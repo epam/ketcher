@@ -49,4 +49,8 @@ export class ChemRenderer extends BaseMonomerRenderer {
 
     super.show(theme);
   }
+
+  protected get modificationConfig() {
+    return undefined;
+  }
 }

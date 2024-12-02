@@ -1,3 +1,4 @@
+import { Subscription } from 'subscription';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -65,6 +66,7 @@ export class Ketcher {
   #editor: Editor;
   _indigo: Indigo;
   #eventBus: EventEmitter;
+  changeEvent: Subscription;
 
   get editor(): Editor {
     return this.#editor;
@@ -82,7 +84,7 @@ export class Ketcher {
     assert(editor != null);
     assert(structService != null);
     assert(formatterFactory != null);
-
+    this.changeEvent = new Subscription();
     this.#editor = editor;
     this.structService = structService;
     this.#formatterFactory = formatterFactory;

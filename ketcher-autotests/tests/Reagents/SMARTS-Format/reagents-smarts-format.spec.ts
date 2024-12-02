@@ -80,6 +80,7 @@ test.describe('Reagents SMARTS format', () => {
     expect(smartsFile).toEqual(smartsFileExpected);
 
     await previewSmarts(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

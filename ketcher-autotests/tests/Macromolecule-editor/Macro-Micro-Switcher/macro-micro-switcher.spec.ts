@@ -69,6 +69,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectMacroBond,
+  selectOpenTool,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -3055,4 +3056,15 @@ test.describe('Move in collepsed state on Micro canvas: ', () => {
       );
     });
   }
+});
+
+test('Switch to Macro mode, verify that user cant open reactions from RDF RXN V2000/V3000 - error message is displayed', async () => {
+  /* 
+  Test case: https://github.com/epam/Indigo/issues/2102
+  Description: In Macro mode, user can't open reactions from RDF RXN V2000/V3000 - error message is displayed. 
+  */
+  await selectOpenTool(page);
+  await openFile('RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf', page);
+  await pressButton(page, 'Open as New');
+  await takeEditorScreenshot(page);
 });

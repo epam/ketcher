@@ -17,6 +17,7 @@
 import { Command } from 'domain/entities/Command';
 import { CoreEditor } from './Editor';
 import assert from 'assert';
+import { ketcherProvider } from 'application/utils';
 const HISTORY_SIZE = 32; // put me to options
 
 export type HistoryOperationType = 'undo' | 'redo';
@@ -35,7 +36,6 @@ export class EditorHistory {
     this.historyPointer = 0;
 
     EditorHistory._instance = this;
-
     return this;
   }
 
@@ -50,13 +50,14 @@ export class EditorHistory {
       }
       this.historyPointer = this.historyStack.length;
     }
+    ketcherProvider.getKetcher()?.changeEvent.dispatch();
   }
 
   undo() {
     if (this.historyPointer === 0) {
       return;
     }
-
+    ketcherProvider.getKetcher()?.changeEvent.dispatch();
     assert(this.editor);
 
     this.historyPointer--;
@@ -71,7 +72,7 @@ export class EditorHistory {
     if (this.historyPointer === this.historyStack.length) {
       return;
     }
-
+    ketcherProvider.getKetcher()?.changeEvent.dispatch();
     assert(this.editor);
 
     const lastCommand = this.historyStack[this.historyPointer];

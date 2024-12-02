@@ -20,6 +20,7 @@ test.describe('Track Changes', () => {
     Description: Add Nitrogen atom to canvas 35 times and then press Undo 32 times
     */
     test.slow();
+
     const atomType = AtomButton.Nitrogen;
 
     const addAtom = async (x: number, y: number) => {

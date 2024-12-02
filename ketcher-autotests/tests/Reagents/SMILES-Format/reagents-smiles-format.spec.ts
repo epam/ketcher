@@ -8,6 +8,7 @@ import {
   readFileContents,
   pasteFromClipboardAndAddToCanvas,
   waitForPageInit,
+  moveMouseAway,
 } from '@utils';
 import {
   getExtendedSmiles,
@@ -64,6 +65,7 @@ test.describe('Reagents SMILES format', () => {
     expect(smiFile).toEqual(smiFileExpected);
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -89,6 +91,7 @@ test.describe('Reagents SMILES format', () => {
     expect(smiFile).toEqual(smiFileExpected);
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -108,6 +111,7 @@ test.describe('Reagents SMILES format', () => {
     );
 
     await getPreviewForSmiles(page, 'Extended SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -127,6 +131,7 @@ test.describe('Reagents SMILES format', () => {
     );
 
     await getPreviewForSmiles(page, 'Extended SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

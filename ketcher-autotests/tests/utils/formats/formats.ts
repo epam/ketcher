@@ -76,6 +76,16 @@ export async function getRxn(
   );
 }
 
+export async function getRdf(
+  page: Page,
+  fileFormat?: MolfileFormat,
+): Promise<string> {
+  return await page.evaluate(
+    (fileFormat) => window.ketcher.getRdf(fileFormat),
+    fileFormat,
+  );
+}
+
 export async function getSmarts(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getSmarts());
 }

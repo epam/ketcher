@@ -163,4 +163,8 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       this.appendPreviewAttachmentPoint.bind(this, params),
     );
   }
+
+  protected get modificationConfig() {
+    return undefined;
+  }
 }

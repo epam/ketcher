@@ -478,7 +478,11 @@ export async function getAndCompareSmiles(page: Page, smilesFilePath: string) {
 export async function saveToFile(filename: string, data: string) {
   if (process.env.GENERATE_DATA === 'true') {
     // `tests/test-data/${filename}`,
-    return await fs.promises.writeFile(`${filename}`, data, 'utf-8');
+    return await fs.promises.writeFile(
+      `tests/test-data/${filename}`,
+      data,
+      'utf-8',
+    );
   }
 }
 

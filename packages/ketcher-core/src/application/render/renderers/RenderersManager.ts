@@ -8,8 +8,11 @@ import { SnakeModePolymerBondRenderer } from 'application/render/renderers/Polym
 import assert from 'assert';
 import {
   HydrogenBond,
+  LinkerSequenceNode,
+  MonomerSequenceNode,
   Nucleoside,
   Nucleotide,
+  Sugar,
   UnsplitNucleotide,
 } from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
@@ -213,6 +216,15 @@ export class RenderersManager {
         node.monomer.renderer?.setEnumeration(monomerEnumeration);
         node.monomer.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
         currentEnumeration++;
+      } else if (
+        node instanceof MonomerSequenceNode ||
+        node instanceof LinkerSequenceNode
+      ) {
+        node.monomers.forEach((monomer) => {
+          if (monomer instanceof Sugar) {
+            monomer.renderer?.redrawEnumeration(false);
+          }
+        });
       }
     });
   }

@@ -1570,7 +1570,13 @@ export class DrawingEntitiesManager {
 
     const monomerXToIndexInMatrix = {};
 
-    sortedGroupedMonomers[0][1].forEach(([x], index) => {
+    const longestRow = sortedGroupedMonomers.reduce(
+      (longestRow, currentRow) =>
+        currentRow[1].length > longestRow[1].length ? currentRow : longestRow,
+      sortedGroupedMonomers[0],
+    );
+
+    longestRow[1].forEach(([x], index) => {
       monomerXToIndexInMatrix[x] = index;
     });
 

@@ -677,7 +677,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
     await verifyFile2(
       page,
-      'tests/test-data/CDXML/reactant-single-reaction-expected.cdxml',
+      'CDXML/reactant-single-reaction-expected.cdxml',
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
@@ -701,7 +701,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
     await verifyFile2(
       page,
-      'tests/test-data/CDXML/products-single-reaction-expected.cdxml',
+      'CDXML/products-single-reaction-expected.cdxml',
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
@@ -725,7 +725,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
     await verifyFile2(
       page,
-      'tests/test-data/CDXML/ket-cascade-reaction-3-1-2-1-1-expected.cdxml',
+      'CDXML/ket-cascade-reaction-3-1-2-1-1-expected.cdxml',
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
@@ -749,7 +749,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
     await verifyFile2(
       page,
-      'tests/test-data/CDXML/multiple-individual-reactions-expected.cdxml',
+      'CDXML/multiple-individual-reactions-expected.cdxml',
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
@@ -773,7 +773,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
     await verifyFile2(
       page,
-      'tests/test-data/CDXML/several-cascade-reactions-expected.cdxml',
+      'CDXML/several-cascade-reactions-expected.cdxml',
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
@@ -797,7 +797,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
     await verifyFile2(
       page,
-      'tests/test-data/CDXML/combination-of-single-and-cascade-reactions-expected.cdxml',
+      'CDXML/combination-of-single-and-cascade-reactions-expected.cdxml',
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
@@ -821,7 +821,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
     await verifyFile2(
       page,
-      'tests/test-data/CDXML/cascade-of-multiple-reactions-expected.cdxml',
+      'CDXML/cascade-of-multiple-reactions-expected.cdxml',
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(
@@ -845,7 +845,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
     await verifyFile2(
       page,
-      'tests/test-data/CDXML/pathway-with-mixed-single-reactions-and-cascades-expected.cdxml',
+      'CDXML/pathway-with-mixed-single-reactions-and-cascades-expected.cdxml',
       FileType.CDXML,
     );
     await openFileAndAddToCanvasAsNewProject(

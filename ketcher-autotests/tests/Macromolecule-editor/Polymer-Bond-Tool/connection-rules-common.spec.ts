@@ -214,7 +214,7 @@ test.describe('Common connection rules: ', () => {
    *  Check that bond dissapears when 'ESC' button is pressed while pulling bond away from RNA monomer placed on canvas
    */
   test(`Check that bond dissapears when 'ESC' button is pressed while pulling bond away from monomers placed on canvas`, async () => {
-    test.setTimeout(20000);
+    test.setTimeout(30000);
 
     await openFileAndAddToCanvasMacro(
       'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',

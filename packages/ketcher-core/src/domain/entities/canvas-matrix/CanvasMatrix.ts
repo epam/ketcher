@@ -231,7 +231,12 @@ export class CanvasMatrix {
           const connectedNode = monomerToNode.get(
             anotherMonomer,
           ) as SubChainNode;
-          const connectedCell = this.monomerToCell.get(anotherMonomer) as Cell;
+          const connectedCell = this.monomerToCell.get(anotherMonomer);
+
+          if (!connectedCell) {
+            return;
+          }
+
           const xDistance = connectedCell.x - cell.x;
           const yDistance = connectedCell.y - cell.y;
           const xDirection = xDistance > 0 ? 0 : 180;

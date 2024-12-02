@@ -88,7 +88,9 @@ export class Chain {
     };
     if (
       monomer instanceof Phosphate &&
-      (!this.lastNode || this.lastNode instanceof Nucleoside) &&
+      (!this.lastNode ||
+        this.lastNode instanceof Nucleoside ||
+        this.lastNode.lastMonomerInNode instanceof UnsplitNucleotide) &&
       (!nextMonomer || isNextMonomerNucleosideOrNucleotideOrPeptide())
     ) {
       this.lastSubChain.add(new MonomerSequenceNode(monomer));

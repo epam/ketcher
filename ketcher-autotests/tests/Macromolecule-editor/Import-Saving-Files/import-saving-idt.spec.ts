@@ -60,6 +60,7 @@ import {
   markResetToDefaultState,
   processResetToDefaultState,
 } from '@utils/testAnnotations/resetToDefaultState';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 let page: Page;
 
@@ -871,7 +872,7 @@ test.describe('Import-Saving .idt Files', () => {
     await selectEraseTool(page);
     await bondLine.click();
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -904,7 +905,7 @@ test.describe('Import-Saving .idt Files', () => {
     await selectEraseTool(page);
     await bondLine.click();
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 

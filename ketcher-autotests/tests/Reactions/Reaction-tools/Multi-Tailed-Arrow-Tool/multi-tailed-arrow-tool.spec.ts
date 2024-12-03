@@ -48,6 +48,10 @@ import {
   selectSaveFileFormat,
 } from '@utils/formats';
 import { openStructureLibrary } from '@utils/templates';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 async function saveToTemplates(page: Page) {
   await pressButton(page, 'Save to Templates');
@@ -625,7 +629,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);
@@ -647,7 +651,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);
@@ -669,12 +673,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await selectAllStructuresOnCanvas(page);
     await selectEraseTool(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
@@ -699,12 +703,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await selectAllStructuresOnCanvas(page);
     await selectEraseTool(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
@@ -1081,7 +1085,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600);
     await takeEditorScreenshot(page);
     await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     });
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
@@ -1621,11 +1625,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -1822,11 +1826,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -1866,11 +1870,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -2296,11 +2300,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(900, 500, page);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -2337,11 +2341,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(900, 500, page);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 6; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 6; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -2460,11 +2464,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(900, 500, page);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -2506,11 +2510,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(900, 500, page);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 6; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 6; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -2927,11 +2931,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 4; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 4; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -2968,11 +2972,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 6; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 6; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -3104,11 +3108,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 4; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 4; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -3151,11 +3155,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 6; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 6; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });

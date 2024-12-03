@@ -19,6 +19,7 @@ import {
   saveToFile,
 } from '@utils';
 import { getMolfile } from '@utils/formats/formats';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 test.describe('Indigo Tools - Clean Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -55,7 +56,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     );
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -79,7 +80,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     );
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -104,7 +105,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     );
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -157,7 +158,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     );
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -198,7 +199,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     );
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -206,7 +207,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     );
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -224,7 +225,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     );
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -249,7 +250,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     );
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -273,7 +274,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     );
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -297,7 +298,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     );
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -314,7 +315,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     );
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
 
     await waitForSpinnerFinishedWork(
       page,
@@ -465,7 +466,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await waitForSpinnerFinishedWork(
       page,
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),

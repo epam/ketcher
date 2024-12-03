@@ -32,6 +32,10 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 const xOffsetFromCenter = -35;
 const idToTitle: {
@@ -107,7 +111,7 @@ test.describe('Plus and Arrows tools ', () => {
         await selectNestedTool(page, tool);
         await clickOnTheCanvas(page, xOffsetFromCenter, 0);
         await takeEditorScreenshot(page);
-        await selectTopPanelButton(TopPanelButton.Undo, page);
+        await pressUndoButton(page);
         await takeEditorScreenshot(page);
       });
     }
@@ -174,11 +178,11 @@ test.describe('Plus and Arrows tools ', () => {
     await clickOnTheCanvas(page, xOffsetFromCenter2, -100);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -275,7 +279,7 @@ test.describe('Plus and Arrows tools ', () => {
       await copyAndPaste(page);
       await clickOnCanvas(page, point.x - 100, point.y - 100);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
       await takeEditorScreenshot(page);
       await selectLeftPanelButton(LeftPanelButton.Erase, page);
       await page.mouse.move(point.x - 300, point.y - 100);
@@ -344,7 +348,7 @@ test.describe('Plus and Arrows tools ', () => {
       await copyAndPaste(page);
       await clickOnCanvas(page, point.x - 100, point.y - 100);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
       await takeEditorScreenshot(page);
       await selectLeftPanelButton(LeftPanelButton.Erase, page);
       await page.mouse.move(point.x - 300, point.y - 100);
@@ -427,7 +431,7 @@ test.describe('Plus and Arrows tools ', () => {
       await selectLeftPanelButton(LeftPanelButton.Erase, page);
       await clickOnTheCanvas(page, -OFFSET_FROM_ARROW, 0);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
       await takeEditorScreenshot(page);
       await selectLeftPanelButton(LeftPanelButton.Erase, page);
       await page.mouse.move(point.x - 40, point.y - 300);
@@ -456,7 +460,7 @@ test.describe('Plus and Arrows tools ', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await waitForSpinnerFinishedWork(
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),

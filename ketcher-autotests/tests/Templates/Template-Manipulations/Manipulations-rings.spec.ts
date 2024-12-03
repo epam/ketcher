@@ -21,6 +21,10 @@ import {
   TopPanelButton,
   waitForPageInit,
 } from '@utils';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 async function checkTooltip(type: RingButton, page: Page) {
   const templateButton = page.getByRole('button', { name: type });
@@ -74,13 +78,13 @@ async function deleteRightBondInRing(page: Page) {
 }
 
 async function checkHistoryForBondDeletion(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Undo, page);
-  await selectTopPanelButton(TopPanelButton.Undo, page);
-  await selectTopPanelButton(TopPanelButton.Redo, page);
-  await selectTopPanelButton(TopPanelButton.Undo, page);
-  await selectTopPanelButton(TopPanelButton.Redo, page);
-  await selectTopPanelButton(TopPanelButton.Redo, page);
-  await selectTopPanelButton(TopPanelButton.Undo, page);
+  await pressUndoButton(page);
+  await pressUndoButton(page);
+  await pressRedoButton(page);
+  await pressUndoButton(page);
+  await pressRedoButton(page);
+  await pressRedoButton(page);
+  await pressUndoButton(page);
 }
 
 async function manipulateRingsByName(type: RingButton, page: Page) {

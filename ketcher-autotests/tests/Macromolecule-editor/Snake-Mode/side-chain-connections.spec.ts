@@ -24,6 +24,7 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
+  resetZoomLevelToDefault,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -57,7 +58,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
-  await page.keyboard.press('Control+0');
+  await resetZoomLevelToDefault(page);
   await selectClearCanvasTool(page);
 });
 

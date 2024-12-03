@@ -19,6 +19,7 @@ import {
   delay,
   clickOnCanvas,
   selectMacroBond,
+  resetZoomLevelToDefault,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
@@ -60,7 +61,7 @@ test.describe('Common connection rules: ', () => {
 
   test.afterEach(async () => {
     await page.keyboard.press('Escape');
-    await page.keyboard.press('Control+0');
+    await resetZoomLevelToDefault(page);
     await selectClearCanvasTool(page);
   });
 

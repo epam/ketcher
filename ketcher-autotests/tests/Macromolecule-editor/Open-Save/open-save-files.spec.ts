@@ -7,6 +7,7 @@ import {
   openStructurePasteFromClipboard,
   openFileAndAddToCanvasAsNewProject,
   selectSaveTool,
+  resetZoomLevelToDefault,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -38,7 +39,7 @@ test.describe('Open/save file tests: ', () => {
 
   test.afterEach(async () => {
     await page.keyboard.press('Escape');
-    await page.keyboard.press('Control+0');
+    await resetZoomLevelToDefault(page);
     await selectClearCanvasTool(page);
   });
 

@@ -10,6 +10,7 @@ import {
   waitForPageInit,
   selectAllStructuresOnCanvas,
   selectMacroBond,
+  resetZoomLevelToDefault,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
@@ -129,7 +130,7 @@ test.describe('Hotkeys', () => {
       await page.keyboard.press('Control+=');
     }
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+0');
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page);
   });
 

@@ -190,19 +190,19 @@ const ambiguousMonomers: IHELMString[] = [
     testDescription:
       '15. DNA Base N (alternative, no probabilities, from the library)',
     HELMString: 'RNA1{[dR](T,G,C,A)P}$$$$V2.0',
-    monomerLocatorIndex: 2,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '16. DNA Base B (alternative, no probabilities, from the library)',
     HELMString: 'RNA1{[dR](T,G,C)P}$$$$V2.0',
-    monomerLocatorIndex: 2,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '17. DNA Base B (alternative, with probabilities, from the library)',
     HELMString: 'RNA1{[dR](T:20,G:50,C:30)P}$$$$V2.0',
-    monomerLocatorIndex: 2,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
@@ -262,7 +262,7 @@ const ambiguousMonomers: IHELMString[] = [
   {
     testDescription: '25. DNA Base N (mixture, no quantities, from library)',
     HELMString: 'RNA1{[dR](T+G+C+A)P}$$$$V2.0',
-    monomerLocatorIndex: 2,
+    monomerLocatorIndex: 1,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
@@ -270,7 +270,7 @@ const ambiguousMonomers: IHELMString[] = [
   {
     testDescription: '26. DNA Base B (mixture, no quantities, from library)',
     HELMString: 'RNA1{[dR](T+G+C)P}$$$$V2.0',
-    monomerLocatorIndex: 2,
+    monomerLocatorIndex: 1,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
@@ -280,7 +280,7 @@ const ambiguousMonomers: IHELMString[] = [
     HELMString: 'RNA1{[dR](T:20+G:50+C:30)P}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/5566',
-    monomerLocatorIndex: 2,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription: '28. Base M (mixture, no quantities, from library)',

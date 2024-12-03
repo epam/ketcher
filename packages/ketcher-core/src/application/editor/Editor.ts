@@ -55,6 +55,7 @@ import { ViewModel } from 'application/render/view-model/ViewModel';
 import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
+import { BaseMonomerRenderer } from 'application/render';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -327,6 +328,16 @@ export class CoreEditor {
           !(eventData.polymerBond instanceof HydrogenBond))
       ) {
         this.events.rightClickPolymerBond.dispatch(event, eventData);
+      } else if (
+        eventData instanceof BaseMonomerRenderer &&
+        eventData.monomer.selected
+      ) {
+        this.events.rightClickSelectedMonomers.dispatch(
+          event,
+          this.drawingEntitiesManager.selectedEntities
+            .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
+            .map(([, drawingEntity]) => drawingEntity as BaseMonomer),
+        );
       } else if (isClickOnCanvas) {
         this.events.rightClickCanvas.dispatch(event);
       }
@@ -368,6 +379,20 @@ export class CoreEditor {
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
     );
+    this.events.createAntisenseChain.add(() => {
+      this.onCreateAntisenseChain();
+    });
+    this.events.copySelectedStructure.add(() => {
+      this.mode.onCopy();
+    });
+    this.events.deleteSelectedStructure.add(() => {
+      const command = new Command();
+      const history = new EditorHistory(this);
+
+      command.merge(this.drawingEntitiesManager.deleteSelectedEntities());
+      history.update(command);
+      this.renderersContainer.update(command);
+    });
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
@@ -396,6 +421,14 @@ export class CoreEditor {
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {
     this.sequenceTypeEnterMode = mode;
+  }
+
+  private onCreateAntisenseChain() {
+    const modelChanges = this.drawingEntitiesManager.createAntisenseChain();
+    const history = new EditorHistory(this);
+
+    this.renderersContainer.update(modelChanges);
+    history.update(modelChanges);
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {
@@ -723,6 +756,18 @@ export class CoreEditor {
         struct,
         this.drawingEntitiesManager,
       );
+
+    if (this.mode instanceof SnakeMode) {
+      modelChanges.merge(
+        this.drawingEntitiesManager.applySnakeLayout(
+          this.canvas.width.baseVal.value,
+          true,
+          true,
+          false,
+        ),
+      );
+    }
+
     this.renderersContainer.update(modelChanges);
     ketcher?.editor.clear();
     this._type = EditorType.Macromolecules;

@@ -105,8 +105,8 @@ export abstract class BaseMode {
 
   abstract scrollForView(): void;
 
-  onCopy(event: ClipboardEvent) {
-    if (this.checkIfTargetIsInput(event)) {
+  onCopy(event?: ClipboardEvent) {
+    if (event && this.checkIfTargetIsInput(event)) {
       return;
     }
     const editor = CoreEditor.provideEditorInstance();
@@ -162,7 +162,7 @@ export abstract class BaseMode {
     );
     if (isClipboardAPIAvailable()) {
       navigator.clipboard.writeText(serializedKet);
-    } else {
+    } else if (event) {
       legacyCopy(event.clipboardData, {
         'text/plain': serializedKet,
       });

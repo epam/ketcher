@@ -278,7 +278,6 @@ class SelectRectangle implements BaseTool {
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
         renderer.polymerBond,
       );
-    this.editor.renderersContainer.markForRecalculateBegin();
     this.editor.renderersContainer.update(modelChanges);
   }
 
@@ -293,7 +292,6 @@ class SelectRectangle implements BaseTool {
       this.editor.drawingEntitiesManager.hidePolymerBondInformation(
         renderer.polymerBond,
       );
-    this.editor.renderersContainer.markForRecalculateBegin();
     this.editor.renderersContainer.update(modelChanges);
   }
 

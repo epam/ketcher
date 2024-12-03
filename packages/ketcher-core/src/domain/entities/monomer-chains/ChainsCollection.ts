@@ -4,6 +4,8 @@ import {
   BaseMonomer,
   Chem,
   IsChainCycled,
+  Nucleoside,
+  Nucleotide,
   Peptide,
   Phosphate,
   RNABase,
@@ -105,6 +107,11 @@ export class ChainsCollection {
         !monomer.monomerItem.props.isMicromoleculeFragment ||
         isMonomerSgroupWithAttachmentPoints(monomer),
     );
+
+    if (filteredMonomers.length === 0) {
+      return chainsCollection;
+    }
+
     const [firstMonomersInRegularChains, firstMonomersInCycledChains] =
       this.getFirstMonomersInChains(filteredMonomers);
 
@@ -115,6 +122,17 @@ export class ChainsCollection {
     firstMonomersInCycledChains.forEach((monomer) => {
       chainsCollection.add(new Chain(monomer, !!IsChainCycled.CYCLED));
     });
+
+    if (
+      firstMonomersInRegularChains.length === 0 &&
+      firstMonomersInCycledChains.length === 0
+    ) {
+      const topLeftMonomer = this.getMonomerWithLowerCoordsFromMonomerList(
+        filteredMonomers.filter((monomer) => !(monomer instanceof RNABase)),
+      );
+
+      chainsCollection.add(new Chain(topLeftMonomer));
+    }
 
     return chainsCollection;
   }
@@ -177,7 +195,6 @@ export class ChainsCollection {
 
       const isFirstMonomerWithR2R1connection =
         !R1PolymerBond || R1PolymerBond.isSideChainConnection;
-
       const R1ConnectedMonomer = R1PolymerBond?.getAnotherMonomer(monomer);
       const isRnaBaseConnectedToSugar =
         isRnaBaseOrAmbiguousRnaBase(monomer) &&
@@ -286,5 +303,28 @@ export class ChainsCollection {
         });
       });
     });
+  }
+
+  public getComplementaryChains(chain: Chain) {
+    const complementaryChains: Set<Chain> = new Set();
+    const monomerToChain = this.monomerToChain;
+
+    chain.forEachNode(({ node }) => {
+      if (!(node instanceof Nucleotide || node instanceof Nucleoside)) {
+        return;
+      }
+
+      const complementaryRnaBase = node.getAntisenseRnaBase();
+      const complementaryChain =
+        complementaryRnaBase && monomerToChain.get(complementaryRnaBase);
+
+      if (!complementaryChain) {
+        return;
+      }
+
+      complementaryChains.add(complementaryChain);
+    });
+
+    return complementaryChains;
   }
 }

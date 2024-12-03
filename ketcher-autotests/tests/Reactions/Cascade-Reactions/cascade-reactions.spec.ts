@@ -33,6 +33,7 @@ import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
   verifyFile,
+  verifyFile2,
   verifyRdfFile,
 } from '@utils/files/receiveFileComparisonData';
 
@@ -2046,6 +2047,29 @@ test.describe('Cascade Reactions', () => {
       Description: ${testCaseExpectedResult}
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
+      await takeEditorScreenshot(page);
+    });
+  });
+
+  const testCases27 = [
+    {
+      rdfFile: 'RDF-V2000/rdf-cascade-reactions-name-conditions.rdf',
+      ketFile: 'KET/rdf-cascade-reactions-name-conditions-expected.ket',
+      testCaseDescription:
+        'RDF V2000 cascade reactions with Multi-Tailed and single arrow (5-tails and 2:1:1) and reactions name and conditions',
+    },
+  ];
+
+  testCases27.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
+    test(`Add to Canvas from ${testCaseDescription}, after that they can be saved/loaded to KET`, async () => {
+      /* 
+      Test case: https://github.com/epam/Indigo/issues/2559
+      Description: Text of name and conditions is displayed correctly (7 different cases), after that saved to KET and load from KET, and it's displayed correctly. 
+      */
+      await openFileAndAddToCanvasAsNewProject(rdfFile, page);
+      await takeEditorScreenshot(page);
+      await verifyFile2(page, ketFile, FileType.KET);
+      await openFileAndAddToCanvasAsNewProject(ketFile, page);
       await takeEditorScreenshot(page);
     });
   });

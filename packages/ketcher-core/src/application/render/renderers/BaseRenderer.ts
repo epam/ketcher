@@ -40,11 +40,6 @@ export abstract class BaseRenderer implements IBaseRenderer {
     void
   >;
 
-  protected selectionElement?:
-    | D3SvgElementSelection<SVGLineElement, void>
-    | D3SvgElementSelection<SVGPathElement, void>
-    | D3SvgElementSelection<SVGCircleElement, void>;
-
   protected canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
 
   protected canvas: D3SvgElementSelection<SVGSVGElement, void>;

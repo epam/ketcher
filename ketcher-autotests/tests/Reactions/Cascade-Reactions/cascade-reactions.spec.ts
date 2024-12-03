@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
@@ -1807,4 +1808,245 @@ test.describe('Cascade Reactions', () => {
       });
     },
   );
+
+  const testCases26 = [
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-1x1-no-wrap-30-symbols.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed or single arrow (1:1) and reactions name and conditions with no wrapping (30 symbols in a line)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-2x1-no-wrap-30-symbols.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed or single arrow (2:1) and reactions name and conditions with no wrapping (30 symbols in a line)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-1x1-auto-wrap-9-lines.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed or single arrow (1:1) and reactions name and conditions with auto wrapping (9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-9-lines.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed or single arrow (2:1) and reactions name and conditions with auto wrapping (9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-1x1-auto-wrap-9-lines-truncated.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed or single arrow (1:1) and reactions name and conditions with auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic and truncated (last 3 points are replaced by points), font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-9-lines-truncated.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed or single arrow (2:1) and reactions name and conditions with auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic and truncated (last 3 points are replaced by points), font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-5x1-auto-wrap-spaces-all-elements.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed or single arrow (5:1) and reactions name and conditions with spaces, all possible elements, auto wrapping',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-1x1-auto-wrap-spaces.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed or single arrow (1:1) and reactions name and conditions with spaces, all possible elements, auto wrapping',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-1x1-auto-wrap-spaces-all-elements-truncated.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed or single arrow (1:1) and reactions name and conditions with spaces, all possible elements, auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Text of conditions is truncated, name is in bold, conditions is in italic, font is 13',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-spaces-all-elements-truncated.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed or single arrow (2:1) and reactions name and conditions with spaces, all possible elements, auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Text of conditions is truncated, name is in bold, conditions is in italic, font is 13',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-2x1-name-no-wrap-30-symbols.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed or single arrow (2:1) and only reactions name and empty conditions with no wrapping (30 symbols in a line)',
+      testCaseExpectedResult: ' Text of name is in bold, font size is 13',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-1x1-conditions-not-available-no-wrap-30-symbols.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Single arrow (1:1) and only reactions name and not available conditions with no wrapping (30 symbols in a line)',
+      testCaseExpectedResult: ' Text of name is in bold, font size is 13',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-name-9-lines.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed arrow (2:1) and only reactions name with auto wrapping (9 lines)',
+      testCaseExpectedResult: 'Text of name is in bold, font size is 13',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-name-9-lines-truncated.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed arrow (2:1) and only reactions name with auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold and truncated (last 3 points are replaced by points), font size is 13',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-conditions-no-wrap-30-symbols.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed arrow (2:1) and only reactions conditions and empty name with no wrapping (30 symbols in a line)',
+      testCaseExpectedResult:
+        'Text of conditions is in italic, first line is empty, font size is 13',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-1x1-name-not-available-no-wrap-30-symbols.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Single arrow (1:1) and only reactions conditions and not available name with no wrapping (30 symbols in a line)',
+      testCaseExpectedResult:
+        'Text of conditions is in italic, first line is empty, font size is 13',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-conditions-9-lines.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed arrow (2:1) and only reactions conditions with auto wrapping (9 lines)',
+      testCaseExpectedResult:
+        'Text of conditions is in italic, font size is 13, the first line is empty',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-conditions-9-lines-truncated.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed arrow (2:1) and only reactions conditions with auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Text of conditions is in italic  and truncated (last 3 points are replaced by points), font size is 13, the first line is empty',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-space-after-30-symbols.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed arrow (2:1) and reactions name and conditions with spaces and auto wrapping (after 30 symbols)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-space-after-30-symbols-with-space.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed arrow (2:1) and reactions name and conditions with spaces and auto wrapping (after 30 symbols with space)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-space-before-30-symbols.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed arrow (2:1) and reactions name and conditions with spaces and auto wrapping (before 30 symbols)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-2x1-manual-wrap-9-lines.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed arrow (2:1) and reactions name and conditions with manual wrapping (9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-manual-wrap-9-lines-truncated.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed arrow (2:1) and reactions name and conditions with manual wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic and truncated (last 3 points are replaced by points), font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-not-available-name-conditions.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed arrow (2:1) and not available reactions name and conditions',
+      testCaseExpectedResult: 'There is no text',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-special-symbols.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed arrow (2:1) and reactions name and conditions with special symbols and auto wrapping',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-v2000-cascade-reaction-2-1-1-auto-wrap-9-lines-and-truncated.rdf',
+      testCaseDescription:
+        'RDF V2000 cascade reaction with Multi-Tailed and single arrow (2:1:1) and reactions name and conditions with auto wrapping/truncating',
+      testCaseExpectedResult:
+        'Text of name and conditions is displayed correctly',
+    },
+    {
+      rdfFile:
+        'RDF-V3000/rdf-v3000-cascade-reaction-2-1-1-auto-wrap-9-lines-and-truncated.rdf',
+      testCaseDescription:
+        'RDF V3000 cascade reaction with Multi-Tailed and single arrow (2:1:1) and reactions name and conditions with auto wrapping/truncating',
+      testCaseExpectedResult:
+        'Text of name and conditions is displayed correctly',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-v2000-cascade-reaction-2-1-2-1-auto-wrap-9-lines-and-truncated.rdf',
+      testCaseDescription:
+        'RDF V2000 cascade reaction with Multi-Tailed and single arrow (2:1:2:1) and reactions name and conditions with auto wrapping/truncating',
+      testCaseExpectedResult:
+        'Text of name and conditions is displayed correctly',
+    },
+    {
+      rdfFile:
+        'RDF-V3000/rdf-v3000-cascade-reaction-2-1-2-1-auto-wrap-9-lines-and-truncated.rdf',
+      testCaseDescription:
+        'RDF V3000 cascade reaction with Multi-Tailed and single arrow (2:1:2:1) and reactions name and conditions with auto wrapping/truncating',
+      testCaseExpectedResult:
+        'Text of name and conditions is displayed correctly',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-2x1-atoms-no-wrap-30-symbols.rdf',
+      testCaseDescription:
+        'RDF V2000 single reaction with Multi-Tailed arrow (2:1), atoms and reactions name and conditions with no wrapping (30 symbols in a line)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+  ];
+
+  testCases26.forEach(({ rdfFile, testCaseDescription }) => {
+    test(`Add to Canvas from ${testCaseDescription} and verify that the text is added correctly`, async () => {
+      /* 
+      Test case: https://github.com/epam/Indigo/issues/2559
+      Description: ${testCaseExpectedResult}
+      */
+      await openFileAndAddToCanvasAsNewProject(rdfFile, page);
+      await takeEditorScreenshot(page);
+    });
+  });
 });

@@ -29,6 +29,7 @@ export abstract class BaseRenderer implements IBaseRenderer {
     | D3SvgElementSelection<SVGRectElement, void>
     | D3SvgElementSelection<SVGPathElement, void>;
 
+  // An extra invisible area around `bodyElement` to make it easier for a user to hover over it.
   protected hoverAreaElement?: D3SvgElementSelection<
     SVGGElement | SVGLineElement,
     void
@@ -38,6 +39,11 @@ export abstract class BaseRenderer implements IBaseRenderer {
     SVGGElement | SVGCircleElement,
     void
   >;
+
+  protected selectionElement?:
+    | D3SvgElementSelection<SVGLineElement, void>
+    | D3SvgElementSelection<SVGPathElement, void>
+    | D3SvgElementSelection<SVGCircleElement, void>;
 
   protected canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
 

@@ -104,9 +104,16 @@ export class RenderersManager {
     monomer.renderer?.drawSelection();
   }
 
-  public redrawDrawingEntity(drawingEntity: DrawingEntity, force = false) {
+  public redrawDrawingEntity(
+    drawingEntity: DrawingEntity,
+    force = false,
+    recalculateEnumeration = false,
+  ) {
     drawingEntity.baseRenderer?.remove();
     drawingEntity.baseRenderer?.show(this.theme, force);
+    if (recalculateEnumeration) {
+      this.markForReEnumeration();
+    }
   }
 
   public deleteAllDrawingEntities() {

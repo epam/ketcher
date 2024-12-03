@@ -161,11 +161,11 @@ export class ReconnectPolymerBondOperation implements Operation {
 
   public execute(renderersManager: RenderersManager) {
     this.polymerBond = this.reconnectPolymerBondModelChange();
-    renderersManager.redrawDrawingEntity(this.polymerBond);
+    renderersManager.redrawDrawingEntity(this.polymerBond, false, true);
   }
 
   public invert(renderersManager: RenderersManager) {
     this.polymerBond = this.revertReconnectPolymerBondModelChange();
-    renderersManager.redrawDrawingEntity(this.polymerBond);
+    renderersManager.redrawDrawingEntity(this.polymerBond, false, true);
   }
 }

@@ -29,7 +29,7 @@ test.describe('Lasso Selection tool', () => {
 
   const xDelta = 30;
   const yDelta = 60;
-  const xAxis = 300;
+  const xAxis = 250;
   const yAxis = 200;
 
   async function selectObjects(page: Page, xAxis: number, yAxis: number) {
@@ -218,7 +218,7 @@ test.describe('Lasso Selection tool', () => {
      * Description: Undo/Redo should work correctly for the actions for the selected objects.
      */
     const randomCoords = { x: 20, y: 20 };
-    const shiftCoords = { x: 50, y: 50 };
+    const shiftCoords = { x: 70, y: 50 };
     const centerPoint = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
     await selectNestedTool(page, SelectTool.LASSO_SELECTION);

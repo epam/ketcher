@@ -19,6 +19,8 @@ enum LineDirection {
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 21;
 const RNA_CHAIN_VERTICAL_LINE_LENGTH = 74;
+const RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH = 20;
+const RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH = 210;
 const CORNER_LENGTH = 4;
 const DOUBLE_CORNER_LENGTH = CORNER_LENGTH * 2;
 
@@ -204,8 +206,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     // check if there is nucleotide in current row
     const isBondConnectedWithNucleotide =
       this.polymerBond.firstMonomer.isMonomerInRnaChainRow;
-
-    const verticalLineLength = isBondConnectedWithNucleotide
+    const verticalLineLength = this.polymerBond.firstMonomer.monomerItem
+      .isAntisense
+      ? RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH
+      : this.polymerBond.firstMonomer.monomerItem.isSense &&
+        (this.polymerBond.restOfRowsWithAntisense || 0) > 0
+      ? RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH
+      : isBondConnectedWithNucleotide
       ? RNA_CHAIN_VERTICAL_LINE_LENGTH
       : VERTICAL_LINE_LENGTH + 5;
 
@@ -276,7 +283,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       }
       this.addLine(
         LineDirection.Horizontal,
-        LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
+        LINE_FROM_MONOMER_LENGTH -
+          (this.polymerBond.firstMonomer.monomerItem.isAntisense ? 10 : 0) +
+          this.getMonomerWidth() / 2,
         startPosition,
       );
       this.addLineFromLeftToBottom();

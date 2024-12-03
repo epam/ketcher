@@ -24,6 +24,7 @@ export class PolymerBond extends BaseBond {
   public renderer?:
     | FlexOrSequenceOrSnakeModePolymerBondRenderer
     | SnakeModeHydrogenBondRenderer = undefined;
+  public restOfRowsWithAntisense?: number = undefined;
 
   constructor(public firstMonomer: BaseMonomer, secondMonomer?: BaseMonomer) {
     super();

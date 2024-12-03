@@ -53,6 +53,10 @@ import {
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn } from '@utils/formats';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -291,12 +295,12 @@ test.describe('Template Manupulations', () => {
     await clickOnAtom(page, 'C', anyAnotherAtom);
     const numberOfPressingUndo = 2;
     for (let i = 0; i < numberOfPressingUndo; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     const numberOfPressingRedo = 2;
     for (let i = 0; i < numberOfPressingRedo; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });

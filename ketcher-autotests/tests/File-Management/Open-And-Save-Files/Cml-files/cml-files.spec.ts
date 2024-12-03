@@ -634,7 +634,6 @@ test.describe('CML files', () => {
     /*
   Test case: https://github.com/epam/ketcher/issues/5156
   Description: add new option AVS style and check saving to different format
-  Need to update file after implementing https://github.com/epam/ketcher/issues/5652
   After implementing https://github.com/epam/ketcher/issues/1933 need to update screenshot
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);

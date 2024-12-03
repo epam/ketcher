@@ -9,10 +9,8 @@ export const waitForRender = async (
   callback = emptyFunction,
   timeout = 1000,
 ) => {
-  await Promise.all([
-    waitForCustomEvent(page, 'renderComplete', timeout),
-    callback(),
-  ]);
+  await callback();
+  await waitForCustomEvent(page, 'renderComplete', timeout);
 };
 
 async function waitForCustomEvent(

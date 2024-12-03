@@ -25,20 +25,6 @@ const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
     [FileType.SMARTS]: getSmarts,
   };
 
-export async function verifyFile(
-  page: Page,
-  _filename: string,
-  expectedFilename: string,
-  fileType: FileType,
-) {
-  // line below for backward compatibility (to comply with prettier)
-  // due to mistake - filename parameter was never make sence,
-  // since we took the original "filename" file directly from the memory but not from file
-  _filename = '';
-
-  verifyFile2(page, expectedFilename, fileType);
-}
-
 export async function verifyFile2(
   page: Page,
   expectedFilename: string,
@@ -58,7 +44,7 @@ export async function verifyFile2(
   // and file content from memory (named as file) from unnessusary data
   const { fileExpected, file } = await receiveFileComparisonData({
     page,
-    expectedFileName: expectedFilename,
+    expectedFileName: `tests/test-data/${expectedFilename}`,
   });
 
   expect(file).toEqual(fileExpected);

@@ -38,11 +38,6 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('Import-Saving .fasta Files', () => {
-  test.beforeEach(async ({ page }) => {
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
-  });
-
   const fastaFileTypes = ['DNA', 'RNA', 'Peptide'] as const;
 
   for (const fileType of fastaFileTypes) {
@@ -56,17 +51,6 @@ test.describe('Import-Saving .fasta Files', () => {
       await takeEditorScreenshot(page);
     });
   }
-
-  // Fail while performance issue on Indigo side
-  // test('Import incorrect data', async ({ page }) => {
-  //   const randomText = 'asjfnsalkfl';
-  //   await selectTopPanelButton(TopPanelButton.Open, page);
-  //   await page.getByTestId('paste-from-clipboard-button').click();
-  //   await page.getByTestId('open-structure-textarea').fill(randomText);
-  //   await chooseFileFormat(page, 'FASTA');
-  //   await page.getByTestId('add-to-canvas-button').click();
-  //   await takeEditorScreenshot(page);
-  // });
 
   test('Check import of .ket file and save in .fasta format', async ({
     page,

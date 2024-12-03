@@ -25,6 +25,7 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   resetZoomLevelToDefault,
+  ZoomOutByKeyboard,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -259,7 +260,7 @@ test.describe('Side chain connections', () => {
     );
     await moveMouseAway(page);
     // Zoom out to see whole picture
-    await page.keyboard.press('Control+Minus');
+    await ZoomOutByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -571,7 +572,7 @@ test.describe('Side chain connections', () => {
       );
       await moveMouseAway(page);
       // Zoom out to see bottom chians
-      await page.keyboard.press('Control+Minus');
+      await ZoomOutByKeyboard(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -770,8 +771,8 @@ test.describe('Side chain connections', () => {
         page,
       );
       await moveMouseAway(page);
-      // Zoom out to see bottom chians
-      await page.keyboard.press('Control+Minus');
+      // Zoom out to see bottom chains
+      await ZoomOutByKeyboard(page);
       await takeEditorScreenshot(page);
     },
   );

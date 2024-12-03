@@ -15,7 +15,6 @@ import {
   pressButton,
   selectTopPanelButton,
   TopPanelButton,
-  getKet,
   saveToFile,
   receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
@@ -36,6 +35,7 @@ import {
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
+import { FileType, verifyFile2 } from '@utils/files/receiveFileComparisonData';
 import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
@@ -82,24 +82,6 @@ test.afterAll(async ({ browser }) => {
     someContext.close();
   });
 });
-
-async function verifyFile(
-  page: Page,
-  filename: string,
-  expectedFilename: string,
-) {
-  const expectedFile = await getKet(page);
-  await saveToFile(filename, expectedFile);
-
-  const { fileExpected: ketFileExpected, file: ketFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName: expectedFilename,
-    });
-
-  expect(ketFile).toEqual(ketFileExpected);
-  await openFileAndAddToCanvasAsNewProject(filename, page);
-}
 
 async function saveAndCompareMolfile(
   page: Page,
@@ -517,10 +499,10 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
-  await verifyFile(
+  await verifyFile2(
     page,
     'KET/two-peptides-connected-expected.ket',
-    'tests/test-data/KET/two-peptides-connected-expected.ket',
+    FileType.KET,
   );
   await selectMacroBond(page, MacroBondTool.SINGLE);
   await bondLine.hover();

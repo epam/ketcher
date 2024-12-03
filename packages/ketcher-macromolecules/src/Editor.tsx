@@ -92,21 +92,21 @@ import { EditorEvents } from './EditorEvents';
 
 const muiTheme = createTheme(muiOverrides);
 
-interface EditorContainerProps {
-  onInit?: () => void;
-  theme?: DeepPartial<EditorTheme>;
-  togglerComponent?: JSX.Element;
-}
-
 interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
+  monomersLibraryUpdate?: string | JSON;
+}
+
+interface EditorContainerProps extends EditorProps {
+  onInit?: () => void;
 }
 
 function EditorContainer({
   onInit,
   theme,
   togglerComponent,
+  monomersLibraryUpdate,
 }: EditorContainerProps) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
@@ -126,14 +126,22 @@ function EditorContainer({
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
         <EditorWrapper ref={rootElRef} className={EditorClassName}>
-          <Editor theme={editorTheme} togglerComponent={togglerComponent} />
+          <Editor
+            theme={editorTheme}
+            togglerComponent={togglerComponent}
+            monomersLibraryUpdate={monomersLibraryUpdate}
+          />
         </EditorWrapper>
       </ThemeProvider>
     </Provider>
   );
 }
 
-function Editor({ theme, togglerComponent }: EditorProps) {
+function Editor({
+  theme,
+  togglerComponent,
+  monomersLibraryUpdate,
+}: EditorProps) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
@@ -151,7 +159,9 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   });
 
   useEffect(() => {
-    dispatch(createEditor({ theme, canvas: canvasRef.current }));
+    dispatch(
+      createEditor({ theme, canvas: canvasRef.current, monomersLibraryUpdate }),
+    );
 
     return () => {
       dispatch(destroyEditor(null));

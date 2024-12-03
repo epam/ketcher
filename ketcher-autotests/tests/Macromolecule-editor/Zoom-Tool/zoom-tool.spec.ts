@@ -18,6 +18,8 @@ import {
   selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
   resetZoomLevelToDefault,
+  ZoomOutByKeyboard,
+  ZoomInByKeyboard,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
@@ -482,13 +484,13 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
 
   const numberOfZooms = 5;
   for (let i = 0; i < numberOfZooms; i++) {
-    await page.keyboard.press('Control+=');
+    await ZoomInByKeyboard(page);
   }
   await takeEditorScreenshot(page);
 
   await resetZoomLevelToDefault(page);
   for (let i = 0; i < numberOfZooms; i++) {
-    await page.keyboard.press('Control+-');
+    await ZoomOutByKeyboard(page);
   }
   await takeEditorScreenshot(page);
 });
@@ -519,13 +521,13 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
 
   const numberOfZooms = 5;
   for (let i = 0; i < numberOfZooms; i++) {
-    await page.keyboard.press('Control+=');
+    await ZoomInByKeyboard(page);
   }
   await takeEditorScreenshot(page);
 
   await resetZoomLevelToDefault(page);
   for (let i = 0; i < numberOfZooms; i++) {
-    await page.keyboard.press('Control+-');
+    await ZoomOutByKeyboard(page);
   }
   await takeEditorScreenshot(page);
   await selectFlexLayoutModeTool(page);
@@ -557,13 +559,13 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
 
   const numberOfZooms = 5;
   for (let i = 0; i < numberOfZooms; i++) {
-    await page.keyboard.press('Control+=');
+    await ZoomInByKeyboard(page);
   }
   await takeEditorScreenshot(page);
 
   await resetZoomLevelToDefault(page);
   for (let i = 0; i < numberOfZooms; i++) {
-    await page.keyboard.press('Control+-');
+    await ZoomOutByKeyboard(page);
   }
   await takeEditorScreenshot(page);
   await selectFlexLayoutModeTool(page);

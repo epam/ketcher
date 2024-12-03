@@ -39,6 +39,7 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  ZoomInByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 
@@ -662,7 +663,7 @@ test.describe('Undo/Redo Actions', () => {
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 5; i++) {
-      await page.keyboard.press('Control+=');
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });

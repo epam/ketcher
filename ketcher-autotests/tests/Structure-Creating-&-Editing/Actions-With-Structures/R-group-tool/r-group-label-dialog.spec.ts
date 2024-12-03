@@ -23,6 +23,7 @@ import {
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  ZoomInByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn, getSmiles } from '@utils/formats';
@@ -268,9 +269,7 @@ test.describe('R-Group Label Tool', () => {
 
     // eslint-disable-next-line no-magic-numbers
     for (let i = 0; i < 5; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });

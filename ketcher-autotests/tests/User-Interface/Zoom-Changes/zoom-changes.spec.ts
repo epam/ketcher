@@ -14,6 +14,8 @@ import {
   waitForPageInit,
   openFromFileViaClipboard,
   drawBenzeneRing,
+  ZoomOutByKeyboard,
+  ZoomInByKeyboard,
 } from '@utils';
 import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
 
@@ -143,7 +145,7 @@ test.describe('Zoom changes', () => {
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
-    await page.keyboard.press('Control+=');
+    await ZoomInByKeyboard(page);
     await page.getByTestId('zoom-input').click();
     await page.getByTestId('zoom-in').click();
     await checkZoomLevel(page, '120%');
@@ -157,7 +159,7 @@ test.describe('Zoom changes', () => {
     await drawBenzeneRing(page);
     await resetCurrentTool(page);
 
-    await page.keyboard.press('Control+-');
+    await ZoomOutByKeyboard(page);
     await page.getByTestId('zoom-input').click();
     await page.getByTestId('zoom-out').click();
     await checkZoomLevel(page, '80%');

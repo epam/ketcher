@@ -11,6 +11,8 @@ import {
   selectAllStructuresOnCanvas,
   selectMacroBond,
   resetZoomLevelToDefault,
+  ZoomOutByKeyboard,
+  ZoomInByKeyboard,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
@@ -95,7 +97,7 @@ test.describe('Hotkeys', () => {
       page,
     );
     for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await page.keyboard.press('Control+=');
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -111,7 +113,7 @@ test.describe('Hotkeys', () => {
       page,
     );
     for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await page.keyboard.press('Control+-');
+      await ZoomOutByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -127,7 +129,7 @@ test.describe('Hotkeys', () => {
       page,
     );
     for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await page.keyboard.press('Control+=');
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     await resetZoomLevelToDefault(page);

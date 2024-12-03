@@ -16,6 +16,7 @@ import {
   waitForRender,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  ZoomInByKeyboard,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
@@ -262,9 +263,7 @@ test.describe('Text tools test cases', () => {
     await page.getByText(text4).click();
     await moveStructureToNewPosition(page);
     for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
+      await ZoomInByKeyboard(page);
     }
 
     await takeEditorScreenshot(page);

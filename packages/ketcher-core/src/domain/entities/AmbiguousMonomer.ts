@@ -11,6 +11,8 @@ import {
 import { MONOMER_CLASS_TO_CONSTRUCTOR } from 'domain/constants/monomers';
 import { IVariantMonomer } from 'domain/entities/types';
 import { AmbiguousMonomerType, AttachmentPointName } from 'domain/types';
+import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
+import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 
 export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
 
@@ -129,10 +131,19 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   }
 
   public get SubChainConstructor() {
-    return ChemSubChain;
+    const monomerClassToSubchainConstructor = {
+      [KetMonomerClass.CHEM]: ChemSubChain,
+      [KetMonomerClass.AminoAcid]: PeptideSubChain,
+      [KetMonomerClass.RNA]: RnaSubChain,
+      [KetMonomerClass.DNA]: RnaSubChain,
+    };
+
+    return monomerClassToSubchainConstructor[this.monomerClass] || ChemSubChain;
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {
-    return ![ChemSubChain].includes(monomerToChain.SubChainConstructor);
+    return MONOMER_CLASS_TO_CONSTRUCTOR[
+      this.monomerClass
+    ].prototype.isMonomerTypeDifferentForChaining.call(this, monomerToChain);
   }
 }

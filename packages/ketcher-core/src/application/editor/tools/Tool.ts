@@ -50,6 +50,8 @@ interface ToolEventHandler {
 
   rightClickPolymerBond?(event: Event): void;
 
+  rightClickSelectedMonomers?(event: Event): void;
+
   editSequence?(): void;
 
   startNewSequence?(): void;

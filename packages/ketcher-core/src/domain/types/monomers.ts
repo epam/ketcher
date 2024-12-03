@@ -60,6 +60,8 @@ export type MonomerItemType = {
   attachmentPoints?: IKetAttachmentPoint[];
   seqId?: number;
   isAmbiguous?: boolean;
+  isAntisense?: boolean;
+  isSense?: boolean;
 };
 
 export type AmbiguousMonomerType = {

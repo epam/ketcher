@@ -27,7 +27,7 @@ export class SnakeMode extends BaseMode {
     // we need just redraw canvas to apply new bond view style (straight instead of curved)
     const modelChanges = _isUndo
       ? new Command()
-      : editor.drawingEntitiesManager.reArrangeChains(
+      : editor.drawingEntitiesManager.applySnakeLayout(
           editor.canvas.width.baseVal.value,
           true,
         );

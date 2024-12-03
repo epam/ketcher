@@ -1,17 +1,10 @@
-import {
-  BaseMonomer,
-  MonomerToAtomBond,
-  Nucleoside,
-  Nucleotide,
-  SubChainNode,
-} from 'domain/entities';
+import { BaseMonomer, MonomerToAtomBond, SubChainNode } from 'domain/entities';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Connection } from 'domain/entities/canvas-matrix/Connection';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { isNumber } from 'lodash';
-import { isRnaBaseOrAmbiguousRnaBase } from 'domain/helpers/monomers';
 
 interface MatrixConfig {
   initialMatrix: Matrix<Cell>;
@@ -33,10 +26,6 @@ export class CanvasMatrix {
     this.matrix = new Matrix<Cell>();
     this.initialMatrixWidth = this.matrixConfig.initialMatrix.width;
     this.fillCells();
-  }
-
-  private get chains() {
-    return this.chainsCollection.chains;
   }
 
   private fillConnectionsOffset(
@@ -178,90 +167,48 @@ export class CanvasMatrix {
   }
 
   private fillCells() {
-    // iterate over each chain and fill matrix with cells
-    let rowNumber = 0;
-    let columnNumber = 0;
-    let rowsWithRnaBases = 0;
-    let wereBasesInRow = false;
-    this.chains.forEach((chain) => {
-      chain.forEachNode(({ node }) => {
-        node.monomers.forEach((monomer) => {
-          if (
-            (node instanceof Nucleotide || node instanceof Nucleoside) &&
-            isRnaBaseOrAmbiguousRnaBase(monomer)
-          ) {
-            const cell = new Cell(
-              node,
-              [],
-              columnNumber - 1,
-              rowNumber + rowsWithRnaBases + 1,
-              monomer,
-            );
-            this.matrix.set(
-              rowNumber + rowsWithRnaBases + 1,
-              columnNumber - 1,
-              cell,
-            );
-            this.monomerToCell.set(monomer, cell);
-            wereBasesInRow = true;
+    // create matrix by initial matrix filling empty cells
 
-            return;
-          }
+    for (
+      let rowNumber = 0;
+      rowNumber < this.matrixConfig.initialMatrix.height;
+      rowNumber++
+    ) {
+      for (
+        let columnNumber = 0;
+        columnNumber < this.initialMatrixWidth;
+        columnNumber++
+      ) {
+        const initialMatrixCell = this.matrixConfig.initialMatrix.get(
+          rowNumber,
+          columnNumber,
+        );
 
-          const initialMatrixRowLength =
-            this.matrixConfig.initialMatrix?.getRow(rowNumber)?.length || 0;
-
-          if (columnNumber >= initialMatrixRowLength) {
-            let emptyCellsAmount = this.initialMatrixWidth - columnNumber;
-            while (emptyCellsAmount > 0) {
-              this.matrix.set(
-                rowNumber + rowsWithRnaBases,
-                columnNumber,
-                new Cell(null, [], columnNumber, rowNumber + rowsWithRnaBases),
-              );
-              columnNumber++;
-              emptyCellsAmount--;
-            }
-
-            if (wereBasesInRow) {
-              rowsWithRnaBases++;
-              wereBasesInRow = false;
-              let index = 0;
-              while (index < this.initialMatrixWidth) {
-                const cellWithPotentialRnaBase = this.matrix.get(
-                  rowNumber + rowsWithRnaBases,
-                  index,
-                );
-                if (cellWithPotentialRnaBase) {
-                  index++;
-                  continue;
-                }
-                this.matrix.set(
-                  rowNumber + rowsWithRnaBases,
-                  index,
-                  new Cell(null, [], index, rowNumber + rowsWithRnaBases + 1),
-                );
-                index++;
-              }
-            }
-
-            rowNumber++;
-            columnNumber = 0;
-          }
-
-          const cell = new Cell(
-            node,
-            [],
+        if (!initialMatrixCell) {
+          this.matrix.set(
+            rowNumber,
             columnNumber,
-            rowNumber + rowsWithRnaBases,
-            monomer,
+            new Cell(null, [], columnNumber, rowNumber),
           );
-          this.matrix.set(rowNumber + rowsWithRnaBases, columnNumber, cell);
-          this.monomerToCell.set(monomer, cell);
-          columnNumber++;
-        });
-      });
-    });
+
+          continue;
+        }
+
+        const cell = new Cell(
+          initialMatrixCell.node,
+          [],
+          columnNumber,
+          rowNumber,
+          initialMatrixCell.monomer,
+        );
+
+        this.matrix.set(rowNumber, columnNumber, cell);
+
+        if (initialMatrixCell.monomer) {
+          this.monomerToCell.set(initialMatrixCell.monomer, cell);
+        }
+      }
+    }
 
     const monomerToNode = this.chainsCollection.monomerToNode;
     const handledConnections = new Set<PolymerBond>();
@@ -284,7 +231,12 @@ export class CanvasMatrix {
           const connectedNode = monomerToNode.get(
             anotherMonomer,
           ) as SubChainNode;
-          const connectedCell = this.monomerToCell.get(anotherMonomer) as Cell;
+          const connectedCell = this.monomerToCell.get(anotherMonomer);
+
+          if (!connectedCell) {
+            return;
+          }
+
           const xDistance = connectedCell.x - cell.x;
           const yDistance = connectedCell.y - cell.y;
           const xDirection = xDistance > 0 ? 0 : 180;

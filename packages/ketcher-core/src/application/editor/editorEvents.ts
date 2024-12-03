@@ -53,6 +53,7 @@ export function resetEditorEvents() {
     doubleClickOnSequenceItem: new Subscription(),
     openConfirmationDialog: new Subscription(),
     mouseUpAtom: new Subscription(),
+    updateMonomersLibrary: new Subscription(),
   };
 }
 resetEditorEvents();

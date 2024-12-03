@@ -465,6 +465,11 @@ test.describe('Plus and Arrows tools ', () => {
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
+
+    test.fixme(
+      true,
+      `That test works wrong because of https://github.com/epam/Indigo/issues/2665 issue.`,
+    );
   });
 
   test('Save plus sign and arrow', async ({ page }) => {

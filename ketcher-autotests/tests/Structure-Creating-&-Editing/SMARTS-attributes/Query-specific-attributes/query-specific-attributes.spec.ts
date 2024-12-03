@@ -1,6 +1,7 @@
 import { Page, test } from '@playwright/test';
 import {
   doubleClickOnAtom,
+  moveMouseAway,
   pressButton,
   takeEditorScreenshot,
   waitForAtomPropsModal,
@@ -186,6 +187,7 @@ test.describe('Checking query specific attributes in SMARTS format', () => {
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, expectedSmarts);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

@@ -60,11 +60,16 @@ interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
   mode?: BaseMode;
+  monomersLibraryUpdate?: string | JSON;
 }
 
 function isMouseMainButtonPressed(event: MouseEvent) {
   return event.button === 0;
 }
+
+let persistentMonomersLibrary: MonomerItemType[] = [];
+let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
+  null;
 
 let editor;
 export class CoreEditor {
@@ -76,7 +81,7 @@ export class CoreEditor {
   public viewModel: ViewModel;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
-  private _monomersLibraryParsedJson?: IKetMacromoleculesContent;
+  private _monomersLibraryParsedJson: IKetMacromoleculesContent | null = null;
   private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
   public drawnStructuresWrapperElement: SVGGElement;
@@ -97,7 +102,12 @@ export class CoreEditor {
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
 
-  constructor({ theme, canvas, mode }: ICoreEditorConstructorParams) {
+  constructor({
+    theme,
+    canvas,
+    mode,
+    monomersLibraryUpdate,
+  }: ICoreEditorConstructorParams) {
     this._type = EditorType.Macromolecules;
     this.theme = theme;
     this.canvas = canvas;
@@ -109,6 +119,9 @@ export class CoreEditor {
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
     this._monomersLibraryParsedJson = JSON.parse(monomersDataRaw);
+    if (monomersLibraryUpdate) {
+      this.updateMonomersLibrary(monomersLibraryUpdate);
+    }
     this.subscribeEvents();
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -131,13 +144,97 @@ export class CoreEditor {
     return editor;
   }
 
-  private setMonomersLibrary(monomersDataRaw: string) {
-    const monomersLibraryParsedJson = JSON.parse(monomersDataRaw);
-    this._monomersLibraryParsedJson = monomersLibraryParsedJson;
+  private parseMonomersLibrary(monomersDataRaw: string | JSON) {
+    const monomersLibraryParsedJson =
+      typeof monomersDataRaw === 'string'
+        ? JSON.parse(monomersDataRaw)
+        : monomersDataRaw;
     const serializer = new KetSerializer();
-    this._monomersLibrary = serializer.convertMonomersLibrary(
+    const monomersLibrary = serializer.convertMonomersLibrary(
       monomersLibraryParsedJson,
     );
+
+    return { monomersLibraryParsedJson, monomersLibrary };
+  }
+
+  private setMonomersLibrary(monomersDataRaw: string) {
+    if (
+      persistentMonomersLibrary.length !== 0 &&
+      persistentMonomersLibraryParsedJson !== undefined
+    ) {
+      this._monomersLibrary = persistentMonomersLibrary;
+      this._monomersLibraryParsedJson = persistentMonomersLibraryParsedJson;
+      return;
+    }
+
+    const { monomersLibraryParsedJson, monomersLibrary } =
+      this.parseMonomersLibrary(monomersDataRaw);
+    this._monomersLibrary = monomersLibrary;
+    this._monomersLibraryParsedJson = monomersLibraryParsedJson;
+    persistentMonomersLibrary = monomersLibrary;
+    persistentMonomersLibraryParsedJson = monomersLibraryParsedJson;
+  }
+
+  public updateMonomersLibrary(monomersDataRaw: string | JSON) {
+    const {
+      monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
+      monomersLibrary: newMonomersLibraryChunk,
+    } = this.parseMonomersLibrary(monomersDataRaw);
+
+    newMonomersLibraryChunk.forEach((newMonomer) => {
+      const existingMonomerIndex = this._monomersLibrary.findIndex(
+        (monomer) => {
+          return (
+            monomer?.props?.MonomerName === newMonomer?.props?.MonomerName &&
+            monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass
+          );
+        },
+      );
+
+      const newMonomerProps = newMonomer.props;
+      const monomerIdToUse = newMonomerProps.id || newMonomerProps.MonomerName;
+
+      if (existingMonomerIndex !== -1) {
+        this._monomersLibrary[existingMonomerIndex] = newMonomer;
+
+        const existingMonomerProps =
+          this._monomersLibrary[existingMonomerIndex].props;
+        const existingMonomerIdToUse =
+          existingMonomerProps.id || existingMonomerProps.MonomerName;
+        // It's safe to use non-null assertion here and below because we already specified monomers library and parsed JSON before
+        const existingMonomerRefIndex =
+          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+          this._monomersLibraryParsedJson!.root.templates.findIndex(
+            (template) => template.$ref === existingMonomerIdToUse,
+          );
+        if (existingMonomerRefIndex && existingMonomerRefIndex !== -1) {
+          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+          delete this._monomersLibraryParsedJson!.root.templates[
+            existingMonomerRefIndex
+          ];
+          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+          delete this._monomersLibraryParsedJson![existingMonomerIdToUse];
+          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+          this._monomersLibraryParsedJson!.root.templates.push({
+            $ref: monomerIdToUse,
+          });
+          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+          this._monomersLibraryParsedJson![monomerIdToUse] =
+            newMonomersLibraryChunkParsedJson[monomerIdToUse];
+        }
+      } else {
+        this._monomersLibrary.push(newMonomer);
+        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+        this._monomersLibraryParsedJson!.root.templates.push({
+          $ref: monomerIdToUse,
+        });
+        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+        this._monomersLibraryParsedJson![monomerIdToUse] =
+          newMonomersLibraryChunkParsedJson[monomerIdToUse];
+      }
+    });
+
+    this.events.updateMonomersLibrary.dispatch();
   }
 
   public get monomersLibraryParsedJson() {
@@ -614,7 +711,7 @@ export class CoreEditor {
 
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
-    this._monomersLibraryParsedJson = undefined;
+    this._monomersLibraryParsedJson = null;
     this._type = EditorType.Micromolecules;
   }
 

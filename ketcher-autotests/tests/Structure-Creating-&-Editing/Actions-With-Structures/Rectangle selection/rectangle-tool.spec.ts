@@ -36,7 +36,7 @@ test.describe('Rectangle selection tool', () => {
     return point;
   }
 
-  const selectionCoords = { x: 300, y: 200 };
+  const selectionCoords = { x: 280, y: 200 };
   async function clickCanvas(page: Page) {
     await clickOnCanvas(page, selectionCoords.x, selectionCoords.y);
   }

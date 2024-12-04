@@ -474,12 +474,23 @@ export class BondRenderer extends BaseRenderer {
       }
 
       this.pathShape = `
-          M${firstLineStartPosition.x},${firstLineStartPosition.y} 
-          L${firstLineEndPosition.x},${firstLineEndPosition.y} 
-          M${secondLineStartPosition.x},${secondLineStartPosition.y}      
+          M${firstLineStartPosition.x},${firstLineStartPosition.y}
+          L${firstLineEndPosition.x},${firstLineEndPosition.y}
+          M${secondLineStartPosition.x},${secondLineStartPosition.y}
           L${secondLineEndPosition.x},${secondLineEndPosition.y}
         `;
-
+      this.rootElement
+        .append('path')
+        .attr('d', this.pathShape)
+        .attr('stroke', 'black')
+        .attr('stroke-width', `${BOND_WIDTH * 10}px`)
+        .attr('opacity', '0')
+        .on('mouseover', () => {
+          this.appendHover();
+        })
+        .on('mouseout', () => {
+          this.removeHover();
+        });
       this.rootElement
         .append('path')
         .attr('d', this.pathShape)
@@ -525,6 +536,20 @@ export class BondRenderer extends BaseRenderer {
           L${bondEndSecondPoint.x},${bondEndSecondPoint.y}
           Z
           `;
+        this.rootElement
+          .append('path')
+          .attr('d', this.pathShape)
+          .attr('stroke', '#000')
+          .attr('stroke-width', 20)
+          .attr('stroke-linecap', 'round')
+          .attr('stroke-linejoin', 'round')
+          .attr('opacity', '0')
+          .on('mouseenter', () => {
+            this.appendHover();
+          })
+          .on('mouseleave', () => {
+            this.removeHover();
+          });
 
         this.rootElement
           .append('path')
@@ -601,6 +626,21 @@ export class BondRenderer extends BaseRenderer {
           .append('path')
           .attr('d', this.pathShape)
           .attr('stroke', '#000')
+          .attr('stroke-width', 20)
+          .attr('stroke-linecap', 'round')
+          .attr('stroke-linejoin', 'round')
+          .attr('opacity', '0')
+          .on('mouseenter', () => {
+            this.appendHover();
+          })
+          .on('mouseleave', () => {
+            this.removeHover();
+          });
+
+        this.rootElement
+          .append('path')
+          .attr('d', this.pathShape)
+          .attr('stroke', '#000')
           .attr('stroke-width', 2)
           .attr('stroke-linecap', 'round')
           .attr('stroke-linejoin', 'round')
@@ -628,6 +668,18 @@ export class BondRenderer extends BaseRenderer {
         );
 
         this.pathShape = `M${startPosition.x},${startPosition.y} L${endPosition.x},${endPosition.y}`;
+        this.rootElement
+          .append('path')
+          .attr('d', this.pathShape)
+          .attr('stroke', 'black')
+          .attr('stroke-width', `${BOND_WIDTH * 10}px`)
+          .attr('opacity', '0')
+          .on('mouseenter', () => {
+            this.appendHover();
+          })
+          .on('mouseleave', () => {
+            this.removeHover();
+          });
 
         this.rootElement
           .append('path')

@@ -10,6 +10,10 @@ import {
   waitForPageInit,
   selectAllStructuresOnCanvas,
   selectMacroBond,
+  selectUndoByKeyboard,
+  selectRedoByKeyboard,
+  waitForRender,
+  getControlModifier,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
@@ -48,9 +52,9 @@ test.describe('Hotkeys', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
     await page.keyboard.press('Control+Backspace');
-    await page.keyboard.press('Control+z');
+    await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Shift+z');
+    await selectRedoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -61,9 +65,13 @@ test.describe('Hotkeys', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
     await page.keyboard.press('Control+Backspace');
-    await page.keyboard.press('Control+z');
+    await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+y');
+
+    const modifier = getControlModifier();
+    await waitForRender(page, async () => {
+      await page.keyboard.press(`${modifier}+KeyY`);
+    });
     await takeEditorScreenshot(page);
   });
 

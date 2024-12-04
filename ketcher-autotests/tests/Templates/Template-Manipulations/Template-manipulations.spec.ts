@@ -50,6 +50,7 @@ import {
   selectRingButton,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectUndoByKeyboard,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -193,7 +194,7 @@ test.describe('Template Manupulations', () => {
       await selectAllStructuresOnCanvas(page);
       await selectAllStructuresOnCanvas(page);
       await cutToClipboardByKeyboard(page);
-      await page.keyboard.press('Control+z');
+      await selectUndoByKeyboard(page);
       await takeEditorScreenshot(page);
     },
   );

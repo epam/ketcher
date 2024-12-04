@@ -530,11 +530,7 @@ test.describe('Saving collapsed monomer to SMARTS: ', () => {
       await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
       await takeEditorScreenshot(page);
 
-      await verifyFile2(
-        page,
-        `tests/test-data/${monomer.SMARTSFile_Expected}`,
-        FileType.SMARTS,
-      );
+      await verifyFile2(page, monomer.SMARTSFile_Expected, FileType.SMARTS);
 
       await openFileAndAddToCanvasAsNewProject(
         monomer.SMARTSFile_Expected,
@@ -592,11 +588,7 @@ test.describe('Saving expanded monomer to SMARTS: ', () => {
       await expandMonomer(page, monomer.monomerLocatorText);
       await takeEditorScreenshot(page);
 
-      await verifyFile2(
-        page,
-        `tests/test-data/${monomer.SMARTSFile_Expected}`,
-        FileType.SMARTS,
-      );
+      await verifyFile2(page, monomer.SMARTSFile_Expected, FileType.SMARTS);
 
       await openFileAndAddToCanvasAsNewProject(
         monomer.SMARTSFile_Expected,

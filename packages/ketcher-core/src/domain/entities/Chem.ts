@@ -1,7 +1,6 @@
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Peptide } from 'domain/entities/Peptide';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
-import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 
 export class Chem extends BaseMonomer {
@@ -18,8 +17,6 @@ export class Chem extends BaseMonomer {
   }
 
   public isMonomerTypeDifferentForChaining(monomerToChain: SubChainNode) {
-    return ![PeptideSubChain, ChemSubChain].includes(
-      monomerToChain.SubChainConstructor,
-    );
+    return ![ChemSubChain].includes(monomerToChain.SubChainConstructor);
   }
 }

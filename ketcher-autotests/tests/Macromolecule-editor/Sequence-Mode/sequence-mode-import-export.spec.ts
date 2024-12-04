@@ -159,6 +159,7 @@ test.describe('Import/export sequence:', () => {
     );
 
     await zoomWithMouseWheel(page, 300);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -179,6 +180,7 @@ test.describe('Import/export sequence:', () => {
     );
 
     await zoomWithMouseWheel(page, 300);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

@@ -1,6 +1,7 @@
 import { ReactElement } from 'react';
 import { Item, ItemParams, Separator } from 'react-contexify';
 import {
+  BaseMonomer,
   BaseSequenceItemRenderer,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
 } from 'ketcher-core';
@@ -18,6 +19,7 @@ interface MenuItem {
     props?: {
       polymerBondRenderer?: DeprecatedFlexModeOrSnakeModePolymerBondRenderer;
       sequenceItemRenderer?: BaseSequenceItemRenderer;
+      selectedMonomers?: BaseMonomer[];
     };
   }) => boolean;
   isMenuTitle?: boolean;

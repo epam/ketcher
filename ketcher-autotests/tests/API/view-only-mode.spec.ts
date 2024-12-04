@@ -29,7 +29,7 @@ import {
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
-  verifyFile,
+  verifyFile2,
   verifyMolfile,
 } from '@utils/files/receiveFileComparisonData';
 import {
@@ -485,10 +485,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await verifyFile(
+    await verifyFile2(
       page,
       'KET/benzene-ring-saved-in-view-only-mode-expected.ket',
-      'tests/test-data/KET/benzene-ring-saved-in-view-only-mode-expected.ket',
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(

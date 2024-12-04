@@ -26,6 +26,9 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectMacroBond,
+  selectUndoByKeyboard,
+  waitForRender,
+  getControlModifier,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { goToRNATab } from '@utils/macromolecules/library';
@@ -310,12 +313,15 @@ test.describe('Undo-Redo tests', () => {
     const numberOfPress = 6;
 
     for (let i = 0; i < numberOfPress; i++) {
-      await page.keyboard.press('Control+z');
+      await selectUndoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
 
+    const modifier = getControlModifier();
     for (let i = 0; i < numberOfPress; i++) {
-      await page.keyboard.press('Control+y');
+      await waitForRender(page, async () => {
+        await page.keyboard.press(`${modifier}+KeyY`);
+      });
     }
     await takeEditorScreenshot(page);
   });

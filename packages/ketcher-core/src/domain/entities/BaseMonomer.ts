@@ -20,7 +20,7 @@ import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain'
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { isNumber } from 'lodash';
+import { compact, isNumber, values } from 'lodash';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
@@ -267,6 +267,10 @@ export abstract class BaseMonomer extends DrawingEntity {
     if (attachmentPointName) {
       this.attachmentPointsToBonds[attachmentPointName] = null;
     }
+  }
+
+  public get covalentBonds() {
+    return compact(values(this.attachmentPointsToBonds));
   }
 
   public get hasBonds() {

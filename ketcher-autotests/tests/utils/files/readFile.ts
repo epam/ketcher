@@ -143,7 +143,7 @@ export async function openFileAndAddToCanvasMacro(
   await selectOptionInDropdown(filename, page);
 
   if (typeDropdownOption) {
-    await selectOptionInTypeDropdown(typeDropdownOption, page);
+    await selectOptionInTypeDropdown2(typeDropdownOption, page);
   }
 
   await waitForLoad(page, async () => {

@@ -24,6 +24,7 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 const labelPositions: { [key: string]: { x: number; y: number } | undefined } =
   {};
 export const MONOMER_CSS_CLASS = 'monomer';
+let monomerSize: { width: number; height: number } = { width: 0, height: 0 };
 
 export abstract class BaseMonomerRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -42,10 +43,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   private enumerationElement?: D3SvgElementSelection<SVGTextElement, void>;
   public enumeration: number | null = null;
 
-  private beginningElement?: D3SvgElementSelection<SVGTextElement, void>;
-  public beginning: string | null = null;
+  private terminalIndicatorElement?: D3SvgElementSelection<
+    SVGTextElement,
+    void
+  >;
 
-  public CHAIN_BEGINNING = '';
+  public CHAIN_START_TERMINAL_INDICATOR_TEXT = '';
+  public CHAIN_END_TERMINAL_INDICATOR_TEXT = '';
 
   static isSelectable() {
     return true;
@@ -76,6 +80,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.monomerSymbolElement?.getAttribute('data-actual-height') || 0
       ),
     };
+    monomerSize = this.monomerSize;
   }
 
   // FIXME: `BaseMonomerRenderer` should not know about `isSnake`.
@@ -89,6 +94,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       return renderer.isSnake && !renderer.isMonomersOnSameHorizontalLine();
     }
     return false;
+  }
+
+  public static get monomerSize() {
+    return monomerSize;
   }
 
   public get center() {
@@ -486,20 +495,30 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .text(this.enumeration);
   }
 
-  public redrawEnumeration() {
+  public redrawEnumeration(needToDrawTerminalIndicator: boolean) {
+    this.redrawChainTerminalIndicator(needToDrawTerminalIndicator);
+
     if (!this.enumerationElement) return;
 
     this.enumerationElement.text(this.enumeration);
   }
 
-  public setBeginning(beginning: string | null) {
-    this.beginning = beginning;
-  }
+  public redrawChainTerminalIndicator(needToDraw: boolean) {
+    if (
+      !this.rootElement ||
+      !this.CHAIN_START_TERMINAL_INDICATOR_TEXT ||
+      !this.beginningElementPosition
+    ) {
+      return;
+    }
 
-  protected appendChainBeginning() {
-    assert(this.rootElement);
-    assert(this.beginningElementPosition);
-    this.beginningElement = this.rootElement
+    this.terminalIndicatorElement?.remove();
+
+    if (!needToDraw) {
+      return;
+    }
+
+    this.terminalIndicatorElement = this.rootElement
       .append('text')
       .attr('direction', 'rtl')
       .attr('fill', '#0097A8')
@@ -510,16 +529,11 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('style', 'user-select: none;')
       .attr('x', this.beginningElementPosition.x)
       .attr('y', this.beginningElementPosition.y)
-      .text(this.beginning);
-  }
-
-  public reDrawChainBeginning() {
-    assert(this.beginningElement);
-    assert(this.beginningElementPosition);
-    this.beginningElement
-      .attr('x', this.beginningElementPosition.x)
-      .attr('y', this.beginningElementPosition.y)
-      .text(this.beginning);
+      .text(
+        this.monomer.monomerItem.isAntisense
+          ? this.CHAIN_END_TERMINAL_INDICATOR_TEXT
+          : this.CHAIN_START_TERMINAL_INDICATOR_TEXT,
+      );
   }
 
   protected abstract get modificationConfig();

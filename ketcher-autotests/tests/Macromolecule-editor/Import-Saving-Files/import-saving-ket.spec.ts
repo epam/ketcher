@@ -684,7 +684,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library)-expected.ket',
     monomerLocatorText: 'D',
   },
   {
@@ -692,7 +692,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library)-expected.ket',
     monomerLocatorText: 'UNA',
   },
   {
@@ -700,7 +700,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library)-expected.ket',
     monomerLocatorText: 'hU',
   },
   {
@@ -708,7 +708,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library)-expected.ket',
     monomerLocatorText: 'bnn',
   },
   {
@@ -716,7 +716,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library)-expected.ket',
     monomerLocatorText: '5hMedC',
   },
   {
@@ -724,7 +724,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library)-expected.ket',
     monomerLocatorText: '4aPEGMal',
   },
   {
@@ -732,7 +732,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/1. Peptide X (ambiguouse, alternatives, from library).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/1. Peptide X (ambiguouse, alternatives, from library)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/1. Peptide X (ambiguouse, alternatives, from library)-expected.ket',
     monomerLocatorText: 'X',
   },
   {
@@ -741,7 +741,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/2. Peptide A+C+D+E+F+G+H+I+K+L+M+N+O+P+Q+R+S+T+U+V+W+Y (ambiguouse, mixed).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/2. Peptide A+C+D+E+F+G+H+I+K+L+M+N+O+P+Q+R+S+T+U+V+W+Y (ambiguouse, mixed)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/2. Peptide A+C+D+E+F+G+H+I+K+L+M+N+O+P+Q+R+S+T+U+V+W+Y (ambiguouse, mixed)-expected.ket',
     monomerLocatorText: '%',
   },
   {
@@ -749,7 +749,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/3. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/3. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/3. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed)-expected.ket',
     monomerLocatorText: '%',
   },
   {
@@ -758,7 +758,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/4. Peptide G,H,I,K,L,M,N,O,P (ambiguous, alternatives).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/4. Peptide G,H,I,K,L,M,N,O,P (ambiguous, alternatives)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/4. Peptide G,H,I,K,L,M,N,O,P (ambiguous, alternatives)-expected.ket',
     monomerLocatorText: '%',
   },
   {
@@ -766,7 +766,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/5. Sugar UNA, SGNA, RGNA (ambiguous, alternatives).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/5. Sugar UNA, SGNA, RGNA (ambiguous, alternatives)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/5. Sugar UNA, SGNA, RGNA (ambiguous, alternatives)-expected.ket',
     monomerLocatorText: '%',
   },
   {
@@ -774,7 +774,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/6. Sugar UNA, SGNA, RGNA (ambiguous, mixed).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/6. Sugar UNA, SGNA, RGNA (ambiguous, mixed)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/6. Sugar UNA, SGNA, RGNA (ambiguous, mixed)-expected.ket',
     monomerLocatorText: '%',
   },
   {
@@ -783,7 +783,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/7. DNA base N (ambiguous, alternatives, from library).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/7. DNA base N (ambiguous, alternatives, from library)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/7. DNA base N (ambiguous, alternatives, from library)-expected.ket',
     monomerLocatorText: 'N',
   },
   {
@@ -792,7 +792,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/8. RNA base N (ambiguous, alternatives, from library).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/8. RNA base N (ambiguous, alternatives, from library)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/8. RNA base N (ambiguous, alternatives, from library)-expected.ket',
     monomerLocatorText: 'N',
   },
   {
@@ -800,7 +800,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/9. Base M (ambiguous, alternatives, from library).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/9. Base M (ambiguous, alternatives, from library)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/9. Base M (ambiguous, alternatives, from library)-expected.ket',
     monomerLocatorText: 'M',
   },
   {
@@ -808,7 +808,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/10. DNA base A+C+G+T (ambiguous, mixed).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/10. DNA base A+C+G+T (ambiguous, mixed)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/10. DNA base A+C+G+T (ambiguous, mixed)-expected.ket',
     monomerLocatorText: '%',
   },
   {
@@ -816,7 +816,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/11. RNA base A+C+G+U (ambiguous, mixed).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/11. RNA base A+C+G+U (ambiguous, mixed)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/11. RNA base A+C+G+U (ambiguous, mixed)-expected.ket',
     monomerLocatorText: '%',
   },
   {
@@ -824,7 +824,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/12. Base A+C (ambiguous, mixed).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/12. Base A+C (ambiguous, mixed)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/12. Base A+C (ambiguous, mixed)-expected.ket',
     monomerLocatorText: '%',
   },
   {
@@ -832,7 +832,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/13. Phosphate bnn,cmp,nen (ambiguous, alternatives).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/13. Phosphate bnn,cmp,nen (ambiguous, alternatives)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/13. Phosphate bnn,cmp,nen (ambiguous, alternatives)-expected.ket',
     monomerLocatorText: '%',
   },
   {
@@ -840,7 +840,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/14. Phosphate bnn+cmp+nen (ambiguous, mixed).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/14. Phosphate bnn+cmp+nen (ambiguous, mixed)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/14. Phosphate bnn+cmp+nen (ambiguous, mixed)-expected.ket',
     monomerLocatorText: '%',
   },
   {
@@ -848,7 +848,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/15. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/15. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/15. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives)-expected.ket',
     monomerLocatorText: '%',
   },
   {
@@ -856,7 +856,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/16. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed).ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/16. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed)-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/16. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed)-expected.ket',
     monomerLocatorText: '%',
   },
   {
@@ -864,7 +864,7 @@ const allTypesOfMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/17. Unknown nucleotide.ket',
     KETFile_Expected:
-      'tests/test-data/KET/Micro-Macro-Switcher/Basic-Monomers/Negative/17. Unknown nucleotide-expected.ket',
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/17. Unknown nucleotide-expected.ket',
     monomerLocatorText: 'Unknown',
   },
 ];
@@ -887,10 +887,7 @@ for (const monomer of allTypesOfMonomers) {
     await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
     await takeEditorScreenshot(page);
     await verifyFile2(page, monomer.KETFile_Expected, FileType.KET);
-    await openFileAndAddToCanvasAsNewProject(
-      monomer.KETFile_Expected.replace('tests/test-data/', ''),
-      page,
-    );
+    await openFileAndAddToCanvasAsNewProject(monomer.KETFile_Expected, page);
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
   });
@@ -913,7 +910,7 @@ test(`Verify that user can save/load macromolecule structures with hydrogen bond
 
   await openFileAndAddToCanvasAsNewProject(KETFile, page);
   await takeEditorScreenshot(page);
-  await verifyFile2(page, `tests/test-data/${KETFileExpected}`, FileType.KET);
+  await verifyFile2(page, KETFileExpected, FileType.KET);
 });
 
 test(`Verify that the structure in macro mode can be saved as a .ket file, and all elements including bonds and atoms are correctly restored when re-loaded`, async () => {
@@ -932,14 +929,11 @@ test(`Verify that the structure in macro mode can be saved as a .ket file, and a
   const KETFile =
     'KET/Micro-Macro-Switcher/Complicated structures on the canvas.ket';
   const KETFileExpected =
-    'tests/test-data/KET/Micro-Macro-Switcher/Complicated structures on the canvas-expected.ket';
+    'KET/Micro-Macro-Switcher/Complicated structures on the canvas-expected.ket';
 
   await openFileAndAddToCanvasAsNewProject(KETFile, page);
   await takeEditorScreenshot(page);
   await verifyFile2(page, KETFileExpected, FileType.KET);
-  await openFileAndAddToCanvasAsNewProject(
-    KETFileExpected.replace('tests/test-data/', ''),
-    page,
-  );
+  await openFileAndAddToCanvasAsNewProject(KETFileExpected, page);
   await takeEditorScreenshot(page);
 });

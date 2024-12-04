@@ -37,6 +37,8 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectUndoByKeyboard,
+  selectRedoByKeyboard,
   ZoomInByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -633,11 +635,11 @@ test.describe('Undo/Redo Actions', () => {
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
     await pressButton(page, 'Apply');
     for (let i = 0; i < 2; i++) {
-      await page.keyboard.press('Control+z');
+      await selectUndoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await page.keyboard.press('Control+Shift+z');
+      await selectRedoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -657,11 +659,11 @@ test.describe('Undo/Redo Actions', () => {
       await page.keyboard.press('Control+_');
     }
     for (let i = 0; i < 2; i++) {
-      await page.keyboard.press('Control+z');
+      await selectUndoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await page.keyboard.press('Control+Shift+z');
+      await selectRedoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 5; i++) {
@@ -735,7 +737,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 2);
     await page.getByTestId('canvas').hover();
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+z');
+    await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -758,7 +760,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
-    await page.keyboard.press('Control+z');
-    await page.keyboard.press('Control+z');
+    await selectUndoByKeyboard(page);
+    await selectUndoByKeyboard(page);
   });
 });

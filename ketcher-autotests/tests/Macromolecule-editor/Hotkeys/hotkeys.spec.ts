@@ -10,6 +10,9 @@ import {
   waitForPageInit,
   selectAllStructuresOnCanvas,
   selectMacroBond,
+  resetZoomLevelToDefault,
+  ZoomOutByKeyboard,
+  ZoomInByKeyboard,
   selectUndoByKeyboard,
   selectRedoByKeyboard,
   waitForRender,
@@ -102,7 +105,7 @@ test.describe('Hotkeys', () => {
       page,
     );
     for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await page.keyboard.press('Control+=');
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -118,7 +121,7 @@ test.describe('Hotkeys', () => {
       page,
     );
     for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await page.keyboard.press('Control+-');
+      await ZoomOutByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -134,10 +137,10 @@ test.describe('Hotkeys', () => {
       page,
     );
     for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await page.keyboard.press('Control+=');
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+0');
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page);
   });
 

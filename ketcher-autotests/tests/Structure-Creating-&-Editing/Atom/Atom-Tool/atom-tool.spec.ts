@@ -30,6 +30,7 @@ import {
   getCoordinatesTopAtomOfBenzeneRing,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  ZoomInByKeyboard,
 } from '@utils';
 import { atomsNames } from '@utils/canvas/atoms/excludedAtoms';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -251,9 +252,7 @@ test.describe('Atom Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });

@@ -111,8 +111,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       this.isMonomersOnSameHorizontalLine();
   }
 
-  // TODO: Specify the types.
-  public appendBond(rootElement) {
+  public appendBond(
+    rootElement: D3SvgElementSelection<SVGGElement, void>,
+  ): void {
     const editor = CoreEditor.provideEditorInstance();
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
@@ -128,8 +129,6 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     } else {
       this.appendBondGraph(rootElement);
     }
-
-    return this.bodyElement;
   }
 
   // TODO: Specify the types.

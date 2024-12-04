@@ -4,20 +4,21 @@ import assert from 'assert';
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
+  getSugarFromRnaBase,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { Vec2 } from 'domain/entities/vec2';
-import { CoreEditor } from 'application/editor/internal';
+import { Coordinates, CoreEditor } from 'application/editor/internal';
 import { AttachmentPointName } from 'domain/types';
 import { Command } from 'domain/entities/Command';
-import {
-  getRnaPartLibraryItem,
-  getSugarBySequenceType,
-} from 'domain/helpers/rna';
+import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
+import { RNA_MONOMER_DISTANCE } from 'application/editor/tools/RnaPreset';
+import { SugarRenderer } from 'application/render';
+import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 
 export class Nucleoside {
   constructor(
@@ -39,24 +40,38 @@ export class Nucleoside {
     return new Nucleoside(sugar, getRnaBaseFromSugar(sugar) as RNABase);
   }
 
-  static createOnCanvas(rnaBaseName: string, position: Vec2) {
+  static createOnCanvas(
+    rnaBaseName: string,
+    position: Vec2,
+    sugarName: RNA_DNA_NON_MODIFIED_PART = RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
+    isAntisense = false,
+  ) {
     const editor = CoreEditor.provideEditorInstance();
     const rnaBaseLibraryItem = getRnaPartLibraryItem(editor, rnaBaseName);
-    const sugarName = getSugarBySequenceType(editor.sequenceTypeEnterMode);
-    assert(sugarName);
-
     const sugarLibraryItem = getRnaPartLibraryItem(editor, sugarName);
 
     assert(sugarLibraryItem);
     assert(rnaBaseLibraryItem);
 
+    const topLeftItemPosition = position;
+    const bottomItemPosition = position.add(
+      Coordinates.canvasToModel(
+        new Vec2(0, RNA_MONOMER_DISTANCE + SugarRenderer.monomerSize.height),
+      ),
+    );
     const modelChanges = new Command();
 
     modelChanges.merge(
-      editor.drawingEntitiesManager.addMonomer(sugarLibraryItem, position),
+      editor.drawingEntitiesManager.addMonomer(
+        { ...sugarLibraryItem, isAntisense },
+        isAntisense ? bottomItemPosition : topLeftItemPosition,
+      ),
     );
     modelChanges.merge(
-      editor.drawingEntitiesManager.addMonomer(rnaBaseLibraryItem, position),
+      editor.drawingEntitiesManager.addMonomer(
+        { ...rnaBaseLibraryItem, isAntisense },
+        isAntisense ? topLeftItemPosition : bottomItemPosition,
+      ),
     );
 
     const sugar = modelChanges.operations[0].monomer as Sugar;
@@ -110,5 +125,23 @@ export class Nucleoside {
     return (
       this.rnaBase.isModification || this.sugar.isModification || isNotLastNode
     );
+  }
+
+  public getAntisenseRnaBase() {
+    const hydrogenBondToAntisenseNode = this.rnaBase.hydrogenBonds.find(
+      (hydrogenBond) => {
+        const anotherMonomer = hydrogenBond.getAnotherMonomer(this.rnaBase);
+
+        return (
+          anotherMonomer instanceof RNABase &&
+          getSugarFromRnaBase(anotherMonomer)
+        );
+      },
+    );
+    const antisenseRnaBase = hydrogenBondToAntisenseNode?.getAnotherMonomer(
+      this.rnaBase,
+    );
+
+    return antisenseRnaBase;
   }
 }

@@ -35,6 +35,7 @@ import {
   verifyFile2,
   verifyRdfFile,
 } from '@utils/files/receiveFileComparisonData';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 async function addTail(page: Page, x: number, y: number) {
   await page.mouse.click(x, y, { button: 'right' });
@@ -1653,16 +1654,12 @@ test.describe('Cascade Reactions', () => {
           await selectPartOfMolecules(page);
           await selectEraseTool(page);
           await takeEditorScreenshot(page);
-          await waitForRender(page, async () => {
-            await selectTopPanelButton(TopPanelButton.Undo, page);
-          });
+          await pressUndoButton(page);
           await takeEditorScreenshot(page);
           await copyAndPaste(page);
           await clickOnCanvas(page, 500, 200);
           await takeEditorScreenshot(page);
-          await waitForRender(page, async () => {
-            await selectTopPanelButton(TopPanelButton.Undo, page);
-          });
+          await pressUndoButton(page);
           await verifyRdfFile(
             page,
             format,

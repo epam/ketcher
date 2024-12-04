@@ -331,6 +331,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return null;
   }
 
+  public redrawChainBeginning() {}
   public hoverAttachmentPoint(): void {}
   public updateAttachmentPoints() {}
 

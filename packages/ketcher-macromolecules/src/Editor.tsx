@@ -19,6 +19,7 @@ import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
 import {
+  BaseMonomer,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   NodeSelection,
 } from 'ketcher-core';
@@ -89,6 +90,7 @@ import { ZoomControls } from 'components/ZoomControls/ZoomControls';
 import { VerticalDivider } from 'components/menu/styles';
 import { PolymerBondContextMenu } from 'components/contextMenu/PolymerBondContextMenu/PolymerBondContextMenu';
 import { EditorEvents } from './EditorEvents';
+import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -151,11 +153,15 @@ function Editor({
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
   const [selections, setSelections] = useState<NodeSelection[][]>();
+  const [selectedMonomers, setSelectedMonomers] = useState<BaseMonomer[]>([]);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
   });
   const { show: showPolymerBondContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_POLYMER_BOND,
+  });
+  const { show: showSelectedMonomersContextMenu } = useContextMenu({
+    id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
   });
 
   useEffect(() => {
@@ -190,6 +196,15 @@ function Editor({
           props: {
             polymerBondRenderer,
           },
+        });
+      },
+    );
+    editor?.events.rightClickSelectedMonomers.add(
+      (event, selectedMonomers: BaseMonomer[]) => {
+        setSelectedMonomers(selectedMonomers);
+        showSelectedMonomersContextMenu({
+          event,
+          props: { selectedMonomers },
         });
       },
     );
@@ -293,6 +308,7 @@ function Editor({
       <Preview />
       <SequenceItemContextMenu selections={selections} />
       <PolymerBondContextMenu />
+      <SelectedMonomersContextMenu selectedMonomers={selectedMonomers} />
       <ModalContainer />
       <ErrorModal />
       <Snackbar

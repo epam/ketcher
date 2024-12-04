@@ -20,6 +20,7 @@ import {
   openSettings,
   delay,
   clickOnCanvas,
+  selectUndoByKeyboard,
 } from '@utils';
 
 async function resetSelectToolOff(page: Page) {
@@ -57,7 +58,7 @@ test.describe('General Settings', () => {
     await drawBenzeneRing(page);
     await copyAndPaste(page);
     await clickOnCanvas(page, pointX, pointY);
-    await page.keyboard.press('Control+z');
+    await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

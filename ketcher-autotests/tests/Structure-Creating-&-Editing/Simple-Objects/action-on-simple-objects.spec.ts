@@ -22,6 +22,7 @@ import {
   cutAndPaste,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  ZoomInByKeyboard,
 } from '@utils';
 import { getKet } from '@utils/formats';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
@@ -80,9 +81,7 @@ test.describe('Action on simples objects', () => {
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });

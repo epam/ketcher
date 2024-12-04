@@ -790,7 +790,8 @@ export class CoreEditor {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       window._ketcher_isAutozoomDisabled ||
-      !this.isCurrentModeWithAutozoom()
+      !this.isCurrentModeWithAutozoom() ||
+      !this.drawingEntitiesManager.hasMonomers
     ) {
       return;
     }

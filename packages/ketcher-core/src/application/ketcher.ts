@@ -40,7 +40,6 @@ import {
 import {
   deleteAllEntitiesOnCanvas,
   getStructure,
-  ketcherProvider,
   parseAndAddMacromoleculesOnCanvas,
   prepareStructToRender,
 } from './utils';
@@ -542,14 +541,10 @@ export class Ketcher {
   public updateMonomersLibrary(rawMonomersData: string | JSON) {
     const editor = CoreEditor.provideEditorInstance();
 
-    ketcherProvider.getKetcher();
-
     if (!editor) {
-      throw new Error(
-        'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
-      );
+      CoreEditor.storeMonomersLibraryUpdate(rawMonomersData);
+    } else {
+      editor.updateMonomersLibrary(rawMonomersData);
     }
-
-    editor.updateMonomersLibrary(rawMonomersData);
   }
 }

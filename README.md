@@ -124,7 +124,7 @@ Parameters:
         * `backgroundColor` – image background color  
         * `bondThickness` – thickness of bonds in output structure
 
-`updateMonomersLibrary(monomersData: string | JSON): void` – given the monomers data, perform upsert operation for the built-in monomers library in the macromolecules editor. Might be invoked only when macromolecules editor is turned on. Update (replace) operation is performed for the particular monomer if its alias and class are matching with the existing one. Otherwise, insert operation is performed.  
+`updateMonomersLibrary(monomersData: string | JSON): void` – given the monomers data, perform upsert operation for the built-in monomers library in the macromolecules editor. Update (replace) operation is performed for the particular monomer if its alias and class are matching with the existing one. Otherwise, insert operation is performed.  
 Parameters: `monomersData: string | JSON` – monomers description in KET format being formatted as either JSON notation or this JSON being stringified to be more concise.
 
 ## Settings

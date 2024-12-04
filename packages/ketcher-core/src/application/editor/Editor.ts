@@ -61,6 +61,7 @@ interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
   mode?: BaseMode;
+  // Raw monomers data in KET format that has to be applied as library update ahead of time on Ketcher initialization – check `updateMonomersLibrary` method of Ketcher API
   monomersLibraryUpdate?: string | JSON;
 }
 
@@ -71,6 +72,7 @@ function isMouseMainButtonPressed(event: MouseEvent) {
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
+let storedMonomersLibraryUpdates: Array<string | JSON> = [];
 
 let editor;
 export class CoreEditor {
@@ -118,11 +120,7 @@ export class CoreEditor {
     this.mode = mode ?? new SequenceMode();
     resetEditorEvents();
     this.events = editorEvents;
-    this.setMonomersLibrary(monomersDataRaw);
-    this._monomersLibraryParsedJson = JSON.parse(monomersDataRaw);
-    if (monomersLibraryUpdate) {
-      this.updateMonomersLibrary(monomersLibraryUpdate);
-    }
+    this.setMonomersLibrary(monomersDataRaw, monomersLibraryUpdate);
     this.subscribeEvents();
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -158,7 +156,10 @@ export class CoreEditor {
     return { monomersLibraryParsedJson, monomersLibrary };
   }
 
-  private setMonomersLibrary(monomersDataRaw: string) {
+  private setMonomersLibrary(
+    monomersDataRaw: string,
+    initialMonomersLibraryUpdate?: string | JSON,
+  ) {
     if (
       persistentMonomersLibrary.length !== 0 &&
       persistentMonomersLibraryParsedJson !== undefined
@@ -172,8 +173,21 @@ export class CoreEditor {
       this.parseMonomersLibrary(monomersDataRaw);
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
-    persistentMonomersLibrary = monomersLibrary;
-    persistentMonomersLibraryParsedJson = monomersLibraryParsedJson;
+
+    if (initialMonomersLibraryUpdate) {
+      this.updateMonomersLibrary(initialMonomersLibraryUpdate);
+    }
+    storedMonomersLibraryUpdates.forEach((storedMonomersLibraryUpdate) => {
+      this.updateMonomersLibrary(storedMonomersLibraryUpdate);
+    });
+    storedMonomersLibraryUpdates = [];
+
+    persistentMonomersLibrary = this._monomersLibrary;
+    persistentMonomersLibraryParsedJson = this._monomersLibraryParsedJson;
+  }
+
+  static storeMonomersLibraryUpdate(monomersDataRaw: string | JSON) {
+    storedMonomersLibraryUpdates.push(monomersDataRaw);
   }
 
   public updateMonomersLibrary(monomersDataRaw: string | JSON) {
@@ -183,6 +197,10 @@ export class CoreEditor {
     } = this.parseMonomersLibrary(monomersDataRaw);
 
     newMonomersLibraryChunk.forEach((newMonomer) => {
+      if (!this._monomersLibraryParsedJson) {
+        return;
+      }
+
       const existingMonomerIndex = this._monomersLibrary.findIndex(
         (monomer) => {
           return (
@@ -202,35 +220,27 @@ export class CoreEditor {
           this._monomersLibrary[existingMonomerIndex].props;
         const existingMonomerIdToUse =
           existingMonomerProps.id || existingMonomerProps.MonomerName;
-        // It's safe to use non-null assertion here and below because we already specified monomers library and parsed JSON before
         const existingMonomerRefIndex =
-          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-          this._monomersLibraryParsedJson!.root.templates.findIndex(
+          this._monomersLibraryParsedJson.root.templates.findIndex(
             (template) => template.$ref === existingMonomerIdToUse,
           );
         if (existingMonomerRefIndex && existingMonomerRefIndex !== -1) {
-          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-          delete this._monomersLibraryParsedJson!.root.templates[
+          delete this._monomersLibraryParsedJson.root.templates[
             existingMonomerRefIndex
           ];
-          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-          delete this._monomersLibraryParsedJson![existingMonomerIdToUse];
-          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-          this._monomersLibraryParsedJson!.root.templates.push({
+          delete this._monomersLibraryParsedJson[existingMonomerIdToUse];
+          this._monomersLibraryParsedJson.root.templates.push({
             $ref: monomerIdToUse,
           });
-          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-          this._monomersLibraryParsedJson![monomerIdToUse] =
+          this._monomersLibraryParsedJson[monomerIdToUse] =
             newMonomersLibraryChunkParsedJson[monomerIdToUse];
         }
       } else {
         this._monomersLibrary.push(newMonomer);
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        this._monomersLibraryParsedJson!.root.templates.push({
+        this._monomersLibraryParsedJson.root.templates.push({
           $ref: monomerIdToUse,
         });
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        this._monomersLibraryParsedJson![monomerIdToUse] =
+        this._monomersLibraryParsedJson[monomerIdToUse] =
           newMonomersLibraryChunkParsedJson[monomerIdToUse];
       }
     });

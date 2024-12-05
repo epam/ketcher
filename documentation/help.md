@@ -45,19 +45,19 @@ To select the **entire structure**:
 - Select the Lasso or Rectangle Selection tool, and then drag the
   mouse to select the object.
 
--`Ctrl-click`with the Lasso or Rectangle Selection tool.
+-`Ctrl-click` with the Lasso or Rectangle Selection tool.
 
 To select **multiple atoms, bonds, structures, or other objects**, do one
 of the following:
 
--`Shift-click`with the Lasso or Rectangle Selection tool selects
+-`Shift-click` with the Lasso or Rectangle Selection tool selects
 some (connected or not) atoms/bonds.
 
 - With the Lasso or Rectangle Selection tool click and drag the
   mouse around the atoms, bonds, or structures that you want to
   select.
 
-**Note** :`Ctrl+Shift-click each structure`with the Lasso or Rectangle Selection tool
+**Note** :`Ctrl+Shift-click each structure` with the Lasso or Rectangle Selection tool
 selects several structures.
 
 You can use the buttons of the _Main_ toolbar:

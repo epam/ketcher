@@ -30,6 +30,7 @@ interface AppendSideConnectionBondParameter {
 interface AppendSideConnectionBondResult {
   readonly appendPathToElement: AppendPathToElementFunction;
   readonly pathDAttributeValue: string;
+  readonly sideConnectionBondTurnPointUpdated: number;
 }
 
 const BOND_END_LENGTH = 15;
@@ -46,6 +47,8 @@ export class SideChainConnectionBondRenderer {
     scaledPosition,
     sideConnectionBondTurnPoint,
   }: AppendSideConnectionBondParameter): AppendSideConnectionBondResult {
+    let sideConnectionBondTurnPointUpdated = sideConnectionBondTurnPoint ?? 0;
+
     const firstCell = cells[0];
     const firstCellConnection = firstCell.connections.find((connection) => {
       return connection.polymerBond === polymerBond;
@@ -120,6 +123,7 @@ export class SideChainConnectionBondRenderer {
       });
       pathDAttributeValue += result.pathPart;
       sideConnectionBondTurnPoint = result.sideConnectionBondTurnPoint;
+      sideConnectionBondTurnPointUpdated = result.sideConnectionBondTurnPoint;
     }
 
     let maxHorizontalOffset = 0;
@@ -204,6 +208,7 @@ export class SideChainConnectionBondRenderer {
         });
         pathDAttributeValue += result.pathPart;
         sideConnectionBondTurnPoint = result.sideConnectionBondTurnPoint;
+        sideConnectionBondTurnPointUpdated = result.sideConnectionBondTurnPoint;
       }
       previousCell = cell;
       previousConnection = cellConnection;
@@ -230,6 +235,7 @@ export class SideChainConnectionBondRenderer {
     return {
       appendPathToElement,
       pathDAttributeValue,
+      sideConnectionBondTurnPointUpdated,
     };
   }
 

@@ -154,13 +154,18 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   ): D3SvgElementSelection<SVGPathElement, this> {
     const sideChainConnectionBondRenderer =
       new SideChainConnectionBondRenderer();
-    const { appendPathToElement, pathDAttributeValue } =
-      sideChainConnectionBondRenderer.appendSideConnectionBond({
-        cells,
-        polymerBond: this.polymerBond,
-        scaledPosition: this.scaledPosition,
-        sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint,
-      });
+    const {
+      appendPathToElement,
+      pathDAttributeValue,
+      sideConnectionBondTurnPointUpdated,
+    } = sideChainConnectionBondRenderer.appendSideConnectionBond({
+      cells,
+      polymerBond: this.polymerBond,
+      scaledPosition: this.scaledPosition,
+      sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint,
+    });
+
+    this.sideConnectionBondTurnPoint = sideConnectionBondTurnPointUpdated;
 
     this.bodyElement = appendPathToElement(
       rootElement,

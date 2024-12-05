@@ -30,7 +30,7 @@ import { Pile, SGroup, SGroupAttachmentPoint, Vec2 } from 'domain/entities';
 import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 
 import { Action } from './action';
-import { SgContexts } from '..';
+import { Coordinates, SgContexts } from '..';
 import { uniq } from 'lodash/fp';
 import { fromAtomsAttrs } from './atom';
 import {
@@ -212,22 +212,156 @@ export function setExpandMonomerSGroup(
     prepareSubStructure(atomId, index);
   });
 
+  const handledAtoms = new Set<number>();
+  let isVerticalMovementStarted = false;
+
+  sGroupsToMove.forEach((sGroupIds) => {
+    if (sGroupsToMove.size === 1) {
+      return;
+    }
+
+    sGroupIds.forEach((sGroupId) => {
+      const collapsedSgroup = restruct.molecule.sgroups.get(sGroupId);
+      const collapsedSgroupCenter = collapsedSgroup.getContractedPosition(
+        restruct.molecule,
+      ).position;
+      const expandedSGroupCenter = sgroup.getContractedPosition(
+        restruct.molecule,
+      ).position;
+      const collapsedSGroupAtoms = SGroup.getAtoms(restruct, collapsedSgroup);
+      const MOVE_THRESHOLD = 0.5;
+      const isMoveVertically =
+        collapsedSgroupCenter.y <
+          expandedSGroupCenter.y + sGroupHeight / 2 + MOVE_THRESHOLD &&
+        collapsedSgroupCenter.y >
+          expandedSGroupCenter.y - sGroupHeight / 2 - MOVE_THRESHOLD;
+      const isMoveHorizontally =
+        collapsedSgroupCenter.y < expandedSGroupCenter.y + MOVE_THRESHOLD &&
+        collapsedSgroupCenter.y > expandedSGroupCenter.y - MOVE_THRESHOLD;
+      const isMoveDown = collapsedSgroupCenter.y > expandedSGroupCenter.y;
+      const isMoveUp = collapsedSgroupCenter.y < expandedSGroupCenter.y;
+      const isMoveRight =
+        collapsedSgroupCenter.x > expandedSGroupCenter.x + MOVE_THRESHOLD;
+      const isMoveLeft =
+        collapsedSgroupCenter.x < expandedSGroupCenter.x - MOVE_THRESHOLD;
+      if (!isVerticalMovementStarted) {
+        isVerticalMovementStarted = !isMoveHorizontally && isMoveVertically;
+      }
+      console.log(isMoveVertically);
+      const moveVector = new Vec2(
+        ((!isMoveHorizontally ? 0 : 1) *
+          (isMoveRight ? 1 : isMoveLeft ? -1 : 0) *
+          sGroupWidth) /
+          2,
+        ((isMoveHorizontally || !isVerticalMovementStarted ? 0 : 1) *
+          (isMoveDown ? 1 : isMoveUp ? -1 : 0) *
+          sGroupHeight) /
+          2,
+      );
+      const finalMoveVector = attrs.expanded
+        ? moveVector
+        : moveVector.negated();
+
+      collapsedSGroupAtoms.forEach((aid) => {
+        action.addOp(new AtomMove(aid, finalMoveVector));
+        handledAtoms.add(aid);
+      });
+      action.addOp(new SGroupDataMove(sGroupId, finalMoveVector));
+    });
+  });
+
   atomsToMove.forEach((atomIds, key) => {
+    if (handledAtoms.has(key)) {
+      return;
+    }
+
     const sGroups = sGroupsToMove.get(key) ?? [];
-    const subStructBBox = SGroup.getObjBBox(atomIds, restruct.molecule);
-    const subStructCenter = new Vec2(
-      subStructBBox.p0.x + subStructBBox.p1.x / 2,
-      subStructBBox.p0.y + subStructBBox.p1.y / 2,
-    );
+    const subStructBBox = SGroup.getObjBBox(atomIds, restruct.molecule, true);
+    const subStructCenter =
+      sGroups.length === -100
+        ? restruct.molecule.sgroups.get(sGroups[0]).pp
+        : new Vec2(
+            subStructBBox.p0.x + (subStructBBox.p1.x - subStructBBox.p0.x) / 2,
+            subStructBBox.p0.y + (subStructBBox.p1.y - subStructBBox.p0.y) / 2,
+          );
     const sGroupCenter = new Vec2(
-      sGroupBBox.p0.x + sGroupBBox.p1.x / 2,
-      sGroupBBox.p0.y + sGroupBBox.p1.y / 2,
+      sGroupBBox.p0.x + (sGroupBBox.p1.x - sGroupBBox.p0.x) / 2,
+      sGroupBBox.p0.y + (sGroupBBox.p1.y - sGroupBBox.p0.y) / 2,
     );
     const direction = subStructCenter.sub(sGroupCenter).normalized();
     const moveVector = new Vec2(
-      (direction.x * sGroupHeight) / 4,
-      (direction.y * sGroupWidth) / 4,
+      (direction.x * sGroupWidth) / 2,
+      (direction.y * sGroupHeight) / 2,
     );
+
+    // const canvas = document.querySelector('.Ketcher-root svg');
+    // const structureRectangle = document.createElementNS(
+    //   'http://www.w3.org/2000/svg',
+    //   'rect',
+    // );
+    // structureRectangle.setAttribute('x', `${subStructBBox.p0.x * 40}`);
+    // structureRectangle.setAttribute('y', `${subStructBBox.p0.y * 40}`);
+    // structureRectangle.setAttribute(
+    //   'width',
+    //   `${(subStructBBox.p1.x - subStructBBox.p0.x) * 40}`,
+    // );
+    // structureRectangle.setAttribute(
+    //   'height',
+    //   `${(subStructBBox.p1.y - subStructBBox.p0.y) * 40}`,
+    // );
+    // structureRectangle.setAttribute('fill', 'none');
+    // structureRectangle.setAttribute('stroke', 'red');
+    // structureRectangle.setAttribute('stroke-width', '2');
+    // canvas?.appendChild(structureRectangle);
+    //
+    // const structureCenter = document.createElementNS(
+    //   'http://www.w3.org/2000/svg',
+    //   'circle',
+    // );
+    // structureCenter.setAttribute('cx', `${subStructCenter.x * 40}`);
+    // structureCenter.setAttribute('cy', `${subStructCenter.y * 40}`);
+    // structureCenter.setAttribute('r', '5');
+    // structureCenter.setAttribute('fill', 'red');
+    // canvas?.appendChild(structureCenter);
+    //
+    // const sgroupRectangle = document.createElementNS(
+    //   'http://www.w3.org/2000/svg',
+    //   'rect',
+    // );
+    // sgroupRectangle.setAttribute('x', `${sGroupBBox.p0.x * 40}`);
+    // sgroupRectangle.setAttribute('y', `${sGroupBBox.p0.y * 40}`);
+    // sgroupRectangle.setAttribute(
+    //   'width',
+    //   `${(sGroupBBox.p1.x - sGroupBBox.p0.x) * 40}`,
+    // );
+    // sgroupRectangle.setAttribute(
+    //   'height',
+    //   `${(sGroupBBox.p1.y - sGroupBBox.p0.y) * 40}`,
+    // );
+    // sgroupRectangle.setAttribute('fill', 'none');
+    // sgroupRectangle.setAttribute('stroke', 'blue');
+    // sgroupRectangle.setAttribute('stroke-width', '2');
+    // canvas?.appendChild(sgroupRectangle);
+    //
+    // const sgroupCenter = document.createElementNS(
+    //   'http://www.w3.org/2000/svg',
+    //   'circle',
+    // );
+    // sgroupCenter.setAttribute('cx', `${sGroupCenter.x * 40}`);
+    // sgroupCenter.setAttribute('cy', `${sGroupCenter.y * 40}`);
+    // sgroupCenter.setAttribute('r', '5');
+    // sgroupCenter.setAttribute('fill', 'blue');
+    // canvas?.appendChild(sgroupCenter);
+    //
+    // const sgroupPP = document.createElementNS(
+    //   'http://www.w3.org/2000/svg',
+    //   'circle',
+    // );
+    // sgroupPP.setAttribute('cx', `${sgroup.pp.x * 40}`);
+    // sgroupPP.setAttribute('cy', `${sgroup.pp.y * 40}`);
+    // sgroupPP.setAttribute('r', '5');
+    // sgroupPP.setAttribute('fill', 'green');
+    // canvas?.appendChild(sgroupPP);
 
     const finalMoveVector = attrs.expanded ? moveVector : moveVector.negated();
 

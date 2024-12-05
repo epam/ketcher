@@ -39,6 +39,19 @@ interface CalculateEndOfPathPartParameter {
   readonly yOffset: number;
 }
 
+interface DrawPartOfSideConnectionParameter {
+  readonly cell: Cell;
+  readonly connection: Connection;
+  readonly direction: ConnectionDirectionInDegrees;
+  readonly horizontal: boolean;
+  readonly sideConnectionBondTurnPoint: number;
+}
+
+interface DrawPartOfSideConnectionResult {
+  readonly pathPart: string;
+  readonly sideConnectionBondTurnPoint: number;
+}
+
 const BOND_END_LENGTH = 15;
 const CELL_HEIGHT = 40;
 const SMOOTH_CORNER_SIZE = 5;
@@ -261,23 +274,13 @@ export class SideChainConnectionBondRenderer {
       : scaledMonomerPosition.y + monomerSize.height / 2 + yOffset;
   }
 
-  // TODO: Specify the types.
   private drawPartOfSideConnection({
     cell,
     connection,
     direction,
     horizontal,
     sideConnectionBondTurnPoint,
-  }: {
-    readonly cell: Cell;
-    readonly connection: Connection;
-    readonly direction: ConnectionDirectionInDegrees;
-    readonly horizontal: boolean;
-    readonly sideConnectionBondTurnPoint: number;
-  }): {
-    readonly pathPart: string;
-    readonly sideConnectionBondTurnPoint: number;
-  } {
+  }: DrawPartOfSideConnectionParameter): DrawPartOfSideConnectionResult {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
     const xOffset = (SNAKE_LAYOUT_CELL_WIDTH / 2) * cos;

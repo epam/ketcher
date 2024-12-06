@@ -554,10 +554,6 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.drawSelection();
   }
 
-  private get isSideConnectionBondDrawn() {
-    return this.polymerBond.isSideChainConnection && this.path;
-  }
-
   public drawSelection(): void {
     if (this.polymerBond.selected) {
       this.selectionElement?.remove();
@@ -794,5 +790,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     if (this.polymerBond.hovered) {
       this.editorEvents.mouseLeaveMonomer.dispatch();
     }
+  }
+
+  private get isSideConnectionBondDrawn(): boolean {
+    return this.polymerBond.isSideChainConnection && !!this.path;
   }
 }

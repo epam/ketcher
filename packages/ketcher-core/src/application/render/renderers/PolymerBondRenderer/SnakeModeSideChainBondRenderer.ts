@@ -77,7 +77,6 @@ export class SnakeModeSideChainBondRenderer {
       .attr('d', pathDAttributeValue)
       .attr('pointer-events', 'stroke')
       .attr('stroke', '#43b5c0')
-      .attr('stroke-dasharray', '0')
       .attr('stroke-width', '1')
       .attr('fill', 'none');
   }

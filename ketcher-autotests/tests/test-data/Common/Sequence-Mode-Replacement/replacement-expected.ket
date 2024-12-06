@@ -136,7 +136,7 @@
         "id": "0",
         "position": {
             "x": 1.25,
-            "y": -2.5665
+            "y": -2.75
         },
         "alias": "C",
         "templateId": "C___Cytosine"
@@ -663,7 +663,7 @@
         "id": "3",
         "position": {
             "x": 4.25,
-            "y": -2.5665
+            "y": -2.75
         },
         "alias": "C",
         "templateId": "C___Cytosine"
@@ -693,7 +693,7 @@
         "id": "6",
         "position": {
             "x": 7.25,
-            "y": -2.5665
+            "y": -2.75
         },
         "alias": "C",
         "templateId": "C___Cytosine"

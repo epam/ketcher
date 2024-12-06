@@ -29,21 +29,31 @@ export const waitForLoad = async (page: Page, callback: VoidFunction) => {
   await page.waitForFunction(() => window.ketcher);
   // const promise = page.evaluate(evaluateCallback, REQUEST_IS_FINISHED);
   callback();
-  const roleDialog = await page.locator('[role=dialog]');
+  const roleDialog = page.locator('[role=dialog]');
+  const loadingSpinner = page.locator('.loading-spinner');
 
   if (await roleDialog.isVisible()) {
+    // this spinner appear in Macro mode (before roleDialog close)
+    if (await loadingSpinner.isVisible()) {
+      await page.waitForSelector('.loading-spinner', { state: 'detached' });
+    }
     // if you see here that "locator resolved to 2 elements. Proceeding with the first one:..."
     // That means that another dialog (error one) appeared over first one
     // for example:
     // Error: locator.isVisible: Error: strict mode violation: locator('[role=dialog]') resolved to 2 elements:
     // 1) <div role="dialog" aria-labelledby=":r2:" class="MuiP…>…</div> aka getByLabel('Open Structure')
     // 2) <div role="dialog" aria-labelledby=":r0:" class="MuiP…>…</div> aka getByLabel('Unsupported symbols')
-    await page.waitForSelector('[role=dialog]', { state: 'detached' });
+    await page.waitForSelector('[role=dialog]', {
+      state: 'detached',
+      // timeout: 10000, <--this is for debug purposes
+    });
   }
-
-  if (await page.locator('.loading-spinner').isVisible()) {
+  // this spinner appear in Molecules mode (after roleDialog close)
+  if (await loadingSpinner.isVisible()) {
     await page.waitForSelector('.loading-spinner', { state: 'detached' });
   }
+
+  await waitForRender(page);
 };
 
 export async function waitForLoadAndRender(page: Page, callback: VoidFunction) {

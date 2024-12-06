@@ -19,6 +19,7 @@ import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
 import {
+  BaseMonomer,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   NodeSelection,
 } from 'ketcher-core';
@@ -89,24 +90,25 @@ import { ZoomControls } from 'components/ZoomControls/ZoomControls';
 import { VerticalDivider } from 'components/menu/styles';
 import { PolymerBondContextMenu } from 'components/contextMenu/PolymerBondContextMenu/PolymerBondContextMenu';
 import { EditorEvents } from './EditorEvents';
+import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 
 const muiTheme = createTheme(muiOverrides);
-
-interface EditorContainerProps {
-  onInit?: () => void;
-  theme?: DeepPartial<EditorTheme>;
-  togglerComponent?: JSX.Element;
-}
 
 interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
+  monomersLibraryUpdate?: string | JSON;
+}
+
+interface EditorContainerProps extends EditorProps {
+  onInit?: () => void;
 }
 
 function EditorContainer({
   onInit,
   theme,
   togglerComponent,
+  monomersLibraryUpdate,
 }: EditorContainerProps) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
@@ -126,14 +128,22 @@ function EditorContainer({
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
         <EditorWrapper ref={rootElRef} className={EditorClassName}>
-          <Editor theme={editorTheme} togglerComponent={togglerComponent} />
+          <Editor
+            theme={editorTheme}
+            togglerComponent={togglerComponent}
+            monomersLibraryUpdate={monomersLibraryUpdate}
+          />
         </EditorWrapper>
       </ThemeProvider>
     </Provider>
   );
 }
 
-function Editor({ theme, togglerComponent }: EditorProps) {
+function Editor({
+  theme,
+  togglerComponent,
+  monomersLibraryUpdate,
+}: EditorProps) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
   const errorTooltipText = useAppSelector(selectErrorTooltipText);
@@ -143,15 +153,21 @@ function Editor({ theme, togglerComponent }: EditorProps) {
   const [isMonomerLibraryHidden, setIsMonomerLibraryHidden] = useState(false);
   const isSequenceEditInRNABuilderMode = useSequenceEditInRNABuilderMode();
   const [selections, setSelections] = useState<NodeSelection[][]>();
+  const [selectedMonomers, setSelectedMonomers] = useState<BaseMonomer[]>([]);
   const { show: showSequenceContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_SEQUENCE,
   });
   const { show: showPolymerBondContextMenu } = useContextMenu({
     id: CONTEXT_MENU_ID.FOR_POLYMER_BOND,
   });
+  const { show: showSelectedMonomersContextMenu } = useContextMenu({
+    id: CONTEXT_MENU_ID.FOR_SELECTED_MONOMERS,
+  });
 
   useEffect(() => {
-    dispatch(createEditor({ theme, canvas: canvasRef.current }));
+    dispatch(
+      createEditor({ theme, canvas: canvasRef.current, monomersLibraryUpdate }),
+    );
 
     return () => {
       dispatch(destroyEditor(null));
@@ -180,6 +196,15 @@ function Editor({ theme, togglerComponent }: EditorProps) {
           props: {
             polymerBondRenderer,
           },
+        });
+      },
+    );
+    editor?.events.rightClickSelectedMonomers.add(
+      (event, selectedMonomers: BaseMonomer[]) => {
+        setSelectedMonomers(selectedMonomers);
+        showSelectedMonomersContextMenu({
+          event,
+          props: { selectedMonomers },
         });
       },
     );
@@ -283,6 +308,7 @@ function Editor({ theme, togglerComponent }: EditorProps) {
       <Preview />
       <SequenceItemContextMenu selections={selections} />
       <PolymerBondContextMenu />
+      <SelectedMonomersContextMenu selectedMonomers={selectedMonomers} />
       <ModalContainer />
       <ErrorModal />
       <Snackbar

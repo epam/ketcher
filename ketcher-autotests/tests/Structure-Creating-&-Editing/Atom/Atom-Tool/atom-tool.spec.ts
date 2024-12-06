@@ -26,15 +26,15 @@ import {
   receiveFileComparisonData,
   selectLeftPanelButton,
   LeftPanelButton,
-  selectTopPanelButton,
-  TopPanelButton,
   drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  ZoomInByKeyboard,
 } from '@utils';
 import { atomsNames } from '@utils/canvas/atoms/excludedAtoms';
 import { getMolfile, getRxn } from '@utils/formats';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 const X_DELTA_ONE = 100;
 
@@ -252,9 +252,7 @@ test.describe('Atom Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -522,7 +520,7 @@ test.describe('Atom Tool', () => {
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await clickOnAtom(page, 'Br', numberOfAtom);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await clickOnAtom(page, 'N', numberOfAtom);
     await takeEditorScreenshot(page);
   });
@@ -687,7 +685,7 @@ test.describe('Atom Tool', () => {
       const coordinatesWithShift = y - MAX_BOND_LENGTH;
       await dragMouseTo(x, coordinatesWithShift, page);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     });
   }
 });

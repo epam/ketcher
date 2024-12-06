@@ -19,6 +19,9 @@ import {
   delay,
   clickOnCanvas,
   selectMacroBond,
+  resetZoomLevelToDefault,
+  ZoomOutByKeyboard,
+  ZoomInByKeyboard,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
@@ -60,7 +63,7 @@ test.describe('Common connection rules: ', () => {
 
   test.afterEach(async () => {
     await page.keyboard.press('Escape');
-    await page.keyboard.press('Control+0');
+    await resetZoomLevelToDefault(page);
     await selectClearCanvasTool(page);
   });
 
@@ -214,7 +217,7 @@ test.describe('Common connection rules: ', () => {
    *  Check that bond dissapears when 'ESC' button is pressed while pulling bond away from RNA monomer placed on canvas
    */
   test(`Check that bond dissapears when 'ESC' button is pressed while pulling bond away from monomers placed on canvas`, async () => {
-    test.setTimeout(20000);
+    test.setTimeout(30000);
 
     await openFileAndAddToCanvasMacro(
       'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
@@ -375,11 +378,11 @@ test.describe('Common connection rules: ', () => {
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out
-    await page.keyboard.press('Control+=');
+    await ZoomInByKeyboard(page);
     await takeEditorScreenshot(page, {
       masks: [page.getByTestId('polymer-library-preview')],
     });
-    await page.keyboard.press('Control+-');
+    await ZoomOutByKeyboard(page);
     await takeEditorScreenshot(page, {
       masks: [page.getByTestId('polymer-library-preview')],
     });

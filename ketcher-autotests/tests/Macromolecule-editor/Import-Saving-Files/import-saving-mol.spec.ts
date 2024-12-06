@@ -25,6 +25,7 @@ import {
   selectFlexLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
+  resetZoomLevelToDefault,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -60,7 +61,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await page.keyboard.press('Control+0');
+  await resetZoomLevelToDefault(page);
   await selectClearCanvasTool(page);
   await selectFlexLayoutModeTool(page);
 });
@@ -689,7 +690,7 @@ test.describe('Import modified .mol files from external editor', () => {
   */
   test.afterEach(async () => {
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+0');
+    await resetZoomLevelToDefault(page);
     await selectClearCanvasTool(page);
   });
 

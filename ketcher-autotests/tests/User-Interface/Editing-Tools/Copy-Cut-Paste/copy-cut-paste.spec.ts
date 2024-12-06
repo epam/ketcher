@@ -32,6 +32,10 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;
@@ -103,9 +107,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await pressRedoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -191,10 +195,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await cutToClipboardByKeyboard(page);
     // 2. Empty canvas - We removed all from canvas by Cut to clipboard
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     // 3. Reaction on the canvas - We returned all back to canvas
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await pressRedoButton(page);
     // 4. Emty canvas - We Undo previus Redo
     await takeEditorScreenshot(page);
   });

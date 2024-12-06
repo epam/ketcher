@@ -4,6 +4,16 @@
 <reactantList>
 <molecule>
     <atomArray>
+        <atom id="a0" elementType="Tl" mrvValence="3" hydrogenCount="3" x2="28.8484" y2="-8.64322"/>
+    </atomArray>
+</molecule>
+<molecule>
+    <atomArray>
+        <atom id="a0" elementType="Dy" mrvValence="2" hydrogenCount="2" x2="31.8989" y2="-8.59362"/>
+    </atomArray>
+</molecule>
+<molecule>
+    <atomArray>
         <atom id="a0" elementType="Br" x2="-2.49892" y2="-10.3597"/>
         <atom id="a1" elementType="C" x2="-1.63207" y2="-9.85924"/>
         <atom id="a2" elementType="C" x2="-1.63207" y2="-8.85828"/>
@@ -59,16 +69,6 @@
         <bond atomRefs2="a22 a24" order="A"/>
         <bond atomRefs2="a24 a1" order="A"/>
     </bondArray>
-</molecule>
-<molecule>
-    <atomArray>
-        <atom id="a0" elementType="Tl" mrvValence="3" hydrogenCount="3" x2="28.8484" y2="-8.64322"/>
-    </atomArray>
-</molecule>
-<molecule>
-    <atomArray>
-        <atom id="a0" elementType="Dy" mrvValence="2" hydrogenCount="2" x2="31.8989" y2="-8.59362"/>
-    </atomArray>
 </molecule>
 </reactantList>
 <productList>

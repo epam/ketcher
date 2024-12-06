@@ -128,6 +128,7 @@ export class MonomerItemModifyOperation implements Operation {
     public revertMonomerItem: () => BaseMonomer,
   ) {
     this.monomer = monomer;
+    this.execute();
   }
 
   public execute() {

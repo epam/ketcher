@@ -27,6 +27,7 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { getExtendedSmiles, getMolfile } from '@utils/formats';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 async function openRGroupModalForTopAtom(page: Page) {
   await selectRingButton(RingButton.Benzene, page);
@@ -252,7 +253,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
 
     await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     });
 
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
@@ -260,7 +261,7 @@ test.describe('Open Ketcher', () => {
     await takeEditorScreenshot(page);
 
     await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     });
 
     await selectAllStructuresOnCanvas(page);

@@ -10,6 +10,13 @@ import {
   waitForPageInit,
   selectAllStructuresOnCanvas,
   selectMacroBond,
+  resetZoomLevelToDefault,
+  ZoomOutByKeyboard,
+  ZoomInByKeyboard,
+  selectUndoByKeyboard,
+  selectRedoByKeyboard,
+  waitForRender,
+  getControlModifier,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
@@ -48,9 +55,9 @@ test.describe('Hotkeys', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
     await page.keyboard.press('Control+Backspace');
-    await page.keyboard.press('Control+z');
+    await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Shift+z');
+    await selectRedoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -61,9 +68,13 @@ test.describe('Hotkeys', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
     await page.keyboard.press('Control+Backspace');
-    await page.keyboard.press('Control+z');
+    await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+y');
+
+    const modifier = getControlModifier();
+    await waitForRender(page, async () => {
+      await page.keyboard.press(`${modifier}+KeyY`);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -94,7 +105,7 @@ test.describe('Hotkeys', () => {
       page,
     );
     for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await page.keyboard.press('Control+=');
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -110,7 +121,7 @@ test.describe('Hotkeys', () => {
       page,
     );
     for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await page.keyboard.press('Control+-');
+      await ZoomOutByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -126,10 +137,10 @@ test.describe('Hotkeys', () => {
       page,
     );
     for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await page.keyboard.press('Control+=');
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+0');
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page);
   });
 

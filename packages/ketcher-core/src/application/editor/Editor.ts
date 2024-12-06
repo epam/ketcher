@@ -8,6 +8,8 @@ import {
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
+  DEFAULT_LAYOUT_MODE,
+  HAS_CONTENT_LAYOUT_MODE,
   FlexMode,
   LayoutMode,
   modesMap,
@@ -55,16 +57,22 @@ import { ViewModel } from 'application/render/view-model/ViewModel';
 import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
+import { BaseMonomerRenderer } from 'application/render';
 
 interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
   mode?: BaseMode;
+  monomersLibraryUpdate?: string | JSON;
 }
 
 function isMouseMainButtonPressed(event: MouseEvent) {
   return event.button === 0;
 }
+
+let persistentMonomersLibrary: MonomerItemType[] = [];
+let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
+  null;
 
 let editor;
 export class CoreEditor {
@@ -76,7 +84,7 @@ export class CoreEditor {
   public viewModel: ViewModel;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
-  private _monomersLibraryParsedJson?: IKetMacromoleculesContent;
+  private _monomersLibraryParsedJson: IKetMacromoleculesContent | null = null;
   private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
   public drawnStructuresWrapperElement: SVGGElement;
@@ -97,18 +105,26 @@ export class CoreEditor {
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
 
-  constructor({ theme, canvas, mode }: ICoreEditorConstructorParams) {
+  constructor({
+    theme,
+    canvas,
+    mode,
+    monomersLibraryUpdate,
+  }: ICoreEditorConstructorParams) {
     this._type = EditorType.Macromolecules;
     this.theme = theme;
     this.canvas = canvas;
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
-    this.mode = mode ?? new SequenceMode();
+    this.mode = this.initializeMode(mode);
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
     this._monomersLibraryParsedJson = JSON.parse(monomersDataRaw);
+    if (monomersLibraryUpdate) {
+      this.updateMonomersLibrary(monomersLibraryUpdate);
+    }
     this.subscribeEvents();
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();
@@ -131,13 +147,97 @@ export class CoreEditor {
     return editor;
   }
 
-  private setMonomersLibrary(monomersDataRaw: string) {
-    const monomersLibraryParsedJson = JSON.parse(monomersDataRaw);
-    this._monomersLibraryParsedJson = monomersLibraryParsedJson;
+  private parseMonomersLibrary(monomersDataRaw: string | JSON) {
+    const monomersLibraryParsedJson =
+      typeof monomersDataRaw === 'string'
+        ? JSON.parse(monomersDataRaw)
+        : monomersDataRaw;
     const serializer = new KetSerializer();
-    this._monomersLibrary = serializer.convertMonomersLibrary(
+    const monomersLibrary = serializer.convertMonomersLibrary(
       monomersLibraryParsedJson,
     );
+
+    return { monomersLibraryParsedJson, monomersLibrary };
+  }
+
+  private setMonomersLibrary(monomersDataRaw: string) {
+    if (
+      persistentMonomersLibrary.length !== 0 &&
+      persistentMonomersLibraryParsedJson !== undefined
+    ) {
+      this._monomersLibrary = persistentMonomersLibrary;
+      this._monomersLibraryParsedJson = persistentMonomersLibraryParsedJson;
+      return;
+    }
+
+    const { monomersLibraryParsedJson, monomersLibrary } =
+      this.parseMonomersLibrary(monomersDataRaw);
+    this._monomersLibrary = monomersLibrary;
+    this._monomersLibraryParsedJson = monomersLibraryParsedJson;
+    persistentMonomersLibrary = monomersLibrary;
+    persistentMonomersLibraryParsedJson = monomersLibraryParsedJson;
+  }
+
+  public updateMonomersLibrary(monomersDataRaw: string | JSON) {
+    const {
+      monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
+      monomersLibrary: newMonomersLibraryChunk,
+    } = this.parseMonomersLibrary(monomersDataRaw);
+
+    newMonomersLibraryChunk.forEach((newMonomer) => {
+      const existingMonomerIndex = this._monomersLibrary.findIndex(
+        (monomer) => {
+          return (
+            monomer?.props?.MonomerName === newMonomer?.props?.MonomerName &&
+            monomer?.props?.MonomerClass === newMonomer?.props?.MonomerClass
+          );
+        },
+      );
+
+      const newMonomerProps = newMonomer.props;
+      const monomerIdToUse = newMonomerProps.id || newMonomerProps.MonomerName;
+
+      if (existingMonomerIndex !== -1) {
+        this._monomersLibrary[existingMonomerIndex] = newMonomer;
+
+        const existingMonomerProps =
+          this._monomersLibrary[existingMonomerIndex].props;
+        const existingMonomerIdToUse =
+          existingMonomerProps.id || existingMonomerProps.MonomerName;
+        // It's safe to use non-null assertion here and below because we already specified monomers library and parsed JSON before
+        const existingMonomerRefIndex =
+          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+          this._monomersLibraryParsedJson!.root.templates.findIndex(
+            (template) => template.$ref === existingMonomerIdToUse,
+          );
+        if (existingMonomerRefIndex && existingMonomerRefIndex !== -1) {
+          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+          delete this._monomersLibraryParsedJson!.root.templates[
+            existingMonomerRefIndex
+          ];
+          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+          delete this._monomersLibraryParsedJson![existingMonomerIdToUse];
+          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+          this._monomersLibraryParsedJson!.root.templates.push({
+            $ref: monomerIdToUse,
+          });
+          // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+          this._monomersLibraryParsedJson![monomerIdToUse] =
+            newMonomersLibraryChunkParsedJson[monomerIdToUse];
+        }
+      } else {
+        this._monomersLibrary.push(newMonomer);
+        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+        this._monomersLibraryParsedJson!.root.templates.push({
+          $ref: monomerIdToUse,
+        });
+        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+        this._monomersLibraryParsedJson![monomerIdToUse] =
+          newMonomersLibraryChunkParsedJson[monomerIdToUse];
+      }
+    });
+
+    this.events.updateMonomersLibrary.dispatch();
   }
 
   public get monomersLibraryParsedJson() {
@@ -230,6 +330,16 @@ export class CoreEditor {
           !(eventData.polymerBond instanceof HydrogenBond))
       ) {
         this.events.rightClickPolymerBond.dispatch(event, eventData);
+      } else if (
+        eventData instanceof BaseMonomerRenderer &&
+        eventData.monomer.selected
+      ) {
+        this.events.rightClickSelectedMonomers.dispatch(
+          event,
+          this.drawingEntitiesManager.selectedEntities
+            .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
+            .map(([, drawingEntity]) => drawingEntity as BaseMonomer),
+        );
       } else if (isClickOnCanvas) {
         this.events.rightClickCanvas.dispatch(event);
       }
@@ -271,6 +381,20 @@ export class CoreEditor {
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
     );
+    this.events.createAntisenseChain.add(() => {
+      this.onCreateAntisenseChain();
+    });
+    this.events.copySelectedStructure.add(() => {
+      this.mode.onCopy();
+    });
+    this.events.deleteSelectedStructure.add(() => {
+      const command = new Command();
+      const history = new EditorHistory(this);
+
+      command.merge(this.drawingEntitiesManager.deleteSelectedEntities());
+      history.update(command);
+      this.renderersContainer.update(command);
+    });
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
@@ -299,6 +423,14 @@ export class CoreEditor {
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {
     this.sequenceTypeEnterMode = mode;
+  }
+
+  private onCreateAntisenseChain() {
+    const modelChanges = this.drawingEntitiesManager.createAntisenseChain();
+    const history = new EditorHistory(this);
+
+    this.renderersContainer.update(modelChanges);
+    history.update(modelChanges);
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {
@@ -614,7 +746,7 @@ export class CoreEditor {
 
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
-    this._monomersLibraryParsedJson = undefined;
+    this._monomersLibraryParsedJson = null;
     this._type = EditorType.Micromolecules;
   }
 
@@ -626,6 +758,18 @@ export class CoreEditor {
         struct,
         this.drawingEntitiesManager,
       );
+
+    if (this.mode instanceof SnakeMode) {
+      modelChanges.merge(
+        this.drawingEntitiesManager.applySnakeLayout(
+          this.canvas.width.baseVal.value,
+          true,
+          true,
+          false,
+        ),
+      );
+    }
+
     this.renderersContainer.update(modelChanges);
     ketcher?.editor.clear();
     this._type = EditorType.Macromolecules;
@@ -638,6 +782,18 @@ export class CoreEditor {
     }
   }
 
+  private initializeMode(mode?: BaseMode) {
+    if (mode) {
+      return mode;
+    }
+    const ketcher = ketcherProvider.getKetcher();
+    const isBlank = ketcher?.editor?.struct().isBlank();
+    if (isBlank) {
+      return new modesMap[DEFAULT_LAYOUT_MODE]();
+    }
+    return new modesMap[HAS_CONTENT_LAYOUT_MODE]();
+  }
+
   public isCurrentModeWithAutozoom(): boolean {
     return this.mode instanceof FlexMode || this.mode instanceof SnakeMode;
   }
@@ -648,7 +804,8 @@ export class CoreEditor {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       window._ketcher_isAutozoomDisabled ||
-      !this.isCurrentModeWithAutozoom()
+      !this.isCurrentModeWithAutozoom() ||
+      !this.drawingEntitiesManager.hasMonomers
     ) {
       return;
     }

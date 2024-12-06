@@ -21,6 +21,7 @@ import {
   selectAtomInToolbar,
   selectLeftPanelButton,
   selectRingButton,
+  selectUndoByKeyboard,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -174,7 +175,7 @@ test.describe('SRU Polymer tool', () => {
     await page.getByLabel('Polymer label').fill(polymerLabel);
     await selectRepeatPattern(page, SGroupRepeatPattern.EitherUnknown);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+z');
+    await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

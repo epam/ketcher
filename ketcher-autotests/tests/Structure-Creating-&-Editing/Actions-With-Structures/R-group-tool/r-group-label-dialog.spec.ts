@@ -23,9 +23,14 @@ import {
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  ZoomInByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn, getSmiles } from '@utils/formats';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -208,11 +213,11 @@ test.describe('R-Group Label Tool', () => {
     await pressButton(page, 'R8');
     await pressButton(page, 'Apply');
     await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     });
     await takeEditorScreenshot(page);
     await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     });
     await takeEditorScreenshot(page);
   });
@@ -268,9 +273,7 @@ test.describe('R-Group Label Tool', () => {
 
     // eslint-disable-next-line no-magic-numbers
     for (let i = 0; i < 5; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });

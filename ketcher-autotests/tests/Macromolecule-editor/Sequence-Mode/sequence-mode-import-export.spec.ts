@@ -16,6 +16,7 @@ import {
   MacroFileType,
   SequenceType,
   PeptideType,
+  resetZoomLevelToDefault,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
@@ -46,7 +47,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await page.keyboard.press('Control+0');
+  await resetZoomLevelToDefault(page);
   await selectClearCanvasTool(page);
 });
 
@@ -158,6 +159,7 @@ test.describe('Import/export sequence:', () => {
     );
 
     await zoomWithMouseWheel(page, 300);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -178,6 +180,7 @@ test.describe('Import/export sequence:', () => {
     );
 
     await zoomWithMouseWheel(page, 300);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

@@ -68,7 +68,7 @@ const SMOOTH_CORNER_SIZE = 5;
 // TODO: Can be:
 //  - a class with static methods.
 //  - a set of functions.
-export class SideChainConnectionBondRenderer {
+export class SnakeModeSideChainBondRenderer {
   public appendSideConnectionBond<ThisType>({
     cells,
     polymerBond,

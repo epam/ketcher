@@ -1,7 +1,7 @@
 import { editorEvents } from 'application/editor/editorEvents';
 import { CoreEditor } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { SideChainConnectionBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SideChainConnectionBondRenderer';
+import { SnakeModeSideChainBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModeSideChainBondRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
 import { Vec2 } from 'domain/entities';
@@ -153,7 +153,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     cells: Cell[],
   ): D3SvgElementSelection<SVGPathElement, this> {
     const sideChainConnectionBondRenderer =
-      new SideChainConnectionBondRenderer();
+      new SnakeModeSideChainBondRenderer();
     const {
       appendPathToElement,
       pathDAttributeValue,

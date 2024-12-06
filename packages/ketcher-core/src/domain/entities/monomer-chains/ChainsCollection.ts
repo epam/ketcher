@@ -4,8 +4,6 @@ import {
   BaseMonomer,
   Chem,
   IsChainCycled,
-  Nucleoside,
-  Nucleotide,
   Peptide,
   Phosphate,
   RNABase,
@@ -312,17 +310,26 @@ export class ChainsCollection {
     });
   }
 
+  private getFirstAntisenseMonomerInNode(node: SubChainNode) {
+    for (let i = 0; i < node.monomers.length; i++) {
+      const monomer = node.monomers[i];
+      const hydrogenBond = monomer.hydrogenBonds[0];
+
+      if (hydrogenBond) {
+        return hydrogenBond.getAnotherMonomer(monomer);
+      }
+    }
+
+    return undefined;
+  }
+
   public getComplimentaryChainsWithData(chain: Chain) {
     const complimentaryChainsWithData: ComplimentaryChainsWithData[] = [];
     const handledChains = new Set<Chain>();
     const monomerToChain = this.monomerToChain;
 
     chain.forEachNode(({ node }) => {
-      if (!(node instanceof Nucleotide || node instanceof Nucleoside)) {
-        return;
-      }
-
-      const complimentaryMonomer = node.getFirstAntisenseMonomer();
+      const complimentaryMonomer = this.getFirstAntisenseMonomerInNode(node);
       const complimentaryNode =
         complimentaryMonomer && this.monomerToNode.get(complimentaryMonomer);
       const complimentaryChain =

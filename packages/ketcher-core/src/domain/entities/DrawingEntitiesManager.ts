@@ -50,6 +50,7 @@ import {
 import { Coordinates, CoreEditor } from 'application/editor/internal';
 import {
   getNextMonomerInChain,
+  getSugarFromRnaBase,
   isAmbiguousMonomerLibraryItem,
   isRnaBaseOrAmbiguousRnaBase,
   isValidNucleoside,
@@ -864,6 +865,8 @@ export class DrawingEntitiesManager {
       command.merge(this.recalculateCanvasMatrix());
     }
 
+    command.merge(this.recalculateAntisenseChains());
+
     return command;
   }
 
@@ -1546,6 +1549,7 @@ export class DrawingEntitiesManager {
   private calculateSnakeLayoutMatrix(chainsCollection: ChainsCollection) {
     const snakeLayoutMatrix = new Matrix<Cell>();
     const monomersGroupedByY = new Map<number, Map<number, BaseMonomer>>();
+    const monomerToNode = chainsCollection.monomerToNode;
 
     this.monomers.forEach((monomer) => {
       const x = Number(monomer.position.x.toFixed());
@@ -1596,7 +1600,7 @@ export class DrawingEntitiesManager {
           Number(indexY),
           Number(monomerXToIndexInMatrix[x]),
           new Cell(
-            chainsCollection.monomerToNode.get(monomer),
+            monomerToNode.get(monomer),
             [],
             Number(indexY),
             Number(monomerXToIndexInMatrix[x]),
@@ -1683,8 +1687,14 @@ export class DrawingEntitiesManager {
         let restOfRowsWithAntisense = 0;
         let isPreviousChainWithAntisense = false;
 
-        chain.forEachNode(({ node, nodeIndex }) => {
-          if (rearrangedMonomersSet.has(node.monomer.id)) {
+        for (
+          let nodeIndex = Math.min(0, ...antisenseChainsStartIndexes);
+          nodeIndex < chain.length;
+          nodeIndex++
+        ) {
+          const node = chain.nodes[nodeIndex];
+
+          if (node && rearrangedMonomersSet.has(node.monomer.id)) {
             return;
           }
 
@@ -1705,6 +1715,10 @@ export class DrawingEntitiesManager {
             restOfRowsWithAntisense = rowsUsedByAntisense;
             command.merge(rearrangedAntisenseCommand);
             isPreviousChainWithAntisense = true;
+          }
+
+          if (!node) {
+            continue;
           }
 
           const r2PolymerBond =
@@ -1759,7 +1773,8 @@ export class DrawingEntitiesManager {
               command.merge(rearrangeResult.command);
             });
           }
-        });
+        }
+
         lastPosition = getFirstPosition(maxVerticalDistance, lastPosition);
         maxVerticalDistance = 0;
 
@@ -2643,6 +2658,16 @@ export class DrawingEntitiesManager {
     const senseToAntisenseChains = new Map<Chain, Chain[]>();
     const handledChains = new Set<Chain>();
 
+    this.monomers.forEach((monomer) => {
+      command.merge(
+        this.modifyMonomerItem(monomer, {
+          ...monomer.monomerItem,
+          isAntisense: false,
+          isSense: false,
+        }),
+      );
+    });
+
     chainsCollection.chains.forEach((chain) => {
       if (handledChains.has(chain)) {
         return;
@@ -2654,21 +2679,27 @@ export class DrawingEntitiesManager {
       const chainsToCheck = new Set<Chain>();
 
       complimentaryChainsWithData.forEach((complimentaryChainWithData) => {
-        const hasNucleotideWithHydrogenBond =
-          complimentaryChainWithData.complimentaryChain.nodes.some(
-            (node) =>
-              (node instanceof Nucleotide || node instanceof Nucleoside) &&
-              node.rnaBase.hydrogenBonds.length > 0,
-          );
-
-        if (/*hasNucleotideWithHydrogenBond*/ true) {
-          chainsToCheck.add(complimentaryChainWithData.complimentaryChain);
-        } else {
-          complimentaryChainWithData.complimentaryChain.monomers.forEach(
+        const hasHadrogenBondWithRnaBase =
+          complimentaryChainWithData.complimentaryChain.monomers.some(
             (monomer) => {
-              command.merge(this.markMonomerAsAntisense(monomer));
+              return (
+                (monomer instanceof RNABase &&
+                  monomer.hydrogenBonds.length > 0) ||
+                monomer.hydrogenBonds.some((hydrogenBond) => {
+                  const anotherMonomer =
+                    hydrogenBond.getAnotherMonomer(monomer);
+
+                  return (
+                    anotherMonomer instanceof RNABase &&
+                    Boolean(getSugarFromRnaBase(anotherMonomer))
+                  );
+                })
+              );
             },
           );
+
+        if (hasHadrogenBondWithRnaBase) {
+          chainsToCheck.add(complimentaryChainWithData.complimentaryChain);
         }
       });
 

@@ -4,7 +4,6 @@ import assert from 'assert';
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
-  getSugarFromRnaBase,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
@@ -125,22 +124,5 @@ export class Nucleoside {
     return (
       this.rnaBase.isModification || this.sugar.isModification || isNotLastNode
     );
-  }
-
-  public getFirstAntisenseMonomer() {
-    for (let i = 0; i < this.monomers.length; i++) {
-      const monomer = this.monomers[i];
-      const hydrogenBondToRnaBase = monomer.hydrogenBonds.find(
-        (hydrogenBond) =>
-          hydrogenBond.firstMonomer instanceof RNABase ||
-          hydrogenBond.secondMonomer instanceof RNABase,
-      );
-
-      if (hydrogenBondToRnaBase) {
-        return hydrogenBondToRnaBase.getAnotherMonomer(monomer);
-      }
-    }
-
-    return undefined;
   }
 }

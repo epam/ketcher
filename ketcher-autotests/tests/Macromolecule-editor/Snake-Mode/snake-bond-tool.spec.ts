@@ -23,6 +23,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectMacroBond,
+  resetZoomLevelToDefault,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
@@ -104,7 +105,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
-  await page.keyboard.press('Control+0');
+  await resetZoomLevelToDefault(page);
   await selectClearCanvasTool(page);
 });
 

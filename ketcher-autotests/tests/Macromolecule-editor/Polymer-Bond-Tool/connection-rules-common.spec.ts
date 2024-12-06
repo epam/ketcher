@@ -19,6 +19,9 @@ import {
   delay,
   clickOnCanvas,
   selectMacroBond,
+  resetZoomLevelToDefault,
+  ZoomOutByKeyboard,
+  ZoomInByKeyboard,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
@@ -60,7 +63,7 @@ test.describe('Common connection rules: ', () => {
 
   test.afterEach(async () => {
     await page.keyboard.press('Escape');
-    await page.keyboard.press('Control+0');
+    await resetZoomLevelToDefault(page);
     await selectClearCanvasTool(page);
   });
 
@@ -375,11 +378,11 @@ test.describe('Common connection rules: ', () => {
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out
-    await page.keyboard.press('Control+=');
+    await ZoomInByKeyboard(page);
     await takeEditorScreenshot(page, {
       masks: [page.getByTestId('polymer-library-preview')],
     });
-    await page.keyboard.press('Control+-');
+    await ZoomOutByKeyboard(page);
     await takeEditorScreenshot(page, {
       masks: [page.getByTestId('polymer-library-preview')],
     });

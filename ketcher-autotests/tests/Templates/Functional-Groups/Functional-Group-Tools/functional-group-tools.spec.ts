@@ -35,6 +35,10 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 const X_DELTA = 300;
 
@@ -267,9 +271,9 @@ test.describe('Templates - Functional Group Tools', () => {
       await page.getByText('Remove Abbreviation').click();
     });
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await resetCurrentTool(page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await pressRedoButton(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -376,7 +380,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await page.getByText('Boc').first().click();
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
 
@@ -482,8 +486,8 @@ test.describe('Templates - Functional Group Tools2', () => {
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await pressUndoButton(page);
+    await pressRedoButton(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

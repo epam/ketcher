@@ -4,8 +4,6 @@ import {
   openFileAndAddToCanvas,
   clickOnAtom,
   dragMouseTo,
-  selectTopPanelButton,
-  TopPanelButton,
   drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
   BondType,
@@ -21,6 +19,10 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 test.describe('Lasso Selection tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -180,7 +182,7 @@ test.describe('Lasso Selection tool', () => {
     );
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     const point = await getBondByIndex(
       page,
       { type: BondType.SINGLE_OR_AROMATIC },
@@ -231,8 +233,8 @@ test.describe('Lasso Selection tool', () => {
       page,
     );
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await pressUndoButton(page);
+    await pressRedoButton(page);
 
     const bondIndex = 5;
     const bondPoint = await getBondByIndex(
@@ -259,7 +261,7 @@ test.describe('Lasso Selection tool', () => {
       centerPoint.y - randomCoords.y,
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
 
     const plusSignCoords = [
       { x: 270, y: 10 },
@@ -293,10 +295,10 @@ test.describe('Lasso Selection tool', () => {
 
     const loopCount = 3;
     for (let index = 0; index < loopCount; index++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     for (let index = 0; index < loopCount; index++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });

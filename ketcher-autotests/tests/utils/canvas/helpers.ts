@@ -15,7 +15,6 @@ import {
   Bases,
   Phosphates,
   Sugars,
-  TopPanelButton,
   selectMonomer,
   AtomButton,
   RingButton,
@@ -30,13 +29,16 @@ import {
   openSettings,
   selectAtomInToolbar,
   selectRectangleSelectionTool,
-  selectTopPanelButton,
 } from './tools';
 
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 export async function drawBenzeneRing(page: Page) {
   await selectRing(RingButton.Benzene, page);
@@ -300,15 +302,15 @@ export async function delay(seconds = 1) {
 }
 
 export async function screenshotBetweenUndoRedo(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Undo, page);
+  await pressUndoButton(page);
   await takeEditorScreenshot(page);
-  await selectTopPanelButton(TopPanelButton.Redo, page);
+  await pressRedoButton(page);
 }
 
 export async function screenshotBetweenUndoRedoInMacro(page: Page) {
-  await page.getByTestId('undo').click();
+  await pressUndoButton(page);
   await takeEditorScreenshot(page);
-  await page.getByTestId('redo').click();
+  await pressRedoButton(page);
 }
 
 export async function resetAllSettingsToDefault(page: Page) {
@@ -465,4 +467,34 @@ export async function pasteFromClipboardByKeyboard(
     page,
     async () => await page.keyboard.press(`${modifier}+KeyV`, options),
   );
+}
+
+export async function selectUndoByKeyboard(
+  page: Page,
+  options?:
+    | {
+        delay?: number;
+      }
+    | undefined,
+) {
+  const modifier = getControlModifier();
+
+  await waitForRender(page, async () => {
+    await page.keyboard.press(`${modifier}+KeyZ`, options);
+  });
+}
+
+export async function selectRedoByKeyboard(
+  page: Page,
+  options?:
+    | {
+        delay?: number;
+      }
+    | undefined,
+) {
+  const modifier = getControlModifier();
+
+  await waitForRender(page, async () => {
+    await page.keyboard.press(`${modifier}+Shift+KeyZ`, options);
+  });
 }

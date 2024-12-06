@@ -8,6 +8,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   selectClearCanvasTool,
   waitForPageInit,
+  resetZoomLevelToDefault,
 } from '@utils';
 
 let page: Page;
@@ -30,7 +31,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await page.keyboard.press('Control+0');
+  await resetZoomLevelToDefault(page);
   await selectClearCanvasTool(page);
 });
 

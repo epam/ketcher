@@ -8,6 +8,8 @@ import {
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
+  DEFAULT_LAYOUT_MODE,
+  HAS_CONTENT_LAYOUT_MODE,
   FlexMode,
   LayoutMode,
   modesMap,
@@ -115,7 +117,7 @@ export class CoreEditor {
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
-    this.mode = mode ?? new SequenceMode();
+    this.mode = this.initializeMode(mode);
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
@@ -780,6 +782,18 @@ export class CoreEditor {
     }
   }
 
+  private initializeMode(mode?: BaseMode) {
+    if (mode) {
+      return mode;
+    }
+    const ketcher = ketcherProvider.getKetcher();
+    const isBlank = ketcher?.editor?.struct().isBlank();
+    if (isBlank) {
+      return new modesMap[DEFAULT_LAYOUT_MODE]();
+    }
+    return new modesMap[HAS_CONTENT_LAYOUT_MODE]();
+  }
+
   public isCurrentModeWithAutozoom(): boolean {
     return this.mode instanceof FlexMode || this.mode instanceof SnakeMode;
   }
@@ -790,7 +804,8 @@ export class CoreEditor {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       window._ketcher_isAutozoomDisabled ||
-      !this.isCurrentModeWithAutozoom()
+      !this.isCurrentModeWithAutozoom() ||
+      !this.drawingEntitiesManager.hasMonomers
     ) {
       return;
     }

@@ -24,6 +24,13 @@ import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 
+export interface ComplimentaryChainsWithData {
+  complimentaryChain: Chain;
+  chain: Chain;
+  firstConnectedNode: SubChainNode;
+  firstConnectedComplimentaryNode: SubChainNode;
+}
+
 export class ChainsCollection {
   public chains: Chain[] = [];
 
@@ -305,8 +312,9 @@ export class ChainsCollection {
     });
   }
 
-  public getComplementaryChains(chain: Chain) {
-    const complementaryChains: Set<Chain> = new Set();
+  public getComplimentaryChainsWithData(chain: Chain) {
+    const complimentaryChainsWithData: ComplimentaryChainsWithData[] = [];
+    const handledChains = new Set<Chain>();
     const monomerToChain = this.monomerToChain;
 
     chain.forEachNode(({ node }) => {
@@ -314,17 +322,29 @@ export class ChainsCollection {
         return;
       }
 
-      const complementaryRnaBase = node.getAntisenseRnaBase();
-      const complementaryChain =
-        complementaryRnaBase && monomerToChain.get(complementaryRnaBase);
+      const complimentaryMonomer = node.getFirstAntisenseMonomer();
+      const complimentaryNode =
+        complimentaryMonomer && this.monomerToNode.get(complimentaryMonomer);
+      const complimentaryChain =
+        complimentaryMonomer && monomerToChain.get(complimentaryMonomer);
 
-      if (!complementaryChain) {
+      if (
+        !complimentaryNode ||
+        !complimentaryChain ||
+        handledChains.has(complimentaryChain)
+      ) {
         return;
       }
 
-      complementaryChains.add(complementaryChain);
+      handledChains.add(complimentaryChain);
+      complimentaryChainsWithData.push({
+        complimentaryChain,
+        chain,
+        firstConnectedNode: node,
+        firstConnectedComplimentaryNode: complimentaryNode,
+      });
     });
 
-    return complementaryChains;
+    return complimentaryChainsWithData;
   }
 }

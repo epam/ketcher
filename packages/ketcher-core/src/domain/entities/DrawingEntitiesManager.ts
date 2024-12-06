@@ -1642,26 +1642,27 @@ export class DrawingEntitiesManager {
           return;
         }
 
-        const antisenseChains = [
-          ...chainsCollection.getComplementaryChains(chain),
-        ];
-        const antisenseChainsStartIndexes = antisenseChains.map(
-          (antisenseChain) => {
+        const complimentaryChainsWithData =
+          chainsCollection.getComplimentaryChainsWithData(chain);
+        const antisenseChainsWithData = complimentaryChainsWithData.filter(
+          (complimentaryChainWithData) =>
+            complimentaryChainWithData.complimentaryChain.firstMonomer
+              ?.monomerItem.isAntisense,
+        );
+        const antisenseChainsStartIndexes = antisenseChainsWithData.map(
+          (antisenseChainWithData) => {
             const firstConnectedAntisenseNodeIndex =
-              antisenseChain.nodes.findIndex((node) => {
-                return (
-                  (node instanceof Nucleoside || node instanceof Nucleotide) &&
-                  node.getAntisenseRnaBase()
-                );
-              });
-            const firstConnectedAntisenseNode = antisenseChain.nodes[
-              firstConnectedAntisenseNodeIndex
-            ] as Nucleoside | Nucleotide;
-            const senseRnaBase =
-              firstConnectedAntisenseNode.getAntisenseRnaBase();
-            const senseNode =
-              senseRnaBase && chainsCollection.monomerToNode.get(senseRnaBase);
-            const senseNodeIndex = senseNode && chain.nodes.indexOf(senseNode);
+              antisenseChainWithData.complimentaryChain.nodes.findIndex(
+                (node) => {
+                  return (
+                    node ===
+                    antisenseChainWithData.firstConnectedComplimentaryNode
+                  );
+                },
+              );
+            const senseNodeIndex = chain.nodes.indexOf(
+              antisenseChainWithData.firstConnectedNode,
+            );
 
             if (!isNumber(senseNodeIndex)) {
               return -1;
@@ -1674,7 +1675,7 @@ export class DrawingEntitiesManager {
           antisenseChainsStartIndexes.map(
             (antisenseChainsStartIndex, index) => [
               antisenseChainsStartIndex,
-              antisenseChains[index],
+              antisenseChainsWithData[index],
             ],
           ),
         );
@@ -1687,12 +1688,13 @@ export class DrawingEntitiesManager {
             return;
           }
 
-          const antisenseChain = antisenseChainsStartIndexesMap.get(nodeIndex);
+          const antisenseChainWithData =
+            antisenseChainsStartIndexesMap.get(nodeIndex);
 
-          if (antisenseChain) {
+          if (antisenseChainWithData) {
             const { rowsUsedByAntisense, command: rearrangedAntisenseCommand } =
               this.rearrangeAntisenseChain(
-                antisenseChain,
+                antisenseChainWithData.complimentaryChain,
                 lastPosition,
                 canvasWidth,
                 rearrangedMonomersSet,
@@ -2647,9 +2649,31 @@ export class DrawingEntitiesManager {
       }
 
       let senseChain: Chain;
-      const complementaryChains =
-        chainsCollection.getComplementaryChains(chain);
-      const chainsToCheck = new Set(complementaryChains).add(chain);
+      const complimentaryChainsWithData =
+        chainsCollection.getComplimentaryChainsWithData(chain);
+      const chainsToCheck = new Set<Chain>();
+
+      complimentaryChainsWithData.forEach((complimentaryChainWithData) => {
+        const hasNucleotideWithHydrogenBond =
+          complimentaryChainWithData.complimentaryChain.nodes.some(
+            (node) =>
+              (node instanceof Nucleotide || node instanceof Nucleoside) &&
+              node.rnaBase.hydrogenBonds.length > 0,
+          );
+
+        if (/*hasNucleotideWithHydrogenBond*/ true) {
+          chainsToCheck.add(complimentaryChainWithData.complimentaryChain);
+        } else {
+          complimentaryChainWithData.complimentaryChain.monomers.forEach(
+            (monomer) => {
+              command.merge(this.markMonomerAsAntisense(monomer));
+            },
+          );
+        }
+      });
+
+      chainsToCheck.add(chain);
+
       const chainToMonomers = new Map<Chain, BaseMonomer[]>();
 
       chainsToCheck.forEach((chainToCheck) => {

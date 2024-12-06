@@ -125,7 +125,7 @@ export class Nucleotide {
     );
   }
 
-  public getAntisenseRnaBase() {
-    return Nucleoside.prototype.getAntisenseRnaBase.call(this);
+  public getFirstAntisenseMonomer() {
+    return Nucleoside.prototype.getFirstAntisenseMonomer.call(this);
   }
 }

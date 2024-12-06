@@ -127,21 +127,20 @@ export class Nucleoside {
     );
   }
 
-  public getAntisenseRnaBase() {
-    const hydrogenBondToAntisenseNode = this.rnaBase.hydrogenBonds.find(
-      (hydrogenBond) => {
-        const anotherMonomer = hydrogenBond.getAnotherMonomer(this.rnaBase);
+  public getFirstAntisenseMonomer() {
+    for (let i = 0; i < this.monomers.length; i++) {
+      const monomer = this.monomers[i];
+      const hydrogenBondToRnaBase = monomer.hydrogenBonds.find(
+        (hydrogenBond) =>
+          hydrogenBond.firstMonomer instanceof RNABase ||
+          hydrogenBond.secondMonomer instanceof RNABase,
+      );
 
-        return (
-          anotherMonomer instanceof RNABase &&
-          getSugarFromRnaBase(anotherMonomer)
-        );
-      },
-    );
-    const antisenseRnaBase = hydrogenBondToAntisenseNode?.getAnotherMonomer(
-      this.rnaBase,
-    );
+      if (hydrogenBondToRnaBase) {
+        return hydrogenBondToRnaBase.getAnotherMonomer(monomer);
+      }
+    }
 
-    return antisenseRnaBase;
+    return undefined;
   }
 }

@@ -38,8 +38,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   // TODO: Specify the type of `selectionElement`.
   // private selectionElement?:
-  //   | D3SvgElementSelection<SVGLineElement, void>
-  //   | D3SvgElementSelection<SVGPathElement, void>;
+  //   | D3SvgElementSelection<SVGLineElement, this>
+  //   | D3SvgElementSelection<SVGPathElement, this>;
   private selectionElement;
 
   private editorEvents: typeof editorEvents;
@@ -112,7 +112,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   public appendBond(
-    rootElement: D3SvgElementSelection<SVGGElement, void>,
+    rootElement: D3SvgElementSelection<SVGGElement, this>,
   ): void {
     const editor = CoreEditor.provideEditorInstance();
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
@@ -149,7 +149,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   private appendSideConnectionBond(
-    rootElement: D3SvgElementSelection<SVGGElement, void>,
+    rootElement: D3SvgElementSelection<SVGGElement, this>,
     cells: Cell[],
   ): D3SvgElementSelection<SVGPathElement, this> {
     const sideChainConnectionBondRenderer =
@@ -158,7 +158,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       appendPathToElement,
       pathDAttributeValue,
       sideConnectionBondTurnPointUpdated,
-    } = sideChainConnectionBondRenderer.appendSideConnectionBond({
+    } = sideChainConnectionBondRenderer.appendSideConnectionBond<this>({
       cells,
       polymerBond: this.polymerBond,
       scaledPosition: this.scaledPosition,
@@ -544,7 +544,12 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       this.sideConnectionBondTurnPoint = undefined;
     }
     this.rootElement = this.rootElement || this.appendRootElement();
-    this.appendBond(this.rootElement);
+    this.appendBond(
+      this.rootElement as D3SvgElementSelection<
+        SVGGElement,
+        unknown
+      > as D3SvgElementSelection<SVGGElement, this>,
+    );
     this.appendHoverAreaElement();
     this.drawSelection();
   }
@@ -716,7 +721,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
       Array.from(allSideConnectionBondsBodyElements).forEach(
         (bondBodyElement) => {
-          bondBodyElement.setAttribute('stroke', '#C0E2E6');
+          bondBodyElement.setAttribute('stroke', '#c0e2e6');
         },
       );
     }
@@ -747,7 +752,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
           bondBodyElement.setAttribute(
             'stroke',
-            renderer.polymerBond.isSideChainConnection ? '#43B5C0' : '#333333',
+            renderer.polymerBond.isSideChainConnection ? '#43b5c0' : '#333333',
           );
         },
       );
@@ -756,7 +761,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.bodyElement
       .attr(
         'stroke',
-        this.polymerBond.isSideChainConnection && true ? '#43B5C0' : '#333333',
+        this.polymerBond.isSideChainConnection ? '#43b5c0' : '#333333',
       )
       .attr('pointer-events', 'stroke');
 

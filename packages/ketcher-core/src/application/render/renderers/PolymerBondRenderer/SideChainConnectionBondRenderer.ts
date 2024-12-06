@@ -9,10 +9,19 @@ import {
 } from 'domain/entities/canvas-matrix/Connection';
 import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 
-type AppendPathToElementFunction = (
-  element: D3SvgElementSelection<SVGGElement, void>,
+type RendererBodyElement<ThisType> = D3SvgElementSelection<
+  SVGPathElement,
+  ThisType
+>;
+type RendererRootElement<ThisType> = D3SvgElementSelection<
+  SVGGElement,
+  ThisType
+>;
+
+type AppendPathToElementFunction<ThisType> = (
+  element: RendererRootElement<ThisType>,
   cssClassForPath: string,
-) => D3SvgElementSelection<SVGPathElement, void>;
+) => RendererBodyElement<ThisType>;
 
 interface AppendSideConnectionBondParameter {
   readonly cells: readonly Cell[];
@@ -24,8 +33,8 @@ interface AppendSideConnectionBondParameter {
   readonly sideConnectionBondTurnPoint?: number;
 }
 
-interface AppendSideConnectionBondResult {
-  readonly appendPathToElement: AppendPathToElementFunction;
+interface AppendSideConnectionBondResult<ThisType> {
+  readonly appendPathToElement: AppendPathToElementFunction<ThisType>;
   readonly pathDAttributeValue: string;
   readonly sideConnectionBondTurnPointUpdated: number;
 }
@@ -60,12 +69,12 @@ const SMOOTH_CORNER_SIZE = 5;
 //  - a class with static methods.
 //  - a set of functions.
 export class SideChainConnectionBondRenderer {
-  public appendSideConnectionBond({
+  public appendSideConnectionBond<ThisType>({
     cells,
     polymerBond,
     scaledPosition,
     sideConnectionBondTurnPoint,
-  }: AppendSideConnectionBondParameter): AppendSideConnectionBondResult {
+  }: AppendSideConnectionBondParameter): AppendSideConnectionBondResult<ThisType> {
     let sideConnectionBondTurnPointUpdated = sideConnectionBondTurnPoint ?? 0;
 
     const firstCell = cells[0];
@@ -235,12 +244,13 @@ export class SideChainConnectionBondRenderer {
 
     pathDAttributeValue += `L ${endPosition.x},${endPosition.y} `;
 
-    const appendPathToElement: AppendPathToElementFunction = (
-      element: D3SvgElementSelection<SVGGElement, void>,
+    const appendPathToElement: AppendPathToElementFunction<ThisType> = <
+      ThisType,
+    >(
+      element: RendererRootElement<ThisType>,
       cssClassForPath: string,
-    ): D3SvgElementSelection<SVGPathElement, void> => {
-      const pathElement: D3SvgElementSelection<SVGPathElement, void> =
-        element.append('path');
+    ): RendererBodyElement<ThisType> => {
+      const pathElement: RendererBodyElement<ThisType> = element.append('path');
       return pathElement
         .attr('class', cssClassForPath)
         .attr('d', pathDAttributeValue)

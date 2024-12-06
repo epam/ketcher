@@ -112,7 +112,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
   }
 
   public appendBond(
-    rootElement: D3SvgElementSelection<SVGGElement, void>,
+    rootElement: D3SvgElementSelection<SVGGElement, this>,
   ): void {
     const editor = CoreEditor.provideEditorInstance();
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
@@ -738,7 +738,12 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
       this.sideConnectionBondTurnPoint = undefined;
     }
     this.rootElement = this.rootElement || this.appendRootElement();
-    this.appendBond(this.rootElement);
+    this.appendBond(
+      this.rootElement as D3SvgElementSelection<
+        SVGGElement,
+        unknown
+      > as D3SvgElementSelection<SVGGElement, this>,
+    );
     this.appendHoverAreaElement();
     this.drawSelection();
   }

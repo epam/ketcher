@@ -26,6 +26,14 @@ const DOUBLE_CORNER_LENGTH = CORNER_LENGTH * 2;
 
 const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 
+// # Colors
+const blue1Color = '#0097a8';
+const blue2Color = '#43b5c0';
+const blue3Color = '#c0e2e6';
+const grayColor = '#333333';
+const green1Color = '#57ff8f';
+const green2Color = '#ccffdd';
+
 // TODO: Need to split the class by three:
 //  - `SnakeModeBackboneBondRenderer` (black “snake” line)
 //  - `SnakeModeSideChainBondRenderer` (blue “snake” line)
@@ -139,7 +147,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
     this.bodyElement = rootElement
       .append('path')
-      .attr('stroke', this.polymerBond.finished ? '#333333' : '#0097A8')
+      .attr('stroke', this.polymerBond.finished ? grayColor : blue1Color)
       .attr('stroke-width', 1)
       .attr('class', 'selection-area')
       .attr('d', this.path)
@@ -503,7 +511,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   public appendBondGraph(rootElement) {
     this.bodyElement = rootElement
       .append('line')
-      .attr('stroke', this.polymerBond.finished ? '#333333' : '#0097A8')
+      .attr('stroke', this.polymerBond.finished ? grayColor : blue1Color)
       .attr('stroke-width', 1)
       .attr('stroke-dasharray', '0')
       .attr('class', 'selection-area')
@@ -562,7 +570,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       ) {
         this.selectionElement = this.rootElement
           ?.insert('path', ':first-child')
-          .attr('stroke', '#57FF8F')
+          .attr('stroke', green1Color)
           .attr('stroke-width', 2)
           .attr('fill-opacity', 0)
           .attr('d', this.path)
@@ -570,7 +578,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       } else {
         this.selectionElement = this.rootElement
           ?.insert('line', ':first-child')
-          .attr('stroke', '#57FF8F')
+          .attr('stroke', green1Color)
           .attr('x1', this.scaledPosition.startPosition.x)
           .attr('y1', this.scaledPosition.startPosition.y)
           .attr('x2', this.scaledPosition.endPosition.x)
@@ -716,15 +724,15 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
       Array.from(allSideConnectionBondsBodyElements).forEach(
         (bondBodyElement) => {
-          bondBodyElement.setAttribute('stroke', '#c0e2e6');
+          bondBodyElement.setAttribute('stroke', blue3Color);
         },
       );
     }
 
-    this.bodyElement.attr('stroke', '#0097A8').attr('pointer-events', 'none');
+    this.bodyElement.attr('stroke', blue1Color).attr('pointer-events', 'none');
 
     if (this.polymerBond.selected && this.selectionElement) {
-      this.selectionElement.attr('stroke', '#CCFFDD');
+      this.selectionElement.attr('stroke', green2Color);
     }
   }
 
@@ -747,7 +755,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
           bondBodyElement.setAttribute(
             'stroke',
-            renderer.polymerBond.isSideChainConnection ? '#43b5c0' : '#333333',
+            renderer.polymerBond.isSideChainConnection ? blue2Color : grayColor,
           );
         },
       );
@@ -756,12 +764,12 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.bodyElement
       .attr(
         'stroke',
-        this.polymerBond.isSideChainConnection ? '#43b5c0' : '#333333',
+        this.polymerBond.isSideChainConnection ? blue2Color : grayColor,
       )
       .attr('pointer-events', 'stroke');
 
     if (this.polymerBond.selected && this.selectionElement) {
-      this.selectionElement.attr('stroke', '#57FF8F');
+      this.selectionElement.attr('stroke', green1Color);
     }
 
     return this.hoverAreaElement.attr('stroke', 'transparent');

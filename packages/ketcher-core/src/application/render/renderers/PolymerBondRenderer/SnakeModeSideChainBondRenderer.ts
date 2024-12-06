@@ -9,19 +9,17 @@ import {
 } from 'domain/entities/canvas-matrix/Connection';
 import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 
-type RendererBodyElement<ThisType> = D3SvgElementSelection<
+type D3SelectionSVGPath<ThisType> = D3SvgElementSelection<
   SVGPathElement,
   ThisType
 >;
-type RendererRootElement<ThisType> = D3SvgElementSelection<
-  SVGGElement,
-  ThisType
->;
+type D3SelectionSVGG<ThisType> = D3SvgElementSelection<SVGGElement, ThisType>;
 
-type AppendPathToElementFunction<ThisType> = (
-  element: RendererRootElement<ThisType>,
-  cssClassForPath: string,
-) => RendererBodyElement<ThisType>;
+interface AppendPathToElementParameter<ThisType> {
+  pathDAttributeValue: string;
+  element: D3SelectionSVGG<ThisType>;
+  cssClassForPath: string;
+}
 
 interface AppendSideConnectionBondParameter {
   readonly cells: readonly Cell[];
@@ -33,8 +31,7 @@ interface AppendSideConnectionBondParameter {
   readonly sideConnectionBondTurnPoint?: number;
 }
 
-interface AppendSideConnectionBondResult<ThisType> {
-  readonly appendPathToElement: AppendPathToElementFunction<ThisType>;
+interface AppendSideConnectionBondResult {
   readonly pathDAttributeValue: string;
   readonly sideConnectionBondTurnPointUpdated: number;
 }
@@ -69,12 +66,28 @@ const SMOOTH_CORNER_SIZE = 5;
 //  - a class with static methods.
 //  - a set of functions.
 export class SnakeModeSideChainBondRenderer {
-  public appendSideConnectionBond<ThisType>({
+  public appendPathToElement<ThisType>({
+    cssClassForPath,
+    element,
+    pathDAttributeValue,
+  }: AppendPathToElementParameter<ThisType>): D3SelectionSVGPath<ThisType> {
+    const pathElement: D3SelectionSVGPath<ThisType> = element.append('path');
+    return pathElement
+      .attr('class', cssClassForPath)
+      .attr('d', pathDAttributeValue)
+      .attr('pointer-events', 'stroke')
+      .attr('stroke', '#43b5c0')
+      .attr('stroke-dasharray', '0')
+      .attr('stroke-width', '1')
+      .attr('fill', 'none');
+  }
+
+  public appendSideConnectionBond({
     cells,
     polymerBond,
     scaledPosition,
     sideConnectionBondTurnPoint,
-  }: AppendSideConnectionBondParameter): AppendSideConnectionBondResult<ThisType> {
+  }: AppendSideConnectionBondParameter): AppendSideConnectionBondResult {
     let sideConnectionBondTurnPointUpdated = sideConnectionBondTurnPoint ?? 0;
 
     const firstCell = cells[0];
@@ -244,25 +257,7 @@ export class SnakeModeSideChainBondRenderer {
 
     pathDAttributeValue += `L ${endPosition.x},${endPosition.y} `;
 
-    const appendPathToElement: AppendPathToElementFunction<ThisType> = <
-      ThisType,
-    >(
-      element: RendererRootElement<ThisType>,
-      cssClassForPath: string,
-    ): RendererBodyElement<ThisType> => {
-      const pathElement: RendererBodyElement<ThisType> = element.append('path');
-      return pathElement
-        .attr('class', cssClassForPath)
-        .attr('d', pathDAttributeValue)
-        .attr('pointer-events', 'stroke')
-        .attr('stroke', '#43b5c0')
-        .attr('stroke-dasharray', '0')
-        .attr('stroke-width', 1)
-        .attr('fill', 'none');
-    };
-
     return {
-      appendPathToElement,
       pathDAttributeValue,
       sideConnectionBondTurnPointUpdated,
     };

@@ -16,9 +16,9 @@ type D3SelectionSVGPath<ThisType> = D3SvgElementSelection<
 type D3SelectionSVGG<ThisType> = D3SvgElementSelection<SVGGElement, ThisType>;
 
 interface AppendPathToElementParameter<ThisType> {
-  pathDAttributeValue: string;
-  element: D3SelectionSVGG<ThisType>;
-  cssClassForPath: string;
+  readonly cssClassForPath: string;
+  readonly element: D3SelectionSVGG<ThisType>;
+  readonly pathDAttributeValue: string;
 }
 
 interface AppendSideConnectionBondParameter {
@@ -36,7 +36,7 @@ interface AppendSideConnectionBondResult {
   readonly sideConnectionBondTurnPointUpdated: number;
 }
 
-interface CalculateEndOfPathPartParameter {
+interface CalculateSideConnectionBondTurnPointParameter {
   readonly horizontal: boolean;
   readonly monomerSize: BaseMonomerRenderer['monomerSize'];
   readonly scaledMonomerPosition: Vec2;
@@ -262,20 +262,21 @@ export class SnakeModeSideChainBondRenderer {
     };
   }
 
-  private calculateEndOfPathPart({
+  private calculateSideConnectionBondTurnPoint({
     horizontal,
     monomerSize,
     scaledMonomerPosition,
     sideConnectionBondTurnPoint,
     xOffset,
     yOffset,
-  }: CalculateEndOfPathPartParameter): number {
-    if (horizontal && sideConnectionBondTurnPoint) {
-      return sideConnectionBondTurnPoint;
+  }: CalculateSideConnectionBondTurnPointParameter): number {
+    if (horizontal) {
+      if (sideConnectionBondTurnPoint) {
+        return sideConnectionBondTurnPoint;
+      }
+      return scaledMonomerPosition.x + monomerSize.width / 2 + xOffset;
     }
-    return horizontal
-      ? scaledMonomerPosition.x + monomerSize.width / 2 + xOffset
-      : scaledMonomerPosition.y + monomerSize.height / 2 + yOffset;
+    return scaledMonomerPosition.y + monomerSize.height / 2 + yOffset;
   }
 
   private drawPartOfSideConnection({
@@ -305,16 +306,17 @@ export class SnakeModeSideChainBondRenderer {
 
     const { monomerSize, scaledMonomerPosition } = (cell.monomer as BaseMonomer)
       .renderer as BaseMonomerRenderer;
-    let endOfPathPart = this.calculateEndOfPathPart({
-      horizontal,
-      monomerSize,
-      scaledMonomerPosition,
-      sideConnectionBondTurnPoint,
-      xOffset,
-      yOffset,
-    });
+    const sideConnectionBondTurnPointInternal =
+      this.calculateSideConnectionBondTurnPoint({
+        horizontal,
+        monomerSize,
+        scaledMonomerPosition,
+        sideConnectionBondTurnPoint,
+        xOffset,
+        yOffset,
+      });
 
-    const sideConnectionBondTurnPointInternal = endOfPathPart;
+    let endOfPathPart = sideConnectionBondTurnPointInternal;
 
     if (horizontal) {
       endOfPathPart +=

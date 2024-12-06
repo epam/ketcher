@@ -536,20 +536,6 @@ export class BondRenderer extends BaseRenderer {
           L${bondEndSecondPoint.x},${bondEndSecondPoint.y}
           Z
           `;
-        this.rootElement
-          .append('path')
-          .attr('d', this.pathShape)
-          .attr('stroke', '#000')
-          .attr('stroke-width', 20)
-          .attr('stroke-linecap', 'round')
-          .attr('stroke-linejoin', 'round')
-          .attr('opacity', '0')
-          .on('mouseenter', () => {
-            this.appendHover();
-          })
-          .on('mouseleave', () => {
-            this.removeHover();
-          });
 
         this.rootElement
           .append('path')
@@ -621,21 +607,6 @@ export class BondRenderer extends BaseRenderer {
         }
 
         this.pathShape = path;
-
-        this.rootElement
-          .append('path')
-          .attr('d', this.pathShape)
-          .attr('stroke', '#000')
-          .attr('stroke-width', 20)
-          .attr('stroke-linecap', 'round')
-          .attr('stroke-linejoin', 'round')
-          .attr('opacity', '0')
-          .on('mouseenter', () => {
-            this.appendHover();
-          })
-          .on('mouseleave', () => {
-            this.removeHover();
-          });
 
         this.rootElement
           .append('path')

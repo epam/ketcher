@@ -20,6 +20,9 @@ import {
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
+  selectZoomInTool,
+  selectZoomReset,
+  selectZoomOutTool,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
@@ -84,17 +87,15 @@ test.describe('Zoom Tool', () => {
   });
 
   test('Zoom In & Out monomer with menu buttons', async () => {
-    await page.getByTestId('zoom-selector').click();
-    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
-    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
-    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
-    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    const zoomInCount = 4;
+    await selectZoomInTool(page, zoomInCount);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await page.getByTestId('zoom-selector').click();
-    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
+    // await page.getByTestId('zoom-selector').click();
+    // await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
+    await selectZoomReset(page);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -102,6 +103,8 @@ test.describe('Zoom Tool', () => {
     await page.getByTestId('zoom-selector').click();
     await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
     await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    const zoomOutCount = 2;
+    await selectZoomOutTool(page, zoomOutCount);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);

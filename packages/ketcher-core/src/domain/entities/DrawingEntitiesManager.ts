@@ -2679,11 +2679,12 @@ export class DrawingEntitiesManager {
       const chainsToCheck = new Set<Chain>();
 
       complimentaryChainsWithData.forEach((complimentaryChainWithData) => {
-        const hasHadrogenBondWithRnaBase =
+        const hasHydrogenBondWithRnaBase =
           complimentaryChainWithData.complimentaryChain.monomers.some(
             (monomer) => {
               return (
                 (monomer instanceof RNABase &&
+                  Boolean(getSugarFromRnaBase(monomer)) &&
                   monomer.hydrogenBonds.length > 0) ||
                 monomer.hydrogenBonds.some((hydrogenBond) => {
                   const anotherMonomer =
@@ -2698,7 +2699,7 @@ export class DrawingEntitiesManager {
             },
           );
 
-        if (hasHadrogenBondWithRnaBase) {
+        if (hasHydrogenBondWithRnaBase) {
           chainsToCheck.add(complimentaryChainWithData.complimentaryChain);
         }
       });

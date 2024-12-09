@@ -225,7 +225,17 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     ) as Connection;
     const isVerticalConnection = firstCellConnection.isVertical;
     const isStraightVerticalConnection =
-      cells.length === 2 && isVerticalConnection;
+      (cells.length === 2 ||
+        cells.reduce(
+          (isStraight: boolean, cell: Cell, index: number): boolean => {
+            if (!isStraight || index === 0 || index === cells.length - 1) {
+              return isStraight;
+            }
+            return cell.x === firstCell.x && !cell.monomer;
+          },
+          true,
+        )) &&
+      isVerticalConnection;
     const isFirstMonomerOfBondInFirstCell = firstCell.node?.monomers.includes(
       this.polymerBond.firstMonomer,
     );

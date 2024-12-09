@@ -73,6 +73,24 @@ export function isMonomerConnectedToR2RnaBase(monomer?: BaseMonomer) {
   );
 }
 
+export function getPreviousMonomerInChain(monomer: BaseMonomer) {
+  const r1PolymerBond = monomer.attachmentPointsToBonds.R1;
+  const previousMonomer =
+    r1PolymerBond instanceof PolymerBond
+      ? r1PolymerBond?.getAnotherMonomer(monomer)
+      : undefined;
+
+  if (!previousMonomer || !(r1PolymerBond instanceof PolymerBond)) {
+    return undefined;
+  }
+
+  return previousMonomer &&
+    previousMonomer.getAttachmentPointByBond(r1PolymerBond) ===
+      AttachmentPointName.R2
+    ? previousMonomer
+    : undefined;
+}
+
 export function getNextMonomerInChain(
   monomer?: BaseMonomer,
   firstMonomer?: BaseMonomer | null,

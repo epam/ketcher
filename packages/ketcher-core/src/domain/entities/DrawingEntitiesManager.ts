@@ -2782,6 +2782,12 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public get hasAntisenseChains() {
+    return [...this.monomers.values()].some(
+      (monomer) => monomer.monomerItem.isAntisense,
+    );
+  }
+
   public createAntisenseChain() {
     const editor = CoreEditor.provideEditorInstance();
     const command = new Command();

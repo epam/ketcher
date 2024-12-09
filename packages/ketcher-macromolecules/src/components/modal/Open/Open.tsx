@@ -29,6 +29,7 @@ import {
   macromoleculesFilesInputFormats,
   ModeTypes,
   SnakeMode,
+  FlexMode,
 } from 'ketcher-core';
 import { IndigoProvider } from 'ketcher-react';
 import { RequiredModalProps } from '../modalContainer';
@@ -175,6 +176,24 @@ const addToCanvas = ({
   const editorHistory = new EditorHistory(editor);
   const isSequenceMode = editor.mode instanceof SequenceMode;
   const isSnakeMode = editor.mode instanceof SnakeMode;
+  const isFlexMode = editor.mode instanceof FlexMode;
+
+  if (isFlexMode) {
+    editor.drawingEntitiesManager.recalculateAntisenseChains();
+
+    if (!editor.drawingEntitiesManager.hasAntisenseChains) {
+      return;
+    }
+
+    modelChanges.merge(
+      editor.drawingEntitiesManager.applySnakeLayout(
+        editor.canvas.width.baseVal.value,
+        true,
+        true,
+        true,
+      ),
+    );
+  }
 
   editor.renderersContainer.update(modelChanges);
   editorHistory.update(modelChanges);

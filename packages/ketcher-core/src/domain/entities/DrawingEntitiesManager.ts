@@ -89,6 +89,7 @@ import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
 import {
   RNA_DNA_NON_MODIFIED_PART,
   RnaDnaNaturalAnaloguesEnum,
+  StandardAmbiguousRnaBase,
 } from 'domain/constants/monomers';
 import { isNumber } from 'lodash';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
@@ -2621,6 +2622,17 @@ export class DrawingEntitiesManager {
       [RnaDnaNaturalAnaloguesEnum.GUANINE]: RnaDnaNaturalAnaloguesEnum.CYTOSINE,
       [RnaDnaNaturalAnaloguesEnum.THYMINE]: RnaDnaNaturalAnaloguesEnum.ADENINE,
       [RnaDnaNaturalAnaloguesEnum.URACIL]: RnaDnaNaturalAnaloguesEnum.ADENINE,
+      [StandardAmbiguousRnaBase.N]: StandardAmbiguousRnaBase.N,
+      [StandardAmbiguousRnaBase.B]: StandardAmbiguousRnaBase.V,
+      [StandardAmbiguousRnaBase.D]: StandardAmbiguousRnaBase.H,
+      [StandardAmbiguousRnaBase.H]: StandardAmbiguousRnaBase.D,
+      [StandardAmbiguousRnaBase.K]: StandardAmbiguousRnaBase.M,
+      [StandardAmbiguousRnaBase.W]: StandardAmbiguousRnaBase.W,
+      [StandardAmbiguousRnaBase.Y]: StandardAmbiguousRnaBase.R,
+      [StandardAmbiguousRnaBase.M]: StandardAmbiguousRnaBase.K,
+      [StandardAmbiguousRnaBase.R]: StandardAmbiguousRnaBase.Y,
+      [StandardAmbiguousRnaBase.S]: StandardAmbiguousRnaBase.S,
+      [StandardAmbiguousRnaBase.V]: StandardAmbiguousRnaBase.B,
     };
   }
 
@@ -2683,7 +2695,7 @@ export class DrawingEntitiesManager {
           complimentaryChainWithData.complimentaryChain.monomers.some(
             (monomer) => {
               return (
-                (monomer instanceof RNABase &&
+                (isRnaBaseOrAmbiguousRnaBase(monomer) &&
                   Boolean(getSugarFromRnaBase(monomer)) &&
                   monomer.hydrogenBonds.length > 0) ||
                 monomer.hydrogenBonds.some((hydrogenBond) => {
@@ -2691,7 +2703,7 @@ export class DrawingEntitiesManager {
                     hydrogenBond.getAnotherMonomer(monomer);
 
                   return (
-                    anotherMonomer instanceof RNABase &&
+                    isRnaBaseOrAmbiguousRnaBase(anotherMonomer) &&
                     Boolean(getSugarFromRnaBase(anotherMonomer))
                   );
                 })
@@ -2782,6 +2794,14 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  private getAntisenseBaseLabel(rnaBase: RNABase | AmbiguousMonomer) {
+    return this.antisenseChainBasesMap[
+      rnaBase instanceof AmbiguousMonomer
+        ? rnaBase.monomerItem.label
+        : rnaBase.monomerItem.props.MonomerNaturalAnalogCode
+    ];
+  }
+
   public createAntisenseChain() {
     const editor = CoreEditor.provideEditorInstance();
     const command = new Command();
@@ -2795,6 +2815,7 @@ export class DrawingEntitiesManager {
           subChain.nodes.some(
             (node) =>
               (node instanceof Nucleotide || node instanceof Nucleoside) &&
+              Boolean(this.getAntisenseBaseLabel(node.rnaBase)) &&
               node.monomer.selected,
           ),
         );
@@ -2814,14 +2835,18 @@ export class DrawingEntitiesManager {
         }
 
         if (node instanceof Nucleotide || node instanceof Nucleoside) {
+          const antisenseBaseLabel = this.getAntisenseBaseLabel(node.rnaBase);
+
+          if (!antisenseBaseLabel) {
+            return;
+          }
+
           const { modelChanges: addNucleotideCommand, node: addedNode } = (
             node instanceof Nucleotide && node.phosphate.selected
               ? Nucleotide
               : Nucleoside
           ).createOnCanvas(
-            this.antisenseChainBasesMap[
-              node.rnaBase.monomerItem.props.MonomerNaturalAnalogCode
-            ],
+            antisenseBaseLabel,
             node.monomer.position.add(new Vec2(0, 3)),
             RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
           );

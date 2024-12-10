@@ -14,6 +14,7 @@ import {
 } from 'domain/entities';
 import {
   getNextMonomerInChain,
+  getPreviousMonomerInChain,
   getRnaBaseFromSugar,
   isMonomerConnectedToR2RnaBase,
   isRnaBaseOrAmbiguousRnaBase,
@@ -128,15 +129,15 @@ export class ChainsCollection {
       chainsCollection.add(new Chain(monomer, !!IsChainCycled.CYCLED));
     });
 
-    if (
-      firstMonomersInRegularChains.length === 0 &&
-      firstMonomersInCycledChains.length === 0
-    ) {
-      const topLeftMonomer = this.getMonomerWithLowerCoordsFromMonomerList(
-        filteredMonomers.filter((monomer) => !(monomer instanceof RNABase)),
-      );
+    const firstMonomersInMiddleOfChains =
+      this.getFirstMonomersInMiddleOfChains(filteredMonomers);
 
-      chainsCollection.add(new Chain(topLeftMonomer));
+    if (firstMonomersInMiddleOfChains.length) {
+      firstMonomersInMiddleOfChains.forEach(
+        (firstMonomerInMiddleOfChain: BaseMonomer) => {
+          chainsCollection.add(new Chain(firstMonomerInMiddleOfChain));
+        },
+      );
     }
 
     return chainsCollection;
@@ -182,6 +183,42 @@ export class ChainsCollection {
     );
 
     return firstMonomersInChains;
+  }
+
+  private static getFirstMonomersInMiddleOfChains(monomers: BaseMonomer[]) {
+    const initialMonomersSet = new Set(monomers);
+    const handledMonomers = new Set<BaseMonomer>();
+    const firstMonomersInMiddleOfChains: BaseMonomer[] = [];
+
+    monomers.forEach((monomer) => {
+      if (handledMonomers.has(monomer)) {
+        return;
+      }
+
+      handledMonomers.add(monomer);
+
+      let previousMonomerInChain = getPreviousMonomerInChain(monomer);
+
+      while (
+        previousMonomerInChain &&
+        !handledMonomers.has(previousMonomerInChain) &&
+        !initialMonomersSet.has(previousMonomerInChain)
+      ) {
+        const previousMonomer = getPreviousMonomerInChain(
+          previousMonomerInChain,
+        );
+
+        handledMonomers.add(previousMonomerInChain);
+
+        if (!previousMonomer) {
+          firstMonomersInMiddleOfChains.push(previousMonomerInChain);
+        } else {
+          previousMonomerInChain = previousMonomer;
+        }
+      }
+    });
+
+    return firstMonomersInMiddleOfChains;
   }
 
   public get firstNode() {

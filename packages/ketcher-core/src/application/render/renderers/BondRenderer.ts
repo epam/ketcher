@@ -374,6 +374,25 @@ export class BondRenderer extends BaseRenderer {
     this.move();
   }
 
+  private bondHoverablePath(attrs: Record<string, string>): void {
+    if (!this.rootElement) {
+      return;
+    }
+    const path = this.rootElement
+      .append('path')
+      .attr('d', this.pathShape)
+      .on('mouseover', () => {
+        this.appendHover();
+      })
+      .on('mouseout', () => {
+        this.removeHover();
+      });
+
+    Object.entries(attrs).forEach(([key, value]) => {
+      path.attr(key, value);
+    });
+  }
+
   show() {
     this.rootElement = this.appendRootElement();
     const editor = CoreEditor.provideEditorInstance();
@@ -479,29 +498,14 @@ export class BondRenderer extends BaseRenderer {
           M${secondLineStartPosition.x},${secondLineStartPosition.y}
           L${secondLineEndPosition.x},${secondLineEndPosition.y}
         `;
-      this.rootElement
-        .append('path')
-        .attr('d', this.pathShape)
-        .attr('stroke', 'black')
-        .attr('stroke-width', `${BOND_WIDTH * 10}px`)
-        .attr('opacity', '0')
-        .on('mouseover', () => {
-          this.appendHover();
-        })
-        .on('mouseout', () => {
-          this.removeHover();
-        });
-      this.rootElement
-        .append('path')
-        .attr('d', this.pathShape)
-        .attr('stroke', 'black')
-        .attr('stroke-width', `${BOND_WIDTH}px`)
-        .on('mouseover', () => {
-          this.appendHover();
-        })
-        .on('mouseout', () => {
-          this.removeHover();
-        });
+      this.bondHoverablePath({
+        stroke: 'transparent',
+        'stroke-width': `${BOND_WIDTH * 10}px`,
+      });
+      this.bondHoverablePath({
+        stroke: 'black',
+        'stroke-width': `${BOND_WIDTH}px`,
+      });
     } else if (this.bond.type === 1) {
       if (this.bond.stereo === 1) {
         let bondStartPosition = Coordinates.modelToCanvas(
@@ -639,30 +643,15 @@ export class BondRenderer extends BaseRenderer {
         );
 
         this.pathShape = `M${startPosition.x},${startPosition.y} L${endPosition.x},${endPosition.y}`;
-        this.rootElement
-          .append('path')
-          .attr('d', this.pathShape)
-          .attr('stroke', 'black')
-          .attr('stroke-width', `${BOND_WIDTH * 10}px`)
-          .attr('opacity', '0')
-          .on('mouseenter', () => {
-            this.appendHover();
-          })
-          .on('mouseleave', () => {
-            this.removeHover();
-          });
+        this.bondHoverablePath({
+          stroke: 'transparent',
+          'stroke-width': `${BOND_WIDTH * 10}px`,
+        });
 
-        this.rootElement
-          .append('path')
-          .attr('d', this.pathShape)
-          .attr('stroke', 'black')
-          .attr('stroke-width', `${BOND_WIDTH}px`)
-          .on('mouseenter', () => {
-            this.appendHover();
-          })
-          .on('mouseleave', () => {
-            this.removeHover();
-          });
+        this.bondHoverablePath({
+          stroke: 'black',
+          'stroke-width': `${BOND_WIDTH}px`,
+        });
       }
     }
   }

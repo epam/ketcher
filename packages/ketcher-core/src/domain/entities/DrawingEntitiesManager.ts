@@ -2617,7 +2617,7 @@ export class DrawingEntitiesManager {
 
   private get antisenseChainBasesMap() {
     return {
-      [RnaDnaNaturalAnaloguesEnum.ADENINE]: RnaDnaNaturalAnaloguesEnum.THYMINE,
+      [RnaDnaNaturalAnaloguesEnum.ADENINE]: RnaDnaNaturalAnaloguesEnum.URACIL,
       [RnaDnaNaturalAnaloguesEnum.CYTOSINE]: RnaDnaNaturalAnaloguesEnum.GUANINE,
       [RnaDnaNaturalAnaloguesEnum.GUANINE]: RnaDnaNaturalAnaloguesEnum.CYTOSINE,
       [RnaDnaNaturalAnaloguesEnum.THYMINE]: RnaDnaNaturalAnaloguesEnum.ADENINE,

@@ -181,18 +181,16 @@ const addToCanvas = ({
   if (isFlexMode) {
     editor.drawingEntitiesManager.recalculateAntisenseChains();
 
-    if (!editor.drawingEntitiesManager.hasAntisenseChains) {
-      return;
+    if (editor.drawingEntitiesManager.hasAntisenseChains) {
+      modelChanges.merge(
+        editor.drawingEntitiesManager.applySnakeLayout(
+          editor.canvas.width.baseVal.value,
+          true,
+          true,
+          true,
+        ),
+      );
     }
-
-    modelChanges.merge(
-      editor.drawingEntitiesManager.applySnakeLayout(
-        editor.canvas.width.baseVal.value,
-        true,
-        true,
-        true,
-      ),
-    );
   }
 
   editor.renderersContainer.update(modelChanges);

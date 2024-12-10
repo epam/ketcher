@@ -280,7 +280,7 @@ export class DrawingEntitiesManager {
     } else if (drawingEntity instanceof Bond) {
       return this.deleteBond(drawingEntity);
     } else if (drawingEntity instanceof Atom) {
-      return this.deleteAtom(drawingEntity);
+      return this.deleteAtom(drawingEntity, needToDeleteConnectedEntities);
     } else {
       return new Command();
     }
@@ -1784,6 +1784,7 @@ export class DrawingEntitiesManager {
       const bondAddCommand = targetDrawingEntitiesManager.addBond(
         newFirstAtom,
         newSecondAtom,
+        bond.bondIdInMicroMode,
         bond.type,
         bond.stereo,
       );
@@ -2182,13 +2183,7 @@ export class DrawingEntitiesManager {
         atomIdInMicroMode,
         label,
       ),
-      this.addAtomChangeModel.bind(
-        this,
-        position,
-        monomer,
-        atomIdInMicroMode,
-        label,
-      ),
+      this.deleteAtomChangeModel.bind(this),
     );
 
     command.addOperation(atomAddOperation);
@@ -2202,7 +2197,7 @@ export class DrawingEntitiesManager {
     return atom;
   }
 
-  private deleteAtom(atom: Atom) {
+  private deleteAtom(atom: Atom, needToDeleteConnectedEntities = true) {
     const command = new Command();
 
     command.addOperation(
@@ -2219,6 +2214,16 @@ export class DrawingEntitiesManager {
       ),
     );
 
+    if (needToDeleteConnectedEntities) {
+      atom.bonds.forEach((bond) => {
+        if (bond.selected) {
+          return;
+        }
+
+        command.merge(this.deleteBond(bond));
+      });
+    }
+
     return command;
   }
 
@@ -2227,6 +2232,7 @@ export class DrawingEntitiesManager {
     secondAtom: Atom,
     type: number,
     stereo: number,
+    bondIdInMicroMode: number,
     _bond?: Bond,
   ) {
     if (_bond) {
@@ -2235,7 +2241,13 @@ export class DrawingEntitiesManager {
       return _bond;
     }
 
-    const bond = new Bond(firstAtom, secondAtom, type, stereo);
+    const bond = new Bond(
+      firstAtom,
+      secondAtom,
+      bondIdInMicroMode,
+      type,
+      stereo,
+    );
 
     this.bonds.set(bond.id, bond);
     firstAtom.addBond(bond);
@@ -2249,11 +2261,20 @@ export class DrawingEntitiesManager {
     secondAtom: Atom,
     type: number,
     stereo: number,
+    bondIdInMicroMode: number,
   ) {
     const command = new Command();
     const bondAddOperation = new BondAddOperation(
-      this.addBondChangeModel.bind(this, firstAtom, secondAtom, type, stereo),
-      this.addBondChangeModel.bind(this, firstAtom, secondAtom, type, stereo),
+      (bond?: Bond) =>
+        this.addBondChangeModel(
+          firstAtom,
+          secondAtom,
+          type,
+          stereo,
+          bondIdInMicroMode,
+          bond,
+        ),
+      (bond: Bond) => this.deleteBondChangeModel(bond),
     );
 
     command.addOperation(bondAddOperation);
@@ -2274,13 +2295,15 @@ export class DrawingEntitiesManager {
       new BondDeleteOperation(
         bond,
         this.deleteBondChangeModel.bind(this, bond),
-        this.addBondChangeModel.bind(
-          this,
-          bond.firstAtom,
-          bond.secondAtom,
-          bond.type,
-          bond.stereo,
-        ),
+        (bond: Bond) =>
+          this.addBondChangeModel(
+            bond.firstAtom,
+            bond.secondAtom,
+            bond.bondIdInMicroMode,
+            bond.type,
+            bond.stereo,
+            bond,
+          ),
       ),
     );
 
@@ -2366,6 +2389,19 @@ export class DrawingEntitiesManager {
     command.addOperation(monomerAddToAtomBondOperation);
 
     return command;
+  }
+
+  public get monomersArray() {
+    return [...this.monomers.values()];
+  }
+
+  public get molecules() {
+    return this.monomersArray.filter((monomer) => {
+      return (
+        monomer.monomerItem.props.isMicromoleculeFragment &&
+        !isMonomerSgroupWithAttachmentPoints(monomer)
+      );
+    });
   }
 }
 function getFirstPosition(height: number, lastPosition: Vec2) {

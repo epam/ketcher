@@ -10,6 +10,7 @@ import {
   pasteFromClipboardAndAddToCanvas,
   selectTopPanelButton,
   TopPanelButton,
+  moveMouseAway,
 } from '@utils';
 import { clickOnFileFormatDropdown, getCml } from '@utils/formats';
 
@@ -76,6 +77,7 @@ test.describe('Reagents CML format', () => {
       page,
     );
     await saveFileAsCmlFormat(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

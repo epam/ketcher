@@ -19,12 +19,32 @@
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { Bond } from 'domain/entities/CoreBond';
+import { Bond as MicromoleculesBond } from 'domain/entities/bond';
+
+function addBondToMoleculeStruct(
+  bond: Bond,
+  bondInMoleculeStruct: MicromoleculesBond,
+) {
+  const moleculeStruct = bond.firstAtom.monomer.monomerItem.struct;
+
+  moleculeStruct.bonds.set(bond.bondIdInMicroMode, bondInMoleculeStruct);
+}
+
+function deleteBondFromMoleculeStruct(bond: Bond) {
+  const moleculeStruct = bond.firstAtom.monomer.monomerItem.struct;
+  const bondInMoleculeStruct = moleculeStruct.bonds.get(bond.bondIdInMicroMode);
+
+  moleculeStruct.bonds.delete(bond.bondIdInMicroMode);
+
+  return bondInMoleculeStruct;
+}
 
 export class BondAddOperation implements Operation {
   public bond: Bond;
+  private bondInMoleculeStruct?: MicromoleculesBond;
   constructor(
     public addBondChangeModel: (bond?: Bond) => Bond,
-    public deleteBondChangeModel: (bond?: Bond) => void,
+    public deleteBondChangeModel: (bond: Bond) => void,
   ) {
     this.bond = this.addBondChangeModel();
   }
@@ -32,6 +52,10 @@ export class BondAddOperation implements Operation {
   public execute(renderersManager: RenderersManager) {
     this.bond = this.addBondChangeModel(this.bond);
     renderersManager.addBond(this.bond);
+
+    if (this.bondInMoleculeStruct) {
+      addBondToMoleculeStruct(this.bond, this.bondInMoleculeStruct);
+    }
   }
 
   public invert(renderersManager: RenderersManager) {
@@ -39,23 +63,36 @@ export class BondAddOperation implements Operation {
       this.deleteBondChangeModel(this.bond);
       renderersManager.deleteBond(this.bond);
     }
+
+    this.bondInMoleculeStruct = deleteBondFromMoleculeStruct(this.bond);
   }
 }
 
 export class BondDeleteOperation implements Operation {
+  private bondInMoleculeStruct?: MicromoleculesBond;
+
   constructor(
     public bond: Bond,
-    public deleteBondChangeModel: (bond?: Bond) => void,
-    public addBondChangeModel: (bond?: Bond) => Bond,
+    public deleteBondChangeModel: (bond: Bond) => void,
+    public addBondChangeModel: (bond: Bond) => Bond,
   ) {}
 
   public execute(renderersManager: RenderersManager) {
     this.deleteBondChangeModel(this.bond);
     renderersManager.deleteBond(this.bond);
+
+    this.bondInMoleculeStruct = deleteBondFromMoleculeStruct(this.bond);
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert() {
     this.addBondChangeModel(this.bond);
+
+    if (this.bondInMoleculeStruct) {
+      addBondToMoleculeStruct(this.bond, this.bondInMoleculeStruct);
+    }
+  }
+
+  public invertAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.addBond(this.bond);
   }
 }

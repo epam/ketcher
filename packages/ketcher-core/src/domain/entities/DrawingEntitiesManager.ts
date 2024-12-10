@@ -18,6 +18,7 @@ import {
   RNABase,
   SGroupForest,
   Struct,
+  SubChainNode,
   Sugar,
 } from 'domain/entities';
 import {
@@ -2821,12 +2822,45 @@ export class DrawingEntitiesManager {
         );
       },
     );
+    const selectedPiecesInChains: SubChainNode[][] = [];
+
+    chainsForAntisenseCreation.forEach((chain) => {
+      let selectedPiece: SubChainNode[] = [];
+      let hasRnaInPiece = false;
+
+      chain.nodes.forEach((node) => {
+        const hasSelectedMonomerInNode = node.monomers.some(
+          (monomer) => monomer.selected,
+        );
+
+        if (!hasSelectedMonomerInNode) {
+          if (hasRnaInPiece) {
+            selectedPiecesInChains.push(selectedPiece);
+          }
+          selectedPiece = [];
+          hasRnaInPiece = false;
+        } else {
+          selectedPiece.push(node);
+        }
+
+        if (node instanceof Nucleoside || node instanceof Nucleotide) {
+          hasRnaInPiece = true;
+        }
+      });
+
+      if (hasRnaInPiece) {
+        selectedPiecesInChains.push(selectedPiece);
+      }
+
+      selectedPiece = [];
+      hasRnaInPiece = false;
+    });
 
     let lastAddedNode;
     let lastAddedMonomer;
 
-    chainsForAntisenseCreation.forEach((chain) => {
-      chain.forEachNode(({ node }) => {
+    selectedPiecesInChains.forEach((selectedPiece) => {
+      selectedPiece.forEach((node) => {
         if (!node.monomer.selected) {
           lastAddedMonomer = undefined;
           lastAddedNode = undefined;

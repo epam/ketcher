@@ -10,7 +10,6 @@ import {
   getKet,
   saveToFile,
   receiveFileComparisonData,
-  waitForRender,
   selectTopPanelButton,
   openFile,
   pressButton,
@@ -24,6 +23,7 @@ import {
   Sugars,
   selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
+  selectZoomOutTool,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { FileType, verifyFile2 } from '@utils/files/receiveFileComparisonData';
@@ -92,12 +92,7 @@ test.describe('Import-Saving .ket Files', () => {
     expect(ketFile).toEqual(ketFileExpected);
 
     const numberOfPressZoomOut = 6;
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out-button').click();
-      });
-    }
+    await selectZoomOutTool(page, numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -122,12 +117,7 @@ test.describe('Import-Saving .ket Files', () => {
     expect(ketFile).toEqual(ketFileExpected);
 
     const numberOfPressZoomOut = 7;
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out-button').click();
-      });
-    }
+    await selectZoomOutTool(page, numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

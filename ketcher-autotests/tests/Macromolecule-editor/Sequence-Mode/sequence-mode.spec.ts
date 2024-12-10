@@ -12,11 +12,12 @@ import {
   clickUndo,
   startNewSequence,
   moveMouseAway,
-  waitForRender,
   switchSequenceEnteringButtonType,
   SequenceType,
   clickInTheMiddleOfTheScreen,
   selectUndoByKeyboard,
+  selectZoomInTool,
+  selectZoomOutTool,
 } from '@utils';
 import {
   enterSequence,
@@ -445,21 +446,11 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < 3; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out-button').click();
-      });
-    }
+    await selectZoomOutTool(page, 3);
     await clickInTheMiddleOfTheScreen(page);
     await enterSequence(page, 'ac');
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < 2; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-in-button').click();
-      });
-    }
+    await selectZoomInTool(page, 2);
     await clickInTheMiddleOfTheScreen(page);
     await enterSequence(page, 'g');
     await page.keyboard.press('Escape');

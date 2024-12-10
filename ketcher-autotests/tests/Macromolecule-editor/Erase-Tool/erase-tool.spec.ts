@@ -14,7 +14,6 @@ import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   waitForPageInit,
-  waitForRender,
   Peptides as Peptides2,
   selectMonomer,
   clickOnTheCanvas,
@@ -23,6 +22,8 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectMacroBond,
+  selectZoomInTool,
+  selectZoomOutTool,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
@@ -331,21 +332,11 @@ test.describe('Erase Tool', () => {
       page,
     );
     await selectEraseTool(page);
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < 5; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-in-button').click();
-      });
-    }
+    await selectZoomInTool(page, 5);
     await clickInTheMiddleOfTheScreen(page);
     await page.getByText('Bal').locator('..').first().click();
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < 8; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out-button').click();
-      });
-    }
+    await selectZoomOutTool(page, 8);
     await clickInTheMiddleOfTheScreen(page);
     await page.getByText('D-2Nal').locator('..').first().click();
     await takeEditorScreenshot(page);

@@ -20,6 +20,9 @@ import {
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
+  selectZoomInTool,
+  selectZoomOutTool,
+  selectZoomReset,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
@@ -86,20 +89,10 @@ test.describe('Zoom Tool', () => {
       'KET/peptides-connected-with-bonds.ket',
       page,
     );
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < 10; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-in-button').click();
-      });
-    }
+    await selectZoomInTool(page, 10);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < 10; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out-button').click();
-      });
-    }
+    await selectZoomOutTool(page, 10);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -115,34 +108,15 @@ test.describe('Zoom Tool', () => {
       'KET/peptides-connected-with-bonds.ket',
       page,
     );
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < 8; i++) {
-      await waitForRender(
-        page,
-        async () => {
-          await page.getByTestId('zoom-out-button').click();
-        },
-        1,
-      );
-    }
+    await selectZoomOutTool(page, 10);
+
     await clickInTheMiddleOfTheScreen(page);
     let zoomValue = await page.getByTestId('zoom-selector').textContent();
     expect(zoomValue).toBe('20%');
     await takePageScreenshot(page);
 
-    await page.getByTestId('zoom-selector').click();
-    await waitForRender(page, async () => {
-      await page.getByTestId('reset-zoom-button').click();
-    });
-    for (let i = 0; i < 30; i++) {
-      await waitForRender(
-        page,
-        async () => {
-          await page.getByTestId('zoom-in-button').click();
-        },
-        1,
-      );
-    }
+    await selectZoomReset(page);
+    await selectZoomInTool(page, 30);
     await clickInTheMiddleOfTheScreen(page);
     zoomValue = await page.getByTestId('zoom-selector').textContent();
     expect(zoomValue).toBe('400%');
@@ -179,8 +153,7 @@ test.describe('Zoom Tool', () => {
       await ZoomOutByKeyboard(page);
     }
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-selector').click();
-    await page.getByTestId('reset-zoom-button').click();
+    await selectZoomReset(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

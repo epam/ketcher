@@ -12,10 +12,11 @@ import {
   clickUndo,
   selectRectangleSelectionTool,
   selectPartOfMolecules,
-  waitForRender,
   clickInTheMiddleOfTheScreen,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectZoomInTool,
+  selectZoomOutTool,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import {
@@ -236,20 +237,10 @@ test.describe('Sequence mode selection for view mode', () => {
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < 8; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out-button').click();
-      });
-    }
+    await selectZoomOutTool(page, 8);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < 5; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-in-button').click();
-      });
-    }
+    await selectZoomInTool(page, 5);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

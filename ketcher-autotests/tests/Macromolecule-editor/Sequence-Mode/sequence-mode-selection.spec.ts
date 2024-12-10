@@ -16,6 +16,7 @@ import {
   clickInTheMiddleOfTheScreen,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectZoomInTool,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import {
@@ -244,12 +245,7 @@ test.describe('Sequence mode selection for view mode', () => {
     }
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < 5; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-in-button').click();
-      });
-    }
+    await selectZoomInTool(page, 5);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

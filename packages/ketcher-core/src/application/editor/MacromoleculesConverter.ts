@@ -477,7 +477,7 @@ export class MacromoleculesConverter {
           );
         });
 
-        monomer.monomerItem.struct.bonds.forEach((bond) => {
+        monomer.monomerItem.struct.bonds.forEach((bond, bondId) => {
           const firstAtom = atomsMap.get(bond.begin);
           const secondAtom = atomsMap.get(bond.end);
 
@@ -491,6 +491,7 @@ export class MacromoleculesConverter {
               secondAtom,
               bond.type,
               bond.stereo,
+              bondId,
             ),
           );
         });

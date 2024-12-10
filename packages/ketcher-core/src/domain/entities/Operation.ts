@@ -15,4 +15,5 @@ export interface Operation {
   execute(renderersManager: RenderersManager): void;
   invert(renderersManager: RenderersManager): void;
   executeAfterAllOperations?(renderersManager: RenderersManager): void;
+  invertAfterAllOperations?(renderersManager: RenderersManager): void;
 }

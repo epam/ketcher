@@ -206,88 +206,94 @@ export class SequenceRenderer {
             return;
           }
 
-          if (!handledMonomersToAttachmentPoints.has(node.monomer)) {
-            handledMonomersToAttachmentPoints.set(node.monomer, new Set());
-          }
-          node.monomer.forEachBond((polymerBond, attachmentPointName) => {
-            const handledAttachmentPoints =
-              handledMonomersToAttachmentPoints.get(
-                node.monomer,
-              ) as Set<AttachmentPointName>;
+          node.monomers.forEach((monomer) => {
+            if (!handledMonomersToAttachmentPoints.has(monomer)) {
+              handledMonomersToAttachmentPoints.set(monomer, new Set());
+            }
 
-            if (polymerBond instanceof MonomerToAtomBond) {
-              const bondRenderer = new MonomerToAtomBondSequenceRenderer(
-                polymerBond,
-                node,
-              );
+            monomer.forEachBond((polymerBond, attachmentPointName) => {
+              const handledAttachmentPoints =
+                handledMonomersToAttachmentPoints.get(
+                  monomer,
+                ) as Set<AttachmentPointName>;
 
+              if (polymerBond instanceof MonomerToAtomBond) {
+                const bondRenderer = new MonomerToAtomBondSequenceRenderer(
+                  polymerBond,
+                  node,
+                );
+
+                bondRenderer.show();
+                polymerBond.setRenderer(bondRenderer);
+                handledAttachmentPoints.add(attachmentPointName);
+
+                return;
+              }
+
+              if (!subChain.bonds.includes(polymerBond)) {
+                subChain.bonds.push(polymerBond);
+              }
+              if (!polymerBond.isSideChainConnection) {
+                polymerBond.setRenderer(
+                  new BackBoneBondSequenceRenderer(polymerBond),
+                );
+                return;
+              }
+
+              if (handledAttachmentPoints.has(attachmentPointName)) {
+                return;
+              }
+
+              const anotherMonomer = polymerBond.getAnotherEntity(
+                monomer,
+              ) as BaseMonomer;
+
+              // Skip handling side chains for sugar(R3) + base(R1) connections.
+              if (
+                (monomer instanceof Sugar &&
+                  getRnaBaseFromSugar(monomer) === anotherMonomer) ||
+                (anotherMonomer instanceof Sugar &&
+                  getRnaBaseFromSugar(anotherMonomer) === monomer)
+              ) {
+                return;
+              }
+
+              let bondRenderer;
+
+              // If side connection comes from rna base then take connected sugar and draw side connection from it
+              // because for rna we display only one letter instead of three
+              const connectedSugarToBase = getSugarFromRnaBase(anotherMonomer);
+              if (
+                isRnaBaseOrAmbiguousRnaBase(anotherMonomer) &&
+                connectedSugarToBase
+              ) {
+                bondRenderer = new PolymerBondSequenceRenderer(
+                  new PolymerBond(monomer, connectedSugarToBase),
+                );
+              } else {
+                bondRenderer = new PolymerBondSequenceRenderer(polymerBond);
+              }
               bondRenderer.show();
               polymerBond.setRenderer(bondRenderer);
               handledAttachmentPoints.add(attachmentPointName);
 
-              return;
-            }
+              if (!handledMonomersToAttachmentPoints.get(anotherMonomer)) {
+                handledMonomersToAttachmentPoints.set(
+                  anotherMonomer,
+                  new Set(),
+                );
+              }
+              const anotherMonomerHandledAttachmentPoints =
+                handledMonomersToAttachmentPoints.get(
+                  anotherMonomer,
+                ) as Set<AttachmentPointName>;
 
-            if (!subChain.bonds.includes(polymerBond)) {
-              subChain.bonds.push(polymerBond);
-            }
-            if (!polymerBond.isSideChainConnection) {
-              polymerBond.setRenderer(
-                new BackBoneBondSequenceRenderer(polymerBond),
+              anotherMonomerHandledAttachmentPoints.add(
+                anotherMonomer?.getAttachmentPointByBond(
+                  polymerBond,
+                ) as AttachmentPointName,
               );
-              return;
-            }
-
-            if (handledAttachmentPoints.has(attachmentPointName)) {
-              return;
-            }
-
-            const anotherMonomer = polymerBond.getAnotherEntity(
-              node.monomer,
-            ) as BaseMonomer;
-
-            // Skip handling side chains for sugar(R3) + base(R1) connections.
-            if (
-              (node.monomer instanceof Sugar &&
-                getRnaBaseFromSugar(node.monomer) === anotherMonomer) ||
-              (anotherMonomer instanceof Sugar &&
-                getRnaBaseFromSugar(anotherMonomer) === node.monomer)
-            ) {
-              return;
-            }
-
-            let bondRenderer;
-
-            // If side connection comes from rna base then take connected sugar and draw side connection from it
-            // because for rna we display only one letter instead of three
-            const connectedSugarToBase = getSugarFromRnaBase(anotherMonomer);
-            if (
-              isRnaBaseOrAmbiguousRnaBase(anotherMonomer) &&
-              connectedSugarToBase
-            ) {
-              bondRenderer = new PolymerBondSequenceRenderer(
-                new PolymerBond(node.monomer, connectedSugarToBase),
-              );
-            } else {
-              bondRenderer = new PolymerBondSequenceRenderer(polymerBond);
-            }
-            bondRenderer.show();
-            polymerBond.setRenderer(bondRenderer);
-            handledAttachmentPoints.add(attachmentPointName);
-
-            if (!handledMonomersToAttachmentPoints.get(anotherMonomer)) {
-              handledMonomersToAttachmentPoints.set(anotherMonomer, new Set());
-            }
-            const anotherMonomerHandledAttachmentPoints =
-              handledMonomersToAttachmentPoints.get(
-                anotherMonomer,
-              ) as Set<AttachmentPointName>;
-
-            anotherMonomerHandledAttachmentPoints.add(
-              anotherMonomer?.getAttachmentPointByBond(
-                polymerBond,
-              ) as AttachmentPointName,
-            );
+            });
           });
         });
       });

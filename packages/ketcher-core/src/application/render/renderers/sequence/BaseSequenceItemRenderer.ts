@@ -92,6 +92,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     const rootElement = this.canvas
       .append('g')
       .data([this])
+      .attr('data-testid', 'sequence-item')
       .attr('transition', 'transform 0.2s')
       .attr(
         'transform',

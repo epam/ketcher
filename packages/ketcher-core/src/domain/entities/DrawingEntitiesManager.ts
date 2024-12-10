@@ -2795,6 +2795,12 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public get hasAntisenseChains() {
+    return [...this.monomers.values()].some(
+      (monomer) => monomer.monomerItem.isAntisense,
+    );
+  }
+
   private getAntisenseBaseLabel(rnaBase: RNABase | AmbiguousMonomer) {
     return this.antisenseChainBasesMap[
       rnaBase instanceof AmbiguousMonomer

@@ -9,7 +9,6 @@ import {
   selectRectangleArea,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
-  waitForRender,
   clickInTheMiddleOfTheScreen,
   selectZoomOutTool,
 } from '@utils';
@@ -62,12 +61,7 @@ test.describe('addFragment', () => {
       async () => await addFragment(page, fileContents),
     );
     const numberOfPressZoomOut = 6;
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out-button').click();
-      });
-    }
+    await selectZoomOutTool(page, numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await page.mouse.move(0, 0);
     await takeEditorScreenshot(page);

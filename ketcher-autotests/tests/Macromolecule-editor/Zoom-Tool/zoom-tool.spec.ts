@@ -3,13 +3,11 @@ import {
   addSingleMonomerToCanvas,
   selectRectangleArea,
   selectRectangleSelectionTool,
-  selectTool,
   takeEditorScreenshot,
   waitForPageInit,
   moveMouseToTheMiddleOfTheScreen,
   selectClearCanvasTool,
   clickInTheMiddleOfTheScreen,
-  MacromoleculesTopPanelButton,
   moveMouseAway,
   selectMacroBond,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -93,16 +91,11 @@ test.describe('Zoom Tool', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    // await page.getByTestId('zoom-selector').click();
-    // await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
     await selectZoomReset(page);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await page.getByTestId('zoom-selector').click();
-    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
-    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
     const zoomOutCount = 2;
     await selectZoomOutTool(page, zoomOutCount);
     await clickInTheMiddleOfTheScreen(page);
@@ -124,23 +117,20 @@ test.describe('Zoom Tool', () => {
   });
 
   test('Zoom In & Out attachment points with menu buttons', async () => {
-    await page.getByTestId('zoom-selector').click();
-    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
-    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    const zoomInCount = 2;
+    await selectZoomInTool(page, zoomInCount);
     await clickInTheMiddleOfTheScreen(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await peptide.hover();
     await takeEditorScreenshot(page);
 
-    await page.getByTestId('zoom-selector').click();
-    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
+    await selectZoomReset(page);
     await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
     await takeEditorScreenshot(page);
 
-    await page.getByTestId('zoom-selector').click();
-    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
-    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    const zoomOutCount = 2;
+    await selectZoomOutTool(page, zoomOutCount);
     await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
 
@@ -166,9 +156,8 @@ test.describe('Zoom Tool', () => {
 
   test('Zoom In & Out bond with menu buttons', async () => {
     const bondCoordinates = { x: 400, y: 400 };
-    await page.getByTestId('zoom-selector').click();
-    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
-    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    const zoomInCount = 2;
+    await selectZoomInTool(page, zoomInCount);
     await clickInTheMiddleOfTheScreen(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await peptide.hover();
@@ -176,17 +165,15 @@ test.describe('Zoom Tool', () => {
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
     await takeEditorScreenshot(page);
     await page.mouse.up();
-    await page.getByTestId('zoom-selector').click();
-    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
+    await selectZoomReset(page);
     await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
     await takeEditorScreenshot(page);
     await page.mouse.up();
-    await page.getByTestId('zoom-selector').click();
-    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
-    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    const zoomOutCount = 2;
+    await selectZoomOutTool(page, zoomOutCount);
     await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
     await page.mouse.down();
@@ -222,9 +209,8 @@ test.describe('Zoom Tool', () => {
   test('Zoom In & Out selection rectangle with menu buttons', async () => {
     const selectionStart = { x: 200, y: 200 };
     const selectionEnd = { x: 400, y: 400 };
-    await page.getByTestId('zoom-selector').click();
-    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
-    await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
+    const zoomInCount = 2;
+    await selectZoomInTool(page, zoomInCount);
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
     await selectRectangleArea(
@@ -236,8 +222,7 @@ test.describe('Zoom Tool', () => {
     );
     await takeEditorScreenshot(page);
 
-    await page.getByTestId('zoom-selector').click();
-    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
+    await selectZoomReset(page);
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleArea(
       page,
@@ -248,9 +233,8 @@ test.describe('Zoom Tool', () => {
     );
     await takeEditorScreenshot(page);
 
-    await page.getByTestId('zoom-selector').click();
-    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
-    await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
+    const zoomOutCount = 2;
+    await selectZoomOutTool(page, zoomOutCount);
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleArea(
       page,
@@ -328,16 +312,11 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     const numberOfZooms = 5;
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < numberOfZooms; i++) {
-      await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
-    }
+    await selectZoomInTool(page, numberOfZooms);
     await takeEditorScreenshot(page);
 
-    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
-    for (let i = 0; i < numberOfZooms; i++) {
-      await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
-    }
+    await selectZoomReset(page);
+    await selectZoomOutTool(page, numberOfZooms);
     await takeEditorScreenshot(page);
   });
 
@@ -366,16 +345,11 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     const numberOfZooms = 5;
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < numberOfZooms; i++) {
-      await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
-    }
+    await selectZoomInTool(page, numberOfZooms);
     await takeEditorScreenshot(page);
 
-    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
-    for (let i = 0; i < numberOfZooms; i++) {
-      await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
-    }
+    await selectZoomReset(page);
+    await selectZoomOutTool(page, numberOfZooms);
     await takeEditorScreenshot(page);
 
     // await page.getByTestId('zoom-selector').click();
@@ -407,16 +381,11 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     const numberOfZooms = 5;
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < numberOfZooms; i++) {
-      await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
-    }
+    await selectZoomInTool(page, numberOfZooms);
     await takeEditorScreenshot(page);
 
-    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
-    for (let i = 0; i < numberOfZooms; i++) {
-      await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
-    }
+    await selectZoomReset(page);
+    await selectZoomOutTool(page, numberOfZooms);
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Escape');
@@ -446,16 +415,11 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     const numberOfZooms = 5;
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < numberOfZooms; i++) {
-      await selectTool(MacromoleculesTopPanelButton.ZoomIn, page);
-    }
+    await selectZoomInTool(page, numberOfZooms);
     await takeEditorScreenshot(page);
 
-    await selectTool(MacromoleculesTopPanelButton.ZoomReset, page);
-    for (let i = 0; i < numberOfZooms; i++) {
-      await selectTool(MacromoleculesTopPanelButton.ZoomOut, page);
-    }
+    await selectZoomReset(page);
+    await selectZoomOutTool(page, numberOfZooms);
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Escape');

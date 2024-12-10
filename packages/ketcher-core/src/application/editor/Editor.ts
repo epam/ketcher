@@ -41,7 +41,12 @@ import assert from 'assert';
 import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
-import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import {
+  DrawingEntitiesManager,
+  MONOMER_START_X_POSITION,
+  MONOMER_START_Y_POSITION,
+  SNAKE_LAYOUT_CELL_WIDTH,
+} from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { KetSerializer } from 'domain/serializers';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
@@ -429,6 +434,7 @@ export class CoreEditor {
 
     this.renderersContainer.update(modelChanges);
     history.update(modelChanges);
+    this.scrollToTopLeftCorner();
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {
@@ -798,5 +804,18 @@ export class CoreEditor {
     const structureBbox = RenderersManager.getRenderedStructuresBbox();
 
     ZoomTool.instance.zoomStructureToFitHalfOfCanvas(structureBbox);
+  }
+
+  public scrollToTopLeftCorner() {
+    const drawnEntitiesBoundingBox =
+      RenderersManager.getRenderedStructuresBbox();
+
+    ZoomTool.instance.scrollTo(
+      new Vec2(drawnEntitiesBoundingBox.left, drawnEntitiesBoundingBox.top),
+      false,
+      MONOMER_START_X_POSITION - SNAKE_LAYOUT_CELL_WIDTH / 4,
+      MONOMER_START_Y_POSITION - SNAKE_LAYOUT_CELL_WIDTH / 4,
+      false,
+    );
   }
 }

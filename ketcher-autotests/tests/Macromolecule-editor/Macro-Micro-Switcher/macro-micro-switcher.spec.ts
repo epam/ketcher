@@ -70,6 +70,9 @@ import {
   clickOnCanvas,
   selectMacroBond,
   selectOpenTool,
+  selectZoomInTool,
+  selectZoomOutTool,
+  selectZoomReset,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -402,26 +405,14 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-in-button').click();
-      });
-    }
+    await selectZoomInTool(page, numberOfPressZoomIn);
     await clickInTheMiddleOfTheScreen(page);
 
     await takeEditorScreenshot(page);
-
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out-button').click();
-      });
-    }
+    await selectZoomOutTool(page, numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-selector').click();
-    await page.getByTestId('reset-zoom-button').click();
+    await selectZoomReset(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -445,8 +436,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await zoomWithMouseWheel(page, 250);
 
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-selector').click();
-    await page.getByTestId('reset-zoom-button').click();
+    await selectZoomOutTool(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -461,12 +451,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/three-monomers-connected-with-bonds.ket',
       page,
     );
-    await page.getByTestId('zoom-selector').click();
-    for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-in-button').click();
-      });
-    }
+    await selectZoomOutTool(page, numberOfPressZoomIn);
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
@@ -875,12 +860,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
       await openFileAndAddToCanvas('KET/all-type-of-atoms-and-bonds.ket', page);
       await turnOnMacromoleculesEditor(page);
-      await page.getByTestId('zoom-selector').click();
-      for (let i = 0; i < 3; i++) {
-        await waitForRender(page, async () => {
-          await page.getByTestId('zoom-out-button').click();
-        });
-      }
+      await selectZoomOutTool(page, 3);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -1497,9 +1477,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await selectEraseTool(page);
       await page.getByText(data.monomer).click();
       await takeEditorScreenshot(page);
-      await waitForRender(page, async () => {
-        await pressUndoButton(page);
-      });
+      await pressUndoButton(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -2467,6 +2445,7 @@ interface IMonomer {
   // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
   pageReloadNeeded?: boolean;
 }
+
 const expandableMonomers: IMonomer[] = [
   {
     monomerDescription: '1. Petide D (from library)',

@@ -1609,7 +1609,7 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/phosphate to sugar connected two sequences of presets (U) w_o base.ket',
     SequenceName:
       'phosphate to sugar connected two sequences of presets (U) w_o base',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -1631,7 +1631,7 @@ const twoSequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of bases (nC6n5U).ket',
     SequenceName: 'two sequences of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -1639,7 +1639,7 @@ const twoSequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of CHEMs (4aPEGMal).ket',
     SequenceName: 'two sequences of CHEMs (4aPEGMal)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -1661,14 +1661,14 @@ const twoSequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of phosphates (Test-6-Ph).ket',
     SequenceName: 'two sequences of phosphates (Test-6-Ph)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
     Id: 28,
     FileName: 'KET/Sequence-Mode-Replacement/two sequences of sugars (5A6).ket',
     SequenceName: 'two sequences of sugars (5A6)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {

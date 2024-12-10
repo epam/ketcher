@@ -12,6 +12,7 @@ export class Command {
 
   public merge(command: Command) {
     this.operations = [...this.operations, ...command.operations];
+    this.setUndoOperationByPriority = command.setUndoOperationByPriority;
   }
 
   public setUndoOperationReverse() {

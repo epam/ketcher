@@ -43,7 +43,6 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { KetSerializer } from 'domain/serializers';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { DOMSubscription } from 'subscription';
 import { initHotKeys, KetcherLogger, keyNorm } from 'utilities';
@@ -56,6 +55,7 @@ import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
+import { initializeMode, parseMonomersLibrary } from './helpers';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -115,7 +115,7 @@ export class CoreEditor {
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
-    this.mode = mode ?? new SequenceMode();
+    this.mode = initializeMode(mode);
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
@@ -145,19 +145,6 @@ export class CoreEditor {
     return editor;
   }
 
-  private parseMonomersLibrary(monomersDataRaw: string | JSON) {
-    const monomersLibraryParsedJson =
-      typeof monomersDataRaw === 'string'
-        ? JSON.parse(monomersDataRaw)
-        : monomersDataRaw;
-    const serializer = new KetSerializer();
-    const monomersLibrary = serializer.convertMonomersLibrary(
-      monomersLibraryParsedJson,
-    );
-
-    return { monomersLibraryParsedJson, monomersLibrary };
-  }
-
   private setMonomersLibrary(monomersDataRaw: string) {
     if (
       persistentMonomersLibrary.length !== 0 &&
@@ -169,7 +156,7 @@ export class CoreEditor {
     }
 
     const { monomersLibraryParsedJson, monomersLibrary } =
-      this.parseMonomersLibrary(monomersDataRaw);
+      parseMonomersLibrary(monomersDataRaw);
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
     persistentMonomersLibrary = monomersLibrary;
@@ -180,7 +167,7 @@ export class CoreEditor {
     const {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
-    } = this.parseMonomersLibrary(monomersDataRaw);
+    } = parseMonomersLibrary(monomersDataRaw);
 
     newMonomersLibraryChunk.forEach((newMonomer) => {
       const existingMonomerIndex = this._monomersLibrary.findIndex(
@@ -790,7 +777,8 @@ export class CoreEditor {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       window._ketcher_isAutozoomDisabled ||
-      !this.isCurrentModeWithAutozoom()
+      !this.isCurrentModeWithAutozoom() ||
+      !this.drawingEntitiesManager.hasMonomers
     ) {
       return;
     }

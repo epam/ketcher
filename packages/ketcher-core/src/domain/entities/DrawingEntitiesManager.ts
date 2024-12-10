@@ -166,6 +166,16 @@ export class DrawingEntitiesManager {
     return this.allEntities.length !== 0;
   }
 
+  public get hasMonomers() {
+    const monomers = [...this.monomers.values()].filter(
+      (monomer) =>
+        !monomer.monomerItem.props.isMicromoleculeFragment ||
+        isMonomerSgroupWithAttachmentPoints(monomer),
+    );
+
+    return monomers.length !== 0;
+  }
+
   public get allBondsToMonomers() {
     return [
       ...(this.polymerBonds as Map<number, PolymerBond>),

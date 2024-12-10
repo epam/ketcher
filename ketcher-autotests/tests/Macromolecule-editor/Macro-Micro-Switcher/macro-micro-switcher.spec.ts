@@ -894,12 +894,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await setAtomAndBondSettings(page);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
-      await page.getByTestId('zoom-selector').click();
-      for (let i = 0; i < 3; i++) {
-        await waitForRender(page, async () => {
-          await page.getByTestId('zoom-out-button').click();
-        });
-      }
+      await selectZoomOutTool(page, 3);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },

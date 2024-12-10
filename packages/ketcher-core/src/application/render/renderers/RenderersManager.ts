@@ -305,12 +305,16 @@ export class RenderersManager {
     monomer.renderer?.updateAttachmentPoints();
   }
 
-  public update(modelChanges?: Command) {
+  public reinitializeViewModel() {
     const editor = CoreEditor.provideEditorInstance();
     const viewModel = editor.viewModel;
 
-    modelChanges?.execute(this);
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
+  }
+
+  public update(modelChanges?: Command) {
+    this.reinitializeViewModel();
+    modelChanges?.execute(this);
     modelChanges?.executeAfterAllOperations(this);
 
     this.runPostRenderMethods();

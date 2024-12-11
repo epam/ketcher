@@ -396,7 +396,7 @@ export class BondRenderer extends BaseRenderer {
       .attr('stroke', 'transparent')
       .attr(
         'stroke-width',
-        `${Number(attrs['stroke-width']) * BOND_WIDTH_HOVER}`,
+        `${Number(attrs['stroke-width'] ?? BOND_WIDTH) * BOND_WIDTH_HOVER}`,
       );
     Object.entries(attrs).forEach(([key, value]) => {
       path.attr(key, value);

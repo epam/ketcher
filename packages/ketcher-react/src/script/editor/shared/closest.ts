@@ -482,7 +482,22 @@ function findClosestSGroup(restruct: ReStruct, pos: Vec2) {
   let minDist = SELECTION_DISTANCE_COEFFICIENT;
 
   restruct.molecule.sgroups.forEach((sg, sgid) => {
-    if (sg.isContracted() || sg.isSuperatomWithoutLabel) return;
+    if (sg.isSuperatomWithoutLabel) {
+      return;
+    }
+
+    if (sg.isContracted()) {
+      const sGroupPosition = sg.pp;
+      if (sGroupPosition) {
+        const dist = Vec2.dist(pos, sGroupPosition);
+        if (dist < minDist) {
+          ret = sgid;
+          minDist = dist;
+        }
+      }
+
+      return;
+    }
 
     const d = sg.bracketDirection;
     const n = d.rotateSC(1, 0);

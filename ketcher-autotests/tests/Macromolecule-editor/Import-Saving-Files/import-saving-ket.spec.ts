@@ -151,7 +151,7 @@ test.describe('Import-Saving .ket Files', () => {
   test('Validate that saving to .ket file of any monomer from our Library does not change after loading it back from .ket file to canvas', async () => {
     /*
     Test case: Import/Saving files #3827 #3757
-    Description: The monomer name is present in the preview after opening the saved file. 
+    Description: The monomer name is present in the preview after opening the saved file.
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
     await pageReload(page);
@@ -176,7 +176,7 @@ test.describe('Import-Saving .ket Files', () => {
   test('Check that after loading from a file and then pressing undo, it does not break the selection/moving functionality', async () => {
     /*
     Test case: Import/Saving files #3756
-    Description: After pressing Undo not break the selection/moving functionality. 
+    Description: After pressing Undo not break the selection/moving functionality.
     */
     await openFileAndAddToCanvasMacro(
       'KET/Peptide-Enumeration-One-Two-Three-connections3.ket',
@@ -199,7 +199,7 @@ test.describe('Import-Saving .ket Files', () => {
   test('Check that fields "class" and "classHELM" are presents into .ket file', async () => {
     /*
     Test case: Import/Saving files #3846
-    Description: Fields "class" and "classHELM" are presents into .ket file. 
+    Description: Fields "class" and "classHELM" are presents into .ket file.
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
     await pageReload(page);
@@ -224,7 +224,7 @@ test.describe('Import-Saving .ket Files', () => {
   test('Check .ket file that "leavingGroup" section contain information about number of atoms', async () => {
     /*
     Test case: Import/Saving files #4172
-    Description: "leavingGroup" section contain information about number of atoms. 
+    Description: "leavingGroup" section contain information about number of atoms.
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
     await pageReload(page);
@@ -932,8 +932,10 @@ test(`Verify that the structure in macro mode can be saved as a .ket file, and a
     'KET/Micro-Macro-Switcher/Complicated structures on the canvas-expected.ket';
 
   await openFileAndAddToCanvasAsNewProject(KETFile, page);
+  await moveMouseAway(page);
   await takeEditorScreenshot(page);
   await verifyFile2(page, KETFileExpected, FileType.KET);
   await openFileAndAddToCanvasAsNewProject(KETFileExpected, page);
+  await moveMouseAway(page);
   await takeEditorScreenshot(page);
 });

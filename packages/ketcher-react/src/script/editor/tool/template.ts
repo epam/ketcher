@@ -251,8 +251,9 @@ class TemplateTool implements Tool {
       });
 
       if (
-        // if point is functional group and it is not expanded
-        this.closestItem?.map === 'functionalGroups' &&
+        // if point is functional group/sgroup and it is not expanded
+        (this.closestItem?.map === 'functionalGroups' ||
+          this.closestItem?.map === 'sgroups') &&
         FunctionalGroup.isContractedFunctionalGroup(
           this.closestItem.id,
           this.functionalGroups,

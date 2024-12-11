@@ -11,7 +11,14 @@ import { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
 import { D3SvgElementSelection } from 'application/render/types';
 
+type MouseActionType = 'mouseover' | 'mouseenter';
+
 const BOND_WIDTH = 2;
+const BOND_WIDTH_HOVER = 10;
+const mouseEvents: Record<MouseActionType, { enter: string; leave: string }> = {
+  mouseover: { enter: 'mouseover', leave: 'mouseout' },
+  mouseenter: { enter: 'mouseenter', leave: 'mouseleave' },
+};
 
 export class BondRenderer extends BaseRenderer {
   private pathShape = '';
@@ -376,7 +383,7 @@ export class BondRenderer extends BaseRenderer {
 
   private createBondHoverablePath(
     attrs: Record<string, string>,
-    mouseAction: string,
+    mouseAction?: MouseActionType,
   ): void {
     if (!this.rootElement) {
       return;
@@ -386,24 +393,20 @@ export class BondRenderer extends BaseRenderer {
       .append('path')
       .attr('d', this.pathShape)
       .attr('stroke', 'transparent')
-      .attr('stroke-width', `${Number(attrs['stroke-width']) * 10}`);
+      .attr(
+        'stroke-width',
+        `${Number(attrs['stroke-width']) * BOND_WIDTH_HOVER}`,
+      );
     Object.entries(attrs).forEach(([key, value]) => {
       path.attr(key, value);
     });
-    if (mouseAction === 'mouseover') {
+    if (mouseAction) {
+      const events = mouseEvents[mouseAction];
       pathHover
-        .on('mouseover', () => {
+        .on(events.enter, () => {
           this.appendHover();
         })
-        .on('mouseout', () => {
-          this.removeHover();
-        });
-    } else if (mouseAction === 'mouseenter') {
-      pathHover
-        .on('mouseenter', () => {
-          this.appendHover();
-        })
-        .on('mouseleave', () => {
+        .on(events.leave, () => {
           this.removeHover();
         });
     }

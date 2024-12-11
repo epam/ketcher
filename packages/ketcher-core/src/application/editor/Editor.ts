@@ -8,8 +8,6 @@ import {
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
-  DEFAULT_LAYOUT_MODE,
-  HAS_CONTENT_LAYOUT_MODE,
   FlexMode,
   LayoutMode,
   modesMap,
@@ -45,7 +43,6 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { KetSerializer } from 'domain/serializers';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { DOMSubscription } from 'subscription';
 import { initHotKeys, KetcherLogger, keyNorm } from 'utilities';
@@ -58,6 +55,7 @@ import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
+import { initializeMode, parseMonomersLibrary } from './helpers';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -117,7 +115,7 @@ export class CoreEditor {
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
-    this.mode = this.initializeMode(mode);
+    this.mode = initializeMode(mode);
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
@@ -147,19 +145,6 @@ export class CoreEditor {
     return editor;
   }
 
-  private parseMonomersLibrary(monomersDataRaw: string | JSON) {
-    const monomersLibraryParsedJson =
-      typeof monomersDataRaw === 'string'
-        ? JSON.parse(monomersDataRaw)
-        : monomersDataRaw;
-    const serializer = new KetSerializer();
-    const monomersLibrary = serializer.convertMonomersLibrary(
-      monomersLibraryParsedJson,
-    );
-
-    return { monomersLibraryParsedJson, monomersLibrary };
-  }
-
   private setMonomersLibrary(monomersDataRaw: string) {
     if (
       persistentMonomersLibrary.length !== 0 &&
@@ -171,7 +156,7 @@ export class CoreEditor {
     }
 
     const { monomersLibraryParsedJson, monomersLibrary } =
-      this.parseMonomersLibrary(monomersDataRaw);
+      parseMonomersLibrary(monomersDataRaw);
     this._monomersLibrary = monomersLibrary;
     this._monomersLibraryParsedJson = monomersLibraryParsedJson;
     persistentMonomersLibrary = monomersLibrary;
@@ -182,7 +167,7 @@ export class CoreEditor {
     const {
       monomersLibraryParsedJson: newMonomersLibraryChunkParsedJson,
       monomersLibrary: newMonomersLibraryChunk,
-    } = this.parseMonomersLibrary(monomersDataRaw);
+    } = parseMonomersLibrary(monomersDataRaw);
 
     newMonomersLibraryChunk.forEach((newMonomer) => {
       const existingMonomerIndex = this._monomersLibrary.findIndex(
@@ -780,18 +765,6 @@ export class CoreEditor {
       this.drawingEntitiesManager.clearCanvas();
       this.drawingEntitiesManager.applyMonomersSequenceLayout();
     }
-  }
-
-  private initializeMode(mode?: BaseMode) {
-    if (mode) {
-      return mode;
-    }
-    const ketcher = ketcherProvider.getKetcher();
-    const isBlank = ketcher?.editor?.struct().isBlank();
-    if (isBlank) {
-      return new modesMap[DEFAULT_LAYOUT_MODE]();
-    }
-    return new modesMap[HAS_CONTENT_LAYOUT_MODE]();
   }
 
   public isCurrentModeWithAutozoom(): boolean {

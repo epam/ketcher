@@ -84,6 +84,7 @@ function deleteAtomFromMoleculeStruct(atom: Atom) {
 export class AtomAddOperation implements Operation {
   public atom: Atom;
   private deletedMoleculeStructItems?: DeletedMoleculeStructItems;
+  public priority = 2;
 
   constructor(
     public addAtomChangeModel: (atom?: Atom) => Atom,
@@ -92,9 +93,8 @@ export class AtomAddOperation implements Operation {
     this.atom = this.addAtomChangeModel();
   }
 
-  public execute(renderersManager: RenderersManager) {
+  public execute() {
     this.atom = this.addAtomChangeModel(this.atom);
-    renderersManager.addAtom(this.atom);
 
     if (this.deletedMoleculeStructItems) {
       addAtomToMoleculeStruct(
@@ -105,18 +105,26 @@ export class AtomAddOperation implements Operation {
     }
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert() {
     if (this.atom) {
       this.deleteAtomChangeModel(this.atom);
-      renderersManager.deleteAtom(this.atom);
     }
 
     this.deletedMoleculeStructItems = deleteAtomFromMoleculeStruct(this.atom);
+  }
+
+  public executeAfterAllOperations(renderersManager: RenderersManager) {
+    renderersManager.addAtom(this.atom);
+  }
+
+  public invertAfterAllOperations(renderersManager: RenderersManager) {
+    renderersManager.deleteAtom(this.atom);
   }
 }
 
 export class AtomDeleteOperation implements Operation {
   private deletedMoleculeStructItems?: DeletedMoleculeStructItems;
+  public priority = 2;
 
   constructor(
     public atom: Atom,
@@ -124,9 +132,8 @@ export class AtomDeleteOperation implements Operation {
     public addAtomChangeModel: (atom?: Atom) => Atom,
   ) {}
 
-  public execute(renderersManager: RenderersManager) {
+  public execute() {
     this.deleteAtomChangeModel();
-    renderersManager.deleteAtom(this.atom);
 
     this.deletedMoleculeStructItems = deleteAtomFromMoleculeStruct(this.atom);
   }
@@ -145,5 +152,9 @@ export class AtomDeleteOperation implements Operation {
 
   public invertAfterAllOperations(renderersManager: RenderersManager) {
     renderersManager.addAtom(this.atom);
+  }
+
+  public executeAfterAllOperations(renderersManager: RenderersManager) {
+    renderersManager.deleteAtom(this.atom);
   }
 }

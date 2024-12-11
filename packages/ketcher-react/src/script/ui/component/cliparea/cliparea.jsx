@@ -214,6 +214,7 @@ async function copy(data) {
 
     const clipboardItem = new ClipboardItem(clipboardItemData);
 
+    // Chrome: clipboardItem.presentationStyle is undefined
     if (
       clipboardItem.presentationStyle &&
       clipboardItem.presentationStyle === 'unspecified'
@@ -228,7 +229,7 @@ async function copy(data) {
     }
   } catch (e) {
     KetcherLogger.error('cliparea.jsx::copy', e);
-    console.info(`Could not write exact type ${data && data.toString()}`);
+    console.info(`Could not write exact type ${JSON.stringify(data)}`);
   }
 }
 

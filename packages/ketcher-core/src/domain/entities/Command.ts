@@ -42,6 +42,8 @@ export class Command {
     this.operations.forEach((operation) =>
       operation.execute(renderersManagers),
     );
+    renderersManagers.reinitializeViewModel();
+    this.executeAfterAllOperations(renderersManagers);
     renderersManagers.runPostRenderMethods();
   }
 

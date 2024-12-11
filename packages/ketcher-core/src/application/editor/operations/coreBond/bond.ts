@@ -42,6 +42,7 @@ function deleteBondFromMoleculeStruct(bond: Bond) {
 export class BondAddOperation implements Operation {
   public bond: Bond;
   private bondInMoleculeStruct?: MicromoleculesBond;
+  public priority = 1;
   constructor(
     public addBondChangeModel: (bond?: Bond) => Bond,
     public deleteBondChangeModel: (bond: Bond) => void,
@@ -49,27 +50,34 @@ export class BondAddOperation implements Operation {
     this.bond = this.addBondChangeModel();
   }
 
-  public execute(renderersManager: RenderersManager) {
+  public execute() {
     this.bond = this.addBondChangeModel(this.bond);
-    renderersManager.addBond(this.bond);
 
     if (this.bondInMoleculeStruct) {
       addBondToMoleculeStruct(this.bond, this.bondInMoleculeStruct);
     }
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert() {
     if (this.bond) {
       this.deleteBondChangeModel(this.bond);
-      renderersManager.deleteBond(this.bond);
     }
 
     this.bondInMoleculeStruct = deleteBondFromMoleculeStruct(this.bond);
+  }
+
+  public executeAfterAllOperations(renderersManager: RenderersManager) {
+    renderersManager.addBond(this.bond);
+  }
+
+  public invertAfterAllOperations(renderersManager: RenderersManager) {
+    renderersManager.deleteBond(this.bond);
   }
 }
 
 export class BondDeleteOperation implements Operation {
   private bondInMoleculeStruct?: MicromoleculesBond;
+  public priority = 1;
 
   constructor(
     public bond: Bond,
@@ -77,9 +85,8 @@ export class BondDeleteOperation implements Operation {
     public addBondChangeModel: (bond: Bond) => Bond,
   ) {}
 
-  public execute(renderersManager: RenderersManager) {
+  public execute() {
     this.deleteBondChangeModel(this.bond);
-    renderersManager.deleteBond(this.bond);
 
     this.bondInMoleculeStruct = deleteBondFromMoleculeStruct(this.bond);
   }
@@ -90,6 +97,10 @@ export class BondDeleteOperation implements Operation {
     if (this.bondInMoleculeStruct) {
       addBondToMoleculeStruct(this.bond, this.bondInMoleculeStruct);
     }
+  }
+
+  public executeAfterAllOperations(renderersManager: RenderersManager) {
+    renderersManager.deleteBond(this.bond);
   }
 
   public invertAfterAllOperations(renderersManager: RenderersManager) {

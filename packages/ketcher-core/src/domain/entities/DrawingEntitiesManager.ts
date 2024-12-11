@@ -1784,9 +1784,9 @@ export class DrawingEntitiesManager {
       const bondAddCommand = targetDrawingEntitiesManager.addBond(
         newFirstAtom,
         newSecondAtom,
-        bond.bondIdInMicroMode,
         bond.type,
         bond.stereo,
+        bond.bondIdInMicroMode,
       );
       const addedBond = bondAddCommand.operations[0].bond as Bond;
 
@@ -2222,6 +2222,12 @@ export class DrawingEntitiesManager {
 
         command.merge(this.deleteBond(bond));
       });
+
+      this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
+        if (monomerToAtomBond.atom === atom && !monomerToAtomBond.selected) {
+          command.merge(this.deleteMonomerToAtomBond(monomerToAtomBond));
+        }
+      });
     }
 
     return command;
@@ -2299,9 +2305,9 @@ export class DrawingEntitiesManager {
           this.addBondChangeModel(
             bond.firstAtom,
             bond.secondAtom,
-            bond.bondIdInMicroMode,
             bond.type,
             bond.stereo,
+            bond.bondIdInMicroMode,
             bond,
           ),
       ),

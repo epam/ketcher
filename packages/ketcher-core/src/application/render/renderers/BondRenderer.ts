@@ -15,6 +15,7 @@ type MouseActionType = 'mouseover' | 'mouseenter';
 
 const BOND_WIDTH = 2;
 const BOND_WIDTH_HOVER = 10;
+//  TODO need to figure out why we need two types of mouse hover actions
 const mouseEvents: Record<MouseActionType, { enter: string; leave: string }> = {
   mouseover: { enter: 'mouseover', leave: 'mouseout' },
   mouseenter: { enter: 'mouseenter', leave: 'mouseleave' },

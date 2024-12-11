@@ -315,8 +315,6 @@ export class RenderersManager {
   public update(modelChanges?: Command) {
     this.reinitializeViewModel();
     modelChanges?.execute(this);
-    modelChanges?.executeAfterAllOperations(this);
-
     this.runPostRenderMethods();
     notifyRenderComplete();
   }

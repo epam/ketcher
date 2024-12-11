@@ -34,6 +34,8 @@ export class Command {
     }
 
     operations.forEach((operation) => operation.invert(renderersManagers));
+    renderersManagers.reinitializeViewModel();
+    this.invertAfterAllOperations(renderersManagers, operations);
     renderersManagers.runPostRenderMethods();
   }
 
@@ -41,13 +43,29 @@ export class Command {
     this.operations.forEach((operation) =>
       operation.execute(renderersManagers),
     );
+    renderersManagers.reinitializeViewModel();
+    this.executeAfterAllOperations(renderersManagers);
     renderersManagers.runPostRenderMethods();
   }
 
-  public executeAfterAllOperations(renderersManagers: RenderersManager) {
-    this.operations.forEach((operation) => {
+  public executeAfterAllOperations(
+    renderersManagers: RenderersManager,
+    operations = this.operations,
+  ) {
+    operations.forEach((operation) => {
       if (operation.executeAfterAllOperations) {
         operation.executeAfterAllOperations(renderersManagers);
+      }
+    });
+  }
+
+  public invertAfterAllOperations(
+    renderersManagers: RenderersManager,
+    operations = this.operations,
+  ) {
+    operations.forEach((operation) => {
+      if (operation.invertAfterAllOperations) {
+        operation.invertAfterAllOperations(renderersManagers);
       }
     });
   }

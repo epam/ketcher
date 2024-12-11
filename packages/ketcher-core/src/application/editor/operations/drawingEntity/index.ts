@@ -36,15 +36,8 @@ export class DrawingEntityMoveOperation implements Operation {
       : this.moveDrawingEntityChangeModel();
   }
 
-  public invert(renderersManager: RenderersManager) {
+  public invert() {
     this.invertMoveDrawingEntityChangeModel();
-
-    if (this.drawingEntity instanceof BaseBond) {
-      renderersManager.redrawDrawingEntity(this.drawingEntity);
-    } else {
-      renderersManager.moveDrawingEntity(this.drawingEntity);
-    }
-
     this.wasInverted = true;
   }
 
@@ -53,6 +46,14 @@ export class DrawingEntityMoveOperation implements Operation {
     // they have two drawing modes: straight and curved.
     // During switching snake/flex layout modes and undo/redo
     // we need to redraw them to apply the correct drawing mode.
+    if (this.drawingEntity instanceof BaseBond) {
+      renderersManager.redrawDrawingEntity(this.drawingEntity);
+    } else {
+      renderersManager.moveDrawingEntity(this.drawingEntity);
+    }
+  }
+
+  public invertAfterAllOperations(renderersManager: RenderersManager) {
     if (this.drawingEntity instanceof BaseBond) {
       renderersManager.redrawDrawingEntity(this.drawingEntity);
     } else {

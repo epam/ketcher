@@ -11,6 +11,7 @@ export class Bond extends DrawingEntity {
   constructor(
     public firstAtom: Atom,
     public secondAtom: Atom,
+    public bondIdInMicroMode,
     public type = 1,
     public stereo = 0,
   ) {

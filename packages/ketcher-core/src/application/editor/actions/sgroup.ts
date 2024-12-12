@@ -243,6 +243,31 @@ export function setExpandMonomerSGroup(
   const handledAtoms = new Set<number>();
   const handledBonds = new Set<number>();
 
+  let expandedMonomersInLine = [...sGroupsToMove.values()].some((sGroupIds) => {
+    return sGroupIds.some((sGroupId) => {
+      const anotherSGroup = restruct.molecule.sgroups.get(sGroupId);
+      if (!anotherSGroup) {
+        return false;
+      }
+
+      const sGroupCenter = sGroup.isContracted() ? sGroup.getContractedPosition(
+        restruct.molecule,
+      ).position : sGroup.pp;
+      const anotherSGroupCenter = anotherSGroup.isContracted() ? anotherSGroup.getContractedPosition(
+        restruct.molecule,
+      ).position : anotherSGroup?.pp;
+      if (!anotherSGroupCenter || !sGroupCenter) {
+        return false;
+      }
+
+      const MOVE_THRESHOLD = 0.5;
+      const inOneLine = (anotherSGroupCenter.y < sGroupCenter.y + MOVE_THRESHOLD &&
+        anotherSGroupCenter.y > sGroupCenter.y - MOVE_THRESHOLD);
+
+      return inOneLine && anotherSGroup.isExpanded();
+    });
+  });
+
   sGroupsToMove.forEach((sGroupIds) => {
     if (sGroupsToMove.size === 1) {
       return;
@@ -284,7 +309,7 @@ export function setExpandMonomerSGroup(
           sGroupCenter.y + sGroupHeight / 2 + MOVE_THRESHOLD &&
         movableSGroupCenter.y >
           sGroupCenter.y - sGroupHeight / 2 - MOVE_THRESHOLD) :
-      true;
+      !expandedMonomersInLine;
 
 
       // Move horizontally if monomer is in wide area and not having any other connections (for RNAs/DNAs)

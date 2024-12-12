@@ -847,12 +847,7 @@ export class SequenceMode extends BaseMode {
           ),
         ],
         handler: (event) => {
-          if (
-            SequenceRenderer.chainsCollection.length === 1 &&
-            SequenceRenderer.chainsCollection.firstNode instanceof
-              EmptySequenceNode &&
-            !this.isEditMode
-          ) {
+          if (SequenceRenderer.isEmptyCanvas() && !this.isEditMode) {
             this.turnOnEditMode();
             SequenceRenderer.setCaretPosition(0);
           }
@@ -1393,6 +1388,7 @@ export class SequenceMode extends BaseMode {
     const history = new EditorHistory(editor);
     const modelChanges = new Command();
     const selections = SequenceRenderer.selections;
+    const wasCanvasEmptyBeforeInsertion = SequenceRenderer.isEmptyCanvas();
 
     if (selections.length > 0) {
       if (
@@ -1464,6 +1460,11 @@ export class SequenceMode extends BaseMode {
       editor.renderersContainer.update(modelChanges);
       SequenceRenderer.moveCaretForward();
       history.update(modelChanges);
+    }
+
+    if (wasCanvasEmptyBeforeInsertion) {
+      this.turnOnEditMode();
+      SequenceRenderer.moveCaretForward();
     }
   }
 

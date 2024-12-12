@@ -11,7 +11,6 @@ import {
   saveToFile,
   selectEraseTool,
   selectPartOfMolecules,
-  selectSingleBondTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   waitForPageInit,
@@ -21,7 +20,11 @@ import {
   clickOnTheCanvas,
   selectRectangleSelectionTool,
   Bases,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
+  selectMacroBond,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
@@ -82,7 +85,7 @@ test.describe('Erase Tool', () => {
     );
 
     // Select bond tool
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -197,7 +200,7 @@ test.describe('Erase Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectEraseTool(page);
     await takeEditorScreenshot(page);
   });
@@ -226,7 +229,7 @@ test.describe('Erase Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
   });
@@ -314,7 +317,7 @@ test.describe('Erase Tool', () => {
       page,
     );
     await selectEraseTool(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 

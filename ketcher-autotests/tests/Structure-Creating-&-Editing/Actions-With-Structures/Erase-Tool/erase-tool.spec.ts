@@ -1,18 +1,19 @@
 import { test, expect } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
-  TopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
   BondType,
-  selectAction,
   takeLeftToolbarScreenshot,
   clickOnAtom,
   clickOnBond,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 function checkElementExists(element: RxnPlus | RxnArrow, errorMsg: string) {
   if (!element) {
     throw new Error(errorMsg);
@@ -87,7 +88,7 @@ test.describe('Erase Tool', () => {
       y: plusElement.pp.y * scale + topBarHeight,
     };
 
-    await page.mouse.click(plusPnt.x, plusPnt.y);
+    await clickOnCanvas(page, plusPnt.x, plusPnt.y);
 
     const plusDeleted = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnPluses.size;
@@ -95,7 +96,7 @@ test.describe('Erase Tool', () => {
 
     expect(plusDeleted).toEqual(plusAfterDelete);
 
-    await selectAction(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
 
     const plusOnCanvas = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnPluses.size;
@@ -121,17 +122,17 @@ test.describe('Erase Tool', () => {
       y: (pnt1.y + pnt2.y) / halfDivider,
     };
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
 
-    await page.mouse.click(arrowMiddle.x, arrowMiddle.y);
+    await clickOnCanvas(page, arrowMiddle.x, arrowMiddle.y);
 
     const arrowDeleted = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnArrows.size;
     });
     expect(arrowDeleted).toEqual(arrowAfterDelete);
 
-    await selectAction(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
 
     const arrowOnCanvas = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnArrows.size;

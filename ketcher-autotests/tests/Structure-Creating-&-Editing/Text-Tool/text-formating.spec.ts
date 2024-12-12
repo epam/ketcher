@@ -15,9 +15,15 @@ import {
   cutAndPaste,
   waitForRender,
   receiveFileComparisonData,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getKet } from '@utils/formats';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 async function openFromFileViaTextBox(filename: string, page: Page) {
   const fileText = await readFileContents(filename);
@@ -36,12 +42,12 @@ async function applyTextFormat(
   buttonName: buttonType,
 ) {
   await page.getByRole('dialog').getByRole('textbox').fill(text);
-  await page.keyboard.press('Control+a');
+  await selectAllStructuresOnCanvas(page);
   await page.getByRole('button', { name: buttonName }).click();
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
   await page.getByText(text).dblclick();
-  await page.keyboard.press('Control+a');
+  await selectAllStructuresOnCanvas(page);
   await page.getByRole('button', { name: buttonName }).click();
   await page.getByRole('button', { name: buttonName }).click();
 }
@@ -56,13 +62,13 @@ test.describe('Text tools test cases', () => {
     // Verify if possible is changing font size on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST');
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByRole('button', { name: '13' }).click();
     await page.getByText('20', { exact: true }).click();
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
     await page.getByText('TEST').dblclick();
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByRole('button', { name: '20' }).click();
     await page.getByText('10', { exact: true }).click();
     await pressButton(page, 'Apply');
@@ -106,7 +112,7 @@ test.describe('Text tools test cases', () => {
     // Verify if possible to put different styles on the created text object
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST123');
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByRole('button', { name: '13' }).click();
     await page.getByText('25', { exact: true }).click();
     await page.getByRole('button', { name: 'bold' }).click();
@@ -115,7 +121,7 @@ test.describe('Text tools test cases', () => {
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
     await page.getByText('TEST123').dblclick();
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByRole('button', { name: 'subscript' }).click();
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
@@ -128,7 +134,7 @@ test.describe('Text tools test cases', () => {
     await page.getByRole('dialog').getByRole('textbox').fill('TEST321');
     await pressButton(page, 'Apply');
     await page.getByText('TEST321').dblclick();
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByRole('button', { name: '13' }).click();
     await page.getByText('20', { exact: true }).click();
     await page.getByRole('button', { name: 'bold' }).click();
@@ -159,7 +165,7 @@ test.describe('Text tools test cases', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await page.getByText('TEST321').dblclick();
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByRole('button', { name: 'italic' }).click();
     await waitForRender(page, async () => {
       await pressButton(page, 'Apply');
@@ -176,7 +182,7 @@ test.describe('Text tools test cases', () => {
     await page.getByRole('dialog').getByRole('textbox').fill('TEXT001');
     await pressButton(page, 'Apply');
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 
@@ -185,14 +191,14 @@ test.describe('Text tools test cases', () => {
   }) => {
     // Opening a file with created ealier text (task EPMLSOPKET-2272 ) and doing copy/paste action on it
     await openFileAndAddToCanvas('KET/two-text-objects.ket', page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await pressUndoButton(page);
+    await pressRedoButton(page);
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressUndoButton(page);
+      await pressRedoButton(page);
     });
     await takeEditorScreenshot(page);
   });
@@ -203,7 +209,7 @@ test.describe('Text tools test cases', () => {
     await openFileAndAddToCanvas('KET/text-object.ket', page);
     await page.getByText('TEXT').dblclick();
     await page.getByRole('dialog').getByRole('textbox').click();
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page
       .getByRole('dialog')
       .getByRole('textbox')
@@ -212,13 +218,13 @@ test.describe('Text tools test cases', () => {
       );
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page
       .getByText(
         'PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP',
       )
       .dblclick();
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await pressButton(page, 'Apply');
     await openFromFileViaTextBox('tests/test-data/Txt/longtext_test.txt', page);

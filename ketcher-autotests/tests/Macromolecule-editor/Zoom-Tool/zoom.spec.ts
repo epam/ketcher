@@ -9,14 +9,19 @@ import {
   clickInTheMiddleOfTheScreen,
   screenshotBetweenUndoRedoInMacro,
   moveMouseToTheMiddleOfTheScreen,
-  selectSingleBondTool,
   takePageScreenshot,
   moveMouseAway,
   openStructurePasteFromClipboard,
   dragMouseTo,
   clickOnMiddleOfCanvas,
   zoomWithMouseWheel,
+  clickOnCanvas,
+  selectMacroBond,
+  resetZoomLevelToDefault,
+  ZoomOutByKeyboard,
+  ZoomInByKeyboard,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
 import { Chems, Peptides } from '@utils/selectors/macromoleculeEditor';
@@ -171,9 +176,7 @@ test.describe('Zoom Tool', () => {
       page,
     );
     for (let i = 0; i < 10; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+-');
-      });
+      await ZoomOutByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     await page.getByTestId('zoom-selector').click();
@@ -194,12 +197,10 @@ test.describe('Zoom Tool', () => {
       page,
     );
     for (let i = 0; i < 10; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+0');
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page);
   });
 
@@ -216,15 +217,11 @@ test.describe('Zoom Tool', () => {
       page,
     );
     for (let i = 0; i < 10; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 10; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+-');
-      });
+      await ZoomOutByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -244,9 +241,7 @@ test.describe('Zoom Tool', () => {
       page,
     );
     for (let i = 0; i < 10; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
+      await ZoomInByKeyboard(page);
     }
     await page.keyboard.down('Shift');
     await page.mouse.wheel(wheelXDelta, 0);
@@ -291,10 +286,10 @@ test.describe('Zoom Tool', () => {
       }
     });
     for (let i = 0; i < 30; i++) {
-      await page.keyboard.press('Control+=');
+      await ZoomInByKeyboard(page);
     }
     for (let i = 0; i < 30; i++) {
-      await page.keyboard.press('Control+-');
+      await ZoomOutByKeyboard(page);
     }
   });
 
@@ -313,20 +308,16 @@ test.describe('Zoom Tool', () => {
     await page.getByTestId(Peptides.BetaAlanine).click();
     await clickInTheMiddleOfTheScreen(page);
     for (let i = 0; i < 3; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
+      await ZoomInByKeyboard(page);
     }
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     for (let i = 0; i < 5; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+-');
-      });
+      await ZoomOutByKeyboard(page);
     }
     await page.getByTestId('meD___N-Methyl-Aspartic acid').click();
-    await page.mouse.click(x1, y1);
+    await clickOnCanvas(page, x1, y1);
     await connectMonomersWithBonds(page, ['Edc', 'meD']);
     await takeEditorScreenshot(page);
   });
@@ -342,13 +333,11 @@ test.describe('Zoom Tool', () => {
     await page.getByTestId(Peptides.BetaAlanine).click();
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 5; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
+      await ZoomInByKeyboard(page);
     }
     await screenshotBetweenUndoRedoInMacro(page);
     await takeEditorScreenshot(page);
@@ -363,9 +352,7 @@ test.describe('Zoom Tool', () => {
     zoom level, preview of monomer entities under mouse cursor remains same as before zoom out.
     */
     for (let i = 0; i < 8; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+-');
-      });
+      await ZoomOutByKeyboard(page);
     }
     await page.getByTestId(Peptides.BetaAlanine).click();
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -397,12 +384,12 @@ test.describe('Zoom Tool', () => {
       await waitForRender(
         page,
         async () => {
-          await page.keyboard.press('Control+=');
+          await ZoomInByKeyboard(page);
         },
         1,
       );
     }
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('(R').locator('..').first().hover();
     await takeEditorScreenshot(page);
   });

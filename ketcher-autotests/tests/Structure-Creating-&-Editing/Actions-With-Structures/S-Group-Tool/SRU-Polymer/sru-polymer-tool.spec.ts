@@ -6,6 +6,7 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   clickOnBond,
+  clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
   LeftPanelButton,
@@ -16,9 +17,11 @@ import {
   RingButton,
   saveToFile,
   screenshotBetweenUndoRedo,
+  selectAllStructuresOnCanvas,
   selectAtomInToolbar,
   selectLeftPanelButton,
   selectRingButton,
+  selectUndoByKeyboard,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -105,7 +108,7 @@ test.describe('SRU Polymer tool', () => {
       Description: The brackets are rendered correctly around whole structure
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectSruPolymer(
       page,
@@ -136,7 +139,7 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Edit S-Group...').click();
     await selectRepeatPattern(page, SGroupRepeatPattern.HeadToHead);
     await takeEditorScreenshot(page);
@@ -151,7 +154,7 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Edit S-Group...').click();
     await selectRepeatPattern(page, SGroupRepeatPattern.EitherUnknown);
     await takeEditorScreenshot(page);
@@ -167,12 +170,12 @@ test.describe('SRU Polymer tool', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Edit S-Group...').click();
     await page.getByLabel('Polymer label').fill(polymerLabel);
     await selectRepeatPattern(page, SGroupRepeatPattern.EitherUnknown);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+z');
+    await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -212,7 +215,7 @@ test.describe('SRU Polymer tool', () => {
       Description: User is able to delete whole Chain with SRU polymer S-Group and undo/redo.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
     await takeEditorScreenshot(page);
 
@@ -262,7 +265,7 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
 
@@ -307,7 +310,7 @@ test.describe('SRU Polymer tool', () => {
       The test is currently not functioning correctly as the bug has not been fixed.
     */
     await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectSruPolymer(
       page,

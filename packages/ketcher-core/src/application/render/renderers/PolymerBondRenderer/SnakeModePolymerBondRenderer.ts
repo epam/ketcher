@@ -30,6 +30,8 @@ enum LineDirection {
 const LINE_FROM_MONOMER_LENGTH = 15;
 const VERTICAL_LINE_LENGTH = 21;
 const RNA_CHAIN_VERTICAL_LINE_LENGTH = 74;
+const RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH = 20;
+const RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH = 210;
 const CORNER_LENGTH = 4;
 const DOUBLE_CORNER_LENGTH = CORNER_LENGTH * 2;
 
@@ -223,7 +225,17 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     ) as Connection;
     const isVerticalConnection = firstCellConnection.isVertical;
     const isStraightVerticalConnection =
-      cells.length === 2 && isVerticalConnection;
+      (cells.length === 2 ||
+        cells.reduce(
+          (isStraight: boolean, cell: Cell, index: number): boolean => {
+            if (!isStraight || index === 0 || index === cells.length - 1) {
+              return isStraight;
+            }
+            return cell.x === firstCell.x && !cell.monomer;
+          },
+          true,
+        )) &&
+      isVerticalConnection;
     const isFirstMonomerOfBondInFirstCell = firstCell.node?.monomers.includes(
       this.polymerBond.firstMonomer,
     );
@@ -420,8 +432,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     // check if there is nucleotide in current row
     const isBondConnectedWithNucleotide =
       this.polymerBond.firstMonomer.isMonomerInRnaChainRow;
-
-    const verticalLineLength = isBondConnectedWithNucleotide
+    const verticalLineLength = this.polymerBond.firstMonomer.monomerItem
+      .isAntisense
+      ? RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH
+      : this.polymerBond.firstMonomer.monomerItem.isSense &&
+        (this.polymerBond.restOfRowsWithAntisense || 0) > 0
+      ? RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH
+      : isBondConnectedWithNucleotide
       ? RNA_CHAIN_VERTICAL_LINE_LENGTH
       : VERTICAL_LINE_LENGTH + 5;
 
@@ -492,7 +509,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       }
       this.addLine(
         LineDirection.Horizontal,
-        LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
+        LINE_FROM_MONOMER_LENGTH -
+          (this.polymerBond.firstMonomer.monomerItem.isAntisense ? 10 : 0) +
+          this.getMonomerWidth() / 2,
         startPosition,
       );
       this.addLineFromLeftToBottom();
@@ -715,7 +734,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('y1', this.scaledPosition.startPosition.y)
       .attr('x2', this.scaledPosition.endPosition.x)
       .attr('y2', this.scaledPosition.endPosition.y)
-      .attr('pointer-events', 'stroke');
+      .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none');
 
     return this.bodyElement;
   }
@@ -736,10 +755,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         this.editorEvents.mouseLeavePolymerBond.dispatch(event);
         this.editorEvents.mouseLeaveDrawingEntity.dispatch(event);
       })
-      .attr('pointer-events', 'stroke') as never as D3SvgElementSelection<
-      SVGGElement,
-      void
-    >;
+      .attr(
+        'pointer-events',
+        this.polymerBond.finished ? 'stroke' : 'none',
+      ) as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
   public show(_theme?: unknown, force = false): void {

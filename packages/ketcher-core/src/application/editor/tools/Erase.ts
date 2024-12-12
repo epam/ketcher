@@ -30,6 +30,9 @@ class EraserTool implements BaseTool {
     ) {
       const modelChanges =
         this.editor.drawingEntitiesManager.deleteSelectedEntities();
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
+      );
       this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
     }
@@ -47,6 +50,9 @@ class EraserTool implements BaseTool {
         this.editor.drawingEntitiesManager.deleteDrawingEntity(
           selectedItemRenderer.drawingEntity,
         );
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
+      );
       this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
     }

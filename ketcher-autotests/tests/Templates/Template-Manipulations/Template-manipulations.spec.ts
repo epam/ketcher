@@ -47,11 +47,17 @@ import {
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
-  waitForRender,
   selectRingButton,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
+  selectUndoByKeyboard,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn } from '@utils/formats';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -146,7 +152,7 @@ test.describe('Template Manupulations', () => {
     await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     const { x: rotationHandleX, y: rotationHandleY } =
       await getRotationHandleCoordinates(page);
     await dragMouseTo(rotationHandleX, rotationHandleY, page);
@@ -185,10 +191,10 @@ test.describe('Template Manupulations', () => {
       await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
       await page.getByTestId('canvas').getByText('F').first().click();
       await takeEditorScreenshot(page);
-      await page.keyboard.press('Control+a');
-      await page.keyboard.press('Control+a');
+      await selectAllStructuresOnCanvas(page);
+      await selectAllStructuresOnCanvas(page);
       await cutToClipboardByKeyboard(page);
-      await page.keyboard.press('Control+z');
+      await selectUndoByKeyboard(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -290,12 +296,12 @@ test.describe('Template Manupulations', () => {
     await clickOnAtom(page, 'C', anyAnotherAtom);
     const numberOfPressingUndo = 2;
     for (let i = 0; i < numberOfPressingUndo; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     const numberOfPressingRedo = 2;
     for (let i = 0; i < numberOfPressingRedo; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -311,7 +317,7 @@ test.describe('Template Manupulations', () => {
     await drawBenzeneRing(page);
     await selectAtomInToolbar(AtomButton.Fluorine, page);
     await clickOnAtom(page, 'C', anyAtom);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Vertical Flip (Alt+V)');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Horizontal Flip (Alt+H)');
@@ -507,7 +513,7 @@ test.describe('Template Manupulations', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(nitrogenCoordinates.x, nitrogenCoordinates.y);
+    await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y);
     await takeEditorScreenshot(page);
   });
 });
@@ -638,9 +644,7 @@ test.describe('Open Ketcher', () => {
       await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
       await takePageScreenshot(page);
 
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+a');
-      });
+      await selectAllStructuresOnCanvas(page);
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
       await clickOnTheCanvas(page, xOffsetFromCenter, 0);
@@ -671,7 +675,7 @@ test.describe('Open Ketcher', () => {
     await page.getByTestId('select-rectangle').click();
     await takePageScreenshot(page);
     await page.getByTestId('select-rectangle').click();
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
     await moveMouseToTheMiddleOfTheScreen(page);

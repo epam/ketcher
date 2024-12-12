@@ -21,6 +21,11 @@ import {
   waitForKetcherInit,
   hideLibrary,
   showLibrary,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
+  resetZoomLevelToDefault,
+  ZoomOutByKeyboard,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -54,7 +59,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
-  await page.keyboard.press('Control+0');
+  await resetZoomLevelToDefault(page);
   await selectClearCanvasTool(page);
 });
 
@@ -255,7 +260,7 @@ test.describe('Side chain connections', () => {
     );
     await moveMouseAway(page);
     // Zoom out to see whole picture
-    await page.keyboard.press('Control+Minus');
+    await ZoomOutByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -266,7 +271,7 @@ test.describe('Side chain connections', () => {
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected by all possible combinations. 
     */
-
+    await pageReload(page);
     await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
     await hideLibrary(page);
@@ -567,7 +572,7 @@ test.describe('Side chain connections', () => {
       );
       await moveMouseAway(page);
       // Zoom out to see bottom chians
-      await page.keyboard.press('Control+Minus');
+      await ZoomOutByKeyboard(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -766,8 +771,8 @@ test.describe('Side chain connections', () => {
         page,
       );
       await moveMouseAway(page);
-      // Zoom out to see bottom chians
-      await page.keyboard.press('Control+Minus');
+      // Zoom out to see bottom chains
+      await ZoomOutByKeyboard(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -1100,13 +1105,9 @@ test.describe('Side chain connections', () => {
     );
     await takeEditorScreenshot(page);
 
-    await page.keyboard.press('Control+a');
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+c');
-    });
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Control+v');
-    });
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

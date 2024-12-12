@@ -11,9 +11,6 @@ import {
   saveToFile,
   pressButton,
   resetCurrentTool,
-  getControlModifier,
-  TopPanelButton,
-  selectTopPanelButton,
   selectBond,
   BondTypeName,
   selectLeftPanelButton,
@@ -26,6 +23,8 @@ import {
   waitForRender,
   waitForAtomPropsModal,
   drawBenzeneRing,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getMolfile, getRxn } from '@utils/formats';
 import {
@@ -53,6 +52,10 @@ import {
   selectRingSizeOption,
   selectConnectivityOption,
 } from './utils';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -266,8 +269,7 @@ test.describe('Atom Properties', () => {
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
-    const modifier = getControlModifier();
-    await page.keyboard.press(`${modifier}+KeyA`);
+    await selectAllStructuresOnCanvas(page);
 
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await takeEditorScreenshot(page);
@@ -1102,12 +1104,12 @@ test.describe('Atom Properties', () => {
     await selectRingBondCount(page, '3', 'Apply');
 
     for (let i = 0; i < numberOfPress; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < numberOfPress; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -1451,7 +1453,7 @@ test.describe('Atom Properties', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
 

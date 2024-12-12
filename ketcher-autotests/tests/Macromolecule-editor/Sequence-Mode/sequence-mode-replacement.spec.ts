@@ -13,7 +13,6 @@ import {
   openFileAndAddToCanvasMacro,
   selectSequenceLayoutModeTool,
   receiveFileComparisonData,
-  moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   getMolfile,
   getSequence,
@@ -21,6 +20,10 @@ import {
   getFasta,
   getKet,
   saveToFile,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  clickOnCanvas,
+  resetZoomLevelToDefault,
 } from '@utils';
 
 import {
@@ -76,9 +79,9 @@ test.beforeAll(async ({ browser }) => {
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
-  await page.keyboard.press('Control+0');
+  await resetZoomLevelToDefault(page);
   await selectClearCanvasTool(page);
-  await page.keyboard.press('Control+0');
+  await resetZoomLevelToDefault(page);
 });
 
 test.afterAll(async ({ browser }) => {
@@ -229,55 +232,55 @@ const sequences: ISequence[] = [
     Id: 1,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of peptides (A).ket',
     SequenceName: 'sequence of peptides (A)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 2,
     FileName:
       'KET/Sequence-Mode-Replacement/sequence of peptides w_o natural analog (4Abz).ket',
     SequenceName: 'sequence of peptides w/o natural analog (4Abz)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 3,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
     SequenceName: 'sequence of presets (A)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 4,
     FileName:
       'KET/Sequence-Mode-Replacement/sequence of presets without phosphate (SGNA(U)).ket',
     SequenceName: 'sequence of presets without phosphate (SGNA(U))',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 5,
     FileName:
       'KET/Sequence-Mode-Replacement/sequence of presets without base (SGNA()ibun).ket',
     SequenceName: 'sequence of presets without base (SGNA()ibun)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
     Id: 6,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of sugars (UNA).ket',
     SequenceName: 'sequence of sugars (UNA)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
     Id: 7,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
     SequenceName: 'sequence of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
     Id: 8,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of phosphates (moen).ket',
     SequenceName: 'sequence of phosphates (moen)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -285,7 +288,7 @@ const sequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/sequence of unsplit nucleotides (2-Amino-dA).ket',
     SequenceName: 'sequence of unsplit nucleotides (2-Amino-dA)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 10,
@@ -293,13 +296,13 @@ const sequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/sequence of unsplit nucleotides w_o natural analog (5NitInd).ket',
     SequenceName:
       'sequence of unsplit nucleotides w/o natural analog (5NitInd)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 11,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of CHEMs (A6OH).ket',
     SequenceName: 'sequence of CHEMs (A6OH)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -307,7 +310,7 @@ const sequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/sequence of unresolved nucleotide (5Unres).ket',
     SequenceName: 'sequence of unresolved nucleotide (5Unres)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
 ];
 
@@ -561,20 +564,20 @@ async function createTestPresets(page: Page) {
   await pressNewPresetButton(page);
   await selectSugarSlot(page);
   await page.getByTestId('R___Ribose').click();
-  await moveMouseAway(page);
+
   await selectPhosphateSlot(page);
   await page.getByTestId('P___Phosphate').click();
-  await moveMouseAway(page);
+
   await pressAddToPresetsButton(page);
 
   // Create preset without phosphate
   await pressNewPresetButton(page);
   await selectSugarSlot(page);
   await page.getByTestId('R___Ribose').click();
-  await moveMouseAway(page);
+
   await selectBaseSlot(page);
   await page.getByTestId('A___Adenine').click();
-  await moveMouseAway(page);
+
   await pressAddToPresetsButton(page);
 
   // Create preset 25mo3r(nC6n5C)Test-6-Ph
@@ -583,13 +586,13 @@ async function createTestPresets(page: Page) {
   await page
     .getByTestId('25mo3r___3-O-Methylribose (2,5 connectivity)')
     .click();
-  await moveMouseAway(page);
+
   await selectBaseSlot(page);
   await page.getByTestId('nC6n5C___Amino-Modier C6 dC').click();
-  await moveMouseAway(page);
+
   await selectPhosphateSlot(page);
   await page.getByTestId('Test-6-Ph___Test-6-AP-Phosphate').click();
-  await moveMouseAway(page);
+
   await pressAddToPresetsButton(page);
 
   // Create preset 25mo3r(nC6n5C)
@@ -598,10 +601,10 @@ async function createTestPresets(page: Page) {
   await page
     .getByTestId('25mo3r___3-O-Methylribose (2,5 connectivity)')
     .click();
-  await moveMouseAway(page);
+
   await selectBaseSlot(page);
   await page.getByTestId('nC6n5C___Amino-Modier C6 dC').click();
-  await moveMouseAway(page);
+
   await pressAddToPresetsButton(page);
 
   // Create preset 25mo3r()Test-6-Ph
@@ -610,10 +613,10 @@ async function createTestPresets(page: Page) {
   await page
     .getByTestId('25mo3r___3-O-Methylribose (2,5 connectivity)')
     .click();
-  await moveMouseAway(page);
+
   await selectPhosphateSlot(page);
   await page.getByTestId('Test-6-Ph___Test-6-AP-Phosphate').click();
-  await moveMouseAway(page);
+
   await pressAddToPresetsButton(page);
 }
 
@@ -667,7 +670,6 @@ async function selectAndReplaceSymbol(
   if (sequence.ConfirmationOnReplecement) {
     await pressYesInConfirmYourActionDialog(page);
   }
-  await moveMouseAway(page);
 }
 
 async function selectAndReplaceSymbolWithError(
@@ -678,7 +680,6 @@ async function selectAndReplaceSymbolWithError(
   await selectSequenceLayoutModeTool(page);
   await clickOnSequenceSymbolByIndex(page, replacementPosition);
   await clickOnMonomerFromLibrary(page, replaceMonomer);
-  await moveMouseAway(page);
 }
 
 async function selectAndReplaceAllSymbols(
@@ -707,7 +708,6 @@ async function selectAndReplaceAllSymbols(
   if (sequence.ConfirmationOnReplecement) {
     await pressYesInConfirmYourActionDialog(page);
   }
-  await moveMouseAway(page);
 }
 
 async function selectAllSymbols(page: Page, sequence: ISequence) {
@@ -727,7 +727,6 @@ async function selectAllSymbols(page: Page, sequence: ISequence) {
     sequence.ReplacementPositions.RightEnd,
   );
   await page.keyboard.up('Shift');
-  await moveMouseAway(page);
 }
 
 async function selectAndReplaceAllSymbolsWithError(
@@ -738,8 +737,6 @@ async function selectAndReplaceAllSymbolsWithError(
   await selectSequenceLayoutModeTool(page);
   await selectAllSymbols(page, sequence);
   await clickOnMonomerFromLibrary(page, replaceMonomer);
-
-  await moveMouseAway(page);
 }
 
 async function selectAndReplaceAllSymbolsInEditMode(
@@ -768,7 +765,6 @@ async function selectAndReplaceAllSymbolsInEditMode(
   if (sequence.ConfirmationOnReplecement) {
     await pressYesInConfirmYourActionDialog(page);
   }
-  await moveMouseAway(page);
 }
 
 async function selectAndReplaceAllSymbolsInEditModeWithError(
@@ -794,7 +790,6 @@ async function selectAndReplaceAllSymbolsInEditModeWithError(
   await page.keyboard.up('Shift');
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
-  await moveMouseAway(page);
 }
 
 async function selectAndReplaceSymbolInEditMode(
@@ -810,7 +805,7 @@ async function selectAndReplaceSymbolInEditMode(
     await pressYesInConfirmYourActionDialog(page);
   }
   await moveMouseToTheMiddleOfTheScreen(page);
-  await page.mouse.click(400, 400);
+  await clickOnCanvas(page, 400, 400);
 }
 
 async function selectAndReplaceSymbolInEditModeWithError(
@@ -821,7 +816,6 @@ async function selectAndReplaceSymbolInEditModeWithError(
   await selectSequenceLayoutModeTool(page);
   await doubleClickOnSequenceSymbolByIndex(page, replacementPosition);
   await clickOnMonomerFromLibrary(page, replaceMonomer);
-  await moveMouseAway(page);
 }
 
 function addAnnotation(message: string) {
@@ -893,10 +887,10 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.LeftEnd,
       );
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -931,10 +925,10 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.Center,
       );
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -969,10 +963,10 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.RightEnd,
       );
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1007,10 +1001,9 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.LeftEnd,
       );
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1045,10 +1038,11 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.Center,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1083,10 +1077,11 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.RightEnd,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1414,10 +1409,11 @@ for (const replaceMonomer of replaceMonomers) {
       */
       await openFileAndAddToCanvasMacro(sequence.FileName, page);
       await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1451,10 +1447,11 @@ for (const replaceMonomer of replaceMonomers) {
         replaceMonomer,
         sequence,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1558,14 +1555,14 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/base to base connected two sequences of presets (U) w_o phosphates.ket',
     SequenceName:
       'base to base connected two sequences of presets (U) w_o phosphates',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 14,
     FileName:
       'KET/Sequence-Mode-Replacement/base to base connected two sequences of presets (U).ket',
     SequenceName: 'base to base connected two sequences of presets (U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 15,
@@ -1573,21 +1570,21 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/base to sugar connected two sequences of presets (U) w_o phosphate.ket',
     SequenceName:
       'base to sugar connected two sequences of presets (U) w_o phosphate',
-    ReplacementPositions: { LeftEnd: 3, Center: 4, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 16,
     FileName:
       'KET/Sequence-Mode-Replacement/base to sugar connected two sequences of presets (U).ket',
     SequenceName: 'base to sugar connected two sequences of presets (U)',
-    ReplacementPositions: { LeftEnd: 3, Center: 4, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 17,
     FileName:
       'KET/Sequence-Mode-Replacement/phosphate to base connected two sequences of presets (U).ket',
     SequenceName: 'phosphate to base connected two sequences of presets (U)',
-    ReplacementPositions: { LeftEnd: 2, Center: 3, RightEnd: 4 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 18,
@@ -1595,7 +1592,7 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/phosphate to phosphate connected two sequences of presets (U) w_o base.ket',
     SequenceName:
       'phosphate to phosphate connected two sequences of presets (U) w_o base',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -1604,7 +1601,7 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/phosphate to phosphate connected two sequences of presets (U).ket',
     SequenceName:
       'phosphate to phosphate connected two sequences of presets (U)',
-    ReplacementPositions: { LeftEnd: 2, Center: 3, RightEnd: 4 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 20,
@@ -1612,7 +1609,7 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/phosphate to sugar connected two sequences of presets (U) w_o base.ket',
     SequenceName:
       'phosphate to sugar connected two sequences of presets (U) w_o base',
-    ReplacementPositions: { LeftEnd: 2, Center: 4, RightEnd: 6 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -1620,21 +1617,21 @@ const twoSequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/phosphate to sugar connected two sequences of presets (U).ket',
     SequenceName: 'phosphate to sugar connected two sequences of presets (U)',
-    ReplacementPositions: { LeftEnd: 3, Center: 4, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 22,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequence of unsplit nucleotides (AmMC6T).ket',
     SequenceName: 'two sequence of unsplit nucleotides (AmMC6T)',
-    ReplacementPositions: { LeftEnd: 4, Center: 5, RightEnd: 6 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 23,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of bases (nC6n5U).ket',
     SequenceName: 'two sequences of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 6, Center: 8, RightEnd: 10 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -1642,7 +1639,7 @@ const twoSequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of CHEMs (4aPEGMal).ket',
     SequenceName: 'two sequences of CHEMs (4aPEGMal)',
-    ReplacementPositions: { LeftEnd: 6, Center: 8, RightEnd: 10 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -1650,28 +1647,28 @@ const twoSequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of peptides (D-gGlu).ket',
     SequenceName: 'two sequences of peptides (D-gGlu)',
-    ReplacementPositions: { LeftEnd: 4, Center: 5, RightEnd: 6 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 26,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of peptides w_o natural analog (Apm).ket',
     SequenceName: 'two sequences of peptides w_o natural analog (Apm)',
-    ReplacementPositions: { LeftEnd: 4, Center: 5, RightEnd: 6 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 27,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of phosphates (Test-6-Ph).ket',
     SequenceName: 'two sequences of phosphates (Test-6-Ph)',
-    ReplacementPositions: { LeftEnd: 6, Center: 8, RightEnd: 10 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
     Id: 28,
     FileName: 'KET/Sequence-Mode-Replacement/two sequences of sugars (5A6).ket',
     SequenceName: 'two sequences of sugars (5A6)',
-    ReplacementPositions: { LeftEnd: 6, Center: 8, RightEnd: 10 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -1679,7 +1676,7 @@ const twoSequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of unresolved nucleotide (5Unres).ket',
     SequenceName: 'two sequences of unresolved nucleotide (5Unres)',
-    ReplacementPositions: { LeftEnd: 4, Center: 5, RightEnd: 6 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
 ];
 
@@ -1792,10 +1789,11 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence,
         sequence.ReplacementPositions.LeftEnd,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1833,10 +1831,11 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence,
         sequence.ReplacementPositions.Center,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1874,10 +1873,11 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence,
         sequence.ReplacementPositions.RightEnd,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1913,10 +1913,11 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence,
         sequence.ReplacementPositions.LeftEnd,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1952,10 +1953,11 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence,
         sequence.ReplacementPositions.Center,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -1991,10 +1993,11 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence,
         sequence.ReplacementPositions.RightEnd,
       );
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       // skip that test if bug(s) exists
       await checkForKnownBugs(
@@ -2025,7 +2028,7 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
     Id: 7,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
     SequenceName: 'sequence of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   };
 
@@ -2051,8 +2054,7 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
   await expect(fullDialogMessage).toBeVisible();
 
   pressCancelInConfirmYourActionDialog(page);
-
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await checkForKnownBugs(
     replaceMonomer,
@@ -2080,7 +2082,7 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
     Id: 7,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
     SequenceName: 'sequence of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   };
 
@@ -2116,8 +2118,7 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
   await expect(fullDialogMessage).toBeVisible();
 
   pressCancelInConfirmYourActionDialog(page);
-
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await checkForKnownBugs(
     replaceMonomer,
@@ -2143,7 +2144,7 @@ test(`25. Verify undo/redo functionality after replacing monomers`, async () => 
     Id: 7,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
     SequenceName: 'sequence of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   };
 
@@ -2157,9 +2158,11 @@ test(`25. Verify undo/redo functionality after replacing monomers`, async () => 
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await pressUndoButton(page);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await checkForKnownBugs(
     replaceMonomer,
@@ -2191,7 +2194,7 @@ test(`26. Copy and paste replaced monomers`, async () => {
     Id: 7,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
     SequenceName: 'sequence of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   };
 
@@ -2205,13 +2208,16 @@ test(`26. Copy and paste replaced monomers`, async () => {
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await selectAllSymbols(page, sequence);
-  await page.keyboard.press('Control+c');
-  await page.keyboard.press('Control+v');
-  await takeEditorScreenshot(page);
+  await copyToClipboardByKeyboard(page);
+  await pasteFromClipboardByKeyboard(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await selectFlexLayoutModeTool(page);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await checkForKnownBugs(
     replaceMonomer,
     sequence,
@@ -2238,7 +2244,7 @@ test(`27. Verify switching from Macro mode to Micro mode and back without data l
     Id: 7,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
     SequenceName: 'sequence of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   };
 
@@ -2252,11 +2258,12 @@ test(`27. Verify switching from Macro mode to Micro mode and back without data l
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await turnOnMicromoleculesEditor(page);
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
   await turnOnMacromoleculesEditor(page);
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await checkForKnownBugs(
     replaceMonomer,
@@ -2285,7 +2292,7 @@ test(`28. Verify saving and reopening a structure with replaced monomers in KET`
     Id: 3,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
     SequenceName: 'sequence of presets (A)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   };
 
   const replaceMonomer: IReplaceMonomer = {
@@ -2299,7 +2306,8 @@ test(`28. Verify saving and reopening a structure with replaced monomers in KET`
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   const expectedKetFile = await getKet(page);
   await saveToFile(
@@ -2340,7 +2348,7 @@ test(`29. Verify saving and reopening a structure with replaced monomers in MOL 
     Id: 3,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
     SequenceName: 'sequence of presets (A)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   };
 
   const replaceMonomer: IReplaceMonomer = {
@@ -2354,7 +2362,8 @@ test(`29. Verify saving and reopening a structure with replaced monomers in MOL 
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   const expectedFile = await getMolfile(page, 'v3000');
   await saveToFile(
@@ -2399,7 +2408,7 @@ test(`30. Verify saving and reopening a structure with replaced monomers in Sequ
     Id: 3,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
     SequenceName: 'sequence of presets (A)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   };
 
   const replaceMonomer: IReplaceMonomer = {
@@ -2413,7 +2422,8 @@ test(`30. Verify saving and reopening a structure with replaced monomers in Sequ
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   const expectedFile = await getSequence(page);
   await saveToFile(
@@ -2456,7 +2466,7 @@ test(`31. Verify saving and reopening a structure with replaced monomers in FAST
     Id: 3,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
     SequenceName: 'sequence of presets (A)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   };
 
   const replaceMonomer: IReplaceMonomer = {
@@ -2470,7 +2480,8 @@ test(`31. Verify saving and reopening a structure with replaced monomers in FAST
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   const expectedFile = await getFasta(page);
   await saveToFile(
@@ -2518,7 +2529,7 @@ test(`32. Verify saving and reopening a structure with replaced monomers in IDT`
     Id: 3,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
     SequenceName: 'sequence of presets (A)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   };
 
   const replaceMonomer: IReplaceMonomer = {
@@ -2532,7 +2543,8 @@ test(`32. Verify saving and reopening a structure with replaced monomers in IDT`
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
-  await takeEditorScreenshot(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   const expectedFile = await getIdt(page);
   await saveToFile(

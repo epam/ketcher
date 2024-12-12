@@ -16,6 +16,7 @@ import {
   switchSequenceEnteringButtonType,
   SequenceType,
   clickInTheMiddleOfTheScreen,
+  selectUndoByKeyboard,
 } from '@utils';
 import {
   enterSequence,
@@ -196,7 +197,7 @@ test.describe('Sequence Mode', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await selectSequenceLayoutModeTool(page);
-    await page.keyboard.press('Control+z');
+    await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -562,6 +563,7 @@ test.describe('Sequence Mode', () => {
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('Backspace');
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

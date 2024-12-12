@@ -15,6 +15,7 @@ import {
   saveToFile,
   receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
+  moveMouseAway,
 } from '@utils';
 import {
   clickOnFileFormatDropdown,
@@ -67,6 +68,7 @@ test.describe('SMILES files', () => {
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
@@ -86,6 +88,7 @@ test.describe('SMILES files', () => {
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -106,6 +109,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/sec-butyl-abr.mol', page);
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await page.getByText('Warnings').click();
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -121,6 +125,7 @@ test.describe('SMILES files', () => {
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -148,6 +153,7 @@ test.describe('SMILES files', () => {
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'NOSPFClBrI[H]');
@@ -171,6 +177,7 @@ test.describe('SMILES files', () => {
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await page.getByText('Warnings').click();
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -196,6 +203,7 @@ test.describe('SMILES files', () => {
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -224,6 +232,7 @@ test.describe('SMILES files', () => {
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -249,6 +258,7 @@ test.describe('SMILES files', () => {
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(
@@ -273,6 +283,7 @@ test.describe('SMILES files', () => {
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'CCCC*CC |$;;alias123;;GH*;;$|');
@@ -295,6 +306,7 @@ test.describe('SMILES files', () => {
       );
 
       await getPreviewForSmiles(page, 'Daylight SMILES');
+      await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
       await clearCanvasAndPasteSmiles(
@@ -322,9 +334,11 @@ test.describe('SMILES files', () => {
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await clearCanvasAndPasteSmiles(page, 'C1C=CC=CC=1>N>C1C=CC=CC=1');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

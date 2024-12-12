@@ -5,7 +5,11 @@ import {
   getCoordinatesTopAtomOfBenzeneRing,
   selectBond,
 } from '.';
-import { clickInTheMiddleOfTheScreen, dragMouseTo } from '@utils';
+import {
+  clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
+  dragMouseTo,
+} from '@utils';
 import { ArrowTool, selectNestedTool } from './tools/selectNestedTool';
 
 export async function drawReactionWithTwoBenzeneRings(
@@ -27,7 +31,8 @@ export async function drawReactionWithTwoBenzeneRings(
     page,
   );
   await page.getByRole('button', { name: 'Benzene (T)' }).click();
-  await page.mouse.click(
+  await clickOnCanvas(
+    page,
     firstBenzineTopAtom.x,
     firstBenzineTopAtom.y - secondBenzeneRingOffset,
   );

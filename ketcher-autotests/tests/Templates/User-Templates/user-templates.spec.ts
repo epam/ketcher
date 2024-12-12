@@ -16,10 +16,10 @@ import {
   waitForPageInit,
   copyAndPaste,
   cutAndPaste,
-  waitForRender,
   drawBenzeneRing,
   clickOnAtom,
   getEditorScreenshot,
+  clickOnCanvas,
 } from '@utils';
 
 const CANVAS_CLICK_X = 300;
@@ -164,7 +164,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
 
@@ -175,9 +175,7 @@ test.describe('Click User Templates on canvas', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
 });

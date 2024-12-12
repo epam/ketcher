@@ -2,11 +2,9 @@ import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectLeftPanelButton,
-  selectTopPanelButton,
   waitForPageInit,
   pressButton,
   LeftPanelButton,
-  TopPanelButton,
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -14,8 +12,15 @@ import {
   RingButton,
   selectDropdownTool,
   waitForRender,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
+  ZoomInByKeyboard,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 async function selectStructureWithSelectionTool(page: Page) {
   const point = { x: 97, y: 79 };
@@ -41,9 +46,9 @@ async function moveStructureToNewPosition(page: Page) {
 
 async function performUndoRedo(page: Page) {
   await waitForRender(page, async () => {
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
+    await pressRedoButton(page);
+    await pressUndoButton(page);
   });
 }
 
@@ -141,7 +146,7 @@ test.describe('Text tools test cases', () => {
     await page.keyboard.type('+++');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await page.getByRole('dialog').getByRole('textbox').click();
     const text1 =
       'Ketcher is a tool to draw molecular structures and chemical reactions';
@@ -216,7 +221,7 @@ test.describe('Text tools test cases', () => {
   }) => {
     await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('erase').click();
     await performUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -234,9 +239,9 @@ test.describe('Text tools test cases', () => {
     const text3 = 'Test123';
     await page.getByRole('dialog').getByRole('textbox').fill(text3);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await page.keyboard.press('Control+a');
+    await pressUndoButton(page);
+    await pressRedoButton(page);
+    await selectAllStructuresOnCanvas(page);
     await page.getByText(text3).hover();
     await waitForRender(page, async () => {
       await moveStructureToNewPosition(page);
@@ -254,15 +259,13 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill(text4);
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
-    await page.keyboard.press('Control+a');
+    await pressUndoButton(page);
+    await pressRedoButton(page);
+    await selectAllStructuresOnCanvas(page);
     await page.getByText(text4).click();
     await moveStructureToNewPosition(page);
     for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
+      await ZoomInByKeyboard(page);
     }
 
     await takeEditorScreenshot(page);

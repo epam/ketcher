@@ -1,12 +1,20 @@
 import { Page, expect } from '@playwright/test';
 import { Ketcher, MolfileFormat } from 'ketcher-core';
 import { readFileContents, saveToFile } from './readFile';
-import { getCdx, getCdxml, getKet, getMolfile } from '@utils/formats';
+import {
+  getCdx,
+  getCdxml,
+  getKet,
+  getMolfile,
+  getRdf,
+  getSmarts,
+} from '@utils/formats';
 
 export enum FileType {
   KET = 'ket',
   CDX = 'cdx',
   CDXML = 'cdxml',
+  SMARTS = 'smarts',
 }
 
 const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
@@ -14,11 +22,11 @@ const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
     [FileType.KET]: getKet,
     [FileType.CDX]: getCdx,
     [FileType.CDXML]: getCdxml,
+    [FileType.SMARTS]: getSmarts,
   };
 
-export async function verifyFile(
+export async function verifyFile2(
   page: Page,
-  filename: string,
   expectedFilename: string,
   fileType: FileType,
 ) {
@@ -28,12 +36,15 @@ export async function verifyFile(
     throw new Error(`Unsupported file type: ${fileType}`);
   }
 
-  const expectedFile = await getFileContent(page);
-  await saveToFile(filename, expectedFile);
+  // This two lines for creating from scratch or for updating exampled files
+  const expectedFileContent = await getFileContent(page);
+  await saveToFile(expectedFilename, expectedFileContent);
 
+  // This line for filtering out example file content (named as fileExpected)
+  // and file content from memory (named as file) from unnessusary data
   const { fileExpected, file } = await receiveFileComparisonData({
     page,
-    expectedFileName: expectedFilename,
+    expectedFileName: `tests/test-data/${expectedFilename}`,
   });
 
   expect(file).toEqual(fileExpected);
@@ -60,6 +71,39 @@ export async function verifyMolfile(
   expect(molFile).toEqual(molFileExpected);
 }
 
+export async function verifyRdfFile(
+  page: Page,
+  format: 'v2000' | 'v3000',
+  filename: string,
+  expectedFilename: string,
+  metaDataIndexes: number[] = [],
+) {
+  const expectedFile = await getRdf(page, format);
+  await saveToFile(filename, expectedFile);
+
+  const { fileExpected: rdfFileExpected, file: rdfFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName: expectedFilename,
+      fileFormat: format,
+      metaDataIndexes,
+    });
+
+  const filterLines = (lines: string[], indexes: number[]) => {
+    if (indexes.length === 0) {
+      return lines.filter(
+        (line) => !line.includes('-INDIGO-') && !line.includes('$DATM'),
+      );
+    }
+    return filterByIndexes(lines, indexes);
+  };
+
+  const filteredRdfFile = filterLines(rdfFile, metaDataIndexes);
+  const filteredRdfFileExpected = filterLines(rdfFileExpected, metaDataIndexes);
+
+  expect(filteredRdfFile).toEqual(filteredRdfFileExpected);
+}
+
 const GetFileMethod: Record<string, keyof Ketcher> = {
   mol: 'getMolfile',
   rxn: 'getRxn',
@@ -77,6 +121,7 @@ const GetFileMethod: Record<string, keyof Ketcher> = {
   fasta: 'getFasta',
   seq: 'getSequence',
   idt: 'getIdt',
+  rdf: 'getRdf',
 } as const;
 
 type KetcherApiFunction = (format?: string) => Promise<string>;

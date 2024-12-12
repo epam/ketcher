@@ -1,12 +1,15 @@
 import { test } from '@playwright/test';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
   selectAtomInToolbar,
   AtomButton,
+  clickOnCanvas,
 } from '@utils';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 test.describe('Track Changes', () => {
   test.beforeEach(async ({ page }) => {
@@ -18,12 +21,13 @@ test.describe('Track Changes', () => {
     Test case: EPMLSOPKET-1989
     Description: Add Nitrogen atom to canvas 35 times and then press Undo 32 times
     */
+    test.slow();
 
     const atomType = AtomButton.Nitrogen;
 
     const addAtom = async (x: number, y: number) => {
       await selectAtomInToolbar(atomType, page);
-      await page.mouse.click(x, y);
+      await clickOnCanvas(page, x, y);
     };
 
     const numberOfRows = 6;
@@ -43,13 +47,13 @@ test.describe('Track Changes', () => {
 
     const maxUndoHistorySize = 32;
     for (let i = 0; i < maxUndoHistorySize; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
 
     const maxRedoHistorySize = 32;
     for (let i = 0; i < maxRedoHistorySize; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });

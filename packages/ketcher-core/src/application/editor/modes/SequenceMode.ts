@@ -32,11 +32,13 @@ import assert from 'assert';
 import {
   getPeptideLibraryItem,
   getRnaPartLibraryItem,
+  getSugarBySequenceType,
 } from 'domain/helpers/rna';
 import {
   peptideNaturalAnalogues,
   RNA_DNA_NON_MODIFIED_PART,
   rnaDnaNaturalAnalogues,
+  RnaDnaNaturalAnaloguesEnum,
 } from 'domain/constants/monomers';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { isNumber, uniq } from 'lodash';
@@ -106,7 +108,7 @@ export class SequenceMode extends BaseMode {
     // Prevent rearranging chains (and recalculating the layout) when switching to sequence mode,
     // only recalculate after changes in the sequence
     const modelChanges = needReArrangeChains
-      ? editor.drawingEntitiesManager.reArrangeChains(
+      ? editor.drawingEntitiesManager.applySnakeLayout(
           editor.canvas.width.baseVal.value,
           true,
           false,
@@ -494,7 +496,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private handleRnaDnaNodeAddition(
-    enteredSymbol: string,
+    enteredSymbol: RnaDnaNaturalAnaloguesEnum | string,
     currentNode: SubChainNode,
     newNodePosition: Vec2,
   ) {
@@ -502,11 +504,20 @@ export class SequenceMode extends BaseMode {
       return undefined;
     }
 
+    const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
     const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
       currentNode instanceof Nucleotide || currentNode instanceof Nucleoside
-        ? Nucleotide.createOnCanvas(enteredSymbol, newNodePosition)
-        : Nucleoside.createOnCanvas(enteredSymbol, newNodePosition);
+        ? Nucleotide.createOnCanvas(
+            enteredSymbol,
+            newNodePosition,
+            getSugarBySequenceType(editor.sequenceTypeEnterMode),
+          )
+        : Nucleoside.createOnCanvas(
+            enteredSymbol,
+            newNodePosition,
+            getSugarBySequenceType(editor.sequenceTypeEnterMode),
+          );
 
     modelChanges.merge(addedNodeModelChanges);
 
@@ -793,12 +804,14 @@ export class SequenceMode extends BaseMode {
         shortcut: ['ArrowUp'],
         handler: () => {
           SequenceRenderer.moveCaretUp();
+          this.unselectAllEntities();
         },
       },
       'move-caret-down': {
         shortcut: ['ArrowDown'],
         handler: () => {
           SequenceRenderer.moveCaretDown();
+          this.unselectAllEntities();
         },
       },
       'move-caret-forward': {
@@ -807,8 +820,10 @@ export class SequenceMode extends BaseMode {
           if (!this.isEditMode) {
             return;
           }
+
           SequenceRenderer.moveCaretForward();
           SequenceRenderer.resetLastUserDefinedCaretPosition();
+          this.unselectAllEntities();
         },
       },
       'move-caret-back': {
@@ -817,8 +832,11 @@ export class SequenceMode extends BaseMode {
           if (!this.isEditMode) {
             return;
           }
+
           SequenceRenderer.moveCaretBack();
           SequenceRenderer.resetLastUserDefinedCaretPosition();
+
+          this.unselectAllEntities();
         },
       },
       'add-sequence-item': {

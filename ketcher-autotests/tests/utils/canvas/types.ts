@@ -61,11 +61,11 @@ export type BondAttributes = {
   hb1?: number;
   hb2?: number;
   len?: number;
-  reactingCenterStatus?: number;
+  reactingCenterStatus?: number | null;
   sa?: number;
   sb?: number;
   stereo?: number;
-  topology?: number;
+  topology?: number | null;
   type?: BondType;
   xxx?: string;
   customQuery?: string | null;
@@ -85,4 +85,18 @@ export enum SequenceType {
   RNA = 'RNA',
   DNA = 'DNA',
   PEPTIDE = 'PEPTIDE',
+}
+
+export enum PeptideType {
+  oneLetterCode = '1-letter code',
+  threeLetterCode = '3-letter code',
+}
+
+export enum MacroFileType {
+  Ket = 'Ket',
+  MOLv3000 = 'MDL Molfile V3000',
+  Sequence = 'Sequence',
+  FASTA = 'FASTA',
+  IDT = 'IDT',
+  HELM = 'HELM',
 }

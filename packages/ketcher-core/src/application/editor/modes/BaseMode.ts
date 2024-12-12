@@ -26,6 +26,9 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { ketcherProvider } from 'application/utils';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
+import { AttachmentPointName } from 'domain/types';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
+import { Atom } from 'domain/entities/CoreAtom';
 
 export abstract class BaseMode {
   private _pasteIsInProgress = false;
@@ -102,8 +105,8 @@ export abstract class BaseMode {
 
   abstract scrollForView(): void;
 
-  onCopy(event: ClipboardEvent) {
-    if (this.checkIfTargetIsInput(event)) {
+  onCopy(event?: ClipboardEvent) {
+    if (event && this.checkIfTargetIsInput(event)) {
       return;
     }
     const editor = CoreEditor.provideEditorInstance();
@@ -115,10 +118,13 @@ export abstract class BaseMode {
           entity.position,
           entity,
         );
-      } else if (
-        (entity instanceof PolymerBond || entity instanceof HydrogenBond) &&
-        entity.secondMonomer
-      ) {
+      } else if (entity instanceof Atom) {
+        drawingEntitiesManager.addMonomerChangeModel(
+          entity.monomer.monomerItem,
+          entity.monomer.position,
+          entity.monomer,
+        );
+      } else if (entity instanceof PolymerBond && entity.secondMonomer) {
         const firstAttachmentPoint =
           entity.firstMonomer.getAttachmentPointByBond(entity);
         const secondAttachmentPoint =
@@ -138,6 +144,15 @@ export abstract class BaseMode {
             entity,
           );
         }
+      } else if (entity instanceof HydrogenBond && entity.secondMonomer) {
+        drawingEntitiesManager.finishPolymerBondCreationModelChange(
+          entity.firstMonomer,
+          entity.secondMonomer,
+          AttachmentPointName.HYDROGEN,
+          AttachmentPointName.HYDROGEN,
+          MACROMOLECULES_BOND_TYPES.HYDROGEN,
+          entity,
+        );
       }
     });
     const ketSerializer = new KetSerializer();
@@ -147,7 +162,7 @@ export abstract class BaseMode {
     );
     if (isClipboardAPIAvailable()) {
       navigator.clipboard.writeText(serializedKet);
-    } else {
+    } else if (event) {
       legacyCopy(event.clipboardData, {
         'text/plain': serializedKet,
       });

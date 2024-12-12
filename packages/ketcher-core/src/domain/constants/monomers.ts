@@ -14,7 +14,35 @@ export enum RNA_DNA_NON_MODIFIED_PART {
   PHOSPHATE = 'P',
 }
 
-export const rnaDnaNaturalAnalogues = ['A', 'T', 'G', 'C', 'U'];
+export enum RnaDnaNaturalAnaloguesEnum {
+  ADENINE = 'A',
+  THYMINE = 'T',
+  GUANINE = 'G',
+  CYTOSINE = 'C',
+  URACIL = 'U',
+}
+
+export enum StandardAmbiguousRnaBase {
+  N = 'N',
+  B = 'B',
+  V = 'V',
+  D = 'D',
+  H = 'H',
+  K = 'K',
+  M = 'M',
+  W = 'W',
+  Y = 'Y',
+  R = 'R',
+  S = 'S',
+}
+
+export const rnaDnaNaturalAnalogues = [
+  RnaDnaNaturalAnaloguesEnum.ADENINE,
+  RnaDnaNaturalAnaloguesEnum.THYMINE,
+  RnaDnaNaturalAnaloguesEnum.GUANINE,
+  RnaDnaNaturalAnaloguesEnum.CYTOSINE,
+  RnaDnaNaturalAnaloguesEnum.URACIL,
+] as string[];
 export const unknownNaturalAnalogues = ['.', 'X'];
 export const peptideNaturalAnalogues = [
   'A',

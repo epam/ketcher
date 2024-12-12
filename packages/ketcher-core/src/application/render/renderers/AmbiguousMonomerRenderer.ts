@@ -44,7 +44,8 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
 
     this.monomerRenderer = new MonomerRenderer(new EmptyMonomer());
     this.monomerSymbolElementsIds = monomerSymbolElementsIds;
-    this.CHAIN_BEGINNING = this.monomerRenderer.CHAIN_BEGINNING;
+    this.CHAIN_START_TERMINAL_INDICATOR_TEXT =
+      this.monomerRenderer.CHAIN_START_TERMINAL_INDICATOR_TEXT;
   }
 
   protected appendBody(
@@ -122,9 +123,6 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
     if (this.enumerationElementPosition) {
       this.appendEnumeration();
     }
-    if (this.CHAIN_BEGINNING) {
-      this.appendChainBeginning();
-    }
   }
 
   private appendPreviewAttachmentPoint(
@@ -162,5 +160,9 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
       // @ts-ignore
       this.appendPreviewAttachmentPoint.bind(this, params),
     );
+  }
+
+  protected get modificationConfig() {
+    return undefined;
   }
 }

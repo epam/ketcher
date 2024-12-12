@@ -22,12 +22,11 @@ import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
-import { DEFAULT_LAYOUT_MODE } from 'ketcher-core';
 
 export const LayoutModeButton = () => {
-  const [activeMode, setActiveMode] = useState(DEFAULT_LAYOUT_MODE);
   const editor = useAppSelector(selectEditor);
   const layoutMode = useLayoutMode();
+  const [activeMode, setActiveMode] = useState(layoutMode);
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
@@ -55,6 +54,7 @@ export const LayoutModeButton = () => {
         testId="layout-mode"
         vertical={true}
         needOpenByMenuItemClick={true}
+        layoutModeButton={true}
       >
         <Menu.Item
           itemId="sequence-layout-mode"

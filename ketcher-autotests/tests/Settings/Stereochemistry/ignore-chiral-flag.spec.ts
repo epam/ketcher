@@ -3,17 +3,16 @@ import { Page, test } from '@playwright/test';
 import { STRUCTURE_LIBRARY_BUTTON_TEST_ID } from '@tests/Templates/templates.costants';
 import {
   clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
   openSettings,
   pressButton,
-  selectTopPanelButton,
   takeEditorScreenshot,
-  TopPanelButton,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 import { scrollSettingBar } from '@utils/scrollSettingBar';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 async function openStructureLibrary(page: Page) {
   await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();
@@ -34,7 +33,8 @@ async function applyIgnoreChiralFlag(page: Page) {
   await page
     .locator('label')
     .filter({ hasText: 'Ignore the chiral flag' })
-    .locator('div span')
+    .locator('div >> span, span')
+    .first()
     .click();
   await pressButton(page, 'Apply');
 }
@@ -53,9 +53,7 @@ test.describe('Ignore Chiral Flag', () => {
     await applyIgnoreChiralFlag(page);
     await templateFromLAminoAcidsCategory(page);
     await copyAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(pointX, pointY);
-    });
+    await clickOnCanvas(page, pointX, pointY);
     await takeEditorScreenshot(page);
   });
 
@@ -68,9 +66,7 @@ test.describe('Ignore Chiral Flag', () => {
     await applyIgnoreChiralFlag(page);
     await templateFromLAminoAcidsCategory(page);
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(pointY, pointZ);
-    });
+    await clickOnCanvas(page, pointY, pointZ);
     await takeEditorScreenshot(page);
   });
 
@@ -81,7 +77,7 @@ test.describe('Ignore Chiral Flag', () => {
     await applyIgnoreChiralFlag(page);
     await templateFromLAminoAcidsCategory(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 });

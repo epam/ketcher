@@ -104,7 +104,7 @@ class PolymerBond implements BaseTool {
       const startAttachmentPoint =
         selectedRenderer.monomer.startBondAttachmentPoint;
 
-      if (!startAttachmentPoint) {
+      if (!startAttachmentPoint && !this.isHydrogenBond) {
         this.editor.events.error.dispatch(
           "Selected monomer doesn't have any free attachment points",
         );
@@ -143,7 +143,6 @@ class PolymerBond implements BaseTool {
       this.editor.drawingEntitiesManager.hidePolymerBondInformation(
         renderer.polymerBond,
       );
-    this.editor.renderersContainer.markForRecalculateBegin();
     this.editor.renderersContainer.update(modelChanges);
   }
 
@@ -157,7 +156,6 @@ class PolymerBond implements BaseTool {
       this.editor.drawingEntitiesManager.showPolymerBondInformation(
         renderer.polymerBond,
       );
-    this.editor.renderersContainer.markForRecalculateBegin();
     this.editor.renderersContainer.update(modelChanges);
   }
 
@@ -188,7 +186,6 @@ class PolymerBond implements BaseTool {
         );
     }
 
-    this.editor.renderersContainer.markForRecalculateBegin();
     this.editor.renderersContainer.update(modelChanges);
   }
 
@@ -229,7 +226,6 @@ class PolymerBond implements BaseTool {
         );
     }
 
-    this.editor.renderersContainer.markForRecalculateBegin();
     this.editor.renderersContainer.update(modelChanges);
   }
 
@@ -257,7 +253,6 @@ class PolymerBond implements BaseTool {
           this.bondRenderer?.polymerBond,
         );
 
-      this.editor.renderersContainer.markForRecalculateBegin();
       this.editor.renderersContainer.update(modelChanges);
     }
   }
@@ -276,7 +271,6 @@ class PolymerBond implements BaseTool {
           attachmentPointRenderer.monomer,
           this.bondRenderer?.polymerBond,
         );
-      this.editor.renderersContainer.markForRecalculateBegin();
       this.editor.renderersContainer.update(modelChanges);
     }
   }
@@ -329,8 +323,6 @@ class PolymerBond implements BaseTool {
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,
-        false,
-        false,
       );
       this.bondRenderer = undefined;
       event.stopPropagation();
@@ -339,14 +331,32 @@ class PolymerBond implements BaseTool {
 
   private finishBondCreation(secondMonomer: BaseMonomer) {
     assert(this.bondRenderer);
-    if (!secondMonomer.hasFreeAttachmentPoint) {
+
+    if (!this.isHydrogenBond && !secondMonomer.hasFreeAttachmentPoint) {
       this.editor.events.error.dispatch(
         "Monomers don't have any connection point available",
       );
+
       return this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
         this.bondRenderer.polymerBond,
       );
     }
+
+    if (
+      this.isHydrogenBond &&
+      secondMonomer.hasHydrogenBondWithMonomer(
+        this.bondRenderer?.polymerBond.firstMonomer,
+      )
+    ) {
+      this.editor.events.error.dispatch(
+        'Unable to establish multiple hydrogen bonds between two monomers',
+      );
+
+      return this.editor.drawingEntitiesManager.cancelPolymerBondCreation(
+        this.bondRenderer.polymerBond,
+      );
+    }
+
     const firstMonomerAttachmentPoint = this.isHydrogenBond
       ? AttachmentPointName.HYDROGEN
       : this.bondRenderer.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
@@ -430,8 +440,6 @@ class PolymerBond implements BaseTool {
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,
-        false,
-        false,
       );
       this.bondRenderer = undefined;
       this.history.update(modelChanges);
@@ -502,8 +510,6 @@ class PolymerBond implements BaseTool {
     this.isBondConnectionModalOpen = false;
     this.editor.renderersContainer.deletePolymerBond(
       this.bondRenderer.polymerBond,
-      false,
-      false,
     );
     this.bondRenderer = undefined;
   };

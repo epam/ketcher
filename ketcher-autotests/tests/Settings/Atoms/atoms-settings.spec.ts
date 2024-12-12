@@ -11,6 +11,7 @@ import {
   RingButton,
   getAtomByIndex,
   openSettings,
+  clickOnCanvas,
 } from '@utils';
 import { scrollSettingBar } from '@utils/scrollSettingBar';
 
@@ -84,7 +85,7 @@ test.describe('Atom Settings', () => {
     const pointX = 250;
     const pointY = 250;
     await selectExtendedTableElements(page, 'D');
-    await page.mouse.click(pointX, pointY);
+    await clickOnCanvas(page, pointX, pointY);
     await selectExtendedTableElements(page, 'T');
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -121,13 +122,13 @@ test.describe('Atom Settings', () => {
     await resetCurrentTool(page);
 
     const point = await getAtomByIndex(page, { label: 'C' }, 1);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Query properties').click();
     await ringBondCountQuery(page, 'Ring bond count');
     await substitutionCountQuery(page, 'Substitution count');
     await aromaticityQuery(page, 'Aromaticity');
     await ringSizeQuery(page, 'Ring size');
-    await page.mouse.click(pointX, pointY);
+    await clickOnCanvas(page, pointX, pointY);
     await takeEditorScreenshot(page);
   });
 });

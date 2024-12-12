@@ -42,11 +42,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await page.keyboard.press('Escape');
-  await page.keyboard.press('Escape');
-  // await page.keyboard.press('Control+0');
   await selectClearCanvasTool(page);
-  // await page.keyboard.press('Control+0');
 });
 
 test.afterAll(async ({ browser }) => {
@@ -67,13 +63,13 @@ async function loadHELMFromClipboard(page: Page, helmString: string) {
   );
 }
 async function hoverMouseOverMonomer(page: Page, monomerLocatorIndex: number) {
-  await page.locator('use').nth(monomerLocatorIndex).hover();
+  await page.locator('use').nth(monomerLocatorIndex).hover({ force: true });
 }
 async function hoverMouseOverMicroMonomer(
   page: Page,
   monomerLocatorIndex: number,
 ) {
-  await page.locator('tspan').nth(monomerLocatorIndex).hover();
+  await page.locator('tspan').nth(monomerLocatorIndex).hover({ force: true });
 }
 async function hoverMouseOverSequenceModeMonomer(page: Page) {
   await page.locator('text').first().hover();
@@ -83,6 +79,7 @@ interface IHELMString {
   testDescription: string;
   HELMString: string;
   monomerLocatorIndex: number;
+  monomerLocatorIndexOnMicro?: number;
   // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
@@ -194,19 +191,22 @@ const ambiguousMonomers: IHELMString[] = [
     testDescription:
       '15. DNA Base N (alternative, no probabilities, from the library)',
     HELMString: 'RNA1{[dR](T,G,C,A)P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
+    monomerLocatorIndexOnMicro: 1,
   },
   {
     testDescription:
       '16. DNA Base B (alternative, no probabilities, from the library)',
     HELMString: 'RNA1{[dR](T,G,C)P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
+    monomerLocatorIndexOnMicro: 1,
   },
   {
     testDescription:
       '17. DNA Base B (alternative, with probabilities, from the library)',
     HELMString: 'RNA1{[dR](T:20,G:50,C:30)P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
+    monomerLocatorIndexOnMicro: 1,
   },
   {
     testDescription:
@@ -266,7 +266,8 @@ const ambiguousMonomers: IHELMString[] = [
   {
     testDescription: '25. DNA Base N (mixture, no quantities, from library)',
     HELMString: 'RNA1{[dR](T+G+C+A)P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
+    monomerLocatorIndexOnMicro: 1,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
@@ -274,7 +275,8 @@ const ambiguousMonomers: IHELMString[] = [
   {
     testDescription: '26. DNA Base B (mixture, no quantities, from library)',
     HELMString: 'RNA1{[dR](T+G+C)P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
+    monomerLocatorIndexOnMicro: 1,
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
@@ -284,7 +286,8 @@ const ambiguousMonomers: IHELMString[] = [
     HELMString: 'RNA1{[dR](T:20+G:50+C:30)P}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/5566',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
+    monomerLocatorIndexOnMicro: 1,
   },
   {
     testDescription: '28. Base M (mixture, no quantities, from library)',
@@ -369,10 +372,17 @@ test.describe('Preview tooltips checks: ', () => {
       await selectFlexLayoutModeTool(page);
       await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
       await turnOnMicromoleculesEditor(page);
-      await hoverMouseOverMicroMonomer(
-        page,
-        ambiguousMonomer.monomerLocatorIndex,
-      );
+      if (ambiguousMonomer.monomerLocatorIndexOnMicro) {
+        await hoverMouseOverMicroMonomer(
+          page,
+          ambiguousMonomer.monomerLocatorIndexOnMicro,
+        );
+      } else {
+        await hoverMouseOverMicroMonomer(
+          page,
+          ambiguousMonomer.monomerLocatorIndex,
+        );
+      }
       await delay(1);
 
       await takeEditorScreenshot(page);

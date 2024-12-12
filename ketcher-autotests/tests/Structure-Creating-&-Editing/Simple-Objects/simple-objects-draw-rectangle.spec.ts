@@ -1,6 +1,9 @@
 import { Page, test } from '@playwright/test';
-import { openFileAndAddToCanvas, waitForPageInit } from '@utils';
-import { takeEditorScreenshot } from '@utils/canvas';
+import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
+import {
+  selectAllStructuresOnCanvas,
+  takeEditorScreenshot,
+} from '@utils/canvas';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -45,11 +48,11 @@ async function resizeRectangle(page: Page) {
   const point3 = { x: 880, y: 596 };
   const point4 = { x: 881, y: 174 };
   const point5 = { x: 584, y: 371 };
-  await page.mouse.click(point.x, point.y);
+  await clickOnCanvas(page, point.x, point.y);
   await dragMouseTo(point1.x, point1.y, page);
-  await page.mouse.click(point2.x, point2.y);
+  await clickOnCanvas(page, point2.x, point2.y);
   await await dragMouseTo(point3.x, point3.y, page);
-  await page.mouse.click(point4.x, point4.y);
+  await clickOnCanvas(page, point4.x, point4.y);
   await await dragMouseTo(point5.x, point5.y, page);
   await clickInTheMiddleOfTheScreen(page);
 }
@@ -61,15 +64,15 @@ async function separetingAndMovingRecatngles(page: Page) {
   const point3 = { x: 817, y: 471 };
   const point4 = { x: 496, y: 280 };
   const point5 = { x: 194, y: 167 };
-  await page.mouse.click(point.x, point.y);
+  await clickOnCanvas(page, point.x, point.y);
   await dragMouseTo(point1.x, point1.y, page);
-  await page.mouse.click(point2.x, point2.y);
+  await clickOnCanvas(page, point2.x, point2.y);
   await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
   await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
   await createSomeStructure(page);
-  await page.mouse.click(point4.x, point4.y);
+  await clickOnCanvas(page, point4.x, point4.y);
   await page.mouse.down();
   await dragMouseTo(point5.x, point5.y, page);
 }
@@ -98,8 +101,8 @@ test.describe('Draw Rectangle', () => {
     const point1 = { x: 759, y: 183 };
     await setupRectangle(page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
-    await page.mouse.click(point.x, point.y);
+    await selectAllStructuresOnCanvas(page);
+    await clickOnCanvas(page, point.x, point.y);
     await dragMouseTo(point1.x, point1.y, page);
     await takeEditorScreenshot(page);
   });
@@ -111,10 +114,10 @@ test.describe('Draw Rectangle', () => {
     const point = { x: 584, y: 371 };
     const point1 = { x: 830, y: 424 };
     await setupRectangle(page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await resizeRectangle(page);
     await createSomeStructure(page);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await dragMouseTo(point1.x, point1.y, page);
     await takeEditorScreenshot(page);
   });

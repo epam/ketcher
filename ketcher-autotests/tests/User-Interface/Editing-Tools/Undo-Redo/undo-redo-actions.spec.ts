@@ -9,8 +9,6 @@ import {
   pressButton,
   selectLeftPanelButton,
   LeftPanelButton,
-  TopPanelButton,
-  selectTopPanelButton,
   selectAtomInToolbar,
   AtomButton,
   doubleClickOnAtom,
@@ -35,8 +33,19 @@ import {
   waitForPageInit,
   waitForRender,
   openSettings,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
+  selectUndoByKeyboard,
+  selectRedoByKeyboard,
+  ZoomInByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -438,7 +447,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Data S-group is restored;
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
     await fillFieldByPlaceholder(page, 'Enter value', '33');
@@ -455,7 +464,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Multiple Group is restored;
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
     await screenshotBetweenUndoRedo(page);
@@ -470,7 +479,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the SRU Polymer is restored;
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectSruPolymer(page, 'Data', 'SRU Polymer', 'A', 'Head-to-tail');
     await screenshotBetweenUndoRedo(page);
@@ -485,7 +494,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Superatom is restored;
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     await screenshotBetweenUndoRedo(page);
@@ -505,7 +514,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
     // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
     await screenshotBetweenUndoRedo(page);
@@ -525,7 +534,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
     // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await pressButton(page, 'R8');
     await pressButton(page, 'Apply');
     await screenshotBetweenUndoRedo(page);
@@ -570,12 +579,12 @@ test.describe('Undo/Redo Actions', () => {
     await pressButton(page, 'Apply');
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -592,7 +601,7 @@ test.describe('Undo/Redo Actions', () => {
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
     await pressButton(page, 'Apply');
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -609,9 +618,7 @@ test.describe('Undo/Redo Actions', () => {
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
     await pressButton(page, 'Apply');
     await cutAndPaste(page);
-    await waitForRender(page, async () => {
-      await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    });
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -628,11 +635,11 @@ test.describe('Undo/Redo Actions', () => {
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
     await pressButton(page, 'Apply');
     for (let i = 0; i < 2; i++) {
-      await page.keyboard.press('Control+z');
+      await selectUndoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await page.keyboard.press('Control+Shift+z');
+      await selectRedoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -652,15 +659,15 @@ test.describe('Undo/Redo Actions', () => {
       await page.keyboard.press('Control+_');
     }
     for (let i = 0; i < 2; i++) {
-      await page.keyboard.press('Control+z');
+      await selectUndoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await page.keyboard.press('Control+Shift+z');
+      await selectRedoByKeyboard(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 5; i++) {
-      await page.keyboard.press('Control+=');
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -672,23 +679,23 @@ test.describe('Undo/Redo Actions', () => {
     */
     const yDelta = 300;
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
     await fillFieldByPlaceholder(page, 'Enter value', '33');
     await pressButton(page, 'Apply');
     await selectLeftPanelButton(LeftPanelButton.Chain, page);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     const coordinatesWithShift = point.y + yDelta;
     await dragMouseTo(point.x, coordinatesWithShift, page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -710,9 +717,9 @@ test.describe('Undo/Redo Actions', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await expect(page).toHaveScreenshot();
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await pressRedoButton(page);
     await expect(page).toHaveScreenshot();
   });
 
@@ -730,7 +737,7 @@ test.describe('Undo/Redo Actions', () => {
     await clickOnAtom(page, 'C', 2);
     await page.getByTestId('canvas').hover();
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+z');
+    await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -750,10 +757,10 @@ test.describe('Undo/Redo Actions', () => {
     await page.getByTestId('OK').click();
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
-    await page.keyboard.press('Control+v');
-    await page.keyboard.press('Control+z');
-    await page.keyboard.press('Control+z');
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
+    await selectUndoByKeyboard(page);
+    await selectUndoByKeyboard(page);
   });
 });

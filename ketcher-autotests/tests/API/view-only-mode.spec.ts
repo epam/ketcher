@@ -24,11 +24,12 @@ import {
   dragMouseTo,
   selectAllStructuresOnCanvas,
   pasteFromClipboardByKeyboard,
+  clickOnCanvas,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
-  verifyFile,
+  verifyFile2,
   verifyMolfile,
 } from '@utils/files/receiveFileComparisonData';
 import {
@@ -194,7 +195,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await page.getByTitle('Copy as MOL (Ctrl+M)').click();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
   });
 
@@ -213,7 +214,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await page.getByTitle('Copy as KET (Ctrl+Shift+K)').click();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
-    await page.mouse.click(200, 200);
+    await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
   });
 
@@ -318,7 +319,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await selectRingButton(RingButton.Benzene, page);
         await clickInTheMiddleOfTheScreen(page);
         await enableViewOnlyModeBySetOptions(page);
-        await page.keyboard.press('Control+a');
+        await selectAllStructuresOnCanvas(page);
         await waitForSpinnerFinishedWork(
           page,
           async () => await page.keyboard.press(hotkey.keys),
@@ -484,10 +485,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await verifyFile(
+    await verifyFile2(
       page,
       'KET/benzene-ring-saved-in-view-only-mode-expected.ket',
-      'tests/test-data/KET/benzene-ring-saved-in-view-only-mode-expected.ket',
       FileType.KET,
     );
     await openFileAndAddToCanvasAsNewProject(

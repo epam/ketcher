@@ -7,6 +7,7 @@ import {
 import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
+  clickOnCanvas,
   pressButton,
 } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
@@ -14,7 +15,6 @@ import {
   Bases,
   Phosphates,
   Sugars,
-  TopPanelButton,
   selectMonomer,
   AtomButton,
   RingButton,
@@ -29,13 +29,16 @@ import {
   openSettings,
   selectAtomInToolbar,
   selectRectangleSelectionTool,
-  selectTopPanelButton,
 } from './tools';
 
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 export async function drawBenzeneRing(page: Page) {
   await selectRing(RingButton.Benzene, page);
@@ -97,7 +100,7 @@ export async function drawElementByTitle(
   const topBarHeight = await getTopToolBarHeight(page);
   await page.getByTitle(elementTitle, { exact: true }).click();
 
-  await page.mouse.click(leftBarWidth + offsetX, topBarHeight + offsetY);
+  await clickOnCanvas(page, leftBarWidth + offsetX, topBarHeight + offsetY);
 }
 
 export async function getLeftToolBarWidth(page: Page): Promise<number> {
@@ -156,11 +159,18 @@ export async function screenshotDialog(page: Page, dialogId: string) {
 export async function takeElementScreenshot(
   page: Page,
   elementId: string,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+  options?: {
+    masks?: Locator[];
+    maxDiffPixelRatio?: number;
+    hideMonomerPreview?: boolean;
+  },
 ) {
   const maxTimeout = 1500;
   const element = page.getByTestId(elementId).first();
   await waitForRender(page, emptyFunction, maxTimeout);
+  if (options?.hideMonomerPreview) {
+    await page.keyboard.press('Shift');
+  }
   await expect(element).toHaveScreenshot({
     mask: options?.masks,
     maxDiffPixelRatio: options?.maxDiffPixelRatio,
@@ -197,7 +207,7 @@ export async function takePageScreenshot(
   page: Page,
   options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
 ) {
-  const maxTimeout = 3000;
+  const maxTimeout = 1500;
   await waitForRender(page, emptyFunction, maxTimeout);
   await expect(page).toHaveScreenshot({
     mask: options?.masks,
@@ -228,7 +238,11 @@ export async function takeMonomerLibraryScreenshot(
 
 export async function takeEditorScreenshot(
   page: Page,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+  options?: {
+    masks?: Locator[];
+    maxDiffPixelRatio?: number;
+    hideMonomerPreview?: boolean;
+  },
 ) {
   await takeElementScreenshot(page, 'ketcher-canvas', options);
 }
@@ -288,15 +302,15 @@ export async function delay(seconds = 1) {
 }
 
 export async function screenshotBetweenUndoRedo(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Undo, page);
+  await pressUndoButton(page);
   await takeEditorScreenshot(page);
-  await selectTopPanelButton(TopPanelButton.Redo, page);
+  await pressRedoButton(page);
 }
 
 export async function screenshotBetweenUndoRedoInMacro(page: Page) {
-  await page.getByTestId('undo').click();
+  await pressUndoButton(page);
   await takeEditorScreenshot(page);
-  await page.getByTestId('redo').click();
+  await pressRedoButton(page);
 }
 
 export async function resetAllSettingsToDefault(page: Page) {
@@ -314,7 +328,7 @@ export async function addSingleMonomerToCanvas(
   index: number,
 ) {
   await page.getByTestId(monomerFullName).click();
-  await page.mouse.click(positionX, positionY);
+  await clickOnCanvas(page, positionX, positionY);
   await hideMonomerPreview(page);
   return await page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='${alias}']]`)
@@ -380,7 +394,7 @@ export async function addRnaPresetOnCanvas(
   phosphateIndex: number,
 ) {
   await page.getByTestId(presetId).click();
-  await page.mouse.click(positionX, positionY);
+  await clickOnCanvas(page, positionX, positionY);
   await hideMonomerPreview(page);
   const sugar = await page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
@@ -453,4 +467,34 @@ export async function pasteFromClipboardByKeyboard(
     page,
     async () => await page.keyboard.press(`${modifier}+KeyV`, options),
   );
+}
+
+export async function selectUndoByKeyboard(
+  page: Page,
+  options?:
+    | {
+        delay?: number;
+      }
+    | undefined,
+) {
+  const modifier = getControlModifier();
+
+  await waitForRender(page, async () => {
+    await page.keyboard.press(`${modifier}+KeyZ`, options);
+  });
+}
+
+export async function selectRedoByKeyboard(
+  page: Page,
+  options?:
+    | {
+        delay?: number;
+      }
+    | undefined,
+) {
+  const modifier = getControlModifier();
+
+  await waitForRender(page, async () => {
+    await page.keyboard.press(`${modifier}+Shift+KeyZ`, options);
+  });
 }

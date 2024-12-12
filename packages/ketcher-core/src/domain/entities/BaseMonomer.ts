@@ -20,7 +20,7 @@ import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain'
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { isNumber } from 'lodash';
+import { compact, isNumber, values } from 'lodash';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 
@@ -40,6 +40,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   public attachmentPointsVisible = false;
   public monomerItem: MonomerItemType;
   public isMonomerInRnaChainRow = false;
+  public hydrogenBonds: HydrogenBond[] = [];
 
   constructor(
     monomerItem: MonomerItemType,
@@ -108,16 +109,28 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public setPotentialBond(
     attachmentPoint: string | undefined,
-    potentialBond?: PolymerBond | null,
+    potentialBond?: PolymerBond | HydrogenBond | null,
   ) {
+    if (potentialBond instanceof HydrogenBond) {
+      this.hydrogenBonds.push(potentialBond);
+
+      return;
+    }
+
     if (attachmentPoint !== undefined) {
       this.potentialAttachmentPointsToBonds[attachmentPoint] = potentialBond;
     }
   }
 
   public getAttachmentPointByBond(
-    bond: PolymerBond | MonomerToAtomBond,
+    bond: PolymerBond | MonomerToAtomBond | HydrogenBond,
   ): AttachmentPointName | undefined {
+    if (bond instanceof HydrogenBond) {
+      return this.hydrogenBonds.find((hydrogenBond) => hydrogenBond === bond)
+        ? AttachmentPointName.HYDROGEN
+        : undefined;
+    }
+
     for (const attachmentPointName in this.attachmentPointsToBonds) {
       if (this.attachmentPointsToBonds[attachmentPointName] === bond) {
         return attachmentPointName as AttachmentPointName;
@@ -206,7 +219,7 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public forEachBond(
     callback: (
-      polymerBond: PolymerBond | MonomerToAtomBond,
+      polymerBond: PolymerBond | MonomerToAtomBond | HydrogenBond,
       attachmentPointName: AttachmentPointName,
     ) => void,
   ) {
@@ -218,21 +231,46 @@ export abstract class BaseMonomer extends DrawingEntity {
         );
       }
     }
+
+    this.hydrogenBonds.forEach((hydrogenBond) => {
+      callback(hydrogenBond, AttachmentPointName.HYDROGEN);
+    });
   }
 
   public setBond(
     attachmentPointName: AttachmentPointName,
     bond: PolymerBond | MonomerToAtomBond | HydrogenBond,
   ) {
-    this.attachmentPointsToBonds[
-      bond instanceof HydrogenBond
-        ? AttachmentPointName.HYDROGEN
-        : attachmentPointName
-    ] = bond;
+    if (!(bond instanceof HydrogenBond)) {
+      this.attachmentPointsToBonds[attachmentPointName] = bond;
+
+      return;
+    }
+
+    if (!this.hydrogenBonds.includes(bond)) {
+      this.hydrogenBonds.push(bond);
+    }
   }
 
-  public unsetBond(attachmentPointName: AttachmentPointName) {
-    this.attachmentPointsToBonds[attachmentPointName] = null;
+  public unsetBond(
+    attachmentPointName?: AttachmentPointName,
+    bondToDelete?: HydrogenBond | PolymerBond,
+  ) {
+    if (bondToDelete instanceof HydrogenBond) {
+      this.hydrogenBonds = this.hydrogenBonds.filter(
+        (bond) => bond !== bondToDelete,
+      );
+
+      return;
+    }
+
+    if (attachmentPointName) {
+      this.attachmentPointsToBonds[attachmentPointName] = null;
+    }
+  }
+
+  public get covalentBonds() {
+    return compact(values(this.attachmentPointsToBonds));
   }
 
   public get hasBonds() {
@@ -242,7 +280,14 @@ export abstract class BaseMonomer extends DrawingEntity {
         hasBonds = true;
       }
     }
-    return hasBonds;
+
+    return hasBonds || this.hydrogenBonds.length > 0;
+  }
+
+  public hasHydrogenBondWithMonomer(monomer: BaseMonomer) {
+    return this.hydrogenBonds.find(
+      (bond) => bond.firstMonomer === monomer || bond.secondMonomer === monomer,
+    );
   }
 
   public hasPotentialBonds() {

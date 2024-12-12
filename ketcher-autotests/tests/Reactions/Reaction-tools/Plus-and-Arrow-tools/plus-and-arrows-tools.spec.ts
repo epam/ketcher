@@ -29,7 +29,13 @@ import {
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 const xOffsetFromCenter = -35;
 const idToTitle: {
@@ -84,7 +90,6 @@ const formatsForSave = [
 const OFFSET_FROM_ARROW = 15;
 
 test.describe('Plus and Arrows tools ', () => {
-  const modifier = getControlModifier();
   const CANVAS_CLICK_X = 300;
   const CANVAS_CLICK_Y = 300;
 
@@ -106,7 +111,7 @@ test.describe('Plus and Arrows tools ', () => {
         await selectNestedTool(page, tool);
         await clickOnTheCanvas(page, xOffsetFromCenter, 0);
         await takeEditorScreenshot(page);
-        await selectTopPanelButton(TopPanelButton.Undo, page);
+        await pressUndoButton(page);
         await takeEditorScreenshot(page);
       });
     }
@@ -139,9 +144,9 @@ test.describe('Plus and Arrows tools ', () => {
     await dragMouseTo(x + 100, y + 100, page);
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -173,11 +178,11 @@ test.describe('Plus and Arrows tools ', () => {
     await clickOnTheCanvas(page, xOffsetFromCenter2, -100);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await selectTopPanelButton(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -217,7 +222,7 @@ test.describe('Plus and Arrows tools ', () => {
 
     test('Select the whole reaction and move it', async ({ page }) => {
       await waitForRender(page, async () => {
-        await page.keyboard.press(`${modifier}+KeyA`);
+        await selectAllStructuresOnCanvas(page);
         await page.mouse.move(point.x - 20, point.y - 20);
       });
       await dragMouseTo(point.x - 100, point.y - 100, page);
@@ -230,7 +235,7 @@ test.describe('Plus and Arrows tools ', () => {
         tag: ['@FlackyTest'],
       },
       async ({ page }) => {
-        await page.mouse.click(point.x - 200, point.y + 15);
+        await clickOnCanvas(page, point.x - 200, point.y + 15);
         await selectRectangleArea(
           page,
           point.x - 200 - 20,
@@ -238,18 +243,18 @@ test.describe('Plus and Arrows tools ', () => {
           point.x - 200 + 20,
           point.y + 15 + 20,
         );
-        await page.keyboard.press('Control+X');
-        await page.keyboard.press('Control+V');
+        await cutToClipboardByKeyboard(page);
+        await pasteFromClipboardByKeyboard(page);
         // await selectTopPanelButton(TopPanelButton.Cut, page);
         // await waitForSpinnerFinishedWork(
         //   page,
         //   async () => await selectTopPanelButton(TopPanelButton.Cut, page),
         // );
 
-        // await page.keyboard.press('Control+V');
+        // await pasteFromClipboardByKeyboard(page);
         // await waitForSpinnerFinishedWork(
         //   page,
-        //   async () => await page.keyboard.press('Control+V'),
+        //   async () => await pasteFromClipboardByKeyboard(page);
         // );
 
         await clickOnTheCanvas(page, 0, -100);
@@ -261,7 +266,7 @@ test.describe('Plus and Arrows tools ', () => {
       // Selection of plus sign doesn't happen and the rest of the scrips works wrong
       page,
     }) => {
-      await page.mouse.click(point.x - 150, point.y - 10);
+      await clickOnCanvas(page, point.x - 150, point.y - 10);
       await copyToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
 
@@ -272,9 +277,9 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await copyAndPaste(page);
-      await page.mouse.click(point.x - 100, point.y - 100);
+      await clickOnCanvas(page, point.x - 100, point.y - 100);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
       await takeEditorScreenshot(page);
       await selectLeftPanelButton(LeftPanelButton.Erase, page);
       await page.mouse.move(point.x - 300, point.y - 100);
@@ -308,7 +313,7 @@ test.describe('Plus and Arrows tools ', () => {
     });
 
     test('Select the whole reaction and move it', async ({ page }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
+      await selectAllStructuresOnCanvas(page);
       await page.mouse.move(point.x - 20, point.y - 20);
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });
@@ -316,9 +321,7 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, cut and paste it onto the canvas', async ({
       page,
     }) => {
-      await waitForRender(page, async () => {
-        await page.mouse.click(point.x + 60, point.y);
-      });
+      await clickOnCanvas(page, point.x + 60, point.y);
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
 
@@ -331,9 +334,7 @@ test.describe('Plus and Arrows tools ', () => {
         tag: ['@FlakyTest'],
       },
       async ({ page }) => {
-        await waitForRender(page, async () => {
-          await page.mouse.click(point.x + 60, point.y);
-        });
+        await clickOnCanvas(page, point.x + 60, point.y);
         await copyToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
 
@@ -345,9 +346,9 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       await copyAndPaste(page);
-      await page.mouse.click(point.x - 100, point.y - 100);
+      await clickOnCanvas(page, point.x - 100, point.y - 100);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
       await takeEditorScreenshot(page);
       await selectLeftPanelButton(LeftPanelButton.Erase, page);
       await page.mouse.move(point.x - 300, point.y - 100);
@@ -386,7 +387,7 @@ test.describe('Plus and Arrows tools ', () => {
     });
 
     test('Select the whole reaction and move it', async ({ page }) => {
-      await page.keyboard.press(`${modifier}+KeyA`);
+      await selectAllStructuresOnCanvas(page);
       await moveMouseToTheMiddleOfTheScreen(page);
       await dragMouseTo(point.x - 100, point.y - 100, page);
     });
@@ -394,9 +395,7 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, cut and paste it onto the canvas', async ({
       page,
     }) => {
-      await waitForRender(page, async () => {
-        await page.mouse.click(point.x + OFFSET_FROM_ARROW, point.y);
-      });
+      await clickOnCanvas(page, point.x + OFFSET_FROM_ARROW, point.y);
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
       await clickOnTheCanvas(page, 0, -100);
@@ -417,9 +416,7 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, copy and paste it onto the canvas', async ({
       page,
     }) => {
-      await waitForRender(page, async () => {
-        await page.mouse.click(point.x + OFFSET_FROM_ARROW, point.y);
-      });
+      await clickOnCanvas(page, point.x + OFFSET_FROM_ARROW, point.y);
 
       await copyToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
@@ -434,7 +431,7 @@ test.describe('Plus and Arrows tools ', () => {
       await selectLeftPanelButton(LeftPanelButton.Erase, page);
       await clickOnTheCanvas(page, -OFFSET_FROM_ARROW, 0);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
       await takeEditorScreenshot(page);
       await selectLeftPanelButton(LeftPanelButton.Erase, page);
       await page.mouse.move(point.x - 40, point.y - 300);
@@ -463,10 +460,15 @@ test.describe('Plus and Arrows tools ', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await waitForSpinnerFinishedWork(
       page,
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+
+    test.fixme(
+      true,
+      `That test works wrong because of https://github.com/epam/Indigo/issues/2665 issue.`,
     );
   });
 
@@ -797,7 +799,7 @@ test.describe('Plus and Arrows tools ', () => {
     await selectNestedTool(page, ArrowTool.ARROW_RETROSYNTHETIC);
     await clickInTheMiddleOfTheScreen(page);
     await copyAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
   });
 
@@ -809,7 +811,7 @@ test.describe('Plus and Arrows tools ', () => {
     await selectNestedTool(page, ArrowTool.ARROW_RETROSYNTHETIC);
     await clickInTheMiddleOfTheScreen(page);
     await cutAndPaste(page);
-    await page.mouse.click(CANVAS_CLICK_X, CANVAS_CLICK_Y);
+    await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
   });
 });

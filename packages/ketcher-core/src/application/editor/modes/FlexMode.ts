@@ -30,7 +30,25 @@ export class FlexMode extends BaseMode {
   }
 
   applyAdditionalPasteOperations() {
-    return new Command();
+    const command = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+
+    editor.drawingEntitiesManager.recalculateAntisenseChains();
+
+    if (!editor.drawingEntitiesManager.hasAntisenseChains) {
+      return command;
+    }
+
+    command.merge(
+      editor.drawingEntitiesManager.applySnakeLayout(
+        editor.canvas.width.baseVal.value,
+        true,
+        true,
+        true,
+      ),
+    );
+
+    return command;
   }
 
   isPasteAllowedByMode(): boolean {

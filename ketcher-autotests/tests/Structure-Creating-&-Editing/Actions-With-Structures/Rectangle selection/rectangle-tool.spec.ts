@@ -3,10 +3,11 @@ import {
   BondType,
   clickOnAtom,
   clickOnBond,
+  clickOnCanvas,
   dragMouseTo,
-  getControlModifier,
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
+  selectAllStructuresOnCanvas,
   selectDropdownTool,
   takeEditorScreenshot,
   waitForPageInit,
@@ -21,7 +22,6 @@ test.describe('Rectangle selection tool', () => {
 
   const xDelta = 30;
   const yDelta = 60;
-  const modifier = getControlModifier();
 
   async function selectObjects(
     page: Page,
@@ -36,9 +36,9 @@ test.describe('Rectangle selection tool', () => {
     return point;
   }
 
-  const selectionCoords = { x: 300, y: 200 };
+  const selectionCoords = { x: 280, y: 200 };
   async function clickCanvas(page: Page) {
-    await page.mouse.click(selectionCoords.x, selectionCoords.y);
+    await clickOnCanvas(page, selectionCoords.x, selectionCoords.y);
   }
 
   test('Structure selection with rectangle selection tool', async ({
@@ -75,15 +75,16 @@ test.describe('Rectangle selection tool', () => {
     await clickCanvas(page);
 
     await page.keyboard.down('Shift');
-    await page.mouse.click(
+    await clickOnCanvas(
+      page,
       point.x - moveMouseCoordinatesX,
       point.y + moveMouseCoordinatesY,
     );
-    await page.mouse.click(point.x, point.y + atomNumber);
+    await clickOnCanvas(page, point.x, point.y + atomNumber);
     await page.keyboard.up('Shift');
     await clickCanvas(page);
 
-    await page.keyboard.press(`${modifier}+KeyA`);
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 

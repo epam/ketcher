@@ -12,7 +12,7 @@ import { AttachmentPointName } from 'domain/types';
 import { BaseMonomer } from './BaseMonomer';
 import { BaseBond } from 'domain/entities/BaseBond';
 
-type FlexOrSequenceOrSnakeModePolymerBondRenderer =
+export type FlexOrSequenceOrSnakeModePolymerBondRenderer =
   | BackBoneBondSequenceRenderer
   | FlexModePolymerBondRenderer
   | PolymerBondSequenceRenderer
@@ -21,6 +21,7 @@ type FlexOrSequenceOrSnakeModePolymerBondRenderer =
 export class PolymerBond extends BaseBond {
   public secondMonomer?: BaseMonomer;
   public renderer?: FlexOrSequenceOrSnakeModePolymerBondRenderer = undefined;
+  public restOfRowsWithAntisense?: number = undefined;
 
   constructor(public firstMonomer: BaseMonomer, secondMonomer?: BaseMonomer) {
     super();

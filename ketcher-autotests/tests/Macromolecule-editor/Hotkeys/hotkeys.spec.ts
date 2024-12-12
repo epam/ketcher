@@ -2,14 +2,23 @@ import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
-  selectSingleBondTool,
   selectSequenceLayoutModeTool,
   typeAllEnglishAlphabet,
   takeEditorScreenshot,
   takeLeftToolbarMacromoleculeScreenshot,
   takeTopToolbarScreenshot,
   waitForPageInit,
+  selectAllStructuresOnCanvas,
+  selectMacroBond,
+  resetZoomLevelToDefault,
+  ZoomOutByKeyboard,
+  ZoomInByKeyboard,
+  selectUndoByKeyboard,
+  selectRedoByKeyboard,
+  waitForRender,
+  getControlModifier,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 test.describe('Hotkeys', () => {
   test.beforeEach(async ({ page }) => {
@@ -46,9 +55,9 @@ test.describe('Hotkeys', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
     await page.keyboard.press('Control+Backspace');
-    await page.keyboard.press('Control+z');
+    await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Shift+z');
+    await selectRedoByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 
@@ -59,9 +68,13 @@ test.describe('Hotkeys', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
     await page.keyboard.press('Control+Backspace');
-    await page.keyboard.press('Control+z');
+    await selectUndoByKeyboard(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+y');
+
+    const modifier = getControlModifier();
+    await waitForRender(page, async () => {
+      await page.keyboard.press(`${modifier}+KeyY`);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -74,7 +87,7 @@ test.describe('Hotkeys', () => {
     */
     await page.keyboard.press('Delete');
     await takeLeftToolbarMacromoleculeScreenshot(page);
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.keyboard.press('Backspace');
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await page.keyboard.press('Shift+Tab');
@@ -92,7 +105,7 @@ test.describe('Hotkeys', () => {
       page,
     );
     for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await page.keyboard.press('Control+=');
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -108,7 +121,7 @@ test.describe('Hotkeys', () => {
       page,
     );
     for (let i = 0; i < numberOfPressZoomOut; i++) {
-      await page.keyboard.press('Control+-');
+      await ZoomOutByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -124,10 +137,10 @@ test.describe('Hotkeys', () => {
       page,
     );
     for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await page.keyboard.press('Control+=');
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+0');
+    await resetZoomLevelToDefault(page);
     await takeEditorScreenshot(page);
   });
 
@@ -140,7 +153,7 @@ test.describe('Hotkeys', () => {
       'KET/three-monomers-not-connected-with-bonds.ket',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
   });
 
@@ -155,7 +168,7 @@ test.describe('Hotkeys', () => {
       'KET/three-monomers-not-connected-with-bonds.ket',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
     await takeLeftToolbarMacromoleculeScreenshot(page);

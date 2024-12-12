@@ -14,7 +14,13 @@ import {
   waitForPageInit,
   openFromFileViaClipboard,
   drawBenzeneRing,
+  ZoomOutByKeyboard,
+  ZoomInByKeyboard,
 } from '@utils';
+import {
+  pressUndoButton,
+  pressRedoButton,
+} from '@utils/macromolecules/topToolBar';
 import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
 
 async function checkZoomLevel(page: Page, zoomLevel: string) {
@@ -125,12 +131,12 @@ test.describe('Zoom changes', () => {
     await checkZoomLevel(page, '110%');
 
     await resetCurrentTool(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
 
     await resetCurrentTool(page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await pressRedoButton(page);
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
   });
@@ -143,7 +149,7 @@ test.describe('Zoom changes', () => {
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
-    await page.keyboard.press('Control+=');
+    await ZoomInByKeyboard(page);
     await page.getByTestId('zoom-input').click();
     await page.getByTestId('zoom-in').click();
     await checkZoomLevel(page, '120%');
@@ -157,7 +163,7 @@ test.describe('Zoom changes', () => {
     await drawBenzeneRing(page);
     await resetCurrentTool(page);
 
-    await page.keyboard.press('Control+-');
+    await ZoomOutByKeyboard(page);
     await page.getByTestId('zoom-input').click();
     await page.getByTestId('zoom-out').click();
     await checkZoomLevel(page, '80%');

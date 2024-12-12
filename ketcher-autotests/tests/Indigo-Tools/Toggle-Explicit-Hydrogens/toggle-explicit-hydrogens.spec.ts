@@ -11,6 +11,7 @@ import {
   RingButton,
   openFileAndAddToCanvasAsNewProject,
   screenshotBetweenUndoRedo,
+  clickOnCanvas,
 } from '@utils';
 
 test.describe('Toggle-Explicit-Hydrogens Tool', () => {
@@ -55,7 +56,7 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     const x = 200;
     const y = 200;
     await selectRing(RingButton.Benzene, page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
     });
@@ -133,7 +134,7 @@ test.describe('1. Molecules connected ', () => {
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/${fileName}`,
         page,
       );
-      await page.mouse.click(200, 200);
+      await clickOnCanvas(page, 200, 200);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -181,7 +182,7 @@ test.describe('2. Molecules connected ', () => {
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/${fileName}`,
         page,
       );
-      await page.mouse.click(200, 200);
+      await clickOnCanvas(page, 200, 200);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -250,7 +251,7 @@ test.describe('3. Molecules connected ', () => {
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/All types of bond with Query feature atom on the canvas/${fileName}`,
         page,
       );
-      await page.mouse.click(200, 200);
+      await clickOnCanvas(page, 200, 200);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -318,7 +319,7 @@ test.describe('4. Fold/unfold hydrogens for', () => {
         `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms/${fileName}`,
         page,
       );
-      await page.mouse.click(20, 20);
+      await clickOnCanvas(page, 20, 20);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -373,7 +374,7 @@ test.describe('5. Fold/unfold hydrogens for', () => {
         `KET/Toggle-Explicit-Hydrogens/Atoms/Custom Query Atoms/${fileName}`,
         page,
       );
-      await page.mouse.click(20, 20);
+      await clickOnCanvas(page, 20, 20);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -422,7 +423,7 @@ test.describe('6. Fold/unfold hydrogens for', () => {
         `KET/Toggle-Explicit-Hydrogens/Atoms/Custom Query Atoms/${fileName}`,
         page,
       );
-      await page.mouse.click(20, 20);
+      await clickOnCanvas(page, 20, 20);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -486,7 +487,7 @@ test.describe('7. Fold/unfold hydrogens for', () => {
         `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms with Custom query feature atom on the canvas/${fileName}`,
         page,
       );
-      await page.mouse.click(20, 20);
+      await clickOnCanvas(page, 20, 20);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -534,7 +535,7 @@ test.describe('8. Fold/unfold hydrogens for', () => {
         `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms/${fileName}`,
         page,
       );
-      await page.mouse.click(20, 20);
+      await clickOnCanvas(page, 20, 20);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -585,7 +586,7 @@ test.describe('9. Fold/unfold hydrogens for', () => {
         `KET/Toggle-Explicit-Hydrogens/Atoms/Ordinary Atoms with Custom query feature atom on the canvas/${fileName}`,
         page,
       );
-      await page.mouse.click(20, 20);
+      await clickOnCanvas(page, 20, 20);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -656,7 +657,7 @@ test.describe('10. Fold/unfold hydrogens for', () => {
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
         page,
       );
-      await page.mouse.click(20, 20);
+      await clickOnCanvas(page, 20, 20);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -712,7 +713,7 @@ test.describe('11. Fold/unfold hydrogens for', () => {
           `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
           page,
         );
-        await page.mouse.click(20, 20);
+        await clickOnCanvas(page, 20, 20);
         await waitForSpinnerFinishedWork(page, async () => {
           await selectTopPanelButton(
             TopPanelButton.toggleExplicitHydrogens,
@@ -765,7 +766,7 @@ test.describe('12. Fold/unfold hydrogens for', () => {
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Custom Query Bonds/Groups/${fileName}`,
         page,
       );
-      await page.mouse.click(20, 20);
+      await clickOnCanvas(page, 20, 20);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -858,7 +859,7 @@ test.describe('13. Fold/unfold hydrogens for', () => {
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
         page,
       );
-      await page.mouse.click(20, 20);
+      await clickOnCanvas(page, 20, 20);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -911,7 +912,7 @@ test.describe('14. Fold/unfold hydrogens for', () => {
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
         page,
       );
-      await page.mouse.click(20, 20);
+      await clickOnCanvas(page, 20, 20);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -965,7 +966,7 @@ test.describe('15. Fold/unfold hydrogens for', () => {
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/${fileName}`,
         page,
       );
-      await page.mouse.click(20, 20);
+      await clickOnCanvas(page, 20, 20);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -1042,7 +1043,7 @@ test.describe('16. Fold/unfold hydrogens for', () => {
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/Groups with Query feature atom on the canvas/${fileName}`,
         page,
       );
-      await page.mouse.click(20, 20);
+      await clickOnCanvas(page, 20, 20);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,
@@ -1099,7 +1100,7 @@ test.describe('17. Fold/unfold hydrogens for', () => {
         `KET/Toggle-Explicit-Hydrogens/All types of bond/Ordinary Bonds/Groups/Groups with Query feature atom on the canvas/${fileName}`,
         page,
       );
-      await page.mouse.click(20, 20);
+      await clickOnCanvas(page, 20, 20);
       await waitForSpinnerFinishedWork(page, async () => {
         await selectTopPanelButton(
           TopPanelButton.toggleExplicitHydrogens,

@@ -30,9 +30,15 @@ import {
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
   waitForSpinnerFinishedWork,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 const X_DELTA = 300;
 
@@ -103,7 +109,7 @@ test.describe('Templates - Functional Group Tools', () => {
     );
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     const coordinates = await getRotationHandleCoordinates(page);
     const { x: rotationHandleX, y: rotationHandleY } = coordinates;
 
@@ -133,7 +139,7 @@ test.describe('Templates - Functional Group Tools', () => {
     );
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
 
     const coordinates = await getRotationHandleCoordinates(page);
     const { x: rotationHandleX, y: rotationHandleY } = coordinates;
@@ -265,9 +271,9 @@ test.describe('Templates - Functional Group Tools', () => {
       await page.getByText('Remove Abbreviation').click();
     });
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await resetCurrentTool(page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await pressRedoButton(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -293,7 +299,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
 
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -315,7 +321,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       'Molfiles-V2000/expand-functional-group-with-benzene.mol',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Vertical Flip (Alt+V)');
 
     await resetCurrentTool(page);
@@ -342,7 +348,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
     );
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await pressButton(page, 'Horizontal Flip (Alt+H)');
 
     await resetCurrentTool(page);
@@ -374,7 +380,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await page.getByText('Boc').first().click();
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
 
@@ -385,7 +391,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByTestId('delete').click();
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -405,7 +411,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await selectRingButton(RingButton.Benzene, page);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await waitForRender(page, async () => {
       await pressButton(page, 'Remove Abbreviation');
     });
@@ -414,7 +420,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await selectRingButton(RingButton.Cyclopentadiene, page);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await page.mouse.click(point.x, point.y);
+    await clickOnCanvas(page, point.x, point.y);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -480,8 +486,8 @@ test.describe('Templates - Functional Group Tools2', () => {
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Undo, page);
-    await selectTopPanelButton(TopPanelButton.Redo, page);
+    await pressUndoButton(page);
+    await pressRedoButton(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -566,11 +572,11 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
     );
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
-    await page.mouse.click(clickCoordines.x1, clickCoordines.y1);
+    await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1);
     await resetCurrentTool(page);
 
     await selectFunctionalGroups(FunctionalGroups.CPh3, page);
-    await page.mouse.click(clickCoordines.x2, clickCoordines.y2);
+    await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -707,23 +713,23 @@ test.describe('Templates - Functional Group Tools3', () => {
       'Molfiles-V2000/contracted-fg-abbreviation.mol',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await page.getByText('Boc').click({ button: 'right' });
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();
     });
     await takeEditorScreenshot(page);
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await waitForRender(page, async () => {
       await page.getByText('Contract Abbreviation').click();
     });
     await takeEditorScreenshot(page);
 
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
-    await page.mouse.click(point.x, point.y, { button: 'right' });
+    await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await waitForRender(page, async () => {
       await page.getByText('Remove Abbreviation').click();
     });
@@ -754,11 +760,11 @@ test.describe('Templates - Functional Group Tools3', () => {
     };
 
     await selectFunctionalGroups(FunctionalGroups.Bn, page);
-    await page.mouse.click(clickCoordines.x1, clickCoordines.y1);
+    await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1);
     await resetCurrentTool(page);
 
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
-    await page.mouse.click(clickCoordines.x2, clickCoordines.y2);
+    await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2);
     await resetCurrentTool(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
@@ -791,11 +797,11 @@ test.describe('Templates - Functional Group Tools3', () => {
     };
 
     await selectFunctionalGroups(FunctionalGroups.CCl3, page);
-    await page.mouse.click(clickCoordines.x1, clickCoordines.y1);
+    await clickOnCanvas(page, clickCoordines.x1, clickCoordines.y1);
     await resetCurrentTool(page);
 
     await selectFunctionalGroups(FunctionalGroups.C2H5, page);
-    await page.mouse.click(clickCoordines.x2, clickCoordines.y2);
+    await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2);
     await resetCurrentTool(page);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
@@ -829,7 +835,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift+f');
     await page.getByText('Boc').click();
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 

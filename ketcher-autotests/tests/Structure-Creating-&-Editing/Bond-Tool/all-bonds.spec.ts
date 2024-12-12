@@ -42,6 +42,7 @@ import {
   cutToClipboardByKeyboard,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -56,6 +57,10 @@ import {
   selectSelection,
 } from '@utils/canvas/selectSelection';
 import { DropdownToolIds } from '@utils/clicks/types';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 const buttonIdToTitle: {
   [key: string]: string;
 } = {
@@ -113,8 +118,8 @@ test.describe(`Bond tool:`, () => {
       await clickInTheMiddleOfTheScreen(page);
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await page.mouse.click(point.x, point.y);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       const countBonds = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -129,7 +134,7 @@ test.describe(`Bond tool:`, () => {
 
       await selectNestedTool(page, BondTool[bondToolKey]);
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       const countBondsWithRing = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -140,7 +145,7 @@ test.describe(`Bond tool:`, () => {
       await selectTool(LeftPanelButton.Erase, page);
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       const sizeAfterErase = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -150,7 +155,7 @@ test.describe(`Bond tool:`, () => {
 
       await selectNestedTool(page, BondTool[bondToolKey]);
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       const sizeWithRingAndBond = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -173,7 +178,7 @@ test.describe(`Bond tool:`, () => {
       await selectNestedTool(page, BondTool[bondToolKey]);
 
       point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       await selectAction(TopPanelButton.Clear, page);
 
@@ -184,12 +189,12 @@ test.describe(`Bond tool:`, () => {
       const doubleBond = await getTopBondByAttributes(page, {
         type: BondType.DOUBLE,
       });
-      await page.mouse.click(doubleBond.x, doubleBond.y);
+      await clickOnCanvas(page, doubleBond.x, doubleBond.y);
 
       const singleBond = await getTopBondByAttributes(page, {
         type: BondType.SINGLE,
       });
-      await page.mouse.click(singleBond.x, singleBond.y);
+      await clickOnCanvas(page, singleBond.x, singleBond.y);
       await takeEditorScreenshot(page);
       await selectAction(TopPanelButton.Clear, page);
     });
@@ -209,14 +214,14 @@ test.describe(`Bond tool:`, () => {
       await selectNestedTool(page, BondTool[bondToolKey]);
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       const chainSize = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
       });
       expect(chainSize).toEqual(chainSizeWithBond);
 
-      await selectAction(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
 
       const chainSizeAfterUndo = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -224,42 +229,42 @@ test.describe(`Bond tool:`, () => {
       expect(chainSizeAfterUndo).toEqual(chainSizeWithoutBondAfterUndo);
 
       point = await getAtomByIndex(page, { label: 'C' }, 1);
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       point = await getAtomByIndex(
         page,
         { label: 'C' },
         DELAY_IN_SECONDS.THREE,
       );
-      await page.mouse.click(point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y);
 
       const editedChain = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
       });
       expect(editedChain).toEqual(chainSizeAfterMultipleEditing);
 
-      await selectAction(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
 
       const editedChainUndo = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainUndo).toEqual(chainSizeWithBond);
 
-      await selectAction(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
 
       const editedChainUndoTwice = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainUndoTwice).toEqual(chainSizeWithoutBondAfterUndo);
 
-      await selectAction(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
 
       const editedChainRedo = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainRedo).toEqual(chainSizeWithBond);
 
-      await selectAction(TopPanelButton.Redo, page);
+      await pressRedoButton(page);
 
       const editedChainRedoTwice = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -353,7 +358,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await moveMouseToTheMiddleOfTheScreen(page);
         await dragMouseTo(point.x + DELTA_X, point.y, page);
         await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
+          await pressUndoButton(page);
         });
 
         await selectSelection(SelectionType.Rectangle, page);
@@ -362,50 +367,44 @@ test.describe(`Bond tool (copy-paste):`, () => {
           reactingCenterStatus: 0,
         });
 
-        await waitForRender(page, async () => {
-          await page.mouse.click(point.x, point.y);
-        });
+        await clickOnCanvas(page, point.x, point.y);
 
         await copyToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
 
+        await clickOnCanvas(page, point.x + DELTA_X, point.y);
         await waitForRender(page, async () => {
-          await page.mouse.click(point.x + DELTA_X, point.y);
-        });
-        await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
+          await pressUndoButton(page);
         });
 
         await clickInTheMiddleOfTheScreen(page);
         await cutToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
-        await page.mouse.click(point.x + DELTA_X, point.y);
+        await clickOnCanvas(page, point.x + DELTA_X, point.y);
         await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
+          await pressUndoButton(page);
         });
         await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
+          await pressUndoButton(page);
         });
 
         await selectTool(LeftPanelButton.Erase, page);
         await clickInTheMiddleOfTheScreen(page);
 
         await waitForRender(page, async () => {
-          await selectTopPanelButton(TopPanelButton.Undo, page);
+          await pressUndoButton(page);
         });
 
         await selectAtom(AtomButton.Oxygen, page);
         point = await getCoordinatesTopAtomOfBenzeneRing(page);
 
         await waitForRender(page, async () => {
-          await page.mouse.click(point.x, point.y);
-          await selectTopPanelButton(TopPanelButton.Undo, page);
+          await clickOnCanvas(page, point.x, point.y);
+          await pressUndoButton(page);
         });
 
         await selectRing(RingButton.Cyclohexane, page);
-        await waitForRender(page, async () => {
-          await page.mouse.click(point.x, point.y);
-        });
+        await clickOnCanvas(page, point.x, point.y);
 
         await takeEditorScreenshot(page);
       },

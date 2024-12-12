@@ -1,8 +1,12 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
+  clickOnCanvas,
+  copyToClipboardByKeyboard,
   moveMouseAway,
   openFileAndAddToCanvasMacro,
+  pasteFromClipboardByKeyboard,
+  selectAllStructuresOnCanvas,
   selectClearCanvasTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
@@ -61,7 +65,7 @@ test.describe('Sequence edit mode', () => {
     */
     const x = 100;
     const y = 100;
-    await page.mouse.click(x, y, { button: 'right' });
+    await clickOnCanvas(page, x, y, { button: 'right' });
     await takeEditorScreenshot(page);
     await page.getByTestId('start_new_sequence').click();
     await enterSequence(page, 'acgtu');
@@ -101,7 +105,7 @@ test.describe('Sequence edit mode', () => {
     await startNewSequence(page);
     await enterSequence(page, 'acgtu');
     await takeEditorScreenshot(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 
@@ -279,15 +283,15 @@ test.describe('Sequence edit mode', () => {
     Description: It is not possible to add more monomers to cycled structure. Error message appears.
     */
     await openFileAndAddToCanvasMacro('KET/cyclic-sequence-tcgu.ket', page);
-    await page.keyboard.press('Control+a');
-    await page.keyboard.press('Control+c');
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
     await startNewSequence(page);
     await enterSequence(page, 'aaaaaaaaaa');
 
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('ArrowLeft');
 
-    await page.keyboard.press('Control+v');
+    await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
 

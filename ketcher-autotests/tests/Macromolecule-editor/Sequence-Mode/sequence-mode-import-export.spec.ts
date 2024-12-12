@@ -12,6 +12,11 @@ import {
   takeEditorScreenshot,
   waitForIndigoToLoad,
   waitForKetcherInit,
+  moveMouseAway,
+  MacroFileType,
+  SequenceType,
+  PeptideType,
+  resetZoomLevelToDefault,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
@@ -42,7 +47,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await page.keyboard.press('Control+0');
+  await resetZoomLevelToDefault(page);
   await selectClearCanvasTool(page);
 });
 
@@ -149,12 +154,12 @@ test.describe('Import/export sequence:', () => {
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'Sequence',
-      'RNA',
+      [MacroFileType.Sequence, SequenceType.RNA],
       'ATCGUatcgu',
     );
 
     await zoomWithMouseWheel(page, 300);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -170,12 +175,12 @@ test.describe('Import/export sequence:', () => {
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'Sequence',
-      'RNA',
+      [MacroFileType.Sequence, SequenceType.RNA],
       'ATCGUatcgu',
     );
 
     await zoomWithMouseWheel(page, 300);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -191,12 +196,15 @@ test.describe('Import/export sequence:', () => {
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      'Sequence',
-      'Peptide',
+      [
+        MacroFileType.Sequence,
+        [SequenceType.PEPTIDE, PeptideType.oneLetterCode],
+      ],
       'ACDEFGHIKLMNPQRSTVWYacdefghiklmnpqrstcwy',
     );
 
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
   });

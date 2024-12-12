@@ -26,13 +26,15 @@ import {
   receiveFileComparisonData,
   selectLeftPanelButton,
   LeftPanelButton,
-  selectTopPanelButton,
-  TopPanelButton,
   drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
+  selectAllStructuresOnCanvas,
+  clickOnCanvas,
+  ZoomInByKeyboard,
 } from '@utils';
 import { atomsNames } from '@utils/canvas/atoms/excludedAtoms';
 import { getMolfile, getRxn } from '@utils/formats';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 const X_DELTA_ONE = 100;
 
@@ -188,7 +190,7 @@ test.describe('Atom Tool', () => {
       'Molfiles-V2000/structure-list-notlist.mol',
       page,
     );
-    await page.keyboard.press('Control+a');
+    await selectAllStructuresOnCanvas(page);
     await moveOnAtom(page, 'C', 0);
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -250,9 +252,7 @@ test.describe('Atom Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < numberOfPressZoomIn; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press('Control+=');
-      });
+      await ZoomInByKeyboard(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -271,7 +271,7 @@ test.describe('Atom Tool', () => {
       page,
     );
     await copyAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 
@@ -289,7 +289,7 @@ test.describe('Atom Tool', () => {
       page,
     );
     await cutAndPaste(page);
-    await page.mouse.click(x, y);
+    await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
 
@@ -306,7 +306,7 @@ test.describe('Atom Tool', () => {
     const bromineCoordinates = { x: x + X_DELTA_ONE, y };
 
     await selectAtomInToolbar(AtomButton.Bromine, page);
-    await page.mouse.click(bromineCoordinates.x, bromineCoordinates.y);
+    await clickOnCanvas(page, bromineCoordinates.x, bromineCoordinates.y);
 
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await page.mouse.move(bromineCoordinates.x, bromineCoordinates.y);
@@ -520,7 +520,7 @@ test.describe('Atom Tool', () => {
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await clickOnAtom(page, 'Br', numberOfAtom);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Undo, page);
+    await pressUndoButton(page);
     await clickOnAtom(page, 'N', numberOfAtom);
     await takeEditorScreenshot(page);
   });
@@ -685,7 +685,7 @@ test.describe('Atom Tool', () => {
       const coordinatesWithShift = y - MAX_BOND_LENGTH;
       await dragMouseTo(x, coordinatesWithShift, page);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Undo, page);
+      await pressUndoButton(page);
     });
   }
 });

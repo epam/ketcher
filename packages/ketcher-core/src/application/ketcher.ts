@@ -1,3 +1,4 @@
+import { Subscription } from 'subscription';
 /****************************************************************************
  * Copyright 2021 EPAM Systems
  *
@@ -16,7 +17,12 @@
 
 import { saveAs } from 'file-saver';
 import { FormatterFactory, SupportedFormat } from './formatters';
-import { GenerateImageOptions, StructService } from 'domain/services';
+import {
+  GenerateImageOptions,
+  StructService,
+  CalculateData,
+  type CalculateResult,
+} from 'domain/services';
 
 import { CoreEditor, Editor } from './editor';
 import { Indigo } from 'application/indigo';
@@ -34,6 +40,7 @@ import {
 import {
   deleteAllEntitiesOnCanvas,
   getStructure,
+  ketcherProvider,
   parseAndAddMacromoleculesOnCanvas,
   prepareStructToRender,
 } from './utils';
@@ -60,6 +67,7 @@ export class Ketcher {
   #editor: Editor;
   _indigo: Indigo;
   #eventBus: EventEmitter;
+  changeEvent: Subscription;
 
   get editor(): Editor {
     return this.#editor;
@@ -77,7 +85,7 @@ export class Ketcher {
     assert(editor != null);
     assert(structService != null);
     assert(formatterFactory != null);
-
+    this.changeEvent = new Subscription();
     this.#editor = editor;
     this.structService = structService;
     this.#formatterFactory = formatterFactory;
@@ -439,6 +447,13 @@ export class Ketcher {
     }, this.eventBus);
   }
 
+  async calculate(options?: CalculateData): Promise<CalculateResult> {
+    if (window.isPolymerEditorTurnedOn) {
+      throw new Error('Calculate is not available in macro mode');
+    }
+    return await this._indigo.calculate(this.#editor.struct(), options);
+  }
+
   /**
    * @param {number} value - in a range [ZoomTool.instance.MINZOOMSCALE, ZoomTool.instance.MAXZOOMSCALE]
    */
@@ -522,5 +537,19 @@ export class Ketcher {
 
   public sendCustomAction(name: string) {
     this.eventBus.emit('CUSTOM_BUTTON_PRESSED', name);
+  }
+
+  public updateMonomersLibrary(rawMonomersData: string | JSON) {
+    const editor = CoreEditor.provideEditorInstance();
+
+    ketcherProvider.getKetcher();
+
+    if (!editor) {
+      throw new Error(
+        'Updating monomer library in small molecules mode is not allowed, please switch to macromolecules mode',
+      );
+    }
+
+    editor.updateMonomersLibrary(rawMonomersData);
   }
 }

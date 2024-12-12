@@ -2,13 +2,16 @@ import { Page } from '@playwright/test';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import {
   BondType,
-  TopPanelButton,
+  clickOnCanvas,
   getControlModifier,
   openFileAndAddToCanvas,
-  selectTopPanelButton,
   takeEditorScreenshot,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 export const COORDINATES_TO_PERFORM_ROTATION = {
   x: 20,
@@ -76,7 +79,7 @@ export async function selectPartOfStructure(page: Page, shift = 5) {
 }
 
 export async function resetSelection(page: Page) {
-  page.mouse.click(EMPTY_SPACE_X, EMPTY_SPACE_Y);
+  await clickOnCanvas(page, EMPTY_SPACE_X, EMPTY_SPACE_Y);
 }
 
 export async function addStructureAndSelect(
@@ -90,8 +93,8 @@ export async function addStructureAndSelect(
 }
 
 export async function checkUndoRedo(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Undo, page);
-  await selectTopPanelButton(TopPanelButton.Redo, page);
+  await pressUndoButton(page);
+  await pressRedoButton(page);
   await takeEditorScreenshot(page);
 }
 

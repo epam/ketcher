@@ -1,0 +1,496 @@
+{
+    "root": {
+        "nodes": [
+            {
+                "$ref": "monomer0"
+            }
+        ],
+        "connections": [],
+        "templates": [
+            {
+                "$ref": "ambiguousMonomerTemplate-mixture__bnn___Benzylamino__cmp___Phosphonoacetate__nen___Ethylenediamine_"
+            },
+            {
+                "$ref": "monomerTemplate-bnn___Benzylamino"
+            },
+            {
+                "$ref": "monomerTemplate-cmp___Phosphonoacetate"
+            },
+            {
+                "$ref": "monomerTemplate-nen___Ethylenediamine"
+            }
+        ]
+    },
+    "monomer0": {
+        "type": "ambiguousMonomer",
+        "id": "0",
+        "position": {
+            "x": 18.213982706585046,
+            "y": -10.60417047523952
+        },
+        "alias": "%",
+        "templateId": "mixture__bnn___Benzylamino__cmp___Phosphonoacetate__nen___Ethylenediamine_"
+    },
+    "ambiguousMonomerTemplate-mixture__bnn___Benzylamino__cmp___Phosphonoacetate__nen___Ethylenediamine_": {
+        "type": "ambiguousMonomerTemplate",
+        "id": "mixture__bnn___Benzylamino__cmp___Phosphonoacetate__nen___Ethylenediamine_",
+        "alias": "%",
+        "subtype": "mixture",
+        "options": [
+            {
+                "templateId": "bnn___Benzylamino"
+            },
+            {
+                "templateId": "cmp___Phosphonoacetate"
+            },
+            {
+                "templateId": "nen___Ethylenediamine"
+            }
+        ]
+    },
+    "monomerTemplate-bnn___Benzylamino": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    -2.8595,
+                    2.5496,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    -1.5606,
+                    1.7994,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    -0.2616,
+                    2.5496,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.5598,
+                    0.2986,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.2602,
+                    -0.452,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -0.2574,
+                    -1.952,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.0374,
+                    0.3004,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    1.0431,
+                    -2.6995,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.3407,
+                    -1.9471,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.3379,
+                    -0.4471,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    6
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    7
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    7,
+                    8
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    9,
+                    6
+                ]
+            }
+        ],
+        "class": "Phosphate",
+        "classHELM": "RNA",
+        "id": "bnn___Benzylamino",
+        "fullName": "Benzylamino",
+        "alias": "bnn",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "type": "left",
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 1,
+                "type": "right",
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                }
+            }
+        ],
+        "naturalAnalogShort": "P"
+    },
+    "monomerTemplate-cmp___Phosphonoacetate": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "O",
+                "location": [
+                    0.1884,
+                    -1.6241,
+                    0
+                ]
+            },
+            {
+                "label": "P",
+                "location": [
+                    0.9383,
+                    -0.325,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    1.6882,
+                    -1.6241,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    0.1874,
+                    0.9745,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    2.4383,
+                    -0.3254,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    -1.3134,
+                    0.9748,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.0633,
+                    -0.3243,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    -2.0639,
+                    2.2736,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    1,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    5
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    5,
+                    6
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    5,
+                    7
+                ]
+            }
+        ],
+        "class": "Phosphate",
+        "classHELM": "RNA",
+        "id": "cmp___Phosphonoacetate",
+        "fullName": "Phosphonoacetate",
+        "alias": "cmp",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "type": "left",
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 1,
+                "type": "right",
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                }
+            }
+        ],
+        "naturalAnalogShort": "P"
+    },
+    "monomerTemplate-nen___Ethylenediamine": {
+        "type": "monomerTemplate",
+        "atoms": [
+            {
+                "label": "H",
+                "location": [
+                    0.0007,
+                    0.0004,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    1.3,
+                    0.75,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    1.3,
+                    2.25,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    2.6,
+                    0,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    3.9,
+                    0.75,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    5.1992,
+                    0.0004,
+                    0
+                ]
+            }
+        ],
+        "bonds": [
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    4,
+                    5
+                ]
+            }
+        ],
+        "class": "Phosphate",
+        "classHELM": "RNA",
+        "id": "nen___Ethylenediamine",
+        "fullName": "Ethylenediamine",
+        "alias": "nen",
+        "attachmentPoints": [
+            {
+                "attachmentAtom": 1,
+                "type": "left",
+                "leavingGroup": {
+                    "atoms": [
+                        0
+                    ]
+                }
+            },
+            {
+                "attachmentAtom": 1,
+                "type": "right",
+                "leavingGroup": {
+                    "atoms": [
+                        2
+                    ]
+                }
+            }
+        ],
+        "naturalAnalogShort": "P"
+    }
+}

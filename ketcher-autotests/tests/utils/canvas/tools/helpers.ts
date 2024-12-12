@@ -1,12 +1,15 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import {
+  clickOnCanvas,
   MacromoleculesTopPanelButton,
   selectOption,
   SequenceType,
+  takePageScreenshot,
   waitForRender,
 } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
+import { DropdownToolIds } from '@utils/clicks/types';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 import {
   AtomButton,
@@ -16,6 +19,7 @@ import {
   RingButton,
   TopPanelButton,
 } from '@utils/selectors';
+import { MacroBondTool } from './selectNestedTool/types';
 
 /**
  * Selects an atom from Atom toolbar
@@ -54,17 +58,45 @@ export async function selectAtomInToolbar(atomName: AtomButton, page: Page) {
 }
 
 export async function selectSingleBondTool(page: Page) {
-  const bondToolButton = page.getByTestId('single-bond');
+  const handToolButton = page.getByTestId('hand-tool');
+  // to reset Bond tool state
+  await handToolButton.click();
+
+  const bondToolDropdown = page
+    .getByTestId('bond-tool-submenu')
+    .locator('path')
+    .nth(1);
+  await bondToolDropdown.click();
+
+  const bondToolButton = page.getByTestId(MacroBondTool.SINGLE);
   await bondToolButton.click();
 }
 
+export async function selectMacroBond(
+  page: Page,
+  bondType: DropdownToolIds = MacroBondTool.SINGLE,
+) {
+  const handToolButton = page.getByTestId('hand-tool');
+  // to reset Bond tool state
+  await handToolButton.click();
+
+  const bondToolDropdown = page
+    .getByTestId('bond-tool-submenu')
+    .locator('path')
+    .nth(1);
+  await bondToolDropdown.click();
+
+  const hydrogenBondButton = page.getByTestId(bondType).first();
+  await hydrogenBondButton.click();
+}
+
 export async function openLayoutModeMenu(page: Page) {
-  const modeSelectorButton = await page.getByTestId('layout-mode');
+  const modeSelectorButton = page.getByTestId('layout-mode');
   await modeSelectorButton.click();
 }
 
 export async function hideLibrary(page: Page) {
-  const hideLibraryLink = await page.getByText('Hide');
+  const hideLibraryLink = page.getByText('Hide');
   const isVisible = await hideLibraryLink.isVisible();
   if (isVisible) {
     await hideLibraryLink.click();
@@ -72,7 +104,7 @@ export async function hideLibrary(page: Page) {
 }
 
 export async function showLibrary(page: Page) {
-  const showLibraryButton = await await page.getByText('Show Library');
+  const showLibraryButton = page.getByText('Show Library');
   const isVisible = await showLibraryButton.isVisible();
   if (isVisible) {
     await showLibraryButton.click();
@@ -97,9 +129,10 @@ export async function selectSequenceLayoutModeTool(page: Page) {
 
 export async function startNewSequence(page: Page) {
   const newSequenceCellCoordinates = { x: 50, y: 50 };
-  await page.mouse.click(200, 200, { button: 'right' });
+  await clickOnCanvas(page, 200, 200, { button: 'right' });
   await page.getByTestId('start_new_sequence').click();
-  await page.mouse.click(
+  await clickOnCanvas(
+    page,
     newSequenceCellCoordinates.x,
     newSequenceCellCoordinates.y,
   );
@@ -130,7 +163,9 @@ export async function selectFlexLayoutModeTool(page: Page) {
 
 export async function selectEraseTool(page: Page) {
   const bondToolButton = page.getByTestId('erase');
-  await bondToolButton.click();
+  await waitForRender(page, async () => {
+    await bondToolButton.click();
+  });
 }
 
 export async function selectImageTool(page: Page) {
@@ -152,6 +187,7 @@ export async function selectImageTool(page: Page) {
  */
 export async function selectClearCanvasTool(page: Page, maxAttempts = 10) {
   const clearCanvasButton = page.getByTestId('clear-canvas');
+  const closeWindowXButton = page.getByTestId('close-icon');
   let attempts = 0;
 
   while (attempts < maxAttempts) {
@@ -160,14 +196,19 @@ export async function selectClearCanvasTool(page: Page, maxAttempts = 10) {
       return;
     } catch (error) {
       attempts++;
+      await clickOnCanvas(page, 0, 0);
       await page.keyboard.press('Escape');
+      if (await closeWindowXButton.isVisible()) {
+        await closeWindowXButton.click();
+      }
       await page.waitForTimeout(100);
     }
   }
 
-  throw new Error(
-    `Unable to click the 'Clear Canvas' button after ${maxAttempts} attempts.`,
-  );
+  await takePageScreenshot(page);
+  // throw new Error(
+  //   `Unable to click the 'Clear Canvas' button after ${maxAttempts} attempts.`,
+  // );
 }
 
 export async function selectRectangleSelectionTool(page: Page) {

@@ -2,6 +2,7 @@
 import { test, expect, Page } from '@playwright/test';
 import {
   BondType,
+  clickOnCanvas,
   doubleClickOnBond,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -526,54 +527,52 @@ test.describe('Bond Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    `Different combinations - 2/3 open the saved .mol file`,
-    async ({ page }) => {
-      /*
-       * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2495
-       * Test case: EPMLSOPKET-1465
-       * Description: User is able to change the bond properties at a time.
-       * All selected properties are assigned to the selected bond.
-       * *.mol and *.rxn files correctly opened, applied atom property correctly represented.
-       */
+  test(`Different combinations - 2/3 open the saved .mol file`, async ({
+    page,
+  }) => {
+    /*
+     * Test case: EPMLSOPKET-1465
+     * Description: User is able to change the bond properties at a time.
+     * All selected properties are assigned to the selected bond.
+     * *.mol and *.rxn files correctly opened, applied atom property correctly represented.
+     */
 
-      await openFileAndAddToCanvas(
-        'Molfiles-V2000/mol_1465_to_open-expected.mol',
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/mol_1465_to_open-expected.mol',
+      page,
+    );
+    await doubleClickOnBond(page, BondType.SINGLE, 5);
+    await selectOption(page, 'Single', 'Single Up');
+    await selectOption(page, 'Either', 'Chain');
+    await selectOption(page, 'Unmarked', 'No change');
+    await pressButton(page, 'Apply');
+
+    await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    await page.mouse.move(x, y + 30);
+    dragMouseTo(x + 100, y + 100, page);
+    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+
+    await selectRingButton(RingButton.Benzene, page);
+    await clickOnCanvas(page, x + 150, y + 150);
+
+    const expectedFile = await getRxn(page, 'v2000');
+    await saveToFile('Rxn-V2000/rxn-1465-to-open-expected.rxn', expectedFile);
+
+    const METADATA_STRING_INDEX = [2, 7, 34];
+
+    const { fileExpected: rxnFileExpected, file: rxnFile } =
+      await receiveFileComparisonData({
         page,
-      );
-      await doubleClickOnBond(page, BondType.SINGLE, 5);
-      await selectOption(page, 'Single', 'Single Up');
-      await selectOption(page, 'Either', 'Chain');
-      await selectOption(page, 'Unmarked', 'No change');
-      await pressButton(page, 'Apply');
+        expectedFileName:
+          'tests/test-data/Rxn-V2000/rxn-1465-to-open-expected.rxn',
+        metaDataIndexes: METADATA_STRING_INDEX,
+        fileFormat: 'v2000',
+      });
 
-      await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
-      const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-      await page.mouse.move(x, y + 30);
-      dragMouseTo(x + 100, y + 100, page);
-      await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-
-      await selectRingButton(RingButton.Benzene, page);
-      await page.mouse.click(x + 150, y + 150);
-
-      const expectedFile = await getRxn(page, 'v2000');
-      await saveToFile('Rxn-V2000/rxn-1465-to-open-expected.rxn', expectedFile);
-
-      const METADATA_STRING_INDEX = [2, 7, 34];
-
-      const { fileExpected: rxnFileExpected, file: rxnFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Rxn-V2000/rxn-1465-to-open-expected.rxn',
-          metaDataIndexes: METADATA_STRING_INDEX,
-          fileFormat: 'v2000',
-        });
-
-      expect(rxnFile).toEqual(rxnFileExpected);
-      await takeEditorScreenshot(page);
-    },
-  );
+    expect(rxnFile).toEqual(rxnFileExpected);
+    await takeEditorScreenshot(page);
+  });
 
   test(`Different combinations - 3/3 open the saved *.rxn and edit it`, async ({
     page,

@@ -10,7 +10,8 @@ const SUGAR_SELECTED_ELEMENT_ID =
 const SUGAR_SYMBOL_ELEMENT_ID = MONOMER_SYMBOLS_IDS[KetMonomerClass.Sugar].body;
 
 export class SugarRenderer extends BaseMonomerRenderer {
-  public CHAIN_BEGINNING = '’5';
+  public CHAIN_START_TERMINAL_INDICATOR_TEXT = '’5';
+  public CHAIN_END_TERMINAL_INDICATOR_TEXT = '’3';
 
   constructor(public monomer: Sugar, scale?: number) {
     super(
@@ -23,7 +24,11 @@ export class SugarRenderer extends BaseMonomerRenderer {
   }
 
   public get textColor() {
-    return '#fff';
+    return this.monomer.isModification ? '#333333' : '#fff';
+  }
+
+  protected get modificationConfig() {
+    return { backgroundId: '#sugar-modified-background' };
   }
 
   protected getMonomerColor(theme) {
@@ -39,11 +44,6 @@ export class SugarRenderer extends BaseMonomerRenderer {
       .data([this])
       .attr('href', SUGAR_SYMBOL_ELEMENT_ID)
       .attr('fill', this.getMonomerColor(theme));
-  }
-
-  show(theme) {
-    super.show(theme);
-    this.appendChainBeginning();
   }
 
   public get enumerationElementPosition() {

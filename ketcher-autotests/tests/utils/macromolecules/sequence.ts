@@ -44,7 +44,9 @@ export async function clickOnSequenceSymbolByIndex(
   symbolIndex: number,
 ) {
   const symbolLocator = page
-    .locator(`g:nth-child(${symbolIndex.toString()}) > text`)
+    .getByTestId('sequence-item')
+    .nth(symbolIndex)
+    .locator('> text')
     .first();
   await symbolLocator.hover();
   await symbolLocator.click();
@@ -55,7 +57,9 @@ export async function doubleClickOnSequenceSymbolByIndex(
   symbolIndex: number,
 ) {
   const symbolLocator = page
-    .locator(`g:nth-child(${symbolIndex.toString()}) > text`)
+    .getByTestId('sequence-item')
+    .nth(symbolIndex)
+    .locator('> text')
     .first();
   await symbolLocator.hover();
   await symbolLocator.dblclick();

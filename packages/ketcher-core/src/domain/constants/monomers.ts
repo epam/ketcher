@@ -22,6 +22,20 @@ export enum RnaDnaNaturalAnaloguesEnum {
   URACIL = 'U',
 }
 
+export enum StandardAmbiguousRnaBase {
+  N = 'N',
+  B = 'B',
+  V = 'V',
+  D = 'D',
+  H = 'H',
+  K = 'K',
+  M = 'M',
+  W = 'W',
+  Y = 'Y',
+  R = 'R',
+  S = 'S',
+}
+
 export const rnaDnaNaturalAnalogues = [
   RnaDnaNaturalAnaloguesEnum.ADENINE,
   RnaDnaNaturalAnaloguesEnum.THYMINE,

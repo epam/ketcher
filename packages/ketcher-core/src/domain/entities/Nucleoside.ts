@@ -4,7 +4,6 @@ import assert from 'assert';
 import {
   getNextMonomerInChain,
   getRnaBaseFromSugar,
-  getSugarFromRnaBase,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
@@ -19,6 +18,7 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { RNA_MONOMER_DISTANCE } from 'application/editor/tools/RnaPreset';
 import { SugarRenderer } from 'application/render';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
+import { KetMonomerClass } from 'application/formatters';
 
 export class Nucleoside {
   constructor(
@@ -47,8 +47,16 @@ export class Nucleoside {
     isAntisense = false,
   ) {
     const editor = CoreEditor.provideEditorInstance();
-    const rnaBaseLibraryItem = getRnaPartLibraryItem(editor, rnaBaseName);
-    const sugarLibraryItem = getRnaPartLibraryItem(editor, sugarName);
+    const rnaBaseLibraryItem = getRnaPartLibraryItem(
+      editor,
+      rnaBaseName,
+      KetMonomerClass.Base,
+    );
+    const sugarLibraryItem = getRnaPartLibraryItem(
+      editor,
+      sugarName,
+      KetMonomerClass.Sugar,
+    );
 
     assert(sugarLibraryItem);
     assert(rnaBaseLibraryItem);
@@ -125,23 +133,5 @@ export class Nucleoside {
     return (
       this.rnaBase.isModification || this.sugar.isModification || isNotLastNode
     );
-  }
-
-  public getAntisenseRnaBase() {
-    const hydrogenBondToAntisenseNode = this.rnaBase.hydrogenBonds.find(
-      (hydrogenBond) => {
-        const anotherMonomer = hydrogenBond.getAnotherMonomer(this.rnaBase);
-
-        return (
-          anotherMonomer instanceof RNABase &&
-          getSugarFromRnaBase(anotherMonomer)
-        );
-      },
-    );
-    const antisenseRnaBase = hydrogenBondToAntisenseNode?.getAnotherMonomer(
-      this.rnaBase,
-    );
-
-    return antisenseRnaBase;
   }
 }

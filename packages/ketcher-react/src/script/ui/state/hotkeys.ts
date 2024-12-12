@@ -397,7 +397,7 @@ async function clipData(editor: Editor) {
       ? ChemicalMimeType.Mol
       : ChemicalMimeType.Rxn;
 
-    res['text/plain'] = data;
+    res['text/plain'] = ket;
     res[type] = data;
 
     return res;

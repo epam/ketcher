@@ -225,7 +225,17 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     ) as Connection;
     const isVerticalConnection = firstCellConnection.isVertical;
     const isStraightVerticalConnection =
-      cells.length === 2 && isVerticalConnection;
+      (cells.length === 2 ||
+        cells.reduce(
+          (isStraight: boolean, cell: Cell, index: number): boolean => {
+            if (!isStraight || index === 0 || index === cells.length - 1) {
+              return isStraight;
+            }
+            return cell.x === firstCell.x && !cell.monomer;
+          },
+          true,
+        )) &&
+      isVerticalConnection;
     const isFirstMonomerOfBondInFirstCell = firstCell.node?.monomers.includes(
       this.polymerBond.firstMonomer,
     );
@@ -724,7 +734,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('y1', this.scaledPosition.startPosition.y)
       .attr('x2', this.scaledPosition.endPosition.x)
       .attr('y2', this.scaledPosition.endPosition.y)
-      .attr('pointer-events', 'stroke');
+      .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none');
 
     return this.bodyElement;
   }
@@ -745,10 +755,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         this.editorEvents.mouseLeavePolymerBond.dispatch(event);
         this.editorEvents.mouseLeaveDrawingEntity.dispatch(event);
       })
-      .attr('pointer-events', 'stroke') as never as D3SvgElementSelection<
-      SVGGElement,
-      void
-    >;
+      .attr(
+        'pointer-events',
+        this.polymerBond.finished ? 'stroke' : 'none',
+      ) as never as D3SvgElementSelection<SVGGElement, void>;
   }
 
   public show(_theme?: unknown, force = false): void {

@@ -30,7 +30,7 @@ function calculateTop(
   target: CalculatePreviewTopPayload,
   height: number,
 ): number {
-  const canvasWrapperBoundingClientRect = ZoomTool.instance.canvasWrapper
+  const canvasWrapperBoundingClientRect = ZoomTool.instance?.canvasWrapper
     .node()
     ?.getBoundingClientRect();
   const canvasWrapperTopOffset = canvasWrapperBoundingClientRect?.top || 0;

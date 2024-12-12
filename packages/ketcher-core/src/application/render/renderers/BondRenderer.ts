@@ -11,7 +11,15 @@ import { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
 import { D3SvgElementSelection } from 'application/render/types';
 
+type MouseActionType = 'mouseover' | 'mouseenter';
+
 const BOND_WIDTH = 2;
+const BOND_WIDTH_HOVER = 10;
+//  TODO need to figure out why we need two types of mouse hover actions
+const mouseEvents: Record<MouseActionType, { enter: string; leave: string }> = {
+  mouseover: { enter: 'mouseover', leave: 'mouseout' },
+  mouseenter: { enter: 'mouseenter', leave: 'mouseleave' },
+};
 
 export class BondRenderer extends BaseRenderer {
   private pathShape = '';
@@ -374,6 +382,37 @@ export class BondRenderer extends BaseRenderer {
     this.move();
   }
 
+  private createBondHoverablePath(
+    attrs: Record<string, string>,
+    mouseAction?: MouseActionType,
+  ): void {
+    if (!this.rootElement) {
+      return;
+    }
+    const path = this.rootElement.append('path').attr('d', this.pathShape);
+    const pathHover = this.rootElement
+      .append('path')
+      .attr('d', this.pathShape)
+      .attr('stroke', 'transparent')
+      .attr(
+        'stroke-width',
+        `${Number(attrs['stroke-width'] ?? BOND_WIDTH) * BOND_WIDTH_HOVER}`,
+      );
+    Object.entries(attrs).forEach(([key, value]) => {
+      path.attr(key, value);
+    });
+    if (mouseAction) {
+      const events = mouseEvents[mouseAction];
+      pathHover
+        .on(events.enter, () => {
+          this.appendHover();
+        })
+        .on(events.leave, () => {
+          this.removeHover();
+        });
+    }
+  }
+
   show() {
     this.rootElement = this.appendRootElement();
     const editor = CoreEditor.provideEditorInstance();
@@ -474,23 +513,18 @@ export class BondRenderer extends BaseRenderer {
       }
 
       this.pathShape = `
-          M${firstLineStartPosition.x},${firstLineStartPosition.y} 
-          L${firstLineEndPosition.x},${firstLineEndPosition.y} 
-          M${secondLineStartPosition.x},${secondLineStartPosition.y}      
+          M${firstLineStartPosition.x},${firstLineStartPosition.y}
+          L${firstLineEndPosition.x},${firstLineEndPosition.y}
+          M${secondLineStartPosition.x},${secondLineStartPosition.y}
           L${secondLineEndPosition.x},${secondLineEndPosition.y}
         `;
-
-      this.rootElement
-        .append('path')
-        .attr('d', this.pathShape)
-        .attr('stroke', 'black')
-        .attr('stroke-width', `${BOND_WIDTH}px`)
-        .on('mouseover', () => {
-          this.appendHover();
-        })
-        .on('mouseout', () => {
-          this.removeHover();
-        });
+      this.createBondHoverablePath(
+        {
+          stroke: 'black',
+          'stroke-width': `${BOND_WIDTH}`,
+        },
+        'mouseover',
+      );
     } else if (this.bond.type === 1) {
       if (this.bond.stereo === 1) {
         let bondStartPosition = Coordinates.modelToCanvas(
@@ -525,20 +559,15 @@ export class BondRenderer extends BaseRenderer {
           L${bondEndSecondPoint.x},${bondEndSecondPoint.y}
           Z
           `;
-
-        this.rootElement
-          .append('path')
-          .attr('d', this.pathShape)
-          .attr('stroke', '#000')
-          .attr('stroke-width', 2)
-          .attr('stroke-linecap', 'round')
-          .attr('stroke-linejoin', 'round')
-          .on('mouseenter', () => {
-            this.appendHover();
-          })
-          .on('mouseleave', () => {
-            this.removeHover();
-          });
+        this.createBondHoverablePath(
+          {
+            stroke: '#000',
+            'stroke-width': '2',
+            'stroke-linecap': 'round',
+            'stroke-linejoin': 'round',
+          },
+          'mouseenter',
+        );
       } else if (this.bond.stereo === 6) {
         let bondStartPosition = Coordinates.modelToCanvas(
           firstHalfEdge.position,
@@ -596,20 +625,15 @@ export class BondRenderer extends BaseRenderer {
         }
 
         this.pathShape = path;
-
-        this.rootElement
-          .append('path')
-          .attr('d', this.pathShape)
-          .attr('stroke', '#000')
-          .attr('stroke-width', 2)
-          .attr('stroke-linecap', 'round')
-          .attr('stroke-linejoin', 'round')
-          .on('mouseenter', () => {
-            this.appendHover();
-          })
-          .on('mouseleave', () => {
-            this.removeHover();
-          });
+        this.createBondHoverablePath(
+          {
+            stroke: '#000',
+            'stroke-width': '2',
+            'stroke-linecap': 'round',
+            'stroke-linejoin': 'round',
+          },
+          'mouseenter',
+        );
       } else {
         let startPosition = new Vec2(0, 0);
         let endPosition = this.scaledPosition.endPosition.sub(
@@ -629,17 +653,13 @@ export class BondRenderer extends BaseRenderer {
 
         this.pathShape = `M${startPosition.x},${startPosition.y} L${endPosition.x},${endPosition.y}`;
 
-        this.rootElement
-          .append('path')
-          .attr('d', this.pathShape)
-          .attr('stroke', 'black')
-          .attr('stroke-width', `${BOND_WIDTH}px`)
-          .on('mouseenter', () => {
-            this.appendHover();
-          })
-          .on('mouseleave', () => {
-            this.removeHover();
-          });
+        this.createBondHoverablePath(
+          {
+            stroke: 'black',
+            'stroke-width': `${BOND_WIDTH}`,
+          },
+          'mouseover',
+        );
       }
     }
   }

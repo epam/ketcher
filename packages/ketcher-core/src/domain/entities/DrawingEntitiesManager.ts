@@ -18,6 +18,7 @@ import {
   RNABase,
   SGroupForest,
   Struct,
+  SubChainNode,
   Sugar,
 } from 'domain/entities';
 import {
@@ -50,6 +51,7 @@ import {
 import { Coordinates, CoreEditor } from 'application/editor/internal';
 import {
   getNextMonomerInChain,
+  getSugarFromRnaBase,
   isAmbiguousMonomerLibraryItem,
   isRnaBaseOrAmbiguousRnaBase,
   isValidNucleoside,
@@ -88,6 +90,7 @@ import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
 import {
   RNA_DNA_NON_MODIFIED_PART,
   RnaDnaNaturalAnaloguesEnum,
+  StandardAmbiguousRnaBase,
 } from 'domain/constants/monomers';
 import { isNumber } from 'lodash';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
@@ -283,7 +286,7 @@ export class DrawingEntitiesManager {
     } else if (drawingEntity instanceof Bond) {
       return this.deleteBond(drawingEntity);
     } else if (drawingEntity instanceof Atom) {
-      return this.deleteAtom(drawingEntity);
+      return this.deleteAtom(drawingEntity, needToDeleteConnectedEntities);
     } else {
       return new Command();
     }
@@ -863,6 +866,8 @@ export class DrawingEntitiesManager {
     if (editor.mode instanceof SnakeMode) {
       command.merge(this.recalculateCanvasMatrix());
     }
+
+    command.merge(this.recalculateAntisenseChains());
 
     return command;
   }
@@ -1546,6 +1551,7 @@ export class DrawingEntitiesManager {
   private calculateSnakeLayoutMatrix(chainsCollection: ChainsCollection) {
     const snakeLayoutMatrix = new Matrix<Cell>();
     const monomersGroupedByY = new Map<number, Map<number, BaseMonomer>>();
+    const monomerToNode = chainsCollection.monomerToNode;
 
     this.monomers.forEach((monomer) => {
       const x = Number(monomer.position.x.toFixed());
@@ -1596,7 +1602,7 @@ export class DrawingEntitiesManager {
           Number(indexY),
           Number(monomerXToIndexInMatrix[x]),
           new Cell(
-            chainsCollection.monomerToNode.get(monomer),
+            monomerToNode.get(monomer),
             [],
             Number(indexY),
             Number(monomerXToIndexInMatrix[x]),
@@ -1642,26 +1648,27 @@ export class DrawingEntitiesManager {
           return;
         }
 
-        const antisenseChains = [
-          ...chainsCollection.getComplementaryChains(chain),
-        ];
-        const antisenseChainsStartIndexes = antisenseChains.map(
-          (antisenseChain) => {
+        const complimentaryChainsWithData =
+          chainsCollection.getComplimentaryChainsWithData(chain);
+        const antisenseChainsWithData = complimentaryChainsWithData.filter(
+          (complimentaryChainWithData) =>
+            complimentaryChainWithData.complimentaryChain.firstMonomer
+              ?.monomerItem.isAntisense,
+        );
+        const antisenseChainsStartIndexes = antisenseChainsWithData.map(
+          (antisenseChainWithData) => {
             const firstConnectedAntisenseNodeIndex =
-              antisenseChain.nodes.findIndex((node) => {
-                return (
-                  (node instanceof Nucleoside || node instanceof Nucleotide) &&
-                  node.getAntisenseRnaBase()
-                );
-              });
-            const firstConnectedAntisenseNode = antisenseChain.nodes[
-              firstConnectedAntisenseNodeIndex
-            ] as Nucleoside | Nucleotide;
-            const senseRnaBase =
-              firstConnectedAntisenseNode.getAntisenseRnaBase();
-            const senseNode =
-              senseRnaBase && chainsCollection.monomerToNode.get(senseRnaBase);
-            const senseNodeIndex = senseNode && chain.nodes.indexOf(senseNode);
+              antisenseChainWithData.complimentaryChain.nodes.findIndex(
+                (node) => {
+                  return (
+                    node ===
+                    antisenseChainWithData.firstConnectedComplimentaryNode
+                  );
+                },
+              );
+            const senseNodeIndex = chain.nodes.indexOf(
+              antisenseChainWithData.firstConnectedNode,
+            );
 
             if (!isNumber(senseNodeIndex)) {
               return -1;
@@ -1674,7 +1681,7 @@ export class DrawingEntitiesManager {
           antisenseChainsStartIndexes.map(
             (antisenseChainsStartIndex, index) => [
               antisenseChainsStartIndex,
-              antisenseChains[index],
+              antisenseChainsWithData[index],
             ],
           ),
         );
@@ -1682,17 +1689,24 @@ export class DrawingEntitiesManager {
         let restOfRowsWithAntisense = 0;
         let isPreviousChainWithAntisense = false;
 
-        chain.forEachNode(({ node, nodeIndex }) => {
-          if (rearrangedMonomersSet.has(node.monomer.id)) {
+        for (
+          let nodeIndex = Math.min(0, ...antisenseChainsStartIndexes);
+          nodeIndex < chain.length;
+          nodeIndex++
+        ) {
+          const node = chain.nodes[nodeIndex];
+
+          if (node && rearrangedMonomersSet.has(node.monomer.id)) {
             return;
           }
 
-          const antisenseChain = antisenseChainsStartIndexesMap.get(nodeIndex);
+          const antisenseChainWithData =
+            antisenseChainsStartIndexesMap.get(nodeIndex);
 
-          if (antisenseChain) {
+          if (antisenseChainWithData) {
             const { rowsUsedByAntisense, command: rearrangedAntisenseCommand } =
               this.rearrangeAntisenseChain(
-                antisenseChain,
+                antisenseChainWithData.complimentaryChain,
                 lastPosition,
                 canvasWidth,
                 rearrangedMonomersSet,
@@ -1703,6 +1717,10 @@ export class DrawingEntitiesManager {
             restOfRowsWithAntisense = rowsUsedByAntisense;
             command.merge(rearrangedAntisenseCommand);
             isPreviousChainWithAntisense = true;
+          }
+
+          if (!node) {
+            continue;
           }
 
           const r2PolymerBond =
@@ -1757,7 +1775,8 @@ export class DrawingEntitiesManager {
               command.merge(rearrangeResult.command);
             });
           }
-        });
+        }
+
         lastPosition = getFirstPosition(maxVerticalDistance, lastPosition);
         maxVerticalDistance = 0;
 
@@ -1989,6 +2008,7 @@ export class DrawingEntitiesManager {
         newSecondAtom,
         bond.type,
         bond.stereo,
+        bond.bondIdInMicroMode,
       );
       const addedBond = bondAddCommand.operations[0].bond as Bond;
 
@@ -2385,13 +2405,7 @@ export class DrawingEntitiesManager {
         atomIdInMicroMode,
         label,
       ),
-      this.addAtomChangeModel.bind(
-        this,
-        position,
-        monomer,
-        atomIdInMicroMode,
-        label,
-      ),
+      this.deleteAtomChangeModel.bind(this),
     );
 
     command.addOperation(atomAddOperation);
@@ -2405,7 +2419,7 @@ export class DrawingEntitiesManager {
     return atom;
   }
 
-  private deleteAtom(atom: Atom) {
+  private deleteAtom(atom: Atom, needToDeleteConnectedEntities = true) {
     const command = new Command();
 
     command.addOperation(
@@ -2422,6 +2436,22 @@ export class DrawingEntitiesManager {
       ),
     );
 
+    if (needToDeleteConnectedEntities) {
+      atom.bonds.forEach((bond) => {
+        if (bond.selected) {
+          return;
+        }
+
+        command.merge(this.deleteBond(bond));
+      });
+
+      this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
+        if (monomerToAtomBond.atom === atom && !monomerToAtomBond.selected) {
+          command.merge(this.deleteMonomerToAtomBond(monomerToAtomBond));
+        }
+      });
+    }
+
     return command;
   }
 
@@ -2430,6 +2460,7 @@ export class DrawingEntitiesManager {
     secondAtom: Atom,
     type: number,
     stereo: number,
+    bondIdInMicroMode: number,
     _bond?: Bond,
   ) {
     if (_bond) {
@@ -2438,7 +2469,13 @@ export class DrawingEntitiesManager {
       return _bond;
     }
 
-    const bond = new Bond(firstAtom, secondAtom, type, stereo);
+    const bond = new Bond(
+      firstAtom,
+      secondAtom,
+      bondIdInMicroMode,
+      type,
+      stereo,
+    );
 
     this.bonds.set(bond.id, bond);
     firstAtom.addBond(bond);
@@ -2452,11 +2489,20 @@ export class DrawingEntitiesManager {
     secondAtom: Atom,
     type: number,
     stereo: number,
+    bondIdInMicroMode: number,
   ) {
     const command = new Command();
     const bondAddOperation = new BondAddOperation(
-      this.addBondChangeModel.bind(this, firstAtom, secondAtom, type, stereo),
-      this.addBondChangeModel.bind(this, firstAtom, secondAtom, type, stereo),
+      (bond?: Bond) =>
+        this.addBondChangeModel(
+          firstAtom,
+          secondAtom,
+          type,
+          stereo,
+          bondIdInMicroMode,
+          bond,
+        ),
+      (bond: Bond) => this.deleteBondChangeModel(bond),
     );
 
     command.addOperation(bondAddOperation);
@@ -2477,13 +2523,15 @@ export class DrawingEntitiesManager {
       new BondDeleteOperation(
         bond,
         this.deleteBondChangeModel.bind(this, bond),
-        this.addBondChangeModel.bind(
-          this,
-          bond.firstAtom,
-          bond.secondAtom,
-          bond.type,
-          bond.stereo,
-        ),
+        (bond: Bond) =>
+          this.addBondChangeModel(
+            bond.firstAtom,
+            bond.secondAtom,
+            bond.type,
+            bond.stereo,
+            bond.bondIdInMicroMode,
+            bond,
+          ),
       ),
     );
 
@@ -2604,6 +2652,17 @@ export class DrawingEntitiesManager {
       [RnaDnaNaturalAnaloguesEnum.GUANINE]: RnaDnaNaturalAnaloguesEnum.CYTOSINE,
       [RnaDnaNaturalAnaloguesEnum.THYMINE]: RnaDnaNaturalAnaloguesEnum.ADENINE,
       [RnaDnaNaturalAnaloguesEnum.URACIL]: RnaDnaNaturalAnaloguesEnum.ADENINE,
+      [StandardAmbiguousRnaBase.N]: StandardAmbiguousRnaBase.N,
+      [StandardAmbiguousRnaBase.B]: StandardAmbiguousRnaBase.V,
+      [StandardAmbiguousRnaBase.D]: StandardAmbiguousRnaBase.H,
+      [StandardAmbiguousRnaBase.H]: StandardAmbiguousRnaBase.D,
+      [StandardAmbiguousRnaBase.K]: StandardAmbiguousRnaBase.M,
+      [StandardAmbiguousRnaBase.W]: StandardAmbiguousRnaBase.W,
+      [StandardAmbiguousRnaBase.Y]: StandardAmbiguousRnaBase.R,
+      [StandardAmbiguousRnaBase.M]: StandardAmbiguousRnaBase.K,
+      [StandardAmbiguousRnaBase.R]: StandardAmbiguousRnaBase.Y,
+      [StandardAmbiguousRnaBase.S]: StandardAmbiguousRnaBase.S,
+      [StandardAmbiguousRnaBase.V]: StandardAmbiguousRnaBase.B,
     };
   }
 
@@ -2641,15 +2700,54 @@ export class DrawingEntitiesManager {
     const senseToAntisenseChains = new Map<Chain, Chain[]>();
     const handledChains = new Set<Chain>();
 
+    this.monomers.forEach((monomer) => {
+      command.merge(
+        this.modifyMonomerItem(monomer, {
+          ...monomer.monomerItem,
+          isAntisense: false,
+          isSense: false,
+        }),
+      );
+    });
+
     chainsCollection.chains.forEach((chain) => {
       if (handledChains.has(chain)) {
         return;
       }
 
       let senseChain: Chain;
-      const complementaryChains =
-        chainsCollection.getComplementaryChains(chain);
-      const chainsToCheck = new Set(complementaryChains).add(chain);
+      const complimentaryChainsWithData =
+        chainsCollection.getComplimentaryChainsWithData(chain);
+      const chainsToCheck = new Set<Chain>();
+
+      complimentaryChainsWithData.forEach((complimentaryChainWithData) => {
+        const hasHydrogenBondWithRnaBase =
+          complimentaryChainWithData.complimentaryChain.monomers.some(
+            (monomer) => {
+              return (
+                (isRnaBaseOrAmbiguousRnaBase(monomer) &&
+                  Boolean(getSugarFromRnaBase(monomer)) &&
+                  monomer.hydrogenBonds.length > 0) ||
+                monomer.hydrogenBonds.some((hydrogenBond) => {
+                  const anotherMonomer =
+                    hydrogenBond.getAnotherMonomer(monomer);
+
+                  return (
+                    isRnaBaseOrAmbiguousRnaBase(anotherMonomer) &&
+                    Boolean(getSugarFromRnaBase(anotherMonomer))
+                  );
+                })
+              );
+            },
+          );
+
+        if (hasHydrogenBondWithRnaBase) {
+          chainsToCheck.add(complimentaryChainWithData.complimentaryChain);
+        }
+      });
+
+      chainsToCheck.add(chain);
+
       const chainToMonomers = new Map<Chain, BaseMonomer[]>();
 
       chainsToCheck.forEach((chainToCheck) => {
@@ -2726,6 +2824,14 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  private getAntisenseBaseLabel(rnaBase: RNABase | AmbiguousMonomer) {
+    return this.antisenseChainBasesMap[
+      rnaBase instanceof AmbiguousMonomer
+        ? rnaBase.monomerItem.label
+        : rnaBase.monomerItem.props.MonomerNaturalAnalogCode
+    ];
+  }
+
   public createAntisenseChain() {
     const editor = CoreEditor.provideEditorInstance();
     const command = new Command();
@@ -2739,17 +2845,51 @@ export class DrawingEntitiesManager {
           subChain.nodes.some(
             (node) =>
               (node instanceof Nucleotide || node instanceof Nucleoside) &&
+              Boolean(this.getAntisenseBaseLabel(node.rnaBase)) &&
               node.monomer.selected,
           ),
         );
       },
     );
+    const selectedPiecesInChains: SubChainNode[][] = [];
+
+    chainsForAntisenseCreation.forEach((chain) => {
+      let selectedPiece: SubChainNode[] = [];
+      let hasRnaInPiece = false;
+
+      chain.nodes.forEach((node) => {
+        const hasSelectedMonomerInNode = node.monomers.some(
+          (monomer) => monomer.selected,
+        );
+
+        if (!hasSelectedMonomerInNode) {
+          if (hasRnaInPiece) {
+            selectedPiecesInChains.push(selectedPiece);
+          }
+          selectedPiece = [];
+          hasRnaInPiece = false;
+        } else {
+          selectedPiece.push(node);
+        }
+
+        if (node instanceof Nucleoside || node instanceof Nucleotide) {
+          hasRnaInPiece = true;
+        }
+      });
+
+      if (hasRnaInPiece) {
+        selectedPiecesInChains.push(selectedPiece);
+      }
+
+      selectedPiece = [];
+      hasRnaInPiece = false;
+    });
 
     let lastAddedNode;
     let lastAddedMonomer;
 
-    chainsForAntisenseCreation.forEach((chain) => {
-      chain.forEachNode(({ node }) => {
+    selectedPiecesInChains.forEach((selectedPiece) => {
+      selectedPiece.forEach((node) => {
         if (!node.monomer.selected) {
           lastAddedMonomer = undefined;
           lastAddedNode = undefined;
@@ -2758,14 +2898,18 @@ export class DrawingEntitiesManager {
         }
 
         if (node instanceof Nucleotide || node instanceof Nucleoside) {
+          const antisenseBaseLabel = this.getAntisenseBaseLabel(node.rnaBase);
+
+          if (!antisenseBaseLabel) {
+            return;
+          }
+
           const { modelChanges: addNucleotideCommand, node: addedNode } = (
             node instanceof Nucleotide && node.phosphate.selected
               ? Nucleotide
               : Nucleoside
           ).createOnCanvas(
-            this.antisenseChainBasesMap[
-              node.rnaBase.monomerItem.props.MonomerNaturalAnalogCode
-            ],
+            antisenseBaseLabel,
             node.monomer.position.add(new Vec2(0, 3)),
             RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
           );
@@ -2844,6 +2988,19 @@ export class DrawingEntitiesManager {
     command.setUndoOperationsByPriority();
 
     return command;
+  }
+
+  public get monomersArray() {
+    return [...this.monomers.values()];
+  }
+
+  public get molecules() {
+    return this.monomersArray.filter((monomer) => {
+      return (
+        monomer.monomerItem.props.isMicromoleculeFragment &&
+        !isMonomerSgroupWithAttachmentPoints(monomer)
+      );
+    });
   }
 }
 function getFirstPosition(

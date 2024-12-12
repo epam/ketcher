@@ -18,7 +18,7 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { RNA_MONOMER_DISTANCE } from 'application/editor/tools/RnaPreset';
 import { SugarRenderer } from 'application/render';
 import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
-import { Nucleoside } from 'domain/entities/Nucleoside';
+import { KetMonomerClass } from 'application/formatters';
 
 export class Nucleotide {
   constructor(
@@ -54,12 +54,20 @@ export class Nucleotide {
     sugarName: RNA_DNA_NON_MODIFIED_PART = RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
   ) {
     const editor = CoreEditor.provideEditorInstance();
-    const rnaBaseLibraryItem = getRnaPartLibraryItem(editor, rnaBaseName);
+    const rnaBaseLibraryItem = getRnaPartLibraryItem(
+      editor,
+      rnaBaseName,
+      KetMonomerClass.Base,
+    );
     const phosphateLibraryItem = getRnaPartLibraryItem(
       editor,
       RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
     );
-    const sugarLibraryItem = getRnaPartLibraryItem(editor, sugarName);
+    const sugarLibraryItem = getRnaPartLibraryItem(
+      editor,
+      sugarName,
+      KetMonomerClass.Sugar,
+    );
 
     assert(sugarLibraryItem);
     assert(rnaBaseLibraryItem);
@@ -123,9 +131,5 @@ export class Nucleotide {
       this.sugar.isModification ||
       this.phosphate.isModification
     );
-  }
-
-  public getAntisenseRnaBase() {
-    return Nucleoside.prototype.getAntisenseRnaBase.call(this);
   }
 }

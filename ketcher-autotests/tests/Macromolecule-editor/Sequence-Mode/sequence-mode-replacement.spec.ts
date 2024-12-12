@@ -232,55 +232,55 @@ const sequences: ISequence[] = [
     Id: 1,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of peptides (A).ket',
     SequenceName: 'sequence of peptides (A)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 2,
     FileName:
       'KET/Sequence-Mode-Replacement/sequence of peptides w_o natural analog (4Abz).ket',
     SequenceName: 'sequence of peptides w/o natural analog (4Abz)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 3,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
     SequenceName: 'sequence of presets (A)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 4,
     FileName:
       'KET/Sequence-Mode-Replacement/sequence of presets without phosphate (SGNA(U)).ket',
     SequenceName: 'sequence of presets without phosphate (SGNA(U))',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 5,
     FileName:
       'KET/Sequence-Mode-Replacement/sequence of presets without base (SGNA()ibun).ket',
     SequenceName: 'sequence of presets without base (SGNA()ibun)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
     Id: 6,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of sugars (UNA).ket',
     SequenceName: 'sequence of sugars (UNA)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
     Id: 7,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
     SequenceName: 'sequence of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
     Id: 8,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of phosphates (moen).ket',
     SequenceName: 'sequence of phosphates (moen)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -288,7 +288,7 @@ const sequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/sequence of unsplit nucleotides (2-Amino-dA).ket',
     SequenceName: 'sequence of unsplit nucleotides (2-Amino-dA)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 10,
@@ -296,13 +296,13 @@ const sequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/sequence of unsplit nucleotides w_o natural analog (5NitInd).ket',
     SequenceName:
       'sequence of unsplit nucleotides w/o natural analog (5NitInd)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 11,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of CHEMs (A6OH).ket',
     SequenceName: 'sequence of CHEMs (A6OH)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -310,7 +310,7 @@ const sequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/sequence of unresolved nucleotide (5Unres).ket',
     SequenceName: 'sequence of unresolved nucleotide (5Unres)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
 ];
 
@@ -1555,14 +1555,14 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/base to base connected two sequences of presets (U) w_o phosphates.ket',
     SequenceName:
       'base to base connected two sequences of presets (U) w_o phosphates',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 14,
     FileName:
       'KET/Sequence-Mode-Replacement/base to base connected two sequences of presets (U).ket',
     SequenceName: 'base to base connected two sequences of presets (U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 15,
@@ -1570,21 +1570,21 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/base to sugar connected two sequences of presets (U) w_o phosphate.ket',
     SequenceName:
       'base to sugar connected two sequences of presets (U) w_o phosphate',
-    ReplacementPositions: { LeftEnd: 3, Center: 4, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 16,
     FileName:
       'KET/Sequence-Mode-Replacement/base to sugar connected two sequences of presets (U).ket',
     SequenceName: 'base to sugar connected two sequences of presets (U)',
-    ReplacementPositions: { LeftEnd: 3, Center: 4, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 17,
     FileName:
       'KET/Sequence-Mode-Replacement/phosphate to base connected two sequences of presets (U).ket',
     SequenceName: 'phosphate to base connected two sequences of presets (U)',
-    ReplacementPositions: { LeftEnd: 2, Center: 3, RightEnd: 4 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 18,
@@ -1592,7 +1592,7 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/phosphate to phosphate connected two sequences of presets (U) w_o base.ket',
     SequenceName:
       'phosphate to phosphate connected two sequences of presets (U) w_o base',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -1601,7 +1601,7 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/phosphate to phosphate connected two sequences of presets (U).ket',
     SequenceName:
       'phosphate to phosphate connected two sequences of presets (U)',
-    ReplacementPositions: { LeftEnd: 2, Center: 3, RightEnd: 4 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 20,
@@ -1609,7 +1609,7 @@ const twoSequences: ISequence[] = [
       'KET/Sequence-Mode-Replacement/phosphate to sugar connected two sequences of presets (U) w_o base.ket',
     SequenceName:
       'phosphate to sugar connected two sequences of presets (U) w_o base',
-    ReplacementPositions: { LeftEnd: 2, Center: 4, RightEnd: 6 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -1617,21 +1617,21 @@ const twoSequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/phosphate to sugar connected two sequences of presets (U).ket',
     SequenceName: 'phosphate to sugar connected two sequences of presets (U)',
-    ReplacementPositions: { LeftEnd: 3, Center: 4, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 22,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequence of unsplit nucleotides (AmMC6T).ket',
     SequenceName: 'two sequence of unsplit nucleotides (AmMC6T)',
-    ReplacementPositions: { LeftEnd: 4, Center: 5, RightEnd: 6 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 23,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of bases (nC6n5U).ket',
     SequenceName: 'two sequences of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 6, Center: 8, RightEnd: 10 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -1639,7 +1639,7 @@ const twoSequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of CHEMs (4aPEGMal).ket',
     SequenceName: 'two sequences of CHEMs (4aPEGMal)',
-    ReplacementPositions: { LeftEnd: 6, Center: 8, RightEnd: 10 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -1647,28 +1647,28 @@ const twoSequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of peptides (D-gGlu).ket',
     SequenceName: 'two sequences of peptides (D-gGlu)',
-    ReplacementPositions: { LeftEnd: 4, Center: 5, RightEnd: 6 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 26,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of peptides w_o natural analog (Apm).ket',
     SequenceName: 'two sequences of peptides w_o natural analog (Apm)',
-    ReplacementPositions: { LeftEnd: 4, Center: 5, RightEnd: 6 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
   {
     Id: 27,
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of phosphates (Test-6-Ph).ket',
     SequenceName: 'two sequences of phosphates (Test-6-Ph)',
-    ReplacementPositions: { LeftEnd: 6, Center: 8, RightEnd: 10 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
     Id: 28,
     FileName: 'KET/Sequence-Mode-Replacement/two sequences of sugars (5A6).ket',
     SequenceName: 'two sequences of sugars (5A6)',
-    ReplacementPositions: { LeftEnd: 6, Center: 8, RightEnd: 10 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   },
   {
@@ -1676,7 +1676,7 @@ const twoSequences: ISequence[] = [
     FileName:
       'KET/Sequence-Mode-Replacement/two sequences of unresolved nucleotide (5Unres).ket',
     SequenceName: 'two sequences of unresolved nucleotide (5Unres)',
-    ReplacementPositions: { LeftEnd: 4, Center: 5, RightEnd: 6 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   },
 ];
 
@@ -2028,7 +2028,7 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
     Id: 7,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
     SequenceName: 'sequence of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   };
 
@@ -2082,7 +2082,7 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
     Id: 7,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
     SequenceName: 'sequence of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   };
 
@@ -2144,7 +2144,7 @@ test(`25. Verify undo/redo functionality after replacing monomers`, async () => 
     Id: 7,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
     SequenceName: 'sequence of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   };
 
@@ -2194,7 +2194,7 @@ test(`26. Copy and paste replaced monomers`, async () => {
     Id: 7,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
     SequenceName: 'sequence of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   };
 
@@ -2244,7 +2244,7 @@ test(`27. Verify switching from Macro mode to Micro mode and back without data l
     Id: 7,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of bases (nC6n5U).ket',
     SequenceName: 'sequence of bases (nC6n5U)',
-    ReplacementPositions: { LeftEnd: 1, Center: 3, RightEnd: 5 },
+    ReplacementPositions: { LeftEnd: 0, Center: 2, RightEnd: 4 },
     ConfirmationOnReplecement: true,
   };
 
@@ -2292,7 +2292,7 @@ test(`28. Verify saving and reopening a structure with replaced monomers in KET`
     Id: 3,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
     SequenceName: 'sequence of presets (A)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   };
 
   const replaceMonomer: IReplaceMonomer = {
@@ -2348,7 +2348,7 @@ test(`29. Verify saving and reopening a structure with replaced monomers in MOL 
     Id: 3,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
     SequenceName: 'sequence of presets (A)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   };
 
   const replaceMonomer: IReplaceMonomer = {
@@ -2408,7 +2408,7 @@ test(`30. Verify saving and reopening a structure with replaced monomers in Sequ
     Id: 3,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
     SequenceName: 'sequence of presets (A)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   };
 
   const replaceMonomer: IReplaceMonomer = {
@@ -2466,7 +2466,7 @@ test(`31. Verify saving and reopening a structure with replaced monomers in FAST
     Id: 3,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
     SequenceName: 'sequence of presets (A)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   };
 
   const replaceMonomer: IReplaceMonomer = {
@@ -2529,7 +2529,7 @@ test(`32. Verify saving and reopening a structure with replaced monomers in IDT`
     Id: 3,
     FileName: 'KET/Sequence-Mode-Replacement/sequence of presets (A).ket',
     SequenceName: 'sequence of presets (A)',
-    ReplacementPositions: { LeftEnd: 1, Center: 2, RightEnd: 3 },
+    ReplacementPositions: { LeftEnd: 0, Center: 1, RightEnd: 2 },
   };
 
   const replaceMonomer: IReplaceMonomer = {

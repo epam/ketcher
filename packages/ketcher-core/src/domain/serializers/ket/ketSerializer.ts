@@ -332,6 +332,14 @@ export class KetSerializer implements Serializer<Struct> {
       fileContentForMicromolecules[template.$ref] = undefined;
     });
 
+    Object.entries(
+      fileContentForMicromolecules as IKetMacromoleculesContent,
+    ).forEach(([key, value]) => {
+      if (value?.type === KetTemplateType.AMBIGUOUS_MONOMER_TEMPLATE) {
+        fileContentForMicromolecules[key] = undefined;
+      }
+    });
+
     return fileContentForMicromolecules;
   }
 

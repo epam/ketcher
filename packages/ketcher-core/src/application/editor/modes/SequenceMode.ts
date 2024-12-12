@@ -804,12 +804,14 @@ export class SequenceMode extends BaseMode {
         shortcut: ['ArrowUp'],
         handler: () => {
           SequenceRenderer.moveCaretUp();
+          this.unselectAllEntities();
         },
       },
       'move-caret-down': {
         shortcut: ['ArrowDown'],
         handler: () => {
           SequenceRenderer.moveCaretDown();
+          this.unselectAllEntities();
         },
       },
       'move-caret-forward': {
@@ -818,8 +820,10 @@ export class SequenceMode extends BaseMode {
           if (!this.isEditMode) {
             return;
           }
+
           SequenceRenderer.moveCaretForward();
           SequenceRenderer.resetLastUserDefinedCaretPosition();
+          this.unselectAllEntities();
         },
       },
       'move-caret-back': {
@@ -828,8 +832,11 @@ export class SequenceMode extends BaseMode {
           if (!this.isEditMode) {
             return;
           }
+
           SequenceRenderer.moveCaretBack();
           SequenceRenderer.resetLastUserDefinedCaretPosition();
+
+          this.unselectAllEntities();
         },
       },
       'add-sequence-item': {

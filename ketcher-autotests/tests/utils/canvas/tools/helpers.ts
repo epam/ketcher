@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import {
+  clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   MacromoleculesTopPanelButton,
   selectOption,
@@ -517,7 +518,7 @@ export async function selectZoomInTool(page: Page, count = 1) {
       await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomIn, page);
     });
   }
-  await page.getByTestId('zoom-selector').click();
+  await clickInTheMiddleOfTheScreen(page);
 }
 
 export async function selectZoomReset(page: Page) {
@@ -525,7 +526,7 @@ export async function selectZoomReset(page: Page) {
   await waitForRender(page, async () => {
     await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomReset, page);
   });
-  await page.getByTestId('zoom-selector').click();
+  await clickInTheMiddleOfTheScreen(page);
 }
 
 export async function selectZoomOutTool(page: Page, count = 1) {
@@ -535,5 +536,5 @@ export async function selectZoomOutTool(page: Page, count = 1) {
       await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomOut, page);
     });
   }
-  await page.getByTestId('zoom-selector').click();
+  await clickInTheMiddleOfTheScreen(page);
 }

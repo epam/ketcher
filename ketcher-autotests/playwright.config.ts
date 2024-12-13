@@ -97,7 +97,7 @@ const config: PlaywrightTestConfig = {
   },
   // maxFailures: isCI ? MAX_NUMBER_OF_FAILURES : 0,
   /* Run tests in files in parallel */
-  fullyParallel: true,
+  fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: isCI,
   /* Retry on CI only */
@@ -128,6 +128,7 @@ const config: PlaywrightTestConfig = {
     viewport: { width: 1920, height: 1080 },
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: baseURL(),
+    screenshot: 'only-on-failure',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',

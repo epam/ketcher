@@ -72,6 +72,11 @@ jobs:
     runs-on: self-hosted-a
     needs: build_ketcher_micro
     container: mcr.microsoft.com/playwright:v1.44.1-jammy
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -106,12 +111,12 @@ jobs:
           cd ketcher-autotests/
           npm i
           npx playwright install chromium
-          npx playwright test
+          npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()
         with:
-          name: playwright-report-micro
+          name: playwright-report-micro-${{ matrix.shardIndex }}
           path: ketcher-autotests/playwright-report/
           retention-days: 5
   
@@ -120,6 +125,11 @@ jobs:
     runs-on: self-hosted-a
     needs: build_ketcher_macro
     container: mcr.microsoft.com/playwright:v1.44.1-jammy
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -154,11 +164,11 @@ jobs:
           cd ketcher-autotests/
           npm i
           npx playwright install chromium
-          npx playwright test
+          npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
         if: always()
         with:
-          name: playwright-report-macro
+          name: playwright-report-macro-${{ matrix.shardIndex }}
           path: ketcher-autotests/playwright-report/
           retention-days: 5

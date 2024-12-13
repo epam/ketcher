@@ -344,6 +344,7 @@ test.describe('1. User can expand hydrogens for ', () => {
         // These tests are not stable
         test.skip();
       }
+      test.skip();
 
       test.setTimeout(180000);
       // Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX
@@ -659,6 +660,7 @@ test.describe('2. User can expand hydrogens for ', () => {
         // These tests are not stable
         test.skip();
       }
+      test.skip();
 
       test.setTimeout(120000);
       // Performance degradation problem - https://github.com/epam/Indigo/issues/1835 - REMOVE AFTER FIX

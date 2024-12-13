@@ -298,19 +298,25 @@ export function setExpandMonomerSGroup(
         );
       });
 
+      const movableSGroupBBox = SGroup.getObjBBox(sGroupAtoms, restruct.molecule);
+      const movableSGroupWidth = movableSGroupBBox.p1.x - movableSGroupBBox.p0.x;
+      const movableSGroupHeight = movableSGroupBBox.p1.y - movableSGroupBBox.p0.y;
+
       // console.log(movableSGroup.data, movableSGroupBondsToOutside);
       // movableSGroupBondsToOutside.forEach(bond => handledBonds.add(bond.));
 
       const MOVE_THRESHOLD = 0.5;
       const BIG_THRESHOLD = 2;
+
+      const movableSGroupAbove = movableSGroupCenter.y < sGroupCenter.y;
+      const movableSGroupHeightToUse = movableSGroupAbove ? movableSGroupHeight : -movableSGroupHeight;
       // For collapsing move vertically always if there is still expanded monomer in line
       const isMoveVertically = attrs.expanded ?
-        (movableSGroupCenter.y <
-          sGroupCenter.y + sGroupHeight / 2 + MOVE_THRESHOLD &&
-        movableSGroupCenter.y >
-          sGroupCenter.y - sGroupHeight / 2 - MOVE_THRESHOLD) :
+        ((movableSGroup.isContracted() ? movableSGroupCenter.y : movableSGroupCenter.y + movableSGroupHeightToUse / 2) <
+          sGroupCenter.y + movableSGroupHeight / 2 + MOVE_THRESHOLD) &&
+        ((movableSGroup.isContracted() ? movableSGroupCenter.y : movableSGroupCenter.y + movableSGroupHeightToUse / 2) >
+          sGroupCenter.y - movableSGroupHeight / 2 - MOVE_THRESHOLD) :
       !expandedMonomersInLine;
-
 
       // Move horizontally if monomer is in wide area and not having any other connections (for RNAs/DNAs)
       const inOneLine = (movableSGroupCenter.y < sGroupCenter.y + MOVE_THRESHOLD &&
@@ -366,9 +372,9 @@ export function setExpandMonomerSGroup(
   });
 
   atomsToMove.forEach((atomIds, key) => {
-    if (handledAtoms.has(key)) {
-      return;
-    }
+    // if (handledAtoms.has(key)) {
+    //   return;
+    // }
 
     const sGroups = sGroupsToMove.get(key) ?? [];
     const subStructBBox = SGroup.getObjBBox(atomIds, restruct.molecule, true);
@@ -389,7 +395,7 @@ export function setExpandMonomerSGroup(
       (direction.y * sGroupHeight) / 2,
     );
 
-    // const canvas = document.querySelector('.Ketcher-root svg');
+    const canvas = document.querySelector('.Ketcher-root svg');
     // const structureRectangle = document.createElementNS(
     //   'http://www.w3.org/2000/svg',
     //   'rect',
@@ -418,7 +424,7 @@ export function setExpandMonomerSGroup(
     // structureCenter.setAttribute('r', '5');
     // structureCenter.setAttribute('fill', 'red');
     // canvas?.appendChild(structureCenter);
-    //
+
     // const sgroupRectangle = document.createElementNS(
     //   'http://www.w3.org/2000/svg',
     //   'rect',
@@ -452,13 +458,17 @@ export function setExpandMonomerSGroup(
     //   'http://www.w3.org/2000/svg',
     //   'circle',
     // );
-    // sgroupPP.setAttribute('cx', `${sgroup.pp.x * 40}`);
-    // sgroupPP.setAttribute('cy', `${sgroup.pp.y * 40}`);
+    // sgroupPP.setAttribute('cx', `${sGroup.pp.x * 40}`);
+    // sgroupPP.setAttribute('cy', `${sGroup.pp.y * 40}`);
     // sgroupPP.setAttribute('r', '5');
     // sgroupPP.setAttribute('fill', 'green');
     // canvas?.appendChild(sgroupPP);
 
     const finalMoveVector = attrs.expanded ? moveVector : moveVector.negated();
+
+    if (handledAtoms.has(key)) {
+      return;
+    }
 
     atomIds.forEach((atomId) => {
       action.addOp(new AtomMove(atomId, finalMoveVector));

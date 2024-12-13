@@ -17,6 +17,7 @@ import { type IconName } from 'ketcher-react';
 import { useMenuContext } from '../../../hooks/useMenuContext';
 import { useCallback } from 'react';
 import { StyledIconButton } from './styles';
+import { blurActiveElement } from 'helpers/canvas';
 
 type MenuItemProp = {
   itemId: IconName;
@@ -37,6 +38,8 @@ const MenuItem = ({
 
   const onClickCallback = useCallback(() => {
     activate(itemId);
+    blurActiveElement();
+
     if (onClick) {
       onClick();
     }

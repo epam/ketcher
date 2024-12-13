@@ -190,6 +190,7 @@ const addToCanvas = ({
           true,
         ),
       );
+      modelChanges.setUndoOperationsByPriority();
     }
   }
 

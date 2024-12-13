@@ -15,9 +15,9 @@ import { Command } from 'domain/entities/Command';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
-import { RNA_MONOMER_DISTANCE } from 'application/editor/tools/RnaPreset';
 import { SugarRenderer } from 'application/render';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
+import { CELL_WIDTH } from './DrawingEntitiesManager';
 
 export class Nucleoside {
   constructor(
@@ -55,7 +55,7 @@ export class Nucleoside {
     const topLeftItemPosition = position;
     const bottomItemPosition = position.add(
       Coordinates.canvasToModel(
-        new Vec2(0, RNA_MONOMER_DISTANCE + SugarRenderer.monomerSize.height),
+        new Vec2(0, CELL_WIDTH + SugarRenderer.monomerSize.height),
       ),
     );
     const modelChanges = new Command();

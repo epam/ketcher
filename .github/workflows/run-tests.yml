@@ -87,6 +87,8 @@ jobs:
           name: ketcher-dist-micro
           path: example/dist/
       - name: Create env file
+        env:
+          ENABLE_POLYMER_EDITOR: false
         run: |
           cat > ketcher-autotests/.env << EOF
           DOCKER=true
@@ -95,6 +97,7 @@ jobs:
           IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS
           CI_ENVIRONMENT=$CI_ENVIRONMENT
           USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM
+          ENABLE_POLYMER_EDITOR=$ENABLE_POLYMER_EDITOR
           EOF
       - name: Run tests
         run: |
@@ -132,6 +135,8 @@ jobs:
           name: ketcher-dist-macro
           path: example/dist/
       - name: Create env file
+        env:
+          ENABLE_POLYMER_EDITOR: true
         run: |
           cat > ketcher-autotests/.env << EOF
           DOCKER=true
@@ -140,6 +145,7 @@ jobs:
           IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS
           CI_ENVIRONMENT=$CI_ENVIRONMENT
           USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM
+          ENABLE_POLYMER_EDITOR=$ENABLE_POLYMER_EDITOR
           EOF
       - name: Run tests
         run: |

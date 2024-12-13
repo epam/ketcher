@@ -25,7 +25,7 @@ import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { Coordinates } from '../shared/coordinates';
 
-export const RNA_MONOMER_DISTANCE = 22.5;
+export const RNA_MONOMER_DISTANCE = 31.5;
 class RnaPresetTool implements Tool {
   rnaBase: MonomerItemType | undefined;
   sugar: MonomerItemType | undefined;
@@ -65,6 +65,7 @@ class RnaPresetTool implements Tool {
       return;
     }
 
+    // debugger;
     const { command: modelChanges } =
       this.editor.drawingEntitiesManager.addRnaPreset({
         sugar: this.sugar,

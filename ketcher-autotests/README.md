@@ -115,13 +115,12 @@ Also make sure, that test is not skipped! Check if test starts with
 `test.skip('We test something', async ({ page }) => {`
 Remove "skip" before running.
 
-- **Run app in browser: from root directory "ketcher"**:
+- **Build ketcher: from root directory "ketcher"**:
 
 - `npm ci`
 - `npm run build`
-- `npm run serve`
 
-- **Run docker**:
+- **Run tests using docker**:
 
   - `cd ketcher-autotests`
   - `npm run docker:build`
@@ -145,6 +144,38 @@ Run this command in the directory "ketcher-autotests"
 - `npm run docker:update` update all snapshots
 - `npm run docker:update file_name:N` update specific test in a file (N - line on which test starts)
 - `npm run docker:update:test -- "test_title"` update only 1 snapshot with test_title
+
+### Testing without installed NPM
+
+If no NPM installed (only docker) to build ketcher the same compiler as on CI platforms, use the following command
+
+Build Ketcher
+```
+docker-compose build ketcher
+docker-compose run --rm --user $(id -u) ketcher bash /app/test_build.sh
+```
+
+Prepare tests
+
+```
+docker-compose build autotests
+docker-compose run --rm --user $(id -u) autotests bash /app/test_prepare.sh
+```
+
+Run tests
+```
+docker-compose run --rm --user $(id -u) autotests bash /app/test_run.sh
+```
+
+Run pattern
+```
+docker-compose run --rm --user $(id -u) autotests bash /app/test_run.sh -g "Cut the reaction"
+```
+
+Run update
+```
+docker-compose run --rm --user $(id -u) autotests bash /app/test_run.sh -g "Cut the reaction" --update-snapshots
+```
 
 ### Known issues
 

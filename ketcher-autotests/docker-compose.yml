@@ -1,13 +1,24 @@
+version: '3'
 services:
+  ketcher:
+    build:
+      context: ./reporters/
+      dockerfile: ../Dockerfile-ketcher
+    volumes:
+      - ./:/app
+      - ../:/ketcher
   autotests:
     build:
-      context: .
+      context: ./reporters/
+      dockerfile: ../Dockerfile
     container_name: ketcher-autotest
     env_file:
       .env
-    network_mode: "host"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    # network_mode: "host"
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+    # ports:
+    #   - "4002:4002"
     volumes:
       - ./:/app
-      - /app/node_modules
+      - ../:/ketcher

@@ -114,7 +114,7 @@ jobs:
           npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
-        if: always()
+        if: failure()
         with:
           name: playwright-report-micro-${{ matrix.shardIndex }}
           path: ketcher-autotests/playwright-report/
@@ -167,8 +167,8 @@ jobs:
           npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
-        if: always()
+        if: failure()
         with:
-          name: playwright-report-macro-${{ matrix.shardIndex }}
+          name: playwright-report-macromolecules-${{ matrix.shardIndex }}
           path: ketcher-autotests/playwright-report/
           retention-days: 5

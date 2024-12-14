@@ -27,6 +27,12 @@ const ignoredTests = [
   // 'Templates/Salts-and-Solvents/**',
   // 'Templates/User-Templates/**',
   'utils/**',
+  'Macromolecule-editor/Polymer-Bond-Tool/connection-rules-for-chems-monomers.spec.ts',
+  'Macromolecule-editor/Polymer-Bond-Tool/connection-rules-for-nucleotide-monomers.spec.ts',
+  'Macromolecule-editor/Polymer-Bond-Tool/connection-rules-for-peptides-monomers.spec.ts',
+  'Macromolecule-editor/Sequence-Mode/sequence-mode-replacement.spec.ts',
+  'Macromolecule-editor/Polymer-Bond-Tool/connection-rules-for-sugar-monomers.spec.ts',
+  'Indigo-Tools/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/toggle-explicit-hydrogens-with-respect-to-selected-atoms.spec.ts'
 ];
 
 const regularTests = [

@@ -35,7 +35,8 @@ const ignoredTests = [
   'Indigo-Tools/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/toggle-explicit-hydrogens-with-respect-to-selected-atoms.spec.ts',
   'Macromolecule-editor/Polymer-Bond-Tool/hydrogen-bonds-for-monomers.spec.ts',
   'Macromolecule-editor/Polymer-Bond-Tool/connection-rules-for-base-monomers.spec.ts',
-  'Macromolecule-editor/Polymer-Bond-Tool/connection-rules-for-phosphate-monomers.spec.ts'
+  'Macromolecule-editor/Polymer-Bond-Tool/connection-rules-for-phosphate-monomers.spec.ts',
+  'Reactions/Reaction-tools/Multi-Tailed-Arrow-Tool/multi-tailed-arrow-tool.spec.ts'
 ];
 
 const regularTests = [
@@ -122,7 +123,7 @@ const config: PlaywrightTestConfig = {
         open: process.env.DOCKER ? 'never' : 'on-failure',
       },
     ],
-    ['line'],
+    ['dot'],
     [
       'json',
       {

@@ -32,7 +32,7 @@ const TIMEOUT_MS = 1000;
  * Usage: await selectBond(BondTypeName.Aromatic, page)
  **/
 export async function selectBond(type: BondTypeName, page: Page) {
-  console.log(`selectBond ${type}`);
+  //console.log(`selectBond ${type}`);
 
   const targetSelector = `div[class*="ToolbarMultiToolItem"] button[title^="${type}"]`;
 

@@ -866,6 +866,7 @@ test.describe('Image files', () => {
      * Description: Image is selected then green selection frame is displayed and
      * image can be scaled vertically, horizontally and diagonally.
      */
+    await pageReload(page);
     await openImageAndAddToCanvas('Images/image-png.png', page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await clickInTheMiddleOfTheScreen(page);

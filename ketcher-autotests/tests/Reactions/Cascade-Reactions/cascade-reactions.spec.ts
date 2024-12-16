@@ -2028,4 +2028,110 @@ test.describe('Cascade Reactions', () => {
       await takeEditorScreenshot(page);
     });
   });
+
+  const testCases28 = [
+    {
+      ketFile: 'KET/ket-single-2x1-text-top-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-top-match-expected.rdf',
+      testCaseDescription:
+        'KET reaction with text name and matching with bounding box on the different sides (top) from Multi-Tailed Arrow (2:1)',
+    },
+    {
+      ketFile: 'KET/ket-single-2x1-text-bottom-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-bottom-match-expected.rdf',
+      testCaseDescription:
+        'KET reaction with text name and matching with bounding box on the different sides (bottom) from Multi-Tailed Arrow (2:1)',
+    },
+    {
+      ketFile: 'KET/ket-single-2x1-text-left-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-left-match-expected.rdf',
+      testCaseDescription:
+        'KET reaction with text name and matching with bounding box on the different sides (left) from Multi-Tailed Arrow (2:1)',
+    },
+    {
+      ketFile: 'KET/ket-single-2x1-text-right-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-right-match-expected.rdf',
+      testCaseDescription:
+        'KET reaction with text name and matching with bounding box on the different sides (right) from Multi-Tailed Arrow (2:1)',
+    },
+  ];
+
+  testCases28.forEach(
+    ({ ketFile, rdfFileExpectedV2000, testCaseDescription }) => {
+      test(`Add to Canvas from ${testCaseDescription} save to RDF V2000, add to Canvas from RDF V2000, verify that reaction with text name is displayed correctly`, async () => {
+        /* 
+        Test case: https://github.com/epam/Indigo/issues/2404
+        Description: ${testCaseDescription} can be saved to RDF V2000 format, then reloaded with correct structure.
+        */
+
+        await openFileAndAddToCanvasAsNewProject(ketFile, page);
+        await takeEditorScreenshot(page);
+        await verifyRdfFile(
+          page,
+          'v2000',
+          rdfFileExpectedV2000,
+          `tests/test-data/${rdfFileExpectedV2000}`,
+        );
+        await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV2000, page);
+        await takeEditorScreenshot(page);
+      });
+    },
+  );
+
+  const testCases29 = [
+    {
+      ketFile: 'KET/ket-single-2x1-text-top-no-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-top-no-match-expected.rdf',
+      testCaseDescription:
+        'KET reaction with text name and no matching with bounding box on the different sides (top) from Multi-Tailed Arrow (2:1)',
+    },
+    {
+      ketFile: 'KET/ket-single-2x1-text-bottom-no-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-bottom-no-match-expected.rdf',
+      testCaseDescription:
+        'KET reaction with text name and no matching with bounding box on the different sides (bottom) from Multi-Tailed Arrow (2:1)',
+    },
+    {
+      ketFile: 'KET/ket-single-2x1-text-left-no-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-left-no-match-expected.rdf',
+      testCaseDescription:
+        'KET reaction with text name and no matching with bounding box on the different sides (left) from Multi-Tailed Arrow (2:1)',
+    },
+    {
+      ketFile: 'KET/ket-single-2x1-text-right-no-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-right-no-match-expected.rdf',
+      testCaseDescription:
+        'KET reaction with text name and no matching with bounding box on the different sides (right) from Multi-Tailed Arrow (2:1)',
+    },
+  ];
+
+  testCases29.forEach(
+    ({ ketFile, rdfFileExpectedV2000, testCaseDescription }) => {
+      test(`Add to Canvas from ${testCaseDescription} save to RDF V2000, add to Canvas from RDF V2000, verify that reaction without text name is displayed correctly`, async () => {
+        /* 
+        Test case: https://github.com/epam/Indigo/issues/2404
+        Description: ${testCaseDescription} can be saved to RDF V2000 format, then reloaded with correct structure.
+        */
+
+        await openFileAndAddToCanvasAsNewProject(ketFile, page);
+        await takeEditorScreenshot(page);
+        await verifyRdfFile(
+          page,
+          'v2000',
+          rdfFileExpectedV2000,
+          `tests/test-data/${rdfFileExpectedV2000}`,
+        );
+        await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV2000, page);
+        await takeEditorScreenshot(page);
+      });
+    },
+  );
 });

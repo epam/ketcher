@@ -437,7 +437,6 @@ test.describe('Macro-Micro-Switcher', () => {
 
     await takeEditorScreenshot(page);
     await selectZoomOutTool(page);
-    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 

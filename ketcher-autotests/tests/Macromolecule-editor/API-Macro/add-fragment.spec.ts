@@ -49,7 +49,6 @@ test.describe('addFragment', () => {
     );
     const numberOfPressZoomOut = 6;
     await selectZoomOutTool(page, numberOfPressZoomOut);
-    await clickInTheMiddleOfTheScreen(page);
     await page.mouse.move(0, 0);
     await takeEditorScreenshot(page);
   });

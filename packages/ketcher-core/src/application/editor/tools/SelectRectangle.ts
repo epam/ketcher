@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Vec2 } from 'domain/entities';
+import { BaseMonomer } from '../../../domain/entities/BaseMonomer';
+import { Vec2 } from '../../../domain/entities/vec2';
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
@@ -28,7 +29,8 @@ import { SequenceMode } from '../modes';
 import { isMacOs } from 'react-device-detect';
 import { EraserTool } from './Erase';
 import { DeprecatedFlexModeOrSnakeModePolymerBondRenderer } from 'application/render';
-
+import { PolymerBond } from 'domain/entities';
+import { vectorUtils } from 'application/editor';
 class SelectRectangle implements BaseTool {
   private brush;
   private brushArea;
@@ -201,22 +203,115 @@ class SelectRectangle implements BaseTool {
     this.setSelectedEntities();
   }
 
-  mousemove() {
-    if (this.editor.mode instanceof SequenceMode) {
+  mousemove(event: MouseEvent) {
+    if (this.editor.mode instanceof SequenceMode || !this.moveStarted) {
       return;
     }
+    const modelChanges = new Command();
+
+    const SNAPPING_ANGLE = 30;
+    const selectedEntities =
+      this.editor.drawingEntitiesManager.selectedEntitiesArr;
+    let isAppliedSnap = false;
+
+    if (
+      selectedEntities.length === 1 &&
+      selectedEntities[0] instanceof BaseMonomer &&
+      !(event.ctrlKey || event.metaKey)
+    ) {
+      const selectedMonomer = selectedEntities[0] as BaseMonomer;
+      const connectedMonomer = selectedMonomer.covalentBonds
+        .filter((bond) => bond instanceof PolymerBond)[0]
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        ?.getAnotherMonomer(selectedMonomer);
+      const cursorPositionInAngstroms = Coordinates.canvasToModel(
+        this.editor.lastCursorPositionOfCanvas,
+      );
+
+      if (connectedMonomer) {
+        const angle = vectorUtils.calcAngle(
+          cursorPositionInAngstroms,
+          connectedMonomer.position,
+        );
+        const angleInDegrees = ((angle * 180) / Math.PI + 360) % 360;
+        const snapRest = Math.abs(angleInDegrees % SNAPPING_ANGLE);
+        const leftSnappingBorder = SNAPPING_ANGLE / 3;
+        const rightSnappingBorder = (SNAPPING_ANGLE * 2) / 3;
+        const angleToSnap =
+          snapRest < leftSnappingBorder
+            ? angleInDegrees - snapRest
+            : snapRest > rightSnappingBorder
+            ? angleInDegrees + SNAPPING_ANGLE - snapRest
+            : angleInDegrees;
+
+        if (angleToSnap !== angleInDegrees) {
+          const angleToSnapInRadians = (angleToSnap * Math.PI) / 180;
+          const distanceToConnectedMonomer = Vec2.diff(
+            cursorPositionInAngstroms,
+            connectedMonomer.position,
+          ).length();
+          let snappedMonomerPosition = new Vec2(
+            connectedMonomer.position.x +
+              distanceToConnectedMonomer * -Math.cos(angleToSnapInRadians),
+            connectedMonomer.position.y +
+              distanceToConnectedMonomer * -Math.sin(angleToSnapInRadians),
+          );
+          const distanceToSnappingBorder = Vec2.diff(
+            cursorPositionInAngstroms,
+            snappedMonomerPosition,
+          ).length();
+
+          if (distanceToSnappingBorder < 0.5) {
+            if (
+              distanceToConnectedMonomer > 1.5 - 0.5 &&
+              distanceToConnectedMonomer < 1.5 + 0.5
+            ) {
+              snappedMonomerPosition = new Vec2(
+                connectedMonomer.position.x +
+                  1.5 * -Math.cos(angleToSnapInRadians),
+                connectedMonomer.position.y +
+                  1.5 * -Math.sin(angleToSnapInRadians),
+              );
+            }
+
+            isAppliedSnap = true;
+
+            if (isAppliedSnap) {
+              modelChanges.merge(
+                this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+                  snappedMonomerPosition.sub(selectedMonomer.position),
+                ),
+              );
+            }
+          }
+
+          // console.log(connectedMonomer.position, snappedMonomerPosition, distanceToConnectedMonomer)
+          // const snappedMonomerPosition = new Vec2(
+          //   selectedMonomer.position.x,
+          //   selectedMonomer.position.y,
+          // ).rotateAroundOrigin(angleToSnap, connectedMonomer.position);
+
+          // console.log(snappedMonomerPosition, selectedMonomer.position)
+        }
+      }
+    }
+
     if (this.moveStarted) {
-      const modelChanges =
-        this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-          Coordinates.canvasToModel(
-            new Vec2(
-              this.editor.lastCursorPositionOfCanvas.x -
-                this.mousePositionAfterMove.x,
-              this.editor.lastCursorPositionOfCanvas.y -
-                this.mousePositionAfterMove.y,
+      if (!isAppliedSnap) {
+        modelChanges.merge(
+          this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+            Coordinates.canvasToModel(
+              new Vec2(
+                this.editor.lastCursorPositionOfCanvas.x -
+                  this.mousePositionAfterMove.x,
+                this.editor.lastCursorPositionOfCanvas.y -
+                  this.mousePositionAfterMove.y,
+              ),
             ),
           ),
         );
+      }
       this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
       requestAnimationFrame(() => {
         this.editor.renderersContainer.update(modelChanges);

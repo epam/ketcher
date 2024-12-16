@@ -180,7 +180,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeLeftToolbarScreenshot(page);
   });
 
-  test('Verify that elements on Canvas can be copied (as MOL) in view-only mode', async ({
+  test('10. Verify that elements on Canvas can be copied (as MOL) in view-only mode', async ({
     page,
   }) => {
     /*
@@ -189,14 +189,21 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await enableViewOnlyModeBySetOptions(page);
+    // await takePageScreenshot(page); //1
+    // await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
+    // await takePageScreenshot(page); //2
     await page.getByTestId('copy-button-dropdown-triangle').click();
     await page.getByTitle('Copy as MOL (Ctrl+M)').click();
-    await disableViewOnlyModeBySetOptions(page);
+    // await copyToClipboardByKeyboard(page);
+
+    // await disableViewOnlyModeBySetOptions(page);
+    // await takePageScreenshot(page); //3
     await pasteFromClipboardByKeyboard(page);
+    // await page.keyboard.press('Control+KeyV');
     await clickOnCanvas(page, 200, 200);
-    await takeEditorScreenshot(page);
+    await takePageScreenshot(page);
+    // await takeEditorScreenshot(page);
   });
 
   test('Verify that elements on Canvas can be copied (as KET) in view-only mode', async ({

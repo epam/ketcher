@@ -159,7 +159,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('class', 'selection-area')
       .attr('d', this.path)
       .attr('fill-opacity', 0)
-      .attr('pointer-events', 'stroke');
+      .attr('pointer-events', 'stroke')
+      .attr('data-testid', 'covalentBond');
     return this.bodyElement;
   }
 
@@ -392,7 +393,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('d', dAttributeForPath)
       .attr('fill', 'none')
       .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0')
-      .attr('pointer-events', 'all');
+      .attr('pointer-events', 'all')
+      .attr(
+        'data-testid',
+        this.isHydrogenBond ? 'hydrogenBond' : 'covalentBond',
+      );
 
     this.path = dAttributeForPath;
 
@@ -734,7 +739,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('y1', this.scaledPosition.startPosition.y)
       .attr('x2', this.scaledPosition.endPosition.x)
       .attr('y2', this.scaledPosition.endPosition.y)
-      .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none');
+      .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none')
+      .attr(
+        'data-testid',
+        this.isHydrogenBond ? 'hydrogenBond' : 'covalentBond',
+      );
 
     return this.bodyElement;
   }

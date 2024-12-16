@@ -315,6 +315,13 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('class', MONOMER_CSS_CLASS)
       .attr('transition', 'transform 0.2s')
       .attr(
+        'data-testid',
+        'monomer_' +
+          this.monomer.label +
+          '_' +
+          this.monomer.monomerItem.props.MonomerClass,
+      )
+      .attr(
         'transform',
         `translate(${this.scaledMonomerPosition.x}, ${
           this.scaledMonomerPosition.y

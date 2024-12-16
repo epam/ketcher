@@ -262,10 +262,10 @@ class SelectRectangle implements BaseTool {
             snappedMonomerPosition,
           ).length();
 
-          if (distanceToSnappingBorder < 0.5) {
+          if (distanceToSnappingBorder < 0.375) {
             if (
-              distanceToConnectedMonomer > 1.5 - 0.5 &&
-              distanceToConnectedMonomer < 1.5 + 0.5
+              distanceToConnectedMonomer > 1.5 - 0.375 &&
+              distanceToConnectedMonomer < 1.5 + 0.375
             ) {
               snappedMonomerPosition = new Vec2(
                 connectedMonomer.position.x +

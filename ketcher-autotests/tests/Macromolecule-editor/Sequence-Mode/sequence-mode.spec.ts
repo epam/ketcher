@@ -447,11 +447,9 @@ test.describe('Sequence Mode', () => {
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
     await selectZoomOutTool(page, 3);
-    await clickInTheMiddleOfTheScreen(page);
     await enterSequence(page, 'ac');
     await takeEditorScreenshot(page);
     await selectZoomInTool(page, 2);
-    await clickInTheMiddleOfTheScreen(page);
     await enterSequence(page, 'g');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);

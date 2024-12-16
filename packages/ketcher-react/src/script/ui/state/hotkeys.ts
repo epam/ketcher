@@ -110,7 +110,9 @@ function keyHandle(dispatch, getState, hotKeys, event) {
 
   let group: any = null;
 
-  if (key && key.length === 1) {
+  const hoveredItem = getHoveredItem(render.ctab);
+
+  if (key && key.length === 1 && !hoveredItem) {
     const currentlyPressedKeys = selectAbbreviationLookupValue(state);
     const isShortcutKey = shortcutKeys.includes(key?.toLowerCase());
     const isTheSameKey = key === currentlyPressedKeys;
@@ -142,7 +144,6 @@ function keyHandle(dispatch, getState, hotKeys, event) {
       bonds: actions['bond-props'].action,
     };
 
-    const hoveredItem = getHoveredItem(render.ctab);
     if (!hoveredItem) {
       return;
     }

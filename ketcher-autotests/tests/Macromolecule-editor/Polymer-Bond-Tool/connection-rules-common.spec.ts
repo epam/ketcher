@@ -24,6 +24,7 @@ import {
   ZoomInByKeyboard,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { pageReload } from '@utils/common/helpers';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -268,6 +269,7 @@ test.describe('Common connection rules: ', () => {
    */
   test(`Check that attachment points dissapear when dragging bond from one monomer on canvas to another and clicking 'ESC' when hover second monomer`, async () => {
     test.setTimeout(50000);
+    await pageReload(page);
 
     await openFileAndAddToCanvasMacro(
       'KET/Common-Bond-Tests/Automation of Bond tests (203-211).ket',
@@ -364,6 +366,7 @@ test.describe('Common connection rules: ', () => {
    */
   test(`Check that 4 connected by Bond A6OH monomers can/are...`, async () => {
     test.setTimeout(40000);
+    await pageReload(page);
 
     await openFileAndAddToCanvasMacro(
       'KET/Common-Bond-Tests/4 connected by Bond A6OH.ket',

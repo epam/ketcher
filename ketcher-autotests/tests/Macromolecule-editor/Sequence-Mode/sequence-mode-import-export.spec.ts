@@ -49,6 +49,7 @@ test.beforeAll(async ({ browser }) => {
 test.afterEach(async () => {
   await resetZoomLevelToDefault(page);
   await selectClearCanvasTool(page);
+  await selectFlexLayoutModeTool(page);
 });
 
 test.afterAll(async ({ browser }) => {
@@ -151,7 +152,6 @@ test.describe('Import/export sequence:', () => {
         Enter symbols A, T, C, G, U (case insensitive) in the sequence input.
         Ensure no errors are displayed.
     */
-
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       [MacroFileType.Sequence, SequenceType.RNA],

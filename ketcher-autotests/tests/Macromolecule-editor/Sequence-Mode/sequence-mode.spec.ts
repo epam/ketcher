@@ -14,7 +14,6 @@ import {
   moveMouseAway,
   switchSequenceEnteringButtonType,
   SequenceType,
-  clickInTheMiddleOfTheScreen,
   selectUndoByKeyboard,
   selectZoomInTool,
   selectZoomOutTool,

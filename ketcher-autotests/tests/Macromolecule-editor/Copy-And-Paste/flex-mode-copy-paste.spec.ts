@@ -8,6 +8,7 @@ import {
   clickUndo,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  moveMouseAway,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
@@ -50,6 +51,7 @@ test.describe('Flex mode copy&paste', () => {
 
     await page.mouse.move(startX, startY);
     await pasteFromClipboardByKeyboard(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await clickUndo(page);

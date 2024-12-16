@@ -238,10 +238,8 @@ test.describe('Sequence mode selection for view mode', () => {
     await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
     await selectAllStructuresOnCanvas(page);
     await selectZoomOutTool(page, 8);
-    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectZoomInTool(page, 5);
-    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 

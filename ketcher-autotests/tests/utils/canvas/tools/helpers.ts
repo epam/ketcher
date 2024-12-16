@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import {
+  clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   MacromoleculesTopPanelButton,
   selectOption,
@@ -364,6 +365,7 @@ export async function openSettings(page: Page) {
     timeout: 5000,
   });
 }
+
 export async function bondsSettings(page: Page) {
   await page.getByText('Bonds', { exact: true }).click();
 }
@@ -507,4 +509,32 @@ export async function scrollToDownInSetting(page: Page) {
   const scrollToDown = page.getByTestId('Options for Debugging-accordion');
   await scrollToDown.scrollIntoViewIfNeeded();
   await scrollToDown.hover({ force: true });
+}
+
+export async function selectZoomInTool(page: Page, count = 1) {
+  await page.getByTestId('zoom-selector').click();
+  for (let i = 0; i < count; i++) {
+    await waitForRender(page, async () => {
+      await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomIn, page);
+    });
+  }
+  await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function selectZoomReset(page: Page) {
+  await page.getByTestId('zoom-selector').click();
+  await waitForRender(page, async () => {
+    await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomReset, page);
+  });
+  await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function selectZoomOutTool(page: Page, count = 1) {
+  await page.getByTestId('zoom-selector').click();
+  for (let i = 0; i < count; i++) {
+    await waitForRender(page, async () => {
+      await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomOut, page);
+    });
+  }
+  await clickInTheMiddleOfTheScreen(page);
 }

@@ -938,4 +938,11 @@ export class SequenceRenderer {
     newSequenceButton.show();
     this.newSequenceButtons.push(newSequenceButton);
   }
+
+  public static isEmptyCanvas() {
+    return (
+      SequenceRenderer.chainsCollection.length === 1 &&
+      SequenceRenderer.chainsCollection.firstNode instanceof EmptySequenceNode
+    );
+  }
 }

@@ -48,6 +48,8 @@ export class FlexMode extends BaseMode {
       ),
     );
 
+    command.setUndoOperationsByPriority();
+
     return command;
   }
 

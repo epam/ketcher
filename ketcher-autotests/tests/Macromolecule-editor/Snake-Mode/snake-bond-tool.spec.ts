@@ -107,6 +107,7 @@ test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await resetZoomLevelToDefault(page);
   await selectClearCanvasTool(page);
+  await selectFlexLayoutModeTool(page);
 });
 
 test.afterAll(async ({ browser }) => {
@@ -948,8 +949,6 @@ test.describe('Snake Bond Tool', () => {
     Test case: Snake Mode
     Description: Snake mode is not applied on structure and it starts from 5FAM monomer because it 
     has no R1 attachment point and there are no similar options for the chain beginning.
-    We have incorrect behavior because bug https://github.com/epam/ketcher/issues/4026 need to be fixed.
-    Then update expected screenshot.
     */
     await openFileAndAddToCanvasMacro(
       `KET/sequence-with-side-connection.ket`,

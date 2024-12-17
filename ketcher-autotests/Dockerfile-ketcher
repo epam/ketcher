@@ -2,4 +2,4 @@ FROM node:18.14-bullseye-slim
 
 RUN apt-get update -y && apt-get install -y git
 
-WORKDIR /app
+WORKDIR /ketcher

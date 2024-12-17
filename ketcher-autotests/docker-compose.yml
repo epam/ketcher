@@ -4,6 +4,8 @@ services:
     build:
       context: ./reporters/
       dockerfile: ../Dockerfile-ketcher
+    env_file:
+      .env
     volumes:
       - ./:/app
       - ../:/ketcher

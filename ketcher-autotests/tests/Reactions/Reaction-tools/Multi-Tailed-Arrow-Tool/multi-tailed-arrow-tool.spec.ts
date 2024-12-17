@@ -9,6 +9,7 @@ import {
   cutToClipboardByKeyboard,
   dragMouseTo,
   LeftPanelButton,
+  moveMouseAway,
   moveOnAtom,
   openDropdown,
   openFile,
@@ -1388,6 +1389,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTailToArrow(page, 2);
     await hoverOverArrowSpine(page, 2, 'right');
     await expect(page.getByText('Add new tail')).toBeDisabled();
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await verifyFile2(
       page,

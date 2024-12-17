@@ -113,7 +113,7 @@ const config: PlaywrightTestConfig = {
   retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */
   // eslint-disable-next-line no-magic-numbers
-  workers: isCI ? os.cpus().length : MIN_AMOUNT_OF_WORKERS,
+  workers: !isCI ? os.cpus().length : MIN_AMOUNT_OF_WORKERS,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     [

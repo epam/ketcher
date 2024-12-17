@@ -101,6 +101,7 @@ selectNestedTool - select specific tool that has sub / nested levels.
     - Local frontend: KETCHER_URL=http://localhost:4002
   - OPTIONAL: IGNORE_UNSTABLE_TESTS=true (if you want to ignore unstable tests)
   - OPTIONAL: ENABLE_POLYMER_EDITOR=true (If you want to run tests for Macromolecule Editor)
+  - OPTIONAL: NUM_WORKERS=8 (default=num cpus, if you want to define custom number of workers)
 
 ### Run tests:
 

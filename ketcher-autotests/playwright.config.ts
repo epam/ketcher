@@ -69,10 +69,13 @@ function baseURL(): string {
   return `${process.env.KETCHER_URL}${REMOTE_URL}`;
 }
 
-const MAX_NUMBER_OF_RETRIES = 2;
-const MIN_AMOUNT_OF_WORKERS = 2;
+const MAX_NUMBER_OF_RETRIES = 1;
 // const MAX_NUMBER_OF_FAILURES = 3;
 const isCI = process.env.CI_ENVIRONMENT === 'true';
+var numWorkers = os.cpus().length;
+if (process.env.NUM_WORKERS) {
+  numWorkers = Number(process.env.NUM_WORKERS);
+}
 
 function getIgnoredFiles(): string[] {
   let ignored = [] as string[];
@@ -113,7 +116,7 @@ const config: PlaywrightTestConfig = {
   retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */
   // eslint-disable-next-line no-magic-numbers
-  workers: !isCI ? os.cpus().length : MIN_AMOUNT_OF_WORKERS,
+  workers: numWorkers,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     [

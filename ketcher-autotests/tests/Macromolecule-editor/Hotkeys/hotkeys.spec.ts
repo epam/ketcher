@@ -17,6 +17,7 @@ import {
   selectRedoByKeyboard,
   waitForRender,
   getControlModifier,
+  selectClearCanvasTool,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
@@ -32,7 +33,7 @@ test.describe('Hotkeys', () => {
     Description: Canvas is cleared.
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 

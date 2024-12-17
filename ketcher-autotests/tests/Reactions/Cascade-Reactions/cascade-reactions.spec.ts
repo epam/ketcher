@@ -2366,4 +2366,82 @@ test.describe('Cascade Reactions', () => {
       });
     },
   );
+
+  const testCases33 = [
+    {
+      ketFile: 'KET/ket-cascade-reactions-name-conditions.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reactions-name-conditions-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-cascade-reactions-name-conditions-expected.rdf',
+      testCaseDescription:
+        'KET cascade reactions with Multi-Tailed and single arrow (5-tails and 2:1:1) and reactions name and conditions',
+    },
+  ];
+
+  testCases33.forEach(
+    ({
+      ketFile,
+      rdfFileExpectedV2000,
+      rdfFileExpectedV3000,
+      testCaseDescription,
+    }) => {
+      (['v2000', 'v3000'] as const).forEach((format) => {
+        test(`Verify that ${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+          /* 
+          Test case: https://github.com/epam/Indigo/issues/2404
+          Description: ${testCaseDescription} can be saved to RDF ${format.toUpperCase()} format, then reloaded with correct structure.
+          */
+
+          const rdfFileExpected =
+            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+
+          await openFileAndAddToCanvasAsNewProject(ketFile, page);
+          await takeEditorScreenshot(page);
+          await verifyRdfFile(
+            page,
+            format,
+            rdfFileExpected,
+            `tests/test-data/${rdfFileExpected}`,
+          );
+          await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
+          await takeEditorScreenshot(page);
+        });
+      });
+    },
+  );
+
+  const testCases34 = [
+    {
+      rdfFile: 'RDF-V2000/ket-cascade-reactions-name-conditions-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-cascade-reactions-name-conditions-v3000.rdf',
+      testCaseDescription:
+        'RDF V2000 cascade reactions with Multi-Tailed and single arrow (5-tails and 2:1:1) and reactions name and conditions',
+      testCaseExpectedResult:
+        'Reaction with text name in bold and conditions in italic are displayed correctly with font = 13',
+    },
+  ];
+
+  testCases34.forEach(
+    ({ rdfFile, rdfFileExpectedV3000, testCaseDescription }) => {
+      test(`Add to Canvas from ${testCaseDescription} save to RDF V3000, add to Canvas from RDF V3000`, async () => {
+        /* 
+        Test case: https://github.com/epam/Indigo/issues/2404
+        Description: ${testCaseDescription} can be saved to RDF V3000 format, then reloaded with correct structure.
+        */
+
+        await openFileAndAddToCanvasAsNewProject(rdfFile, page);
+        await takeEditorScreenshot(page);
+        await verifyRdfFile(
+          page,
+          'v3000',
+          rdfFileExpectedV3000,
+          `tests/test-data/${rdfFileExpectedV3000}`,
+        );
+        await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV3000, page);
+        await takeEditorScreenshot(page);
+      });
+    },
+  );
 });

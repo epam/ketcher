@@ -240,6 +240,8 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3],[5A6])(A)}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
@@ -248,6 +250,8 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{([25moe3]+[5A6])(A)}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
@@ -264,6 +268,8 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{R(A,C,G,U)}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6149',
   },
   {
     monomerDescription:
@@ -310,6 +316,8 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{R(A)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6090',
   },
   {
     monomerDescription:
@@ -318,138 +326,276 @@ const monomers: IMonomer[] = [
     HELMString: 'RNA1{R(A)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6090',
   },
   {
     monomerDescription:
-      '36. Nucleotide of base A with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A)([bnn],[bP])',
+      '36. Nucleotide of base A with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A)P',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3],[5A6])(A)P}$$$$V2.0',
+    eligableForAntisense: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '37 Nucleotide of base A with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A)([bnn],[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3],[5A6])(A)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '37. Nucleotide of base A with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A)([bnn],[bP])',
+      '38. Nucleotide of base A with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A)P',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3]+[5A6])(A)P}$$$$V2.0',
+    eligableForAntisense: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '39 Nucleotide of base A with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A)([bnn],[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '38. Nucleotide of base A with ambiguous alternative sugar and mixed phosphate - ([25moe3],[5A6])(A)([bnn]+[bP])',
+      '40. Nucleotide of base A with ambiguous alternative sugar and mixed phosphate - ([25moe3],[5A6])(A)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3],[5A6])(A)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '39. Nucleotide of base A with ambiguous mixed sugar and mixed phosphate - ([25moe3]+[5A6])(A)([bnn]+[bP])',
+      '41. Nucleotide of base A with ambiguous mixed sugar and mixed phosphate - ([25moe3]+[5A6])(A)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '40. Nucleotide of DNA base N with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A,C,G,T)([bnn],[bP])',
+      '42. Nucleotide of DNA base N with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A,C,G,T)P',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,T)P}$$$$V2.0',
+    eligableForAntisense: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '43. Nucleotide of DNA base N with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A,C,G,T)([bnn],[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,T)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '41. Nucleotide of DNA base N with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C,G,T)([bnn],[bP])',
+      '44. Nucleotide of DNA base N with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A,C,G,T)P',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,T)P}$$$$V2.0',
+    eligableForAntisense: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '45. Nucleotide of DNA base N with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C,G,T)([bnn],[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,T)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '42. Nucleotide of DNA base N with ambiguous alternative sugar and mixed phosphate - ([25moe3],[5A6])(A,C,G,T)([bnn]+[bP])',
+      '46. Nucleotide of DNA base N with ambiguous alternative sugar and mixed phosphate - ([25moe3],[5A6])(A,C,G,T)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,T)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '43. Nucleotide of DNA base N with ambiguous mixed sugar and mixed phosphate - ([25moe3]+[5A6])(A,C,G,T)([bnn]+[bP])',
+      '47. Nucleotide of DNA base N with ambiguous mixed sugar and mixed phosphate - ([25moe3]+[5A6])(A,C,G,T)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,T)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '44. Nucleotide of RNA base N with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A,C,G,U)([bnn],[bP])',
+      '48. Nucleotide of RNA base N with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A,C,G,U)P',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,U)P}$$$$V2.0',
+    eligableForAntisense: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '49. Nucleotide of RNA base N with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A,C,G,U)([bnn],[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,U)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '45. Nucleotide of RNA base N with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C,G,U)([bnn],[bP])',
+      '50. Nucleotide of RNA base N with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A,C,G,U)P',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,U)P}$$$$V2.0',
+    eligableForAntisense: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '51. Nucleotide of RNA base N with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C,G,U)([bnn],[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,U)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '46. Nucleotide of RNA base N with ambiguous alternative sugar and mixed phosphate - ([25moe3],[5A6])(A,C,G,U)([bnn]+[bP])',
+      '52. Nucleotide of RNA base N with ambiguous alternative sugar and mixed phosphate - ([25moe3],[5A6])(A,C,G,U)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3],[5A6])(A,C,G,U)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '47. Nucleotide of RNA base N with ambiguous mixed sugar and mixed phosphate - ([25moe3]+[5A6])(A,C,G,U)([bnn]+[bP])',
+      '53. Nucleotide of RNA base N with ambiguous mixed sugar and mixed phosphate - ([25moe3]+[5A6])(A,C,G,U)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C,G,U)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '48. Nucleotide of alternative base M with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A,C)([bnn],[bP])',
+      '54. Nucleotide of alternative base M with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A,C)P',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3],[5A6])(A,C)P}$$$$V2.0',
+    eligableForAntisense: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '55. Nucleotide of alternative base M with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A,C)([bnn],[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3],[5A6])(A,C)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '49. Nucleotide of alternative base M with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C)([bnn],[bP])',
+      '56. Nucleotide of alternative base M with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C)P',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3]+[5A6])(A,C)P}$$$$V2.0',
+    eligableForAntisense: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '57. Nucleotide of alternative base M with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C)([bnn],[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '50. Nucleotide of alternative base M with ambiguous alternative sugar and mixed phosphate - ([25moe3],[5A6])(A,C)([bnn]+[bP])',
+      '58. Nucleotide of alternative base M with ambiguous alternative sugar and mixed phosphate - ([25moe3],[5A6])(A,C)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3],[5A6])(A,C)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '51. Nucleotide of alternative base M with ambiguous mixed sugar and mixed phosphate - ([25moe3]+[5A6])(A,C)([bnn]+[bP])',
+      '59. Nucleotide of alternative base M with ambiguous mixed sugar and mixed phosphate - ([25moe3]+[5A6])(A,C)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A,C)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: true,
     monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6090, https://github.com/epam/ketcher/issues/6091',
   },
   {
     monomerDescription:
-      '52. Nucleotide of mixed DNA base % with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A,C,G,T)([bnn],[bP])',
+      '60. Nucleotide of mixed DNA base % with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A,C,G,T)P',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3],[5A6])(A+C+G+T)P}$$$$V2.0',
+    eligableForAntisense: false,
+    monomerLocatorIndex: 0,
+  },
+  {
+    monomerDescription:
+      '61. Nucleotide of mixed DNA base % with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A,C,G,T)([bnn],[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3],[5A6])(A+C+G+T)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: false,
@@ -457,7 +603,15 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '53. Nucleotide of mixed DNA base % with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C,G,T)([bnn],[bP])',
+      '62. Nucleotide of mixed DNA base % with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A,C,G,T)P',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3]+[5A6])(A+C+G+T)P}$$$$V2.0',
+    eligableForAntisense: false,
+    monomerLocatorIndex: 0,
+  },
+  {
+    monomerDescription:
+      '63. Nucleotide of mixed DNA base % with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C,G,T)([bnn],[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A+C+G+T)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: false,
@@ -465,7 +619,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '54. Nucleotide of mixed DNA base % with ambiguous alternative sugar and mixed phosphate - ([25moe3],[5A6])(A,C,G,T)([bnn]+[bP])',
+      '64. Nucleotide of mixed DNA base % with ambiguous alternative sugar and mixed phosphate - ([25moe3],[5A6])(A,C,G,T)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3],[5A6])(A+C+G+T)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: false,
@@ -473,7 +627,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '55. Nucleotide of mixed DNA base % with ambiguous mixed sugar and mixed phosphate - ([25moe3]+[5A6])(A,C,G,T)([bnn]+[bP])',
+      '65. Nucleotide of mixed DNA base % with ambiguous mixed sugar and mixed phosphate - ([25moe3]+[5A6])(A,C,G,T)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A+C+G+T)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: false,
@@ -481,7 +635,15 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '56. Nucleotide of mixed RNA base % with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A,C,G,U)([bnn],[bP])',
+      '66. Nucleotide of mixed RNA base % with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A,C,G,U)P',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3],[5A6])(A+C+G+U)P}$$$$V2.0',
+    eligableForAntisense: false,
+    monomerLocatorIndex: 0,
+  },
+  {
+    monomerDescription:
+      '67. Nucleotide of mixed RNA base % with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A,C,G,U)([bnn],[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3],[5A6])(A+C+G+U)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: false,
@@ -489,7 +651,15 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '57. Nucleotide of mixed RNA base % with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C,G,U)([bnn],[bP])',
+      '68. Nucleotide of mixed RNA base % with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A,C,G,U)P',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3]+[5A6])(A+C+G+U)P}$$$$V2.0',
+    eligableForAntisense: false,
+    monomerLocatorIndex: 0,
+  },
+  {
+    monomerDescription:
+      '69. Nucleotide of mixed RNA base % with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C,G,U)([bnn],[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A+C+G+U)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: false,
@@ -497,7 +667,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '58. Nucleotide of mixed RNA base % with ambiguous alternative sugar and mixed phosphate - ([25moe3],[5A6])(A,C,G,U)([bnn]+[bP])',
+      '70. Nucleotide of mixed RNA base % with ambiguous alternative sugar and mixed phosphate - ([25moe3],[5A6])(A,C,G,U)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3],[5A6])(A+C+G+U)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: false,
@@ -505,7 +675,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '59. Nucleotide of mixed RNA base % with ambiguous mixed sugar and mixed phosphate - ([25moe3]+[5A6])(A,C,G,U)([bnn]+[bP])',
+      '71. Nucleotide of mixed RNA base % with ambiguous mixed sugar and mixed phosphate - ([25moe3]+[5A6])(A,C,G,U)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A+C+G+U)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: false,
@@ -513,7 +683,15 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '60. Nucleotide of mixed base % with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A,C)([bnn],[bP])',
+      '72. Nucleotide of mixed base % with ambiguous alternative sugar and phosphate P - ([25moe3],[5A6])(A,C)P',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3],[5A6])(A+C)P}$$$$V2.0',
+    eligableForAntisense: false,
+    monomerLocatorIndex: 0,
+  },
+  {
+    monomerDescription:
+      '73. Nucleotide of mixed base % with ambiguous alternative sugar and alternative phosphate - ([25moe3],[5A6])(A,C)([bnn],[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3],[5A6])(A+C)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: false,
@@ -521,7 +699,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '61. Nucleotide of mixed base % with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C)([bnn],[bP])',
+      '74. Nucleotide of mixed base % with ambiguous mixed sugar and phosphate P - ([25moe3]+[5A6])(A,C)P',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A+C)([bnn],[bP])}$$$$V2.0',
     eligableForAntisense: false,
@@ -529,7 +707,15 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '62. Nucleotide of mixed base % with ambiguous alternative sugar and mixed phosphate - ([25moe3],[5A6])(A,C)([bnn]+[bP])',
+      '75. Nucleotide of mixed base % with ambiguous mixed sugar and alternative phosphate - ([25moe3]+[5A6])(A,C)([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{([25moe3]+[5A6])(A+C)([bnn],[bP])}$$$$V2.0',
+    eligableForAntisense: false,
+    monomerLocatorIndex: 0,
+  },
+  {
+    monomerDescription:
+      '76. Nucleotide of mixed base % with ambiguous alternative sugar and mixed phosphate - ([25moe3],[5A6])(A,C)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3],[5A6])(A+C)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: false,
@@ -537,7 +723,7 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '63. Nucleotide of mixed base % with ambiguous mixed sugar and mixed phosphate - ([25moe3]+[5A6])(A,C)([bnn]+[bP])',
+      '77. Nucleotide of mixed base % with ambiguous mixed sugar and mixed phosphate - ([25moe3]+[5A6])(A,C)([bnn]+[bP])',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{([25moe3]+[5A6])(A+C)([bnn]+[bP])}$$$$V2.0',
     eligableForAntisense: false,
@@ -558,6 +744,11 @@ for (const monomer of monomers.filter((m) => m.eligableForAntisense)) {
      *       4. Take screenshot to validate Antisense creation
      */
     test.setTimeout(20000);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      monomer.shouldFail === true,
+      `That test fails because of ${monomer.issueNumber} issue.`,
+    );
     if (monomer.pageReloadNeeded) await pageReload(page);
 
     if (monomer.KETFile) {
@@ -587,11 +778,5 @@ for (const monomer of monomers.filter((m) => m.eligableForAntisense)) {
 
     await createAntisenseStrandOption.click();
     await takeEditorScreenshot(page);
-
-    // Test should be skipped if related bug exists
-    test.fixme(
-      monomer.shouldFail === true,
-      `That test fails because of ${monomer.issueNumber} issue.`,
-    );
   });
 }

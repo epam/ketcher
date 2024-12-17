@@ -318,6 +318,7 @@ test.describe('Sequence-edit mode', () => {
     await clickOnSequenceSymbol(page, 'G');
     await page.keyboard.press('ArrowLeft');
     await pasteFromClipboardByKeyboard(page);
+    await moveMouseAway(page);
     await waitForRender(page, async () => {
       await takeEditorScreenshot(page);
     });

@@ -26,21 +26,21 @@ import {
   SGroupDelete,
   SGroupRemoveFromHierarchy,
 } from '../operations';
-import {Pile, SGroup, SGroupAttachmentPoint, Vec2} from 'domain/entities';
-import {atomGetAttr, atomGetDegree, atomGetSGroups} from './utils';
+import { Pile, SGroup, SGroupAttachmentPoint, Vec2 } from 'domain/entities';
+import { atomGetAttr, atomGetDegree, atomGetSGroups } from './utils';
 
-import {Action} from './action';
-import {SgContexts} from '..';
-import {uniq} from 'lodash/fp';
-import {fromAtomsAttrs} from './atom';
+import { Action } from './action';
+import { SgContexts } from '..';
+import { uniq } from 'lodash/fp';
+import { fromAtomsAttrs } from './atom';
 import {
   SGroupAttachmentPointAdd,
   SGroupAttachmentPointRemove,
 } from 'application/editor/operations/sgroup/sgroupAttachmentPoints';
 import Restruct from 'application/render/restruct/restruct';
 import assert from 'assert';
-import {MonomerMicromolecule} from 'domain/entities/monomerMicromolecule';
-import {isNumber} from 'lodash';
+import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { isNumber } from 'lodash';
 
 export function fromSeveralSgroupAddition(
   restruct: Restruct,
@@ -220,7 +220,7 @@ export function setExpandMonomerSGroup(
     prepareSubStructure(atomId, index);
   });
 
-  const sameLine = new Set<number>([sgid]);
+  const sameLine = new Set<number>();
   const complementaryLine = new Set<number>();
 
   sGroupsToMove.forEach((sGroupIds) => {
@@ -238,8 +238,9 @@ export function setExpandMonomerSGroup(
       }
 
       const SAME_LINE_THRESHOLD = 0.5;
-      const inOneLine = (movableSGroupCenter.y < sGroupCenter.y + SAME_LINE_THRESHOLD &&
-        movableSGroupCenter.y > sGroupCenter.y - SAME_LINE_THRESHOLD);
+      const inOneLine =
+        movableSGroupCenter.y < sGroupCenter.y + SAME_LINE_THRESHOLD &&
+        movableSGroupCenter.y > sGroupCenter.y - SAME_LINE_THRESHOLD;
 
       if (inOneLine) {
         sameLine.add(sGroupId);
@@ -247,18 +248,24 @@ export function setExpandMonomerSGroup(
       }
 
       const WIDE_LINE_THRESHOLD = 2;
-      const inWideLine = (movableSGroupCenter.y < sGroupCenter.y + WIDE_LINE_THRESHOLD &&
-        movableSGroupCenter.y > sGroupCenter.y - WIDE_LINE_THRESHOLD);
+      const inWideLine =
+        movableSGroupCenter.y < sGroupCenter.y + WIDE_LINE_THRESHOLD &&
+        movableSGroupCenter.y > sGroupCenter.y - WIDE_LINE_THRESHOLD;
 
       const movableSGroupAtoms = SGroup.getAtoms(restruct, movableSGroup);
-      const movableSGroupBondsToOutside = restruct.molecule.bonds.filter((_, bond) => {
-        return (
-          (movableSGroupAtoms.includes(bond.begin) && !movableSGroupAtoms.includes(bond.end)) ||
-          (movableSGroupAtoms.includes(bond.end) && !movableSGroupAtoms.includes(bond.begin))
-        );
-      });
+      const movableSGroupBondsToOutside = restruct.molecule.bonds.filter(
+        (_, bond) => {
+          return (
+            (movableSGroupAtoms.includes(bond.begin) &&
+              !movableSGroupAtoms.includes(bond.end)) ||
+            (movableSGroupAtoms.includes(bond.end) &&
+              !movableSGroupAtoms.includes(bond.begin))
+          );
+        },
+      );
 
-      const hasComplementaryBondToMainLine = movableSGroupBondsToOutside.size === 1 &&
+      const hasComplementaryBondToMainLine =
+        movableSGroupBondsToOutside.size === 1 &&
         [...sameLine.values()].some((sGroupId) => {
           const mainLineSGroup = restruct.molecule.sgroups.get(sGroupId);
           if (!mainLineSGroup) {
@@ -267,11 +274,14 @@ export function setExpandMonomerSGroup(
 
           const mainLineSGroupAtoms = SGroup.getAtoms(restruct, mainLineSGroup);
           const bond = [...movableSGroupBondsToOutside.values()][0];
-          return mainLineSGroupAtoms.includes(bond.begin) || mainLineSGroupAtoms.includes(bond.end);
+          return (
+            mainLineSGroupAtoms.includes(bond.begin) ||
+            mainLineSGroupAtoms.includes(bond.end)
+          );
         });
 
       if (inWideLine && hasComplementaryBondToMainLine) {
-        complementaryLine.add(sGroupId);
+        sameLine.add(sGroupId);
       }
     });
   });
@@ -287,22 +297,22 @@ export function setExpandMonomerSGroup(
     }
 
     const sGroupInLineAtoms = SGroup.getAtoms(restruct, sGroupInLine);
-    const sGroupInLineBBox = SGroup.getObjBBox(sGroupInLineAtoms, restruct.molecule);
+    const sGroupInLineBBox = SGroup.getObjBBox(
+      sGroupInLineAtoms,
+      restruct.molecule,
+    );
     const sGroupInLineHeight = sGroupInLineBBox.p1.y - sGroupInLineBBox.p0.y;
 
     return Math.max(acc, sGroupInLineHeight);
   }, 0);
-  const baseVerticalOffset = largestHeightInLine > sGroupHeight
-    ? 0
-    : (sGroupHeight - largestHeightInLine) / 2;
+  const baseVerticalOffset =
+    largestHeightInLine > sGroupHeight
+      ? 0
+      : (sGroupHeight - largestHeightInLine) / 2;
   const horizontalOffset = sGroupWidth / 2;
 
   const handledAtoms = new Set<number>();
   sGroupsToMove.forEach((sGroupIds) => {
-    if (sGroupsToMove.size === 1) {
-      return;
-    }
-
     sGroupIds.forEach((sGroupId) => {
       const movableSGroup = restruct.molecule.sgroups.get(sGroupId);
       if (!movableSGroup) {
@@ -318,19 +328,19 @@ export function setExpandMonomerSGroup(
 
       const moveDown = movableSGroupCenter.y > sGroupCenter.y;
       const moveUp = movableSGroupCenter.y < sGroupCenter.y;
-      const moveRight =
-        movableSGroupCenter.x > sGroupCenter.x;
-      const moveLeft =
-        movableSGroupCenter.x < sGroupCenter.x;
-      const moveHorizontally = sameLine.has(sGroupId) || complementaryLine.has(sGroupId);
-      const complementaryBelowInitialSgroup = complementaryLine.has(sGroupId) && movableSGroupCenter.x === sGroupCenter.x;
-      const moveVertically = complementaryBelowInitialSgroup || !moveHorizontally;
+      const moveRight = movableSGroupCenter.x > sGroupCenter.x;
+      const moveLeft = movableSGroupCenter.x < sGroupCenter.x;
+      const moveHorizontally =
+        sameLine.has(sGroupId) || complementaryLine.has(sGroupId);
+      const moveVertically = !moveHorizontally;
 
       const moveVector = new Vec2(
         (moveHorizontally ? 1 : 0) *
-        (moveRight ? 1 : moveLeft ? -1 : 0) * horizontalOffset,
+          (moveRight ? 1 : moveLeft ? -1 : 0) *
+          horizontalOffset,
         (moveVertically ? 1 : 0) *
-        (moveDown ? 1 : moveUp ? -1 : 0) * baseVerticalOffset
+          (moveDown ? 1 : moveUp ? -1 : 0) *
+          baseVerticalOffset,
       );
       const finalMoveVector = attrs.expanded
         ? moveVector

@@ -38,6 +38,7 @@ import {
   TopPanelButton,
   waitForPageInit,
   waitForRender,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { FileType, verifyFile2 } from '@utils/files/receiveFileComparisonData';
@@ -3659,6 +3660,78 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     });
   }
 
+  test('Verify that elements of cascade reaction are corrected and aligned after Layout action', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2236
+     * Description: Add to Canvas cascade reaction from KET with not corrupted elements, Multi-Tailed and single Arrows (3-1-2-1-1),
+     * where elements are shifted, but they are on continuation of tails and head arrow, corrupt elements, verify that after Layout (Ctrl+L) action,
+     * Multi-Tailed arrow has default Indigo sizes with aligned, corrected elements, single arrow is filled, they can be saved to .ket file with correct coordinates,
+     * after that loaded from .ket file with correct sizes and positions
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/ket-cascade-reaction-3-1-2-1-1-clean-up.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await moveOnAtom(page, 'P', 0);
+    await dragMouseTo(540, 260, page);
+    await moveOnAtom(page, 'F', 0);
+    await dragMouseTo(700, 340, page);
+    await clickOnCanvas(page, 200, 200);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    await verifyFile2(
+      page,
+      'KET/ket-cascade-reaction-3-1-2-1-1-corrected-layout-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/ket-cascade-reaction-3-1-2-1-1-corrected-layout-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that elements of cascade reaction are corrected after Clean Up action', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2236
+     * Description: Add to Canvas cascade and single reaction from KET with not corrupted elements, Multi-Tailed and single Arrows (3-1-2-1-1),
+     * corrupt elements, make Clean Up (Ctrl+Shift+L) action, verify that corrupted elements are corrected, they can be saved to .ket file with correct coordinates,
+     * after that loaded from .ket file with correct sizes and positions
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/ket-cascade-reaction-3-1-2-1-1-clean-up.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await moveOnAtom(page, 'P', 0);
+    await dragMouseTo(540, 260, page);
+    await moveOnAtom(page, 'F', 0);
+    await dragMouseTo(700, 340, page);
+    await clickOnCanvas(page, 200, 200);
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+    );
+    await takeEditorScreenshot(page);
+    await verifyFile2(
+      page,
+      'KET/ket-cascade-reaction-3-1-2-1-1-corrected-clean-up-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/ket-cascade-reaction-3-1-2-1-1-corrected-clean-up-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('Verify single bonds of cascade reaction after calculate CIP action', async ({
     page,
   }) => {
@@ -3744,6 +3817,36 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await openFileAndAddToCanvasAsNewProject(
       'KET/ket-cascade-reaction-3-1-2-1-1-calculated-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify the cascade reaction after Hydrogens action', async ({
+    page,
+  }) => {
+    /**
+     * Test case: https://github.com/epam/Indigo/issues/2236
+     * Description: Add to Canvas cascade reaction from KET with Multi-Tailed and single Arrows (3-1-2-1-1),
+     * Add/Remove explicit hydrogens actions, verify that only elements are affected, they can be saved to .ket file with correct coordinates,
+     * after that loaded from .ket file with correct sizes and positions
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
+    await takeEditorScreenshot(page);
+    await verifyFile2(
+      page,
+      'KET/ket-cascade-reaction-3-1-2-1-1-hydrogens-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/ket-cascade-reaction-3-1-2-1-1-hydrogens-expected.ket',
       page,
     );
     await takeEditorScreenshot(page);

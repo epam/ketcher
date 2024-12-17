@@ -122,7 +122,8 @@ const config: PlaywrightTestConfig = {
         open: process.env.DOCKER ? 'never' : 'on-failure',
       },
     ],
-    [isCI ? 'dot' : 'line'],
+    // [isCI ? 'dot' : 'line'],
+    ['line'],
     [
       'json',
       {

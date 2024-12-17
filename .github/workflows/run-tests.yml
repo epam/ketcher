@@ -68,7 +68,7 @@ jobs:
           name: ketcher-dist-macro
           path: example/dist
   playwright_tests_micro:
-    timeout-minutes: 120
+    timeout-minutes: 60
     runs-on: self-hosted-a
     needs: build_ketcher_micro
     container: mcr.microsoft.com/playwright:v1.44.1-jammy
@@ -113,14 +113,14 @@ jobs:
           npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
-        if: failure()
+        if: always()
         with:
           name: playwright-report-micro-${{ matrix.shardIndex }}
           path: ketcher-autotests/playwright-report/
           retention-days: 5
   
   playwright_tests_macro:
-    timeout-minutes: 120
+    timeout-minutes: 60
     runs-on: self-hosted-a
     needs: build_ketcher_macro
     container: mcr.microsoft.com/playwright:v1.44.1-jammy
@@ -165,7 +165,7 @@ jobs:
           npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - uses: actions/upload-artifact@v3
         # run even if previous steps fails
-        if: failure()
+        if: always()
         with:
           name: playwright-report-macromolecules-${{ matrix.shardIndex }}
           path: ketcher-autotests/playwright-report/

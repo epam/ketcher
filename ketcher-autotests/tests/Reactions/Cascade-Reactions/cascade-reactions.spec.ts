@@ -2240,4 +2240,130 @@ test.describe('Cascade Reactions', () => {
       });
     },
   );
+
+  const testCases32 = [
+    {
+      ketFile: 'KET/ket-cascade-2-1-1-text-name-conditions-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-2-1-1-text-name-conditions-match-expected.rdf',
+      testCaseDescription:
+        'KET cascade reaction (2:1:1) with text name, conditions and matching with bounding box',
+      testCaseExpectedResult:
+        'Reaction with text name in bold and conditions in italic are displayed correctly with font = 13',
+    },
+    {
+      ketFile: 'KET/ket-cascade-2-1-1-text-name-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-2-1-1-text-name-match-expected.rdf',
+      testCaseDescription:
+        'KET cascade reaction (2:1:1) with text name only and matching with bounding box',
+      testCaseExpectedResult:
+        'Reaction only with name in bold is displayed correctly with font = 13',
+    },
+    {
+      ketFile: 'KET/ket-cascade-2-1-1-text-conditions-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-2-1-1-text-conditions-match-expected.rdf',
+      testCaseDescription:
+        'KET cascade reaction (2:1:1) with text conditions only and matching with bounding box',
+      testCaseExpectedResult:
+        'Reaction only with name in italic is displayed correctly with font = 13, the first line is empty',
+    },
+    {
+      ketFile: 'KET/ket-cascade-2-1-1-text-name-conditions-no-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-2-1-1-text-name-conditions-no-match-expected.rdf',
+      testCaseDescription:
+        'KET cascade reaction (2:1:1) with text name, conditions and no matching with bounding box',
+      testCaseExpectedResult: 'There are no reactions name and conditions',
+    },
+    {
+      ketFile: 'KET/ket-cascade-reaction-2-1-1-auto-wrap-9-lines.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-auto-wrap-9-lines-expected.rdf',
+      testCaseDescription:
+        'KET cascade reaction (2:1:1) with text name, conditions, matching with bounding box and future auto wrapping (9 lines)',
+      testCaseExpectedResult:
+        'Reaction with text name in bold and conditions in italic are displayed correctly with font = 13',
+    },
+    {
+      ketFile: 'KET/ket-cascade-reaction-2-1-1-auto-wrap-9-lines-truncated.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-auto-wrap-9-lines-truncated-expected.rdf',
+      testCaseDescription:
+        'KET cascade reaction (2:1:1) with text name, conditions, matching with bounding box and future auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Reaction with text name in bold and conditions in italic (truncated) are displayed correctly with font = 13',
+    },
+    {
+      ketFile:
+        'KET/ket-cascade-reaction-2-1-1-auto-wrap-name-9-lines-truncated.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-auto-wrap-name-9-lines-truncated-expected.rdf',
+      testCaseDescription:
+        'KET cascade reaction (2:1:1) with only text name, matching with bounding box and future auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Reaction with text name in bold (truncated) is displayed correctly with font = 13',
+    },
+    {
+      ketFile:
+        'KET/ket-cascade-reaction-2-1-1-auto-wrap-conditions-9-lines-truncated.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-auto-wrap-conditions-9-lines-truncated-expected.rdf',
+      testCaseDescription:
+        'KET cascade reaction (2:1:1) with only text conditions, matching with bounding box and future auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Reaction with text conditions in italic (truncated) is displayed correctly with font = 13',
+    },
+    {
+      ketFile: 'KET/ket-cascade-reaction-2-1-1-auto-wrap-spaces-9-lines.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-auto-wrap-spaces-9-lines-expected.rdf',
+      testCaseDescription:
+        'KET cascade reaction (2:1:1) with text name, conditions, matching with bounding box and future auto wrapping  (9 lines), spaces',
+      testCaseExpectedResult:
+        'Reaction with text name in bold and conditions in italic are displayed correctly with font = 13',
+    },
+    {
+      ketFile:
+        'KET/ket-cascade-reaction-2-1-1-auto-wrap-spaces-all-elements-9-lines-truncated.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-auto-wrap-spaces-all-elements-9-lines-truncated-expected.rdf',
+      testCaseDescription:
+        'KET cascade reaction (2:1:1) with text name, conditions, matching with bounding box and future auto wrapping, spaces, truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Reaction with text name in bold and conditions in italic (truncated) are displayed correctly with font = 13',
+    },
+    {
+      ketFile: 'KET/ket-cascade-reaction-2-1-1-manual-wrap-9-lines.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-manual-wrap-9-lines-expected.rdf',
+      testCaseDescription:
+        'KET cascade reaction with Multi-Tailed arrow (2:1:1) and reactions name and conditions with manual wrapping (9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+  ];
+
+  testCases32.forEach(
+    ({ ketFile, rdfFileExpectedV2000, testCaseDescription }) => {
+      test(`Add to Canvas from ${testCaseDescription} save to RDF V2000, add to Canvas from RDF V2000`, async () => {
+        /* 
+        Test case: https://github.com/epam/Indigo/issues/2404
+        Description: ${testCaseDescription} can be saved to RDF V2000 format, then reloaded with correct structure.
+        */
+
+        await openFileAndAddToCanvasAsNewProject(ketFile, page);
+        await takeEditorScreenshot(page);
+        await verifyRdfFile(
+          page,
+          'v2000',
+          rdfFileExpectedV2000,
+          `tests/test-data/${rdfFileExpectedV2000}`,
+        );
+        await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV2000, page);
+        await takeEditorScreenshot(page);
+      });
+    },
+  );
 });

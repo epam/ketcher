@@ -35,6 +35,7 @@ import { isBondingWithMacroMolecule } from './helper/isMacroMolecule';
 class ChainTool implements Tool {
   private readonly editor: Editor;
   private dragCtx: any;
+  private sectCount?: number;
 
   constructor(editor) {
     this.editor = editor;
@@ -46,6 +47,7 @@ class ChainTool implements Tool {
     if (isBondingWithMacroMolecule(this.editor, event)) {
       return;
     }
+    this.sectCount = 0;
     const struct = this.editor.render.ctab;
     const molecule = struct.molecule;
     const functionalGroups = molecule.functionalGroups;
@@ -146,7 +148,7 @@ class ChainTool implements Tool {
     return true;
   }
 
-  mousemove(event) {
+  mousemove(event, isShowSectCount = true) {
     const editor = this.editor;
     const restruct = editor.render.ctab;
     const dragCtx = this.dragCtx;
@@ -177,6 +179,7 @@ class ChainTool implements Tool {
 
       const pos1 = editor.render.page2obj(event);
       const sectCount = Math.ceil(Vec2.diff(pos1, pos0).length());
+      this.sectCount = sectCount;
 
       const angle = event.ctrlKey
         ? vectorUtils.calcAngle(pos0, pos1)
@@ -188,6 +191,7 @@ class ChainTool implements Tool {
         angle,
         sectCount,
         dragCtx.item ? dragCtx.item.id : null,
+        isShowSectCount,
       );
 
       editor.event.message.dispatch({
@@ -213,6 +217,10 @@ class ChainTool implements Tool {
     let atom;
     const atomResult: Array<number> = [];
     const result: Array<number> = [];
+
+    if (this.sectCount && this.dragCtx) {
+      this.mousemove(event, false);
+    }
 
     if (this.dragCtx && this.dragCtx.mergeItems && functionalGroups.size) {
       atom = this.dragCtx.mergeItems.atoms.values().next().value;

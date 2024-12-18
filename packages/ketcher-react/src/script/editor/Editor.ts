@@ -30,7 +30,6 @@ import {
   Scale,
   Struct,
   Vec2,
-  ketcherProvider,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -356,7 +355,6 @@ class Editor implements KetcherEditor {
       // We need to reset the tool to make sure it was recreated
       this.tool('select');
       this.event.change.dispatch('force');
-      ketcherProvider.getKetcher().changeEvent.dispatch('force');
     }
   }
 
@@ -545,7 +543,6 @@ class Editor implements KetcherEditor {
         }
         this.historyPtr = this.historyStack.length;
         this.event.change.dispatch(action); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
-        ketcherProvider.getKetcher().changeEvent.dispatch(action);
       }
       this.render.update(false, null);
     }
@@ -559,7 +556,6 @@ class Editor implements KetcherEditor {
   }
 
   undo() {
-    const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty');
     }
@@ -577,17 +573,14 @@ class Editor implements KetcherEditor {
 
     if (this._tool instanceof toolsMap.paste) {
       this.event.change.dispatch(); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
-      ketcherChangeEvent.dispatch();
     } else {
       this.event.change.dispatch(action); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
-      ketcherChangeEvent.dispatch(action);
     }
 
     this.render.update();
   }
 
   redo() {
-    const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
     if (this.historyPtr === this.historyStack.length) {
       throw new Error('Redo stack is empty');
     }
@@ -604,10 +597,8 @@ class Editor implements KetcherEditor {
 
     if (this._tool instanceof toolsMap.paste) {
       this.event.change.dispatch(); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
-      ketcherChangeEvent.dispatch();
     } else {
       this.event.change.dispatch(action); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
-      ketcherChangeEvent.dispatch(action);
     }
 
     this.render.update();
@@ -623,7 +614,7 @@ class Editor implements KetcherEditor {
         const subscribeFuncWrapper = (action) =>
           customOnChangeHandler(action, handler);
         subscriber.handler = subscribeFuncWrapper;
-        ketcherProvider.getKetcher().changeEvent.add(subscribeFuncWrapper);
+        this.event.change.add(subscribeFuncWrapper);
         break;
       }
 

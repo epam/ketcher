@@ -24,7 +24,6 @@ import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
-import { SequenceMode } from '../modes';
 import { isMacOs } from 'react-device-detect';
 import { EraserTool } from './Erase';
 import { DeprecatedFlexModeOrSnakeModePolymerBondRenderer } from 'application/render';
@@ -149,10 +148,7 @@ class SelectRectangle implements BaseTool {
     let modelChanges: Command;
     if (renderer instanceof BaseRenderer && !event.shiftKey && !ModKey) {
       this.moveStarted = true;
-      if (
-        renderer.drawingEntity.selected &&
-        !(this.editor.mode instanceof SequenceMode)
-      ) {
+      if (renderer.drawingEntity.selected) {
         return;
       }
       modelChanges =
@@ -202,9 +198,6 @@ class SelectRectangle implements BaseTool {
   }
 
   mousemove() {
-    if (this.editor.mode instanceof SequenceMode) {
-      return;
-    }
     if (this.moveStarted) {
       const modelChanges =
         this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(

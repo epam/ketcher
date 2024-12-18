@@ -21,6 +21,7 @@ import {
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
   selectAllStructuresOnCanvas,
+  selectClearCanvasTool,
 } from '@utils';
 import { FileType, verifyFile2 } from '@utils/files/receiveFileComparisonData';
 import { getCdxml } from '@utils/formats';
@@ -117,7 +118,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 

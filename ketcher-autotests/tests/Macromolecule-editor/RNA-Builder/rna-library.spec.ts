@@ -977,7 +977,7 @@ test.describe('RNA Library', () => {
     Description: Canvas is cleared
     */
     await drawThreeMonomersConnectedWithBonds(page);
-    await page.getByTestId('clear-canvas').click();
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -990,7 +990,7 @@ test.describe('RNA Library', () => {
       'KET/monomers-connected-with-bonds.ket',
       page,
     );
-    await page.getByTestId('clear-canvas').click();
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 

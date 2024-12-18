@@ -10,6 +10,7 @@ import {
   selectTopPanelButton,
   waitForPageInit,
   waitForRender,
+  selectClearCanvasTool,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/addTextBoxToCanvas';
 import {
@@ -69,7 +70,7 @@ test.describe('Clear canvas', () => {
     // Test case:EPMLSOPKET-1705
     // Checking clearing canvas with hotkey
     await openFileAndAddToCanvas('KET/ketcher.ket', page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -84,10 +85,10 @@ test.describe('Clear canvas', () => {
     await selectRing(RingButton.Benzene, page);
     await page.getByTestId('canvas').click({ position: { x, y } });
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await openFileAndAddToCanvas('Molfiles-V2000/ketcher.mol', page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -99,13 +100,11 @@ test.describe('Clear canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await pressUndoButton(page);
-    await page.keyboard.press('Control+Delete');
-    await waitForRender(page, async () => {
-      await pressUndoButton(page);
-      await pressUndoButton(page);
-      await pressRedoButton(page);
-      await pressRedoButton(page);
-    });
+    await selectClearCanvasTool(page);
+    await pressUndoButton(page);
+    await pressUndoButton(page);
+    await pressRedoButton(page);
+    await pressRedoButton(page);
     await takeEditorScreenshot(page);
   });
 });

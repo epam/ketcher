@@ -3552,10 +3552,15 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     page,
   }) => {
     /**
-     * Test case: https://github.com/epam/Indigo/issues/2236
-     * Description: Verify that added to Canvas from KET reactions with Multi-Tailed and single arrows (3-1-2-1-1, 2:2) 
-     and Benzene Rings are on the same positions after Aromatize (Ctrl+A)/Dearomatize (Ctrl+Alt+A) actions for Benzene Rings 
-     and can be saved to .ket file with correct positions, after that loaded from .ket file with correct positions
+    Test case: https://github.com/epam/Indigo/issues/2236
+    Description: Verify that added to Canvas from KET reactions with Multi-Tailed and single arrows (3-1-2-1-1, 2:2) 
+    and Benzene Rings are on the same positions after Aromatize (Ctrl+A)/Dearomatize (Ctrl+Alt+A) actions for Benzene Rings 
+    and can be saved to .ket file with correct positions, after that loaded from .ket file with correct positions
+    Case:
+        1. Add a reaction from a KET file to the Canvas.
+        2. Perform Aromatize and Dearomatize actions, verify the reaction's position using screenshots.
+        3. Verify the saved KET file matches the expected KET file.
+        4. Load the expected KET file and verify its appearance using screenshots.
      */
     await openFileAndAddToCanvasAsNewProject(
       'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-aromatize.ket',
@@ -3580,41 +3585,38 @@ test.describe('Multi-Tailed Arrow Tool', () => {
 
   const testConfigs1 = [
     {
-      description:
-        'Verify that single reaction with MTA is aligned after Layout action',
+      description: '1. Verify that single reaction with MTA is aligned',
       detailedDescription: `Add to Canvas single reaction from KET with not corrupted elements (not atoms) and Multi-Tailed Arrow (3:1),
-     * where elements are shifted, but they are on continuation of tails and head arrow, verify that after Layout (Ctrl+L) action,
-     * Multi-Tailed arrow has default Indigo sizes, they can be saved to .ket file with correct coordinates,
-     * after that loaded from .ket file with correct sizes and positions`,
+      where elements are shifted, but they are on continuation of tails and head arrow, verify that after Layout (Ctrl+L) action,
+      Multi-Tailed arrow has default Indigo sizes, they can be saved to .ket file with correct coordinates,
+      after that loaded from .ket file with correct sizes and positions`,
       file: 'KET/ket-single-reaction-3x1-layout.ket',
       expectedFile: 'KET/ket-single-reaction-3x1-layout-expected.ket',
     },
     {
-      description:
-        'Verify that 2 single reactions with MTA is aligned after Layout action',
+      description: '2. Verify that 2 single reactions with MTA are aligned',
       detailedDescription: `Add to Canvas 2 single reactions from KET with not corrupted elements (not atoms) and Multi-Tailed Arrow (2:1, 3:1),
-     * where elements are shifted, but they are on continuation of tails and head arrow, verify that after Layout (Ctrl+L) action,
-     * Multi-Tailed arrows have default Indigo sizes, they can be saved to .ket file with correct coordinates,
-     * after that loaded from .ket file with correct sizes and positions`,
+      where elements are shifted, but they are on continuation of tails and head arrow, verify that after Layout (Ctrl+L) action,
+      Multi-Tailed arrows have default Indigo sizes, they can be saved to .ket file with correct coordinates,
+      after that loaded from .ket file with correct sizes and positions`,
       file: 'KET/ket-single-reactions-2x1-3x1-layout.ket',
       expectedFile: 'KET/ket-single-reactions-2x1-3x1-layout-expected.ket',
     },
     {
       description:
-        'Verify that 2 single reactions with atoms and MTA is aligned after Layout action',
+        '3. Verify that 2 single reactions with atoms and MTA are aligned',
       detailedDescription: `Add to Canvas 2 single reactions from KET with not corrupted elements (atoms) and Multi-Tailed Arrow (2:1, 3:1),
-     * where elements are shifted, but they are on continuation of tails and head arrow, verify that after Layout (Ctrl+L) action,
-     * Multi-Tailed arrows have default Indigo sizes 
-     * (for reaction 2:1 - tails = 0.5, head arrow = 6.5, spine = 3.5; for reaction 3:1 - tails = 0.5, head arrow = 6.5, spine = 7),
-     * they can be saved to .ket file with correct coordinates,
-     * after that loaded from .ket file with correct sizes and positions`,
+      where elements are shifted, but they are on continuation of tails and head arrow, verify that after Layout (Ctrl+L) action,
+      Multi-Tailed arrows have default Indigo sizes
+      (for reaction 2:1 - tails = 0.5, head arrow = 6.5, spine = 3.5; for reaction 3:1 - tails = 0.5, head arrow = 6.5, spine = 7),
+      they can be saved to .ket file with correct coordinates,
+      after that loaded from .ket file with correct sizes and positions`,
       file: 'KET/ket-single-reactions-2x1-3x1-with-atoms-layout.ket',
       expectedFile:
         'KET/ket-single-reactions-2x1-3x1-with-atoms-layout-expected.ket',
     },
     {
-      description:
-        'Verify that cascade reaction with MTA is aligned after Layout action',
+      description: '4. Verify that cascade reaction with MTA is aligned',
       detailedDescription: `Add to Canvas cascade reaction from KET with not corrupted elements, Multi-Tailed and single Arrows (3-1-2-1-1),
       where elements are shifted, but they are on continuation of tails and head arrow, verify that after Layout (Ctrl+L) action,
       Multi-Tailed arrow has default Indigo sizes with aligned elements, single arrow is filled,
@@ -3623,8 +3625,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       expectedFile: 'KET/ket-cascade-reaction-3-1-2-1-1-layout-expected.ket',
     },
     {
-      description:
-        'Verify that 2 cascade reactions with MTA are aligned after Layout action',
+      description: '5. Verify that 2 cascade reactions with MTA are aligned',
       detailedDescription: `Add to Canvas 2 cascade reactions from KET with not corrupted elements, Multi-Tailed and single Arrows,
       where elements are shifted, but they are on continuation of tails and head arrow, verify that after Layout (Ctrl+L) action,
       Multi-Tailed arrow has default Indigo sizes with aligned elements, single arrow is filled,
@@ -3634,7 +3635,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     },
     {
       description:
-        'Verify that cascades of cascade reaction with MTA are aligned after Layout action',
+        '6. Verify that cascades of cascade reaction with MTA are aligned',
       detailedDescription: `Add to Canvas cascade reaction with several tails (5 tails) from ket, where elements are shifted,
       but they are on continuation of tails and head arrow, verify that after Layout (Ctrl+L) action, alignment of cascades is correct,
       Multi-Tailed arrow has default Indigo sizes with aligned elements, single arrow is filled,
@@ -3645,10 +3646,15 @@ test.describe('Multi-Tailed Arrow Tool', () => {
   ];
 
   for (const { description, file, expectedFile } of testConfigs1) {
-    test(`${description}`, async ({ page }) => {
+    test(`${description} after Layout action`, async ({ page }) => {
       /**
-       * Test case: https://github.com/epam/Indigo/issues/2236
-       * Description: ${detailedDescription}
+      Test case: https://github.com/epam/Indigo/issues/2236
+      Description: ${detailedDescription}
+      Case: 
+          1. Add a reaction from a KET file to the Canvas.
+          2. Perform Layout action, verify the reaction's position using screenshots.
+          3. Verify the saved KET file matches the expected KET file.
+          4. Load the expected KET file and verify its appearance using screenshots.
        */
       await openFileAndAddToCanvasAsNewProject(file, page);
       await takeEditorScreenshot(page);
@@ -3669,6 +3675,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * where elements are shifted, but they are on continuation of tails and head arrow, corrupt elements, verify that after Layout (Ctrl+L) action,
      * Multi-Tailed arrow has default Indigo sizes with aligned, corrected elements, single arrow is filled, they can be saved to .ket file with correct coordinates,
      * after that loaded from .ket file with correct sizes and positions
+     * Case: 
+          1. Add a reaction from a KET file to the Canvas.
+          2. Corrupt elements by moving of atoms, verify the reaction's position using screenshots.
+          2. Perform Layout action, verify the reaction's position using screenshots.
+          3. Verify the saved KET file matches the expected KET file.
+          4. Load the expected KET file and verify its appearance using screenshots.
      */
     await openFileAndAddToCanvasAsNewProject(
       'KET/ket-cascade-reaction-3-1-2-1-1-clean-up.ket',
@@ -3703,6 +3715,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Add to Canvas cascade and single reaction from KET with not corrupted elements, Multi-Tailed and single Arrows (3-1-2-1-1),
      * corrupt elements, make Clean Up (Ctrl+Shift+L) action, verify that corrupted elements are corrected, they can be saved to .ket file with correct coordinates,
      * after that loaded from .ket file with correct sizes and positions
+     * Case: 
+          1. Add a reaction from a KET file to the Canvas.
+          2. Corrupt elements by moving of atoms, verify the reaction's position using screenshots.
+          2. Perform Clean Up action, verify the reaction's position using screenshots.
+          3. Verify the saved KET file matches the expected KET file.
+          4. Load the expected KET file and verify its appearance using screenshots.
      */
     await openFileAndAddToCanvasAsNewProject(
       'KET/ket-cascade-reaction-3-1-2-1-1-clean-up.ket',
@@ -3740,7 +3758,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Add to Canvas cascade reaction from KET with Multi-Tailed and single Arrows (3-1-2-1-1) and single bonds,
      * make Calculate CIP (Ctrl+P) action, verify that CIP is calculated for elements,
      * they can be saved together to .ket file with correct coordinates, after that loaded from .ket file with correct sizes and positions
-     */
+     * Case:
+        1. Add a reaction from a KET file to the Canvas.
+        2. Perform Calculate CIP action, verify the reaction and single bonds using screenshots.
+        3. Verify the saved KET file matches the expected KET file.
+        4. Load the expected KET file and verify its appearance using screenshots.
+    */
     await openFileAndAddToCanvasAsNewProject(
       'KET/ket-cascade-reaction-3-1-2-1-1-cip.ket',
       page,
@@ -3768,6 +3791,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Add to Canvas cascade reaction from KET with Multi-Tailed and single Arrows (3-1-2-1-1),
      * make Check structure (Alt+S) action, verify that check structure is calculated for elements and elements,
      * arrows are on the same positions
+     * Case:
+        1. Add a reaction from a KET file to the Canvas.
+        2. Perform Chech Structure action, verify pop-up using screenshots with mask and cancel.
+        3. Verify the saved KET file matches the expected KET file.
+        4. Load the expected KET file and verify its appearance using screenshots.
      */
     await openFileAndAddToCanvasAsNewProject(
       'KET/ket-cascade-reaction-3-1-2-1-1.ket',
@@ -3800,6 +3828,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Add to Canvas cascade reaction from KET with Multi-Tailed and single Arrows (3-1-2-1-1),
      * make Calculate Values (Alt+C) action, verify that  Values is calculated for elements and elements,
      * arrows are on the same positions
+     * Case:
+        1. Add a reaction from a KET file to the Canvas.
+        2. Perform Calculated Values action, verify the pop up using screenshots and close.
+        3. Verify the saved KET file matches the expected KET file.
+        4. Load the expected KET file and verify its appearance using screenshots.
      */
     await openFileAndAddToCanvasAsNewProject(
       'KET/ket-cascade-reaction-3-1-2-1-1.ket',
@@ -3830,6 +3863,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Add to Canvas cascade reaction from KET with Multi-Tailed and single Arrows (3-1-2-1-1),
      * Add/Remove explicit hydrogens actions, verify that only elements are affected, they can be saved to .ket file with correct coordinates,
      * after that loaded from .ket file with correct sizes and positions
+     * Case:
+        1. Add a reaction from a KET file to the Canvas.
+        2. Perform Add/Remove explicit hydrogens action, verify the reaction using screenshots.
+        3. Verify the saved KET file matches the expected KET file.
+        4. Load the expected KET file and verify its appearance using screenshots.
      */
     await openFileAndAddToCanvasAsNewProject(
       'KET/ket-cascade-reaction-3-1-2-1-1.ket',

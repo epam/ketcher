@@ -309,17 +309,21 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
   protected appendRootElement(
     canvas: D3SvgElementSelection<SVGSVGElement, void>,
   ) {
-    return canvas
+    const rootElement = canvas
       .append('g')
       .data([this])
       .attr('class', MONOMER_CSS_CLASS)
       .attr('transition', 'transform 0.2s')
+      .attr('data-testid', 'monomer')
       .attr(
-        'data-testid',
-        'monomer_' +
-          this.monomer.label +
-          '_' +
-          this.monomer.monomerItem.props.MonomerClass,
+        'data-monomertype',
+        this.monomer.monomerItem.props.MonomerClass || '',
+      )
+      .attr('data-monomeralias', this.monomer.label)
+      .attr('data-monomerId', this.monomer.id)
+      .attr(
+        'data-number-of-attachment-points',
+        this.monomer.listOfAttachmentPoints.length,
       )
       .attr(
         'transform',
@@ -327,6 +331,14 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
           this.scaledMonomerPosition.y
         }) scale(${this.scale || 1})`,
       ) as never as D3SvgElementSelection<SVGGElement, void>;
+
+    this.monomer.listOfAttachmentPoints.forEach((attachmentPoint) => {
+      rootElement.attr(
+        `data-${attachmentPoint}`,
+        !!this.monomer.attachmentPointsToBonds[attachmentPoint],
+      );
+    });
+    return rootElement;
   }
 
   protected appendLabel(rootElement: D3SvgElementSelection<SVGGElement, void>) {

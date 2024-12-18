@@ -160,7 +160,23 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('d', this.path)
       .attr('fill-opacity', 0)
       .attr('pointer-events', 'stroke')
-      .attr('data-testid', 'covalentBond');
+      .attr('data-testid', 'bond')
+      .attr('data-bondtype', 'covalent')
+      .attr('data-bondid', this.polymerBond.id)
+      .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
+      .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id)
+      .attr(
+        'data-fromconnectionpoint',
+        this.polymerBond.firstMonomer.getAttachmentPointByBond(
+          this.polymerBond,
+        ),
+      )
+      .attr(
+        'data-tomonomerid',
+        this.polymerBond.secondMonomer?.getAttachmentPointByBond(
+          this.polymerBond,
+        ),
+      );
     return this.bodyElement;
   }
 
@@ -394,10 +410,27 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('fill', 'none')
       .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0')
       .attr('pointer-events', 'all')
-      .attr(
-        'data-testid',
-        this.isHydrogenBond ? 'hydrogenBond' : 'covalentBond',
-      );
+      .attr('data-testid', 'bond')
+      .attr('data-bondtype', this.isHydrogenBond ? 'hydrogen' : 'covalent')
+      .attr('data-bondid', this.polymerBond.id)
+      .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
+      .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id);
+
+    if (!this.isHydrogenBond && this.bodyElement) {
+      this.bodyElement
+        .attr(
+          'data-fromconnectionpoint',
+          this.polymerBond.firstMonomer.getAttachmentPointByBond(
+            this.polymerBond,
+          ) || '',
+        )
+        .attr(
+          'data-toconnectionpoint',
+          this.polymerBond.secondMonomer?.getAttachmentPointByBond(
+            this.polymerBond,
+          ) || '',
+        );
+    }
 
     this.path = dAttributeForPath;
 
@@ -740,10 +773,27 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('x2', this.scaledPosition.endPosition.x)
       .attr('y2', this.scaledPosition.endPosition.y)
       .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none')
-      .attr(
-        'data-testid',
-        this.isHydrogenBond ? 'hydrogenBond' : 'covalentBond',
-      );
+      .attr('data-testid', 'bond')
+      .attr('data-bondtype', this.isHydrogenBond ? 'hydrogen' : 'covalent')
+      .attr('data-bondid', this.polymerBond.id)
+      .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
+      .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id);
+
+    if (!this.isHydrogenBond && this.bodyElement) {
+      this.bodyElement
+        .attr(
+          'data-fromconnectionpoint',
+          this.polymerBond.firstMonomer.getAttachmentPointByBond(
+            this.polymerBond,
+          ) || '',
+        )
+        .attr(
+          'data-toconnectionpoint',
+          this.polymerBond.secondMonomer?.getAttachmentPointByBond(
+            this.polymerBond,
+          ) || '',
+        );
+    }
 
     return this.bodyElement;
   }

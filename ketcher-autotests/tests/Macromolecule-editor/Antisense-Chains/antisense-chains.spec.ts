@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { Page, test, expect } from '@playwright/test';
@@ -852,7 +853,7 @@ const monomers: IMonomer[] = [
 ];
 
 for (const monomer of monomers.filter((m) => m.eligableForAntisense)) {
-  test(`Create antisense chain for: ${monomer.monomerDescription}`, async () => {
+  test(`1. Create antisense chain for: ${monomer.monomerDescription}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/6134
      * Description: Validate that selecting a valid backbone with the correct R1-R2 connections and right-clicking displays the "Create
@@ -904,7 +905,7 @@ for (const monomer of monomers.filter((m) => m.eligableForAntisense)) {
 for (const monomer of monomers.filter(
   (m) => m.baseWithR3R1ConnectionPresent && !m.eligableForAntisense,
 )) {
-  test(`Create antisense chain for: ${monomer.monomerDescription}`, async () => {
+  test(`2. Check that Create Antisense Strand option disabled for not a sense base: ${monomer.monomerDescription}`, async () => {
     /*
      * Test task: https://github.com/epam/ketcher/issues/6134
      * Description: Ensure that the "Create Antisense Strand" option appears but is disabled
@@ -926,6 +927,1235 @@ for (const monomer of monomers.filter(
     if (monomer.KETFile) {
       await openFileAndAddToCanvasMacro(monomer.KETFile, page);
     }
+    if (monomer.HELMString) {
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        monomer.HELMString,
+      );
+    }
+
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForMonomer(page, monomer.monomerLocatorIndex);
+
+    const createAntisenseStrandOption = page
+      .getByTestId('create_antisense_chain')
+      .first();
+    const createAntisenseStrandOptionPresent =
+      (await createAntisenseStrandOption.count()) > 0;
+    // Checking presence of Create Antisense Strand option on the context menu and its disabled state
+    await expect(createAntisenseStrandOptionPresent).toBeTruthy();
+    if (createAntisenseStrandOptionPresent) {
+      await expect(createAntisenseStrandOption).toHaveAttribute(
+        'aria-disabled',
+        'true',
+      );
+    }
+  });
+}
+
+const monomersWithExtraBondToBase: IMonomer[] = [
+  {
+    monomerDescription:
+      '1. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    monomerDescription:
+      '2. Nucleoside of sugar R, ambiguous alternative base that have extra covalent bond - R([nC6n8A],[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '3. Nucleoside of sugar R, ambiguous mixed base that have extra covalent bond - R([nC6n8A]+[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '4. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    monomerDescription:
+      '5. Nucleoside of sugar R, ambiguous alternative base that have extra covalent bond - R([nC6n8A],[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '6. Nucleoside of sugar R, ambiguous mixed base that have extra covalent bond - R([nC6n8A]+[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '7. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    monomerDescription:
+      '8. Nucleoside of sugar R, ambiguous alternative base that have extra covalent bond - R([nC6n8A],[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '9. Nucleoside of sugar R, ambiguous mixed base that have extra covalent bond - R([nC6n8A]+[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '10. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    monomerDescription:
+      '11. Nucleoside of sugar R, ambiguous alternative base that have extra covalent bond - R([nC6n8A],[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '12. Nucleoside of sugar R, ambiguous mixed base that have extra covalent bond - R([nC6n8A]+[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '13. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra covalent bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '14. Nucleotide of ambiguous mixed sugar, base that have extra covalent bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '15. Nucleotide of ambiguous mixed sugar, base that have extra covalent bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '16. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra covalent bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '17. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra covalent bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '18. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra covalent bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '19. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra covalent bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '20. Nucleotide of ambiguous mixed sugar, base that have extra covalent bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '21. Nucleotide of ambiguous mixed sugar, base that have extra covalent bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '22. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra covalent bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '23. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra covalent bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '24. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra covalent bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '25. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra covalent bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '26. Nucleotide of ambiguous mixed sugar, base that have extra covalent bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '27. Nucleotide of ambiguous mixed sugar, base that have extra covalent bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '28. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra covalent bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '29. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra covalent bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '30. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra covalent bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '31. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra covalent bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '32. Nucleotide of ambiguous mixed sugar, base that have extra covalent bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '33. Nucleotide of ambiguous mixed sugar, base that have extra covalent bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '34. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra covalent bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '35. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra covalent bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '36. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra covalent bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '37. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '38. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '39. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '40. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '41. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '42. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '43. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '44. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '45. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '46. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '47. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '48. Nucleotide of ambiguous alternative sugar, base that have extra covalent bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '49. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    monomerDescription:
+      '50. Nucleoside of sugar R, ambiguous alternative base that have extra hydrogen bond - R([nC6n8A],[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '51. Nucleoside of sugar R, ambiguous mixed base that have extra hydrogen bond - R([nC6n8A]+[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '52. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    monomerDescription:
+      '53. Nucleoside of sugar R, ambiguous alternative base that have extra hydrogen bond - R([nC6n8A],[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '54. Nucleoside of sugar R, ambiguous mixed base that have extra hydrogen bond - R([nC6n8A]+[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '55. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    monomerDescription:
+      '56. Nucleoside of sugar R, ambiguous alternative base that have extra hydrogen bond - R([nC6n8A],[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '57. Nucleoside of sugar R, ambiguous mixed base that have extra hydrogen bond - R([nC6n8A]+[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '58. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    monomerDescription:
+      '59. Nucleoside of sugar R, ambiguous alternative base that have extra hydrogen bond - R([nC6n8A],[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A],[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '60. Nucleoside of sugar R, ambiguous mixed base that have extra hydrogen bond - R([nC6n8A]+[nC6n5C])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R([nC6n8A]+[nC6n5C])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '61. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra hydrogen bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '62. Nucleotide of ambiguous mixed sugar, base that have extra hydrogen bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '63. Nucleotide of ambiguous mixed sugar, base that have extra hydrogen bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '64. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra hydrogen bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '65. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra hydrogen bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '66. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra hydrogen bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '67. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra hydrogen bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '68. Nucleotide of ambiguous mixed sugar, base that have extra hydrogen bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '69. Nucleotide of ambiguous mixed sugar, base that have extra hydrogen bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '70. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra hydrogen bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '71. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra hydrogen bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '72. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra hydrogen bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '73. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra hydrogen bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '74. Nucleotide of ambiguous mixed sugar, base that have extra hydrogen bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '75. Nucleotide of ambiguous mixed sugar, base that have extra hydrogen bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '76. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra hydrogen bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '77. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra hydrogen bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '78. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra hydrogen bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '79. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra hydrogen bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '80. Nucleotide of ambiguous mixed sugar, base that have extra hydrogen bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '81. Nucleotide of ambiguous mixed sugar, base that have extra hydrogen bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '82. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra hydrogen bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '83. Nucleotide of ambiguous mixed sugar, ambiguous alternative base that have extra hydrogen bond and ambiguous alternative phopsphate - ([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A],[nC6n5C])([bnn],[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '84. Nucleotide of ambiguous mixed sugar, ambiguous mixed base that have extra hydrogen bond and ambiguous mixed phopsphate - ([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3]+[5A6])([nC6n8A]+[nC6n5C])([bnn]+[bP])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '85. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '86. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '87. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '88. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '89. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '90. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '91. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '92. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber:
+      'https://github.com/epam/ketcher/issues/6088, https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '93. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '94. Nucleotide of ambiguous alternative sugar, ambiguous alternative base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A],[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A],[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+  {
+    monomerDescription:
+      '95. Nucleotide of ambiguous alternative sugar, ambiguous mixed base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A]+[nC6n5C])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A]+[nC6n5C])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: false,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6088',
+  },
+  {
+    monomerDescription:
+      '96. Nucleotide of ambiguous alternative sugar, base that have extra hydrogen bond and phopsphate P- ([25moe3],[5A6])([nC6n8A])P',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{([25moe3],[5A6])([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+    eligableForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+    shouldFail: true,
+    issueNumber: 'https://github.com/epam/ketcher/issues/6091',
+  },
+];
+
+for (const monomer of monomersWithExtraBondToBase) {
+  test(`3. Check that Create Antisense Strand option disabled for: ${monomer.monomerDescription}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/6134
+     * Description: Check if any of the bases connected to the sugars via R3-R1 have more bonds (hydrogen or covalent),
+     *              the "Create Antisense Strand" option appear, but disabled
+     * Case:
+     *       1. Load correct monomer (with not antisense base) from HELM
+     *       2. Select it (using Control+A)
+     *       3. Call context menu for monomer
+     *       4. Check that "Create Antisense Strand" option present but disabled
+     */
+    test.setTimeout(20000);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      monomer.shouldFail === true,
+      `That test fails because of ${monomer.issueNumber} issue(s).`,
+    );
+    if (monomer.pageReloadNeeded) await pageReload(page);
+
     if (monomer.HELMString) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,

@@ -203,6 +203,7 @@ test.describe('Sequence-edit mode', () => {
     await copyToClipboardByKeyboard(page);
     await page.keyboard.press('Enter');
     await pasteFromClipboardByKeyboard(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
@@ -266,6 +267,7 @@ test.describe('Sequence-edit mode', () => {
     await page.keyboard.up('Shift');
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
@@ -293,6 +295,7 @@ test.describe('Sequence-edit mode', () => {
     await page.getByTestId('edit_sequence').click();
     await page.keyboard.press('ArrowLeft');
     await pasteFromClipboardByKeyboard(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -315,6 +318,7 @@ test.describe('Sequence-edit mode', () => {
     await clickOnSequenceSymbol(page, 'G');
     await page.keyboard.press('ArrowLeft');
     await pasteFromClipboardByKeyboard(page);
+    await moveMouseAway(page);
     await waitForRender(page, async () => {
       await takeEditorScreenshot(page);
     });

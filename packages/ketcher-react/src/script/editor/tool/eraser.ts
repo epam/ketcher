@@ -346,7 +346,7 @@ class EraserTool implements Tool {
     } else if (ci.map === 'bonds') {
       this.editor.update(fromOneBondDeletion(restruct, ci.id));
     } else if (
-      ci.map === 'functionalGroups' &&
+      (ci.map === 'sgroups' || ci.map === 'functionalGroups') &&
       FunctionalGroup.isContractedFunctionalGroup(ci.id, functionalGroups)
     ) {
       const sGroup = sgroups.get(ci.id);

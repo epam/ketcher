@@ -804,12 +804,14 @@ export class SequenceMode extends BaseMode {
         shortcut: ['ArrowUp'],
         handler: () => {
           SequenceRenderer.moveCaretUp();
+          this.unselectAllEntities();
         },
       },
       'move-caret-down': {
         shortcut: ['ArrowDown'],
         handler: () => {
           SequenceRenderer.moveCaretDown();
+          this.unselectAllEntities();
         },
       },
       'move-caret-forward': {
@@ -818,8 +820,10 @@ export class SequenceMode extends BaseMode {
           if (!this.isEditMode) {
             return;
           }
+
           SequenceRenderer.moveCaretForward();
           SequenceRenderer.resetLastUserDefinedCaretPosition();
+          this.unselectAllEntities();
         },
       },
       'move-caret-back': {
@@ -828,8 +832,11 @@ export class SequenceMode extends BaseMode {
           if (!this.isEditMode) {
             return;
           }
+
           SequenceRenderer.moveCaretBack();
           SequenceRenderer.resetLastUserDefinedCaretPosition();
+
+          this.unselectAllEntities();
         },
       },
       'add-sequence-item': {
@@ -840,12 +847,7 @@ export class SequenceMode extends BaseMode {
           ),
         ],
         handler: (event) => {
-          if (
-            SequenceRenderer.chainsCollection.length === 1 &&
-            SequenceRenderer.chainsCollection.firstNode instanceof
-              EmptySequenceNode &&
-            !this.isEditMode
-          ) {
+          if (SequenceRenderer.isEmptyCanvas() && !this.isEditMode) {
             this.turnOnEditMode();
             SequenceRenderer.setCaretPosition(0);
           }
@@ -1386,6 +1388,7 @@ export class SequenceMode extends BaseMode {
     const history = new EditorHistory(editor);
     const modelChanges = new Command();
     const selections = SequenceRenderer.selections;
+    const wasCanvasEmptyBeforeInsertion = SequenceRenderer.isEmptyCanvas();
 
     if (selections.length > 0) {
       if (
@@ -1457,6 +1460,11 @@ export class SequenceMode extends BaseMode {
       editor.renderersContainer.update(modelChanges);
       SequenceRenderer.moveCaretForward();
       history.update(modelChanges);
+    }
+
+    if (wasCanvasEmptyBeforeInsertion) {
+      this.turnOnEditMode();
+      SequenceRenderer.moveCaretForward();
     }
   }
 

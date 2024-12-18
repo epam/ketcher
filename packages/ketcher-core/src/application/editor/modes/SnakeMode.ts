@@ -7,11 +7,6 @@ import { Command } from 'domain/entities/Command';
 import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import { Vec2 } from 'domain/entities';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
-import {
-  MONOMER_START_X_POSITION,
-  MONOMER_START_Y_POSITION,
-  CELL_WIDTH,
-} from 'domain/entities/DrawingEntitiesManager';
 
 export class SnakeMode extends BaseMode {
   constructor(previousMode?: LayoutMode) {
@@ -33,22 +28,10 @@ export class SnakeMode extends BaseMode {
         );
 
     editor.drawingEntitiesManager.applyFlexLayoutMode();
-
     command.merge(modelChanges);
     editor.renderersContainer.update(modelChanges);
     command.setUndoOperationReverse();
-
-    const drawnEntitiesBoundingBox =
-      RenderersManager.getRenderedStructuresBbox();
-    const zoom = ZoomTool.instance;
-
-    zoom.scrollTo(
-      new Vec2(drawnEntitiesBoundingBox.left, drawnEntitiesBoundingBox.top),
-      false,
-      MONOMER_START_X_POSITION - CELL_WIDTH / 4,
-      MONOMER_START_Y_POSITION - CELL_WIDTH / 4,
-      false,
-    );
+    editor.scrollToTopLeftCorner();
 
     return command;
   }

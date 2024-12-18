@@ -27,6 +27,11 @@ export class SGroupAttachmentPointAdd extends BaseOperation {
     assert(sgroup != null);
 
     const attachmentPoint = this.data.attachmentPoint;
+
+    if (attachmentPoint.atomId === undefined) {
+      return;
+    }
+
     const apAtom = struct.atoms.get(attachmentPoint.atomId);
 
     if (!apAtom) {

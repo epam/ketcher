@@ -18,6 +18,7 @@ import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { SugarRenderer } from 'application/render';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 import { CELL_WIDTH } from './DrawingEntitiesManager';
+import { KetMonomerClass } from 'application/formatters';
 
 export class Nucleoside {
   constructor(
@@ -46,8 +47,16 @@ export class Nucleoside {
     isAntisense = false,
   ) {
     const editor = CoreEditor.provideEditorInstance();
-    const rnaBaseLibraryItem = getRnaPartLibraryItem(editor, rnaBaseName);
-    const sugarLibraryItem = getRnaPartLibraryItem(editor, sugarName);
+    const rnaBaseLibraryItem = getRnaPartLibraryItem(
+      editor,
+      rnaBaseName,
+      KetMonomerClass.Base,
+    );
+    const sugarLibraryItem = getRnaPartLibraryItem(
+      editor,
+      sugarName,
+      KetMonomerClass.Sugar,
+    );
 
     assert(sugarLibraryItem);
     assert(rnaBaseLibraryItem);

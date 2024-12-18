@@ -68,7 +68,7 @@ import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { KetMonomerClass } from 'application/formatters';
-import { Atom } from 'domain/entities/CoreAtom';
+import { Atom, AtomProperties } from 'domain/entities/CoreAtom';
 import { Bond } from 'domain/entities/CoreBond';
 import {
   AtomAddOperation,
@@ -2369,6 +2369,7 @@ export class DrawingEntitiesManager {
     monomer: BaseMonomer,
     atomIdInMicroMode: number,
     label: AtomLabel,
+    properties?: AtomProperties,
     _atom?: Atom,
   ) {
     if (_atom) {
@@ -2377,7 +2378,13 @@ export class DrawingEntitiesManager {
       return _atom;
     }
 
-    const atom = new Atom(position, monomer, atomIdInMicroMode, label);
+    const atom = new Atom(
+      position,
+      monomer,
+      atomIdInMicroMode,
+      label,
+      properties,
+    );
 
     this.atoms.set(atom.id, atom);
 
@@ -2389,16 +2396,19 @@ export class DrawingEntitiesManager {
     monomer: BaseMonomer,
     atomIdInMicroMode: number,
     label: AtomLabel,
+    properties?: AtomProperties,
   ) {
     const command = new Command();
     const atomAddOperation = new AtomAddOperation(
-      this.addAtomChangeModel.bind(
-        this,
-        position,
-        monomer,
-        atomIdInMicroMode,
-        label,
-      ),
+      (atom?: Atom) =>
+        this.addAtomChangeModel(
+          position,
+          monomer,
+          atomIdInMicroMode,
+          label,
+          properties,
+          atom,
+        ),
       this.deleteAtomChangeModel.bind(this),
     );
 
@@ -2420,13 +2430,15 @@ export class DrawingEntitiesManager {
       new AtomDeleteOperation(
         atom,
         this.deleteAtomChangeModel.bind(this, atom),
-        this.addAtomChangeModel.bind(
-          this,
-          atom.position,
-          atom.monomer,
-          atom.atomIdInMicroMode,
-          atom.label,
-        ),
+        () =>
+          this.addAtomChangeModel(
+            atom.position,
+            atom.monomer,
+            atom.atomIdInMicroMode,
+            atom.label,
+            atom.properties,
+            atom,
+          ),
       ),
     );
 

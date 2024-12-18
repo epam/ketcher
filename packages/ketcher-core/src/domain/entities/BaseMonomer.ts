@@ -13,6 +13,7 @@ import assert from 'assert';
 import {
   IKetAttachmentPoint,
   IKetAttachmentPointType,
+  KetMonomerClass,
 } from 'application/formatters/types/ket';
 import { RnaSubChain } from 'domain/entities/monomer-chains/RnaSubChain';
 import { ChemSubChain } from 'domain/entities/monomer-chains/ChemSubChain';
@@ -327,6 +328,10 @@ export abstract class BaseMonomer extends DrawingEntity {
 
   public hasAttachmentPoint(attachmentPointName: AttachmentPointName) {
     return this.attachmentPointsToBonds[attachmentPointName] !== undefined;
+  }
+
+  public get isPhosphate() {
+    return this.monomerItem?.props?.MonomerClass === KetMonomerClass.Phosphate;
   }
 
   public get usedAttachmentPointsNamesList() {

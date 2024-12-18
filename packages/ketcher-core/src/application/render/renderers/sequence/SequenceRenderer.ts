@@ -945,4 +945,8 @@ export class SequenceRenderer {
       SequenceRenderer.chainsCollection.firstNode instanceof EmptySequenceNode
     );
   }
+
+  public static get isCaretAtChainEnd() {
+    return SequenceRenderer.currentEdittingNode instanceof EmptySequenceNode;
+  }
 }

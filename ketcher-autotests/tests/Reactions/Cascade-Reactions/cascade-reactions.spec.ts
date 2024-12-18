@@ -36,6 +36,7 @@ import {
   verifyRdfFile,
 } from '@utils/files/receiveFileComparisonData';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import { addTextToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 async function addTail(page: Page, x: number, y: number) {
   await page.mouse.click(x, y, { button: 'right' });
@@ -2479,6 +2480,40 @@ test.describe('Cascade Reactions', () => {
       testCaseExpectedResult:
         'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
     },
+    {
+      ketFile: 'KET/ket-single-reaction-2x1-name-conditions-long.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-reaction-2x1-name-conditions-long-expected.rdf',
+      testCaseDescription:
+        '12. KET single reaction (2:1) with very long text name, conditions, matching with bounding box',
+      testCaseExpectedResult: 'Truncated symbols are saved',
+    },
+    {
+      ketFile: 'KET/ket-cascade-reaction-2-1-1-multiple-texts.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-multiple-texts-expected.rdf',
+      testCaseDescription:
+        '13. KET cascade reaction (2:1:1) with multiple texts and matching with bounding box',
+      testCaseExpectedResult:
+        'Only nearest one is saved (algorithm checks minimal distance between start of head arrow and left bottom corner of text box), load from RDF V2000, reaction displayed correctly with only one text box near each part of reaction',
+    },
+    {
+      ketFile: 'KET/ket-single-reaction-2x1-atoms-no-wrap-30-symbols.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-reaction-2x1-atoms-no-wrap-30-symbols-expected.rdf',
+      testCaseDescription:
+        '14. KET single reaction (2:1) with atoms, text name, conditions, matching with bounding box',
+      testCaseExpectedResult:
+        'Text of name and conditions is displayed correctly',
+    },
+    {
+      ketFile: 'KET/ket-single-reaction-2x1-text-modified.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-reaction-2x1-text-modified-expected.rdf',
+      testCaseDescription:
+        '15. KET single reaction with Multi-Tailed (2:1) and reactions name and conditions, text of them is modified using editor',
+      testCaseExpectedResult: 'The modifications are lost',
+    },
   ];
 
   testCases32.forEach(
@@ -2586,6 +2621,60 @@ test.describe('Cascade Reactions', () => {
         );
         await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV3000, page);
         await takeEditorScreenshot(page);
+      });
+    },
+  );
+
+  const testCases35 = [
+    {
+      ketFile: 'KET/ket-single-reaction-2-1-1-no-text.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-reaction-2-1-1-no-text-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-single-reaction-2-1-1-no-text-expected.rdf',
+      testCaseDescription:
+        'KET cascade reaction (2-1-1) without text, using "Add Text" tool, add text name and conditions for each part of reaction',
+    },
+  ];
+
+  testCases35.forEach(
+    ({
+      ketFile,
+      rdfFileExpectedV2000,
+      rdfFileExpectedV3000,
+      testCaseDescription,
+    }) => {
+      (['v2000', 'v3000'] as const).forEach((format) => {
+        test(`Add to Canvas from ${testCaseDescription} then can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+          /*
+            Test case: https://github.com/epam/Indigo/issues/2404
+            Description: Added to Canvas from KET cascade reaction (2-1-1) without text, using "Add Text" tool, 
+            added text name and conditions for each part of reaction, saved to RDF V2000/V3000 formats, after that loaded from RDF V2000/V3000, 
+            verified that they are displayed correctly with name and conditions.
+            Case:
+            1. Open KET file
+            2. Add text above arrows
+            3. Save and verify RDF file
+            4. Open saved RDF file
+          */
+          const rdfFileExpected =
+            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+
+          await openFileAndAddToCanvas(ketFile, page);
+          await addTextToCanvas(page, 'abcde FGHIJKLMNOP!@##$%^^^&*', 470, 360);
+          await pressButton(page, 'Apply');
+          await addTextToCanvas(page, 'abcde FGHIJKLMNOP!@##$%^^^&*', 700, 360);
+          await pressButton(page, 'Apply');
+          await takeEditorScreenshot(page);
+          await verifyRdfFile(
+            page,
+            format,
+            rdfFileExpected,
+            `tests/test-data/${rdfFileExpected}`,
+          );
+          await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
+          await takeEditorScreenshot(page);
+        });
       });
     },
   );

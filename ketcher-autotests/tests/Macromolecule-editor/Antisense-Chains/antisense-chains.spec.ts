@@ -2390,3 +2390,49 @@ for (const monomer1 of shortMonomerList) {
     });
   }
 }
+
+const chainWithAllTypeOfConnections: IMonomer[] = [
+  {
+    monomerDescription:
+      'All type of monomers connected to R1, R2, R3, R4 attachment points',
+    contentType: MacroFileType.Ket,
+    KETFile:
+      'KET/Antisense-Chains/Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored.ket',
+    eligibleForAntisense: false,
+    baseWithR3R1ConnectionPresent: false,
+    monomerLocatorIndex: 0,
+  },
+];
+
+test(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6134
+   * Description: Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored
+   * Case:
+   *       1. Load chain with all type of monomers connected to R1, R2, R3, R4 attachment points
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense Strand" option
+   *       4. Take screenshot to validate Antisense creation and that all monomers connected via non-R1-R2 are ignored
+   */
+  test.setTimeout(20000);
+
+  const chain = chainWithAllTypeOfConnections[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+  await takeEditorScreenshot(page);
+});

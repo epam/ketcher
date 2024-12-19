@@ -2583,3 +2583,51 @@ test(`7. Check that every nucleoside (not a nucleotide, sugar is connected throu
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });
+
+const chainOfAllTypesModifiedMonomers: IMonomer[] = [
+  {
+    monomerDescription: 'All types of modified monomers in one chain',
+    contentType: MacroFileType.Ket,
+    KETFile:
+      'KET/Antisense-Chains/Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside directly copied to the antisense strand.ket',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+];
+
+test(`8. Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside directly copied to the antisense strand`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6134
+   * Description: Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside
+   *              directly copied to the antisense strand
+   * Case:
+   *       1. Load chain with all types of modified monomers in one
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense Strand" option
+   *       4. Take screenshot to validate Antisense creation and that monomers directly copied to antisense
+   */
+  test.setTimeout(20000);
+
+  const chain = chainOfAllTypesModifiedMonomers[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+  await zoomWithMouseWheel(page, 300);
+  await takeEditorScreenshot(page);
+  await resetZoomLevelToDefault(page);
+});

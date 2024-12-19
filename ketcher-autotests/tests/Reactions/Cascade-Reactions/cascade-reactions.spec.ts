@@ -28,6 +28,7 @@ import {
   RingButton,
   selectRectangleSelectionTool,
   waitForRender,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -2678,4 +2679,41 @@ test.describe('Cascade Reactions', () => {
       });
     },
   );
+
+  const testCases36 = [
+    {
+      ketFile: 'KET/ket-single-reaction-2x1-name-conditions-layout.ket',
+      testCaseDescription:
+        '1. KET single reaction (2:1) with very text name, conditions, matching with bounding box',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      ketFile: 'KET/ket-cascade-reactions-name-conditions.ket',
+      testCaseDescription:
+        '2. KET cascade reactions with Multi-Tailed and single arrow (5-tails and 2:1:1) and reactions name and conditions',
+      testCaseExpectedResult:
+        'Text of name and conditions is displayed correctly',
+    },
+  ];
+
+  testCases36.forEach(({ ketFile, testCaseDescription }) => {
+    test(`Add to Canvas from ${testCaseDescription} make Layout and verify that the text is looked correctly`, async () => {
+      /* 
+      Test case: https://github.com/epam/Indigo/issues/2559
+      Description: ${testCaseExpectedResult}
+      Case:
+        1. Open KET file
+        2. Make Layout
+        3. Take screenshot
+      */
+      await openFileAndAddToCanvasAsNewProject(ketFile, page);
+      await takeEditorScreenshot(page);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+      );
+      await takeEditorScreenshot(page);
+    });
+  });
 });

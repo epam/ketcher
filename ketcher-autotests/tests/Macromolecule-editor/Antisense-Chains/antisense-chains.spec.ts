@@ -2645,11 +2645,14 @@ const chainOfNucleotidesAndPeptides: IMonomer[] = [
   },
 ];
 
-test(`9. Check that the antisense chain should be "flipped" in relation to the sense chain:If the left most sugar/amino acid of the sense chain has a terminal indicator of 5'/N, then the left most sugar/amino acid of the antisense chain should have a terminal indicator of 3'/C `, async () => {
+test(`9. Check that the antisense chain should be "flipped" in relation to the sense chain checks`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6134
-   * Description: Check that the antisense chain should be "flipped" in relation to the sense chain:
-   *              If the left most sugar/amino acid of the sense chain has a terminal indicator of 5'/N, then the left most sugar/amino acid of the antisense chain should have a terminal indicator of 3'/C
+   * Description: 1. If the left most sugar/amino acid of the sense chain has a terminal indicator of 5'/N,
+   *                 then the left most sugar/amino acid of the antisense chain should have a terminal indicator of 3'/C
+   *              2. If the numbering of the sense chain increases from left to right, the numbering of the antisense chain should increase right to left
+   *              3. If the sense chain was oriented bases down, the antisense chain should be oriented bases up
+   *
    * Case:
    *       1. Load chain with all types of modified monomers in one
    *       2. Select it (using Control+A)

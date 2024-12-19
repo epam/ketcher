@@ -63,7 +63,7 @@ function baseURL(): string {
 const MAX_NUMBER_OF_RETRIES = 2;
 // const MAX_NUMBER_OF_FAILURES = 3;
 const isCI = process.env.CI_ENVIRONMENT === 'true';
-var numWorkers = os.cpus().length;
+let numWorkers = os.cpus().length;
 if (process.env.NUM_WORKERS) {
   numWorkers = Number(process.env.NUM_WORKERS);
 }

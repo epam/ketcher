@@ -1,9 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import {
-  turnOnMacromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -19,6 +16,7 @@ import {
   ZoomOutByKeyboard,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 let page: Page;
 
@@ -2682,4 +2680,66 @@ test(`9. Check that the antisense chain should be "flipped" in relation to the s
   for (let i = 0; i < 6; i++) await ZoomInByKeyboard(page);
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
+});
+
+test(`10. Check that options "Delete" and "Copy" added to the r-click menu`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6134
+   * Description: Check that options "Delete" and "Copy" added to the r-click menu
+   *
+   * Case:
+   *       1. Load monomer
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and check if Delete and Copy present and enabled
+   */
+  test.setTimeout(20000);
+
+  const chain = chainOfNucleotidesAndPeptides[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
+
+  const deleteOption = page.getByTestId('delete').first();
+  const copyOption = page.getByTestId('copy').first();
+  // Checking presence of Copy and Delete options are in the context menu and enabled
+  await expect(deleteOption).toHaveCount(1);
+  await expect(copyOption).toHaveCount(1);
+  await expect(deleteOption).toHaveAttribute('aria-disabled', 'false');
+  await expect(copyOption).toHaveAttribute('aria-disabled', 'false');
+});
+
+test(`11. Check that option "Delete" deletes the selected monomers and all the bonds of those monomers and Undo restore all monomers and bonds`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6134
+   * Description: Check that option "Delete" deletes the selected monomers and all the bonds of those monomers and Undo restore all monomers and bonds
+   *
+   * Case:
+   *       1. Load monomer
+   *       2. Select it (using Control+A)
+   *       3. Take screenshot to validate initial state
+   *       4. Call context menu for monomer and click Delete
+   *       5. Take screenshot to witness clear canvas
+   *       6. Press Undo
+   *       7. Take screenshot to witness initial state got back
+   */
+  test.setTimeout(20000);
+
+  const chain = chainOfNucleotidesAndPeptides[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await takeEditorScreenshot(page);
+  await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
+
+  const deleteOption = page.getByTestId('delete').first();
+  // Checking presence of Delete options are in the context menu and enabled
+  await expect(deleteOption).toHaveCount(1);
+  await expect(deleteOption).toHaveAttribute('aria-disabled', 'false');
+
+  await deleteOption.click();
+  await takeEditorScreenshot(page);
+
+  await pressUndoButton(page);
+  await takeEditorScreenshot(page);
 });

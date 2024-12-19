@@ -16,6 +16,7 @@ import {
   selectAllStructuresOnCanvas,
   ZoomInByKeyboard,
   resetZoomLevelToDefault,
+  ZoomOutByKeyboard,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 
@@ -2628,6 +2629,54 @@ test(`8. Check that all other monomers in the backbone that are not a part of th
 
   await createAntisenseStrandOption.click();
   await zoomWithMouseWheel(page, 300);
+  await takeEditorScreenshot(page);
+  await resetZoomLevelToDefault(page);
+});
+
+const chainOfNucleotidesAndPeptides: IMonomer[] = [
+  {
+    monomerDescription: 'All types of modified monomers in one chain',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+];
+
+test(`9. Check that the antisense chain should be "flipped" in relation to the sense chain:If the left most sugar/amino acid of the sense chain has a terminal indicator of 5'/N, then the left most sugar/amino acid of the antisense chain should have a terminal indicator of 3'/C `, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6134
+   * Description: Check that the antisense chain should be "flipped" in relation to the sense chain:
+   *              If the left most sugar/amino acid of the sense chain has a terminal indicator of 5'/N, then the left most sugar/amino acid of the antisense chain should have a terminal indicator of 3'/C
+   * Case:
+   *       1. Load chain with all types of modified monomers in one
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense Strand" option
+   *       4. Take screenshot to validate Antisense creation and that monomers directly copied to antisense
+   */
+  test.setTimeout(20000);
+
+  const chain = chainOfNucleotidesAndPeptides[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+  for (let i = 0; i < 6; i++) await ZoomInByKeyboard(page);
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });

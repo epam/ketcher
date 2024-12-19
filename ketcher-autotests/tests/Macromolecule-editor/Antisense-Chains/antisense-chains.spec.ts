@@ -26,6 +26,11 @@ import {
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
 import { getMonomerLocatorByAlias } from '@utils/macromolecules/monomer';
+import {
+  verifyFile2,
+  FileType,
+  verifyHELM,
+} from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 
@@ -2791,7 +2796,7 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
    * Test task: https://github.com/epam/ketcher/issues/6134
    * Description: Validate that creating, deleting, and modifying the antisense chain supports the undo/redo functionality
    * Case:
-   *       1. Load chain withantisense base
+   *       1. Load chain with antisense base
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense Strand" option
    *       4. Take screenshot to validate Antisense creation
@@ -2853,4 +2858,61 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
 
   await pressRedoButton(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
+
+test(`14. Validate that both sense and antisense strands can be exported correctly in supported file formats`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6134
+   * Description: Validate that creating, deleting, and modifying the antisense chain supports the undo/redo functionality
+   * Case:
+   *       1. Load chain with antisense base
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense Strand" option
+   *       4. Validate export to KET file
+   *       5. Validate exported MOL V3000 file
+   *       6. Validate exported HELM file
+   */
+  test.setTimeout(30000);
+
+  const chain = chainOfNucleotidesAndPeptides[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+
+  await verifyFile2(
+    page,
+    'KET/Antisense-Chains/Antisense-expected.ket',
+    FileType.KET,
+  );
+
+  await verifyFile2(
+    page,
+    'KET/Antisense-Chains/Antisense-expected.mol',
+    FileType.MOL,
+    'v3000',
+    [1],
+  );
+
+  await verifyHELM(
+    page,
+    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe]}|' +
+      'RNA2{R(A)P.R(C)P.R(G)P}|PEPTIDE2{[1Nal].[Cys_Bn].[AspOMe]}' +
+      '$RNA1,PEPTIDE1,9:R2-1:R1|RNA1,RNA2,2:pair-2:pair|' +
+      'RNA1,RNA2,5:pair-5:pair|RNA1,RNA2,8:pair-8:pair|' +
+      'RNA2,PEPTIDE2,9:R2-1:R1$$$V2.0',
+  );
 });

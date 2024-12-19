@@ -45,7 +45,7 @@ import {
   DrawingEntitiesManager,
   MONOMER_START_X_POSITION,
   MONOMER_START_Y_POSITION,
-  SNAKE_LAYOUT_CELL_WIDTH,
+  CELL_WIDTH,
 } from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
@@ -800,8 +800,8 @@ export class CoreEditor {
     ZoomTool.instance.scrollTo(
       new Vec2(drawnEntitiesBoundingBox.left, drawnEntitiesBoundingBox.top),
       false,
-      MONOMER_START_X_POSITION - SNAKE_LAYOUT_CELL_WIDTH / 4,
-      MONOMER_START_Y_POSITION - SNAKE_LAYOUT_CELL_WIDTH / 4,
+      MONOMER_START_X_POSITION - CELL_WIDTH / 4,
+      MONOMER_START_Y_POSITION - CELL_WIDTH / 4,
       false,
     );
   }

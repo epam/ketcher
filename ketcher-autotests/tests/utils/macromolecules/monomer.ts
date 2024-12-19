@@ -50,3 +50,41 @@ export async function connectMonomersWithBonds(
     await page.mouse.up();
   }
 }
+
+export async function getMonomerIDsByAlias(
+  page: Page,
+  name: string,
+): Promise<number[]> {
+  const monomerIDs = await page
+    .locator('[data-testid="monomer"]')
+    .evaluateAll((elements, alias) => {
+      return elements
+        .filter(
+          (element) => element.getAttribute('data-monomeralias') === alias,
+        )
+        .map((element) => {
+          const monomerId = element.getAttribute('data-monomerId');
+          return monomerId ? parseInt(monomerId, 10) : null;
+        })
+        .filter((id) => id !== null);
+    }, name);
+  return monomerIDs;
+}
+
+export async function getMonomerLocatorByAlias(
+  page: Page,
+  monomerAlias: string,
+): Promise<Locator> {
+  return page.locator(
+    `[data-testid="monomer"][data-monomeralias="${monomerAlias}"]`,
+  );
+}
+
+export async function getMonomerLocatorById(
+  page: Page,
+  id: number | string,
+): Promise<Locator> {
+  return page
+    .locator(`[data-testid="monomer"][data-monomerId="${id}"]`)
+    .first();
+}

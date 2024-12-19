@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
@@ -14,9 +15,17 @@ import {
   ZoomInByKeyboard,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
+  pasteFromClipboardByKeyboard,
+  selectEraseTool,
+  selectRectangleSelectionTool,
+  dragMouseTo,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
+import { getMonomerLocatorByAlias } from '@utils/macromolecules/monomer';
 
 let page: Page;
 
@@ -2742,4 +2751,106 @@ test(`11. Check that option "Delete" deletes the selected monomers and all the b
 
   await pressUndoButton(page);
   await takeEditorScreenshot(page);
+});
+
+test(`12. Check that option "Copy" copies the selected monomers and any bonds between them as the default format`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6134
+   * Description: Check that option "Copy" copies the selected monomers and any bonds between them as the default format
+   *
+   * Case:
+   *       1. Load monomer
+   *       2. Select it (using Control+A)
+   *       3. Take screenshot to validate initial state
+   *       4. Call context menu for monomer and click Copy
+   *       5. Paste clipboard content to the canvas
+   *       6. Take screenshot to witness the result
+   */
+  test.setTimeout(20000);
+
+  const chain = chainOfNucleotidesAndPeptides[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await takeEditorScreenshot(page);
+  await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
+
+  const copyOption = page.getByTestId('copy').first();
+  // Checking presence of Delete options are in the context menu and enabled
+  await expect(copyOption).toHaveCount(1);
+  await expect(copyOption).toHaveAttribute('aria-disabled', 'false');
+
+  await copyOption.click();
+  await pasteFromClipboardByKeyboard(page);
+
+  await takeEditorScreenshot(page);
+});
+
+test(`13. Validate that creating, deleting, and modifying the antisense chain supports the undo/redo functionality`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6134
+   * Description: Validate that creating, deleting, and modifying the antisense chain supports the undo/redo functionality
+   * Case:
+   *       1. Load chain withantisense base
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense Strand" option
+   *       4. Take screenshot to validate Antisense creation
+   *       5. Delete sugar R from the antisense chain
+   *       6. Take screenshot to validate deletion
+   *       7. Move sugar R to the new position
+   *       8. Take screenshot to validate movement
+   *       9. Undo all actions taking screenshots after each action to validate the undo functionality
+   *      10. Redo all actions taking screenshots after each action to validate the redo functionality
+   */
+  test.setTimeout(30000);
+
+  const chain = chainOfNucleotidesAndPeptides[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  const sugarRs = await getMonomerLocatorByAlias(page, 'R');
+
+  await selectRectangleSelectionTool(page);
+  await sugarRs.nth(2).click();
+  await selectEraseTool(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await selectRectangleSelectionTool(page);
+  await sugarRs.nth(1).click();
+  await dragMouseTo(200, 200, page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await pressUndoButton(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await pressUndoButton(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await pressUndoButton(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await pressRedoButton(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await pressRedoButton(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await pressRedoButton(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });

@@ -116,9 +116,6 @@ export async function selectAllStructuresOnCanvas(
     | undefined,
 ) {
   const modifier = getControlModifier();
-  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
-  // before proceeding next. Sometimes - select object on the screen took time
-  // await waitForRender(page, emptyFunction, 500);
 
   await waitForRender(
     page,

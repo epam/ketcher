@@ -143,14 +143,23 @@ export class AtomRenderer extends BaseRenderer {
     return this.atom.properties.alias || this.atom.label;
   }
 
+  private get isAtomTerminal() {
+    const editor = CoreEditor.provideEditorInstance();
+    const viewModel = editor.viewModel;
+    const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
+
+    return (
+      !atomNeighborsHalfEdges?.length || atomNeighborsHalfEdges.length === 1
+    );
+  }
+
   public get isLabelVisible() {
     const editor = CoreEditor.provideEditorInstance();
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
     const isCarbon = this.atom.label === AtomLabel.C;
     const visibleTerminal = true;
-    const isAtomTerminal =
-      !atomNeighborsHalfEdges?.length || atomNeighborsHalfEdges.length === 1;
+    const isAtomTerminal = this.isAtomTerminal;
     const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length || 0) >= 2;
     const hasCharge = this.atom.hasCharge;
     const hasRadical = this.atom.hasRadical;
@@ -224,7 +233,7 @@ export class AtomRenderer extends BaseRenderer {
 
   public get shouldDisplayHydrogen() {
     // Remove when rules for displaying hydrogen are implemented same as in molecules mode
-    return this.atom.label !== AtomLabel.C;
+    return this.atom.label !== AtomLabel.C || this.isAtomTerminal;
   }
 
   private appendLabel() {

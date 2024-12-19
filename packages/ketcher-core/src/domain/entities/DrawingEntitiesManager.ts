@@ -98,11 +98,10 @@ import { Chain } from 'domain/entities/monomer-chains/Chain';
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = 30;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
 const DISTANCE_FROM_RIGHT = 55;
-export const SNAKE_LAYOUT_CELL_WIDTH = 60;
-export const SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS =
-  SNAKE_LAYOUT_CELL_WIDTH * 2 + 30;
-export const MONOMER_START_X_POSITION = 20 + SNAKE_LAYOUT_CELL_WIDTH / 2;
-export const MONOMER_START_Y_POSITION = 20 + SNAKE_LAYOUT_CELL_WIDTH / 2;
+export const CELL_WIDTH = 60;
+export const SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS = CELL_WIDTH * 2 + 30;
+export const MONOMER_START_X_POSITION = 20 + CELL_WIDTH / 2;
+export const MONOMER_START_Y_POSITION = 20 + CELL_WIDTH / 2;
 
 type RnaPresetAdditionParams = {
   sugar: MonomerItemType;
@@ -1246,7 +1245,7 @@ export class DrawingEntitiesManager {
   ) {
     const command = new Command();
     const heightMonomerWithBond =
-      SNAKE_LAYOUT_CELL_WIDTH / 2 + VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA;
+      CELL_WIDTH / 2 + VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA;
     const isNewRow = lastPosition.x === MONOMER_START_X_POSITION;
 
     maxVerticalDistance =
@@ -1314,7 +1313,7 @@ export class DrawingEntitiesManager {
     const oldSugarPosition = nucleotideOrNucleoside.sugar.position;
     const rnaBasePosition = new Vec2(
       lastPosition.x,
-      lastPosition.y + (isAntisense ? -1 : 1) * SNAKE_LAYOUT_CELL_WIDTH,
+      lastPosition.y + (isAntisense ? -1 : 1) * CELL_WIDTH,
     );
 
     if (needRepositionMonomers) {
@@ -1338,7 +1337,7 @@ export class DrawingEntitiesManager {
     if (nucleotideOrNucleoside instanceof Nucleotide) {
       nucleotideOrNucleoside.phosphate.isMonomerInRnaChainRow = true;
       const phosphatePosition = new Vec2(
-        lastPosition.x + SNAKE_LAYOUT_CELL_WIDTH,
+        lastPosition.x + CELL_WIDTH,
         lastPosition.y,
       );
 
@@ -1363,8 +1362,8 @@ export class DrawingEntitiesManager {
         maxVerticalDistance,
         restOfRowsWithAntisense,
         nucleotideOrNucleoside instanceof Nucleotide
-          ? SNAKE_LAYOUT_CELL_WIDTH * 2
-          : SNAKE_LAYOUT_CELL_WIDTH,
+          ? CELL_WIDTH * 2
+          : CELL_WIDTH,
       );
 
     const nextMonomer = getNextMonomerInChain(
@@ -1497,9 +1496,7 @@ export class DrawingEntitiesManager {
     needRepositionMonomers = true,
   ) {
     const command = new Command();
-    let lastPosition = startPosition.add(
-      new Vec2(0, SNAKE_LAYOUT_CELL_WIDTH * 3),
-    );
+    let lastPosition = startPosition.add(new Vec2(0, CELL_WIDTH * 3));
     let rowsUsedByAntisense = 1;
 
     antisenseChain.forEachNode(({ node }) => {
@@ -1856,15 +1853,12 @@ export class DrawingEntitiesManager {
     lastPosition: Vec2,
     height: number,
     canvasWidth: number,
-    width = SNAKE_LAYOUT_CELL_WIDTH,
+    width = CELL_WIDTH,
     restOfRowsWithAntisense: number,
   ) {
-    const isMonomerFitCanvas =
-      lastPosition.x +
-        width +
-        DISTANCE_FROM_RIGHT +
-        SNAKE_LAYOUT_CELL_WIDTH / 2 <
-      canvasWidth;
+    const monomerOccupiedWidth =
+      lastPosition.x + width + DISTANCE_FROM_RIGHT + CELL_WIDTH / 2;
+    const isMonomerFitCanvas = monomerOccupiedWidth < canvasWidth;
 
     if (!isMonomerFitCanvas) {
       return {

@@ -14,7 +14,7 @@ import {
   ConnectionDirectionInDegrees,
   ConnectionDirectionOfLastCell,
 } from 'domain/entities/canvas-matrix/Connection';
-import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
+import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
@@ -171,7 +171,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   ): string {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
-    const xOffset = (SNAKE_LAYOUT_CELL_WIDTH / 2) * cos;
+    const xOffset = (CELL_WIDTH / 2) * cos;
     const yOffset = (CELL_HEIGHT / 2) * sin;
     const maxXOffset = cell.connections.reduce(
       (max: number, connection: Connection): number => {

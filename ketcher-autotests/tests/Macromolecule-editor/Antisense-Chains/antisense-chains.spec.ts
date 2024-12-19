@@ -1,6 +1,9 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  turnOnMacromoleculesEditor,
+  zoomWithMouseWheel,
+} from '@utils/macromolecules';
 import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -11,6 +14,8 @@ import {
   selectSnakeLayoutModeTool,
   openFileAndAddToCanvasMacro,
   selectAllStructuresOnCanvas,
+  ZoomInByKeyboard,
+  resetZoomLevelToDefault,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 
@@ -2398,8 +2403,8 @@ const chainWithAllTypeOfConnections: IMonomer[] = [
     contentType: MacroFileType.Ket,
     KETFile:
       'KET/Antisense-Chains/Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored.ket',
-    eligibleForAntisense: false,
-    baseWithR3R1ConnectionPresent: false,
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
     monomerLocatorIndex: 0,
   },
 ];
@@ -2435,4 +2440,146 @@ test(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1
 
   await createAntisenseStrandOption.click();
   await takeEditorScreenshot(page);
+});
+
+const chainOfNucleotidesWithAllTypesOfPhosphateAndSugar: IMonomer[] = [
+  {
+    monomerDescription: 'All type of sugars and phosphates in one chain',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{[25d3r]([4ime6A])[bP].[25mo3r]([az8A])[cm].[25moe3]([baA])[cmp].[25R]([br8A])[co].[3A6]([c3A])[fl2me].[4sR]([c7io7A])' +
+      '[gly].[5A6]([c7io7n])[hn].[ana]([meA])[Ssp].[Am2d]([m2A])[Smp].[ALtri2]([io2A])[s2p].[ALtri1]([imprn2])[Rsp].[ALmecl]([impr6n])[Rmp].' +
+      '[allyl2]([fl2A])[prn].[aFR]([eaA])[P-].[afl2Nm]([e6A])[oxy].[afhna]([dabA])[nen].[Ae2d]([daA])[msp].[acn4d]([cyp6A])[mp].' +
+      '[5S6Sm5]([cyh6A])[moen].[5S6Rm5]([cpmA])[mn].[5R6Sm5]([clA])[mepo2].[5R6Rm5]([cl8A])[me].[5formD]([cl2cyp])[m2np].[aoe2r]([mo2A])[en].' +
+      '[aR]([moprn2])[sP].[bcdna]([ms2A])[eop].[Bcm2r]([n2A])[sP-]}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+];
+
+test(`6. Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (R), phosphate (P), and the appropriate "antisense base"`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6134
+   * Description: Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p),
+   *              and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense
+   *              chain that contains ribose (R), phosphate (P), and the appropriate "antisense base"
+   * Case:
+   *       1. Load chain with all type of phosphates and sugars
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense Strand" option
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to R and P
+   */
+  test.setTimeout(20000);
+
+  const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+  await zoomWithMouseWheel(page, 600);
+  await takeEditorScreenshot(page);
+  await resetZoomLevelToDefault(page);
+});
+
+const chainOfNucleosidesWithAllTypesOfSugar: IMonomer[] = [
+  {
+    monomerDescription: 'Nucleosides with all type of sugars in one chain',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{[Bcm3d]([n8A])}|RNA2{[Bcm3r]([nC6n8A])}|RNA3{[Bcoh4d]([nen2A])}|RNA4{[bn2r]([o8A])}|RNA5{[bnanc]([phen2A])}|' +
+      'RNA6{[bnancm]([z8A])}|RNA7{[bnoe2r]([5meC])}|RNA8{[bu2r]([ac4C])}|RNA9{[c4d]([br5C])}|RNA10{[c4m]([cdaC])}|RNA11{[C52r]([cl5C])}|' +
+      'RNA12{[C92r]([cpC])}|RNA13{[cena]([ethy5C])}|RNA14{[cet]([fl3mC])}|RNA15{[ciPr]([fl5C])}|RNA16{[clhna]([form5C])}|RNA17{[d5m]([gclamp])}|' +
+      'RNA18{[d5moe]([ggclam])}|RNA19{[dhp]([hm5C])}|RNA20{[Dlyspn]([m4C])}|RNA21{[dmac]([nC65C])}|RNA22{[dmaeac]([nC6n5C])}|' +
+      'RNA23{[dmaeoe]([npry5C])}|RNA24{[dmaoe]([oC64m5])}|RNA25{[dR]([oh4C])}|RNA26{[e2noe2]([oh5C])}|RNA27{[e2r]([prpC])}|' +
+      'RNA28{[eom2r]([s2C])}|RNA29{[eR]([tCnitr])}|RNA30{[fcena]([tCo])}|RNA31{[fhna]([thiz5C])}|RNA32{[fl2Nmc]([z5C])}|' +
+      'RNA33{[fl3e2r]([4imen2])}|RNA34{[fl3pr2]([allyl9])}|RNA35{[fl5pr2]([br8G])}|RNA36{[fle2r]([c3ally])}|RNA37{[fleana]([c3G])}|' +
+      'RNA38{[FMOE]([c7G])}|RNA39{[fR]([c7io7G])}|RNA40{[GalNAc]([cl6G])}|RNA41{[guane2]([impr2G])}|RNA42{[hx]([isoG])}|RNA43{[imbu2r]([m1G])}|' +
+      'RNA44{[ime2r]([m22G])}|RNA45{[ipr2r]([m2G])}|RNA46{[iprmno]([m6G])}|RNA47{[Ld]([m7G])}|RNA48{[Liprgl]([m7h8G])}|RNA49{[lLR]([ms6G])}|' +
+      'RNA50{[Llyspn]([n8G])}|RNA51{[LR]([nC6n2G])}|RNA52{[m2e2r]([nen2G])}|RNA53{[m2nc2r]([npr2G])}|RNA54{[m2nenc]([o8G])}|' +
+      'RNA55{[m2npr2]([o8s9G])}|RNA56{[m3ALln]([s6G])}|RNA57{[m3ana]([s8G])}|RNA58{[m5d]([z7G])}|RNA59{[m5m]([z8c3G])}|RNA60{[me3d]([cnes4T])}|' +
+      'RNA61{[me3fl2]([cneT])}|RNA62{[me3m]([h56T])}|RNA63{[me3r]([mo4bn3])}|RNA64{[meclna]([npomT])}|RNA65{[menoe2]([s2T])}|RNA66{[mn2lna]([s4T])}|' +
+      'RNA67{[mnc2r]([z5T])}|RNA68{[mne2r]([5eU])}|RNA69{[mnobna]([5fU])}|RNA70{[MOE]([5iU])}|RNA71{[moe3an]([5tpU])}|RNA72{[moeon2]([allyl5])}|' +
+      'RNA73{[mon2ln]([br5U])}|RNA74{[mopr2d]([brviny])}|RNA75{[mph]([cl5U])}|RNA76{[mR]([CN5U])}|RNA77{[ms2r]([cpU])}|RNA78{[mse2r]([d4U])}|' +
+      'RNA79{[mseac]([DBCOnC])}|RNA80{[msoe2r]([e5U])}|RNA81{[n2r]([form5U])}|RNA82{[n3co4d]([h456U])}|RNA83{[n3d]([h456UR])}|RNA84{[n3fl2r]([hU])}|' +
+      'RNA85{[n3m]([ipr5U])}|RNA86{[n5d]([m1Yra])}|RNA87{[n5fl2r]([m3U])}|RNA88{[n5m]([m6T])}|RNA89{[n5r]([m6U])}|RNA90{[nac2r]([mnm5U])}|' +
+      'RNA91{[nbu2r]([mo5U])}|RNA92{[nC52r]([nC65U])}|RNA93{[nC62r]([nC6n5U])}|RNA94{[ne2r]([npr5U])}|RNA95{[nma]([oh5U])}|RNA96{[Nmc]([ohm5U])}|' +
+      'RNA97{[npr2r]([Oro])}|RNA98{[ox23ar]([thiz5U])}|RNA99{[ph2r]([vinyl5])}|RNA100{[phoe2r]([z6pry5])}|RNA101{[phs2r]([z6U])}|RNA102{[pna]([tfU])}|' +
+      'RNA103{[PONA]([thien5])}|RNA104{[pr2r]([pr56U])}|RNA105{[prparg]([prpU])}|RNA106{[pyren1]([psiU])}|RNA107{[qR]([s2U])}|RNA108{[Rcet]([s4U])}|' +
+      'RNA109{[Rcmoe]([io5C])}|RNA110{[Rflcln]([c7py7A])}|RNA111{[RGNA]([2imen2])}|RNA112{[Rhe5d]([m2nprn])}|RNA113{[Rm5ALl]([c7py7N])}|' +
+      'RNA114{[Rm5d]([c7A])}|RNA115{[Rm5fl2]([m1A])}|RNA116{[Rm5lna]([c7cn7A])}|RNA117{[Rm5moe]([cl2A])}|RNA118{[Diprgl]([m3C])}$RNA1,RNA2,1:R2-1:R1|' +
+      'RNA2,RNA3,1:R2-1:R1|RNA3,RNA4,1:R2-1:R1|RNA4,RNA5,1:R2-1:R1|RNA5,RNA6,1:R2-1:R1|RNA6,RNA7,1:R2-1:R1|RNA7,RNA8,1:R2-1:R1|RNA8,RNA9,1:R2-1:R1|' +
+      'RNA9,RNA10,1:R2-1:R1|RNA10,RNA11,1:R2-1:R1|RNA11,RNA12,1:R2-1:R1|RNA12,RNA13,1:R2-1:R1|RNA13,RNA14,1:R2-1:R1|RNA14,RNA15,1:R2-1:R1|' +
+      'RNA15,RNA16,1:R2-1:R1|RNA16,RNA17,1:R2-1:R1|RNA17,RNA18,1:R2-1:R1|RNA18,RNA19,1:R2-1:R1|RNA19,RNA118,1:R2-1:R1|RNA118,RNA20,1:R2-1:R1|' +
+      'RNA20,RNA21,1:R2-1:R1|RNA21,RNA22,1:R2-1:R1|RNA22,RNA23,1:R2-1:R1|RNA23,RNA24,1:R2-1:R1|RNA24,RNA25,1:R2-1:R1|RNA25,RNA26,1:R2-1:R1|' +
+      'RNA26,RNA27,1:R2-1:R1|RNA27,RNA28,1:R2-1:R1|RNA28,RNA29,1:R2-1:R1|RNA29,RNA30,1:R2-1:R1|RNA30,RNA31,1:R2-1:R1|RNA31,RNA32,1:R2-1:R1|' +
+      'RNA32,RNA33,1:R2-1:R1|RNA33,RNA34,1:R2-1:R1|RNA34,RNA35,1:R2-1:R1|RNA35,RNA36,1:R2-1:R1|RNA36,RNA37,1:R2-1:R1|RNA37,RNA38,1:R2-1:R1|' +
+      'RNA38,RNA39,1:R2-1:R1|RNA39,RNA40,1:R2-1:R1|RNA40,RNA41,1:R2-1:R1|RNA41,RNA42,1:R2-1:R1|RNA42,RNA43,1:R2-1:R1|RNA43,RNA44,1:R2-1:R1|' +
+      'RNA44,RNA45,1:R2-1:R1|RNA45,RNA46,1:R2-1:R1|RNA46,RNA47,1:R2-1:R1|RNA47,RNA48,1:R2-1:R1|RNA48,RNA49,1:R2-1:R1|RNA49,RNA50,1:R2-1:R1|' +
+      'RNA50,RNA51,1:R2-1:R1|RNA51,RNA52,1:R2-1:R1|RNA52,RNA53,1:R2-1:R1|RNA53,RNA54,1:R2-1:R1|RNA54,RNA55,1:R2-1:R1|RNA55,RNA56,1:R2-1:R1|' +
+      'RNA56,RNA57,1:R2-1:R1|RNA57,RNA58,1:R2-1:R1|RNA58,RNA59,1:R2-1:R1|RNA59,RNA60,1:R2-1:R1|RNA60,RNA61,1:R2-1:R1|RNA61,RNA62,1:R2-1:R1|' +
+      'RNA62,RNA63,1:R2-1:R1|RNA63,RNA64,1:R2-1:R1|RNA64,RNA65,1:R2-1:R1|RNA65,RNA66,1:R2-1:R1|RNA66,RNA67,1:R2-1:R1|RNA67,RNA68,1:R2-1:R1|' +
+      'RNA68,RNA69,1:R2-1:R1|RNA69,RNA70,1:R2-1:R1|RNA70,RNA71,1:R2-1:R1|RNA71,RNA72,1:R2-1:R1|RNA72,RNA73,1:R2-1:R1|RNA73,RNA74,1:R2-1:R1|' +
+      'RNA74,RNA75,1:R2-1:R1|RNA75,RNA76,1:R2-1:R1|RNA76,RNA77,1:R2-1:R1|RNA77,RNA78,1:R2-1:R1|RNA78,RNA79,1:R2-1:R1|RNA79,RNA80,1:R2-1:R1|' +
+      'RNA80,RNA81,1:R2-1:R1|RNA81,RNA82,1:R2-1:R1|RNA82,RNA83,1:R2-1:R1|RNA83,RNA84,1:R2-1:R1|RNA84,RNA85,1:R2-1:R1|RNA85,RNA86,1:R2-1:R1|' +
+      'RNA86,RNA87,1:R2-1:R1|RNA87,RNA88,1:R2-1:R1|RNA88,RNA89,1:R2-1:R1|RNA89,RNA90,1:R2-1:R1|RNA90,RNA91,1:R2-1:R1|RNA91,RNA92,1:R2-1:R1|' +
+      'RNA92,RNA93,1:R2-1:R1|RNA93,RNA94,1:R2-1:R1|RNA94,RNA95,1:R2-1:R1|RNA95,RNA96,1:R2-1:R1|RNA96,RNA97,1:R2-1:R1|RNA98,RNA99,1:R2-1:R1|' +
+      'RNA99,RNA100,1:R2-1:R1|RNA100,RNA101,1:R2-1:R1|RNA101,RNA102,1:R2-1:R1|RNA102,RNA103,1:R2-1:R1|RNA103,RNA104,1:R2-1:R1|RNA104,RNA105,1:R2-1:R1|' +
+      'RNA105,RNA106,1:R2-1:R1|RNA106,RNA107,1:R2-1:R1|RNA107,RNA108,1:R2-1:R1|RNA108,RNA109,1:R2-1:R1|RNA109,RNA110,1:R2-1:R1|RNA110,RNA111,1:R2-1:R1|' +
+      'RNA111,RNA112,1:R2-1:R1|RNA112,RNA113,1:R2-1:R1|RNA113,RNA114,1:R2-1:R1|RNA114,RNA115,1:R2-1:R1|RNA115,RNA116,1:R2-1:R1|RNA116,RNA117,1:R2-1:R1|' +
+      'RNA97,RNA98,1:R2-1:R1$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+];
+
+test(`7. Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (R) and the appropriate "antisense base"`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6134
+   * Description: Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate,
+   *              or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside
+   *              on the antisense chain that contains ribose (R) and the appropriate "antisense base"
+   * Case:
+   *       1. Load chain with all type of phosphates and sugars
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense Strand" option
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to R and P
+   */
+  test.setTimeout(20000);
+
+  const chain = chainOfNucleosidesWithAllTypesOfSugar[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+  await zoomWithMouseWheel(page, 600);
+  await takeEditorScreenshot(page);
+  await resetZoomLevelToDefault(page);
 });

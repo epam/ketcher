@@ -19,7 +19,7 @@ export class FlexMode extends BaseMode {
     command.merge(editor.drawingEntitiesManager.recalculateCanvasMatrix());
 
     editor.renderersContainer.update(modelChanges);
-
+    editor.scrollToTopLeftCorner();
     return command;
   }
 

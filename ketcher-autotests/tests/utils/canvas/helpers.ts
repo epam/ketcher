@@ -498,3 +498,7 @@ export async function selectRedoByKeyboard(
     await page.keyboard.press(`${modifier}+Shift+KeyZ`, options);
   });
 }
+
+export async function copyToClipboardByIcon(page: Page) {
+  await page.getByTestId('copy-to-clipboard').click();
+}

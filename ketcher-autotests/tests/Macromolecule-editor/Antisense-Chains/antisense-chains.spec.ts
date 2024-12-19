@@ -2491,7 +2491,7 @@ test(`6. Check that every nucleotide (sugar and phosphate are part of the backbo
   );
 
   await createAntisenseStrandOption.click();
-  await zoomWithMouseWheel(page, 600);
+  for (let i = 0; i < 4; i++) await ZoomOutByKeyboard(page);
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });
@@ -2580,7 +2580,7 @@ test(`7. Check that every nucleoside (not a nucleotide, sugar is connected throu
   );
 
   await createAntisenseStrandOption.click();
-  await zoomWithMouseWheel(page, 600);
+  for (let i = 0; i < 5; i++) await ZoomOutByKeyboard(page);
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });
@@ -2628,7 +2628,7 @@ test(`8. Check that all other monomers in the backbone that are not a part of th
   );
 
   await createAntisenseStrandOption.click();
-  await zoomWithMouseWheel(page, 300);
+  for (let i = 0; i < 2; i++) await ZoomOutByKeyboard(page);
   await takeEditorScreenshot(page);
   await resetZoomLevelToDefault(page);
 });
@@ -2654,7 +2654,7 @@ test(`9. Check that the antisense chain should be "flipped" in relation to the s
    *       1. Load chain with all types of modified monomers in one
    *       2. Select it (using Control+A)
    *       3. Call context menu for monomer and click "Create Antisense Strand" option
-   *       4. Take screenshot to validate Antisense creation and that monomers directly copied to antisense
+   *       4. Take screenshot to validate Antisense creation and numbering order
    */
   test.setTimeout(20000);
 

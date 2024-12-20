@@ -317,7 +317,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       .attr('data-testid', 'monomer')
       .attr(
         'data-monomertype',
-        this.monomer.monomerItem.props.MonomerClass || '',
+        this.monomer instanceof AmbiguousMonomer
+          ? AmbiguousMonomer.getMonomerClass(this.monomer.monomers)
+          : this.monomer.monomerItem.props.MonomerClass || '',
       )
       .attr('data-monomeralias', this.monomer.label)
       .attr('data-monomerid', this.monomer.id)

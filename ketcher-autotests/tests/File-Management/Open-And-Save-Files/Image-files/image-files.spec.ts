@@ -1275,10 +1275,8 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    // await selectTopPanelButton(TopPanelButton.Aromatize, page);
     selectAromatizeTool(page);
     await takeEditorScreenshot(page);
-    // await selectTopPanelButton(TopPanelButton.Dearomatize, page);
     selectDearomatizeTool(page);
     await takeEditorScreenshot(page);
     await verifyFile2(

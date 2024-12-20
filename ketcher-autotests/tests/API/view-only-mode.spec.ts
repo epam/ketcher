@@ -514,13 +514,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'v2000',
       [1],
     );
-    // await verifyMolfile(
-    //   page,
-    //   'v2000',
-    //   'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
-    //   'tests/test-data/Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
-    //   [1],
-    // );
 
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
@@ -546,13 +539,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'v3000',
       [1],
     );
-    // await verifyMolfile(
-    //   page,
-    //   'v3000',
-    //   'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
-    //   'tests/test-data/Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
-    //   [1],
-    // );
 
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',

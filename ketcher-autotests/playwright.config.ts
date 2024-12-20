@@ -61,9 +61,12 @@ function baseURL(): string {
 }
 
 const MAX_NUMBER_OF_RETRIES = 2;
-const MIN_AMOUNT_OF_WORKERS = 2;
 // const MAX_NUMBER_OF_FAILURES = 3;
 const isCI = process.env.CI_ENVIRONMENT === 'true';
+let numWorkers = os.cpus().length;
+if (process.env.NUM_WORKERS) {
+  numWorkers = Number(process.env.NUM_WORKERS);
+}
 
 function getIgnoredFiles(): string[] {
   let ignored = [] as string[];
@@ -104,7 +107,7 @@ const config: PlaywrightTestConfig = {
   retries: isCI ? MAX_NUMBER_OF_RETRIES : 0,
   /* Opt out of parallel tests on CI. */
   // eslint-disable-next-line no-magic-numbers
-  workers: process.env.CI ? MIN_AMOUNT_OF_WORKERS : os.cpus().length,
+  workers: numWorkers,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     [
@@ -113,8 +116,14 @@ const config: PlaywrightTestConfig = {
         open: process.env.DOCKER ? 'never' : 'on-failure',
       },
     ],
+    // [isCI ? 'dot' : 'line'],
     ['line'],
-    // ['./reporters/TimeReporter.ts'],
+    [
+      'json',
+      {
+        outputFile: 'results.json',
+      },
+    ],
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -123,9 +132,10 @@ const config: PlaywrightTestConfig = {
     viewport: { width: 1920, height: 1080 },
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: baseURL(),
+    screenshot: 'only-on-failure',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: isCI ? 'off' : 'on-first-retry',
   },
 
   /* Configure projects for major browsers */

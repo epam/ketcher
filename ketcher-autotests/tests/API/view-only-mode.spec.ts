@@ -25,6 +25,7 @@ import {
   selectAllStructuresOnCanvas,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
+  copyToClipboardByKeyboard,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -188,21 +189,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    // await takePageScreenshot(page); //1
-    // await enableViewOnlyModeBySetOptions(page);
+    await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
-    // await takePageScreenshot(page); //2
+    // await copyToClipboardByKeyboard(page);
     await page.getByTestId('copy-button-dropdown-triangle').click();
     await page.getByTitle('Copy as MOL (Ctrl+M)').click();
-    // await copyToClipboardByKeyboard(page);
-
-    // await disableViewOnlyModeBySetOptions(page);
-    // await takePageScreenshot(page); //3
+    await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
-    // await page.keyboard.press('Control+KeyV');
     await clickOnCanvas(page, 200, 200);
     await takePageScreenshot(page);
-    // await takeEditorScreenshot(page);
   });
 
   test('Verify that elements on Canvas can be copied (as KET) in view-only mode', async ({

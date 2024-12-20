@@ -25,6 +25,7 @@ import {
   resetCurrentTool,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectClearCanvasTool,
 } from '@utils';
 import { getExtendedSmiles, getMolfile } from '@utils/formats';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
@@ -265,7 +266,7 @@ test.describe('Open Ketcher', () => {
     });
 
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 

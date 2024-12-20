@@ -19,6 +19,8 @@ import {
   selectEraseTool,
   selectRectangleSelectionTool,
   dragMouseTo,
+  selectSequenceLayoutModeTool,
+  selectFlexLayoutModeTool,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -2915,4 +2917,50 @@ test(`14. Validate that both sense and antisense strands can be exported correct
       'RNA1,RNA2,5:pair-5:pair|RNA1,RNA2,8:pair-8:pair|' +
       'RNA2,PEPTIDE2,9:R2-1:R1$$$V2.0',
   );
+});
+
+test(`15. Ensure that switching between (Flex, Snake, Sequence) modes does not break the alignment or hydrogen bonding between the sense and antisense strands`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6134
+   * Description: Ensure that switching between (Flex, Snake, Sequence) modes does not break the alignment or hydrogen bonding between the sense and antisense strands
+   * Case:
+   *       1. Load chain with antisense base
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense Strand" option
+   *       4. Switch to Snake mode
+   *       6. Take screenshot to validate layout
+   *       7. Switch to Sequence mode
+   *       8. Take screenshot to validate layout
+   *       9. Switch to Flex mode
+   *      10. Take screenshot to validate layout
+   */
+  test.setTimeout(20000);
+
+  const chain = chainOfNucleotidesAndPeptides[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+
+  await selectSnakeLayoutModeTool(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await selectSequenceLayoutModeTool(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await selectFlexLayoutModeTool(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });

@@ -176,6 +176,9 @@ export class SequenceMode extends BaseMode {
   }
 
   public startNewSequence(eventData?: StartNewSequenceEventData) {
+    if (CoreEditor.provideEditorInstance()?.isSequenceEditInRNABuilderMode) {
+      return;
+    }
     const currentChainIndex = this.isEditMode
       ? SequenceRenderer.currentChainIndex
       : SequenceRenderer.chainsCollection.chains.length - 1;

@@ -43,7 +43,10 @@ import {
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
-import { FileType, verifyFile2 } from '@utils/files/receiveFileComparisonData';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import {
   clickOnFileFormatDropdown,
   FileFormatOption,
@@ -170,7 +173,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
 
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-to-compare.ket',
       FileType.KET,
@@ -190,7 +193,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
 
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/three-different-multi-tail-arrows-expected.ket',
       FileType.KET,
@@ -210,7 +213,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
 
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/three-different-multi-tail-arrows-with-elements-expected.ket',
       FileType.KET,
@@ -236,7 +239,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     });
     await clickOnCanvas(page, 200, 300);
 
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrows-from-two-different-files-expected.ket',
       FileType.KET,
@@ -257,7 +260,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
 
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50-expected.ket',
       FileType.KET,
@@ -825,7 +828,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickOnCanvas(page, 500, 600);
 
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/reaction-arrow-multitail-to-compare.ket',
       FileType.KET,
@@ -849,7 +852,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600);
     await clickOnCanvas(page, 700, 500);
 
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/three-reaction-arrow-multitail-to-compare.ket',
       FileType.KET,
@@ -877,7 +880,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600);
     await clickOnCanvas(page, 700, 500);
 
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/benzene-rings-and-three-reaction-arrow-multitail-to-compare.ket',
       FileType.KET,
@@ -1025,7 +1028,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     */
     await setupElementsAndModifyMultiTailArrow(page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/modified-multitail-arrow-expected.ket',
       FileType.KET,
@@ -1074,7 +1077,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await copyAndPaste(page);
     await clickOnCanvas(page, 500, 200);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/modified-multitail-arrow-with-added-tails-expected.ket',
       FileType.KET,
@@ -1277,7 +1280,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickInTheMiddleOfTheScreen(page, 'right');
     await expect(page.getByText('Add new tail')).toBeDisabled();
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-spine-0.7-expected.ket',
       FileType.KET,
@@ -1303,7 +1306,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickInTheMiddleOfTheScreen(page, 'right');
     await expect(page.getByText('Add new tail')).toBeDisabled();
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-spine-1.39-expected.ket',
       FileType.KET,
@@ -1331,7 +1334,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickInTheMiddleOfTheScreen(page, 'right');
     await expect(page.getByText('Add new tail')).toBeDisabled();
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-spine-1.4-expected.ket',
       FileType.KET,
@@ -1362,7 +1365,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await hoverOverArrowSpine(page, 2, 'right');
     await expect(page.getByText('Add new tail')).toBeDisabled();
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrows-3-expected.ket',
       FileType.KET,
@@ -1394,7 +1397,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await expect(page.getByText('Add new tail')).toBeDisabled();
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrows-3-with-elements-expected.ket',
       FileType.KET,
@@ -1427,7 +1430,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 200, 200);
     await removeTail(page, 'tails-0-move');
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-2-tails-spine-0.7-expected.ket',
       FileType.KET,
@@ -1465,7 +1468,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       await removeTail(page, tailId);
     }
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-5-tails-spine-1.4-new-expected.ket',
       FileType.KET,
@@ -1493,7 +1496,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await removeTail(page, 'tails-0-resize');
     await removeTail(page, 'tails-1-resize');
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrows-3-removed-tails-expected.ket',
       FileType.KET,
@@ -1521,7 +1524,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrows-3-with-elements-removed-tails-expected.ket',
       FileType.KET,
@@ -1553,7 +1556,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       await page.getByText('Add new tail').click();
     }
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-5-tails-spine-2.1-expected.ket',
       FileType.KET,
@@ -1695,7 +1698,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTail(page, 700, 500);
     await addTail(page, 700, 500);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/three-reaction-arrow-with-added-tails-to-compare.ket',
       FileType.KET,
@@ -1737,7 +1740,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await removeTail(page, 'tails-1-move', 1);
 
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/two-reaction-arrow-with-removed-tails-to-compare.ket',
       FileType.KET,
@@ -1775,7 +1778,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTail(page, 300, 400);
     await addTail(page, 300, 400);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/one-reaction-arrow-with-six-tails-to-compare.ket',
       FileType.KET,
@@ -1999,7 +2002,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(500, 300, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-default-head-up-expected.ket',
       FileType.KET,
@@ -2023,7 +2026,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(500, 600, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-default-head-down-expected.ket',
       FileType.KET,
@@ -2047,7 +2050,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-default-head-minimal-size-expected.ket',
       FileType.KET,
@@ -2071,7 +2074,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(800, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-default-head-increase-size-expected.ket',
       FileType.KET,
@@ -2097,7 +2100,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(500, 200, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/button-added-multi-tailed-arrow-default-head-up-expected.ket',
       FileType.KET,
@@ -2123,7 +2126,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-move').hover({ force: true });
     await dragMouseTo(500, 600, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/button-added-multi-tailed-arrow-default-head-down-expected.ket',
       FileType.KET,
@@ -2149,7 +2152,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/button-added-multi-tailed-arrow-default-head-minimal-size-expected.ket',
       FileType.KET,
@@ -2175,7 +2178,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(800, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/button-added-multi-tailed-arrow-default-head-increase-size-expected.ket',
       FileType.KET,
@@ -2214,7 +2217,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(900, 500, page);
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 200, 200);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrows-3-with-elements-moved-and-resized-heads-expected.ket',
       FileType.KET,
@@ -2258,7 +2261,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-resize').nth(2).hover({ force: true });
     await dragMouseTo(900, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/button-added-multi-tailed-arrows-3-with-elements-moved-and-resized-heads-expected.ket',
       FileType.KET,
@@ -2636,7 +2639,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(500, 600, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/moved-toptail-and-bottomtail-expected.ket',
       FileType.KET,
@@ -2663,7 +2666,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(500, 200, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/moved-toptail-and-bottomtail-to-head-expected.ket',
       FileType.KET,
@@ -2687,7 +2690,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('topTail-resize').hover({ force: true });
     await dragMouseTo(700, 100, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-2-tails-reduced-1-expected.ket',
       FileType.KET,
@@ -2711,7 +2714,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('topTail-resize').hover({ force: true });
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-default-increased-to-left-expected.ket',
       FileType.KET,
@@ -2741,7 +2744,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(500, 600, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/button-added-moved-toptail-and-bottomtail-expected.ket',
       FileType.KET,
@@ -2770,7 +2773,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(500, 200, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/button-added-moved-toptail-and-bottomtail-to-head-expected.ket',
       FileType.KET,
@@ -2799,7 +2802,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('topTail-resize').hover({ force: true });
     await dragMouseTo(700, 100, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/button-added-multi-tailed-arrow-2-tails-reduced-1-expected.ket',
       FileType.KET,
@@ -2837,7 +2840,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(400, 500, page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrows-3-with-elements-moved-and-resized-tails-expected.ket',
       FileType.KET,
@@ -2881,7 +2884,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(400, 500, page);
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/button-added-multi-tailed-arrows-3-moved-and-resized-tails-expected.ket',
       FileType.KET,
@@ -3285,7 +3288,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('tails-0-move').hover({ force: true });
     await dragMouseTo(500, 300, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-3-tails-default-middle-tail-up-expected.ket',
       FileType.KET,
@@ -3309,7 +3312,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('tails-0-move').hover({ force: true });
     await dragMouseTo(500, 600, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-3-tails-default-middle-tail-down-expected.ket',
       FileType.KET,
@@ -3336,7 +3339,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('tails-0-resize').hover({ force: true });
     await dragMouseTo(800, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/multi-tailed-arrow-3-tails-default-middle-tail-to-left-right-expected.ket',
       FileType.KET,
@@ -3368,7 +3371,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('tails-0-resize').hover({ force: true });
     await dragMouseTo(800, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/button-added-multi-tailed-arrow-3-tails-default-middle-tail-to-left-right-expected.ket',
       FileType.KET,
@@ -3403,7 +3406,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('tails-0-move').hover({ force: true });
     await dragMouseTo(400, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/button-added-multi-tailed-arrow-3-tails-default-manupulate-with-tails-expected.ket',
       FileType.KET,
@@ -3447,7 +3450,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTails(page, 1);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/button-added-multi-tailed-arrow-3-tails-default-manupulate-with-extra-tails-expected.ket',
       FileType.KET,
@@ -3573,7 +3576,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await selectDearomatizeTool(page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-aromatize-expected.ket',
       FileType.KET,
@@ -3662,7 +3665,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Layout, page);
       await takeEditorScreenshot(page);
-      await verifyFile2(page, expectedFile, FileType.KET);
+      await verifyFileExport(page, expectedFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(expectedFile, page);
       await takeEditorScreenshot(page);
     });
@@ -3697,7 +3700,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/ket-cascade-reaction-3-1-2-1-1-corrected-layout-expected.ket',
       FileType.KET,
@@ -3740,7 +3743,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/ket-cascade-reaction-3-1-2-1-1-corrected-clean-up-expected.ket',
       FileType.KET,
@@ -3773,7 +3776,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/ket-cascade-reaction-3-1-2-1-1-cip-expected.ket',
       FileType.KET,
@@ -3810,7 +3813,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     });
     await pressButton(page, 'Cancel');
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/ket-cascade-reaction-3-1-2-1-1-check-expected.ket',
       FileType.KET,
@@ -3845,7 +3848,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Close');
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/ket-cascade-reaction-3-1-2-1-1-calculated-expected.ket',
       FileType.KET,
@@ -3880,7 +3883,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/ket-cascade-reaction-3-1-2-1-1-hydrogens-expected.ket',
       FileType.KET,

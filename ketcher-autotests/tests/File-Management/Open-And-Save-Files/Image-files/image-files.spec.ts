@@ -46,7 +46,10 @@ import {
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { closeErrorAndInfoModals, pageReload } from '@utils/common/helpers';
-import { FileType, verifyFile2 } from '@utils/files/receiveFileComparisonData';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import { openStructureLibrary } from '@utils/templates';
 import {
   pressRedoButton,
@@ -80,7 +83,11 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg-demo.svg', page);
     await takeEditorScreenshot(page);
-    await verifyFile2(page, 'KET/image-svg-demo-expected.ket', FileType.KET);
+    await verifyFileExport(
+      page,
+      'KET/image-svg-demo-expected.ket',
+      FileType.KET,
+    );
     await openFileAndAddToCanvasAsNewProject(
       'KET/image-svg-demo-expected.ket',
       page,
@@ -95,7 +102,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-png.png', page);
     await takeEditorScreenshot(page);
-    await verifyFile2(page, 'KET/image-png-expected.ket', FileType.KET);
+    await verifyFileExport(page, 'KET/image-png-expected.ket', FileType.KET);
     await openFileAndAddToCanvasAsNewProject(
       'KET/image-png-expected.ket',
       page,
@@ -111,7 +118,11 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg-demo.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await verifyFile2(page, 'KET/image-svg-and-png-expected.ket', FileType.KET);
+    await verifyFileExport(
+      page,
+      'KET/image-svg-and-png-expected.ket',
+      FileType.KET,
+    );
     await openFileAndAddToCanvasAsNewProject(
       'KET/image-svg-and-png-expected.ket',
       page,
@@ -130,7 +141,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/four-images-svg-and-png-expected.ket',
       FileType.KET,
@@ -152,7 +163,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/images-with-benzene-ring-and-arrow-expected.ket',
       FileType.KET,
@@ -174,7 +185,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/images-png-svg-with-elements-expected.ket',
       FileType.KET,
@@ -197,7 +208,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/images-png-svg-80-with-50-structures-expected.ket',
       FileType.KET,
@@ -222,7 +233,7 @@ test.describe('Image files', () => {
       200,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/two-images-with-many-elements-expected.ket',
       FileType.KET,
@@ -951,7 +962,7 @@ test.describe('Image files', () => {
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/image-svg-png-after-moving-expected.ket',
       FileType.KET,
@@ -978,7 +989,7 @@ test.describe('Image files', () => {
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDX/image-svg-png-after-moving-expected.cdx',
       FileType.CDX,
@@ -1006,7 +1017,7 @@ test.describe('Image files', () => {
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/image-svg-png-after-moving-expected.cdxml',
       FileType.CDXML,
@@ -1037,7 +1048,7 @@ test.describe('Image files', () => {
 
     await dragMouseTo(500, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/image-svg-png-after-scaling-expected.ket',
       FileType.KET,
@@ -1067,7 +1078,7 @@ test.describe('Image files', () => {
     await resizeHandle.hover({ force: true });
     await dragMouseTo(500, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDX/image-svg-png-after-scaling-expected.cdx',
       FileType.CDX,
@@ -1098,7 +1109,7 @@ test.describe('Image files', () => {
     await resizeHandle.hover({ force: true });
     await dragMouseTo(500, 500, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/image-svg-png-after-scaling-expected.cdxml',
       FileType.CDXML,
@@ -1122,7 +1133,7 @@ test.describe('Image files', () => {
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/image-svg-png-after-deleting-expected.ket',
       FileType.KET,
@@ -1148,7 +1159,7 @@ test.describe('Image files', () => {
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDX/image-svg-png-after-deleting-expected.cdx',
       FileType.CDX,
@@ -1175,7 +1186,7 @@ test.describe('Image files', () => {
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/image-svg-png-after-deleting-expected.cdxml',
       FileType.CDXML,
@@ -1199,7 +1210,7 @@ test.describe('Image files', () => {
     await copyAndPaste(page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/image-svg-png-after-copying-expected.ket',
       FileType.KET,
@@ -1225,7 +1236,7 @@ test.describe('Image files', () => {
     await copyAndPaste(page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDX/image-svg-png-after-copying-expected.cdx',
       FileType.CDX,
@@ -1252,7 +1263,7 @@ test.describe('Image files', () => {
     await copyAndPaste(page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/image-svg-png-after-copying-expected.cdxml',
       FileType.CDXML,
@@ -1279,7 +1290,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await selectDearomatizeTool(page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/images-png-svg-with-benzene-expected.ket',
       FileType.KET,
@@ -1307,7 +1318,7 @@ test.describe('Image files', () => {
       async () => await selectTopPanelButton(TopPanelButton.Layout, page),
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/images-png-svg-with-benzene-for-distorting-expected.ket',
       FileType.KET,
@@ -1360,7 +1371,7 @@ test.describe('Image files', () => {
       async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/images-png-svg-with-benzene-for-calculateCIP-expected.ket',
       FileType.KET,
@@ -1391,7 +1402,7 @@ test.describe('Image files', () => {
       masks: [page.locator('[class*="Check-module_checkInfo"] > span')],
     });
     await pressButton(page, 'Cancel');
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/images-png-svg-with-benzene-for-check-structure-expected.ket',
       FileType.KET,
@@ -1420,7 +1431,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await pressButton(page, 'Close');
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
       FileType.KET,
@@ -1461,7 +1472,7 @@ test.describe('Image files', () => {
         ),
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/images-png-svg-with-benzene-for-explicit-expected.ket',
       FileType.KET,
@@ -1489,7 +1500,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await pressButton(page, 'Cancel');
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/images-png-svg-with-benzene-for-calculate-values-expected.ket',
       FileType.KET,
@@ -1533,7 +1544,7 @@ test.describe('Image files', () => {
 
       await applyAutoMapMode(page, mode);
 
-      await verifyFile2(page, expectedFiles[index], FileType.KET);
+      await verifyFileExport(page, expectedFiles[index], FileType.KET);
       await openFileAndAddToCanvasAsNewProject(expectedFiles[index], page);
       await takeEditorScreenshot(page);
     });
@@ -1547,7 +1558,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-png.png', page);
     await takeEditorScreenshot(page);
-    await verifyFile2(page, 'CDX/image-png-expected.cdx', FileType.CDX);
+    await verifyFileExport(page, 'CDX/image-png-expected.cdx', FileType.CDX);
     const fileContent = await readFileContents(
       'tests/test-data/CDX/image-png-expected.cdx',
     );
@@ -1564,7 +1575,11 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-png.png', page);
     await takeEditorScreenshot(page);
-    await verifyFile2(page, 'CDXML/image-png-expected.cdxml', FileType.CDXML);
+    await verifyFileExport(
+      page,
+      'CDXML/image-png-expected.cdxml',
+      FileType.CDXML,
+    );
     await openFileAndAddToCanvasAsNewProject(
       'CDXML/image-png-expected.cdxml',
       page,
@@ -1580,7 +1595,11 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg-colored.svg', page);
     await takeEditorScreenshot(page);
-    await verifyFile2(page, 'CDX/image-svg-colored-expected.cdx', FileType.CDX);
+    await verifyFileExport(
+      page,
+      'CDX/image-svg-colored-expected.cdx',
+      FileType.CDX,
+    );
     const fileContent = await readFileContents(
       'tests/test-data/CDX/image-svg-colored-expected.cdx',
     );
@@ -1597,7 +1616,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg-colored.svg', page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/image-svg-colored-expected.cdxml',
       FileType.CDXML,
@@ -1620,7 +1639,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDX/images-svg-colored-above-png-expected.cdx',
       FileType.CDX,
@@ -1644,7 +1663,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/images-svg-colored-above-png-expected.cdxml',
       FileType.CDXML,
@@ -1667,7 +1686,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDX/image-png-with-elements-expected.cdx',
       FileType.CDX,
@@ -1691,7 +1710,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/image-png-with-elements-expected.cdxml',
       FileType.CDXML,
@@ -1714,7 +1733,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDX/image-svg-with-elements-expected.cdx',
       FileType.CDX,
@@ -1738,7 +1757,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/image-svg-with-elements-expected.cdxml',
       FileType.CDXML,
@@ -1761,7 +1780,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDX/image-svg-png-with-elements-expected.cdx',
       FileType.CDX,
@@ -1785,7 +1804,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/image-svg-png-with-elements-expected.cdxml',
       FileType.CDXML,
@@ -1820,7 +1839,7 @@ test.describe('Image files', () => {
     await setZoomInputValue(page, '60');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDX/two-images-png-with-elements-expected.cdx',
       FileType.CDX,
@@ -1856,7 +1875,7 @@ test.describe('Image files', () => {
     await setZoomInputValue(page, '60');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/two-images-png-with-elements-expected.cdxml',
       FileType.CDXML,
@@ -1891,7 +1910,7 @@ test.describe('Image files', () => {
     await setZoomInputValue(page, '60');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDX/two-images-svg-with-elements-expected.cdx',
       FileType.CDX,
@@ -1927,7 +1946,7 @@ test.describe('Image files', () => {
     await setZoomInputValue(page, '60');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/two-images-svg-with-elements-expected.cdxml',
       FileType.CDXML,
@@ -1962,7 +1981,7 @@ test.describe('Image files', () => {
     await setZoomInputValue(page, '60');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDX/two-image-svg-png-with-elements-expected.cdx',
       FileType.CDX,
@@ -1998,7 +2017,7 @@ test.describe('Image files', () => {
     await setZoomInputValue(page, '60');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/two-image-svg-png-with-elements-expected.cdxml',
       FileType.CDXML,
@@ -2097,7 +2116,7 @@ test.describe('Image files', () => {
     await setZoomInputValue(page, '20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDX/images-png-50-with-50-structures-expected.cdx',
       FileType.CDX,
@@ -2126,7 +2145,7 @@ test.describe('Image files', () => {
     await setZoomInputValue(page, '20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/images-png-50-with-50-structures-expected.cdxml',
       FileType.CDXML,
@@ -2360,7 +2379,11 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await verifyFile2(page, 'CDX/two-image-png-expected.cdx', FileType.CDX);
+    await verifyFileExport(
+      page,
+      'CDX/two-image-png-expected.cdx',
+      FileType.CDX,
+    );
     const fileContent = await readFileContents(
       'tests/test-data/CDX/two-image-png-expected.cdx',
     );
@@ -2378,7 +2401,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/two-image-png-expected.cdxml',
       FileType.CDXML,
@@ -2405,7 +2428,11 @@ test.describe('Image files', () => {
       200,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(page, 'CDX/two-image-svg-expected.cdx', FileType.CDX);
+    await verifyFileExport(
+      page,
+      'CDX/two-image-svg-expected.cdx',
+      FileType.CDX,
+    );
     const fileContent = await readFileContents(
       'tests/test-data/CDX/two-image-svg-expected.cdx',
     );
@@ -2429,7 +2456,7 @@ test.describe('Image files', () => {
       200,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'CDXML/two-image-svg-expected.cdxml',
       FileType.CDXML,

@@ -35,7 +35,10 @@ import {
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
-import { FileType, verifyFile2 } from '@utils/files/receiveFileComparisonData';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
@@ -503,7 +506,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
-  await verifyFile2(
+  await verifyFileExport(
     page,
     'KET/two-peptides-connected-expected.ket',
     FileType.KET,

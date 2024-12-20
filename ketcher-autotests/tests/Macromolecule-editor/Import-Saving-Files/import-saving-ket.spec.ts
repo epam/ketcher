@@ -26,7 +26,10 @@ import {
   selectZoomOutTool,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import { FileType, verifyFile2 } from '@utils/files/receiveFileComparisonData';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
@@ -876,7 +879,7 @@ for (const monomer of allTypesOfMonomers) {
     await turnOnMicromoleculesEditor(page);
     await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(page, monomer.KETFile_Expected, FileType.KET);
+    await verifyFileExport(page, monomer.KETFile_Expected, FileType.KET);
     await openFileAndAddToCanvasAsNewProject(monomer.KETFile_Expected, page);
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
@@ -900,7 +903,7 @@ test(`Verify that user can save/load macromolecule structures with hydrogen bond
 
   await openFileAndAddToCanvasAsNewProject(KETFile, page);
   await takeEditorScreenshot(page);
-  await verifyFile2(page, KETFileExpected, FileType.KET);
+  await verifyFileExport(page, KETFileExpected, FileType.KET);
 });
 
 test(`Verify that the structure in macro mode can be saved as a .ket file, and all elements including bonds and atoms are correctly restored when re-loaded`, async () => {
@@ -924,7 +927,7 @@ test(`Verify that the structure in macro mode can be saved as a .ket file, and a
   await openFileAndAddToCanvasAsNewProject(KETFile, page);
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
-  await verifyFile2(page, KETFileExpected, FileType.KET);
+  await verifyFileExport(page, KETFileExpected, FileType.KET);
   await openFileAndAddToCanvasAsNewProject(KETFileExpected, page);
   await moveMouseAway(page);
   await takeEditorScreenshot(page);

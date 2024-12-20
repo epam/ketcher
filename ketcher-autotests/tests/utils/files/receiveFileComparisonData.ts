@@ -30,7 +30,7 @@ const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
     [FileType.MOL]: getMolfile,
   };
 
-export async function verifyFile2(
+export async function verifyFileExport(
   page: Page,
   expectedFilename: string,
   fileType: FileType,
@@ -214,7 +214,7 @@ export async function receiveFileComparisonData({
     fileExpected: filterByIndexes(fileExpected, metaDataIndexes),
   };
 }
-export async function verifyHELM(page: Page, HELMExportExpected = '') {
+export async function verifyHELMExport(page: Page, HELMExportExpected = '') {
   await selectSaveTool(page);
   await chooseFileFormat(page, 'HELM');
   const HELMExportResult = await page

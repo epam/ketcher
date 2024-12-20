@@ -29,8 +29,7 @@ import {
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
-  verifyFile2,
-  verifyMolfile,
+  verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
   disableViewOnlyMode,
@@ -492,7 +491,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/benzene-ring-saved-in-view-only-mode-expected.ket',
       FileType.KET,
@@ -514,13 +513,20 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await verifyMolfile(
+    await verifyFileExport(
       page,
-      'v2000',
       'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
-      'tests/test-data/Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
+      FileType.MOL,
+      'v2000',
       [1],
     );
+    // await verifyMolfile(
+    //   page,
+    //   'v2000',
+    //   'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
+    //   'tests/test-data/Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
+    //   [1],
+    // );
 
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
@@ -539,13 +545,20 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await verifyMolfile(
+    await verifyFileExport(
       page,
-      'v3000',
       'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
-      'tests/test-data/Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
+      FileType.MOL,
+      'v3000',
       [1],
     );
+    // await verifyMolfile(
+    //   page,
+    //   'v3000',
+    //   'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
+    //   'tests/test-data/Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
+    //   [1],
+    // );
 
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',

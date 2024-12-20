@@ -27,9 +27,9 @@ import {
 } from '@utils/macromolecules/topToolBar';
 import { getMonomerLocatorByAlias } from '@utils/macromolecules/monomer';
 import {
-  verifyFile2,
+  verifyFileExport,
   FileType,
-  verifyHELM,
+  verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
@@ -2893,13 +2893,13 @@ test(`14. Validate that both sense and antisense strands can be exported correct
 
   await createAntisenseStrandOption.click();
 
-  await verifyFile2(
+  await verifyFileExport(
     page,
     'KET/Antisense-Chains/Antisense-expected.ket',
     FileType.KET,
   );
 
-  await verifyFile2(
+  await verifyFileExport(
     page,
     'KET/Antisense-Chains/Antisense-expected.mol',
     FileType.MOL,
@@ -2907,7 +2907,7 @@ test(`14. Validate that both sense and antisense strands can be exported correct
     [1],
   );
 
-  await verifyHELM(
+  await verifyHELMExport(
     page,
     'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe]}|' +
       'RNA2{R(A)P.R(C)P.R(G)P}|PEPTIDE2{[1Nal].[Cys_Bn].[AspOMe]}' +

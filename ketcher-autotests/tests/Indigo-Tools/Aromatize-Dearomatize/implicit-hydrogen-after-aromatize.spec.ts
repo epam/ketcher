@@ -1,12 +1,9 @@
 import { test } from '@playwright/test';
 import {
-  TopPanelButton,
   openFileAndAddToCanvas,
   selectAromatizeTool,
-  selectTopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
-  waitForSpinnerFinishedWork,
 } from '@utils';
 
 test.describe('Shows correctly implicit Hydrogen after aromatize', () => {

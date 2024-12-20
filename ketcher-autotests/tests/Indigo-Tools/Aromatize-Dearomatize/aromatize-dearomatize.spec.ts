@@ -1,9 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
 import {
-  selectTopPanelButton,
   openFileAndAddToCanvas,
-  TopPanelButton,
   takeEditorScreenshot,
   copyAndPaste,
   cutAndPaste,
@@ -15,7 +13,6 @@ import {
   selectAllStructuresOnCanvas,
   receiveFileComparisonData,
   saveToFile,
-  waitForSpinnerFinishedWork,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,

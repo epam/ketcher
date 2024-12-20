@@ -36,7 +36,6 @@ class TripleBondPathRenderer {
           L${bottomLineEndPosition.x},${bottomLineEndPosition.y}
         `,
       attrs: {
-        stroke: 'black',
         'stroke-width': `${BondWidth}`,
       },
     };

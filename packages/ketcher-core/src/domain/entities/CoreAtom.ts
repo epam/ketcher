@@ -1,8 +1,7 @@
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Bond } from 'domain/entities/CoreBond';
-import { Bond as MicromoleculesBond } from 'domain/entities/bond';
+import { Bond, BondType } from 'domain/entities/CoreBond';
 import { BaseRenderer } from 'application/render';
 import { AtomLabel, Elements } from 'domain/constants';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
@@ -37,24 +36,25 @@ export class Atom extends DrawingEntity {
 
     for (let i = 0; i < this.bonds.length; i++) {
       switch (this.bonds[i].type) {
-        case MicromoleculesBond.PATTERN.TYPE.SINGLE:
+        case BondType.Single:
           connectionsAmount += 1;
           break;
-        case MicromoleculesBond.PATTERN.TYPE.DOUBLE:
+        case BondType.Double:
           connectionsAmount += 2;
           break;
-        case MicromoleculesBond.PATTERN.TYPE.TRIPLE:
+        case BondType.Triple:
           connectionsAmount += 3;
           break;
-        case MicromoleculesBond.PATTERN.TYPE.DATIVE:
+        case BondType.Dative:
+        case BondType.Hydrogen:
           break;
-        case MicromoleculesBond.PATTERN.TYPE.HYDROGEN:
-          break;
-        case MicromoleculesBond.PATTERN.TYPE.AROMATIC:
-          if (this.bonds.length === 1) return 0;
+        case BondType.Aromatic:
+          if (this.bonds.length === 1) {
+            return -1;
+          }
           return this.bonds.length;
         default:
-          return 0;
+          return -1;
       }
     }
 
@@ -77,8 +77,15 @@ export class Atom extends DrawingEntity {
     const radicalAmount = this.calculateRadicalAmount();
     const absCharge = 0;
     const charge = this.calculateCharge();
-    let valence = this.calculateConnections();
+    let valence = connectionAmount;
     let hydrogenAmount = 0;
+
+    if (connectionAmount === -1) {
+      return {
+        valence,
+        hydrogenAmount,
+      };
+    }
 
     if (elementGroupNumber === undefined) {
       if (label === AtomLabel.D || label === AtomLabel.T) {

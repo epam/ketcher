@@ -1,7 +1,7 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { Bond } from 'domain/entities/CoreBond';
+import { Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
 import { Scale } from 'domain/helpers';
 import { Vec2 } from 'domain/entities';
 import { CoreEditor } from 'application/editor';
@@ -9,7 +9,6 @@ import { HalfEdge } from 'application/render/view-model/HalfEdge';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
 import { D3SvgElementSelection } from 'application/render/types';
-import { BondStereo, BondType } from 'application/render/renderers/constants';
 import {
   BondSVGPath,
   BondVectors,
@@ -394,7 +393,13 @@ export class BondRenderer extends BaseRenderer {
     }
 
     paths.forEach(({ d, attrs }) => {
-      const path = this.rootElement?.append('path').attr('d', d);
+      const path = this.rootElement
+        ?.append('path')
+        .attr('d', d)
+        .attr('stroke', 'black')
+        .attr('stroke-linecap', 'round')
+        .attr('stroke-linejoin', 'round');
+
       Object.entries(attrs).forEach(([key, value]) => {
         path?.attr(key, value);
       });
@@ -412,6 +417,7 @@ export class BondRenderer extends BaseRenderer {
     const hoverPath = this.rootElement
       .append('path')
       .attr('d', combinedPath)
+      .attr('fill', 'none')
       .attr('stroke', 'transparent')
       .attr('stroke-width', `${combinedPathWidth * BOND_WIDTH_HOVER}`);
 

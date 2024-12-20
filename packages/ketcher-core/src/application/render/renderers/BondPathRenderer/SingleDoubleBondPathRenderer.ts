@@ -6,8 +6,8 @@ import {
   BondWidth,
   LinesOffset,
 } from 'application/render/renderers/BondPathRenderer/constants';
-import { BondType } from 'application/render/renderers/constants';
 import { Vec2 } from 'domain/entities';
+import { BondType } from 'domain/entities/CoreBond';
 
 class SingleDoubleBondPathRenderer {
   static preparePaths(bondVectors: BondVectors): BondSVGPath[] {
@@ -64,7 +64,6 @@ class SingleDoubleBondPathRenderer {
     const svgPath: BondSVGPath = {
       d: path,
       attrs: {
-        stroke: 'black',
         'stroke-dasharray': BondDashArrayMap[BondType.SingleDouble],
         'stroke-width': `${BondWidth}`,
       },

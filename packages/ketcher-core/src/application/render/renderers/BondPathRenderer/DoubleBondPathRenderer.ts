@@ -7,7 +7,7 @@ import {
   LinesOffset,
 } from 'application/render/renderers/BondPathRenderer/constants';
 import { getBondLineShift } from 'application/render/restruct/rebond';
-import { BondType } from 'application/render/renderers/constants';
+import { BondType } from 'domain/entities/CoreBond';
 
 class DoubleBondPathRenderer {
   static preparePaths(
@@ -112,7 +112,6 @@ class DoubleBondPathRenderer {
           L${secondLineEndPosition.x},${secondLineEndPosition.y}
         `,
         attrs: {
-          stroke: 'black',
           'stroke-dasharray': strokeDasharray,
           'stroke-width': `${BondWidth}`,
         },

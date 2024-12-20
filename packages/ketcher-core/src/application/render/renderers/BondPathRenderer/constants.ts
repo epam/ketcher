@@ -1,6 +1,6 @@
 import { Vec2 } from 'domain/entities';
 import { HalfEdge } from 'application/render/view-model/HalfEdge';
-import { BondType } from 'application/render/renderers/constants';
+import { BondType } from 'domain/entities/CoreBond';
 
 export type BondSVGPath = {
   d: string;
@@ -20,10 +20,10 @@ export const BondSpace = 6;
 export const LinesOffset = BondSpace / 2;
 
 export const BondDashArrayMap = {
-  [BondType.Aromatic]: '8',
-  [BondType.SingleDouble]: '8',
-  [BondType.SingleAromatic]: '8 4 4 4',
-  [BondType.DoubleAromatic]: '8 4 4 4',
-  [BondType.Any]: '8',
-  [BondType.Hydrogen]: '2',
+  [BondType.Aromatic]: '6',
+  [BondType.SingleDouble]: '6',
+  [BondType.SingleAromatic]: '4 4 1 4',
+  [BondType.DoubleAromatic]: '4 4 1 4',
+  [BondType.Any]: '6',
+  [BondType.Hydrogen]: '3',
 };

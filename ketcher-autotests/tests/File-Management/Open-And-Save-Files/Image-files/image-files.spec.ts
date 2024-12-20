@@ -27,7 +27,9 @@ import {
   saveToTemplates,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
+  selectAromatizeTool,
   selectClearCanvasTool,
+  selectDearomatizeTool,
   selectEraseTool,
   selectLeftPanelButton,
   selectRectangleSelectionTool,
@@ -1273,9 +1275,11 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    // await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    selectAromatizeTool(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    // await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    selectDearomatizeTool(page);
     await takeEditorScreenshot(page);
     await verifyFile2(
       page,

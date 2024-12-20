@@ -1,3 +1,4 @@
+/* eslint-disable no-inline-comments */
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
@@ -386,7 +387,9 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that the "Highlight" option appears below "Add attachment point." for selected atom', async ({ page }) => {
+  test('Verify that the "Highlight" option appears below "Add attachment point." for selected atom', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4984
     Description: "Highlight" option appears below "Add attachment point." for selected atom.
@@ -400,7 +403,9 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that the "Highlight" option appears below "Attach S-Group." for selected bond', async ({ page }) => {
+  test('Verify that the "Highlight" option appears below "Attach S-Group." for selected bond', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4984
     Description: "Highlight" option appears below "Attach S-Group." for selected bond.
@@ -414,7 +419,9 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify that the "Highlight" option appears below "Enhanced stereochemistry," separated by a horizontal delimiter line for selected multiple atoms and bonds', async ({ page }) => {
+  test('Verify that the "Highlight" option appears below "Enhanced stereochemistry," separated by a horizontal delimiter line for selected multiple atoms and bonds', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4984
     Description: "Highlight" option appears below "Enhanced stereochemistry," separated by a horizontal delimiter line for selected multiple atoms and bonds.
@@ -434,7 +441,9 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Click on the "Highlight" option and confirm that the standard colors are displayed (eight colors and a "No highlight" option)', async ({ page }) => {
+  test('Click on the "Highlight" option and confirm that the standard colors are displayed (eight colors and a "No highlight" option)', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4984
     Description: "Highlight" option standard colors are displayed (eight colors and a "No highlight" option).
@@ -449,7 +458,9 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Select each color individually and verify that the selected atoms are highlighted with the chosen color', async ({ page }) => {
+  test('Select each color individually and verify that the selected atoms are highlighted with the chosen color', async ({
+    page,
+  }) => {
     /*
       Test case: https://github.com/epam/ketcher/issues/4984
       Description: The selected atoms are highlighted with the chosen color.
@@ -462,14 +473,14 @@ test.describe('Right-click menu', () => {
     await drawBenzeneRing(page);
     await selectRectangleSelection(page);
     const colors = [
-      '.css-cyxjjb',   // Red
-      '.css-55t14h',   // Orange
-      '.css-q0qzfh',   // Yellow
-      '.css-1pz88a0',  // Green
-      '.css-d1acvy',   // Blue
-      '.css-1jrzwzn',  // Pink
-      '.css-1kxl817',  // Burgundy
-      '.css-1j267jk',  // Purple
+      '.css-cyxjjb', // Red
+      '.css-55t14h', // Orange
+      '.css-q0qzfh', // Yellow
+      '.css-1pz88a0', // Green
+      '.css-d1acvy', // Blue
+      '.css-1jrzwzn', // Pink
+      '.css-1kxl817', // Burgundy
+      '.css-1j267jk', // Purple
     ];
 
     for (const color of colors) {
@@ -480,7 +491,9 @@ test.describe('Right-click menu', () => {
     }
   });
 
-  test('Select each color individually and verify that the selected bonds are highlighted with the chosen color', async ({ page }) => {
+  test('Select each color individually and verify that the selected bonds are highlighted with the chosen color', async ({
+    page,
+  }) => {
     /*
       Test case: https://github.com/epam/ketcher/issues/4984
       Description: The selected bonds are highlighted with the chosen color.
@@ -493,14 +506,14 @@ test.describe('Right-click menu', () => {
     await drawBenzeneRing(page);
     await selectRectangleSelection(page);
     const colors = [
-      '.css-cyxjjb',   // Red
-      '.css-55t14h',   // Orange
-      '.css-q0qzfh',   // Yellow
-      '.css-1pz88a0',  // Green
-      '.css-d1acvy',   // Blue
-      '.css-1jrzwzn',  // Pink
-      '.css-1kxl817',  // Burgundy
-      '.css-1j267jk',  // Purple
+      '.css-cyxjjb', // Red
+      '.css-55t14h', // Orange
+      '.css-q0qzfh', // Yellow
+      '.css-1pz88a0', // Green
+      '.css-d1acvy', // Blue
+      '.css-1jrzwzn', // Pink
+      '.css-1kxl817', // Burgundy
+      '.css-1j267jk', // Purple
     ];
 
     for (const color of colors) {
@@ -511,7 +524,9 @@ test.describe('Right-click menu', () => {
     }
   });
 
-  test('Select the "No highlight" option and confirm that the highlight is removed from the selected elements', async ({ page }) => {
+  test('Select the "No highlight" option and confirm that the highlight is removed from the selected elements', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4984
     Description: The highlight is removed from the selected elements.
@@ -539,7 +554,9 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Perform undo and redo operations after applying a highlight and verify that the highlight state is accurately restored', async ({ page }) => {
+  test('Perform undo and redo operations after applying a highlight and verify that the highlight state is accurately restored', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4984
     Description: The highlight state is accurately restored.
@@ -561,7 +578,9 @@ test.describe('Right-click menu', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Apply different highlights to different atoms/bonds and ensure that the highlights do not interfere with each other', async ({ page }) => {
+  test('Apply different highlights to different atoms/bonds and ensure that the highlights do not interfere with each other', async ({
+    page,
+  }) => {
     /*
     Test case: https://github.com/epam/ketcher/issues/4984
     Description: The highlights do not interfere with each other.
@@ -572,13 +591,33 @@ test.describe('Right-click menu', () => {
     */
     const highlights = [
       { type: 'atom', index: 0, colorClass: '.css-cyxjjb' },
-      { type: 'bond', index: 0, bondType: BondType.SINGLE, colorClass: '.css-d1acvy' },
+      {
+        type: 'bond',
+        index: 0,
+        bondType: BondType.SINGLE,
+        colorClass: '.css-d1acvy',
+      },
       { type: 'atom', index: 1, colorClass: '.css-1pz88a0' },
-      { type: 'bond', index: 1, bondType: BondType.SINGLE, colorClass: '.css-q0qzfh' },
+      {
+        type: 'bond',
+        index: 1,
+        bondType: BondType.SINGLE,
+        colorClass: '.css-q0qzfh',
+      },
       { type: 'atom', index: 2, colorClass: '.css-1pz88a0' },
-      { type: 'bond', index: 2, bondType: BondType.SINGLE, colorClass: '.css-1j267jk' },
+      {
+        type: 'bond',
+        index: 2,
+        bondType: BondType.SINGLE,
+        colorClass: '.css-1j267jk',
+      },
       { type: 'atom', index: 3, colorClass: '.css-55t14h' },
-      { type: 'bond', index: 0, bondType: BondType.DOUBLE, colorClass: '.css-1jrzwzn' },
+      {
+        type: 'bond',
+        index: 0,
+        bondType: BondType.DOUBLE,
+        colorClass: '.css-1jrzwzn',
+      },
     ];
 
     await drawBenzeneRing(page);
@@ -586,7 +625,10 @@ test.describe('Right-click menu', () => {
     for (const highlight of highlights) {
       if (highlight.type === 'atom') {
         await clickOnAtom(page, 'C', highlight.index, 'right');
-      } else if (highlight.type === 'bond' && highlight.bondType !== undefined) {
+      } else if (
+        highlight.type === 'bond' &&
+        highlight.bondType !== undefined
+      ) {
         await clickOnBond(page, highlight.bondType, highlight.index, 'right');
       }
       await page.getByText('Highlight', { exact: true }).click();
@@ -594,5 +636,5 @@ test.describe('Right-click menu', () => {
       await clickOnCanvas(page, 100, 100);
     }
     await takeEditorScreenshot(page);
-  });   
+  });
 });

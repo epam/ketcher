@@ -2,10 +2,6 @@ import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
   selectAromatizeTool,
-<<<<<<< HEAD
-=======
-  selectTopPanelButton,
->>>>>>> 809500529 (Replaced explicit Aromatize and Dearomatize selections in tests with calls to the respective helper functions.)
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';

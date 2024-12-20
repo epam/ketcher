@@ -46,6 +46,7 @@ import {
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { attachmentPointNames } from 'domain/types';
 import { getAttachmentPointLabel } from 'domain/helpers/attachmentPointCalculations';
+import { VALENCE_MAP } from 'application/render/restruct/constants';
 
 interface ElemAttr {
   text: string;
@@ -1104,28 +1105,11 @@ function showExplicitValence(
   render: Render,
   rightMargin: number,
 ): ElemAttr {
-  const mapValence = {
-    0: '0',
-    1: 'I',
-    2: 'II',
-    3: 'III',
-    4: 'IV',
-    5: 'V',
-    6: 'VI',
-    7: 'VII',
-    8: 'VIII',
-    9: 'IX',
-    10: 'X',
-    11: 'XI',
-    12: 'XII',
-    13: 'XIII',
-    14: 'XIV',
-  };
   const ps = Scale.modelToCanvas(atom.a.pp, render.options);
   const options = render.options;
   const delta = 0.5 * options.lineWidth;
   const valence: any = {};
-  valence.text = mapValence[atom.a.explicitValence];
+  valence.text = VALENCE_MAP[atom.a.explicitValence];
   if (!valence.text) {
     throw new Error('invalid valence ' + atom.a.explicitValence.toString());
   }

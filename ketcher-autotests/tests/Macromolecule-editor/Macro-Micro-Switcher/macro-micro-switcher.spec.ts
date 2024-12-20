@@ -72,6 +72,8 @@ import {
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
+  setZoomInputValue,
+  resetCurrentTool,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -3326,6 +3328,8 @@ test(`Verify that "Expand monomer" does not break cyclic structures when the rin
     page,
   );
   await takeEditorScreenshot(page);
+  await setZoomInputValue(page, '50');
+  await resetCurrentTool(page);
   await expandMonomer(page, 'A');
   await expandMonomer(page, '5hMedC');
   await expandMonomer(page, 'gly');

@@ -1252,7 +1252,6 @@ function bondSingleEither(
     .path(path)
     .attr(options.lineattr)
     .attr({
-      fill: color,
       stroke: color,
     })
     .attr(isSnapping ? options.bondSnappingStyle : {});

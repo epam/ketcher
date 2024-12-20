@@ -1275,9 +1275,9 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    selectAromatizeTool(page);
+    await selectAromatizeTool(page);
     await takeEditorScreenshot(page);
-    selectDearomatizeTool(page);
+    await selectDearomatizeTool(page);
     await takeEditorScreenshot(page);
     await verifyFile2(
       page,

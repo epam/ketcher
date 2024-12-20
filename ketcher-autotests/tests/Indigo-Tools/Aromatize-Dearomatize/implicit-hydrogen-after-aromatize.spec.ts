@@ -2,6 +2,7 @@ import { test } from '@playwright/test';
 import {
   TopPanelButton,
   openFileAndAddToCanvas,
+  selectAromatizeTool,
   selectTopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
@@ -30,9 +31,7 @@ test.describe('Shows correctly implicit Hydrogen after aromatize', () => {
         `KET/Implicit-Hydrogen-After-Aromatize/${fileName}`,
         page,
       );
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(TopPanelButton.Aromatize, page);
-      });
+      await selectAromatizeTool(page);
       await takeEditorScreenshot(page);
     });
   }

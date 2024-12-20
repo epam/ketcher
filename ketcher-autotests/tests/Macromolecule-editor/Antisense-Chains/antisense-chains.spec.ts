@@ -24,6 +24,7 @@ import {
   dragMouseTo,
   selectSequenceLayoutModeTool,
   selectFlexLayoutModeTool,
+  copyToClipboardByKeyboard,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -3006,5 +3007,46 @@ test(`16. Ensure that switching between macro and micro modes does not break the
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await turnOnMacromoleculesEditor(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
+
+test(`17. Verify that copying the sense and antisense strand and pasting it within the same canvas retains the correct orientation and complementary base pairing`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6134
+   * Description: Verify that copying the sense and antisense strand and pasting it within the same canvas retains the correct orientation and complementary base pairing
+   * Case:
+   *       1. Load chain with antisense base
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense Strand" option
+   *       4. Select all structures on the canvas
+   *       6. Copy structures to clipboard
+   *       7. Paste clipboard content to the canvas
+   *       8. Take screenshot to validate layout
+   */
+  test.setTimeout(20000);
+
+  const chain = chainOfNucleotidesAndPeptides[0];
+
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+
+  await selectAllStructuresOnCanvas(page);
+  await copyToClipboardByKeyboard(page);
+  await pasteFromClipboardByKeyboard(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });

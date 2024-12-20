@@ -69,7 +69,7 @@ export async function getMonomerIDsByAlias(
         })
         .filter((id) => id !== null);
     }, name);
-  return monomerIDs;
+  return monomerIDs as number[];
 }
 
 export async function getMonomerLocatorByAlias(

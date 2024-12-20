@@ -3574,7 +3574,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Dearomatize, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/ket-cascade-single-reactions-3-1-2-1-1-2x2-aromatize-expected.ket',
       FileType.KET,
@@ -3663,7 +3663,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Layout, page);
       await takeEditorScreenshot(page);
-      await verifyFile2(page, expectedFile, FileType.KET);
+      await verifyFileExport(page, expectedFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(expectedFile, page);
       await takeEditorScreenshot(page);
     });
@@ -3698,7 +3698,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Layout, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/ket-cascade-reaction-3-1-2-1-1-corrected-layout-expected.ket',
       FileType.KET,
@@ -3741,7 +3741,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       async () => await selectTopPanelButton(TopPanelButton.Clean, page),
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/ket-cascade-reaction-3-1-2-1-1-corrected-clean-up-expected.ket',
       FileType.KET,
@@ -3774,7 +3774,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Calculate, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/ket-cascade-reaction-3-1-2-1-1-cip-expected.ket',
       FileType.KET,
@@ -3811,7 +3811,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     });
     await pressButton(page, 'Cancel');
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/ket-cascade-reaction-3-1-2-1-1-check-expected.ket',
       FileType.KET,
@@ -3846,7 +3846,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Close');
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/ket-cascade-reaction-3-1-2-1-1-calculated-expected.ket',
       FileType.KET,
@@ -3881,7 +3881,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/ket-cascade-reaction-3-1-2-1-1-hydrogens-expected.ket',
       FileType.KET,

@@ -19,10 +19,15 @@ import {
   StructFormatter,
   SupportedFormat,
 } from './structFormatter.types';
-import { KetSerializer } from 'domain/serializers';
+import {
+  KetSerializer,
+  MolSerializer,
+  MolSerializerOptions,
+} from 'domain/serializers';
 import { StructService, StructServiceOptions } from 'domain/services';
 import { KetFormatter } from './ketFormatter';
 import { ServerFormatter } from './serverFormatter';
+import { MolfileV2000Formatter } from './molfileV2000Formatter';
 
 export class FormatterFactory {
   #structService: StructService;
@@ -33,25 +38,42 @@ export class FormatterFactory {
 
   private separateOptions(
     options?: FormatterFactoryOptions,
-  ): Partial<StructServiceOptions> {
+  ): [Partial<MolSerializerOptions>, Partial<StructServiceOptions>] {
     if (!options) {
-      return {};
+      return [{}, {}];
     }
 
-    const { ignoreChiralFlag, ...structServiceOptions } = options;
+    const {
+      reactionRelayout,
+      badHeaderRecover,
+      ignoreChiralFlag,
+      ...structServiceOptions
+    } = options;
+
+    const molfileParseOptions: Partial<MolSerializerOptions> = {};
+
+    if (typeof reactionRelayout === 'boolean') {
+      molfileParseOptions.reactionRelayout = reactionRelayout;
+    }
+    if (typeof badHeaderRecover === 'boolean') {
+      molfileParseOptions.badHeaderRecover = badHeaderRecover;
+    }
 
     if (typeof ignoreChiralFlag === 'boolean') {
+      molfileParseOptions.ignoreChiralFlag = ignoreChiralFlag;
       structServiceOptions['ignore-no-chiral-flag'] = ignoreChiralFlag;
     }
 
-    return structServiceOptions;
+    return [molfileParseOptions, structServiceOptions];
   }
 
   create(
     format: SupportedFormat,
     options?: FormatterFactoryOptions,
+    queryPropertiesAreUsed?: boolean,
   ): StructFormatter {
-    const structServiceOptions = this.separateOptions(options);
+    const [molSerializerOptions, structServiceOptions] =
+      this.separateOptions(options);
 
     let formatter: StructFormatter;
     switch (format) {
@@ -60,12 +82,18 @@ export class FormatterFactory {
         break;
 
       case SupportedFormat.mol:
-        formatter = new ServerFormatter(
-          this.#structService,
-          new KetSerializer(),
-          format,
-          structServiceOptions,
-        );
+        if (queryPropertiesAreUsed) {
+          formatter = new ServerFormatter(
+            this.#structService,
+            new KetSerializer(),
+            format,
+            structServiceOptions,
+          );
+        } else {
+          formatter = new MolfileV2000Formatter(
+            new MolSerializer(molSerializerOptions),
+          );
+        }
         break;
 
       case SupportedFormat.cml:

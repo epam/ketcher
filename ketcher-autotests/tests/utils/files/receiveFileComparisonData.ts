@@ -9,12 +9,16 @@ import {
   getRdf,
   getSmarts,
 } from '@utils/formats';
+import { selectSaveTool } from '@utils/canvas';
+import { pressButton } from '@utils/clicks';
+import { chooseFileFormat } from '@utils/macromolecules';
 
 export enum FileType {
   KET = 'ket',
   CDX = 'cdx',
   CDXML = 'cdxml',
   SMARTS = 'smarts',
+  MOL = 'mol',
 }
 
 const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
@@ -23,12 +27,15 @@ const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
     [FileType.CDX]: getCdx,
     [FileType.CDXML]: getCdxml,
     [FileType.SMARTS]: getSmarts,
+    [FileType.MOL]: getMolfile,
   };
 
-export async function verifyFile2(
+export async function verifyFileExport(
   page: Page,
   expectedFilename: string,
   fileType: FileType,
+  format: 'v2000' | 'v3000' = 'v2000',
+  metaDataIndexes: number[] = [],
 ) {
   const getFileContent = fileTypeHandlers[fileType];
 
@@ -45,6 +52,8 @@ export async function verifyFile2(
   const { fileExpected, file } = await receiveFileComparisonData({
     page,
     expectedFileName: `tests/test-data/${expectedFilename}`,
+    fileFormat: format,
+    metaDataIndexes,
   });
 
   expect(file).toEqual(fileExpected);
@@ -204,4 +213,15 @@ export async function receiveFileComparisonData({
     file: filterByIndexes(file, metaDataIndexes),
     fileExpected: filterByIndexes(fileExpected, metaDataIndexes),
   };
+}
+export async function verifyHELMExport(page: Page, HELMExportExpected = '') {
+  await selectSaveTool(page);
+  await chooseFileFormat(page, 'HELM');
+  const HELMExportResult = await page
+    .getByTestId('preview-area-text')
+    .textContent();
+
+  expect(HELMExportResult).toEqual(HELMExportExpected);
+
+  await pressButton(page, 'Cancel');
 }

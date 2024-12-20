@@ -29,8 +29,7 @@ import {
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
-  verifyFile2,
-  verifyMolfile,
+  verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
   disableViewOnlyMode,
@@ -180,7 +179,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeLeftToolbarScreenshot(page);
   });
 
-  test('Verify that elements on Canvas can be copied (as MOL) in view-only mode', async ({
+  test('10. Verify that elements on Canvas can be copied (as MOL) in view-only mode', async ({
     page,
   }) => {
     /*
@@ -191,12 +190,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
+    // await copyToClipboardByKeyboard(page);
     await page.getByTestId('copy-button-dropdown-triangle').click();
     await page.getByTitle('Copy as MOL (Ctrl+M)').click();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 200, 200);
-    await takeEditorScreenshot(page);
+    await takePageScreenshot(page);
   });
 
   test('Verify that elements on Canvas can be copied (as KET) in view-only mode', async ({
@@ -485,7 +485,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/benzene-ring-saved-in-view-only-mode-expected.ket',
       FileType.KET,
@@ -507,11 +507,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await verifyMolfile(
+    await verifyFileExport(
       page,
-      'v2000',
       'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
-      'tests/test-data/Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
+      FileType.MOL,
+      'v2000',
       [1],
     );
 
@@ -532,11 +532,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await verifyMolfile(
+    await verifyFileExport(
       page,
-      'v3000',
       'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
-      'tests/test-data/Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
+      FileType.MOL,
+      'v3000',
       [1],
     );
 

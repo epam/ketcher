@@ -1,9 +1,9 @@
+/* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { getControlModifier } from '@utils/keyboard';
 import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import { INPUT_DELAY } from '@utils/globals';
-import { moveMouseAway, waitForRender, waitForSpinnerFinishedWork } from '..';
-import { emptyFunction } from '@utils/common/helpers';
+import { moveMouseAway, waitForRender } from '..';
 
 export enum SelectionType {
   Rectangle = 'Rectangle',
@@ -116,11 +116,8 @@ export async function selectAllStructuresOnCanvas(
     | undefined,
 ) {
   const modifier = getControlModifier();
-  // Dirty hack for old tests - operation below waits while system finishes all canvas operations
-  // before proceeding next. Sometimes - select object on the screen took time
-  await waitForRender(page, emptyFunction);
 
-  await waitForSpinnerFinishedWork(
+  await waitForRender(
     page,
     async () => await page.keyboard.press(`${modifier}+KeyA`, options),
   );

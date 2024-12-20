@@ -97,7 +97,24 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       .attr('y1', this.scaledPosition.startPosition.y)
       .attr('x2', this.scaledPosition.endPosition.x)
       .attr('y2', this.scaledPosition.endPosition.y)
-      .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none');
+      .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none')
+      .attr('data-testid', 'bond')
+      .attr('data-bondtype', 'covalent')
+      .attr('data-bondid', this.polymerBond.id)
+      .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
+      .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id)
+      .attr(
+        'data-fromconnectionpoint',
+        this.polymerBond.firstMonomer.getAttachmentPointByBond(
+          this.polymerBond,
+        ),
+      )
+      .attr(
+        'data-tomonomerid',
+        this.polymerBond.secondMonomer?.getAttachmentPointByBond(
+          this.polymerBond,
+        ),
+      );
 
     return this.bodyElement;
   }

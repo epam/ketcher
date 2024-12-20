@@ -35,25 +35,3 @@ export const MONOMER_SYMBOLS_IDS = {
     body: '#nucleotide',
   },
 };
-
-export enum BondType {
-  None,
-  Single,
-  Double,
-  Triple,
-  Aromatic,
-  SingleDouble,
-  SingleAromatic,
-  DoubleAromatic,
-  Any,
-  Dative,
-  Hydrogen,
-}
-
-export enum BondStereo {
-  None = 0,
-  Up = 1,
-  Either = 4,
-  Down = 6,
-  CisTrans = 3,
-}

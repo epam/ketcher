@@ -23,7 +23,6 @@ class DoubleCisTransBondPathRenderer {
           L${secondLineEnd.x},${secondLineEnd.y}
         `,
       attrs: {
-        stroke: 'black',
         'stroke-width': `${BondWidth}`,
       },
     };

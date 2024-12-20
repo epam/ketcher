@@ -3,7 +3,28 @@ import { Vec2 } from 'domain/entities/vec2';
 import { Atom } from 'domain/entities/CoreAtom';
 import { BaseRenderer } from 'application/render';
 import { BondRenderer } from 'application/render/renderers/BondRenderer';
-import { BondStereo, BondType } from 'application/render/renderers/constants';
+
+export enum BondType {
+  None,
+  Single,
+  Double,
+  Triple,
+  Aromatic,
+  SingleDouble,
+  SingleAromatic,
+  DoubleAromatic,
+  Any,
+  Dative,
+  Hydrogen,
+}
+
+export enum BondStereo {
+  None = 0,
+  Up = 1,
+  Either = 4,
+  Down = 6,
+  CisTrans = 3,
+}
 
 export class Bond extends DrawingEntity {
   public endPosition: Vec2 = new Vec2();
@@ -13,8 +34,8 @@ export class Bond extends DrawingEntity {
     public firstAtom: Atom,
     public secondAtom: Atom,
     public bondIdInMicroMode,
-    public type: BondType = 1,
-    public stereo: BondStereo = 0,
+    public type: BondType = BondType.Single,
+    public stereo: BondStereo = BondStereo.None,
   ) {
     super(firstAtom.position);
     this.endPosition = secondAtom.position;

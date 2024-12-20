@@ -36,11 +36,7 @@ class SingleUpDownBondPathRenderer {
       d: path,
       attrs: {
         fill: 'none',
-        stroke: 'black',
-        'stroke-linecap': 'round',
-        'stroke-linejoin': 'round',
-        opacity: 1,
-        'stroke-width': BondWidth,
+        'stroke-width': `${BondWidth}`,
       },
     };
 

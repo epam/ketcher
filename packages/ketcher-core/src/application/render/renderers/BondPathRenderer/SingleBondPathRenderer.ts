@@ -4,7 +4,7 @@ import {
   BondVectors,
   BondWidth,
 } from 'application/render/renderers/BondPathRenderer/constants';
-import { BondType } from 'application/render/renderers/constants';
+import { BondType } from 'domain/entities/CoreBond';
 
 class SingleBondPathRenderer {
   static preparePaths(
@@ -21,7 +21,6 @@ class SingleBondPathRenderer {
           L${endPosition.x},${endPosition.y}
         `,
       attrs: {
-        stroke: 'black',
         'marker-end': type === BondType.Dative ? 'url(#arrow-marker)' : 'none',
         'stroke-dasharray': strokeDasharray,
         'stroke-width': `${BondWidth}`,

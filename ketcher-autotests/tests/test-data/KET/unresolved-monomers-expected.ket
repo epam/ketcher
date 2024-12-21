@@ -16,8 +16,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 11.9,
-            "y": -8.325000000000001
+            "x": 11.025,
+            "y": -7.45
         },
         "alias": "i2AmPr",
         "templateId": "unknown_monomer_with_idt_alias_i2AmPr",

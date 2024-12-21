@@ -16,8 +16,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 14.75,
-            "y": -7.65
+            "x": 13.875,
+            "y": -6.775
         },
         "alias": "bAla",
         "templateId": "bAla___beta-Alanine"

@@ -16,8 +16,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 11.9,
-            "y": -8.325000000000001
+            "x": 11.025,
+            "y": -7.45
         },
         "alias": "(R2,R3)_-_R1_gap",
         "templateId": "_R2_R3__-_R1_gap"

@@ -76,7 +76,7 @@ export function parseStruct(
 
   const service = factory.create(format, {
     'dearomatize-on-load': options['dearomatize-on-load'],
-    'ignore-no-chiral-flag': options.ignoreChiralFlag,
+    ignoreChiralFlag: options.ignoreChiralFlag,
   });
   return service.getStructureFromStringAsync(structStr);
 }

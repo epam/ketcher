@@ -647,7 +647,7 @@ In the _Stereochemistry tab_ in _Settings_ you can:
 
 <img src=images/49_sett_stereon.png width = "440"/>
 
-When option _Ignore the chiral flag_ is _true_ it will affect opening and saving of MDL V2000 and MDL V3000 files, as well as the display of labels at stereogenic centers and stereo flags:
+When option _Ignore the chiral flag_ is _true_ it will affect opening of MDL V2000 and MDL V3000 files, as well as the display of labels at stereogenic centers and stereo flags:
 
 - stereo flags are not displayed
 

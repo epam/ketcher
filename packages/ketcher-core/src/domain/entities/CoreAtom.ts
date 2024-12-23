@@ -6,7 +6,15 @@ import { Bond as MicromoleculesBond } from 'domain/entities/bond';
 import { BaseRenderer } from 'application/render';
 import { AtomLabel, Elements } from 'domain/constants';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
+import { isNumber } from 'lodash';
 
+export interface AtomProperties {
+  charge?: number | null;
+  explicitValence?: number;
+  isotope?: number | null;
+  radical?: number;
+  alias?: string | null;
+}
 export class Atom extends DrawingEntity {
   public bonds: Bond[] = [];
   public renderer: AtomRenderer | undefined = undefined;
@@ -15,6 +23,7 @@ export class Atom extends DrawingEntity {
     public monomer: BaseMonomer,
     public atomIdInMicroMode,
     public label: AtomLabel,
+    public properties: AtomProperties = {},
   ) {
     super(position);
   }
@@ -30,6 +39,10 @@ export class Atom extends DrawingEntity {
   public setRenderer(renderer: AtomRenderer) {
     this.renderer = renderer;
     super.setBaseRenderer(renderer as BaseRenderer);
+  }
+
+  public get isCarbon() {
+    return this.label === AtomLabel.C;
   }
 
   private calculateConnections() {
@@ -61,12 +74,23 @@ export class Atom extends DrawingEntity {
     return connectionsAmount;
   }
 
-  private calculateCharge() {
-    return 0;
+  public get hasRadical() {
+    return isNumber(this.properties.radical) && this.properties.radical !== 0;
   }
 
-  private calculateRadicalAmount() {
-    return 0;
+  public get hasCharge() {
+    return isNumber(this.properties.charge) && this.properties.charge !== 0;
+  }
+
+  public get hasExplicitValence() {
+    return (
+      isNumber(this.properties.explicitValence) &&
+      this.properties.explicitValence !== -1
+    );
+  }
+
+  public get hasExplicitIsotope() {
+    return isNumber(this.properties.isotope) && this.properties.isotope >= 0;
   }
 
   calculateValence() {
@@ -74,9 +98,9 @@ export class Atom extends DrawingEntity {
     const element = Elements.get(label);
     const elementGroupNumber = element?.group;
     const connectionAmount = this.calculateConnections();
-    const radicalAmount = this.calculateRadicalAmount();
+    const radicalAmount = this.properties.radical || 0;
     const absCharge = 0;
-    const charge = this.calculateCharge();
+    const charge = this.properties.charge || 0;
     let valence = this.calculateConnections();
     let hydrogenAmount = 0;
 

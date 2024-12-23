@@ -54,6 +54,7 @@ test.describe('Modal window', () => {
       peptide2,
       undefined,
       undefined,
+      MacroBondTool.SINGLE,
       false,
       false,
     );
@@ -68,7 +69,16 @@ test.describe('Modal window', () => {
       */
 
     // Create bonds between peptides
-    await bondTwoMonomers(page, peptide1, peptide2, 'R1', 'R2', true, false);
+    await bondTwoMonomers(
+      page,
+      peptide1,
+      peptide2,
+      'R1',
+      'R2',
+      MacroBondTool.SINGLE,
+      true,
+      false,
+    );
     await takeEditorScreenshot(page);
   });
 });

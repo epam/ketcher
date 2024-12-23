@@ -2,7 +2,6 @@
 import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
 import { clickOnCanvas, moveMouseAway, selectMacroBond } from '..';
-import { DropdownToolIds } from '@utils/clicks/types';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 export async function bondTwoMonomers(
@@ -11,10 +10,11 @@ export async function bondTwoMonomers(
   secondMonomerElement: Locator,
   connectTitle1?: string,
   connectTitle2?: string,
+  bondType: (typeof MacroBondTool)[keyof typeof MacroBondTool] = MacroBondTool.SINGLE,
   needSelectAttachmentPoint = true,
   needConnect = true,
 ) {
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await selectMacroBond(page, bondType);
   await firstMonomerElement.hover();
   await page.mouse.down();
   await secondMonomerElement.hover();
@@ -40,7 +40,7 @@ export async function bondTwoMonomersPointToPoint(
   secondMonomerElement: Locator,
   firstMonomerConnectionPoint?: string,
   secondMonomerConnectionPoint?: string,
-  bondType?: DropdownToolIds,
+  bondType?: (typeof MacroBondTool)[keyof typeof MacroBondTool],
 ) {
   await selectMacroBond(page, bondType);
   await firstMonomerElement.hover({ force: true });

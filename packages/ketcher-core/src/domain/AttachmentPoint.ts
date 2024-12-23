@@ -249,7 +249,9 @@ export class AttachmentPoint {
       this.isSnake &&
       !polymerBond?.renderer?.isMonomersOnSameHorizontalLine()
     ) {
-      angleRadians = isAttachmentpointR1 ? 0 : Math.PI;
+      angleRadians = isAttachmentpointR1
+        ? this.rotateToAngle(polymerBond, flip)
+        : Math.PI;
       angleDegrees = Vec2.radiansToDegrees(angleRadians);
     } else {
       angleRadians = this.rotateToAngle(polymerBond, flip);

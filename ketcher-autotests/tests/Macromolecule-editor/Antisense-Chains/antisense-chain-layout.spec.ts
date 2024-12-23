@@ -1647,7 +1647,7 @@ test(`5. Check that backbones should be placed parallel to each other`, async ()
    * Case:
    *       1. Load very long chain on the canvas
    *       2. Create antisense chain
-   *       6. Take screenshot to validate parallel backbones
+   *       3. Take screenshot to validate parallel backbones
    */
   test.setTimeout(20000);
 
@@ -1672,14 +1672,17 @@ test(`5. Check that backbones should be placed parallel to each other`, async ()
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 
-test(`6. Check that backbones should be placed parallel to each other`, async () => {
+test(`6. Check that chains should be placed in such a way that the left-most monomer' +
+  ' that has a hydrogen bond from the non-"flipped" chain has the monomer that is ' +
+  'connected to it via a hydrogen bond from the other chain bellow it`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6184
-   * Description: Check that backbones should be placed parallel to each other
+   * Description: Check that chains should be placed in such a way that the left-most monomer
+   *              that has a hydrogen bond from the non-"flipped" chain has the monomer that is
+   *              connected to it via a hydrogen bond from the other chain bellow it
    * Case:
-   *       1. Load very long chain on the canvas
-   *       2. Create antisense chain
-   *       6. Take screenshot to validate parallel backbones
+   *       1. Load very long chain with short antisense connected on the canvas
+   *       2. Take screenshot to validate layout
    */
   test.setTimeout(20000);
 
@@ -1692,6 +1695,55 @@ test(`6. Check that backbones should be placed parallel to each other`, async ()
       'RNA4{R(G)P.R(G)P.R(G)P.R(G)P.R(G)P}$RNA1,PEPTIDE1,9:R2-1:R1|' +
       'RNA2,PEPTIDE2,9:R2-1:R1|PEPTIDE1,RNA2,4:R2-1:R1|RNA3,PEPTIDE3,9:R2-1:R1|' +
       'PEPTIDE2,RNA3,4:R2-1:R1|RNA3,RNA4,8:pair-2:pair$$$V2.0',
+  );
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
+
+test(`7. Check that distance between all monomers should be minimum one bond length`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6184
+   * Description: Check that distance between all monomers should be minimum one bond length
+   * Case:
+   *       1. Load very long chain with short antisense connected on the canvas
+   *       2. Take screenshot to validate distance between monomers
+   */
+  test.setTimeout(20000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA2{R(U)P.R(G)P.R(C)P}|PEPTIDE2{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA3{R(U)P.R(G)P.R(C)P}|PEPTIDE3{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA4{R(G)P.R(G)P.R(G)P.R(G)P.R(G)P}$RNA1,PEPTIDE1,9:R2-1:R1|' +
+      'RNA2,PEPTIDE2,9:R2-1:R1|PEPTIDE1,RNA2,4:R2-1:R1|RNA3,PEPTIDE3,9:R2-1:R1|' +
+      'PEPTIDE2,RNA3,4:R2-1:R1|RNA3,RNA4,8:pair-2:pair$$$V2.0',
+  );
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
+
+test(`8. Check that multiple backbones/chains can be placed in on a line if they are both connected via H-bonds to the same chain (but not to each other!!!)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6184
+   * Description: Check that multiple backbones/chains can be placed in on a line if they
+   *              are both connected via H-bonds to the same chain (but not to each other!!!)
+   * Case:
+   *       1. Load very long chain with short antisense connected on the canvas
+   *       2. Take screenshot to validate layout
+   */
+  test.setTimeout(20000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA2{R(U)P.R(G)P.R(C)P}|PEPTIDE2{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA3{R(U)P.R(G)P.R(C)P}|PEPTIDE3{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA4{R(G)P.R(G)P.R(G)P}|RNA5{R(G)P.R(G)P}$RNA1,PEPTIDE1,9:R2-1:R1|' +
+      'RNA2,PEPTIDE2,9:R2-1:R1|PEPTIDE1,RNA2,4:R2-1:R1|RNA3,PEPTIDE3,9:R2-1:R1|' +
+      'PEPTIDE2,RNA3,4:R2-1:R1|RNA1,RNA4,5:pair-2:pair|RNA2,RNA5,5:pair-2:pair$$$V2.0',
   );
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });

@@ -543,7 +543,7 @@ test.describe('Right-click menu', () => {
     await selectAllStructuresOnCanvas(page);
     await clickOnAtom(page, 'C', 0, 'right');
     await page.getByText('Highlight', { exact: true }).click();
-    await page.locator('.css-d1acvy').click();
+    await page.locator('.css-d1acvy').click(); // Blue
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -571,7 +571,7 @@ test.describe('Right-click menu', () => {
     await selectAllStructuresOnCanvas(page);
     await clickOnAtom(page, 'C', 0, 'right');
     await page.getByText('Highlight', { exact: true }).click();
-    await page.locator('.css-d1acvy').click();
+    await page.locator('.css-d1acvy').click(); // Blue
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
@@ -590,33 +590,33 @@ test.describe('Right-click menu', () => {
       3. Verify that the highlights do not interfere with each other
     */
     const highlights = [
-      { type: 'atom', index: 0, colorClass: '.css-cyxjjb' },
+      { type: 'atom', index: 0, colorClass: '.css-cyxjjb' }, // Red
       {
         type: 'bond',
         index: 0,
         bondType: BondType.SINGLE,
-        colorClass: '.css-d1acvy',
+        colorClass: '.css-d1acvy', // Blue
       },
-      { type: 'atom', index: 1, colorClass: '.css-1pz88a0' },
+      { type: 'atom', index: 1, colorClass: '.css-1pz88a0' }, // Green
       {
         type: 'bond',
         index: 1,
         bondType: BondType.SINGLE,
-        colorClass: '.css-q0qzfh',
+        colorClass: '.css-q0qzfh', // Yellow
       },
-      { type: 'atom', index: 2, colorClass: '.css-1pz88a0' },
+      { type: 'atom', index: 2, colorClass: '.css-1pz88a0' }, // Green
       {
         type: 'bond',
         index: 2,
         bondType: BondType.SINGLE,
-        colorClass: '.css-1j267jk',
+        colorClass: '.css-1j267jk', // Purple
       },
-      { type: 'atom', index: 3, colorClass: '.css-55t14h' },
+      { type: 'atom', index: 3, colorClass: '.css-55t14h' }, // Orange
       {
         type: 'bond',
         index: 0,
         bondType: BondType.DOUBLE,
-        colorClass: '.css-1jrzwzn',
+        colorClass: '.css-1jrzwzn', // Pink
       },
     ];
 

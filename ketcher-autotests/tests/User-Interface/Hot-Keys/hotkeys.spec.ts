@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
 import {
   selectNestedTool,
@@ -13,6 +14,21 @@ import {
   TopPanelButton,
   selectTopPanelButton,
   takeEditorScreenshot,
+  drawBenzeneRing,
+  clickOnAtom,
+  clickOnBond,
+  BondType,
+  selectAllStructuresOnCanvas,
+  selectRectangleSelectionTool,
+  openFileAndAddToCanvasAsNewProject,
+  copyStructureByCtrlMove,
+  screenshotBetweenUndoRedo,
+  selectPartOfMolecules,
+  selectFunctionalGroups,
+  FunctionalGroups,
+  dragMouseTo,
+  selectSaltsAndSolvents,
+  SaltsAndSolvents,
 } from '@utils';
 
 test.describe('Hot keys', () => {
@@ -36,6 +52,280 @@ test.describe('Hot keys', () => {
     await page.keyboard.press('Shift+Tab');
     await expect(page.getByTestId('select-fragment')).toBeVisible();
     await expect(page).toHaveScreenshot();
+  });
+
+  test('Verify move by ctrl when its a part of molecula as only atom', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Atom copied and moves to a new place.
+      Case:
+      1. Draw a benzene ring.
+      2. Select atom.
+      3. Press Ctrl key and move atom.
+      Expected: Atom copied and moves to a new place.
+      */
+    await drawBenzeneRing(page);
+    await selectRectangleSelectionTool(page);
+    await copyStructureByCtrlMove(page, 'C', 0);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify move by ctrl when its a part of molecula as atom and bond', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Atom and bond copied and moves to a new place.
+      Case:
+      1. Draw a benzene ring.
+      2. Select atom and bond.
+      3. Press Ctrl key and move atom and bond.
+      Expected: Atom and bond copied and moves to a new place.
+      */
+    await drawBenzeneRing(page);
+    await selectRectangleSelectionTool(page);
+    await page.keyboard.down('Shift');
+    await clickOnAtom(page, 'C', 0);
+    await clickOnBond(page, BondType.SINGLE, 0);
+    await page.keyboard.up('Shift');
+    await copyStructureByCtrlMove(page, 'C', 0);
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify move by ctrl when its a part of molecula as ring', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Benzene ring copied and moves to a new place.
+      Case:
+      1. Draw a benzene ring.
+      2. Select all structure.
+      3. Press Ctrl key and move structure.
+      Expected: Benzene ring copied and moves to a new place.
+      */
+    await drawBenzeneRing(page);
+    await selectAllStructuresOnCanvas(page);
+    await selectRectangleSelectionTool(page);
+    await copyStructureByCtrlMove(page, 'C', 0);
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify move by ctrl when its a part of molecula as ring with attachment points', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Benzene ring with attachment points copied and moves to a new place.
+      Case:
+      1. Open a benzene ring with attachment points.
+      2. Select all structure.
+      3. Press Ctrl key and move structure.
+      Expected: Benzene ring with attachment points copied and moves to a new place.
+      */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-ring-with-two-attachment-points.ket',
+      page,
+    );
+    await selectAllStructuresOnCanvas(page);
+    await selectRectangleSelectionTool(page);
+    await copyStructureByCtrlMove(page, 'C', 0);
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify move by ctrl when its a part of molecula as ring with attachment points and Undo/Redo', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
+      Case:
+      1. Open a benzene ring with attachment points.
+      2. Select all structure.
+      3. Press Ctrl key and move structure.
+      Expected: Benzene ring with attachment points copied and moves to a new place and then Undo/Redo actions work proper.
+      We have a bug: https://github.com/epam/ketcher/issues/6199 
+      After fixing this bug we need update screenshots.
+      */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-ring-with-two-attachment-points.ket',
+      page,
+    );
+    await selectAllStructuresOnCanvas(page);
+    await selectRectangleSelectionTool(page);
+    await copyStructureByCtrlMove(page, 'C', 0);
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify move by ctrl when its a part of molecula as ring with attachment bonds', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Structure moved by ctrl when its a part of molecula as ring with attachment bonds.
+      Case:
+      1. Open structure.
+      2. Select part of structure.
+      3. Press Ctrl key and move structure.
+      Expected: Structure copied and moves to a new place.
+      */
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/non-proprietary-structure.mol',
+      page,
+    );
+    await selectPartOfMolecules(page);
+    await selectRectangleSelectionTool(page);
+    await copyStructureByCtrlMove(page, 'C', 0, { x: 250, y: 250 });
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify move by ctrl when its a whole molecula', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Structure moved by ctrl when its a whole molecula.
+      Case:
+      1. Open structure.
+      2. Select whole structure.
+      3. Press Ctrl key and move structure.
+      Expected: Structure copied and moves to a new place.
+      */
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/non-proprietary-structure.mol',
+      page,
+    );
+    await selectAllStructuresOnCanvas(page);
+    await selectRectangleSelectionTool(page);
+    await copyStructureByCtrlMove(page, 'C', 0, { x: 245, y: 245 });
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify move by ctrl when its a contracted functional group', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Structure moved by ctrl when its a functional group.
+      Case:
+      1. Add functional group structure.
+      2. Select whole structure.
+      3. Press Ctrl key and move structure.
+      Expected: Functional group structure copied and moves to a new place.
+      */
+    await selectFunctionalGroups(FunctionalGroups.Cbz, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectRectangleSelectionTool(page);
+    await page.getByText('Cbz').hover();
+    await page.keyboard.down('Control');
+    await dragMouseTo(300, 300, page);
+    await page.keyboard.up('Control');
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify move by ctrl when its a expanded functional group', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Structure moved by ctrl when its a functional group.
+      Case:
+      1. Add functional group structure and expand it.
+      2. Select whole structure.
+      3. Press Ctrl key and move structure.
+      Expected: Functional group structure copied and moves to a new place.
+      */
+    await selectFunctionalGroups(FunctionalGroups.Cbz, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectRectangleSelectionTool(page);
+    await page.getByText('Cbz').click({ button: 'right' });
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
+    await selectAllStructuresOnCanvas(page);
+    await copyStructureByCtrlMove(page, 'C', 0);
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify move by ctrl when its a contracted salts and solvents', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Structure moved by ctrl when its a salts and solvents.
+      Case:
+      1. Add salts and solvents structure.
+      2. Select whole structure.
+      3. Press Ctrl key and move structure.
+      Expected: Salts and solvents structure copied and moves to a new place.
+      */
+    await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectRectangleSelectionTool(page);
+    await page.getByText('formic acid').hover();
+    await page.keyboard.down('Control');
+    await dragMouseTo(300, 300, page);
+    await page.keyboard.up('Control');
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify move by ctrl when its a expanded salts and solvents', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Structure moved by ctrl when its a salts and solvents.
+      Case:
+      1. Add salts and solvents structure and expand it.
+      2. Select whole structure.
+      3. Press Ctrl key and move structure.
+      Expected: Salts and solvents structure copied and moves to a new place.
+      */
+    await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectRectangleSelectionTool(page);
+    await page.getByText('formic acid').click({ button: 'right' });
+    await waitForRender(page, async () => {
+      await page.getByText('Expand Abbreviation').click();
+    });
+    await selectAllStructuresOnCanvas(page);
+    await copyStructureByCtrlMove(page, 'C', 0);
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify move by ctrl when its a reaction with catalyst above and below arrow', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Structure moved by ctrl when its a reaction with catalyst above and below arrow.
+      Case:
+      1. Add reaction with catalyst above and below arrow.
+      2. Select whole structure.
+      3. Press Ctrl key and move structure.
+      Expected: Reaction with catalyst above and below arrow copied and moves to a new place.
+      */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/reaction-with-catalyst.ket',
+      page,
+    );
+    await selectRectangleSelectionTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
   });
 });
 

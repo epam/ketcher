@@ -11,6 +11,10 @@ import {
   openFileAndAddToCanvasMacro,
   selectFlexLayoutModeTool,
   MonomerType,
+  ZoomInByKeyboard,
+  resetZoomLevelToDefault,
+  moveMouseAway,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -1511,3 +1515,160 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
     });
   }
 }
+
+test(`3. Check that shorter chain (fewer monomers) should get "flipped", and if they are of the same size, the chain whose center is lower on the canvas`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6184
+   * Description: Check that shorter chain (fewer monomers) should get "flipped", and if they are of the same size, the chain whose center is lower on the canvas
+   * Case:
+   *       1. Load short chain on the canvas
+   *       2. Load long chain on the canvas
+   *       3. Take screenshot to validate initial state
+   *       4. Connect to bases with hydrogen bond
+   *       5. Switch to Flex mode and back to Snake - chains got filipped
+   *       6. Take screenshot to validate flipping
+   */
+  test.setTimeout(20000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
+  );
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
+  );
+  for (let i = 0; i < 5; i++) await ZoomInByKeyboard(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await bondTwoMonomers(
+    page,
+    await getMonomerLocator(page, { monomerAlias: 'A' }),
+    await getMonomerLocator(page, { monomerAlias: 'U' }),
+    undefined,
+    undefined,
+    MacroBondTool.HYDROGEN,
+  );
+
+  await selectFlexLayoutModeTool(page);
+  await selectSnakeLayoutModeTool(page);
+
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await resetZoomLevelToDefault(page);
+});
+
+test(`4. For R3-R1 sugar-base side connections (when the base does not have hydrogen bonds),' +
+  ' that base should be oriented like other bases in the chain (or if there is a tie, bellow the sugar)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6184
+   * Description: For R3-R1 sugar-base side connections (when the base does not have hydrogen bonds),
+   *              that base should be oriented like other bases in the chain (or if there is a tie,
+   *              bellow the sugar)
+   * Case:
+   *       1. Load short chain on the canvas
+   *       2. Load long chain on the canvas
+   *       3. Take screenshot to validate initial state
+   *       4. Connect to bases with hydrogen bond
+   *       5. Switch to Flex mode and back to Snake - all bases from bottom chain got filipped
+   *       6. Take screenshot to validate flipping
+   */
+  test.setTimeout(20000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
+  );
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
+  );
+  for (let i = 0; i < 5; i++) await ZoomInByKeyboard(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await bondTwoMonomers(
+    page,
+    await getMonomerLocator(page, { monomerAlias: 'A' }),
+    await getMonomerLocator(page, { monomerAlias: 'U' }),
+    undefined,
+    undefined,
+    MacroBondTool.HYDROGEN,
+  );
+
+  await selectFlexLayoutModeTool(page);
+  await selectSnakeLayoutModeTool(page);
+
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await resetZoomLevelToDefault(page);
+});
+
+async function callContextMenuForMonomer(
+  page: Page,
+  monomerLocatorIndex: number,
+) {
+  const canvasLocator = page.getByTestId('ketcher-canvas');
+  await canvasLocator
+    .locator('g.monomer')
+    .nth(monomerLocatorIndex)
+    .click({ button: 'right', force: true });
+}
+
+const longChain: IMonomer[] = [
+  {
+    id: 1,
+    monomerDescription: '',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString:
+      'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA2{R(U)P.R(G)P.R(C)P}|PEPTIDE2{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+      'RNA3{R(U)P.R(G)P.R(C)P}|PEPTIDE3{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}' +
+      '$RNA1,PEPTIDE1,9:R2-1:R1|RNA2,PEPTIDE2,9:R2-1:R1|PEPTIDE1,RNA2,4:R2-1:R1|' +
+      'RNA3,PEPTIDE3,9:R2-1:R1|PEPTIDE2,RNA3,4:R2-1:R1$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+];
+
+test(`5. Check that backbones should be placed parallel to each other`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6184
+   * Description: Check that backbones should be placed parallel to each other
+   * Case:
+   *       1. Load very long chain on the canvas
+   *       2. Create antisense chain
+   *       6. Take screenshot to validate parallel backbones
+   */
+  test.setTimeout(20000);
+
+  const chain = longChain[0];
+
+  if (chain.HELMString) {
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      chain.HELMString,
+    );
+  }
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForMonomer(page, 0);
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_chain')
+    .first();
+  await createAntisenseStrandOption.click();
+
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
+

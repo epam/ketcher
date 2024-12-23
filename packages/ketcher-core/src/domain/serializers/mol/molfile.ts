@@ -134,7 +134,6 @@ export class Molfile {
     skipSGroupErrors: boolean,
     norgroups?: boolean,
     preserveIndigoDesc?: boolean,
-    ignoreChiralFlag?: boolean,
   ) {
     // eslint-disable-line max-statements
     /* saver */
@@ -201,7 +200,7 @@ export class Molfile {
     this.prepareSGroups(skipSGroupErrors, preserveIndigoDesc);
 
     this.writeHeader();
-    this.writeCTab2000(undefined, ignoreChiralFlag);
+    this.writeCTab2000(undefined);
 
     return this.molfile;
   }
@@ -268,7 +267,7 @@ export class Molfile {
     this.write(utils.paddedNum(number, width, precision));
   }
 
-  writeCTab2000Header(ignoreChiralFlag) {
+  writeCTab2000Header() {
     /* saver */
     this.writePaddedNumber(this.molecule!.atoms.size, 3);
     this.writePaddedNumber(this.molecule!.bonds.size, 3);
@@ -279,7 +278,7 @@ export class Molfile {
       fr ? fr.enhancedStereoFlag === StereoFlag.Abs : false,
     );
 
-    this.writePaddedNumber(isAbsFlag || ignoreChiralFlag ? 1 : 0, 3);
+    this.writePaddedNumber(isAbsFlag ? 1 : 0, 3);
     this.writePaddedNumber(0, 3);
     this.writePaddedNumber(0, 3);
     this.writePaddedNumber(0, 3);
@@ -289,10 +288,10 @@ export class Molfile {
     this.writeCR(' V2000');
   }
 
-  writeCTab2000(rgroups?: Map<any, any>, ignoreChiralFlag?: boolean) {
+  writeCTab2000(rgroups?: Map<any, any>) {
     // eslint-disable-line max-statements
     /* saver */
-    this.writeCTab2000Header(ignoreChiralFlag);
+    this.writeCTab2000Header();
 
     this.mapping = {};
     let i = 1;

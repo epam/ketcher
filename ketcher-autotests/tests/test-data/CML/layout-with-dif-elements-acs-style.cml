@@ -4,32 +4,32 @@
 <reactantList>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="O" x2="20.9146" y2="-16.8034"/>
+        <atom id="a0" elementType="O" x2="21.2986" y2="-16.8381"/>
     </atomArray>
 </molecule>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="O" x2="23.1868" y2="-16.8034"/>
+        <atom id="a0" elementType="O" x2="23.4792" y2="-16.8381"/>
     </atomArray>
 </molecule>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="N" x2="24.6257" y2="-16.8034"/>
+        <atom id="a0" elementType="N" x2="24.6875" y2="-16.8381"/>
     </atomArray>
 </molecule>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="N" x2="26.8979" y2="-16.8034"/>
+        <atom id="a0" elementType="N" x2="26.868" y2="-16.8381"/>
     </atomArray>
 </molecule>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="Br" x2="30.2445" y2="-15.8034"/>
-        <atom id="a1" elementType="Br" x2="29.3785" y2="-17.3034"/>
-        <atom id="a2" elementType="Br" x2="29.3785" y2="-16.3034"/>
-        <atom id="a3" elementType="Br" x2="30.2445" y2="-17.8034"/>
-        <atom id="a4" elementType="Br" x2="31.1105" y2="-16.3034"/>
-        <atom id="a5" elementType="Br" x2="31.1105" y2="-17.3034"/>
+        <atom id="a0" elementType="Br" x2="30.1577" y2="-15.8381"/>
+        <atom id="a1" elementType="Br" x2="29.2917" y2="-17.3381"/>
+        <atom id="a2" elementType="Br" x2="29.2917" y2="-16.3381"/>
+        <atom id="a3" elementType="Br" x2="30.1577" y2="-17.8381"/>
+        <atom id="a4" elementType="Br" x2="31.0237" y2="-16.3381"/>
+        <atom id="a5" elementType="Br" x2="31.0237" y2="-17.3381"/>
     </atomArray>
     <bondArray>
         <bond atomRefs2="a2 a0" order="2"/>
@@ -44,29 +44,29 @@
 <productList>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="F" x2="34.3744" y2="-16.8034"/>
+        <atom id="a0" elementType="F" x2="34.739" y2="-16.8381"/>
     </atomArray>
 </molecule>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="F" x2="36.2299" y2="-16.8034"/>
+        <atom id="a0" elementType="F" x2="36.4334" y2="-16.8381"/>
     </atomArray>
 </molecule>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="F" x2="38.0855" y2="-16.8034"/>
+        <atom id="a0" elementType="F" x2="38.1279" y2="-16.8381"/>
     </atomArray>
 </molecule>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="F" x2="39.9411" y2="-16.8034"/>
+        <atom id="a0" elementType="F" x2="39.8223" y2="-16.8381"/>
     </atomArray>
 </molecule>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="C" x2="41.6716" y2="-16.3703"/>
-        <atom id="a1" elementType="C" x2="41.1716" y2="-17.2364"/>
-        <atom id="a2" elementType="C" x2="42.1716" y2="-17.2364"/>
+        <atom id="a0" elementType="C" x2="41.2876" y2="-16.4051"/>
+        <atom id="a1" elementType="C" x2="40.7876" y2="-17.2711"/>
+        <atom id="a2" elementType="C" x2="41.7876" y2="-17.2711"/>
     </atomArray>
     <bondArray>
         <bond atomRefs2="a0 a1" order="1"/>
@@ -78,12 +78,12 @@
 <spectatorList>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="H" x2="31.9577" y2="-15.7756"/>
+        <atom id="a0" elementType="H" x2="31.9751" y2="-15.7409"/>
     </atomArray>
 </molecule>
 <molecule>
     <atomArray>
-        <atom id="a0" elementType="H" x2="32.9022" y2="-15.7756"/>
+        <atom id="a0" elementType="H" x2="33.0584" y2="-15.7409"/>
     </atomArray>
 </molecule>
 </spectatorList>

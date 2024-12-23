@@ -15,9 +15,9 @@ export async function bondTwoMonomers(
   needConnect = true,
 ) {
   await selectMacroBond(page, bondType);
-  await firstMonomerElement.hover();
+  await firstMonomerElement.hover({ force: true });
   await page.mouse.down();
-  await secondMonomerElement.hover();
+  await secondMonomerElement.hover({ force: true });
   await page.mouse.up();
   await hideMonomerPreview(page);
   const dialog = page.getByRole('dialog');

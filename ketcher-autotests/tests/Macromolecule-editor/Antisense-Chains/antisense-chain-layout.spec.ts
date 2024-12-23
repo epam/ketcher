@@ -1266,7 +1266,7 @@ for (const leftMonomer of shortMonomerList) {
          * Description: Check if hydrogen bonds connect monomers inside one chain, those
          *              hydrogen bonds should be considered as side chain connections for layout purposes
          * Case:
-         *       1. Load two monomers on the canvas (load first, move it to the left, load second)
+         *       1. Load two monomers on the canvas
          *       2. Connect them with hydrogen bond
          *       3. Switch to the flex/snake mode to refresh layout
          *       4. Take screenshot to validate layout (connection should be considered as side chain)
@@ -1332,5 +1332,182 @@ for (const leftMonomer of shortMonomerList) {
         await takeEditorScreenshot(page);
       },
     );
+  }
+}
+
+const eligibleForAntisenseMonomerList: IMonomer[] = [
+  {
+    id: 1,
+    monomerDescription: 'Nucleoside base A - R(A)',
+    alias: 'A',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A)}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    id: 2,
+    monomerDescription:
+      'Nucleoside with ambiguous alternative RNA base W - R(A,U)',
+    // Alias is not W because of the a bug
+    alias: '%',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A,U)}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    id: 3,
+    monomerDescription: 'Nucleoside with ambiguous mixed RNA base % - R(A+U)',
+    alias: '%',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A+U)}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    id: 4,
+    monomerDescription:
+      'Nucleoside with ambiguous alternative DNA base H - R(A,C,T)',
+    alias: 'H',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A,C,T)}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    id: 5,
+    monomerDescription: 'Nucleoside with ambiguous mixed DNA base % - R(A+C+T)',
+    alias: '%',
+    type: 'Nucleoside',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A+C+T)}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    id: 6,
+    monomerDescription: 'Nucleotide base A - R(A)P',
+    alias: 'A',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A)P}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    id: 7,
+    monomerDescription:
+      'Nucleotide with ambiguous alternative RNA base W - R(A,U)P',
+    // Alias is not W because of the a bug
+    alias: '%',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A,U)P}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    id: 8,
+    monomerDescription: 'Nucleotide with ambiguous mixed RNA base % - R(A+U)P',
+    alias: '%',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A+U)P}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    id: 9,
+    monomerDescription:
+      'Nucleotide with ambiguous alternative DNA base H - R(A,C,T)P',
+    alias: 'H',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A,C,T)P}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+  {
+    id: 10,
+    monomerDescription:
+      'Nucleotide with ambiguous mixed DNA base % - R(A+C+T)P',
+    alias: '%',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{R(A+C+T)P}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: true,
+    monomerLocatorIndex: 0,
+  },
+];
+
+for (const leftMonomer of eligibleForAntisenseMonomerList) {
+  for (const rightMonomer of eligibleForAntisenseMonomerList) {
+    test(`2-${leftMonomer.id}-${rightMonomer.id}. Creating sense/antisense connection for: ${leftMonomer.monomerDescription} and ${rightMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/6184
+       * Description: Check if monomers who participate in those H-bonds should be oriented
+       *              towards each other (one of the chains should be "flipped")
+       * Case:
+       *       1. Load two monomers (eligable for antisense) on the canvas
+       *       2. Bond its bases with hydrogen bond
+       *       3. Switch to the flex/snake mode to refresh layout
+       *       4. Take screenshot to validate layout (connection should be considered as side chain)
+       */
+      test.setTimeout(20000);
+
+      await loadMonomerOnCanvas(page, leftMonomer);
+
+      const leftMonomerLocator = (
+        await getMonomerLocator(page, {
+          monomerAlias: leftMonomer.alias,
+        })
+      ).first();
+      await loadMonomerOnCanvas(page, rightMonomer);
+
+      const rightMonomerLocator =
+        (await (
+          await getMonomerLocator(page, {
+            monomerAlias: rightMonomer.alias,
+          })
+        ).count()) > 1
+          ? (
+              await getMonomerLocator(page, {
+                monomerAlias: rightMonomer.alias,
+              })
+            ).nth(1)
+          : (
+              await getMonomerLocator(page, {
+                monomerAlias: rightMonomer.alias,
+              })
+            ).first();
+
+      await bondTwoMonomers(
+        page,
+        leftMonomerLocator,
+        rightMonomerLocator,
+        undefined,
+        undefined,
+        MacroBondTool.HYDROGEN,
+      );
+
+      await selectFlexLayoutModeTool(page);
+      await selectSnakeLayoutModeTool(page);
+      await takeEditorScreenshot(page);
+    });
   }
 }

@@ -467,6 +467,13 @@ export class MacromoleculesConverter {
             monomer,
             atomId,
             atom.label as AtomLabel,
+            {
+              charge: atom.charge,
+              explicitValence: atom.explicitValence,
+              isotope: atom.isotope,
+              radical: atom.radical,
+              alias: atom.alias,
+            },
           );
 
           command.merge(atomAddCommand);

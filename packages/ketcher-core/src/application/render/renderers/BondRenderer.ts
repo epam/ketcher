@@ -3,13 +3,14 @@ import { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { Bond } from 'domain/entities/CoreBond';
 import { Scale } from 'domain/helpers';
-import { Vec2 } from 'domain/entities';
+import { Box2Abs, Vec2 } from 'domain/entities';
 import { getBondLineShift } from 'application/render/restruct/rebond';
 import { CoreEditor } from 'application/editor';
 import { HalfEdge } from 'application/render/view-model/HalfEdge';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
 import { D3SvgElementSelection } from 'application/render/types';
+import util from 'application/render/util';
 
 type MouseActionType = 'mouseover' | 'mouseenter';
 
@@ -140,14 +141,35 @@ export class BondRenderer extends BaseRenderer {
     atom: Atom,
     halfEdge: HalfEdge,
   ) {
-    if (atom.renderer?.isLabelVisible) {
-      return position.addScaled(
-        halfEdge.direction,
-        BOND_WIDTH * 3 + (this.bond.firstAtom.renderer?.labelLength || 0) * 4,
-      );
+    if (!atom.renderer || !atom.renderer.isLabelVisible) {
+      return position;
     }
 
-    return position;
+    const atomLabelBBoxes = atom.renderer?.labelBBoxes;
+    const atomPositionInPixels = atom.renderer.scaledPosition;
+    let shiftValue = 0;
+
+    atomLabelBBoxes?.forEach((labelSymbolBBox) => {
+      const relativeLabelSymbolBox2Abs = new Box2Abs(
+        labelSymbolBBox.x,
+        labelSymbolBBox.y,
+        labelSymbolBBox.x + labelSymbolBBox.width,
+        labelSymbolBBox.y + labelSymbolBBox.height,
+      );
+      const absoluteLabelSymbolBox2Abs =
+        relativeLabelSymbolBox2Abs.translate(atomPositionInPixels);
+
+      shiftValue = Math.max(
+        shiftValue,
+        util.shiftRayBox(
+          atomPositionInPixels,
+          halfEdge.direction,
+          absoluteLabelSymbolBox2Abs,
+        ),
+      );
+    });
+
+    return position.addScaled(halfEdge.direction, BOND_WIDTH + shiftValue);
   }
 
   public appendSelection() {
@@ -475,41 +497,52 @@ export class BondRenderer extends BaseRenderer {
       );
 
       if (shift > 0) {
-        firstLineStartPosition = firstLineStartPosition.addScaled(
-          firstHalfEdge.direction,
-          bondSpace *
-            getBondLineShift(
-              firstHalfEdge.cosToRightNeighborHalfEdge,
-              firstHalfEdge.sinToRightNeighborHalfEdge,
-            ),
-        );
+        firstLineStartPosition = firstHalfEdge.firstAtom.renderer
+          ?.isLabelVisible
+          ? firstLineStartPosition
+          : firstLineStartPosition.addScaled(
+              firstHalfEdge.direction,
+              bondSpace *
+                getBondLineShift(
+                  firstHalfEdge.cosToRightNeighborHalfEdge,
+                  firstHalfEdge.sinToRightNeighborHalfEdge,
+                ),
+            );
 
-        firstLineEndPosition = firstLineEndPosition.addScaled(
-          firstHalfEdge.direction,
-          -bondSpace *
-            getBondLineShift(
-              secondHalfEdge.cosToLeftNeighborHalfEdge,
-              secondHalfEdge.sinToLeftNeighborHalfEdge,
-            ),
-        );
+        firstLineEndPosition = firstHalfEdge.secondAtom.renderer?.isLabelVisible
+          ? firstLineEndPosition
+          : firstLineEndPosition.addScaled(
+              firstHalfEdge.direction,
+              -bondSpace *
+                getBondLineShift(
+                  secondHalfEdge.cosToLeftNeighborHalfEdge,
+                  secondHalfEdge.sinToLeftNeighborHalfEdge,
+                ),
+            );
       } else if (shift < 0) {
-        secondLineStartPosition = secondLineStartPosition.addScaled(
-          firstHalfEdge.direction,
-          bondSpace *
-            getBondLineShift(
-              firstHalfEdge.cosToLeftNeighborHalfEdge,
-              firstHalfEdge.sinToLeftNeighborHalfEdge,
-            ),
-        );
+        secondLineStartPosition = firstHalfEdge.firstAtom.renderer
+          ?.isLabelVisible
+          ? secondLineStartPosition
+          : secondLineStartPosition.addScaled(
+              firstHalfEdge.direction,
+              bondSpace *
+                getBondLineShift(
+                  firstHalfEdge.cosToLeftNeighborHalfEdge,
+                  firstHalfEdge.sinToLeftNeighborHalfEdge,
+                ),
+            );
 
-        secondLineEndPosition = secondLineEndPosition.addScaled(
-          firstHalfEdge.direction,
-          -bondSpace *
-            getBondLineShift(
-              secondHalfEdge.cosToRightNeighborHalfEdge,
-              secondHalfEdge.sinToRightNeighborHalfEdge,
-            ),
-        );
+        secondLineEndPosition = firstHalfEdge.secondAtom.renderer
+          ?.isLabelVisible
+          ? secondLineEndPosition
+          : secondLineEndPosition.addScaled(
+              firstHalfEdge.direction,
+              -bondSpace *
+                getBondLineShift(
+                  secondHalfEdge.cosToRightNeighborHalfEdge,
+                  secondHalfEdge.sinToRightNeighborHalfEdge,
+                ),
+            );
       }
 
       this.pathShape = `

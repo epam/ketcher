@@ -126,11 +126,11 @@ const GetFileMethod: Record<string, keyof Ketcher> = {
   cdxml: 'getCDXml' as keyof Ketcher,
   cml: 'getCml',
   inchi: 'getInchi',
-  sdf: 'getSdf',
-  fasta: 'getFasta',
-  seq: 'getSequence',
-  idt: 'getIdt',
-  rdf: 'getRdf',
+  sdf: 'getSdf' as keyof Ketcher,
+  fasta: 'getFasta' as keyof Ketcher,
+  seq: 'getSequence' as keyof Ketcher,
+  idt: 'getIdt' as keyof Ketcher,
+  rdf: 'getRdf' as keyof Ketcher,
 } as const;
 
 type KetcherApiFunction = (format?: string) => Promise<string>;

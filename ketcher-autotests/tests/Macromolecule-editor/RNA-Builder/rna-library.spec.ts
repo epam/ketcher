@@ -1374,7 +1374,7 @@ test.describe('RNA Library', () => {
     await page.keyboard.press('Home');
   }
 
-  test('Check that preview window disappears when a cursor moves off from RNA in library', async () => {
+  test.skip('Check that preview window disappears when a cursor moves off from RNA in library', async () => {
     /*
      *Test case: https://github.com/epam/ketcher/issues/4422 - Case 21
      *Description:

@@ -6,6 +6,7 @@ import {
   clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
+  openFileAndAddToCanvasAsNewProject,
   openSettings,
   pressButton,
   takeEditorScreenshot,
@@ -78,6 +79,18 @@ test.describe('Ignore Chiral Flag', () => {
     await templateFromLAminoAcidsCategory(page);
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify absence "Enhanced Stereochemistry" flag and stereocenters', async ({
+    page,
+  }) => {
+    // Test case: https://github.com/epam/ketcher/issues/6161
+    await applyIgnoreChiralFlag(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/non-proprietary-structure.mol',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 });

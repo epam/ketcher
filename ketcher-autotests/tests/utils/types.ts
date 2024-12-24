@@ -12,3 +12,8 @@ export enum MonomerType {
   CHEM = 'CHEM',
   UnknownMonomer = 'CHEM',
 }
+
+export enum MacroBondType {
+  Single = 'covalent',
+  Hydrogen = 'hydrogen',
+}

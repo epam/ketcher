@@ -86,8 +86,6 @@ test.describe('Ignore Chiral Flag', () => {
     page,
   }) => {
     // Test case: https://github.com/epam/ketcher/issues/6161
-    // For now test working in not proper way because we have bug https://github.com/epam/ketcher/issues/6161
-    // After fix we need update snapshot.
     await applyIgnoreChiralFlag(page);
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/non-proprietary-structure.mol',

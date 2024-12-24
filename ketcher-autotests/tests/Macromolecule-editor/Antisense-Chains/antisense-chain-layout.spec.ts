@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
@@ -15,6 +16,7 @@ import {
   resetZoomLevelToDefault,
   moveMouseAway,
   selectAllStructuresOnCanvas,
+  selectSequenceLayoutModeTool,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -92,981 +94,6 @@ async function loadMonomerOnCanvas(
     await openFileAndAddToCanvasMacro(polymer.KETFile, page);
   }
 }
-
-// async function callContextMenuForMonomer(
-//   page: Page,
-//   monomerLocatorIndex: number,
-// ) {
-//   const canvasLocator = page.getByTestId('ketcher-canvas');
-//   await canvasLocator
-//     .locator('g.monomer')
-//     .nth(monomerLocatorIndex)
-//     .click({ button: 'right', force: true });
-// }
-
-// const monomers: IPolymer[] = [
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)}|RNA2{R(U)}$RNA1,RNA2,2:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)}|RNA2{R(U)}$RNA1,RNA2,2:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)}|RNA2{R}$RNA1,RNA2,2:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)}|RNA2{R}$RNA1,RNA2,1:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{P}|RNA2{R(C)}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{P}|RNA2{R(C)}$RNA2,RNA1,1:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)}|PEPTIDE1{A}$RNA1,PEPTIDE1,2:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)}|PEPTIDE1{A}$RNA1,PEPTIDE1,1:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{[2-damdA]}|RNA2{R(C)}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{[2-damdA]}|RNA2{R(C)}$RNA2,RNA1,1:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'CHEM1{[4aPEGMal]}|RNA1{R(C)}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'CHEM1{[4aPEGMal]}|RNA1{R(C)}$RNA1,CHEM1,1:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)}$RNA1,RNA2,2:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)}$RNA1,RNA2,2:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R}$RNA1,RNA2,2:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R}$RNA1,RNA2,1:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{P}|RNA2{R(C)P}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{P}|RNA2{R(C)P}$RNA2,RNA1,1:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|PEPTIDE1{A}$RNA1,PEPTIDE1,2:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|PEPTIDE1{A}$RNA1,PEPTIDE1,1:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|PEPTIDE1{A}$RNA1,PEPTIDE1,3:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{[2-damdA]}|RNA2{R(C)P}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{[2-damdA]}|RNA2{R(C)P}$RNA2,RNA1,1:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{[2-damdA]}|RNA2{R(C)P}$RNA2,RNA1,3:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'CHEM1{[4aPEGMal]}|RNA1{R(C)P}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'CHEM1{[4aPEGMal]}|RNA1{R(C)P}$RNA1,CHEM1,1:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'CHEM1{[4aPEGMal]}|RNA1{R(C)P}$RNA1,CHEM1,3:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)}$RNA1,RNA2,3:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)}$RNA1,RNA2,3:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R}$RNA1,RNA2,3:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{P}|RNA2{R(C)P}$RNA2,RNA1,3:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)P}$RNA1,RNA2,2:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)P}$RNA1,RNA2,2:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)P}$RNA1,RNA2,2:pair-3:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{RP}$RNA1,RNA2,2:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{RP}$RNA1,RNA2,1:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{RP}$RNA1,RNA2,3:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{RP}$RNA2,RNA1,2:pair-2:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{RP}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{RP}$RNA2,RNA1,2:pair-3:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{P}|RNA2{R(C)P}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{P}|RNA2{R(C)P}$RNA2,RNA1,1:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{P}|RNA2{R(C)P}$RNA2,RNA1,3:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|PEPTIDE1{A}$RNA1,PEPTIDE1,2:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|PEPTIDE1{A}$RNA1,PEPTIDE1,1:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|PEPTIDE1{A}$RNA1,PEPTIDE1,3:pair-1:pair$$$V2.0',
-//     checks: ['side chain'],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{[2-damdA]}|RNA2{R(C)P}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{[2-damdA]}|RNA2{R(C)P}$RNA2,RNA1,1:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{[2-damdA]}|RNA2{R(C)P}$RNA2,RNA1,3:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'CHEM1{[4aPEGMal]}|RNA1{R(C)P}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'CHEM1{[4aPEGMal]}|RNA1{R(C)P}$RNA1,CHEM1,1:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'CHEM1{[4aPEGMal]}|RNA1{R(C)P}$RNA1,CHEM1,3:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)}$RNA1,RNA2,3:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)}$RNA1,RNA2,3:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R}$RNA1,RNA2,3:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA1,RNA2,2:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA1,RNA2,2:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA1,RNA2,2:pair-3:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{RP.R(U)P}$RNA1,RNA2,2:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{RP.R(U)P}$RNA1,RNA2,1:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{RP.R(U)P}$RNA1,RNA2,3:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{RP.R(U)P}$RNA2,RNA1,2:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{RP.R(U)P}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{RP.R(U)P}$RNA2,RNA1,2:pair-3:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{P.R(U)P}|RNA2{R(C)P}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{P.R(U)P}|RNA2{R(C)P}$RNA2,RNA1,1:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{P.R(U)P}|RNA2{R(C)P}$RNA2,RNA1,3:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P}|PEPTIDE1{A}|RNA2{R(U)P}$RNA1,PEPTIDE1,2:pair-1:pair|RNA2,PEPTIDE1,1:R1-1:R2$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P}|PEPTIDE1{A}|RNA2{R(U)P}$RNA1,PEPTIDE1,1:pair-1:pair|PEPTIDE1,RNA2,1:R2-1:R1$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P}|PEPTIDE1{A}|RNA2{R(U)P}$RNA1,PEPTIDE1,3:pair-1:pair|PEPTIDE1,RNA2,1:R2-1:R1$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{[2-damdA].R(U)P}|RNA2{R(C)P}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{[2-damdA].R(U)P}|RNA2{R(C)P}$RNA2,RNA1,1:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{[2-damdA].R(U)P}|RNA2{R(C)P}$RNA2,RNA1,3:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'CHEM1{[4aPEGMal]}|RNA1{R(C)P}|RNA2{R(U)P}$CHEM1,RNA2,1:R2-1:R1|RNA1,CHEM1,2:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'CHEM1{[4aPEGMal]}|RNA1{R(C)P}|RNA2{R(U)P}$CHEM1,RNA2,1:R2-1:R1|RNA1,CHEM1,1:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'CHEM1{[4aPEGMal]}|RNA1{R(C)P}|RNA2{R(U)P}$CHEM1,RNA2,1:R2-1:R1|RNA1,CHEM1,3:pair-1:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P}|RNA2{R(U)}|RNA3{R(U)P}$RNA1,RNA2,3:pair-1:pair|RNA2,RNA3,1:R2-1:R1$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P}|RNA2{R(U)}|RNA3{R(U)P}$RNA1,RNA2,3:pair-2:pair|RNA2,RNA3,1:R2-1:R1$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P}|RNA2{R}|RNA3{R(U)P}$RNA1,RNA2,3:pair-1:pair|RNA2,RNA3,1:R2-1:R1$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA1,RNA2,2:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA1,RNA2,2:pair-5:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA1,RNA2,2:pair-3:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString: 'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA1,RNA2,1:pair-4:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA1,RNA2,1:pair-1:pair|RNA1,RNA2,3:pair-3:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA2,3:pair-5:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA2,3:pair-4:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA1,RNA2,1:pair-1:pair|RNA1,RNA2,1:pair-4:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA2,RNA1,5:pair-2:pair|RNA1,RNA2,2:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA2,5:pair-8:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-8:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-8:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,2:pair-5:pair|RNA1,RNA2,2:pair-8:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,3:pair-5:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,3:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-2:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-8:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-5:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,3:pair-8:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,6:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,6:pair-5:pair|RNA1,RNA2,2:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,6:pair-5:pair|RNA1,RNA2,2:pair-8:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,6:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,6:pair-5:pair|RNA1,RNA2,2:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,6:pair-5:pair|RNA1,RNA2,2:pair-8:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-2:pair|RNA1,RNA2,6:pair-5:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-5:pair|RNA1,RNA2,6:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-8:pair|RNA1,RNA2,6:pair-2:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-2:pair|RNA1,RNA2,6:pair-8:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-5:pair|RNA1,RNA2,6:pair-8:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-8:pair|RNA1,RNA2,6:pair-5:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-2:pair|RNA1,RNA2,6:pair-6:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-5:pair|RNA1,RNA2,6:pair-9:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-8:pair|RNA1,RNA2,6:pair-3:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-2:pair|RNA1,RNA2,3:pair-6:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-5:pair|RNA1,RNA2,3:pair-6:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-8:pair|RNA1,RNA2,3:pair-6:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,6:pair-6:pair|RNA1,RNA2,3:pair-3:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,6:pair-9:pair|RNA1,RNA2,3:pair-6:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,6:pair-3:pair|RNA1,RNA2,3:pair-9:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-6:pair|RNA1,RNA2,6:pair-3:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,6:pair-6:pair|RNA1,RNA2,3:pair-9:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,3:pair-6:pair|RNA1,RNA2,3:pair-9:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-//   {
-//     polymerDescription: '',
-//     contentType: MacroFileType.HELM,
-//     HELMString:
-//       'RNA1{R(C)P.R(C)P}|RNA2{R(U)P.R(U)P.R(U)P}$RNA1,RNA2,6:pair-6:pair|RNA1,RNA2,6:pair-9:pair$$$V2.0',
-//     checks: [''],
-//     monomerLocatorIndex: 0,
-//   },
-// ];
 
 const shortMonomerList: IMonomer[] = [
   {
@@ -1333,7 +360,7 @@ for (const leftMonomer of shortMonomerList) {
 
         await selectFlexLayoutModeTool(page);
         await selectSnakeLayoutModeTool(page);
-        await takeEditorScreenshot(page);
+        await takeEditorScreenshot(page, { hideMonomerPreview: true });
       },
     );
   }
@@ -1465,7 +492,7 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
       /*
        * Test task: https://github.com/epam/ketcher/issues/6184
        * Description: Check if monomers who participate in those H-bonds should be oriented
-       *              towards each other (one of the chains should be "flipped")
+       *                 towards each other (one of the chains should be "flipped")
        * Case:
        *       1. Load two monomers (eligable for antisense) on the canvas
        *       2. Bond its bases with hydrogen bond
@@ -1511,7 +538,7 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
 
       await selectFlexLayoutModeTool(page);
       await selectSnakeLayoutModeTool(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
     });
   }
 }
@@ -1781,3 +808,138 @@ test(
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   },
 );
+
+for (const leftMonomer of eligibleForAntisenseMonomerList) {
+  for (const rightMonomer of eligibleForAntisenseMonomerList) {
+    test(`10-${leftMonomer.id}-${rightMonomer.id}. Sequence mode: Creating sense/antisense connection for: ${leftMonomer.monomerDescription} and ${rightMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/6184
+       * Description: Sense and antisense chains should be treated as completely separate chains
+       *              in sequence mode, without any hydrogen bonds connecting them
+       * Case:
+       *       1. Load two monomers (eligable for antisense) on the canvas
+       *       2. Bond its bases with hydrogen bond
+       *       3. Switch to the sequence mode
+       *       4. Take screenshot to validate that sense and antisense chains are treated as separate chains
+       */
+      test.setTimeout(20000);
+
+      await loadMonomerOnCanvas(page, leftMonomer);
+
+      const leftMonomerLocator = (
+        await getMonomerLocator(page, {
+          monomerAlias: leftMonomer.alias,
+        })
+      ).first();
+      await loadMonomerOnCanvas(page, rightMonomer);
+
+      const rightMonomerLocator =
+        (await (
+          await getMonomerLocator(page, {
+            monomerAlias: rightMonomer.alias,
+          })
+        ).count()) > 1
+          ? (
+              await getMonomerLocator(page, {
+                monomerAlias: rightMonomer.alias,
+              })
+            ).nth(1)
+          : (
+              await getMonomerLocator(page, {
+                monomerAlias: rightMonomer.alias,
+              })
+            ).first();
+
+      await bondTwoMonomers(
+        page,
+        leftMonomerLocator,
+        rightMonomerLocator,
+        undefined,
+        undefined,
+        MacroBondTool.HYDROGEN,
+      );
+
+      await selectSequenceLayoutModeTool(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+      await selectSnakeLayoutModeTool(page);
+    });
+  }
+}
+
+for (const leftMonomer of shortMonomerList) {
+  for (const rightMonomer of shortMonomerList) {
+    test(
+      `11-${leftMonomer.id}-${rightMonomer.id}. Sequence mode: Hydrogen side chain for: ${leftMonomer.monomerDescription} and ${rightMonomer.monomerDescription}`,
+      { tag: ['@IncorrectResultBecauseOfBug'] },
+      async () => {
+        /*
+         * Test task: https://github.com/epam/ketcher/issues/6184
+         * Description: Check if hydrogen bonds connect monomers between chains (but not between bases), those
+         *              hydrogen bonds should be considered as side chain connections and shown correct at sequence mode
+         * Case:
+         *       1. Load two monomers on the canvas
+         *       2. Connect them with hydrogen bond
+         *       3. Switch to the sequence mode
+         *       4. Take screenshot to validate layout (connection should be considered as side chain)
+         *
+         *  WARNING: Some test tesults are wrong because of bug: https://github.com/epam/ketcher/issues/6204
+         *  Screenshots must be updated after fix and fixme should be removed
+         */
+        test.setTimeout(20000);
+
+        await loadMonomerOnCanvas(page, leftMonomer);
+        let leftMonomerAlias;
+        if (leftMonomer.type === 'Nucleoside') {
+          leftMonomerAlias = 'R';
+        } else if (leftMonomer.type === 'Nucleotide') {
+          leftMonomerAlias = 'P';
+        } else {
+          leftMonomerAlias = leftMonomer.alias;
+        }
+        const leftMonomerLocator = (
+          await getMonomerLocator(page, {
+            monomerAlias: leftMonomerAlias,
+          })
+        ).first();
+        await loadMonomerOnCanvas(page, rightMonomer);
+        let rightMonomerAlias;
+        if (rightMonomer.type === 'Nucleoside') {
+          rightMonomerAlias = 'R';
+        } else if (rightMonomer.type === 'Nucleotide') {
+          rightMonomerAlias = 'P';
+        } else {
+          rightMonomerAlias = rightMonomer.alias;
+        }
+        const rightMonomerLocator =
+          (await (
+            await getMonomerLocator(page, {
+              monomerAlias: rightMonomerAlias,
+            })
+          ).count()) > 1
+            ? (
+                await getMonomerLocator(page, {
+                  monomerAlias: rightMonomerAlias,
+                })
+              ).nth(1)
+            : (
+                await getMonomerLocator(page, {
+                  monomerAlias: rightMonomerAlias,
+                })
+              ).first();
+
+        await bondTwoMonomers(
+          page,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          MacroBondTool.HYDROGEN,
+        );
+
+        await selectSequenceLayoutModeTool(page);
+        await takeEditorScreenshot(page, { hideMonomerPreview: true });
+        await selectSnakeLayoutModeTool(page);
+      },
+    );
+  }
+}

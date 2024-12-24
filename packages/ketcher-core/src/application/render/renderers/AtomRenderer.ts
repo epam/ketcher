@@ -4,10 +4,12 @@ import { Coordinates } from 'application/editor/shared/coordinates';
 import { CoreEditor, ZoomTool } from 'application/editor';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import { D3SvgElementSelection } from 'application/render/types';
+import { VALENCE_MAP } from 'application/render/restruct/constants';
 
 export class AtomRenderer extends BaseRenderer {
   private selectionElement?: D3SvgElementSelection<SVGEllipseElement, void>;
   private textElement?: D3SvgElementSelection<SVGTextElement, void>;
+  private radicalElement?: D3SvgElementSelection<SVGGElement, void>;
 
   constructor(public atom: Atom) {
     super(atom);
@@ -58,7 +60,10 @@ export class AtomRenderer extends BaseRenderer {
   }
 
   private appendSelectionContour() {
-    if (this.labelLength < 2 || !this.isLabelVisible) {
+    if (
+      (this.labelLength < 2 || !this.isLabelVisible) &&
+      !this.atom.hasCharge
+    ) {
       return this.rootElement
         ?.insert('circle', ':first-child')
         .attr('r', 10)
@@ -134,28 +139,63 @@ export class AtomRenderer extends BaseRenderer {
     return false;
   }
 
+  public get labelText() {
+    return this.atom.properties.alias || this.atom.label;
+  }
+
+  private get isAtomTerminal() {
+    const editor = CoreEditor.provideEditorInstance();
+    const viewModel = editor.viewModel;
+    const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
+
+    return (
+      !atomNeighborsHalfEdges?.length || atomNeighborsHalfEdges.length === 1
+    );
+  }
+
   public get isLabelVisible() {
     const editor = CoreEditor.provideEditorInstance();
     const viewModel = editor.viewModel;
     const atomNeighborsHalfEdges = viewModel.atomsToHalfEdges.get(this.atom);
     const isCarbon = this.atom.label === AtomLabel.C;
     const visibleTerminal = true;
-    const isAtomTerminal =
-      !atomNeighborsHalfEdges?.length || atomNeighborsHalfEdges.length === 1;
+    const isAtomTerminal = this.isAtomTerminal;
     const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length || 0) >= 2;
+    const hasCharge = this.atom.hasCharge;
+    const hasRadical = this.atom.hasRadical;
+    const hasAlias = this.atom.properties.alias;
+    const hasExplicitValence = this.atom.hasExplicitValence;
+    const hasExplicitIsotope = this.atom.hasExplicitIsotope;
 
-    if (isCarbon && !isAtomTerminal) {
+    if (
+      isCarbon &&
+      !isAtomTerminal &&
+      !hasCharge &&
+      !hasRadical &&
+      !hasAlias &&
+      !hasExplicitValence &&
+      !hasExplicitIsotope
+    ) {
       return false;
     }
 
-    if ((isAtomTerminal && visibleTerminal) || isAtomInMiddleOfChain)
+    if ((isAtomTerminal && visibleTerminal) || isAtomInMiddleOfChain) {
       return true;
+    }
 
     return false;
   }
 
   public get labelLength() {
-    const { hydrogenAmount } = this.atom.calculateValence();
+    let { hydrogenAmount } = this.atom.calculateValence();
+
+    if (this.labelText.length > 1) {
+      return this.labelText.length;
+    }
+
+    if (!this.shouldDisplayHydrogen) {
+      hydrogenAmount = 0;
+    }
 
     if (hydrogenAmount === 0) {
       return 1;
@@ -164,18 +204,54 @@ export class AtomRenderer extends BaseRenderer {
     return hydrogenAmount === 1 ? 2 : 3;
   }
 
+  private get labelColor() {
+    return this.atom.properties.alias ? 'black' : ElementColor[this.atom.label];
+  }
+
+  public get labelBBoxes() {
+    // TODO calculate label bboxes after creation of text element
+    //  and store them in atom renderer to optimize performance
+    if (!this.textElement) {
+      return [];
+    }
+
+    const labelBboxes: DOMRect[] = [];
+    const radicalElementBbox = this.radicalElement?.node()?.getBBox();
+
+    this.textElement
+      .selectAll<SVGTSpanElement, this>('tspan')
+      .each(function (_atomRenderer, tspanIndex, tspans) {
+        labelBboxes.push(tspans[tspanIndex].getBBox());
+      });
+
+    if (radicalElementBbox) {
+      labelBboxes.push(radicalElementBbox);
+    }
+
+    return labelBboxes;
+  }
+
+  public get shouldDisplayHydrogen() {
+    // Remove when rules for displaying hydrogen are implemented same as in molecules mode
+    return this.atom.label !== AtomLabel.C || this.isAtomTerminal;
+  }
+
   private appendLabel() {
     if (!this.isLabelVisible) {
       return;
     }
 
-    const { hydrogenAmount } = this.atom.calculateValence();
+    let { hydrogenAmount } = this.atom.calculateValence();
     const shouldHydrogenBeOnLeft = this.shouldHydrogenBeOnLeft;
+
+    if (!this.shouldDisplayHydrogen) {
+      hydrogenAmount = 0;
+    }
 
     const textElement = this.rootElement
       ?.append('text')
       .attr('y', 5)
-      .attr('fill', ElementColor[this.atom.label])
+      .attr('fill', this.labelColor)
       .attr(
         'style',
         'user-select: none; font-family: Arial; letter-spacing: 1.2px;',
@@ -184,11 +260,17 @@ export class AtomRenderer extends BaseRenderer {
       .attr('pointer-events', 'none');
 
     if (!shouldHydrogenBeOnLeft) {
-      textElement?.append('tspan').text(this.atom.label);
+      textElement
+        ?.append('tspan')
+        .attr('dy', this.atom.hasExplicitIsotope ? 4 : 0)
+        .text(this.atom.properties.alias || this.atom.label);
     }
 
     if (hydrogenAmount > 0) {
-      textElement?.append('tspan').text('H');
+      textElement
+        ?.append('tspan')
+        .attr('dy', this.atom.hasExplicitIsotope ? 4 : 0)
+        .text('H');
     }
 
     if (hydrogenAmount > 1) {
@@ -198,7 +280,7 @@ export class AtomRenderer extends BaseRenderer {
     if (shouldHydrogenBeOnLeft) {
       textElement
         ?.append('tspan')
-        .text(this.atom.label)
+        .text(this.atom.properties.alias || this.atom.label)
         .attr('dy', hydrogenAmount > 1 ? -3 : 0);
     }
 
@@ -255,10 +337,102 @@ export class AtomRenderer extends BaseRenderer {
     this.move();
   }
 
+  private appendCharge() {
+    if (this.atom.hasCharge) {
+      const charge = this.atom.properties.charge as number;
+
+      this.textElement
+        ?.append('tspan')
+        .text(
+          (Math.abs(charge) > 1 ? Math.abs(charge) : '') +
+            (charge > 0 ? '+' : '-'),
+        )
+        .attr('fill', this.labelColor)
+        .attr('dy', -4);
+    }
+  }
+
+  private appendRadical() {
+    if (!this.atom.hasRadical) {
+      return;
+    }
+
+    const radical = this.atom.properties.radical;
+
+    this.radicalElement = this.rootElement?.append('g');
+
+    switch (radical) {
+      case 1:
+        this.radicalElement
+          ?.append('circle')
+          .attr('cx', 3)
+          .attr('cy', -10)
+          .attr('r', 2)
+          .attr('fill', this.labelColor);
+        this.radicalElement
+          ?.append('circle')
+          .attr('cx', -3)
+          .attr('cy', -10)
+          .attr('r', 2)
+          .attr('fill', this.labelColor);
+        break;
+      case 2:
+        this.radicalElement
+          ?.append('circle')
+          .attr('cx', 0)
+          .attr('cy', -10)
+          .attr('r', 2)
+          .attr('fill', this.labelColor);
+        break;
+      case 3:
+        this.radicalElement
+          ?.append('path')
+          .attr('d', `M 0 -5 L 2 -10 L 4 -5 M -6 -5 L -4 -10 L -2 -5`)
+          .attr('fill', 'none')
+          .attr('stroke', this.labelColor)
+          .attr('stroke-width', 1.4);
+        break;
+    }
+  }
+
+  private appendExplicitValence() {
+    if (this.atom.hasExplicitValence) {
+      const explicitValence = this.atom.properties.explicitValence as number;
+
+      this.textElement
+        ?.append('tspan')
+        .text(`(${VALENCE_MAP[explicitValence]})`)
+        .attr('fill', this.labelColor)
+        .attr('letter-spacing', 0.2)
+        .attr('dy', -4);
+    }
+  }
+
+  private appendExplicitIsotope() {
+    if (this.atom.hasExplicitIsotope) {
+      const explicitIsotope = this.atom.properties.isotope as number;
+
+      this.textElement
+        ?.insert('tspan', ':first-child')
+        .text(explicitIsotope)
+        .attr('fill', this.labelColor)
+        .attr('letter-spacing', 0.2)
+        .attr('dy', -4);
+    }
+  }
+
+  private appendAtomProperties() {
+    this.appendExplicitIsotope();
+    this.appendCharge();
+    this.appendRadical();
+    this.appendExplicitValence();
+  }
+
   show() {
     this.rootElement = this.appendRootElement();
     this.bodyElement = this.appendBody();
     this.textElement = this.appendLabel();
+    this.appendAtomProperties();
     this.hoverElement = this.appendHover();
     this.drawSelection();
   }

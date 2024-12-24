@@ -14,7 +14,7 @@ import {
   ConnectionDirectionInDegrees,
   ConnectionDirectionOfLastCell,
 } from 'domain/entities/canvas-matrix/Connection';
-import { SNAKE_LAYOUT_CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
+import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
@@ -159,7 +159,24 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('class', 'selection-area')
       .attr('d', this.path)
       .attr('fill-opacity', 0)
-      .attr('pointer-events', 'stroke');
+      .attr('pointer-events', 'stroke')
+      .attr('data-testid', 'bond')
+      .attr('data-bondtype', 'covalent')
+      .attr('data-bondid', this.polymerBond.id)
+      .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
+      .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id)
+      .attr(
+        'data-fromconnectionpoint',
+        this.polymerBond.firstMonomer.getAttachmentPointByBond(
+          this.polymerBond,
+        ),
+      )
+      .attr(
+        'data-tomonomerid',
+        this.polymerBond.secondMonomer?.getAttachmentPointByBond(
+          this.polymerBond,
+        ),
+      );
     return this.bodyElement;
   }
 
@@ -171,7 +188,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   ): string {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
-    const xOffset = (SNAKE_LAYOUT_CELL_WIDTH / 2) * cos;
+    const xOffset = (CELL_WIDTH / 2) * cos;
     const yOffset = (CELL_HEIGHT / 2) * sin;
     const maxXOffset = cell.connections.reduce(
       (max: number, connection: Connection): number => {
@@ -392,7 +409,28 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('d', dAttributeForPath)
       .attr('fill', 'none')
       .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0')
-      .attr('pointer-events', 'all');
+      .attr('pointer-events', 'all')
+      .attr('data-testid', 'bond')
+      .attr('data-bondtype', this.isHydrogenBond ? 'hydrogen' : 'covalent')
+      .attr('data-bondid', this.polymerBond.id)
+      .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
+      .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id);
+
+    if (!this.isHydrogenBond && this.bodyElement) {
+      this.bodyElement
+        .attr(
+          'data-fromconnectionpoint',
+          this.polymerBond.firstMonomer.getAttachmentPointByBond(
+            this.polymerBond,
+          ) || '',
+        )
+        .attr(
+          'data-toconnectionpoint',
+          this.polymerBond.secondMonomer?.getAttachmentPointByBond(
+            this.polymerBond,
+          ) || '',
+        );
+    }
 
     this.path = dAttributeForPath;
 
@@ -734,7 +772,28 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('y1', this.scaledPosition.startPosition.y)
       .attr('x2', this.scaledPosition.endPosition.x)
       .attr('y2', this.scaledPosition.endPosition.y)
-      .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none');
+      .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none')
+      .attr('data-testid', 'bond')
+      .attr('data-bondtype', this.isHydrogenBond ? 'hydrogen' : 'covalent')
+      .attr('data-bondid', this.polymerBond.id)
+      .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
+      .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id);
+
+    if (!this.isHydrogenBond && this.bodyElement) {
+      this.bodyElement
+        .attr(
+          'data-fromconnectionpoint',
+          this.polymerBond.firstMonomer.getAttachmentPointByBond(
+            this.polymerBond,
+          ) || '',
+        )
+        .attr(
+          'data-toconnectionpoint',
+          this.polymerBond.secondMonomer?.getAttachmentPointByBond(
+            this.polymerBond,
+          ) || '',
+        );
+    }
 
     return this.bodyElement;
   }

@@ -4,6 +4,7 @@ Tests below moved here from macro-micro-switcher since they are designed to be e
 and can't be executed in "clear canvas way"
 */
 import {
+  chooseFileFormat,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
@@ -29,9 +30,19 @@ import {
   Bases,
   selectMacroBond,
   moveMouseAway,
+  selectRingButton,
+  RingButton,
+  selectSaveFileFormat,
+  FileFormatOption,
+  moveMouseToTheMiddleOfTheScreen,
+  selectSaveTool,
+  clickOnCanvas,
+  pasteFromClipboardByKeyboard,
+  copyToClipboardByIcon,
 } from '@utils';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { closeErrorAndInfoModals } from '@utils/common/helpers';
 
 async function addToFavoritesMonomers(page: Page) {
   await page.getByTestId(Peptides.BetaAlanine).getByText('★').click();
@@ -342,6 +353,74 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await selectClearCanvasTool(page);
     await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that the "Copy to Clipboard" icon appears in the export window in molecules mode', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/5854
+      Description: The "Copy to Clipboard" icon appears in the export window in molecules mode
+      */
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectSaveFileFormat(page, FileFormatOption.KET);
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that the "Copy to Clipboard" icon appears in the export window in macromolecules mode', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/5854
+      Description: The "Copy to Clipboard" icon appears in the export window in macromolecules mode
+      */
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await turnOnMacromoleculesEditor(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, 'Ket');
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that the "Copy to Clipboard" icon disappears after clicking on the preview section and appears when hovering again', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/5854
+      Description: The "Copy to Clipboard" icon disappears after clicking on the preview section and appears when hovering again
+      */
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectSaveFileFormat(page, FileFormatOption.KET);
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await clickInTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+    await clickOnCanvas(page, 100, 100);
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that clicking on the "Copy to Clipboard" icon copies all exportable information to the clipboard', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/5854
+      Description: Clicking on the "Copy to Clipboard" icon copies all exportable information to the clipboard
+      */
+    await selectRingButton(RingButton.Benzene, page);
+    await clickInTheMiddleOfTheScreen(page);
+    await selectSaveFileFormat(page, FileFormatOption.KET);
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await copyToClipboardByIcon(page);
+    await closeErrorAndInfoModals(page);
+    await pasteFromClipboardByKeyboard(page);
+    await moveMouseAway(page);
+    await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
   });
 });

@@ -334,6 +334,7 @@ const server: {
   'gross-formula-add-rsites': ExtendedSchema;
   'gross-formula-add-isotopes': ExtendedSchema;
   'dearomatize-on-load': ExtendedSchema;
+  ignoreChiralFlag: ExtendedSchema;
 } = {
   'dearomatize-on-load': {
     title: 'dearomatize-on-load',
@@ -346,6 +347,12 @@ const server: {
     type: 'boolean',
     description: 'slider',
     default: true,
+  },
+  ignoreChiralFlag: {
+    title: 'Ignore the chiral flag',
+    type: 'boolean',
+    description: 'slider',
+    default: false,
   },
   'ignore-stereochemistry-errors': {
     title: 'Ignore stereochemistry errors',

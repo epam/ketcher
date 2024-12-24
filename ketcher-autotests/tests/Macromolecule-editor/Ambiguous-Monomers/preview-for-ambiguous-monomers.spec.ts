@@ -62,15 +62,18 @@ async function loadHELMFromClipboard(page: Page, helmString: string) {
     async () => await page.getByTestId('add-to-canvas-button').click(),
   );
 }
+
 async function hoverMouseOverMonomer(page: Page, monomerLocatorIndex: number) {
   await page.locator('use').nth(monomerLocatorIndex).hover({ force: true });
 }
+
 async function hoverMouseOverMicroMonomer(
   page: Page,
   monomerLocatorIndex: number,
 ) {
   await page.locator('tspan').nth(monomerLocatorIndex).hover({ force: true });
 }
+
 async function hoverMouseOverSequenceModeMonomer(page: Page) {
   await page.locator('text').first().hover();
 }

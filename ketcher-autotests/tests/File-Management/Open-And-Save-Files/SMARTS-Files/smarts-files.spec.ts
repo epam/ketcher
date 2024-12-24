@@ -13,7 +13,10 @@ import {
   waitForRender,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import { FileType, verifyFile2 } from '@utils/files/receiveFileComparisonData';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Loading SMARTS files', () => {
   test.beforeEach(async ({ page }) => {
@@ -530,7 +533,11 @@ test.describe('Saving collapsed monomer to SMARTS: ', () => {
       await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
       await takeEditorScreenshot(page);
 
-      await verifyFile2(page, monomer.SMARTSFile_Expected, FileType.SMARTS);
+      await verifyFileExport(
+        page,
+        monomer.SMARTSFile_Expected,
+        FileType.SMARTS,
+      );
 
       await openFileAndAddToCanvasAsNewProject(
         monomer.SMARTSFile_Expected,
@@ -588,7 +595,11 @@ test.describe('Saving expanded monomer to SMARTS: ', () => {
       await expandMonomer(page, monomer.monomerLocatorText);
       await takeEditorScreenshot(page);
 
-      await verifyFile2(page, monomer.SMARTSFile_Expected, FileType.SMARTS);
+      await verifyFileExport(
+        page,
+        monomer.SMARTSFile_Expected,
+        FileType.SMARTS,
+      );
 
       await openFileAndAddToCanvasAsNewProject(
         monomer.SMARTSFile_Expected,

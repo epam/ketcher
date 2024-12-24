@@ -33,7 +33,7 @@ import {
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
-  verifyFile2,
+  verifyFileExport,
   verifyRdfFile,
 } from '@utils/files/receiveFileComparisonData';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
@@ -212,7 +212,7 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await verifyFile2(page, ketFile, FileType.KET);
+      await verifyFileExport(page, ketFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(ketFile, page);
       await takeEditorScreenshot(page);
     });
@@ -246,7 +246,7 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await verifyFile2(page, ketFile, FileType.KET);
+      await verifyFileExport(page, ketFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(ketFile, page);
       await takeEditorScreenshot(page);
     });
@@ -280,7 +280,7 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await verifyFile2(page, ketFile, FileType.KET);
+      await verifyFileExport(page, ketFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(ketFile, page);
       await takeEditorScreenshot(page);
     });
@@ -327,7 +327,7 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await verifyFile2(page, ketFile, FileType.KET);
+      await verifyFileExport(page, ketFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(ketFile, page);
       await takeEditorScreenshot(page);
     });
@@ -457,7 +457,7 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await verifyFile2(page, ketFile, FileType.KET);
+      await verifyFileExport(page, ketFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(ketFile, page);
       await takeEditorScreenshot(page);
     });
@@ -503,7 +503,7 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await verifyFile2(page, ketFile, FileType.KET);
+      await verifyFileExport(page, ketFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(ketFile, page);
       await takeEditorScreenshot(page);
     });
@@ -621,7 +621,7 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await verifyFile2(page, ketFile, FileType.KET);
+      await verifyFileExport(page, ketFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(ketFile, page);
       await takeEditorScreenshot(page);
     });
@@ -648,7 +648,7 @@ test.describe('Cascade Reactions', () => {
       100,
     );
     await takeEditorScreenshot(page);
-    await verifyFile2(
+    await verifyFileExport(
       page,
       'KET/rdf-rxn-v2000-cascade-reaction-2-1-1-and-rdf-rxn-v3000-single-reaction-1x1.ket',
       FileType.KET,
@@ -752,7 +752,7 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await verifyFile2(page, ketFile, FileType.KET);
+      await verifyFileExport(page, ketFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(ketFile, page);
       await takeEditorScreenshot(page);
     });

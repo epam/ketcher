@@ -9,8 +9,6 @@ import { HalfEdge } from 'application/render/view-model/HalfEdge';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
 import { D3SvgElementSelection } from 'application/render/types';
-import util from 'application/render/util';
-import { BondStereo, BondType } from 'application/render/renderers/constants';
 import {
   BondSVGPath,
   BondVectors,
@@ -25,6 +23,7 @@ import {
   SingleUpDownBondPathRenderer,
   TripleBondPathRenderer,
 } from 'application/render/renderers/BondPathRenderer';
+import util from 'application/render/util';
 
 const BOND_WIDTH = 2;
 const BOND_WIDTH_HOVER = 10;

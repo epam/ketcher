@@ -39,41 +39,49 @@ class DoubleBondPathRenderer {
     );
 
     if (shift > 0) {
-      firstLineStartPosition = firstLineStartPosition.addScaled(
-        firstHalfEdge.direction,
-        BondSpace *
-          getBondLineShift(
-            firstHalfEdge.cosToRightNeighborHalfEdge,
-            firstHalfEdge.sinToRightNeighborHalfEdge,
-          ),
-      );
+      firstLineStartPosition = firstHalfEdge.firstAtom.renderer?.isLabelVisible
+        ? firstLineStartPosition
+        : firstLineStartPosition.addScaled(
+            firstHalfEdge.direction,
+            BondSpace *
+              getBondLineShift(
+                firstHalfEdge.cosToRightNeighborHalfEdge,
+                firstHalfEdge.sinToRightNeighborHalfEdge,
+              ),
+          );
 
-      firstLineEndPosition = firstLineEndPosition.addScaled(
-        firstHalfEdge.direction,
-        -BondSpace *
-          getBondLineShift(
-            secondHalfEdge.cosToLeftNeighborHalfEdge,
-            secondHalfEdge.sinToLeftNeighborHalfEdge,
-          ),
-      );
+      firstLineEndPosition = firstHalfEdge.secondAtom.renderer?.isLabelVisible
+        ? firstLineEndPosition
+        : firstLineEndPosition.addScaled(
+            firstHalfEdge.direction,
+            -BondSpace *
+              getBondLineShift(
+                secondHalfEdge.cosToLeftNeighborHalfEdge,
+                secondHalfEdge.sinToLeftNeighborHalfEdge,
+              ),
+          );
     } else if (shift < 0) {
-      secondLineStartPosition = secondLineStartPosition.addScaled(
-        firstHalfEdge.direction,
-        BondSpace *
-          getBondLineShift(
-            firstHalfEdge.cosToLeftNeighborHalfEdge,
-            firstHalfEdge.sinToLeftNeighborHalfEdge,
-          ),
-      );
+      secondLineStartPosition = firstHalfEdge.firstAtom.renderer?.isLabelVisible
+        ? secondLineStartPosition
+        : secondLineStartPosition.addScaled(
+            firstHalfEdge.direction,
+            BondSpace *
+              getBondLineShift(
+                firstHalfEdge.cosToLeftNeighborHalfEdge,
+                firstHalfEdge.sinToLeftNeighborHalfEdge,
+              ),
+          );
 
-      secondLineEndPosition = secondLineEndPosition.addScaled(
-        firstHalfEdge.direction,
-        -BondSpace *
-          getBondLineShift(
-            secondHalfEdge.cosToRightNeighborHalfEdge,
-            secondHalfEdge.sinToRightNeighborHalfEdge,
-          ),
-      );
+      secondLineEndPosition = firstHalfEdge.secondAtom.renderer?.isLabelVisible
+        ? secondLineEndPosition
+        : secondLineEndPosition.addScaled(
+            firstHalfEdge.direction,
+            -BondSpace *
+              getBondLineShift(
+                secondHalfEdge.cosToRightNeighborHalfEdge,
+                secondHalfEdge.sinToRightNeighborHalfEdge,
+              ),
+          );
     }
 
     const strokeDasharray =

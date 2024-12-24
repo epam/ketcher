@@ -327,6 +327,29 @@ test.describe('Hot keys', () => {
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
   });
+
+  test('Verify move by ctrl when its a reactant and elliptical arrow', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Structure moved by ctrl when its a reaction with catalyst above and below elliptical arrow.
+      Case:
+      1. Add reaction with catalyst above and below elliptical arrow.
+      2. Select whole structure.
+      3. Press Ctrl key and move structure.
+      Expected: Reaction with catalyst above and below elliptical arrow copied and moves to a new place.
+      */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/two-benzene-and-elliptical-arrow.ket',
+      page,
+    );
+    await selectRectangleSelectionTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+  });
 });
 
 test.describe('Hot key Del', () => {

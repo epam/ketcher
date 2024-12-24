@@ -2149,7 +2149,7 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await verifyFile2(page, ketFile, FileType.KET);
+      await verifyFileExport(page, ketFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(ketFile, page);
       await takeEditorScreenshot(page);
     });

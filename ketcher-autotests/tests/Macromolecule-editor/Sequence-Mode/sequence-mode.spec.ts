@@ -17,6 +17,9 @@ import {
   selectUndoByKeyboard,
   selectZoomInTool,
   selectZoomOutTool,
+  MacroFileType,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  selectClearCanvasTool,
 } from '@utils';
 import {
   enterSequence,
@@ -671,4 +674,89 @@ test.describe('Sequence Mode', () => {
       await takeEditorScreenshot(page);
     });
   }
+
+  test('1. Check that in sequence mode not modifid amino acids are not marked', async ({
+    page,
+  }) => {
+    /*
+    Test task: https://github.com/epam/ketcher/issues/5629
+    Description: Check that in sequence mode not modifid amino acids are not marked
+    Case: 
+          1. Switch to sequence mode
+          2. Open HELM with all not modified amino acids
+          3. Take a screenshot to verify that not modified amino acids are not marked
+    */
+    await selectSequenceLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{A.C.D.[D*].E.F.G}|PEPTIDE2{H.K.L.M.N.O.P}|PEPTIDE3{Q.R.S.T.U.V.W}|' +
+        'PEPTIDE4{Y.(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y).(D,N).(L,I).(E,Q)}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  const modifiedAminoAcids: string[] = [
+    'PEPTIDE1{[bAla].[Cha].[Cya].[D-1Nal].[D-2Nal].[D-2Pal].[D-2Thi].[D-3Pal].[D-Abu].[D-Cha].[meA].' +
+      '[NMebAl].[Thi].[Tza].[dA].[1Nal].[2Nal].[3Pal].[4Pal].[Abu].[Cys_Bn].[Cys_Me].[Dha].[dC].[Edc].' +
+      '[Hcy].[meC].[AspOMe].[dD].[meD].[dE].[gGlu].[Gla].[meE].[aMePhe].[Bip].[Bpa].[dF].[DPhe4C].' +
+      '[DPhe4F].[DPhe4u].[hPhe].[meF].[Phe_2F].[Phe_3F].[Phe_4F].[Phe_4I].[Chg].[D-Chg].[D-Phg].' +
+      '[D-Pyr].[PheNO2].[Phebbd].[PheaDH].[Phe4SD].[Phe4NO].[Phe4NH].[Phe4Me].[Phe4Cl].[Phe4Br].' +
+      '[Phe3Cl].[Phe34d].[Phe2Me].[meQ].[dQ].[xiHyp].[Thz].[DAGlyO].[D-Nle].[Ar5c].[Orn].[meK].' +
+      '[LysMe3].[LysiPr].[LysBoc].[Nle].[meL].[Hyp].[Mhp].[Cit].[D-Cit].[D-hArg].[DhArgE].[dR].' +
+      '[Har].[hArg].[LhArgE].[meR].[D-Dap].[Dap].[dS].[DSerBn].[DSertB].[Hse].[meS].[Ser_Bn].[SerPO3]' +
+      '.[SertBu].[aThr].[D-aThr].[dT].[D-Pen].[DaMeAb].[dV].[Iva].[Val3OH].[DTrp2M].[DTrpFo].[dW].' +
+      '[Kyn].[meW].[Trp_Me].[Trp5OH].[TrpOme].[2Abz].[3Abz].[4Abz].[Abu23D].[Bmt].[Azi].[Asu].[App].' +
+      '[Apm].[Aoda].[Cap].[Ac3c].[Ac6c].[Aca].[Aib].[D-Bmt].[D-Dab].[D-Dip].[D-Pip].[D-Tic].[Dab].[meV].' +
+      '[Nva].[Pen].[dL].[ThrPO3].[xiThr].[dU].[meU].[D-Nva].[meT].[Dip].[Dsu].[dN].[meN].[dO].[meO].' +
+      '[aHyp].[aMePro].[Aze].[D-aHyp].[D-Hyp].[D-Thz].[dP].[Pyr].[dH].[DHis1B].[Hhs].[His1Bn].[His1Me].' +
+      '[His3Me].[meH].[aIle].[D-aIle].[dI].[DxiIle].[meI].[xiIle].[Aad].[D-Orn].[DALys].[dK].[Dpm].' +
+      '[Hyl5xi].[Lys_Ac].[tLeu].[dM].[DMetSO].[meM].[Met_O].[Met_O2].[Phg].[meG].[GlycPr].[Phg].[meG].' +
+      '[GlycPr].[Glyall].[TyrtBu].[TyrSO3].[TyrPO3].[TyrPh4].[TyrabD].[Tyr3OH].[Tyr3NO].[Tyr35d].' +
+      '[Tyr26d].[Tyr_Me].[Tyr_Bn].[Tyr_3I].[nTyr].[meY].[dY].[DTyrMe].[DTyrEt].[NMe2Ab].[NMe4Ab].[Pqa].' +
+      '[pnT].[pnG].[pnC].[pnA].[Pip].[Oic].[Oic3aR].[Oic3aS].[Sta].[Sta3xi].[Tic].[Wil].[aMeTy3].' +
+      '[aMeTyr].[D-nTyr].[D-gGlu].[D-hPhe].[Bux]}$$$$V2.0',
+
+    'PEPTIDE1{[DACys].[Ala-al]}|PEPTIDE2{[DAlaol].[Ala-ol]}|PEPTIDE3{[D-OAla].[Gly-al]}|PEPTIDE4{[L-OAla].' +
+      '[Phg-ol]}|PEPTIDE5{[DAhPhe].[-NHBn]}|PEPTIDE6{[DAPhg3].[Phe-al]}|PEPTIDE7{[DAGlyB].[-NHEt]}$$$$V2.0',
+
+    'PEPTIDE1{[PhLA].[Phe-ol]}|PEPTIDE2{[DAGlyC].[Lys-ol]}|PEPTIDE3{[DAGlyP].[Arg-al]}|PEPTIDE4{[DAGlyT].' +
+      '[DPhgol]}|PEPTIDE5{[DAPhg4].[Pro-ol]}|PEPTIDE6{[DALeu].[Leu-ol]}|PEPTIDE7{[OLeu].[-OtBu]}$$$$V2.0',
+
+    'PEPTIDE1{[meP].[Pro-al]}|PEPTIDE2{[D-OVal].[dThrol]}|PEPTIDE3{[L-OVal].[-Et]}|PEPTIDE4{[Ac-].[-Bn]}|' +
+      'PEPTIDE5{[Bua-].[-OEt]}|PEPTIDE6{[Cbz-].[-Ph]}|PEPTIDE7{[Bn-].[Am-]}$$$$V2.0',
+
+    'PEPTIDE1{[DANcy].[Leu-al]}|PEPTIDE2{[fmoc-].[Thr-ol]}|PEPTIDE3{[DADip].[Val-ol]}|PEPTIDE4{[Glc].[-Me]}|' +
+      'PEPTIDE5{[Boc-].[Aib-ol]}|PEPTIDE6{[Bz-]}|PEPTIDE7{[DAChg].[DADab]}$$$$V2.0',
+
+    'PEPTIDE1{[NHBn-].[Gly-ol]}|PEPTIDE2{[MsO-].[Lys-al]}|PEPTIDE3{[Mpa].[Asp-al]}|PEPTIDE4{[Et-].[DProol]}|' +
+      'PEPTIDE5{[Me-].[Hsl]}|PEPTIDE6{[Hva]}|PEPTIDE7{[Mba]}$$$$V2.0',
+
+    'PEPTIDE1{[OMe-].[-NMe]}|PEPTIDE2{[NMe24A].[-OBn]}|PEPTIDE3{[NMe23A].[DTyr3O]}|PEPTIDE4{[OBn-].[Oxa]}|' +
+      'PEPTIDE5{[DAnTyr].[Pyrro]}|PEPTIDE6{[Tos-].[-OMe]}$$$$V2.0',
+  ];
+
+  test('2. Check that in sequence mode all modifid amino acids are marked', async ({
+    page,
+  }) => {
+    /*
+    Test task: https://github.com/epam/ketcher/issues/5629
+    Description: Check that in sequence mode all modifid amino acids are marked
+    Case: 
+          1. Open HELM with all not modified amino acids
+          2. Switch to sequence mode
+          3. Take a screenshot to verify that all modified amino acids are marked
+    */
+    await selectSequenceLayoutModeTool(page);
+
+    for (const modifiedAminoAcid of modifiedAminoAcids) {
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        modifiedAminoAcid,
+      );
+      await takeEditorScreenshot(page);
+      await selectClearCanvasTool(page);
+    }
+  });
 });

@@ -29,6 +29,9 @@ import {
   dragMouseTo,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
+  waitForSpinnerFinishedWork,
+  copyAndPaste,
+  clickOnCanvas,
 } from '@utils';
 
 test.describe('Hot keys', () => {
@@ -348,6 +351,133 @@ test.describe('Hot keys', () => {
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
     await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify move by ctrl when its a part of molecula as atom with valence, alias, text and plus', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Structure moved by ctrl when its a part of molecula as atom with valence, alias, text and plus.
+      Case:
+      1. Add reaction with a molecula as atom with valence, alias, text and plus.
+      2. Select whole structure.
+      3. Press Ctrl key and move structure.
+      Expected: Reaction with a molecula as atom with valence, alias, text and plus copied and moves to a new place.
+      */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/two-benzene-valence-alias-text-plus.ket',
+      page,
+    );
+    await selectRectangleSelectionTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify aromatize/dearomatize after copy and moving by ctrl', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Aromatize/dearomatize works after copy and moving by ctrl.
+      Case:
+      1. Add structure.
+      2. Select whole structure.
+      3. Press Ctrl key and move structure.
+      4. Aromatize/dearomatize.
+      Expected: Aromatize/dearomatize works after moving by ctrl.
+      */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/two-benzene-valence-alias-text-plus.ket',
+      page,
+    );
+    await selectRectangleSelectionTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await page.mouse.click(100, 100);
+    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify Layout after copy and moving by ctrl', async ({ page }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Layout works after copy and moving by ctrl.
+      Case:
+      1. Add structure.
+      2. Select whole structure.
+      3. Press Ctrl key and move structure.
+      4. Layout.
+      Expected: Layout works after moving by ctrl.
+      */
+    await drawBenzeneRing(page);
+    await selectRectangleSelectionTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyStructureByCtrlMove(page, 'C', 0);
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify add/remove explicit hydrogen after moving by ctrl', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/4986
+      Description: Add/remove explicit hydrogen works after copy and moving by ctrl.
+      Case:
+      1. Add structure.
+      2. Select whole structure.
+      3. Press Ctrl key and move structure.
+      4. Add/remove explicit hydrogen.
+      Expected: Add/remove explicit hydrogen works after moving by ctrl.
+      */
+    await drawBenzeneRing(page);
+    await selectRectangleSelectionTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyStructureByCtrlMove(page, 'C', 0);
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
+    });
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
+    });
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify copy/paste works after copy and moving by ctrl', async ({
+    page,
+  }) => {
+    /*
+        Test case: https://github.com/epam/ketcher/issues/4986
+        Description: Copy/paste works after copy and moving by ctrl.
+        Case:
+        1. Add structure.
+        2. Select whole structure.
+        3. Press Ctrl key and move structure.
+        4. Copy/paste.
+        Expected: Copy/paste works after moving by ctrl.
+        */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/two-benzene-valence-alias-text-plus.ket',
+      page,
+    );
+    await selectRectangleSelectionTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
+    await page.mouse.click(100, 100);
+    await takeEditorScreenshot(page);
+    await copyAndPaste(page);
+    await clickOnCanvas(page, 400, 500);
     await takeEditorScreenshot(page);
   });
 });

@@ -398,9 +398,13 @@ test.describe('Hot keys', () => {
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
     await page.mouse.click(100, 100);
-    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
     await takeEditorScreenshot(page);
   });
 

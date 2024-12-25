@@ -157,7 +157,7 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, peptide2, peptide3);
     await bondTwoMonomers(page, peptide3, peptide4);
 
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check snake mode arrange for peptides chain', async () => {
@@ -180,7 +180,7 @@ test.describe('Snake Bond Tool', () => {
 
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check finding right chain sequence using snake mode', async () => {
@@ -192,7 +192,7 @@ test.describe('Snake Bond Tool', () => {
     await createBondedMonomers(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Mode returns back/forth after undo/redo', async () => {

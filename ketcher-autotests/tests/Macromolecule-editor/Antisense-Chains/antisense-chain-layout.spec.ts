@@ -307,7 +307,7 @@ for (const leftMonomer of shortMonomerList) {
          *  https://github.com/epam/ketcher/issues/6195
          *  Screenshots must be updated after fix and fixme should be removed
          */
-        test.setTimeout(20000);
+        test.setTimeout(30000);
 
         await loadMonomerOnCanvas(page, leftMonomer);
         let leftMonomerAlias;

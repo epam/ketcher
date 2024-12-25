@@ -17,13 +17,10 @@ import {
   waitForRender,
   selectAtomInToolbar,
   AtomButton,
-  selectTopPanelButton,
-  TopPanelButton,
   selectAromatizeTool,
   selectDearomatizeTool,
   removeExplicitHydrogens,
 } from '@utils';
-import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {

@@ -13,6 +13,7 @@
     "noImplicitThis": true,
     "noImplicitAny": false,
     "strictNullChecks": true,
+    "suppressImplicitAnyIndexErrors": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "allowSyntheticDefaultImports": true,

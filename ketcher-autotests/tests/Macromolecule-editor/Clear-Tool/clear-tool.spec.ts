@@ -114,7 +114,7 @@ test.describe('Clear Canvas Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);
   });
 

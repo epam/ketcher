@@ -70,7 +70,7 @@ test.describe('Clear canvas', () => {
     // Test case:EPMLSOPKET-1705
     // Checking clearing canvas with hotkey
     await openFileAndAddToCanvas('KET/ketcher.ket', page);
-    await selectClearCanvasTool(page);
+    await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);
   });
 
@@ -85,10 +85,10 @@ test.describe('Clear canvas', () => {
     await selectRing(RingButton.Benzene, page);
     await page.getByTestId('canvas').click({ position: { x, y } });
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await page.keyboard.press('Control+Delete');
     await openFileAndAddToCanvas('Molfiles-V2000/ketcher.mol', page);
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await page.keyboard.press('Control+Delete');
     await takeEditorScreenshot(page);
   });
 

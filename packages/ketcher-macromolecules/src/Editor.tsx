@@ -65,6 +65,8 @@ import {
   SugarAvatar,
   UnresolvedMonomerAvatar,
   NucleotideAvatar,
+  SequenceStartArrow,
+  ArrowMarker,
 } from 'components/shared/monomerOnCanvas';
 import { ErrorModal } from 'components/modal/Error';
 import {
@@ -81,7 +83,6 @@ import { LayoutModeButton } from 'components/LayoutModeButton';
 import { useContextMenu } from 'react-contexify';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu/SequenceItemContextMenu';
-import { SequenceStartArrow } from 'components/shared/monomerOnCanvas/SequenceStartArrow';
 import { Preview } from 'components/preview/Preview';
 import { SequenceTypeGroupButton } from 'components/SequenceTypeGroupButton';
 import { TopMenuComponent } from 'components/TopMenuComponent';
@@ -273,27 +274,6 @@ function Editor({
             }}
           >
             <defs>
-              <path
-                strokeLinecap="round"
-                d="M5,0 0,2.5 5,5z"
-                id="arrow-marker-content"
-              />
-              <marker
-                id="arrow-marker"
-                markerHeight="3"
-                markerWidth="5"
-                orient="auto"
-                refX="2.5"
-                refY="1.5"
-              >
-                <use
-                  href="#arrow-marker-content"
-                  transform="rotate(180 2.5 1.5) scale(1,0.6)"
-                  strokeWidth="1.2500"
-                  fill="#000"
-                  stroke="none"
-                />
-              </marker>
               <PeptideAvatar />
               <ChemAvatar />
               <SugarAvatar />
@@ -302,6 +282,7 @@ function Editor({
               <UnresolvedMonomerAvatar />
               <NucleotideAvatar />
               <SequenceStartArrow />
+              <ArrowMarker />
             </defs>
             <g className="drawn-structures"></g>
             {isHandToolSelected && (

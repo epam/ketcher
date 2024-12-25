@@ -332,6 +332,7 @@ test.describe('Saving in .svg files', () => {
     test(`Export to SVG: Verify it is possible to export Sequence-Peptide mode canvas with ${description} to SVG`, async () => {
       markResetToDefaultState('defaultLayout');
 
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(filename, page);
       await selectSequenceLayoutModeTool(page);
       await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);

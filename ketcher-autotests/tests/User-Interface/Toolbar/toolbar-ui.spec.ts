@@ -19,6 +19,8 @@ import {
   AtomButton,
   selectTopPanelButton,
   TopPanelButton,
+  selectAromatizeTool,
+  selectDearomatizeTool,
   removeExplicitHydrogens,
 } from '@utils';
 import { waitForLoadAndRender } from '@utils/common/loaders/waitForLoad/waitForLoad';
@@ -186,13 +188,9 @@ test.describe('Open Ketcher', () => {
     */
     await takeTopToolbarScreenshot(page);
     await drawBenzeneRing(page);
-    await waitForLoadAndRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Aromatize, page);
-    });
+    await selectAromatizeTool(page);
     await takeEditorScreenshot(page);
-    await waitForLoadAndRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
-    });
+    await selectDearomatizeTool(page);
     await takeEditorScreenshot(page);
   });
 

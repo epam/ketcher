@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
@@ -27,6 +28,7 @@ import {
   RingButton,
   selectRectangleSelectionTool,
   waitForRender,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -35,6 +37,7 @@ import {
   verifyRdfFile,
 } from '@utils/files/receiveFileComparisonData';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import { addTextToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 async function addTail(page: Page, x: number, y: number) {
   await page.mouse.click(x, y, { button: 'right' });
@@ -117,91 +120,95 @@ test.describe('Cascade Reactions', () => {
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-1x0.rdf',
       ketFile: 'KET/rdf-rxn-v2000-single-reaction-1x0-expected.ket',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (1:0)',
+      testCaseDescription: '1. RDF file with RXN V2000 single reactions (1:0)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-1x1.rdf',
       ketFile: 'KET/rdf-rxn-v2000-single-reaction-1x1-expected.ket',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (1:1)',
+      testCaseDescription: '2. RDF file with RXN V2000 single reactions (1:1)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-1x2.rdf',
       ketFile: 'KET/rdf-rxn-v2000-single-reaction-1x2-expected.ket',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (1:2)',
+      testCaseDescription: '3. RDF file with RXN V2000 single reactions (1:2)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-2x0.rdf',
       ketFile: 'KET/rdf-rxn-v2000-single-reaction-2x0-expected.ket',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (2:0)',
+      testCaseDescription: '4. RDF file with RXN V2000 single reactions (2:0)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-2x1.rdf',
       ketFile: 'KET/rdf-rxn-v2000-single-reaction-2x1-expected.ket',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (2:1)',
+      testCaseDescription: '5. RDF file with RXN V2000 single reactions (2:1)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-2x2.rdf',
       ketFile: 'KET/rdf-rxn-v2000-single-reaction-2x2-expected.ket',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (2:2)',
+      testCaseDescription: '6. RDF file with RXN V2000 single reactions (2:2)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-3x1.rdf',
       ketFile: 'KET/rdf-rxn-v2000-single-reaction-3x1-expected.ket',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (3:1)',
+      testCaseDescription: '7. RDF file with RXN V2000 single reactions (3:1)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-3x3.rdf',
       ketFile: 'KET/rdf-rxn-v2000-single-reaction-3x3-expected.ket',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (3:3)',
+      testCaseDescription: '8. RDF file with RXN V2000 single reactions (3:3)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-1x0.rdf',
       ketFile: 'KET/rdf-rxn-v3000-single-reaction-1x0-expected.ket',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (1:0)',
+      testCaseDescription: '9. RDF file with RXN V3000 single reactions (1:0)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-1x1.rdf',
       ketFile: 'KET/rdf-rxn-v3000-single-reaction-1x1-expected.ket',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (1:1)',
+      testCaseDescription: '10. RDF file with RXN V3000 single reactions (1:1)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-1x2.rdf',
       ketFile: 'KET/rdf-rxn-v3000-single-reaction-1x2-expected.ket',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (1:2)',
+      testCaseDescription: '11. RDF file with RXN V3000 single reactions (1:2)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-2x0.rdf',
       ketFile: 'KET/rdf-rxn-v3000-single-reaction-2x0-expected.ket',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (2:0)',
+      testCaseDescription: '12. RDF file with RXN V3000 single reactions (2:0)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-2x1.rdf',
       ketFile: 'KET/rdf-rxn-v3000-single-reaction-2x1-expected.ket',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (2:1)',
+      testCaseDescription: '13. RDF file with RXN V3000 single reactions (2:1)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-2x2.rdf',
       ketFile: 'KET/rdf-rxn-v3000-single-reaction-2x2-expected.ket',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (2:2)',
+      testCaseDescription: '14. RDF file with RXN V3000 single reactions (2:2)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-3x1.rdf',
       ketFile: 'KET/rdf-rxn-v3000-single-reaction-3x1-expected.ket',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (3:1)',
+      testCaseDescription: '15. RDF file with RXN V3000 single reactions (3:1)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-3x3.rdf',
       ketFile: 'KET/rdf-rxn-v3000-single-reaction-3x3-expected.ket',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (3:3)',
+      testCaseDescription: '16. RDF file with RXN V3000 single reactions (3:3)',
     },
   ];
 
   testCases.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
-      and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions. 
+      and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions.
+      Case:
+        1. Open RDF file
+        2. Save and verify KET file
+        3. Open saved KET file 
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -215,21 +222,27 @@ test.describe('Cascade Reactions', () => {
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-24x24.rdf',
       ketFile: 'KET/rdf-rxn-v2000-single-reaction-24x24-expected.ket',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (24:24)',
+      testCaseDescription:
+        '1. RDF file with RXN V2000 single reactions (24:24)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-24x24.rdf',
       ketFile: 'KET/rdf-rxn-v3000-single-reaction-24x24-expected.ket',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (24:24)',
+      testCaseDescription:
+        '2. RDF file with RXN V3000 single reactions (24:24)',
     },
   ];
 
   testCases1.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
       and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions. 
+      Case:
+        1. Open RDF file
+        2. Save and verify KET file
+        3. Open saved KET file
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -244,22 +257,26 @@ test.describe('Cascade Reactions', () => {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reactions-4.rdf',
       ketFile: 'KET/rdf-rxn-v2000-single-reactions-4-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 4 single reactions (1:1, 2:2, 1:0, 2:0)',
+        '1. RDF file with RXN V2000 4 single reactions (1:1, 2:2, 1:0, 2:0)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reactions-4.rdf',
       ketFile: 'KET/rdf-rxn-v3000-single-reactions-4-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V3000 4 single reactions (1:1, 2:2, 1:0, 2:0)',
+        '2. RDF file with RXN V3000 4 single reactions (1:1, 2:2, 1:0, 2:0)',
     },
   ];
 
   testCases2.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
-      and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions. 
+      and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions.
+      Case:
+        1. Open RDF file
+        2. Save and verify KET file
+        3. Open saved KET file 
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -274,35 +291,39 @@ test.describe('Cascade Reactions', () => {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1-atoms.rdf',
       ketFile: 'KET/rdf-rxn-v2000-cascade-reaction-2-1-1-atoms-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 2-1-1 with atoms',
+        '1. RDF file with RXN V2000 single cascade reaction 2-1-1 with atoms',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-3-1-1-atoms.rdf',
       ketFile: 'KET/rdf-rxn-v2000-cascade-reaction-3-1-1-atoms-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 3-1-1 with atoms',
+        '2. RDF file with RXN V2000 single cascade reaction 3-1-1 with atoms',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1-atoms.rdf',
       ketFile: 'KET/rdf-rxn-v3000-cascade-reaction-2-1-1-atoms-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 2-1-1 with atoms',
+        '3. RDF file with RXN V3000 single cascade reaction 2-1-1 with atoms',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-3-1-1-atoms.rdf',
       ketFile: 'KET/rdf-rxn-v3000-cascade-reaction-3-1-1-atoms-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 3-1-1 with atoms',
+        '4. RDF file with RXN V3000 single cascade reaction 3-1-1 with atoms',
     },
   ];
 
   testCases3.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: ${testCaseDescription} RDF file with RXN V2000/V3000 single cascade reaction 2-1-1 and 3-1-1 with atoms can be loaded, reactions are displayed on Canvas with 
       Multi-Tailed and filled single arrows, verify that sizes of arrows are correct (single arrow: length = 7, Multi-Tailed arrow: head = 6.5, tail = 0.5, spine = 2.5).
       We have a bug https://github.com/epam/Indigo/issues/2583 after fix we need update snapshots and test files.
+      Case:
+        1. Open RDF file
+        2. Save and verify KET file
+        3. Open saved KET file
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -317,118 +338,122 @@ test.describe('Cascade Reactions', () => {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1.rdf',
       ketFile: 'KET/rdf-rxn-v2000-cascade-reaction-2-1-1-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 2-1-1',
+        '1. RDF file with RXN V2000 single cascade reaction 2-1-1',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-2-1.rdf',
       ketFile: 'KET/rdf-rxn-v2000-cascade-reaction-2-2-1-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 2-2-1',
+        '2. RDF file with RXN V2000 single cascade reaction 2-2-1',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-3-1.rdf',
       ketFile: 'KET/rdf-rxn-v2000-cascade-reaction-2-3-1-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 2-3-1',
+        '3. RDF file with RXN V2000 single cascade reaction 2-3-1',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-2-1.rdf',
       ketFile: 'KET/rdf-rxn-v2000-cascade-reaction-2-1-2-1-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 2-1-2-1',
+        '4. RDF file with RXN V2000 single cascade reaction 2-1-2-1',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-2-3-1.rdf',
       ketFile: 'KET/rdf-rxn-v2000-cascade-reaction-2-2-3-1-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 2-2-3-1',
+        '5. RDF file with RXN V2000 single cascade reaction 2-2-3-1',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-3-4-1.rdf',
       ketFile: 'KET/rdf-rxn-v2000-cascade-reaction-2-3-4-1-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 2-3-4-1',
+        '6. RDF file with RXN V2000 single cascade reaction 2-3-4-1',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-7-1.rdf',
       ketFile: 'KET/rdf-rxn-v2000-cascade-reaction-7-1-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 7-1',
+        '7. RDF file with RXN V2000 single cascade reaction 7-1',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-tails-5.rdf',
       ketFile: 'KET/rdf-rxn-v2000-cascade-reaction-tails-5-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 5 tails',
+        '8. RDF file with RXN V2000 single cascade reaction 5 tails',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-tails-12.rdf',
       ketFile: 'KET/rdf-rxn-v2000-cascade-reaction-tails-12-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 12 tails',
+        '9. RDF file with RXN V2000 single cascade reaction 12 tails',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf',
       ketFile: 'KET/rdf-rxn-v3000-cascade-reaction-2-1-1-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 2-1-1',
+        '10. RDF file with RXN V3000 single cascade reaction 2-1-1',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-2-1.rdf',
       ketFile: 'KET/rdf-rxn-v3000-cascade-reaction-2-2-1-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 2-2-1',
+        '11. RDF file with RXN V3000 single cascade reaction 2-2-1',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-3-1.rdf',
       ketFile: 'KET/rdf-rxn-v3000-cascade-reaction-2-3-1-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 2-3-1',
+        '12. RDF file with RXN V3000 single cascade reaction 2-3-1',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-2-1.rdf',
       ketFile: 'KET/rdf-rxn-v3000-cascade-reaction-2-1-2-1-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 2-1-2-1',
+        '13. RDF file with RXN V3000 single cascade reaction 2-1-2-1',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-2-3-1.rdf',
       ketFile: 'KET/rdf-rxn-v3000-cascade-reaction-2-2-3-1-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 2-2-3-1',
+        '14. RDF file with RXN V3000 single cascade reaction 2-2-3-1',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-3-4-1.rdf',
       ketFile: 'KET/rdf-rxn-v3000-cascade-reaction-2-3-4-1-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 2-3-4-1',
+        '15. RDF file with RXN V3000 single cascade reaction 2-3-4-1',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-7-1.rdf',
       ketFile: 'KET/rdf-rxn-v3000-cascade-reaction-7-1-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 7-1',
+        '16. RDF file with RXN V3000 single cascade reaction 7-1',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-tails-5.rdf',
       ketFile: 'KET/rdf-rxn-v3000-cascade-reaction-tails-5-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 5 tails',
+        '17. RDF file with RXN V3000 single cascade reaction 5 tails',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-tails-12.rdf',
       ketFile: 'KET/rdf-rxn-v3000-cascade-reaction-tails-12-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 12 tails',
+        '18. RDF file with RXN V3000 single cascade reaction 12 tails',
     },
   ];
 
   testCases4.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: ${testCaseDescription} RDF file with RXN V2000/V3000 single cascade reaction 2-1-1 and 3-1-1 with atoms can be loaded, reactions are displayed on Canvas with 
       Multi-Tailed and filled single arrows, verify that sizes of arrows are correct (single arrow: length = 7, Multi-Tailed arrow: head = 6.5, tail = 0.5, spine = 2.5).
+      Case:
+        1. Open RDF file
+        2. Save and verify KET file
+        3. Open saved KET file
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -443,34 +468,38 @@ test.describe('Cascade Reactions', () => {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reactions-3.rdf',
       ketFile: 'KET/rdf-rxn-v2000-cascade-reactions-3-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 3 cascade reactions together',
+        '1. RDF file with RXN V2000 3 cascade reactions together',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reactions-2-single-2.rdf',
       ketFile: 'KET/rdf-rxn-v2000-cascade-reactions-2-single-2-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 2 cascade and 2 single reactions',
+        '2. RDF file with RXN V2000 2 cascade and 2 single reactions',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reactions-3.rdf',
       ketFile: 'KET/rdf-rxn-v3000-cascade-reactions-3-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V3000 3 cascade reactions together',
+        '3. RDF file with RXN V3000 3 cascade reactions together',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reactions-2-single-2.rdf',
       ketFile: 'KET/rdf-rxn-v3000-cascade-reactions-2-single-2-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V3000 2 cascade and 2 single reactions',
+        '4. RDF file with RXN V3000 2 cascade and 2 single reactions',
     },
   ];
 
   testCases5.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
-      and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions. 
+      and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions.
+      Case:
+        1. Open RDF file
+        2. Save and verify KET file
+        3. Open saved KET file
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -487,7 +516,7 @@ test.describe('Cascade Reactions', () => {
       ketFile:
         'KET/rdf-rxn-v2000-prod-1-react-2-2+-elements-case-1-new-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 3 reactions where 1 product of 1 reaction is matched to 2 same reactants of another 2 reactions by 2+ elements (case 1)',
+        '1. RDF file with RXN V2000 3 reactions where 1 product of 1 reaction is matched to 2 same reactants of another 2 reactions by 2+ elements (case 1)',
     },
     {
       rdfFile:
@@ -495,7 +524,7 @@ test.describe('Cascade Reactions', () => {
       ketFile:
         'KET/rdf-rxn-v2000-prod-1-react-2-2+-elements-case-2-new-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 3 reactions where 1 product of 1 reaction is matched to 2 same reactants of another 2 reactions by 2+ elements (case 2)',
+        '2. RDF file with RXN V2000 3 reactions where 1 product of 1 reaction is matched to 2 same reactants of another 2 reactions by 2+ elements (case 2)',
     },
     {
       rdfFile:
@@ -503,7 +532,7 @@ test.describe('Cascade Reactions', () => {
       ketFile:
         'KET/rdf-rxn-v2000-prod-1-react-2-2+-elements-case-3-new-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 3 reactions where 1 product of 1 reaction is matched to 2 same reactants of another 2 reactions by 2+ elements (case 3)',
+        '3. RDF file with RXN V2000 3 reactions where 1 product of 1 reaction is matched to 2 same reactants of another 2 reactions by 2+ elements (case 3)',
     },
     {
       rdfFile:
@@ -511,7 +540,7 @@ test.describe('Cascade Reactions', () => {
       ketFile:
         'KET/rdf-rxn-v2000-prod-1-react-2-2+-elements-case-4-new-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 3 reactions where 1 product of 1 reaction is matched to 2 same reactants of another 2 reactions by 2+ elements (case 4)',
+        '4. RDF file with RXN V2000 3 reactions where 1 product of 1 reaction is matched to 2 same reactants of another 2 reactions by 2+ elements (case 4)',
     },
     {
       rdfFile:
@@ -519,7 +548,7 @@ test.describe('Cascade Reactions', () => {
       ketFile:
         'KET/rdf-rxn-v2000-prod-1-react-2-2+-elements-case-5-new-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 3 reactions where 1 product of 1 reaction is matched to 2 same reactants of another 2 reactions by 2+ elements (case 5)',
+        '5. RDF file with RXN V2000 3 reactions where 1 product of 1 reaction is matched to 2 same reactants of another 2 reactions by 2+ elements (case 5)',
     },
     {
       rdfFile:
@@ -527,7 +556,7 @@ test.describe('Cascade Reactions', () => {
       ketFile:
         'KET/rdf-rxn-v2000-prod-1-react-2-2+-elements-case-6-new-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 3 reactions where 1 product of 1 reaction is matched to 2 same reactants of another 2 reactions by 2+ elements (case 6)',
+        '6. RDF file with RXN V2000 3 reactions where 1 product of 1 reaction is matched to 2 same reactants of another 2 reactions by 2+ elements (case 6)',
     },
     {
       rdfFile:
@@ -535,7 +564,7 @@ test.describe('Cascade Reactions', () => {
       ketFile:
         'KET/rdf-rxn-v2000-cascade-1-or-reactions-2-case-1-new-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 3 reactions where 2 products of 2 reactions are matched to 2 same reactants of 2 reactions by 2+ elements (case 1)',
+        '7. RDF file with RXN V2000 3 reactions where 2 products of 2 reactions are matched to 2 same reactants of 2 reactions by 2+ elements (case 1)',
     },
     {
       rdfFile:
@@ -543,7 +572,7 @@ test.describe('Cascade Reactions', () => {
       ketFile:
         'KET/rdf-rxn-v2000-cascade-1-or-reactions-2-case-2-new-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 3 reactions where 2 products of 2 reactions are matched to 2 same reactants of 2 reactions by 2+ elements (case 2)',
+        '8. RDF file with RXN V2000 3 reactions where 2 products of 2 reactions are matched to 2 same reactants of 2 reactions by 2+ elements (case 2)',
     },
     {
       rdfFile:
@@ -551,7 +580,7 @@ test.describe('Cascade Reactions', () => {
       ketFile:
         'KET/rdf-rxn-v2000-cascade-1-or-reactions-2-case-3-new-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 3 reactions where 2 products of 2 reactions are matched to 2 same reactants of 2 reactions by 2+ elements (case 3)',
+        '9. RDF file with RXN V2000 3 reactions where 2 products of 2 reactions are matched to 2 same reactants of 2 reactions by 2+ elements (case 3)',
     },
     {
       rdfFile:
@@ -559,7 +588,7 @@ test.describe('Cascade Reactions', () => {
       ketFile:
         'KET/rdf-rxn-v2000-cascade-1-or-reactions-2-case-4-new-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 3 reactions where 2 products of 2 reactions are matched to 2 same reactants of 2 reactions by 2+ elements (case 4)',
+        '10. RDF file with RXN V2000 3 reactions where 2 products of 2 reactions are matched to 2 same reactants of 2 reactions by 2+ elements (case 4)',
     },
     {
       rdfFile:
@@ -567,7 +596,7 @@ test.describe('Cascade Reactions', () => {
       ketFile:
         'KET/rdf-rxn-v2000-cascade-1-or-reactions-2-case-5-new-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 3 reactions where 2 products of 2 reactions are matched to 2 same reactants of 2 reactions by 2+ elements (case 5)',
+        '11. RDF file with RXN V2000 3 reactions where 2 products of 2 reactions are matched to 2 same reactants of 2 reactions by 2+ elements (case 5)',
     },
     {
       rdfFile:
@@ -575,16 +604,20 @@ test.describe('Cascade Reactions', () => {
       ketFile:
         'KET/rdf-rxn-v2000-cascade-1-or-reactions-2-case-6-new-expected.ket',
       testCaseDescription:
-        'RDF file with RXN V2000 3 reactions where 2 products of 2 reactions are matched to 2 same reactants of 2 reactions by 2+ elements (case 6)',
+        '12. RDF file with RXN V2000 3 reactions where 2 products of 2 reactions are matched to 2 same reactants of 2 reactions by 2+ elements (case 6)',
     },
   ];
 
   testCases6.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
-      and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions. 
+      and correct positions, after that they can be saved to KET with correct sizes and positions, after that loaded from KET with correct sizes and positions.
+      Case:
+        1. Open RDF file
+        2. Save and verify KET file
+        3. Open saved KET file
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -598,7 +631,11 @@ test.describe('Cascade Reactions', () => {
     /* 
     Test case: https://github.com/epam/Indigo/issues/2102
     Description: Cascade and Single reactions can be added to selected place on Canvas from 2 different RDF files with correct positions 
-    and they can be saved together to .ket file with correct parameters. 
+    and they can be saved together to .ket file with correct parameters.
+    Case:
+        1. Open two RDF file v2000 and v3000
+        2. Save and verify KET file
+        3. Open saved KET file 
     */
     await openFileAndAddToCanvasAsNewProject(
       'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1.rdf',
@@ -627,50 +664,53 @@ test.describe('Cascade Reactions', () => {
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-reagent-1x1x1.rdf',
       testCaseDescription:
-        'RDF RXN V2000 file with reaction with reagents (1:1:1)',
+        '1. RDF RXN V2000 file with reaction with reagents (1:1:1)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-reagents-2x2x2.rdf',
       testCaseDescription:
-        'RDF RXN V2000 file with reaction with reagents (2:2:2)',
+        '2. RDF RXN V2000 file with reaction with reagents (2:2:2)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-reagent-1x1x1.rdf',
       testCaseDescription:
-        'RDF RXN V3000 file with reaction with reagents (1:1:1)',
+        '3. RDF RXN V3000 file with reaction with reagents (1:1:1)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-reagents-2x2x2.rdf',
       testCaseDescription:
-        'RDF RXN V3000 file with reaction with reagents (2:2:2)',
+        '4. RDF RXN V3000 file with reaction with reagents (2:2:2)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V2000 file with cascade reaction with reagents',
+        '5. RDF RXN V2000 file with cascade reaction with reagents',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V3000 file with cascade reaction with reagents',
+        '6. RDF RXN V3000 file with cascade reaction with reagents',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-1-single-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V2000 file with cascade and single reactions with reagents',
+        '7. RDF RXN V2000 file with cascade and single reactions with reagents',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-1-single-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V3000 file with cascade and single reactions with reagents',
+        '8. RDF RXN V3000 file with cascade and single reactions with reagents',
     },
   ];
 
   testCases7.forEach(({ rdfFile, testCaseDescription }) => {
-    test(`Load  ${testCaseDescription} verify that reagents are ignored and not added to Canvas`, async () => {
+    test(`Load ${testCaseDescription} verify that reagents are ignored and not added to Canvas`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
-      Description: Reagents are ignored and not added to Canvas. 
+      Description: Reagents are ignored and not added to Canvas.
+      Case:
+        1. Open RDF file
+        2. Take screenshot
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -683,19 +723,19 @@ test.describe('Cascade Reactions', () => {
       ketFile:
         'KET/rdf-rxn-v2000-root-reaction-with-same-reactants-expected.ket',
       testCaseDescription:
-        'RXN V2000 file with reactions where root reaction has the same reactants',
+        '1. RXN V2000 file with reactions where root reaction has the same reactants',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-with-abbreviation.rdf',
       ketFile:
         'KET/rdf-rxn-v2000-single-reaction-with-abbreviation-expected.ket',
       testCaseDescription:
-        'RDF RXN V2000 file with several reactants and products with abbreviations',
+        '2. RDF RXN V2000 file with several reactants and products with abbreviations',
     },
   ];
 
   testCases8.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to KET`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
@@ -705,6 +745,10 @@ test.describe('Cascade Reactions', () => {
       https://github.com/epam/Indigo/issues/2320
       https://github.com/epam/Indigo/issues/2408
       After fix we should update snapshots and test files.
+      Case:
+        1. Open RDF file
+        2. Save and verify KET file
+        3. Open saved KET file
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -717,12 +761,12 @@ test.describe('Cascade Reactions', () => {
   const testCases9 = [
     {
       testName:
-        'Verify that Cascade Reaction is correctly displayed in RDF RXN V2000 format in Open Structure Preview',
+        '1. Verify that Cascade Reaction is correctly displayed in RDF RXN V2000 format in Open Structure Preview',
       rdfFile: 'RDF-V2000/rdf-mol-v2000-no-reaction-3-elements.rdf',
     },
     {
       testName:
-        'Verify that Cascade Reaction is correctly displayed in RDF RXN V3000 format in Open Structure Preview',
+        '2. Verify that Cascade Reaction is correctly displayed in RDF RXN V3000 format in Open Structure Preview',
       rdfFile: 'RDF-V3000/rdf-mol-v3000-no-reaction-3-elements.rdf',
     },
   ];
@@ -732,6 +776,9 @@ test.describe('Cascade Reactions', () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: Cascade Reaction is correctly displayed in RDF RXN V2000/V3000 format in Open Structure Preview
+      Case:
+        1. Open RDF file Open Structure Preview
+        2. Take screenshot
       */
       await selectTopPanelButton(TopPanelButton.Open, page);
       await openFile(rdfFile, page);
@@ -743,21 +790,24 @@ test.describe('Cascade Reactions', () => {
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V2000 file with cascade reaction with reagents',
+        '1. RDF RXN V2000 file with cascade reaction with reagents',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V3000 file with cascade reaction with reagents',
+        '2. RDF RXN V3000 file with cascade reaction with reagents',
     },
   ];
 
   testCases10.forEach(({ rdfFile, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be zoomed in/out (20, 400, 100)`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be zoomed in/out (20, 400, 100)`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
-      and correct positions, after that they can be zoomed in/out (20, 400, 100). 
+      and correct positions, after that they can be zoomed in/out (20, 400, 100).
+      Case:
+        1. Open RDF file
+        2. Zoom to 20, 400, 100%
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -777,21 +827,24 @@ test.describe('Cascade Reactions', () => {
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V2000 file with cascade reaction with reagents',
+        '1. RDF RXN V2000 file with cascade reaction with reagents',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V3000 file with cascade reaction with reagents',
+        '2. RDF RXN V3000 file with cascade reaction with reagents',
     },
   ];
 
   testCases11.forEach(({ rdfFile, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be Undo/Redo`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be Undo/Redo`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
-      and correct positions, after that they can be Undo/Redo. 
+      and correct positions, after that they can be Undo/Redo.
+      Case:
+        1. Open RDF file
+        2. Perform Undo and Redo actions
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -804,21 +857,26 @@ test.describe('Cascade Reactions', () => {
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V2000 file with cascade reaction with reagents',
+        '1. RDF RXN V2000 file with cascade reaction with reagents',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V3000 file with cascade reaction with reagents',
+        '2. RDF RXN V3000 file with cascade reaction with reagents',
     },
   ];
 
   testCases12.forEach(({ rdfFile, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be deleted by Erase tool`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be deleted by Erase tool`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
-      and correct positions, after that they can be deleted by Erase tool and can be Undo/Redo. 
+      and correct positions, after that they can be deleted by Erase tool and can be Undo/Redo.
+      Case:
+        1. Open RDF file
+        2. Select part of structure
+        3. Delete part of structure by Erase button
+        4. Perform Undo/Redo actions 
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -834,21 +892,26 @@ test.describe('Cascade Reactions', () => {
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V2000 file with cascade reaction with reagents',
+        '1. RDF RXN V2000 file with cascade reaction with reagents',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V3000 file with cascade reaction with reagents',
+        '2. RDF RXN V3000 file with cascade reaction with reagents',
     },
   ];
 
   testCases13.forEach(({ rdfFile, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be copy/pasted and Undo/Redo`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be copy/pasted and Undo/Redo`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
-      and correct positions, after that they can be copy/pasted and Undo/Redo. 
+      and correct positions, after that they can be copy/pasted and Undo/Redo.
+      Case:
+        1. Open RDF file
+        2. Select all structures on canvas
+        3. Perform Copy/Paste actions
+        4. Perform Undo/Redo actions
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -865,21 +928,26 @@ test.describe('Cascade Reactions', () => {
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V2000 file with cascade reaction with reagents',
+        '1. RDF RXN V2000 file with cascade reaction with reagents',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V3000 file with cascade reaction with reagents',
+        '2. RDF RXN V3000 file with cascade reaction with reagents',
     },
   ];
 
   testCases14.forEach(({ rdfFile, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be cut/pasted and Undo/Redo`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be cut/pasted and Undo/Redo`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
-      and correct positions, after that they can be cut/pasted and Undo/Redo. 
+      and correct positions, after that they can be cut/pasted and Undo/Redo.
+      Case:
+        1. Open RDF file
+        2. Select all structures on canvas
+        3. Perform Cut/Paste actions
+        4. Perform Undo/Redo actions 
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -896,21 +964,26 @@ test.describe('Cascade Reactions', () => {
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V2000 file with cascade reaction with reagents',
+        '1. RDF RXN V2000 file with cascade reaction with reagents',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1-reagents.rdf',
       testCaseDescription:
-        'RDF RXN V3000 file with cascade reaction with reagents',
+        '2. RDF RXN V3000 file with cascade reaction with reagents',
     },
   ];
 
   testCases15.forEach(({ rdfFile, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be selected/moved and Undo/Redo`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be selected/moved and Undo/Redo`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2102
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
-      and correct positions, after that they can be selected/moved and Undo/Redo. 
+      and correct positions, after that they can be selected/moved and Undo/Redo.
+      Case:
+        1. Open RDF file
+        2. Select all structures on canvas
+        3. Perform move to new position action
+        4. Perform Undo/Redo actions 
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -1018,60 +1091,64 @@ test.describe('Cascade Reactions', () => {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-1x0.rdf',
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-single-reaction-1x0-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (1:0)',
+      testCaseDescription: '1. RDF file with RXN V2000 single reactions (1:0)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-1x1.rdf',
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-single-reaction-1x1-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (1:1)',
+      testCaseDescription: '2. RDF file with RXN V2000 single reactions (1:1)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-1x2.rdf',
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-single-reaction-1x2-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (1:2)',
+      testCaseDescription: '3. RDF file with RXN V2000 single reactions (1:2)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-2x0.rdf',
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-single-reaction-2x0-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (2:0)',
+      testCaseDescription: '4. RDF file with RXN V2000 single reactions (2:0)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-2x1.rdf',
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-single-reaction-2x1-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (2:1)',
+      testCaseDescription: '5. RDF file with RXN V2000 single reactions (2:1)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-2x2.rdf',
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-single-reaction-2x2-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (2:2)',
+      testCaseDescription: '6. RDF file with RXN V2000 single reactions (2:2)',
       // We have a bug https://github.com/epam/Indigo/issues/2412
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-3x1.rdf',
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-single-reaction-3x1-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (3:1)',
+      testCaseDescription: '7. RDF file with RXN V2000 single reactions (3:1)',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-3x3.rdf',
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-single-reaction-3x3-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (3:3)',
+      testCaseDescription: '8. RDF file with RXN V2000 single reactions (3:3)',
       // We have a bug https://github.com/epam/Indigo/issues/2412
     },
   ];
 
   testCases16.forEach(({ rdfFile, rdfFileExpected, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded from RDF V2000`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be saved/loaded from RDF V2000`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2237
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
-      and correct positions, after that they can be saved to RDF V2000 with correct sizes and positions, after that loaded from RDF V2000 with correct sizes and positions. 
+      and correct positions, after that they can be saved to RDF V2000 with correct sizes and positions, after that loaded from RDF V2000 with correct sizes and positions.
+      Case:
+        1. Open RDF file
+        2. Save and verify RDF file
+        3. Open saved RDF file 
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -1091,60 +1168,64 @@ test.describe('Cascade Reactions', () => {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-1x0.rdf',
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-single-reaction-1x0-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (1:0)',
+      testCaseDescription: '1. RDF file with RXN V3000 single reactions (1:0)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-1x1.rdf',
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-single-reaction-1x1-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (1:1)',
+      testCaseDescription: '2. RDF file with RXN V3000 single reactions (1:1)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-1x2.rdf',
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-single-reaction-1x2-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (1:2)',
+      testCaseDescription: '3. RDF file with RXN V3000 single reactions (1:2)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-2x0.rdf',
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-single-reaction-2x0-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (2:0)',
+      testCaseDescription: '4. RDF file with RXN V3000 single reactions (2:0)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-2x1.rdf',
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-single-reaction-2x1-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (2:1)',
+      testCaseDescription: '5. RDF file with RXN V3000 single reactions (2:1)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-2x2.rdf',
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-single-reaction-2x2-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (2:2)',
+      testCaseDescription: '6. RDF file with RXN V3000 single reactions (2:2)',
       // We have a bug https://github.com/epam/Indigo/issues/2412
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-3x1.rdf',
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-single-reaction-3x1-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (3:1)',
+      testCaseDescription: '7. RDF file with RXN V3000 single reactions (3:1)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-3x3.rdf',
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-single-reaction-3x3-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (3:3)',
+      testCaseDescription: '8. RDF file with RXN V3000 single reactions (3:3)',
       // We have a bug https://github.com/epam/Indigo/issues/2412
     },
   ];
 
   testCases17.forEach(({ rdfFile, rdfFileExpected, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded from RDF V3000`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be saved/loaded from RDF V3000`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2237
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
-      and correct positions, after that they can be saved to RDF V2000 with correct sizes and positions, after that loaded from RDF V3000 with correct sizes and positions. 
+      and correct positions, after that they can be saved to RDF V2000 with correct sizes and positions, after that loaded from RDF V3000 with correct sizes and positions.
+      Case:
+        1. Open RDF file
+        2. Save and verify RDF file
+        3. Open saved RDF file 
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
@@ -1164,24 +1245,30 @@ test.describe('Cascade Reactions', () => {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-single-reaction-24x24.rdf',
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-single-reaction-24x24-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V2000 single reactions (24:24)',
+      testCaseDescription:
+        '1. RDF file with RXN V2000 single reactions (24:24)',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-single-reaction-24x24.rdf',
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-single-reaction-24x24-expected.rdf',
-      testCaseDescription: 'RDF file with RXN V3000 single reactions (24:24)',
+      testCaseDescription:
+        '2. RDF file with RXN V3000 single reactions (24:24)',
     },
   ];
 
   testCases18.forEach(({ rdfFile, rdfFileExpected, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded to RDF`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to RDF`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2237
       Description: ${testCaseDescription} can be loaded, reactions are displayed on Canvas with a single filled arrow 
       and correct positions, after that they can be saved to RDF with correct sizes and positions, after that loaded from RDF with correct sizes and positions. 
       Now test working not in proper way because we have a bug https://github.com/epam/Indigo/issues/2412
       After fix we should update snapshots and test files
+      Case:
+        1. Open RDF file
+        2. Save and verify RDF file
+        3. Open saved RDF file
       */
       const fileFormat = rdfFile.includes('V2000') ? 'v2000' : 'v3000';
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
@@ -1203,14 +1290,14 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-1-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 2-1-1',
+        '1. RDF file with RXN V2000 single cascade reaction 2-1-1',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-2-1.rdf',
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-2-1-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 2-2-1',
+        '2. RDF file with RXN V2000 single cascade reaction 2-2-1',
       // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
     },
     {
@@ -1218,7 +1305,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-3-1-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 2-3-1',
+        '3. RDF file with RXN V2000 single cascade reaction 2-3-1',
       // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
     },
     {
@@ -1226,14 +1313,14 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-1-2-1-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 2-1-2-1',
+        '4. RDF file with RXN V2000 single cascade reaction 2-1-2-1',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-2-3-1.rdf',
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-2-3-1-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 2-2-3-1',
+        '5. RDF file with RXN V2000 single cascade reaction 2-2-3-1',
       // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
     },
     {
@@ -1241,7 +1328,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-cascade-reaction-2-3-4-1-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 2-3-4-1',
+        '6. RDF file with RXN V2000 single cascade reaction 2-3-4-1',
       // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
     },
     {
@@ -1249,7 +1336,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-cascade-reaction-7-1-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 7-1',
+        '7. RDF file with RXN V2000 single cascade reaction 7-1',
       // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
     },
     {
@@ -1257,28 +1344,28 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-cascade-reaction-tails-5-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 5 tails',
+        '8. RDF file with RXN V2000 single cascade reaction 5 tails',
     },
     {
       rdfFile: 'RDF-V2000/rdf-rxn-v2000-cascade-reaction-tails-12.rdf',
       rdfFileExpected:
         'RDF-V2000/rdf-rxn-v2000-cascade-reaction-tails-12-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V2000 single cascade reaction 12 tails',
+        '9. RDF file with RXN V2000 single cascade reaction 12 tails',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf',
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 2-1-1',
+        '10. RDF file with RXN V3000 single cascade reaction 2-1-1',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-2-1.rdf',
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-2-1-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 2-2-1',
+        '11. RDF file with RXN V3000 single cascade reaction 2-2-1',
       // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
     },
     {
@@ -1286,7 +1373,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-3-1-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 2-3-1',
+        '12. RDF file with RXN V3000 single cascade reaction 2-3-1',
       // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
     },
     {
@@ -1294,14 +1381,14 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-2-1-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 2-1-2-1',
+        '13. RDF file with RXN V3000 single cascade reaction 2-1-2-1',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-2-3-1.rdf',
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-2-3-1-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 2-2-3-1',
+        '14. RDF file with RXN V3000 single cascade reaction 2-2-3-1',
       // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
     },
     {
@@ -1309,7 +1396,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-3-4-1-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 2-3-4-1',
+        '15. RDF file with RXN V3000 single cascade reaction 2-3-4-1',
       // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
     },
     {
@@ -1317,7 +1404,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-cascade-reaction-7-1-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 7-1',
+        '16. RDF file with RXN V3000 single cascade reaction 7-1',
       // We have bug and after fix need to update snapshots and test files https://github.com/epam/Indigo/issues/2416
     },
     {
@@ -1325,22 +1412,26 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-cascade-reaction-tails-5-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 5 tails',
+        '17. RDF file with RXN V3000 single cascade reaction 5 tails',
     },
     {
       rdfFile: 'RDF-V3000/rdf-rxn-v3000-cascade-reaction-tails-12.rdf',
       rdfFileExpected:
         'RDF-V3000/rdf-rxn-v3000-cascade-reaction-tails-12-expected.rdf',
       testCaseDescription:
-        'RDF file with RXN V3000 single cascade reaction 12 tails',
+        '18. RDF file with RXN V3000 single cascade reaction 12 tails',
     },
   ];
 
   testCases19.forEach(({ rdfFile, rdfFileExpected, testCaseDescription }) => {
-    test(`Verify that ${testCaseDescription} can be loaded, after that they can be saved/loaded to RDF`, async () => {
+    test(`${testCaseDescription} can be loaded, after that they can be saved/loaded to RDF`, async () => {
       /* 
       Test case: https://github.com/epam/Indigo/issues/2237
       Description: ${testCaseDescription} RDF file with RXN V2000/V3000 can be loaded, after that they can be saved/loaded to RDF.
+      Case:
+        1. Open RDF file
+        2. Save and verify RDF file
+        3. Open saved RDF file
       */
       const fileFormat = rdfFile.includes('V2000') ? 'v2000' : 'v3000';
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
@@ -1380,6 +1471,10 @@ test.describe('Cascade Reactions', () => {
           Test case: https://github.com/epam/Indigo/issues/2237
           Description: Now test working not in proper way because we have a bug https://github.com/epam/Indigo/issues/2426
           After fix we should update snapshots and test files.
+          Case:
+            1. Open KET file
+            2. Save and verify RDF file
+            3. Open saved RDF file
           */
           const rdfFileExpected =
             format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
@@ -1422,6 +1517,10 @@ test.describe('Cascade Reactions', () => {
           Test case: https://github.com/epam/Indigo/issues/2237
           Description: Now test working not in proper way because we have a bug https://github.com/epam/Indigo/issues/2550
           After fix we should update snapshots and test files.
+          Case:
+            1. Open KET file
+            2. Save and verify RDF file
+            3. Open saved RDF file
           */
           const rdfFileExpected =
             format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
@@ -1473,6 +1572,10 @@ test.describe('Cascade Reactions', () => {
           /* 
           Test case: https://github.com/epam/Indigo/issues/2237
           Description: ${testCaseDescription} can be saved to RDF ${format.toUpperCase()} format, then reloaded with correct structure.
+          Case:
+            1. Open KET file
+            2. Save and verify RDF file
+            3. Open saved RDF file
           */
 
           const rdfFileExpected =
@@ -1498,19 +1601,19 @@ test.describe('Cascade Reactions', () => {
       ketFile: 'KET/ket-single-reaction-0x1.ket',
       rdfFileExpectedV2000: 'RDF-V2000/ket-single-reaction-0x1-expected.rdf',
       rdfFileExpectedV3000: 'RDF-V3000/ket-single-reaction-0x1-expected.rdf',
-      testCaseDescription: 'KET single reaction (0:1)',
+      testCaseDescription: '1. KET single reaction (0:1)',
     },
     {
       ketFile: 'KET/ket-single-reaction-0x2.ket',
       rdfFileExpectedV2000: 'RDF-V2000/ket-single-reaction-0x2-expected.rdf',
       rdfFileExpectedV3000: 'RDF-V3000/ket-single-reaction-0x2-expected.rdf',
-      testCaseDescription: 'KET single reaction (0:2)',
+      testCaseDescription: '2. KET single reaction (0:2)',
     },
     {
       ketFile: 'KET/ket-single-reaction-2x0.ket',
       rdfFileExpectedV2000: 'RDF-V2000/ket-single-reaction-2x0-expected.rdf',
       rdfFileExpectedV3000: 'RDF-V3000/ket-single-reaction-2x0-expected.rdf',
-      testCaseDescription: 'KET single reaction (2:0)',
+      testCaseDescription: '3. KET single reaction (2:0)',
     },
     {
       ketFile: 'KET/ket-single-reaction-1x1-with-several-tails.ket',
@@ -1518,7 +1621,7 @@ test.describe('Cascade Reactions', () => {
         'RDF-V2000/ket-single-reaction-1x1-with-several-tails-expected.rdf',
       rdfFileExpectedV3000:
         'RDF-V3000/ket-single-reaction-1x1-with-several-tails-expected.rdf',
-      testCaseDescription: 'KET single reaction (1:1 with several tails)',
+      testCaseDescription: '4. KET single reaction (1:1 with several tails)',
     },
     {
       ketFile: 'KET/ket-single-reaction-2x2-with-pluses.ket',
@@ -1526,13 +1629,13 @@ test.describe('Cascade Reactions', () => {
         'RDF-V2000/ket-single-reaction-2x2-with-pluses-expected.rdf',
       rdfFileExpectedV3000:
         'RDF-V3000/ket-single-reaction-2x2-with-pluses-expected.rdf',
-      testCaseDescription: 'KET single reaction (2:2 with pluses)',
+      testCaseDescription: '5. KET single reaction (2:2 with pluses)',
     },
     {
       ketFile: 'KET/ket-single-reaction-3x1.ket',
       rdfFileExpectedV2000: 'RDF-V2000/ket-single-reaction-3x1-expected.rdf',
       rdfFileExpectedV3000: 'RDF-V3000/ket-single-reaction-3x1-expected.rdf',
-      testCaseDescription: 'KET single reaction (3:1)',
+      testCaseDescription: '6. KET single reaction (3:1)',
     },
     {
       ketFile: 'KET/ket-cascade-reaction-3-1-2-1-1.ket',
@@ -1540,7 +1643,7 @@ test.describe('Cascade Reactions', () => {
         'RDF-V2000/ket-cascade-reaction-3-1-2-1-1-expected.rdf',
       rdfFileExpectedV3000:
         'RDF-V3000/ket-cascade-reaction-3-1-2-1-1-expected.rdf',
-      testCaseDescription: 'KET cascade reaction (3-1-2-1-1)',
+      testCaseDescription: '7. KET cascade reaction (3-1-2-1-1)',
     },
     {
       ketFile:
@@ -1550,7 +1653,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000:
         'RDF-V3000/ket-cascade-single-reactions-3-1-2-1-1-2x2-with-pluses-row-expected.rdf',
       testCaseDescription:
-        'KET cascade single reaction (3-1-2-1-1-2x2-with-pluses-row)',
+        '8. KET cascade single reaction (3-1-2-1-1-2x2-with-pluses-row)',
     },
     {
       ketFile:
@@ -1560,7 +1663,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000:
         'RDF-V3000/ket-cascade-single-reactions-3-1-2-1-1-2x2-with-pluses-bottom-top-expected.rdf',
       testCaseDescription:
-        'KET cascade single reaction (3-1-2-1-1-2x2-with-pluses-bottom-top)',
+        '9. KET cascade single reaction (3-1-2-1-1-2x2-with-pluses-bottom-top)',
     },
   ];
 
@@ -1572,11 +1675,15 @@ test.describe('Cascade Reactions', () => {
       testCaseDescription,
     }) => {
       (['v2000', 'v3000'] as const).forEach((format) => {
-        test(`Verify that ${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+        test(`${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
           /* 
           Test case: https://github.com/epam/Indigo/issues/2237
           Description: ${testCaseDescription} can be saved to RDF ${format.toUpperCase()} format, then reloaded with correct structure.
           We have a bug https://github.com/epam/Indigo/issues/2424 After fix we should update test files and snapshots.
+          Case:
+            1. Open KET file
+            2. Save and verify RDF file
+            3. Open saved RDF file
           */
 
           const rdfFileExpected =
@@ -1638,6 +1745,15 @@ test.describe('Cascade Reactions', () => {
             Test case: https://github.com/epam/Indigo/issues/2237
             Description: Loaded from RDF RXN file, added cascade reaction to Canvas, added other elements,
             cascade reactions with elements saved to RDF formats with the correct positions.
+            Case:
+            1. Open RDF file
+            2. Add Benzene ring to canvas
+            3. Add tail to multi-tailed arrow
+            4. Erase part of structure
+            5. Perform Undo/Redo actions
+            6. Perform Copy/Paste actions
+            7. Save and verify RDF file
+            8. Open saved RDF file
           */
           const rdfFile = format === 'v2000' ? rdfFileV2000 : rdfFileV3000;
           const rdfFileExpected =
@@ -1680,7 +1796,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000:
         'RDF-V3000/ket-single-reaction-5x3-with-pluses-expected.rdf',
       testCaseDescription:
-        'KET single reaction with Multi-Tailed arrow and pluses near reactants and products (5:3)',
+        '1. KET single reaction with Multi-Tailed arrow and pluses near reactants and products (5:3)',
     },
     {
       ketFile: 'KET/ket-single-reactions-2-5x3-with-pluses-top-bottom.ket',
@@ -1689,7 +1805,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000:
         'RDF-V3000/ket-single-reactions-2-5x3-with-pluses-top-bottom-expected.rdf',
       testCaseDescription:
-        'KET two single reactions (one under another) with Multi-Tailed arrow and pluses near reactants and products (5:3)',
+        '2. KET two single reactions (one under another) with Multi-Tailed arrow and pluses near reactants and products (5:3)',
     },
     {
       ketFile: 'KET/ket-single-reactions-2-5x3-with-pluses-left-right.ket',
@@ -1698,7 +1814,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000:
         'RDF-V3000/ket-single-reactions-2-5x3-with-pluses-left-right-expected.rdf',
       testCaseDescription:
-        'KET two single reactions (two in a row) with Multi-Tailed arrow and pluses near reactants and products (5:3)',
+        '3. KET two single reactions (two in a row) with Multi-Tailed arrow and pluses near reactants and products (5:3)',
     },
     {
       ketFile: 'KET/ket-cascade-reaction-tails-5-with-pluses.ket',
@@ -1707,7 +1823,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000:
         'RDF-V3000/ket-cascade-reaction-tails-5-with-pluses-expected.rdf',
       testCaseDescription:
-        'KET cascade reaction (5 tails with pluses) with single/Multi-Tailed arrows and pluses near reactants and products',
+        '4. KET cascade reaction (5 tails with pluses) with single/Multi-Tailed arrows and pluses near reactants and products',
     },
     {
       ketFile:
@@ -1717,7 +1833,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000:
         'RDF-V3000/ket-single-cascade-reactions-with-pluses-5x3-tails-5-top-bottom-expected.rdf',
       testCaseDescription:
-        'KET cascade and single reactions (one under another 5:3, 5 tails) with Multi-Tailed arrow and pluses near reactants and products',
+        '5. KET cascade and single reactions (one under another 5:3, 5 tails) with Multi-Tailed arrow and pluses near reactants and products',
     },
     {
       ketFile:
@@ -1727,7 +1843,7 @@ test.describe('Cascade Reactions', () => {
       rdfFileExpectedV3000:
         'RDF-V3000/ket-single-cascade-reactions-with-pluses-5x3-tails-5-row-expected.rdf',
       testCaseDescription:
-        'KET two cascade and single reactions (two in a row 5:3, 5 tails) with Multi-Tailed arrow and pluses near reactants and products',
+        '6. KET two cascade and single reactions (two in a row 5:3, 5 tails) with Multi-Tailed arrow and pluses near reactants and products',
     },
   ];
 
@@ -1739,11 +1855,15 @@ test.describe('Cascade Reactions', () => {
       testCaseDescription,
     }) => {
       (['v2000', 'v3000'] as const).forEach((format) => {
-        test(`Verify that ${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+        test(`${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
           /* 
           Test case: https://github.com/epam/Indigo/issues/2237
           Description: ${testCaseDescription} can be saved to RDF ${format.toUpperCase()} format, then reloaded with correct structure.
           We have a bug https://github.com/epam/Indigo/issues/2424 After fix we should update test files and snapshots.
+          Case:
+            1. Open KET file
+            2. Save and verify RDF file
+            3. Open saved RDF file
           */
 
           const rdfFileExpected =
@@ -1763,4 +1883,837 @@ test.describe('Cascade Reactions', () => {
       });
     },
   );
+
+  const testCases26 = [
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-1x1-no-wrap-30-symbols.rdf',
+      testCaseDescription:
+        '1. RDF V2000 single reaction with Multi-Tailed or single arrow (1:1) and reactions name and conditions with no wrapping (30 symbols in a line)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-2x1-no-wrap-30-symbols.rdf',
+      testCaseDescription:
+        '2. RDF V2000 single reaction with Multi-Tailed or single arrow (2:1) and reactions name and conditions with no wrapping (30 symbols in a line)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-1x1-auto-wrap-9-lines.rdf',
+      testCaseDescription:
+        '3. RDF V2000 single reaction with Multi-Tailed or single arrow (1:1) and reactions name and conditions with auto wrapping (9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-9-lines.rdf',
+      testCaseDescription:
+        '4. RDF V2000 single reaction with Multi-Tailed or single arrow (2:1) and reactions name and conditions with auto wrapping (9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-1x1-auto-wrap-9-lines-truncated.rdf',
+      testCaseDescription:
+        '5. RDF V2000 single reaction with Multi-Tailed or single arrow (1:1) and reactions name and conditions with auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic and truncated (last 3 points are replaced by points), font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-9-lines-truncated.rdf',
+      testCaseDescription:
+        '6. RDF V2000 single reaction with Multi-Tailed or single arrow (2:1) and reactions name and conditions with auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic and truncated (last 3 points are replaced by points), font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-5x1-auto-wrap-spaces-all-elements.rdf',
+      testCaseDescription:
+        '7. RDF V2000 single reaction with Multi-Tailed or single arrow (5:1) and reactions name and conditions with spaces, all possible elements, auto wrapping',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-1x1-auto-wrap-spaces.rdf',
+      testCaseDescription:
+        '8. RDF V2000 single reaction with Multi-Tailed or single arrow (1:1) and reactions name and conditions with spaces, all possible elements, auto wrapping',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-1x1-auto-wrap-spaces-all-elements-truncated.rdf',
+      testCaseDescription:
+        '9. RDF V2000 single reaction with Multi-Tailed or single arrow (1:1) and reactions name and conditions with spaces, all possible elements, auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Text of conditions is truncated, name is in bold, conditions is in italic, font is 13',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-spaces-all-elements-truncated.rdf',
+      testCaseDescription:
+        '10. RDF V2000 single reaction with Multi-Tailed or single arrow (2:1) and reactions name and conditions with spaces, all possible elements, auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Text of conditions is truncated, name is in bold, conditions is in italic, font is 13',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-2x1-name-no-wrap-30-symbols.rdf',
+      testCaseDescription:
+        '11. RDF V2000 single reaction with Multi-Tailed or single arrow (2:1) and only reactions name and empty conditions with no wrapping (30 symbols in a line)',
+      testCaseExpectedResult: ' Text of name is in bold, font size is 13',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-1x1-conditions-not-available-no-wrap-30-symbols.rdf',
+      testCaseDescription:
+        '12. RDF V2000 single reaction with Single arrow (1:1) and only reactions name and not available conditions with no wrapping (30 symbols in a line)',
+      testCaseExpectedResult: ' Text of name is in bold, font size is 13',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-name-9-lines.rdf',
+      testCaseDescription:
+        '13. RDF V2000 single reaction with Multi-Tailed arrow (2:1) and only reactions name with auto wrapping (9 lines)',
+      testCaseExpectedResult: 'Text of name is in bold, font size is 13',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-name-9-lines-truncated.rdf',
+      testCaseDescription:
+        '14. RDF V2000 single reaction with Multi-Tailed arrow (2:1) and only reactions name with auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold and truncated (last 3 points are replaced by points), font size is 13',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-conditions-no-wrap-30-symbols.rdf',
+      testCaseDescription:
+        '15. RDF V2000 single reaction with Multi-Tailed arrow (2:1) and only reactions conditions and empty name with no wrapping (30 symbols in a line)',
+      testCaseExpectedResult:
+        'Text of conditions is in italic, first line is empty, font size is 13',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-1x1-name-not-available-no-wrap-30-symbols.rdf',
+      testCaseDescription:
+        '16. RDF V2000 single reaction with Single arrow (1:1) and only reactions conditions and not available name with no wrapping (30 symbols in a line)',
+      testCaseExpectedResult:
+        'Text of conditions is in italic, first line is empty, font size is 13',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-conditions-9-lines.rdf',
+      testCaseDescription:
+        '17. RDF V2000 single reaction with Multi-Tailed arrow (2:1) and only reactions conditions with auto wrapping (9 lines)',
+      testCaseExpectedResult:
+        'Text of conditions is in italic, font size is 13, the first line is empty',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-conditions-9-lines-truncated.rdf',
+      testCaseDescription:
+        '18. RDF V2000 single reaction with Multi-Tailed arrow (2:1) and only reactions conditions with auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Text of conditions is in italic  and truncated (last 3 points are replaced by points), font size is 13, the first line is empty',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-space-after-30-symbols.rdf',
+      testCaseDescription:
+        '19. RDF V2000 single reaction with Multi-Tailed arrow (2:1) and reactions name and conditions with spaces and auto wrapping (after 30 symbols)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-space-after-30-symbols-with-space.rdf',
+      testCaseDescription:
+        '20. RDF V2000 single reaction with Multi-Tailed arrow (2:1) and reactions name and conditions with spaces and auto wrapping (after 30 symbols with space)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-space-before-30-symbols.rdf',
+      testCaseDescription:
+        '21. RDF V2000 single reaction with Multi-Tailed arrow (2:1) and reactions name and conditions with spaces and auto wrapping (before 30 symbols)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-2x1-manual-wrap-9-lines.rdf',
+      testCaseDescription:
+        '22. RDF V2000 single reaction with Multi-Tailed arrow (2:1) and reactions name and conditions with manual wrapping (9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-manual-wrap-9-lines-truncated.rdf',
+      testCaseDescription:
+        '23. RDF V2000 single reaction with Multi-Tailed arrow (2:1) and reactions name and conditions with manual wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic and truncated (last 3 points are replaced by points), font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-not-available-name-conditions.rdf',
+      testCaseDescription:
+        '24. RDF V2000 single reaction with Multi-Tailed arrow (2:1) and not available reactions name and conditions',
+      testCaseExpectedResult: 'There is no text',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-single-reaction-2x1-auto-wrap-special-symbols.rdf',
+      testCaseDescription:
+        '25. RDF V2000 single reaction with Multi-Tailed arrow (2:1) and reactions name and conditions with special symbols and auto wrapping',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-v2000-cascade-reaction-2-1-1-auto-wrap-9-lines-and-truncated.rdf',
+      testCaseDescription:
+        '26. RDF V2000 cascade reaction with Multi-Tailed and single arrow (2:1:1) and reactions name and conditions with auto wrapping/truncating',
+      testCaseExpectedResult:
+        'Text of name and conditions is displayed correctly',
+    },
+    {
+      rdfFile:
+        'RDF-V3000/rdf-v3000-cascade-reaction-2-1-1-auto-wrap-9-lines-and-truncated.rdf',
+      testCaseDescription:
+        '27. RDF V3000 cascade reaction with Multi-Tailed and single arrow (2:1:1) and reactions name and conditions with auto wrapping/truncating',
+      testCaseExpectedResult:
+        'Text of name and conditions is displayed correctly',
+    },
+    {
+      rdfFile:
+        'RDF-V2000/rdf-v2000-cascade-reaction-2-1-2-1-auto-wrap-9-lines-and-truncated.rdf',
+      testCaseDescription:
+        '28. RDF V2000 cascade reaction with Multi-Tailed and single arrow (2:1:2:1) and reactions name and conditions with auto wrapping/truncating',
+      testCaseExpectedResult:
+        'Text of name and conditions is displayed correctly',
+    },
+    {
+      rdfFile:
+        'RDF-V3000/rdf-v3000-cascade-reaction-2-1-2-1-auto-wrap-9-lines-and-truncated.rdf',
+      testCaseDescription:
+        '29. RDF V3000 cascade reaction with Multi-Tailed and single arrow (2:1:2:1) and reactions name and conditions with auto wrapping/truncating',
+      testCaseExpectedResult:
+        'Text of name and conditions is displayed correctly',
+    },
+    {
+      rdfFile: 'RDF-V2000/rdf-single-reaction-2x1-atoms-no-wrap-30-symbols.rdf',
+      testCaseDescription:
+        '30. RDF V2000 single reaction with Multi-Tailed arrow (2:1), atoms and reactions name and conditions with no wrapping (30 symbols in a line)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+  ];
+
+  testCases26.forEach(({ rdfFile, testCaseDescription }) => {
+    test(`Add to Canvas from ${testCaseDescription} and verify that the text is added correctly`, async () => {
+      /* 
+      Test case: https://github.com/epam/Indigo/issues/2559
+      Description: ${testCaseExpectedResult}
+      Case:
+        1. Open RDF file
+        2. Take screenshot
+      */
+      await openFileAndAddToCanvasAsNewProject(rdfFile, page);
+      await takeEditorScreenshot(page);
+    });
+  });
+
+  const testCases27 = [
+    {
+      rdfFile: 'RDF-V2000/rdf-cascade-reactions-name-conditions.rdf',
+      ketFile: 'KET/rdf-cascade-reactions-name-conditions-expected.ket',
+      testCaseDescription:
+        'RDF V2000 cascade reactions with Multi-Tailed and single arrow (5-tails and 2:1:1) and reactions name and conditions',
+    },
+  ];
+
+  testCases27.forEach(({ rdfFile, ketFile, testCaseDescription }) => {
+    test(`Add to Canvas from ${testCaseDescription}, after that they can be saved/loaded to KET`, async () => {
+      /* 
+      Test case: https://github.com/epam/Indigo/issues/2559
+      Description: Text of name and conditions is displayed correctly (7 different cases), after that saved to KET and load from KET, and it's displayed correctly.
+      Case:
+        1. Open RDF file
+        2. Save and verify KET file
+        3. Open saved KET file 
+      */
+      await openFileAndAddToCanvasAsNewProject(rdfFile, page);
+      await takeEditorScreenshot(page);
+      await verifyFileExport(page, ketFile, FileType.KET);
+      await openFileAndAddToCanvasAsNewProject(ketFile, page);
+      await takeEditorScreenshot(page);
+    });
+  });
+
+  const testCases28 = [
+    {
+      ketFile: 'KET/ket-single-2x1-text-top-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-top-match-expected.rdf',
+      testCaseDescription:
+        '1. KET reaction with text name and matching with bounding box on the different sides (top) from Multi-Tailed Arrow (2:1)',
+    },
+    {
+      ketFile: 'KET/ket-single-2x1-text-bottom-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-bottom-match-expected.rdf',
+      testCaseDescription:
+        '2. KET reaction with text name and matching with bounding box on the different sides (bottom) from Multi-Tailed Arrow (2:1)',
+    },
+    {
+      ketFile: 'KET/ket-single-2x1-text-left-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-left-match-expected.rdf',
+      testCaseDescription:
+        '3. KET reaction with text name and matching with bounding box on the different sides (left) from Multi-Tailed Arrow (2:1)',
+    },
+    {
+      ketFile: 'KET/ket-single-2x1-text-right-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-right-match-expected.rdf',
+      testCaseDescription:
+        '4. KET reaction with text name and matching with bounding box on the different sides (right) from Multi-Tailed Arrow (2:1)',
+    },
+  ];
+
+  testCases28.forEach(
+    ({ ketFile, rdfFileExpectedV2000, testCaseDescription }) => {
+      test(`Add to Canvas from ${testCaseDescription} save to RDF V2000, add to Canvas from RDF V2000, verify that reaction with text name is displayed correctly`, async () => {
+        /* 
+        Test case: https://github.com/epam/Indigo/issues/2404
+        Description: ${testCaseDescription} can be saved to RDF V2000 format, then reloaded with correct structure.
+        Case:
+          1. Open KET file
+          2. Save and verify RDF file
+          3. Open saved RDF file
+        */
+        await openFileAndAddToCanvasAsNewProject(ketFile, page);
+        await takeEditorScreenshot(page);
+        await verifyRdfFile(
+          page,
+          'v2000',
+          rdfFileExpectedV2000,
+          `tests/test-data/${rdfFileExpectedV2000}`,
+        );
+        await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV2000, page);
+        await takeEditorScreenshot(page);
+      });
+    },
+  );
+
+  const testCases29 = [
+    {
+      ketFile: 'KET/ket-single-2x1-text-top-no-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-top-no-match-expected.rdf',
+      testCaseDescription:
+        '1. KET reaction with text name and no matching with bounding box on the different sides (top) from Multi-Tailed Arrow (2:1)',
+    },
+    {
+      ketFile: 'KET/ket-single-2x1-text-bottom-no-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-bottom-no-match-expected.rdf',
+      testCaseDescription:
+        '2. KET reaction with text name and no matching with bounding box on the different sides (bottom) from Multi-Tailed Arrow (2:1)',
+    },
+    {
+      ketFile: 'KET/ket-single-2x1-text-left-no-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-left-no-match-expected.rdf',
+      testCaseDescription:
+        '3. KET reaction with text name and no matching with bounding box on the different sides (left) from Multi-Tailed Arrow (2:1)',
+    },
+    {
+      ketFile: 'KET/ket-single-2x1-text-right-no-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-2x1-text-right-no-match-expected.rdf',
+      testCaseDescription:
+        '4. KET reaction with text name and no matching with bounding box on the different sides (right) from Multi-Tailed Arrow (2:1)',
+    },
+  ];
+
+  testCases29.forEach(
+    ({ ketFile, rdfFileExpectedV2000, testCaseDescription }) => {
+      test(`Add to Canvas from ${testCaseDescription} save to RDF V2000, add to Canvas from RDF V2000, verify that reaction without text name is displayed correctly`, async () => {
+        /* 
+        Test case: https://github.com/epam/Indigo/issues/2404
+        Description: ${testCaseDescription} can be saved to RDF V2000 format, then reloaded with correct structure.
+        Case:
+          1. Open KET file
+          2. Save and verify RDF file
+          3. Open saved RDF file
+        */
+        await openFileAndAddToCanvasAsNewProject(ketFile, page);
+        await takeEditorScreenshot(page);
+        await verifyRdfFile(
+          page,
+          'v2000',
+          rdfFileExpectedV2000,
+          `tests/test-data/${rdfFileExpectedV2000}`,
+        );
+        await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV2000, page);
+        await takeEditorScreenshot(page);
+      });
+    },
+  );
+
+  const testCases30 = [
+    {
+      ketFile: 'KET/ket-single-1x1-2x1-text-top-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-1x1-2x1-text-top-match-expected.rdf',
+      testCaseDescription:
+        '1. KET reaction with text name and matching with bounding box on the different sides (top) from Single Arrow (1:1), Multi-Tailed Arrow is also added',
+    },
+    {
+      ketFile: 'KET/ket-single-1x1-2x1-text-bottom-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-1x1-2x1-text-bottom-match-expected.rdf',
+      testCaseDescription:
+        '2. KET reaction with text name and matching with bounding box on the different sides (bottom) from Single Arrow (1:1), Multi-Tailed Arrow is also added',
+    },
+    {
+      ketFile: 'KET/ket-single-1x1-2x1-text-left-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-1x1-2x1-text-left-match-expected.rdf',
+      testCaseDescription:
+        '3. KET reaction with text name and matching with bounding box on the different sides (left) from Single Arrow (1:1), Multi-Tailed Arrow is also added',
+    },
+    {
+      ketFile: 'KET/ket-single-1x1-2x1-text-right-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-1x1-2x1-text-right-match-expected.rdf',
+      testCaseDescription:
+        '4. KET reaction with text name and matching with bounding box on the different sides (right) from Single Arrow (1:1), Multi-Tailed Arrow is also added',
+    },
+  ];
+
+  testCases30.forEach(
+    ({ ketFile, rdfFileExpectedV2000, testCaseDescription }) => {
+      test(`Add to Canvas from ${testCaseDescription} save to RDF V2000, add to Canvas from RDF V2000, verify that reaction with text name is displayed correctly`, async () => {
+        /* 
+        Test case: https://github.com/epam/Indigo/issues/2404
+        Description: ${testCaseDescription} can be saved to RDF V2000 format, then reloaded with correct structure.
+        Case:
+          1. Open KET file
+          2. Save and verify RDF file
+          3. Open saved RDF file
+        */
+        await openFileAndAddToCanvasAsNewProject(ketFile, page);
+        await takeEditorScreenshot(page);
+        await verifyRdfFile(
+          page,
+          'v2000',
+          rdfFileExpectedV2000,
+          `tests/test-data/${rdfFileExpectedV2000}`,
+        );
+        await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV2000, page);
+        await takeEditorScreenshot(page);
+      });
+    },
+  );
+
+  const testCases31 = [
+    {
+      ketFile: 'KET/ket-single-1x1-2x1-text-top-no-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-1x1-2x1-text-top-no-match-expected.rdf',
+      testCaseDescription:
+        '1. KET reaction with text name and no matching with bounding box on the different sides (top) from Single Arrow (1:1), Multi-Tailed Arrow is also added',
+    },
+    {
+      ketFile: 'KET/ket-single-1x1-2x1-text-bottom-no-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-1x1-2x1-text-bottom-no-match-expected.rdf',
+      testCaseDescription:
+        '2. KET reaction with text name and no matching with bounding box on the different sides (bottom) from Single Arrow (1:1), Multi-Tailed Arrow is also added',
+    },
+    {
+      ketFile: 'KET/ket-single-1x1-2x1-text-left-no-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-1x1-2x1-text-left-no-match-expected.rdf',
+      testCaseDescription:
+        '3. KET reaction with text name and no matching with bounding box on the different sides (left) from Single Arrow (1:1), Multi-Tailed Arrow is also added',
+    },
+    {
+      ketFile: 'KET/ket-single-1x1-2x1-text-right-no-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-1x1-2x1-text-right-no-match-expected.rdf',
+      testCaseDescription:
+        '4. KET reaction with text name and no matching with bounding box on the different sides (right) from Single Arrow (1:1), Multi-Tailed Arrow is also added',
+    },
+  ];
+
+  testCases31.forEach(
+    ({ ketFile, rdfFileExpectedV2000, testCaseDescription }) => {
+      test(`Add to Canvas from ${testCaseDescription} save to RDF V2000, add to Canvas from RDF V2000, verify that reaction without text name is displayed correctly`, async () => {
+        /* 
+        Test case: https://github.com/epam/Indigo/issues/2404
+        Description: ${testCaseDescription} can be saved to RDF V2000 format, then reloaded with correct structure.
+        Case:
+          1. Open KET file
+          2. Save and verify RDF file
+          3. Open saved RDF file
+        */
+        await openFileAndAddToCanvasAsNewProject(ketFile, page);
+        await takeEditorScreenshot(page);
+        await verifyRdfFile(
+          page,
+          'v2000',
+          rdfFileExpectedV2000,
+          `tests/test-data/${rdfFileExpectedV2000}`,
+        );
+        await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV2000, page);
+        await takeEditorScreenshot(page);
+      });
+    },
+  );
+
+  const testCases32 = [
+    {
+      ketFile: 'KET/ket-cascade-2-1-1-text-name-conditions-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-2-1-1-text-name-conditions-match-expected.rdf',
+      testCaseDescription:
+        '1. KET cascade reaction (2:1:1) with text name, conditions and matching with bounding box',
+      testCaseExpectedResult:
+        'Reaction with text name in bold and conditions in italic are displayed correctly with font = 13',
+    },
+    {
+      ketFile: 'KET/ket-cascade-2-1-1-text-name-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-2-1-1-text-name-match-expected.rdf',
+      testCaseDescription:
+        '2. KET cascade reaction (2:1:1) with text name only and matching with bounding box',
+      testCaseExpectedResult:
+        'Reaction only with name in bold is displayed correctly with font = 13',
+    },
+    {
+      ketFile: 'KET/ket-cascade-2-1-1-text-conditions-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-2-1-1-text-conditions-match-expected.rdf',
+      testCaseDescription:
+        '3. KET cascade reaction (2:1:1) with text conditions only and matching with bounding box',
+      testCaseExpectedResult:
+        'Reaction only with name in italic is displayed correctly with font = 13, the first line is empty',
+    },
+    {
+      ketFile: 'KET/ket-cascade-2-1-1-text-name-conditions-no-match.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-2-1-1-text-name-conditions-no-match-expected.rdf',
+      testCaseDescription:
+        '4. KET cascade reaction (2:1:1) with text name, conditions and no matching with bounding box',
+      testCaseExpectedResult: 'There are no reactions name and conditions',
+    },
+    {
+      ketFile: 'KET/ket-cascade-reaction-2-1-1-auto-wrap-9-lines.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-auto-wrap-9-lines-expected.rdf',
+      testCaseDescription:
+        '5. KET cascade reaction (2:1:1) with text name, conditions, matching with bounding box and future auto wrapping (9 lines)',
+      testCaseExpectedResult:
+        'Reaction with text name in bold and conditions in italic are displayed correctly with font = 13',
+    },
+    {
+      ketFile: 'KET/ket-cascade-reaction-2-1-1-auto-wrap-9-lines-truncated.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-auto-wrap-9-lines-truncated-expected.rdf',
+      testCaseDescription:
+        '6. KET cascade reaction (2:1:1) with text name, conditions, matching with bounding box and future auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Reaction with text name in bold and conditions in italic (truncated) are displayed correctly with font = 13',
+    },
+    {
+      ketFile:
+        'KET/ket-cascade-reaction-2-1-1-auto-wrap-name-9-lines-truncated.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-auto-wrap-name-9-lines-truncated-expected.rdf',
+      testCaseDescription:
+        '7. KET cascade reaction (2:1:1) with only text name, matching with bounding box and future auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Reaction with text name in bold (truncated) is displayed correctly with font = 13',
+    },
+    {
+      ketFile:
+        'KET/ket-cascade-reaction-2-1-1-auto-wrap-conditions-9-lines-truncated.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-auto-wrap-conditions-9-lines-truncated-expected.rdf',
+      testCaseDescription:
+        '8. KET cascade reaction (2:1:1) with only text conditions, matching with bounding box and future auto wrapping and truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Reaction with text conditions in italic (truncated) is displayed correctly with font = 13',
+    },
+    {
+      ketFile: 'KET/ket-cascade-reaction-2-1-1-auto-wrap-spaces-9-lines.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-auto-wrap-spaces-9-lines-expected.rdf',
+      testCaseDescription:
+        '9. KET cascade reaction (2:1:1) with text name, conditions, matching with bounding box and future auto wrapping  (9 lines), spaces',
+      testCaseExpectedResult:
+        'Reaction with text name in bold and conditions in italic are displayed correctly with font = 13',
+    },
+    {
+      ketFile:
+        'KET/ket-cascade-reaction-2-1-1-auto-wrap-spaces-all-elements-9-lines-truncated.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-auto-wrap-spaces-all-elements-9-lines-truncated-expected.rdf',
+      testCaseDescription:
+        '10. KET cascade reaction (2:1:1) with text name, conditions, matching with bounding box and future auto wrapping, spaces, truncating (more than 9 lines)',
+      testCaseExpectedResult:
+        'Reaction with text name in bold and conditions in italic (truncated) are displayed correctly with font = 13',
+    },
+    {
+      ketFile: 'KET/ket-cascade-reaction-2-1-1-manual-wrap-9-lines.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-manual-wrap-9-lines-expected.rdf',
+      testCaseDescription:
+        '11. KET cascade reaction with Multi-Tailed arrow (2:1:1) and reactions name and conditions with manual wrapping (9 lines)',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      ketFile: 'KET/ket-single-reaction-2x1-name-conditions-long.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-reaction-2x1-name-conditions-long-expected.rdf',
+      testCaseDescription:
+        '12. KET single reaction (2:1) with very long text name, conditions, matching with bounding box',
+      testCaseExpectedResult: 'Truncated symbols are saved',
+    },
+    {
+      ketFile: 'KET/ket-cascade-reaction-2-1-1-multiple-texts.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reaction-2-1-1-multiple-texts-expected.rdf',
+      testCaseDescription:
+        '13. KET cascade reaction (2:1:1) with multiple texts and matching with bounding box',
+      testCaseExpectedResult:
+        'Only nearest one is saved (algorithm checks minimal distance between start of head arrow and left bottom corner of text box), load from RDF V2000, reaction displayed correctly with only one text box near each part of reaction',
+    },
+    {
+      ketFile: 'KET/ket-single-reaction-2x1-atoms-no-wrap-30-symbols.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-reaction-2x1-atoms-no-wrap-30-symbols-expected.rdf',
+      testCaseDescription:
+        '14. KET single reaction (2:1) with atoms, text name, conditions, matching with bounding box',
+      testCaseExpectedResult:
+        'Text of name and conditions is displayed correctly',
+    },
+    {
+      ketFile: 'KET/ket-single-reaction-2x1-text-modified.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-reaction-2x1-text-modified-expected.rdf',
+      testCaseDescription:
+        '15. KET single reaction with Multi-Tailed (2:1) and reactions name and conditions, text of them is modified using editor',
+      testCaseExpectedResult: 'The modifications are lost',
+    },
+  ];
+
+  testCases32.forEach(
+    ({ ketFile, rdfFileExpectedV2000, testCaseDescription }) => {
+      test(`Add to Canvas from ${testCaseDescription} save to RDF V2000, add to Canvas from RDF V2000`, async () => {
+        /* 
+        Test case: https://github.com/epam/Indigo/issues/2404
+        Description: ${testCaseDescription} can be saved to RDF V2000 format, then reloaded with correct structure.
+        Case:
+          1. Open KET file
+          2. Save and verify RDF file
+          3. Open saved RDF file
+        */
+        await openFileAndAddToCanvasAsNewProject(ketFile, page);
+        await takeEditorScreenshot(page);
+        await verifyRdfFile(
+          page,
+          'v2000',
+          rdfFileExpectedV2000,
+          `tests/test-data/${rdfFileExpectedV2000}`,
+        );
+        await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV2000, page);
+        await takeEditorScreenshot(page);
+      });
+    },
+  );
+
+  const testCases33 = [
+    {
+      ketFile: 'KET/ket-cascade-reactions-name-conditions.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-cascade-reactions-name-conditions-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-cascade-reactions-name-conditions-expected.rdf',
+      testCaseDescription:
+        'KET cascade reactions with Multi-Tailed and single arrow (5-tails and 2:1:1) and reactions name and conditions',
+    },
+  ];
+
+  testCases33.forEach(
+    ({
+      ketFile,
+      rdfFileExpectedV2000,
+      rdfFileExpectedV3000,
+      testCaseDescription,
+    }) => {
+      (['v2000', 'v3000'] as const).forEach((format) => {
+        test(`Verify that ${testCaseDescription} can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+          /* 
+          Test case: https://github.com/epam/Indigo/issues/2404
+          Description: ${testCaseDescription} can be saved to RDF ${format.toUpperCase()} format, then reloaded with correct structure.
+          Case:
+            1. Open KET file
+            2. Save and verify RDF file
+            3. Open saved RDF file
+          */
+          const rdfFileExpected =
+            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+
+          await openFileAndAddToCanvasAsNewProject(ketFile, page);
+          await takeEditorScreenshot(page);
+          await verifyRdfFile(
+            page,
+            format,
+            rdfFileExpected,
+            `tests/test-data/${rdfFileExpected}`,
+          );
+          await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
+          await takeEditorScreenshot(page);
+        });
+      });
+    },
+  );
+
+  const testCases34 = [
+    {
+      rdfFile: 'RDF-V2000/ket-cascade-reactions-name-conditions-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-cascade-reactions-name-conditions-v3000.rdf',
+      testCaseDescription:
+        'RDF V2000 cascade reactions with Multi-Tailed and single arrow (5-tails and 2:1:1) and reactions name and conditions',
+      testCaseExpectedResult:
+        'Reaction with text name in bold and conditions in italic are displayed correctly with font = 13',
+    },
+  ];
+
+  testCases34.forEach(
+    ({ rdfFile, rdfFileExpectedV3000, testCaseDescription }) => {
+      test(`Add to Canvas from ${testCaseDescription} save to RDF V3000, add to Canvas from RDF V3000`, async () => {
+        /* 
+        Test case: https://github.com/epam/Indigo/issues/2404
+        Description: ${testCaseDescription} can be saved to RDF V3000 format, then reloaded with correct structure.
+        Case:
+          1. Open RDF file
+          2. Save and verify RDF file
+          3. Open saved RDF file
+        */
+        await openFileAndAddToCanvasAsNewProject(rdfFile, page);
+        await takeEditorScreenshot(page);
+        await verifyRdfFile(
+          page,
+          'v3000',
+          rdfFileExpectedV3000,
+          `tests/test-data/${rdfFileExpectedV3000}`,
+        );
+        await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV3000, page);
+        await takeEditorScreenshot(page);
+      });
+    },
+  );
+
+  const testCases35 = [
+    {
+      ketFile: 'KET/ket-single-reaction-2-1-1-no-text.ket',
+      rdfFileExpectedV2000:
+        'RDF-V2000/ket-single-reaction-2-1-1-no-text-expected.rdf',
+      rdfFileExpectedV3000:
+        'RDF-V3000/ket-single-reaction-2-1-1-no-text-expected.rdf',
+      testCaseDescription:
+        'KET cascade reaction (2-1-1) without text, using "Add Text" tool, add text name and conditions for each part of reaction',
+    },
+  ];
+
+  testCases35.forEach(
+    ({
+      ketFile,
+      rdfFileExpectedV2000,
+      rdfFileExpectedV3000,
+      testCaseDescription,
+    }) => {
+      (['v2000', 'v3000'] as const).forEach((format) => {
+        test(`Add to Canvas from ${testCaseDescription} then can be saved/loaded to/from ${format.toUpperCase()}`, async () => {
+          /*
+            Test case: https://github.com/epam/Indigo/issues/2404
+            Description: Added to Canvas from KET cascade reaction (2-1-1) without text, using "Add Text" tool, 
+            added text name and conditions for each part of reaction, saved to RDF V2000/V3000 formats, after that loaded from RDF V2000/V3000, 
+            verified that they are displayed correctly with name and conditions.
+            Case:
+            1. Open KET file
+            2. Add text above arrows
+            3. Save and verify RDF file
+            4. Open saved RDF file
+          */
+          const rdfFileExpected =
+            format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
+
+          await openFileAndAddToCanvas(ketFile, page);
+          await addTextToCanvas(page, 'abcde FGHIJKLMNOP!@##$%^^^&*', 470, 360);
+          await pressButton(page, 'Apply');
+          await addTextToCanvas(page, 'abcde FGHIJKLMNOP!@##$%^^^&*', 700, 360);
+          await pressButton(page, 'Apply');
+          await takeEditorScreenshot(page);
+          await verifyRdfFile(
+            page,
+            format,
+            rdfFileExpected,
+            `tests/test-data/${rdfFileExpected}`,
+          );
+          await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
+          await takeEditorScreenshot(page);
+        });
+      });
+    },
+  );
+
+  const testCases36 = [
+    {
+      ketFile: 'KET/ket-single-reaction-2x1-name-conditions-layout.ket',
+      testCaseDescription:
+        '1. KET single reaction (2:1) with very text name, conditions, matching with bounding box',
+      testCaseExpectedResult:
+        'Text of name is in bold, text of conditions is in italic, font size is 13, empty line between name and conditions',
+    },
+    {
+      ketFile: 'KET/ket-cascade-reactions-name-conditions.ket',
+      testCaseDescription:
+        '2. KET cascade reactions with Multi-Tailed and single arrow (5-tails and 2:1:1) and reactions name and conditions',
+      testCaseExpectedResult:
+        'Text of name and conditions is displayed correctly',
+    },
+  ];
+
+  testCases36.forEach(({ ketFile, testCaseDescription }) => {
+    test(`Add to Canvas from ${testCaseDescription} make Layout and verify that the text is looked correctly`, async () => {
+      /* 
+      Test case: https://github.com/epam/Indigo/issues/2559
+      Description: ${testCaseExpectedResult}
+      Case:
+        1. Open KET file
+        2. Make Layout
+        3. Take screenshot
+      */
+      await openFileAndAddToCanvasAsNewProject(ketFile, page);
+      await takeEditorScreenshot(page);
+      await waitForSpinnerFinishedWork(
+        page,
+        async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+      );
+      await takeEditorScreenshot(page);
+    });
+  });
 });

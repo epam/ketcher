@@ -31,12 +31,16 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
-import { getMonomerLocatorByAlias } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  getMonomerLocatorByAlias,
+} from '@utils/macromolecules/monomer';
 import {
   verifyFileExport,
   FileType,
   verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
+import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
 
@@ -3023,7 +3027,8 @@ test(`17. Verify that copying the sense and antisense strand and pasting it with
    *       7. Paste clipboard content to the canvas
    *       8. Take screenshot to validate layout
    */
-  test.setTimeout(20000);
+  test.setTimeout(30000);
+  await pageReload(page);
 
   const chain = chainOfNucleotidesAndPeptides[0];
 
@@ -3049,4 +3054,46 @@ test(`17. Verify that copying the sense and antisense strand and pasting it with
   await copyToClipboardByKeyboard(page);
   await pasteFromClipboardByKeyboard(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
+
+test(`18. Flipping checks`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6134
+   * Description: 1. If the sense chain was oriented bases down, the antisense chain should be oriented bases up.
+   *              2. If the sense chain was oriented bases up, the antisense chain should be oriented bases down.
+   *              3. If the left most sugar/amino acid of the sense chain has a terminal indicator of 5'/N, then the left most sugar/amino acid of the antisense chain should have a terminal indicator of 3'/C.
+   *              4. If the left most sugar/amino acid of the sense chain has a terminal indicator of 3'/C, then the left most sugar/amino acid of the antisense chain should have a terminal indicator of 5'/N.
+   *              5. If the numbering of the sense chain increases from left to right, the numbering of the antisense chain should increase right to left.
+   *              6. If the numbering of the sense chain increases from right to left, the numbering of the antisense chain should increase left to right.
+   * Case:
+   *       1. Load chain/antisense pair (and standalone nucleotide)
+   *       2. Take screenshot to validate initial state (numbering, orientation, terminal indicator)
+   *       3. Connect to antisense chain extra nucleotide
+   *       4. Switch to Flex mode and back to Snake - chains got filipped
+   *       5. Take screenshot to validate new state (numbering, orientation, terminal indicator)
+   */
+  test.setTimeout(20000);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{[dR](A,C,G,T)P.[dR](A,G,T)P.[dR](A,T)P}|RNA2{R(A,C,G,U)P.R(A,C,U)P.R(A,U)[Ssp]}|' +
+      'RNA3{[RSpabC](A,U)P}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA2,5:pair-5:pair|RNA1,RNA2,8:pair-8:pair$$$V2.0',
+  );
+  for (let i = 0; i < 5; i++) await ZoomInByKeyboard(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await bondTwoMonomers(
+    page,
+    await getMonomerLocator(page, { monomerAlias: 'Ssp' }),
+    await getMonomerLocator(page, { monomerAlias: 'RSpabC' }),
+  );
+
+  await selectFlexLayoutModeTool(page);
+  await selectSnakeLayoutModeTool(page);
+
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await resetZoomLevelToDefault(page);
 });

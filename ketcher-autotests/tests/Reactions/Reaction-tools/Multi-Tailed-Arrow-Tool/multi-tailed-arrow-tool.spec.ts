@@ -25,7 +25,9 @@ import {
   RingButton,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
+  selectAromatizeTool,
   selectClearCanvasTool,
+  selectDearomatizeTool,
   selectDropdownTool,
   selectEraseTool,
   selectLeftPanelButton,
@@ -3571,9 +3573,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await selectAromatizeTool(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await selectDearomatizeTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

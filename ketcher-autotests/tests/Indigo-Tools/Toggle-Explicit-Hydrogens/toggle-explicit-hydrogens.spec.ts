@@ -1,10 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
   takeEditorScreenshot,
-  waitForSpinnerFinishedWork,
   waitForPageInit,
   drawBenzeneRing,
   selectRing,
@@ -12,6 +9,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   screenshotBetweenUndoRedo,
   clickOnCanvas,
+  removeExplicitHydrogens,
 } from '@utils';
 
 test.describe('Toggle-Explicit-Hydrogens Tool', () => {
@@ -20,27 +18,21 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
   });
 
   test('Empty canvas', async ({ page }) => {
-    await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
+    await removeExplicitHydrogens(page);
   });
 
   test('Show and then hide hydrogens', async ({ page }) => {
     await drawBenzeneRing(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
-    });
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
 
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
-    });
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
   });
 
   test('(Undo/Redo)', async ({ page }) => {
     await drawBenzeneRing(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
-    });
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -57,13 +49,9 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     const y = 200;
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, x, y);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
-    });
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
-    });
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
   });
 
@@ -78,9 +66,7 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
       'KET/schema-with-retrosynthetic-arrow-for-options.ket',
       page,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
-    });
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
   });
 });
@@ -135,20 +121,10 @@ test.describe('1. Molecules connected ', () => {
         page,
       );
       await clickOnCanvas(page, 200, 200);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
 
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -183,20 +159,10 @@ test.describe('2. Molecules connected ', () => {
         page,
       );
       await clickOnCanvas(page, 200, 200);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
 
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -252,20 +218,10 @@ test.describe('3. Molecules connected ', () => {
         page,
       );
       await clickOnCanvas(page, 200, 200);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
 
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -320,20 +276,10 @@ test.describe('4. Fold/unfold hydrogens for', () => {
         page,
       );
       await clickOnCanvas(page, 20, 20);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
 
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -375,20 +321,10 @@ test.describe('5. Fold/unfold hydrogens for', () => {
         page,
       );
       await clickOnCanvas(page, 20, 20);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
 
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -424,20 +360,10 @@ test.describe('6. Fold/unfold hydrogens for', () => {
         page,
       );
       await clickOnCanvas(page, 20, 20);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       /*
-       await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+       await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       */
     });
@@ -488,20 +414,9 @@ test.describe('7. Fold/unfold hydrogens for', () => {
         page,
       );
       await clickOnCanvas(page, 20, 20);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
-
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -536,20 +451,10 @@ test.describe('8. Fold/unfold hydrogens for', () => {
         page,
       );
       await clickOnCanvas(page, 20, 20);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       /*
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       */
     });
@@ -587,20 +492,10 @@ test.describe('9. Fold/unfold hydrogens for', () => {
         page,
       );
       await clickOnCanvas(page, 20, 20);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       /*
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       */
     });
@@ -658,20 +553,10 @@ test.describe('10. Fold/unfold hydrogens for', () => {
         page,
       );
       await clickOnCanvas(page, 20, 20);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
 
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -714,20 +599,10 @@ test.describe('11. Fold/unfold hydrogens for', () => {
           page,
         );
         await clickOnCanvas(page, 20, 20);
-        await waitForSpinnerFinishedWork(page, async () => {
-          await selectTopPanelButton(
-            TopPanelButton.toggleExplicitHydrogens,
-            page,
-          );
-        });
+        await removeExplicitHydrogens(page);
         await takeEditorScreenshot(page);
         /*
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       */
       },
@@ -767,20 +642,10 @@ test.describe('12. Fold/unfold hydrogens for', () => {
         page,
       );
       await clickOnCanvas(page, 20, 20);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       /*
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       */
     });
@@ -860,20 +725,10 @@ test.describe('13. Fold/unfold hydrogens for', () => {
         page,
       );
       await clickOnCanvas(page, 20, 20);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
 
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       // await takeEditorScreenshot(page);
     });
   }
@@ -913,20 +768,10 @@ test.describe('14. Fold/unfold hydrogens for', () => {
         page,
       );
       await clickOnCanvas(page, 20, 20);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       /*
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       */
     });
@@ -967,20 +812,10 @@ test.describe('15. Fold/unfold hydrogens for', () => {
         page,
       );
       await clickOnCanvas(page, 20, 20);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       /*
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       */
     });
@@ -1044,20 +879,10 @@ test.describe('16. Fold/unfold hydrogens for', () => {
         page,
       );
       await clickOnCanvas(page, 20, 20);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
 
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -1101,20 +926,10 @@ test.describe('17. Fold/unfold hydrogens for', () => {
         page,
       );
       await clickOnCanvas(page, 20, 20);
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       /*
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
       */
     });

@@ -1,14 +1,12 @@
 /* eslint-disable no-magic-numbers */
 import { Page, chromium, test } from '@playwright/test';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
   takeEditorScreenshot,
-  waitForSpinnerFinishedWork,
   openFileAndAddToCanvasAsNewProject,
   selectClearCanvasTool,
   waitForPageInit,
   resetZoomLevelToDefault,
+  removeExplicitHydrogens,
 } from '@utils';
 
 let page: Page;
@@ -351,20 +349,10 @@ test.describe('1. User can expand hydrogens for ', () => {
         `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/All types of bond/${fileName}`,
         page,
       );
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
 
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -666,20 +654,10 @@ test.describe('2. User can expand hydrogens for ', () => {
         `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/A on the canvas/${fileName}`,
         page,
       );
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
 
-      await waitForSpinnerFinishedWork(page, async () => {
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        );
-      });
+      await removeExplicitHydrogens(page);
       await takeEditorScreenshot(page);
     });
   }

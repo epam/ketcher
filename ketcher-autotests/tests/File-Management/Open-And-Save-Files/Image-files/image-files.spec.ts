@@ -680,7 +680,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -698,7 +698,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -716,7 +716,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -732,7 +732,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 

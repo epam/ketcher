@@ -27,6 +27,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectAromatizeTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -302,9 +303,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     });
     await takeEditorScreenshot(page);
 
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Aromatize, page);
-    });
+    await selectAromatizeTool(page);
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);

@@ -1,7 +1,9 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
 import {
+  selectTopPanelButton,
   openFileAndAddToCanvas,
+  TopPanelButton,
   takeEditorScreenshot,
   copyAndPaste,
   cutAndPaste,
@@ -13,11 +15,10 @@ import {
   selectAllStructuresOnCanvas,
   receiveFileComparisonData,
   saveToFile,
+  waitForSpinnerFinishedWork,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
-  selectAromatizeTool,
-  selectDearomatizeTool,
 } from '@utils';
 import { getCml, getMolfile, getRxn, getSmiles } from '@utils/formats';
 import {
@@ -38,8 +39,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Test case: EPMLSOPKET-1867
     Description: Nothing is changed.
     */
-    await selectAromatizeTool(page);
-    await selectDearomatizeTool(page);
+    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
     await takeEditorScreenshot(page);
   });
 
@@ -49,9 +50,13 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/non-aromatic.mol', page);
-    await selectAromatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -66,9 +71,13 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/non-aromatic-structures.mol',
       page,
     );
-    await selectAromatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -86,9 +95,13 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/aromatic-structures.mol',
       page,
     );
-    await selectAromatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -104,9 +117,13 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
       page,
     );
-    await selectAromatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -122,8 +139,12 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
       page,
     );
-    await selectAromatizeTool(page);
-    await selectDearomatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
     await pressRedoButton(page);
@@ -145,7 +166,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     );
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await selectAromatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -163,7 +186,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     );
     await cutAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await selectAromatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -177,7 +202,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAromatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await selectAllStructuresOnCanvas(page);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await takeEditorScreenshot(page);
@@ -393,7 +420,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
         'KET/all-possible-query-features-with-out-custom-query.ket',
         page,
       );
-      await selectAromatizeTool(page);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Aromatize, page);
+      });
       await takeEditorScreenshot(page);
     },
   );
@@ -422,8 +451,12 @@ test.describe('Aromatize/Dearomatize Tool', () => {
         'KET/all-possible-query-features-with-out-custom-query.ket',
         page,
       );
-      await selectAromatizeTool(page);
-      await selectDearomatizeTool(page);
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Aromatize, page);
+      });
+      await waitForSpinnerFinishedWork(page, async () => {
+        await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+      });
       await takeEditorScreenshot(page);
     },
   );
@@ -447,7 +480,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'KET/all-possible-custom-query-features.ket',
       page,
     );
-    await selectAromatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -471,8 +506,12 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'KET/all-possible-custom-query-features.ket',
       page,
     );
-    await selectAromatizeTool(page);
-    await selectDearomatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -487,7 +526,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'KET/schema-with-retrosynthetic-arrow-for-options.ket',
       page,
     );
-    await selectAromatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -502,8 +543,12 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'KET/schema-with-retrosynthetic-arrow-for-options.ket',
       page,
     );
-    await selectAromatizeTool(page);
-    await selectDearomatizeTool(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    });
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    });
     await takeEditorScreenshot(page);
   });
 });

@@ -43,8 +43,6 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
-  selectAromatizeTool,
-  selectDearomatizeTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -620,9 +618,9 @@ test.describe('Bond Tool', () => {
       i++;
     }
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
     await takeEditorScreenshot(page);
-    await selectAromatizeTool(page);
+    await selectTopPanelButton(TopPanelButton.Aromatize, page);
     await takeEditorScreenshot(page);
   });
 });

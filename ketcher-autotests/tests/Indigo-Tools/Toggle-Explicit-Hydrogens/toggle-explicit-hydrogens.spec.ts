@@ -1,10 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
   takeEditorScreenshot,
-  waitForSpinnerFinishedWork,
   waitForPageInit,
   drawBenzeneRing,
   selectRing,

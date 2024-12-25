@@ -20,6 +20,7 @@ import {
   pasteFromClipboardByKeyboard,
   pressButton,
   readFileContents,
+  removeExplicitHydrogens,
   resetCurrentTool,
   RingButton,
   screenshotBetweenUndoRedo,
@@ -3877,9 +3878,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

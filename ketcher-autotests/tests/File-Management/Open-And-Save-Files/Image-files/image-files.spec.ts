@@ -21,6 +21,7 @@ import {
   pasteFromClipboardByKeyboard,
   pressButton,
   readFileContents,
+  removeExplicitHydrogens,
   resetCurrentTool,
   resetZoomLevelToDefault,
   RingButton,
@@ -1452,23 +1453,9 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () =>
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        ),
-    );
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () =>
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        ),
-    );
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

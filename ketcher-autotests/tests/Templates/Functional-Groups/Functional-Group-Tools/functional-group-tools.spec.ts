@@ -32,6 +32,8 @@ import {
   waitForSpinnerFinishedWork,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectAromatizeTool,
+  selectDearomatizeTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -773,10 +775,10 @@ test.describe('Templates - Functional Group Tools3', () => {
       await page.getByText('Expand Abbreviation').click();
     });
 
-    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await selectAromatizeTool(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await selectDearomatizeTool(page);
     await takeEditorScreenshot(page);
   });
 

@@ -26,6 +26,7 @@
     "@playwright/test": "^1.44.1",
     "eslint": "^8.44.0",
     "lint-staged": "^13.1.2",
+    "playwright": "^1.49.1",
     "prettier": "2.8.4"
   },
   "dependencies": {

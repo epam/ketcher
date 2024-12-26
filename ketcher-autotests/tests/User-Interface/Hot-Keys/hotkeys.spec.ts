@@ -29,9 +29,11 @@ import {
   dragMouseTo,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
-  waitForSpinnerFinishedWork,
   copyAndPaste,
   clickOnCanvas,
+  selectAromatizeTool,
+  selectDearomatizeTool,
+  removeExplicitHydrogens,
 } from '@utils';
 
 test.describe('Hot keys', () => {
@@ -398,13 +400,9 @@ test.describe('Hot keys', () => {
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
     await page.mouse.click(100, 100);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Aromatize, page);
-    });
+    await selectAromatizeTool(page);
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Dearomatize, page);
-    });
+    await selectDearomatizeTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -448,13 +446,9 @@ test.describe('Hot keys', () => {
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
-    });
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
-    });
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
   });
 

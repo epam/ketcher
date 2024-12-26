@@ -10,6 +10,7 @@ import {
   selectTopPanelButton,
   waitForPageInit,
   waitForRender,
+  selectClearCanvasTool,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/addTextBoxToCanvas';
 import {
@@ -99,13 +100,11 @@ test.describe('Clear canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.Clear, page);
     await pressUndoButton(page);
-    await page.keyboard.press('Control+Delete');
-    await waitForRender(page, async () => {
-      await pressUndoButton(page);
-      await pressUndoButton(page);
-      await pressRedoButton(page);
-      await pressRedoButton(page);
-    });
+    await selectClearCanvasTool(page);
+    await pressUndoButton(page);
+    await pressUndoButton(page);
+    await pressRedoButton(page);
+    await pressRedoButton(page);
     await takeEditorScreenshot(page);
   });
 });

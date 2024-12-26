@@ -8,6 +8,7 @@ import {
   SequenceType,
   takePageScreenshot,
   waitForRender,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import { DropdownToolIds } from '@utils/clicks/types';
@@ -537,4 +538,10 @@ export async function selectZoomOutTool(page: Page, count = 1) {
     });
   }
   await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function removeExplicitHydrogens(page: Page) {
+  await waitForSpinnerFinishedWork(page, async () => {
+    await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
+  });
 }

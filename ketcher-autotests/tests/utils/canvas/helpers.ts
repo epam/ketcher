@@ -23,12 +23,14 @@ import {
   selectRing,
   waitForSpinnerFinishedWork,
   getControlModifier,
+  TopPanelButton,
 } from '..';
 import { waitForRender } from '@utils/common';
 import {
   openSettings,
   selectAtomInToolbar,
   selectRectangleSelectionTool,
+  selectTopPanelButton,
 } from './tools';
 
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
@@ -501,4 +503,18 @@ export async function selectRedoByKeyboard(
 
 export async function copyToClipboardByIcon(page: Page) {
   await page.getByTestId('copy-to-clipboard').click();
+}
+
+export async function selectAromatizeTool(page: Page) {
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await selectTopPanelButton(TopPanelButton.Aromatize, page),
+  );
+}
+
+export async function selectDearomatizeTool(page: Page) {
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await selectTopPanelButton(TopPanelButton.Dearomatize, page),
+  );
 }

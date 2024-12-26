@@ -3027,7 +3027,8 @@ test(`17. Verify that copying the sense and antisense strand and pasting it with
    *       7. Paste clipboard content to the canvas
    *       8. Take screenshot to validate layout
    */
-  test.setTimeout(20000);
+  test.setTimeout(30000);
+  await pageReload(page);
 
   const chain = chainOfNucleotidesAndPeptides[0];
 

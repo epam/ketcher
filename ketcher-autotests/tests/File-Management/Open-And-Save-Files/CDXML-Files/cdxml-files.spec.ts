@@ -21,6 +21,7 @@ import {
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
   selectAllStructuresOnCanvas,
+  selectClearCanvasTool,
 } from '@utils';
 import {
   FileType,
@@ -120,7 +121,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 

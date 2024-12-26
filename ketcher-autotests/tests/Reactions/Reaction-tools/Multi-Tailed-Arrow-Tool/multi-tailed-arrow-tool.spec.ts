@@ -20,11 +20,14 @@ import {
   pasteFromClipboardByKeyboard,
   pressButton,
   readFileContents,
+  removeExplicitHydrogens,
   resetCurrentTool,
   RingButton,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
+  selectAromatizeTool,
   selectClearCanvasTool,
+  selectDearomatizeTool,
   selectDropdownTool,
   selectEraseTool,
   selectLeftPanelButton,
@@ -615,7 +618,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -637,7 +640,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -3570,9 +3573,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await selectAromatizeTool(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await selectDearomatizeTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -3877,9 +3880,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

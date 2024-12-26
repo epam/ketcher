@@ -130,7 +130,7 @@ test.describe('Clear Canvas Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await page.getByTestId('clear-canvas').click();
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -149,7 +149,7 @@ test.describe('Clear Canvas Tool', () => {
         );
       }
     });
-    await page.getByTestId('clear-canvas').click();
+    await selectClearCanvasTool(page);
   });
 
   test('Check that after creating a monomer structure and click Clear Canvas button and then Undo structure back for same place', async ({
@@ -160,7 +160,7 @@ test.describe('Clear Canvas Tool', () => {
     Description: After click Undo structure back for same place.
     */
     await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
-    await page.getByTestId('clear-canvas').click();
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
     await page.getByTestId('undo').click();
     await takeEditorScreenshot(page);
@@ -174,7 +174,7 @@ test.describe('Clear Canvas Tool', () => {
     Description: Undo/Redo functionality works properly.
     */
     await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
-    await page.getByTestId('clear-canvas').click();
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
     await page.getByTestId('undo').click();
     await takeEditorScreenshot(page);
@@ -195,7 +195,7 @@ test.describe('Clear Canvas Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('clear-canvas').click();
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -212,7 +212,7 @@ test.describe('Clear Canvas Tool', () => {
     );
     await takeEditorScreenshot(page);
     await turnOnMicromoleculesEditor(page);
-    await page.getByTestId('clear-canvas').click();
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);

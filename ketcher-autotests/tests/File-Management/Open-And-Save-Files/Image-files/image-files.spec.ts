@@ -21,13 +21,16 @@ import {
   pasteFromClipboardByKeyboard,
   pressButton,
   readFileContents,
+  removeExplicitHydrogens,
   resetCurrentTool,
   resetZoomLevelToDefault,
   RingButton,
   saveToTemplates,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
+  selectAromatizeTool,
   selectClearCanvasTool,
+  selectDearomatizeTool,
   selectEraseTool,
   selectLeftPanelButton,
   selectRectangleSelectionTool,
@@ -677,7 +680,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -695,7 +698,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -713,7 +716,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -729,7 +732,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Control+Delete');
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1284,9 +1287,9 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Aromatize, page);
+    await selectAromatizeTool(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Dearomatize, page);
+    await selectDearomatizeTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1452,23 +1455,9 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () =>
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        ),
-    );
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () =>
-        await selectTopPanelButton(
-          TopPanelButton.toggleExplicitHydrogens,
-          page,
-        ),
-    );
+    await removeExplicitHydrogens(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

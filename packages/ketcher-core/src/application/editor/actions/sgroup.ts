@@ -355,13 +355,17 @@ export function setExpandMonomerSGroup(
     });
   });
 
-  atomsToMove.forEach((atomIds, key) => {
-    if (handledAtoms.has(key)) {
+  atomsToMove.forEach((atomIds) => {
+    const intactAtoms = atomIds.filter((aid) => !handledAtoms.has(aid));
+    if (intactAtoms.length === 0) {
       return;
     }
 
-    const sGroups = sGroupsToMove.get(key) ?? [];
-    const subStructBBox = SGroup.getObjBBox(atomIds, restruct.molecule, true);
+    const subStructBBox = SGroup.getObjBBox(
+      intactAtoms,
+      restruct.molecule,
+      true,
+    );
     const subStructCenter = new Vec2(
       subStructBBox.p0.x + (subStructBBox.p1.x - subStructBBox.p0.x) / 2,
       subStructBBox.p0.y + (subStructBBox.p1.y - subStructBBox.p0.y) / 2,
@@ -378,11 +382,8 @@ export function setExpandMonomerSGroup(
 
     const finalMoveVector = attrs.expanded ? moveVector : moveVector.negated();
 
-    atomIds.forEach((atomId) => {
+    intactAtoms.forEach((atomId) => {
       action.addOp(new AtomMove(atomId, finalMoveVector));
-    });
-    sGroups.forEach((sGroupId) => {
-      action.addOp(new SGroupDataMove(sGroupId, finalMoveVector));
     });
   });
 

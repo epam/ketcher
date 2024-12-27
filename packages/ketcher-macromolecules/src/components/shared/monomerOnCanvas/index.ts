@@ -5,3 +5,5 @@ export { PhosphateAvatar } from './Phosphate';
 export { RNABaseAvatar } from './RNABase';
 export { UnresolvedMonomerAvatar } from './UnresolvedMonomer';
 export { NucleotideAvatar } from './Nucleotide';
+export { ArrowMarker } from './ArrowMarker';
+export { SequenceStartArrow } from './SequenceStartArrow';

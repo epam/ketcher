@@ -86,254 +86,254 @@ const ambiguousMonomers: IHELMString[] = [
     testDescription:
       '1. Ambiguous alternatives peptide made of peptide(R1) and peptide(R1) should result in peptide(R1)',
     HELMString: 'PEPTIDE1{([Pyrro],[Am-])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '2. Ambiguous alternatives peptide made of peptide(R2) and peptide(R2) should result in peptide(R2)',
     HELMString: 'PEPTIDE1{([Glc],[Hva])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '3. Ambiguous alternatives peptide made of peptide(R2+R3) and peptide(R2+R3) should result in peptide(R2+R3)',
     HELMString: 'PEPTIDE1{([Mpa],[Mba])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '4. Ambiguous alternatives peptide made of peptide(R1+R2) and peptide(R1+R2) should result in peptide(R1+R2)',
     HELMString: 'PEPTIDE1{([D-Nle],[2Nal])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '5. Ambiguous alternatives peptide made of peptide(R1+R2+R3) and peptide(R1+R2+R3) should result in peptide(R1+R2+R3)',
     HELMString: 'PEPTIDE1{([Aad],[Asu])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '6. Ambiguous alternatives peptide made of peptide(R1) and peptide(R1+R2+R3) should result in peptide(R1)',
     HELMString: 'PEPTIDE1{([Pyrro],[Asu])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '7. Ambiguous alternatives peptide made of peptide(R2) and peptide(R1) should result in peptide with no APs',
     HELMString: 'PEPTIDE1{([Glc],[Am-])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '8. Ambiguous alternatives peptide made of peptide(R2+R3) and peptide(R2) should result in peptide(R2)',
     HELMString: 'PEPTIDE1{([Mpa],[Hva])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '9. Ambiguous alternatives peptide made of peptide(R1+R2) and peptide(R2+R3) should result in peptide(R2)',
     HELMString: 'PEPTIDE1{([D-Nle],[Mba])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '10. Ambiguous alternatives peptide made of peptide(R1+R2+R3) and peptide(R1+R2) should result in peptide(R1+R2)',
     HELMString: 'PEPTIDE1{([Aad],[2Nal])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '11. Ambiguous alternatives peptide made of peptide(R1) and peptide(R1+R2) should result in peptide(R1)',
     HELMString: 'PEPTIDE1{([Pyrro],[2Nal])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '12. Ambiguous alternatives peptide made of peptide(R2) and peptide(R1+R2+R3) should result in peptide(R2)',
     HELMString: 'PEPTIDE1{([Glc],[Asu])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '13. Ambiguous alternatives peptide made of peptide(R2+R3) and peptide(R1) should result in peptide with no APs',
     HELMString: 'PEPTIDE1{([Mpa],[Am-])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '14. Ambiguous alternatives peptide made of peptide(R1+R2) and peptide(R2) should result in peptide(R2)',
     HELMString: 'PEPTIDE1{([D-Nle],[Hva])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '15. Ambiguous alternatives peptide made of peptide(R1+R2+R3) and peptide(R2+R3) should result in peptide(R2+R3)',
     HELMString: 'PEPTIDE1{([Aad],[Mba])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '16. Ambiguous mixed peptide made of peptide(R1) and peptide(R1) should result in peptide(R1)',
     HELMString: 'PEPTIDE1{([Pyrro]+[Am-])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '17. Ambiguous mixed peptide made of peptide(R2) and peptide(R2) should result in peptide(R2)',
     HELMString: 'PEPTIDE1{([Glc]+[Hva])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '18. Ambiguous mixed peptide made of peptide(R2+R3) and peptide(R2+R3) should result in peptide(R2+R3)',
     HELMString: 'PEPTIDE1{([Mpa]+[Mba])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '19. Ambiguous mixed peptide made of peptide(R1+R2) and peptide(R1+R2) should result in peptide(R1+R2)',
     HELMString: 'PEPTIDE1{([D-Nle]+[2Nal])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '20. Ambiguous mixed peptide made of peptide(R1+R2+R3) and peptide(R1+R2+R3) should result in peptide(R1+R2+R3)',
     HELMString: 'PEPTIDE1{([Aad]+[Asu])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '21. Ambiguous mixed peptide made of peptide(R1) and peptide(R1+R2+R3) should result in peptide(R1)',
     HELMString: 'PEPTIDE1{([Pyrro]+[Asu])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '22. Ambiguous mixed peptide made of peptide(R2) and peptide(R1) should result in peptide with no APs',
     HELMString: 'PEPTIDE1{([Glc]+[Am-])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '23. Ambiguous mixed peptide made of peptide(R2+R3) and peptide(R2) should result in peptide(R2)',
     HELMString: 'PEPTIDE1{([Mpa]+[Hva])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '24. Ambiguous mixed peptide made of peptide(R1+R2) and peptide(R2+R3) should result in peptide(R2)',
     HELMString: 'PEPTIDE1{([D-Nle]+[Mba])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '25. Ambiguous mixed peptide made of peptide(R1+R2+R3) and peptide(R1+R2) should result in peptide(R1+R2)',
     HELMString: 'PEPTIDE1{([Aad]+[2Nal])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '26. Ambiguous mixed peptide made of peptide(R1) and peptide(R1+R2) should result in peptide(R1)',
     HELMString: 'PEPTIDE1{([Pyrro]+[2Nal])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '27. Ambiguous mixed peptide made of peptide(R2) and peptide(R1+R2+R3) should result in peptide(R2)',
     HELMString: 'PEPTIDE1{([Glc]+[Asu])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '28. Ambiguous mixed peptide made of peptide(R2+R3) and peptide(R1) should result in peptide with no APs',
     HELMString: 'PEPTIDE1{([Mpa]+[Am-])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '29. Ambiguous mixed peptide made of peptide(R1+R2) and peptide(R2) should result in peptide(R2)',
     HELMString: 'PEPTIDE1{([D-Nle]+[Hva])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '30. Ambiguous mixed peptide made of peptide(R1+R2+R3) and peptide(R2+R3) should result in peptide(R2+R3)',
     HELMString: 'PEPTIDE1{([Aad]+[Mba])}$$$V2.0',
-    monomerLocatorIndex: 0,
+    monomerLocatorIndex: 1,
   },
   {
     testDescription:
       '31. Ambiguous alternatives base made of base(R1) and base(R1) should result in base(R1)',
     HELMString: 'RNA1{R([2imen2],[5meC])P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
     pageReloadNeeded: true,
   },
   {
     testDescription:
       '32. Ambiguous alternatives base made of base(R1+R2) and base(R1+R2) should result in base(R1+R2)',
     HELMString: 'RNA1{R([oC64m5],[nC65U])P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
   },
   {
     testDescription:
       '33. Ambiguous alternatives base made of base(R1+R2+R3) and base(R1+R2+R3) should result in base(R1+R2+R3)',
     HELMString: 'RNA1{R([nC6n5C],[nC6n8A])P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
   },
   {
     testDescription:
       '34. Ambiguous alternatives base made of base(R1) and base(R1+R2+R3) should result in base(R1)',
     HELMString: 'RNA1{R([2imen2],[nC6n8A])P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
   },
   {
     testDescription:
       '35. Ambiguous alternatives base made of base(R1+R2) and base(R1) should result in base(R1)',
     HELMString: 'RNA1{R([oC64m5],[5meC])P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
   },
   {
     testDescription:
       '36. Ambiguous alternatives base made of base(R1+R2+R3) and base(R1+R2) should result in base(R1+R2)',
     HELMString: 'RNA1{R([nC6n5C],[nC65U])P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
   },
   {
     testDescription:
       '37. Ambiguous mixed base made of base(R1) and base(R1) should result in base(R1)',
     HELMString: 'RNA1{R([2imen2]+[5meC])P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
   },
   {
     testDescription:
       '38. Ambiguous mixed base made of base(R1+R2) and base(R1+R2) should result in base(R1+R2)',
     HELMString: 'RNA1{R([oC64m5]+[nC65U])P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
   },
   {
     testDescription:
       '39. Ambiguous mixed base made of base(R1+R2+R3) and base(R1+R2+R3) should result in base(R1+R2+R3)',
     HELMString: 'RNA1{R([nC6n5C]+[nC6n8A])P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
   },
   {
     testDescription:
       '40. Ambiguous mixed base made of base(R1) and base(R1+R2+R3) should result in base(R1)',
     HELMString: 'RNA1{R([2imen2]+[nC6n8A])P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
   },
   {
     testDescription:
       '41. Ambiguous mixed base made of base(R1+R2) and base(R1) should result in base(R1)',
     HELMString: 'RNA1{R([oC64m5]+[5meC])P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
   },
   {
     testDescription:
       '42. Ambiguous mixed base made of base(R1+R2+R3) and base(R1+R2) should result in base(R1+R2)',
     HELMString: 'RNA1{R([nC6n5C]+[nC65U])P}$$$$V2.0',
-    monomerLocatorIndex: 1,
+    monomerLocatorIndex: 2,
   },
 ];
 

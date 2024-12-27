@@ -75,6 +75,7 @@ import {
   selectZoomReset,
   selectAromatizeTool,
   selectDearomatizeTool,
+  selectCleanTool,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -1901,10 +1902,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvas('KET/distorted-r1-attachment-point.ket', page);
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 

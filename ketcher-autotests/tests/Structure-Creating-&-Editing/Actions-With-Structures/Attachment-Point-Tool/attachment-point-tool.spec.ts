@@ -29,6 +29,7 @@ import {
   waitForSpinnerFinishedWork,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectCleanTool,
 } from '@utils';
 import {
   pressRedoButton,
@@ -915,9 +916,7 @@ test.describe('Attachment Point Tool', () => {
       await pressUndoButton(page);
     });
 
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Clean, page);
-    });
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 });

@@ -1784,9 +1784,8 @@ export class SequenceMode extends BaseMode {
     const firstNodeOfNewFragment = chainsCollection.firstNode;
     const newNodePosition = this.getNewNodePosition();
 
-    this.deleteBondToNextNodeInChain(previousNodeInSameChain, modelChanges);
-
     if (needConnectWithPreviousNodeInChain) {
+      this.deleteBondToNextNodeInChain(previousNodeInSameChain, modelChanges);
       this.connectNodes(
         previousNodeInSameChain,
         firstNodeOfNewFragment,

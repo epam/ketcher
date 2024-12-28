@@ -526,16 +526,16 @@ export abstract class BaseMonomer extends DrawingEntity {
     return attachmentPointNameToBond;
   }
 
-  public get startBondAttachmentPoint() {
+  public get startBondAttachmentPoint(): AttachmentPointName | undefined {
     if (this.chosenFirstAttachmentPointForBond) {
       return this.chosenFirstAttachmentPointForBond;
     }
     if (this.attachmentPointsToBonds.R2 === null) {
-      return 'R2';
+      return AttachmentPointName.R2;
     }
 
     if (this.attachmentPointsToBonds.R1 === null) {
-      return 'R1';
+      return AttachmentPointName.R1;
     }
 
     return this.firstFreeAttachmentPoint;

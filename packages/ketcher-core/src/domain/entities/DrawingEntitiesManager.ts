@@ -2447,8 +2447,9 @@ export class DrawingEntitiesManager {
         if (bond.selected) {
           return;
         }
-
-        command.merge(this.deleteBond(bond));
+        if (bond instanceof Bond) {
+          command.merge(this.deleteBond(bond));
+        }
       });
 
       this.monomerToAtomBonds.forEach((monomerToAtomBond) => {

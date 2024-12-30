@@ -1,4 +1,4 @@
-import { Action, setExpandSGroup } from 'ketcher-core';
+import { Action, setExpandMonomerSGroup } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAppContext } from 'src/hooks';
@@ -27,7 +27,7 @@ const useFunctionalGroupEoc = () => {
 
       selectedFunctionalGroups?.forEach((functionalGroup) => {
         action.mergeWith(
-          setExpandSGroup(molecule, functionalGroup.relatedSGroupId, {
+          setExpandMonomerSGroup(molecule, functionalGroup.relatedSGroupId, {
             expanded: toExpand,
           }),
         );
@@ -47,17 +47,8 @@ const useFunctionalGroupEoc = () => {
       ),
     );
   }, []);
-  const disabled = useCallback(({ props }: Params) => {
-    const editor = getKetcherInstance().editor as Editor;
-    const molecule = editor.render.ctab.molecule;
-    return Boolean(
-      props?.functionalGroups?.every((functionalGroup) =>
-        functionalGroup?.relatedSGroup.isNotContractible(molecule),
-      ),
-    );
-  }, []);
 
-  return [handler, hidden, disabled] as const;
+  return [handler, hidden] as const;
 };
 
 export default useFunctionalGroupEoc;

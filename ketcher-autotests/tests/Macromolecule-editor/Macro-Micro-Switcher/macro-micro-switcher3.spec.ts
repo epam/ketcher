@@ -706,7 +706,7 @@ test(`Verify that expanding multiple monomers works in a top-to-bottom order wit
     'KET/Micro-Macro-Switcher/All type of monomers in vertical chain.ket',
     page,
   );
-  await setZoomInputValue(page, '50');
+  await setZoomInputValue(page, '40');
   await resetCurrentTool(page);
   await takeEditorScreenshot(page);
   await expandMonomer(page, 'oC64m5');

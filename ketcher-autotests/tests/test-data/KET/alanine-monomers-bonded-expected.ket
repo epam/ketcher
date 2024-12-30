@@ -31,8 +31,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 9.55,
-            "y": -10.149999999999999
+            "x": 8.675,
+            "y": -9.274999999999999
         },
         "alias": "A",
         "templateId": "A___Alanine"
@@ -170,8 +170,8 @@
         "type": "monomer",
         "id": "1",
         "position": {
-            "x": 14.25,
-            "y": -6.499999999999998
+            "x": 13.375,
+            "y": -5.624999999999998
         },
         "alias": "A",
         "templateId": "A___Alanine"

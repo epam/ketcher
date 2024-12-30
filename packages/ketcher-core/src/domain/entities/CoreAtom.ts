@@ -6,6 +6,7 @@ import { BaseRenderer } from 'application/render';
 import { AtomLabel, Elements } from 'domain/constants';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { isNumber } from 'lodash';
+import { MonomerToAtomBond } from './MonomerToAtomBond';
 
 export interface AtomProperties {
   charge?: number | null;
@@ -15,7 +16,7 @@ export interface AtomProperties {
   alias?: string | null;
 }
 export class Atom extends DrawingEntity {
-  public bonds: Bond[] = [];
+  public bonds: Array<Bond | MonomerToAtomBond> = [];
   public renderer: AtomRenderer | undefined = undefined;
   constructor(
     position: Vec2,
@@ -31,8 +32,14 @@ export class Atom extends DrawingEntity {
     return this.position;
   }
 
-  public addBond(bond: Bond) {
-    this.bonds.push(bond);
+  public addBond(bond: Bond | MonomerToAtomBond) {
+    if (!this.bonds.includes(bond)) {
+      this.bonds.push(bond);
+    }
+  }
+
+  public deleteBond(bondId: number) {
+    this.bonds = this.bonds.filter((bond) => bond.id !== bondId);
   }
 
   public setRenderer(renderer: AtomRenderer) {
@@ -48,26 +55,31 @@ export class Atom extends DrawingEntity {
     let connectionsAmount = 0;
 
     for (let i = 0; i < this.bonds.length; i++) {
-      switch (this.bonds[i].type) {
-        case BondType.Single:
-          connectionsAmount += 1;
-          break;
-        case BondType.Double:
-          connectionsAmount += 2;
-          break;
-        case BondType.Triple:
-          connectionsAmount += 3;
-          break;
-        case BondType.Dative:
-        case BondType.Hydrogen:
-          break;
-        case BondType.Aromatic:
-          if (this.bonds.length === 1) {
+      const bond = this.bonds[i];
+      if (bond instanceof MonomerToAtomBond) {
+        connectionsAmount += 1;
+      } else {
+        switch (bond.type) {
+          case BondType.Single:
+            connectionsAmount += 1;
+            break;
+          case BondType.Double:
+            connectionsAmount += 2;
+            break;
+          case BondType.Triple:
+            connectionsAmount += 3;
+            break;
+          case BondType.Dative:
+          case BondType.Hydrogen:
+            break;
+          case BondType.Aromatic:
+            if (this.bonds.length === 1) {
+              return -1;
+            }
+            return this.bonds.length;
+          default:
             return -1;
-          }
-          return this.bonds.length;
-        default:
-          return -1;
+        }
       }
     }
 

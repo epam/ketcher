@@ -128,6 +128,19 @@ export class SequenceMode extends BaseMode {
       zoom.scrollTo(firstMonomerPosition);
     }
 
+    if (this.isEditMode) {
+      const drawnStructuresElement =
+        document.querySelector('.drawn-structures');
+      const isScrollToTheBottomNeeded =
+        drawnStructuresElement &&
+        drawnStructuresElement.getBoundingClientRect().bottom >
+          window.innerHeight;
+
+      if (isScrollToTheBottomNeeded) {
+        zoom.scrollToVerticalBottom();
+      }
+    }
+
     modelChanges.merge(command);
 
     return modelChanges;

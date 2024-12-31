@@ -17,6 +17,7 @@ import {
   clickOnCanvas,
   selectZoomInTool,
   selectZoomOutTool,
+  moveMouseAway,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import {
@@ -100,10 +101,12 @@ test.describe('Sequence mode selection for edit mode', () => {
       await page.keyboard.press('ArrowRight');
     }
     await page.keyboard.up('Shift');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await selectFlexLayoutModeTool(page);
     await selectSequenceLayoutModeTool(page);
+
     await takeEditorScreenshot(page);
   });
 
@@ -116,6 +119,7 @@ test.describe('Sequence mode selection for edit mode', () => {
       await page.keyboard.press('ArrowLeft');
     }
     await page.keyboard.up('Shift');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Backspace');

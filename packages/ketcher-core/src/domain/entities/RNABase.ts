@@ -10,14 +10,14 @@ export class RNABase extends BaseMonomer {
     if (this.chosenFirstAttachmentPointForBond) {
       return this.chosenFirstAttachmentPointForBond;
     }
-    return this.firstFreeAttachmentPoint;
+    return this.getFreeAttachmentPoint();
   }
 
   public getValidTargetPoint() {
     if (this.potentialSecondAttachmentPointForBond) {
       return this.potentialSecondAttachmentPointForBond;
     }
-    return this.firstFreeAttachmentPoint;
+    return this.getFreeAttachmentPoint();
   }
 
   public get SubChainConstructor() {

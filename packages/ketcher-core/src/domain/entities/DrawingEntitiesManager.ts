@@ -123,6 +123,7 @@ export class DrawingEntitiesManager {
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
   public snakeLayoutMatrix?: Matrix<Cell>;
+
   public get bottomRightMonomerPosition(): Vec2 {
     let position: Vec2 | null = null;
 
@@ -910,7 +911,7 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public intendToStartAttachmenPointBondCreation(
+  public intendToStartAttachmentPointBondCreation(
     monomer: BaseMonomer,
     attachmentPointName: AttachmentPointName,
   ) {
@@ -960,7 +961,7 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public intendToFinishAttachmenPointBondCreation(
+  public intendToFinishAttachmentPointBondCreation(
     monomer: BaseMonomer,
     bond: PolymerBond,
     attachmentPointName: AttachmentPointName,
@@ -3016,6 +3017,7 @@ export class DrawingEntitiesManager {
     });
   }
 }
+
 function getFirstPosition(
   height: number,
   lastPosition: Vec2,

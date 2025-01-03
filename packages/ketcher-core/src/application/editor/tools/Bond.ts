@@ -110,6 +110,11 @@ class PolymerBond implements BaseTool {
         );
         return;
       }
+
+      if (startAttachmentPoint) {
+        this.removePreviouslyCreatedBond(startAttachmentPoint);
+      }
+
       const { polymerBond, command: modelChanges } =
         this.editor.drawingEntitiesManager.startPolymerBondCreation(
           selectedRenderer.monomer,
@@ -212,7 +217,7 @@ class PolymerBond implements BaseTool {
         false,
       );
       modelChanges =
-        this.editor.drawingEntitiesManager.intendToFinishAttachmenPointBondCreation(
+        this.editor.drawingEntitiesManager.intendToFinishAttachmentPointBondCreation(
           renderer.monomer,
           this.bondRenderer?.polymerBond,
           event.attachmentPointName,
@@ -220,7 +225,7 @@ class PolymerBond implements BaseTool {
         );
     } else {
       modelChanges =
-        this.editor.drawingEntitiesManager.intendToStartAttachmenPointBondCreation(
+        this.editor.drawingEntitiesManager.intendToStartAttachmentPointBondCreation(
           renderer.monomer,
           event.attachmentPointName,
         );
@@ -327,6 +332,21 @@ class PolymerBond implements BaseTool {
       this.bondRenderer = undefined;
       event.stopPropagation();
     }
+  }
+
+  private removePreviouslyCreatedBond(attachmentPoint: AttachmentPointName) {
+    this.editor.drawingEntitiesManager.monomerToAtomBonds.forEach(
+      (monomerToAtomBond) => {
+        const bond =
+          monomerToAtomBond.monomer.attachmentPointsToBonds[attachmentPoint];
+
+        if (bond?.id === monomerToAtomBond.id) {
+          this.editor.renderersContainer.deleteMonomerToAtomBond(
+            monomerToAtomBond,
+          );
+        }
+      },
+    );
   }
 
   private finishBondCreation(secondMonomer: BaseMonomer) {
@@ -459,6 +479,7 @@ class PolymerBond implements BaseTool {
         this.bondRenderer?.polymerBond,
       ) || monomer?.getValidSourcePoint();
 
+    // Remove temporary Polymer Bond
     this.editor.drawingEntitiesManager.deletePolymerBond(
       this.bondRenderer?.polymerBond,
     );
@@ -469,6 +490,7 @@ class PolymerBond implements BaseTool {
       return;
     }
 
+    // Establish new Monomer to Atom Bond
     const modelChanges =
       this.editor.drawingEntitiesManager.addMonomerToAtomBond(
         monomer,

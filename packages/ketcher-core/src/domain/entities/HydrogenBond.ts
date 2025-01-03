@@ -4,10 +4,11 @@ import { BaseBond } from './BaseBond';
 import { FlexOrSequenceOrSnakeModePolymerBondRenderer } from 'domain/entities/PolymerBond';
 
 export class HydrogenBond extends BaseBond {
+  public firstMonomer: BaseMonomer;
   public secondMonomer?: BaseMonomer;
   public renderer?: FlexOrSequenceOrSnakeModePolymerBondRenderer = undefined;
 
-  constructor(public firstMonomer: BaseMonomer, secondMonomer?: BaseMonomer) {
+  constructor(firstMonomer: BaseMonomer, secondMonomer?: BaseMonomer) {
     super();
     this.firstMonomer = firstMonomer;
     this.secondMonomer = secondMonomer;

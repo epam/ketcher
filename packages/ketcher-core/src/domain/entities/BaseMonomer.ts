@@ -32,9 +32,18 @@ export abstract class BaseMonomer extends DrawingEntity {
   public renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer = undefined;
   public attachmentPointsToBonds: AttachmentPointsToBonds = {};
 
-  public chosenFirstAttachmentPointForBond: AttachmentPointName | null;
+  private _chosenFirstAttachmentPointForBond: AttachmentPointName | null;
+  public get chosenFirstAttachmentPointForBond(): AttachmentPointName | null {
+    return this._chosenFirstAttachmentPointForBond;
+  }
+
+  private _chosenSecondAttachmentPointForBond: AttachmentPointName | null;
+
+  public get chosenSecondAttachmentPointForBond(): AttachmentPointName | null {
+    return this._chosenSecondAttachmentPointForBond;
+  }
+
   public potentialSecondAttachmentPointForBond: AttachmentPointName | null;
-  public chosenSecondAttachmentPointForBond: AttachmentPointName | null;
 
   public potentialAttachmentPointsToBonds: AttachmentPointsToBonds = {};
 
@@ -56,9 +65,9 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.monomerItem.attachmentPoints =
       this.monomerItem.attachmentPoints ||
       this.getMonomerDefinitionAttachmentPoints();
-    this.chosenFirstAttachmentPointForBond = null;
+    this._chosenFirstAttachmentPointForBond = null;
     this.potentialSecondAttachmentPointForBond = null;
-    this.chosenSecondAttachmentPointForBond = null;
+    this._chosenSecondAttachmentPointForBond = null;
   }
 
   public get label() {
@@ -93,13 +102,13 @@ export abstract class BaseMonomer extends DrawingEntity {
   public setChosenFirstAttachmentPoint(
     attachmentPoint: AttachmentPointName | null,
   ) {
-    this.chosenFirstAttachmentPointForBond = attachmentPoint;
+    this._chosenFirstAttachmentPointForBond = attachmentPoint;
   }
 
   public setChosenSecondAttachmentPoint(
     attachmentPoint: AttachmentPointName | null,
   ) {
-    this.chosenSecondAttachmentPointForBond = attachmentPoint;
+    this._chosenSecondAttachmentPointForBond = attachmentPoint;
   }
 
   public setPotentialSecondAttachmentPoint(
@@ -157,11 +166,16 @@ export abstract class BaseMonomer extends DrawingEntity {
     return undefined;
   }
 
-  public get firstFreeAttachmentPoint() {
+  public getFreeAttachmentPoint(
+    startAttachmentPoint?: AttachmentPointName,
+  ): AttachmentPointName | undefined {
     const maxAttachmentPointNumber = this.getMaxAttachmentPointNumber();
+    let started = !startAttachmentPoint;
     for (let i = 1; i <= maxAttachmentPointNumber; i++) {
       const attachmentPoint = `R${i}` as AttachmentPointName;
+      if (attachmentPoint === startAttachmentPoint) started = true;
       if (
+        started &&
         this.hasAttachmentPoint(attachmentPoint) &&
         this.attachmentPointsToBonds[attachmentPoint] === null
       ) {
@@ -203,7 +217,7 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public get hasFreeAttachmentPoint() {
-    return Boolean(this.firstFreeAttachmentPoint);
+    return Boolean(this.getFreeAttachmentPoint());
   }
 
   public isAttachmentPointExistAndFree(attachmentPoint: AttachmentPointName) {
@@ -307,10 +321,10 @@ export abstract class BaseMonomer extends DrawingEntity {
     this.unsetBond(attachmentPointName);
   }
 
-  public removePotentialBonds(clearSelectedPoints = false) {
-    if (clearSelectedPoints) {
-      this.chosenFirstAttachmentPointForBond = null;
-      this.chosenSecondAttachmentPointForBond = null;
+  public removePotentialBonds(resetSelectedPoints = false) {
+    if (resetSelectedPoints) {
+      this._chosenFirstAttachmentPointForBond = null;
+      this._chosenSecondAttachmentPointForBond = null;
       this.potentialSecondAttachmentPointForBond = null;
     }
 
@@ -323,7 +337,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     if (this.chosenSecondAttachmentPointForBond) {
       return this.chosenSecondAttachmentPointForBond;
     }
-    return this.firstFreeAttachmentPoint;
+    return this.getFreeAttachmentPoint();
   }
 
   public hasAttachmentPoint(attachmentPointName: AttachmentPointName) {
@@ -526,19 +540,19 @@ export abstract class BaseMonomer extends DrawingEntity {
     return attachmentPointNameToBond;
   }
 
-  public get startBondAttachmentPoint() {
+  public get startBondAttachmentPoint(): AttachmentPointName | undefined {
     if (this.chosenFirstAttachmentPointForBond) {
       return this.chosenFirstAttachmentPointForBond;
     }
     if (this.attachmentPointsToBonds.R2 === null) {
-      return 'R2';
+      return AttachmentPointName.R2;
     }
 
     if (this.attachmentPointsToBonds.R1 === null) {
-      return 'R1';
+      return AttachmentPointName.R1;
     }
 
-    return this.firstFreeAttachmentPoint;
+    return this.getFreeAttachmentPoint();
   }
 
   abstract get SubChainConstructor():

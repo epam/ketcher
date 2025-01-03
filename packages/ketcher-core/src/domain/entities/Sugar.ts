@@ -12,7 +12,7 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 export class Sugar extends BaseMonomer {
   public getValidSourcePoint(secondMonomer?: BaseMonomer & IVariantMonomer) {
     if (!secondMonomer) {
-      return this.firstFreeAttachmentPoint;
+      return this.getFreeAttachmentPoint();
     }
 
     return this.getValidPoint(
@@ -23,7 +23,7 @@ export class Sugar extends BaseMonomer {
 
   public getValidTargetPoint(firstMonomer: BaseMonomer & IVariantMonomer) {
     if (!firstMonomer) {
-      return this.firstFreeAttachmentPoint;
+      return this.getFreeAttachmentPoint();
     }
 
     // same implementation for both source and target attachment points

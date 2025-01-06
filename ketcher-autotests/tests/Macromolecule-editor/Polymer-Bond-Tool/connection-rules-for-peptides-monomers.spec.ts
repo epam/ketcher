@@ -626,7 +626,7 @@ test.describe('Connection rules for peptides: ', () => {
           await hoverOverConnectionLine(page);
 
           await takeEditorScreenshot(page, {
-            masks: [page.getByTestId('polymer-library-preview')],
+            hideMonomerPreview: true,
           });
         });
       }
@@ -663,7 +663,7 @@ test.describe('Connection rules for peptides: ', () => {
                   await hoverOverConnectionLine(page);
 
                   await takeEditorScreenshot(page, {
-                    masks: [page.getByTestId('polymer-library-preview')],
+                    hideMonomerPreview: true,
                   });
                 });
               }
@@ -711,7 +711,7 @@ test.describe('Connection rules for peptides: ', () => {
               await hoverOverConnectionLine(page);
 
               await takeEditorScreenshot(page, {
-                masks: [page.getByTestId('polymer-library-preview')],
+                hideMonomerPreview: true,
               });
             });
           },
@@ -757,7 +757,7 @@ test.describe('Connection rules for peptides: ', () => {
   //         );
 
   //                 await takeEditorScreenshot(page, {
-  //         masks: [page.getByTestId('polymer-library-preview')],
+  //         hideMonomerPreview: true,
   //       });
 
   //         const targetConnectionPoint = Object.keys(
@@ -777,7 +777,7 @@ test.describe('Connection rules for peptides: ', () => {
   //         await hoverOverConnectionLine(page);
   //
   //                 await takeEditorScreenshot(page, {
-  //         masks: [page.getByTestId('polymer-library-preview')],
+  //         hideMonomerPreview: true,
   //       });
   //       });
   //     },
@@ -816,7 +816,7 @@ test.describe('Connection rules for peptides: ', () => {
   //           );
 
   //                   await takeEditorScreenshot(page, {
-  //         masks: [page.getByTestId('polymer-library-preview')],
+  //         hideMonomerPreview: true,
   //       });
 
   //           if (await page.getByRole('dialog').isVisible()) {
@@ -829,7 +829,7 @@ test.describe('Connection rules for peptides: ', () => {
   //           await hoverOverConnectionLine(page);
 
   //                   await takeEditorScreenshot(page, {
-  //         masks: [page.getByTestId('polymer-library-preview')],
+  //         hideMonomerPreview: true,
   //       });
   //         });
   //       }
@@ -865,7 +865,7 @@ test.describe('Connection rules for peptides: ', () => {
           await zoomWithMouseWheel(page, -600);
 
           await takeEditorScreenshot(page, {
-            masks: [page.getByTestId('polymer-library-preview')],
+            hideMonomerPreview: true,
           });
         });
       },
@@ -925,7 +925,7 @@ test.describe('Connection rules for peptides: ', () => {
           await hoverOverConnectionLine(page);
 
           await takeEditorScreenshot(page, {
-            masks: [page.getByTestId('polymer-library-preview')],
+            hideMonomerPreview: true,
           });
         });
       },
@@ -960,7 +960,7 @@ test.describe('Connection rules for peptides: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -994,7 +994,7 @@ test.describe('Connection rules for peptides: ', () => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });
@@ -1188,7 +1188,7 @@ test.describe('Connection rules for peptides: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -1226,7 +1226,7 @@ test.describe('Connection rules for peptides: ', () => {
         await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });
@@ -1323,7 +1323,7 @@ test.describe('Connection rules for peptides: ', () => {
         await bondMonomerCenterToAtom(page, leftPeptide, rightMolecule, 0);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
 
         test.fixme(
@@ -1375,7 +1375,7 @@ test.describe('Connection rules for peptides: ', () => {
         }
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });

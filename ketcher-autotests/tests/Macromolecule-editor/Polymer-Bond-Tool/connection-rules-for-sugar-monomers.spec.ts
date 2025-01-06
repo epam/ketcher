@@ -373,7 +373,7 @@ test.describe('Connection rules for sugars: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -585,7 +585,7 @@ test.describe('Connection rules for sugars: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -778,7 +778,7 @@ test.describe('Connection rules for sugars: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -811,7 +811,7 @@ test.describe('Connection rules for sugars: ', () => {
         await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });
@@ -840,7 +840,7 @@ test.describe('Connection rules for sugars: ', () => {
         await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });
@@ -1035,7 +1035,7 @@ test.describe('Connection rules for sugars: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -1073,7 +1073,7 @@ test.describe('Connection rules for sugars: ', () => {
         await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });
@@ -1202,7 +1202,7 @@ test.describe('Connection rules for sugars: ', () => {
         await bondMonomerCenterToAtom(page, leftMonomer, rightMolecule, 0);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
 
         test.fixme(
@@ -1253,7 +1253,7 @@ test.describe('Connection rules for sugars: ', () => {
         }
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });

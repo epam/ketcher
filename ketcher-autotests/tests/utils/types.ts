@@ -11,6 +11,7 @@ export enum MonomerType {
   UnresovedNucleotide = 'RNA',
   CHEM = 'CHEM',
   UnknownMonomer = 'CHEM',
+  Molecule = 'ordinaryMolecule',
 }
 
 export enum MacroBondType {

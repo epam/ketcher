@@ -80,7 +80,7 @@ test.describe('Check attachment point rotation', () => {
     await page.waitForSelector('[data-testid="polymer-library-preview"]');
 
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
 
     // Hover 2nd peptide
@@ -91,7 +91,7 @@ test.describe('Check attachment point rotation', () => {
     await page.waitForSelector('[data-testid="polymer-library-preview"]');
 
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
   });
 
@@ -135,7 +135,7 @@ test.describe('Check attachment point rotation', () => {
     await peptide1.hover();
 
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
 
     // Move selected monomer
@@ -149,7 +149,7 @@ test.describe('Check attachment point rotation', () => {
     await peptide1.hover();
     await page.getByTestId('polymer-library-preview');
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
   });
 });

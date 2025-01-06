@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, chromium, test } from '@playwright/test';
+import { Locator, Page, chromium, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
@@ -9,14 +9,18 @@ import {
   waitForIndigoToLoad,
   selectClearCanvasTool,
   resetZoomLevelToDefault,
+  MonomerType,
+  MacroBondType,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
+  getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
@@ -62,7 +66,7 @@ test.describe('Connection rules for Base monomers: ', () => {
   test.describe.configure({ retries: 0 });
 
   interface IMonomer {
-    monomerType: string;
+    monomerType: MonomerType;
     fileName: string;
     alias: string;
     connectionPoints: { [connectionPointName: string]: string };
@@ -70,7 +74,7 @@ test.describe('Connection rules for Base monomers: ', () => {
 
   const baseMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'base',
+      monomerType: MonomerType.Base,
       fileName: 'KET/Base-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -78,7 +82,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'base',
+      monomerType: MonomerType.Base,
       fileName: 'KET/Base-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
@@ -86,7 +90,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: 'base',
+    //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
@@ -94,7 +98,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     '(R1,R2) - R3 gap': {
-      monomerType: 'base',
+      monomerType: MonomerType.Base,
       fileName: 'KET/Base-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -103,7 +107,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R1,R3) - R2 gap': {
-    //   monomerType: 'base',
+    //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
     //   connectionPoints: {
@@ -112,7 +116,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R2,R3) - R1 gap': {
-    //   monomerType: 'base',
+    //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
     //   connectionPoints: {
@@ -121,7 +125,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R3,R4)': {
-    //        monomerType: 'base',
+    //        monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -130,7 +134,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R1,R2,R3)': {
-    //   monomerType: 'base',
+    //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/08 - (R1,R2,R3).ket',
     //   alias: '(R1,R2,R3)',
     //   connectionPoints: {
@@ -140,7 +144,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R1,R3,R4)': {
-    // monomerType: 'base',
+    // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -150,7 +154,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    // monomerType: 'base',
+    // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -160,7 +164,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    // monomerType: 'base',
+    // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -170,7 +174,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4)': {
-    // monomerType: 'base',
+    // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
     //   connectionPoints: {
@@ -181,7 +185,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R1,R3,R4,R5)': {
-    // monomerType: 'base',
+    // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -192,7 +196,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    // monomerType: 'base',
+    // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -203,7 +207,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
-    // monomerType: 'base',
+    // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -215,7 +219,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     N: {
-      monomerType: 'base',
+      monomerType: MonomerType.Base,
       fileName:
         'KET/Base-Templates/16 - W - ambiguous alternatives from library (R1).ket',
       alias: 'W',
@@ -224,7 +228,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '%': {
-    //   monomerType: 'base',
+    //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/17 - W - ambiguous mixed (R1).ket',
     //   alias: '%',
     //   connectionPoints: {
@@ -240,37 +244,41 @@ test.describe('Connection rules for Base monomers: ', () => {
 
   async function loadTwoMonomers(
     page: Page,
-    leftMonomers: IMonomer,
-    rightMonomers: IMonomer,
-  ) {
-    await openFileAndAddToCanvasMacro(leftMonomers.fileName, page);
-    const canvasLocator = page.getByTestId('ketcher-canvas').first();
-    const leftMonomerLocator = canvasLocator
-      .locator(`text=${leftMonomers.alias}`)
-      .locator('..')
-      .first();
-    // const leftMonomerLocator = page.locator('use').first();
-    await leftMonomerLocator.hover();
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
+  ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
+    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    const leftMonomerLocator = (
+      await getMonomerLocator(page, {
+        monomerAlias: leftMonomer.alias,
+        monomerType: leftMonomer.monomerType,
+      })
+    ).first();
+
+    await leftMonomerLocator.hover({ force: true });
+
     await dragMouseTo(500, 370, page);
     await moveMouseAway(page);
 
-    await openFileAndAddToCanvasMacro(rightMonomers.fileName, page);
+    await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
+    const tmpMonomerLocator = await getMonomerLocator(page, {
+      monomerAlias: rightMonomer.alias,
+      monomerType: rightMonomer.monomerType,
+    });
     const rightMonomerLocator =
-      (await canvasLocator.locator(`text=${leftMonomers.alias}`).count()) > 1
-        ? canvasLocator
-            .locator(`text=${rightMonomers.alias}`)
-            .nth(1)
-            .locator('..')
-            .first()
-        : canvasLocator
-            .locator(`text=${rightMonomers.alias}`)
-            .locator('..')
-            .first();
-    // const rightMonomerLocator = page.locator('use').nth(1);
+      (await tmpMonomerLocator.count()) > 1
+        ? tmpMonomerLocator.nth(1)
+        : tmpMonomerLocator.first();
+
     await rightMonomerLocator.hover();
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
     await dragMouseTo(600, 372, page);
     await moveMouseAway(page);
+
+    return {
+      leftMonomer: leftMonomerLocator,
+      rightMonomer: rightMonomerLocator,
+    };
   }
 
   async function bondTwoMonomersByPointToPoint(
@@ -369,12 +377,13 @@ test.describe('Connection rules for Base monomers: ', () => {
 
   /*
   test(`temporary test for debug purposes1`, async () => {
-    await bondTwoMonomersByPointToPoint(
+    await bondTwoMonomersPointToPoint(
       page,
       baseMonomers['(R1,R2,R3)'],
       baseMonomers['(R1,R3,R4)'],
       'R3',
       'R1',
+      MacroBondTool.SINGLE,
     );
   });
   test(`temporary test for debug purposes2`, async () => {
@@ -384,6 +393,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       baseMonomers['(R1,R3,R4)'],
       'R3',
       'R4',
+      MacroBondTool.SINGLE,
     );
   });
   */
@@ -409,23 +419,26 @@ test.describe('Connection rules for Base monomers: ', () => {
               test(`Connect ${leftBaseConnectionPoint} to ${rightBaseConnectionPoint} of ${leftBase.alias} and ${rightBase.alias}`, async () => {
                 test.setTimeout(40000);
 
-                await loadTwoMonomers(page, leftBase, rightBase);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftBase, rightBase);
 
-                await bondTwoMonomersByPointToPoint(
+                await bondTwoMonomersPointToPoint(
                   page,
-                  leftBase,
-                  rightBase,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftBaseConnectionPoint,
                   rightBaseConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -800);
-
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                const bondLine = await getBondLocator(page, {
+                  bondType: MacroBondType.Single,
+                  fromConnectionPoint: leftBaseConnectionPoint,
+                  toConnectionPoint: rightBaseConnectionPoint,
                 });
+
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -436,7 +449,7 @@ test.describe('Connection rules for Base monomers: ', () => {
 
   const peptideMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -444,7 +457,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
@@ -452,7 +465,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
@@ -460,7 +473,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     '(R1,R2) - R3 gap': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -469,7 +482,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     '(R1,R3) - R2 gap': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
       connectionPoints: {
@@ -478,7 +491,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     '(R2,R3) - R1 gap': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
       connectionPoints: {
@@ -487,7 +500,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -496,7 +509,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
@@ -506,7 +519,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -516,7 +529,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -526,7 +539,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -536,7 +549,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
     //   connectionPoints: {
@@ -547,7 +560,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -558,7 +571,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -569,7 +582,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -581,7 +594,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     J: {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName:
         'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
       alias: 'J',
@@ -591,7 +604,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '%': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
     //   alias: '%',
     //   connectionPoints: {
@@ -636,7 +649,7 @@ test.describe('Connection rules for Base monomers: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -648,7 +661,7 @@ test.describe('Connection rules for Base monomers: ', () => {
 
   const chemMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -656,7 +669,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
@@ -664,7 +677,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
@@ -672,7 +685,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     '(R1,R2) - R3 gap': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -681,7 +694,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R1,R3) - R2 gap': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
     //   connectionPoints: {
@@ -690,7 +703,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R2,R3) - R1 gap': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
     //   connectionPoints: {
@@ -699,7 +712,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R3,R4)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -708,7 +721,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
@@ -718,7 +731,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -728,7 +741,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -738,7 +751,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -748,7 +761,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     '(R1,R2,R3,R4)': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/12 - (R1,R2,R3,R4).ket',
       alias: '(R1,R2,R3,R4)',
       connectionPoints: {
@@ -759,7 +772,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -770,7 +783,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -781,7 +794,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -829,7 +842,7 @@ test.describe('Connection rules for Base monomers: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -862,7 +875,7 @@ test.describe('Connection rules for Base monomers: ', () => {
         await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });
@@ -891,7 +904,7 @@ test.describe('Connection rules for Base monomers: ', () => {
         await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });
@@ -899,7 +912,7 @@ test.describe('Connection rules for Base monomers: ', () => {
 
   const ordinaryMoleculeMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/01 - (R1) - Left only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -907,7 +920,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/02 - (R2) - Right only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -915,7 +928,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     '(R3) - Side only': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/03 - (R3) - Side only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -923,7 +936,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     '(R1,R2) - R3 gap': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -932,7 +945,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     '(R1,R3) - R2 gap': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -941,7 +954,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     '(R2,R3) - R1 gap': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -950,7 +963,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R3,R4)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/07 - (R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -959,7 +972,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/08 - (R1,R2,R3).ket',
       alias: 'F1',
       connectionPoints: {
@@ -969,7 +982,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/09 - (R1,R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -979,7 +992,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/10 - (R2,R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -989,7 +1002,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/11 - (R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -999,7 +1012,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     '(R1,R2,R3,R4)': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
       alias: 'F1',
       connectionPoints: {
@@ -1010,7 +1023,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       },
     },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -1021,7 +1034,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -1032,7 +1045,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     //   },
     // },
     '(R1,R2,R3,R4,R5)': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
       alias: 'F1',
       connectionPoints: {
@@ -1086,7 +1099,7 @@ test.describe('Connection rules for Base monomers: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -1124,7 +1137,7 @@ test.describe('Connection rules for Base monomers: ', () => {
         await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });
@@ -1251,9 +1264,7 @@ test.describe('Connection rules for Base monomers: ', () => {
 
         await bondMonomerCenterToAtom(page, leftMonomer, rightMolecule, 0);
 
-        await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
-        });
+        await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
         test.fixme(
           // eslint-disable-next-line no-self-compare
@@ -1303,7 +1314,7 @@ test.describe('Connection rules for Base monomers: ', () => {
         }
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });

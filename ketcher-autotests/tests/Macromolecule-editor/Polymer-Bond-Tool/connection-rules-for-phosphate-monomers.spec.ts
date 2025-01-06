@@ -348,7 +348,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
         await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });
@@ -390,7 +390,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -602,7 +602,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -795,7 +795,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -832,7 +832,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
         await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });
@@ -861,7 +861,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
         await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });
@@ -1055,7 +1055,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -1093,7 +1093,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
         await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });
@@ -1222,7 +1222,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
         await bondMonomerCenterToAtom(page, leftMonomer, rightMolecule, 0);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
 
         test.fixme(
@@ -1273,7 +1273,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
         }
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });

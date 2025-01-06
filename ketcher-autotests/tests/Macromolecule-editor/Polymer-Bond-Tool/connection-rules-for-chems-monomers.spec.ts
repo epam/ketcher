@@ -560,7 +560,7 @@ test.describe('Connection rules for chems: ', () => {
                   await hoverOverConnectionLine(page);
 
                   await takeEditorScreenshot(page, {
-                    masks: [page.getByTestId('polymer-library-preview')],
+                    hideMonomerPreview: true,
                   });
                 });
               }
@@ -608,7 +608,7 @@ test.describe('Connection rules for chems: ', () => {
               await hoverOverConnectionLine(page);
 
               await takeEditorScreenshot(page, {
-                masks: [page.getByTestId('polymer-library-preview')],
+                hideMonomerPreview: true,
               });
             });
           },
@@ -659,7 +659,7 @@ test.describe('Connection rules for chems: ', () => {
           );
 
           await takeEditorScreenshot(page, {
-            masks: [page.getByTestId('polymer-library-preview')],
+            hideMonomerPreview: true,
           });
 
           if (await page.getByRole('dialog').isVisible()) {
@@ -672,7 +672,7 @@ test.describe('Connection rules for chems: ', () => {
           await hoverOverConnectionLine(page);
 
           await takeEditorScreenshot(page, {
-            masks: [page.getByTestId('polymer-library-preview')],
+            hideMonomerPreview: true,
           });
         });
       },
@@ -706,7 +706,7 @@ test.describe('Connection rules for chems: ', () => {
           await zoomWithMouseWheel(page, -600);
 
           await takeEditorScreenshot(page, {
-            masks: [page.getByTestId('polymer-library-preview')],
+            hideMonomerPreview: true,
           });
         });
       },
@@ -749,7 +749,7 @@ test.describe('Connection rules for chems: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -962,7 +962,7 @@ test.describe('Connection rules for chems: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -991,7 +991,7 @@ test.describe('Connection rules for chems: ', () => {
         await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });
@@ -1016,7 +1016,7 @@ test.describe('Connection rules for chems: ', () => {
         await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });
@@ -1211,7 +1211,7 @@ test.describe('Connection rules for chems: ', () => {
                 await hoverOverConnectionLine(page);
 
                 await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
+                  hideMonomerPreview: true,
                 });
               });
             },
@@ -1249,7 +1249,7 @@ test.describe('Connection rules for chems: ', () => {
         await hoverOverConnectionLine(page);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });
@@ -1377,7 +1377,7 @@ test.describe('Connection rules for chems: ', () => {
         await bondMonomerCenterToAtom(page, leftMonomer, rightMolecule, 0);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
         test.fixme(
           // eslint-disable-next-line no-self-compare
@@ -1427,7 +1427,7 @@ test.describe('Connection rules for chems: ', () => {
         }
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });

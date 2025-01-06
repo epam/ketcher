@@ -54,7 +54,7 @@ const fileNames: string[] = [
 //     for (bondNumber; bondNumber < numberOfBonds; bondNumber++) {
 //       await hoverOverBond(page, bondNumber);
 //       await takeEditorScreenshot(page, {
-//         masks: [page.getByTestId('polymer-library-preview')],
+//         hideMonomerPreview: true,
 //       });
 //     }
 //     await selectClearCanvasTool(page);

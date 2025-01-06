@@ -263,7 +263,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       await callContexMenuOverConnectionLine(page);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });
@@ -372,7 +372,7 @@ Object.values(monomersWithNoFreeConnectionPoint).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });
@@ -415,7 +415,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });
@@ -478,7 +478,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
 
       test.fixme(
@@ -521,7 +521,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       await selectSnakeLayoutModeTool(page);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
 
       await selectFlexLayoutModeTool(page);
@@ -668,17 +668,17 @@ Object.values(monomers).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
 
       await pressUndoButton(page);
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
 
       await pressRedoButton(page);
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });
@@ -714,14 +714,14 @@ Object.values(monomers).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
 
       await selectEraseTool(page);
       await clickOnConnectionLine(page);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });
@@ -763,7 +763,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });
@@ -912,7 +912,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
 
       await selectEraseTool(page);
@@ -926,7 +926,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       );
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });

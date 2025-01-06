@@ -227,35 +227,35 @@ test.describe('Common connection rules: ', () => {
     await dragBondFromMonomerCenterAwayTo(page, 'SMPEG2', 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     await page.mouse.up();
     // CHEM
     await dragBondFromMonomerCenterAwayTo(page, 'LysiPr', 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Sugar
     await dragBondFromMonomerCenterAwayTo(page, '12ddR', 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Phosphate
     await dragBondFromMonomerCenterAwayTo(page, 'P', 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Base
     await dragBondFromMonomerCenterAwayTo(page, 'c7io7n', 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     await page.mouse.up();
   });
@@ -277,35 +277,35 @@ test.describe('Common connection rules: ', () => {
     await dragBondFromMonomerCenterTo(page, 'SMPEG2', 'sDBL');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     await page.mouse.up();
     // CHEM
     await dragBondFromMonomerCenterTo(page, 'LysiPr', 'Hcy');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Sugar
     await dragBondFromMonomerCenterTo(page, '12ddR', 'nC62r');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Phosphate
     await dragBondFromMonomerCenterTo(page, 'P', 'mn');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Base
     await dragBondFromMonomerCenterTo(page, 'c7io7n', 'nC6n5U');
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     await page.mouse.up();
   });
@@ -328,27 +328,27 @@ test.describe('Common connection rules: ', () => {
     // Peptide
     await hoverMouseOverMonomerNTymes(page, 'sDBL', 10);
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     // CHEM
     await hoverMouseOverMonomerNTymes(page, 'Hcy', 10);
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     // Sugar
     await hoverMouseOverMonomerNTymes(page, 'nC62r', 10);
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     // Phosphate
     await hoverMouseOverMonomerNTymes(page, 'mn', 10);
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     // Base
     await hoverMouseOverMonomerNTymes(page, 'nC6n5U', 10);
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
 
     await selectFlexLayoutModeTool(page);
@@ -374,23 +374,23 @@ test.describe('Common connection rules: ', () => {
     await selectRectangleArea(page, 100, 100, 800, 800);
     await grabSelectionAndMoveTo(page, 'A6OH', 200, 200);
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Zoom In/ Zoom Out
     await ZoomInByKeyboard(page);
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     await ZoomOutByKeyboard(page);
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Erase
     await eraseMonomer(page, 'A6OH');
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Save Structure
@@ -447,12 +447,12 @@ test.describe('Common connection rules: ', () => {
     // Case 8-9
     await page.getByTitle('expand window').click();
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
     // Case 10
     await page.getByTitle('expand window').click();
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
 
     await pressCancelAtSelectConnectionPointDialog(page);
@@ -487,13 +487,13 @@ test.describe('Common connection rules: ', () => {
   //   await hoverMouseOverMonomer(page, 'Test-6-Ch');
   //   await delay(1);
   //           await takeEditorScreenshot(page, {
-  //         masks: [page.getByTestId('polymer-library-preview')],
+  //         hideMonomerPreview: true,
   //       });
   //
   //   await hoverMouseOverMonomer(page, 'F1');
   //   await delay(1);
   //           await takeEditorScreenshot(page, {
-  //         masks: [page.getByTestId('polymer-library-preview')],
+  //         hideMonomerPreview: true,
   //       });
   // });
 
@@ -513,7 +513,7 @@ test.describe('Common connection rules: ', () => {
     await hoverMouseOverMonomer(page, 'C');
     await delay(1);
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
   });
 
@@ -533,7 +533,7 @@ test.describe('Common connection rules: ', () => {
     await page.getByText('C', { exact: true }).locator('..').first().hover();
     await delay(1);
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
 
     await turnOnMacromoleculesEditor(page);
@@ -565,7 +565,7 @@ test.describe('Common connection rules: ', () => {
         connectionPoint,
       );
       //         await takeEditorScreenshot(page, {
-      //     masks: [page.getByTestId('polymer-library-preview')],
+      //     hideMonomerPreview: true,
       //   });
 
       await selectRightConnectionPointAtSelectConnectionPointDialog(
@@ -573,7 +573,7 @@ test.describe('Common connection rules: ', () => {
         connectionPoint,
       );
       //         await takeEditorScreenshot(page, {
-      //     masks: [page.getByTestId('polymer-library-preview')],
+      //     hideMonomerPreview: true,
       //   });
     }
 

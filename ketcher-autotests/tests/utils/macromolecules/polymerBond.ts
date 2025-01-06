@@ -1,7 +1,12 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
-import { clickOnCanvas, moveMouseAway, selectMacroBond } from '..';
+import {
+  clickOnCanvas,
+  MacroBondType,
+  moveMouseAway,
+  selectMacroBond,
+} from '..';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 export async function bondTwoMonomers(
@@ -109,15 +114,11 @@ export async function bondMonomerPointToMoleculeAtom(
   await monomer.hover({ force: true });
 
   if (monomerConnectionPoint) {
-    // const connectionPoint = monomer.locator(
-    //   `xpath=//*[text()="${monomerConnectionPoint}"]/..//*[@r="3"]`,
-    // );
     const connectionPoint = page
       .locator('g')
       .filter({ hasText: new RegExp(`^${monomerConnectionPoint}$`) })
       .locator('circle');
 
-    // await connectionPoint.hover({ force: true });
     const connectionPointBoundingBox = await connectionPoint.boundingBox();
     const monomerBoundingBox = await monomer.boundingBox();
 
@@ -149,7 +150,6 @@ export async function bondMonomerPointToMoleculeAtom(
   }
   await page.mouse.down();
 
-  // await atom.hover({ force: true });
   if (connectionPointShift) {
     const atomBoundingBox = await atom.boundingBox();
 
@@ -285,4 +285,46 @@ export async function clickOnMicroBondByIndex(page: Page, bondIndex: number) {
       boundingBox.y + boundingBox.height / 2 + 2,
     );
   }
+}
+
+export async function getBondLocator(
+  page: Page,
+  {
+    bondType,
+    bondid,
+    fromMonomerId,
+    toMonomerId,
+    fromConnectionPoint,
+    toConnectionPoint,
+  }: {
+    bondType?: MacroBondType;
+    bondid?: string | number;
+    fromMonomerId?: string | number;
+    toMonomerId?: string | number;
+    fromConnectionPoint?: string;
+    toConnectionPoint?: string;
+  },
+): Promise<Locator> {
+  const attributes: { [key: string]: string } = {};
+
+  attributes['data-testid'] = 'bond';
+
+  if (bondType) attributes['data-bondtype'] = bondType;
+  if (bondid) attributes['data-bondid'] = String(bondid);
+  if (fromMonomerId) attributes['data-frommonomerid'] = String(fromMonomerId);
+  if (toMonomerId) attributes['data-tomonomerid'] = String(toMonomerId);
+  if (fromConnectionPoint) {
+    attributes['data-fromconnectionpoint'] = fromConnectionPoint;
+  }
+  if (toConnectionPoint) {
+    attributes['data-toconnectionpoint'] = toConnectionPoint;
+  }
+
+  const attributeSelectors = Object.entries(attributes)
+    .map(([key, value]) => `[${key}="${value}"]`)
+    .join('');
+
+  const locator = page.locator(attributeSelectors);
+
+  return locator;
 }

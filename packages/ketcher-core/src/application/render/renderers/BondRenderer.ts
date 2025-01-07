@@ -1,29 +1,34 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { Bond } from 'domain/entities/CoreBond';
+import { Bond, BondStereo, BondType } from 'domain/entities/CoreBond';
 import { Scale } from 'domain/helpers';
 import { Box2Abs, Vec2 } from 'domain/entities';
-import { getBondLineShift } from 'application/render/restruct/rebond';
 import { CoreEditor } from 'application/editor';
 import { HalfEdge } from 'application/render/view-model/HalfEdge';
 import { ViewModel } from 'application/render/view-model/ViewModel';
 import { KetcherLogger } from 'utilities';
 import { D3SvgElementSelection } from 'application/render/types';
+import {
+  BondSVGPath,
+  BondVectors,
+} from 'application/render/renderers/BondPathRenderer/constants';
+import {
+  DoubleBondPathRenderer,
+  DoubleCisTransBondPathRenderer,
+  SingleBondPathRenderer,
+  SingleDoubleBondPathRenderer,
+  SingleDownBondPathRenderer,
+  SingleUpBondPathRenderer,
+  SingleUpDownBondPathRenderer,
+  TripleBondPathRenderer,
+} from 'application/render/renderers/BondPathRenderer';
 import util from 'application/render/util';
-
-type MouseActionType = 'mouseover' | 'mouseenter';
 
 const BOND_WIDTH = 2;
 const BOND_WIDTH_HOVER = 10;
-//  TODO need to figure out why we need two types of mouse hover actions
-const mouseEvents: Record<MouseActionType, { enter: string; leave: string }> = {
-  mouseover: { enter: 'mouseover', leave: 'mouseout' },
-  mouseenter: { enter: 'mouseenter', leave: 'mouseleave' },
-};
 
 export class BondRenderer extends BaseRenderer {
-  private pathShape = '';
   private selectionElement:
     | D3SvgElementSelection<SVGPathElement, void>
     | undefined;
@@ -404,297 +409,167 @@ export class BondRenderer extends BaseRenderer {
     this.move();
   }
 
-  private createBondHoverablePath(
-    attrs: Record<string, string>,
-    mouseAction?: MouseActionType,
-  ): void {
+  private createBondHoverablePath(paths: BondSVGPath[]): void {
     if (!this.rootElement) {
       return;
     }
-    const path = this.rootElement.append('path').attr('d', this.pathShape);
-    const pathHover = this.rootElement
-      .append('path')
-      .attr('d', this.pathShape)
-      .attr('stroke', 'transparent')
-      .attr(
-        'stroke-width',
-        `${Number(attrs['stroke-width'] ?? BOND_WIDTH) * BOND_WIDTH_HOVER}`,
-      );
-    Object.entries(attrs).forEach(([key, value]) => {
-      path.attr(key, value);
+
+    paths.forEach(({ d, attrs }) => {
+      const path = this.rootElement
+        ?.append('path')
+        .attr('d', d)
+        .attr('stroke', 'black')
+        .attr('stroke-linecap', 'round')
+        .attr('stroke-linejoin', 'round');
+
+      Object.entries(attrs).forEach(([key, value]) => {
+        path?.attr(key, value);
+      });
     });
-    if (mouseAction) {
-      const events = mouseEvents[mouseAction];
-      pathHover
-        .on(events.enter, () => {
-          this.appendHover();
-        })
-        .on(events.leave, () => {
-          this.removeHover();
-        });
-    }
+
+    const combinedPath = paths.reduce((acc, { d }) => {
+      return acc + d;
+    }, '');
+
+    const combinedPathWidth = paths.reduce((acc, { attrs }) => {
+      const strokeWidth = Number(attrs['stroke-width'] ?? BOND_WIDTH);
+      return acc + strokeWidth;
+    }, 0);
+
+    const hoverPath = this.rootElement
+      .append('path')
+      .attr('d', combinedPath)
+      .attr('fill', 'none')
+      .attr('stroke', 'transparent')
+      .attr('stroke-width', `${combinedPathWidth * BOND_WIDTH_HOVER}`);
+
+    hoverPath
+      .on('mouseenter', () => {
+        this.appendHover();
+      })
+      .on('mouseleave', () => {
+        this.removeHover();
+      });
   }
 
-  show() {
-    this.rootElement = this.appendRootElement();
+  private get halfEdges() {
     const editor = CoreEditor.provideEditorInstance();
     const viewModel = editor.viewModel;
-    const halfEdges = viewModel.bondsToHalfEdges.get(this.bond);
+    return viewModel.bondsToHalfEdges.get(this.bond);
+  }
+
+  private get bondVectors(): BondVectors | undefined {
+    const halfEdges = this.halfEdges;
     const firstHalfEdge = halfEdges?.[0];
     const secondHalfEdge = halfEdges?.[1];
-    const bondSpace = 6;
-    const linesOffset = bondSpace / 2;
-    const stereoBondWidth = 6;
 
     if (!firstHalfEdge || !secondHalfEdge) {
-      KetcherLogger.warn(
-        'Failed to draw double bond. There is no no half edges.',
-      );
-
       return;
     }
 
-    if (this.bond.type === 2) {
-      let bondStartPosition = Coordinates.modelToCanvas(
-        firstHalfEdge.position,
-      ).sub(this.scaledPosition.startPosition);
-      let bondEndPosition = Coordinates.modelToCanvas(
-        secondHalfEdge.position,
-      ).sub(this.scaledPosition.startPosition);
-      bondStartPosition = this.shiftPositionIfAtomLabelVisible(
-        bondStartPosition,
-        this.bond.firstAtom,
-        firstHalfEdge,
-      );
-      bondEndPosition = this.shiftPositionIfAtomLabelVisible(
-        bondEndPosition,
-        this.bond.secondAtom,
-        secondHalfEdge,
-      );
-      const shift = this.getDoubleBondShift(
-        viewModel,
-        firstHalfEdge,
-        secondHalfEdge,
-      );
-      const firstLinePartShift = linesOffset + shift * linesOffset;
-      const secondLinePartShift = -linesOffset + shift * linesOffset;
+    let startPosition = new Vec2(0, 0);
+    let endPosition = Coordinates.modelToCanvas(secondHalfEdge.position).sub(
+      this.scaledPosition.startPosition,
+    );
 
-      let firstLineStartPosition = bondStartPosition.addScaled(
-        firstHalfEdge.leftNormal,
-        firstLinePartShift,
-      );
-      let firstLineEndPosition = bondEndPosition.addScaled(
-        firstHalfEdge.leftNormal,
-        firstLinePartShift,
-      );
-      let secondLineStartPosition = bondStartPosition.addScaled(
-        firstHalfEdge.leftNormal,
-        secondLinePartShift,
-      );
-      let secondLineEndPosition = bondEndPosition.addScaled(
-        firstHalfEdge.leftNormal,
-        secondLinePartShift,
-      );
+    startPosition = this.shiftPositionIfAtomLabelVisible(
+      startPosition,
+      this.bond.firstAtom,
+      firstHalfEdge,
+    );
 
-      if (shift > 0) {
-        firstLineStartPosition = firstHalfEdge.firstAtom.renderer
-          ?.isLabelVisible
-          ? firstLineStartPosition
-          : firstLineStartPosition.addScaled(
-              firstHalfEdge.direction,
-              bondSpace *
-                getBondLineShift(
-                  firstHalfEdge.cosToRightNeighborHalfEdge,
-                  firstHalfEdge.sinToRightNeighborHalfEdge,
-                ),
-            );
+    endPosition = this.shiftPositionIfAtomLabelVisible(
+      endPosition,
+      this.bond.secondAtom,
+      secondHalfEdge,
+    );
 
-        firstLineEndPosition = firstHalfEdge.secondAtom.renderer?.isLabelVisible
-          ? firstLineEndPosition
-          : firstLineEndPosition.addScaled(
-              firstHalfEdge.direction,
-              -bondSpace *
-                getBondLineShift(
-                  secondHalfEdge.cosToLeftNeighborHalfEdge,
-                  secondHalfEdge.sinToLeftNeighborHalfEdge,
-                ),
-            );
-      } else if (shift < 0) {
-        secondLineStartPosition = firstHalfEdge.firstAtom.renderer
-          ?.isLabelVisible
-          ? secondLineStartPosition
-          : secondLineStartPosition.addScaled(
-              firstHalfEdge.direction,
-              bondSpace *
-                getBondLineShift(
-                  firstHalfEdge.cosToLeftNeighborHalfEdge,
-                  firstHalfEdge.sinToLeftNeighborHalfEdge,
-                ),
-            );
+    return {
+      startPosition,
+      endPosition,
+      firstHalfEdge,
+      secondHalfEdge,
+    };
+  }
 
-        secondLineEndPosition = firstHalfEdge.secondAtom.renderer
-          ?.isLabelVisible
-          ? secondLineEndPosition
-          : secondLineEndPosition.addScaled(
-              firstHalfEdge.direction,
-              -bondSpace *
-                getBondLineShift(
-                  secondHalfEdge.cosToRightNeighborHalfEdge,
-                  secondHalfEdge.sinToRightNeighborHalfEdge,
-                ),
-            );
-      }
+  show() {
+    const editor = CoreEditor.provideEditorInstance();
+    const viewModel = editor.viewModel;
 
-      this.pathShape = `
-          M${firstLineStartPosition.x},${firstLineStartPosition.y}
-          L${firstLineEndPosition.x},${firstLineEndPosition.y}
-          M${secondLineStartPosition.x},${secondLineStartPosition.y}
-          L${secondLineEndPosition.x},${secondLineEndPosition.y}
-        `;
-      this.createBondHoverablePath(
-        {
-          stroke: 'black',
-          'stroke-width': `${BOND_WIDTH}`,
-        },
-        'mouseover',
-      );
-    } else if (this.bond.type === 1) {
-      if (this.bond.stereo === 1) {
-        let bondStartPosition = Coordinates.modelToCanvas(
-          firstHalfEdge.position,
-        ).sub(this.scaledPosition.startPosition);
-        let bondEndPosition = Coordinates.modelToCanvas(
-          secondHalfEdge.position,
-        ).sub(this.scaledPosition.startPosition);
-        bondStartPosition = this.shiftPositionIfAtomLabelVisible(
-          bondStartPosition,
-          this.bond.firstAtom,
-          firstHalfEdge,
-        );
-        bondEndPosition = this.shiftPositionIfAtomLabelVisible(
-          bondEndPosition,
-          this.bond.secondAtom,
-          secondHalfEdge,
-        );
-        const halfOfBondEndWidth = 0.7 * stereoBondWidth;
-        const bondEndFirstPoint = bondEndPosition.addScaled(
-          firstHalfEdge.leftNormal,
-          halfOfBondEndWidth,
-        );
-        const bondEndSecondPoint = bondEndPosition.addScaled(
-          firstHalfEdge.leftNormal,
-          -halfOfBondEndWidth,
-        );
+    this.rootElement = this.appendRootElement();
 
-        this.pathShape = `
-          M${bondStartPosition.x},${bondStartPosition.y}
-          L${bondEndFirstPoint.x},${bondEndFirstPoint.y}
-          L${bondEndSecondPoint.x},${bondEndSecondPoint.y}
-          Z
-          `;
-        this.createBondHoverablePath(
-          {
-            stroke: '#000',
-            'stroke-width': '2',
-            'stroke-linecap': 'round',
-            'stroke-linejoin': 'round',
-          },
-          'mouseenter',
-        );
-      } else if (this.bond.stereo === 6) {
-        let bondStartPosition = Coordinates.modelToCanvas(
-          firstHalfEdge.position,
-        ).sub(this.scaledPosition.startPosition);
-        let bondEndPosition = Coordinates.modelToCanvas(
-          secondHalfEdge.position,
-        ).sub(this.scaledPosition.startPosition);
-
-        bondStartPosition = this.shiftPositionIfAtomLabelVisible(
-          bondStartPosition,
-          this.bond.firstAtom,
-          firstHalfEdge,
-        );
-        bondEndPosition = this.shiftPositionIfAtomLabelVisible(
-          bondEndPosition,
-          this.bond.secondAtom,
-          secondHalfEdge,
-        );
-
-        const direction = bondEndPosition.sub(bondStartPosition);
-        const bondLength = direction.length() + 0.2;
-        const normalizedDirection = direction.normalized();
-        const offsetBetweenLines = 1.2 * BOND_WIDTH;
-        const numberOfLines =
-          Math.max(
-            Math.floor(
-              (bondLength - BOND_WIDTH) / (BOND_WIDTH + offsetBetweenLines),
-            ),
-            0,
-          ) + 2;
-        const step = bondLength / (numberOfLines - 1);
-        const halfOfBondEndWidth = 0.7 * stereoBondWidth;
-
-        let path = '';
-        // TODO define proper names for variables below
-        let p;
-        let q;
-        let r;
-
-        for (let i = 0; i < numberOfLines; ++i) {
-          r = bondStartPosition.addScaled(normalizedDirection, step * i);
-          p = r.addScaled(
-            firstHalfEdge.leftNormal,
-            (halfOfBondEndWidth * (i + 0.5)) / (numberOfLines - 0.5),
-          );
-          q = r.addScaled(
-            firstHalfEdge.leftNormal,
-            (-halfOfBondEndWidth * (i + 0.5)) / (numberOfLines - 0.5),
-          );
-
-          path += `
-            M${p.x},${p.y}
-            L${q.x},${q.y}
-          `;
-        }
-
-        this.pathShape = path;
-        this.createBondHoverablePath(
-          {
-            stroke: '#000',
-            'stroke-width': '2',
-            'stroke-linecap': 'round',
-            'stroke-linejoin': 'round',
-          },
-          'mouseenter',
-        );
-      } else {
-        let startPosition = new Vec2(0, 0);
-        let endPosition = this.scaledPosition.endPosition.sub(
-          this.scaledPosition.startPosition,
-        );
-
-        startPosition = this.shiftPositionIfAtomLabelVisible(
-          startPosition,
-          this.bond.firstAtom,
-          firstHalfEdge,
-        );
-        endPosition = this.shiftPositionIfAtomLabelVisible(
-          endPosition,
-          this.bond.secondAtom,
-          secondHalfEdge,
-        );
-
-        this.pathShape = `M${startPosition.x},${startPosition.y} L${endPosition.x},${endPosition.y}`;
-
-        this.createBondHoverablePath(
-          {
-            stroke: 'black',
-            'stroke-width': `${BOND_WIDTH}`,
-          },
-          'mouseover',
-        );
-      }
+    const bondVectors = this.bondVectors;
+    if (!bondVectors) {
+      KetcherLogger.warn('Failed to draw a bond. No half edges found.');
+      return;
     }
+
+    let bondSVGPaths: BondSVGPath[] = [];
+    switch (this.bond.type) {
+      case BondType.Single:
+        if (this.bond.stereo === BondStereo.Up) {
+          bondSVGPaths = SingleUpBondPathRenderer.preparePaths(bondVectors);
+        } else if (this.bond.stereo === BondStereo.Down) {
+          bondSVGPaths = SingleDownBondPathRenderer.preparePaths(bondVectors);
+        } else if (this.bond.stereo === BondStereo.Either) {
+          bondSVGPaths = SingleUpDownBondPathRenderer.preparePaths(bondVectors);
+        } else {
+          bondSVGPaths = SingleBondPathRenderer.preparePaths(bondVectors);
+        }
+        break;
+
+      case BondType.Double:
+        if (this.bond.stereo === BondStereo.CisTrans) {
+          bondSVGPaths =
+            DoubleCisTransBondPathRenderer.preparePaths(bondVectors);
+        } else {
+          bondSVGPaths = DoubleBondPathRenderer.preparePaths(
+            bondVectors,
+            this.getDoubleBondShift(
+              viewModel,
+              bondVectors.firstHalfEdge,
+              bondVectors.secondHalfEdge,
+            ),
+          );
+        }
+        break;
+
+      case BondType.Triple:
+        bondSVGPaths = TripleBondPathRenderer.preparePaths(bondVectors);
+        break;
+
+      case BondType.Aromatic:
+      case BondType.SingleAromatic:
+      case BondType.DoubleAromatic:
+        bondSVGPaths = DoubleBondPathRenderer.preparePaths(
+          bondVectors,
+          this.getDoubleBondShift(
+            viewModel,
+            bondVectors.firstHalfEdge,
+            bondVectors.secondHalfEdge,
+          ),
+          this.bond.type,
+        );
+        break;
+
+      case BondType.SingleDouble:
+        bondSVGPaths = SingleDoubleBondPathRenderer.preparePaths(bondVectors);
+        break;
+
+      case BondType.Any:
+      case BondType.Dative:
+      case BondType.Hydrogen:
+        bondSVGPaths = SingleBondPathRenderer.preparePaths(
+          bondVectors,
+          this.bond.type,
+        );
+        break;
+
+      default:
+        break;
+    }
+
+    this.createBondHoverablePath(bondSVGPaths);
   }
 
   public remove() {

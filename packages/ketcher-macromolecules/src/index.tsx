@@ -15,4 +15,5 @@
  ***************************************************************************/
 
 export * from './Editor';
+export * from './KetcherEditors';
 export * from './constants';

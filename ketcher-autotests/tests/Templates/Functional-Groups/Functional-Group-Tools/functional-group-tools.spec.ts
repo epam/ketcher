@@ -34,6 +34,7 @@ import {
   clickOnCanvas,
   selectAromatizeTool,
   selectDearomatizeTool,
+  selectCleanTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -817,9 +818,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     });
     await takeEditorScreenshot(page);
 
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Clean, page);
-    });
+    await selectCleanTool(page);
     await takeEditorScreenshot(page);
   });
 

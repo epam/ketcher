@@ -12,7 +12,6 @@ import {
   TemplateLibrary,
   selectUserTemplatesAndPlaceInTheMiddle,
   STRUCTURE_LIBRARY_BUTTON_NAME,
-  waitForSpinnerFinishedWork,
   waitForPageInit,
   copyAndPaste,
   cutAndPaste,
@@ -20,6 +19,7 @@ import {
   clickOnAtom,
   getEditorScreenshot,
   clickOnCanvas,
+  selectCleanTool,
 } from '@utils';
 
 const CANVAS_CLICK_X = 300;
@@ -222,9 +222,7 @@ test.describe('Create and Save Templates', () => {
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('user_template_1');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Clean, page);
-    });
+    await selectCleanTool(page);
 
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();

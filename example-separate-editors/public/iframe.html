@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .modal {
+        display: block;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        margin: 0% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+      }
+
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .inputs {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .columns {
+        width: 100%;
+        display: flex;
+        gap: 40px;
+      }
+
+      .columns > div:nth-child(2) {
+        width: 80%;
+      }
+
+      textarea {
+        width: 100%;
+        height: 500px;
+      }
+
+      input {
+        margin: 5px 0;
+      }
+
+      label {
+        margin-right: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="columns">
+      <div>
+        <button>Open Modal</button>
+        <div class="inputs">
+          <div>
+            <label>Height</label>
+            <input placeholder="height" class="height" />
+          </div>
+          <div>
+            <label>Width</label>
+            <input placeholder="width" class="width" />
+          </div>
+        </div>
+      </div>
+      <div>
+        <textarea
+          class="molecule"
+          placeholder="Insert a molecule here..."
+        ></textarea>
+      </div>
+    </div>
+    <script defer>
+      const button = document.querySelector('button')
+      const textarea = document.querySelector('.molecule')
+      const width = document.querySelector('.width')
+      const height = document.querySelector('.height')
+      const modalContent = `
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <iframe
+            width="784"
+            height="624"
+            id="iframe"
+            src="env_url"
+            sandbox="allow-scripts allow-same-origin"
+            ></iframe>
+        </div>
+      `
+      let modal
+      let closeIcon;
+      let iframe;
+
+      function closeModal() {
+        closeIcon.removeEventListener('click', closeModal)
+        modal.remove()
+      }
+
+      function createModal() {
+        modal = document.createElement('div')
+        modal.classList.add('modal')
+        modal.innerHTML = modalContent
+        document.body.appendChild(modal)
+
+        closeIcon = document.querySelector('.close')
+        iframe = document.getElementById('iframe')
+        iframe.style.height = height.value + 'px'
+        iframe.style.width = width.value + 'px'
+
+        closeIcon.addEventListener('click', closeModal)
+      }
+
+      button.onclick = createModal
+      window.onclick = function (event) {
+        if (event.target == modal) {
+            closeModal()
+        }
+      }
+
+      window.addEventListener('message', (event) => {
+        if (event.data.eventType === 'init') {
+          iframe.contentWindow.ketcher.setMolecule(textarea.value)
+        }
+      })
+    </script>
+  </body>
+</html>

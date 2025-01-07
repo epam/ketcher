@@ -633,13 +633,18 @@ export class SGroup {
     return brackets;
   }
 
-  static getObjBBox(atoms, mol): Box2Abs {
+  static getObjBBox(atoms, mol, useCollapsedSgroupsPosition = false): Box2Abs {
     const a0 = mol.atoms.get(atoms[0]).pp;
     let bb = new Box2Abs(a0, a0);
     for (let i = 1; i < atoms.length; ++i) {
       const aid = atoms[i];
       const atom = mol.atoms.get(aid);
-      const p = atom.pp;
+      const sgroupId = atom.sgs.values().next().value;
+      const sgroup = isNumber(sgroupId) ? mol.sgroups.get(sgroupId) : undefined;
+      const p =
+        useCollapsedSgroupsPosition && sgroup && !sgroup.expanded
+          ? sgroup.getContractedPosition(mol).position
+          : atom.pp;
       bb = bb.include(p);
     }
     return bb;

@@ -172,7 +172,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         ),
       )
       .attr(
-        'data-tomonomerid',
+        'data-toconnectionpoint',
         this.polymerBond.secondMonomer?.getAttachmentPointByBond(
           this.polymerBond,
         ),

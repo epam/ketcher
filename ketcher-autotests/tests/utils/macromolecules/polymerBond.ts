@@ -46,7 +46,7 @@ export async function bondTwoMonomersPointToPoint(
   firstMonomerConnectionPoint?: string,
   secondMonomerConnectionPoint?: string,
   bondType?: (typeof MacroBondTool)[keyof typeof MacroBondTool],
-) {
+): Promise<Locator> {
   await selectMacroBond(page, bondType);
   await firstMonomerElement.hover({ force: true });
 
@@ -101,6 +101,17 @@ export async function bondTwoMonomersPointToPoint(
   await page.mouse.up();
 
   await moveMouseAway(page);
+
+  const bondLocator = await getBondLocator(page, {
+    fromMonomerId:
+      (await firstMonomerElement.getAttribute('data-monomerid')) || undefined,
+    toMonomerId:
+      (await secondMonomerElement.getAttribute('data-monomerid')) || undefined,
+    fromConnectionPoint: firstMonomerConnectionPoint,
+    toConnectionPoint: secondMonomerConnectionPoint,
+  });
+
+  return bondLocator;
 }
 
 export async function bondMonomerPointToMoleculeAtom(

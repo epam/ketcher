@@ -10,7 +10,7 @@ import {
   selectClearCanvasTool,
   resetZoomLevelToDefault,
   MonomerType,
-  MacroBondType,
+  waitForPageInit,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
@@ -20,45 +20,25 @@ import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
-  getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
 
 test.beforeAll(async ({ browser }) => {
-  let sharedContext;
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
+  const context = await browser.newContext();
+  page = await context.newPage();
 
-  // Reminder: do not pass page as async
-  page = await sharedContext.newPage();
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
+  await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
+});
+
+test.afterAll(async ({ browser }) => {
+  await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
 test.afterEach(async () => {
   await resetZoomLevelToDefault(page);
   await selectClearCanvasTool(page);
-});
-
-test.afterAll(async ({ browser }) => {
-  const cntxt = page.context();
-  await page.close();
-  await cntxt.close();
-  await browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
-  // await browser.close();
 });
 
 test.describe('Connection rules for Base monomers: ', () => {
@@ -270,7 +250,7 @@ test.describe('Connection rules for Base monomers: ', () => {
         ? tmpMonomerLocator.nth(1)
         : tmpMonomerLocator.first();
 
-    await rightMonomerLocator.hover();
+    await rightMonomerLocator.hover({ force: true });
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
     await dragMouseTo(600, 372, page);
     await moveMouseAway(page);
@@ -417,26 +397,20 @@ test.describe('Connection rules for Base monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Connect ${leftBaseConnectionPoint} to ${rightBaseConnectionPoint} of ${leftBase.alias} and ${rightBase.alias}`, async () => {
-                test.setTimeout(40000);
+                test.setTimeout(30000);
 
                 const {
                   leftMonomer: leftMonomerLocator,
                   rightMonomer: rightMonomerLocator,
                 } = await loadTwoMonomers(page, leftBase, rightBase);
 
-                await bondTwoMonomersPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
                   leftBaseConnectionPoint,
                   rightBaseConnectionPoint,
                 );
-
-                const bondLine = await getBondLocator(page, {
-                  bondType: MacroBondType.Single,
-                  fromConnectionPoint: leftBaseConnectionPoint,
-                  toConnectionPoint: rightBaseConnectionPoint,
-                });
 
                 await expect(bondLine).toBeVisible();
               });

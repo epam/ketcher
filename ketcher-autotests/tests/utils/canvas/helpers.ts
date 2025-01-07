@@ -518,3 +518,10 @@ export async function selectDearomatizeTool(page: Page) {
     async () => await selectTopPanelButton(TopPanelButton.Dearomatize, page),
   );
 }
+
+export async function selectCleanTool(page: Page) {
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+  );
+}

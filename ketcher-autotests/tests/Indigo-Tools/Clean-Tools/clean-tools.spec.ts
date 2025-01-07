@@ -17,6 +17,7 @@ import {
   selectPartOfChain,
   selectPartOfMolecules,
   saveToFile,
+  selectCleanTool,
 } from '@utils';
 import { getMolfile } from '@utils/formats/formats';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
@@ -58,10 +59,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
 
     await pressUndoButton(page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -82,10 +80,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
 
     await pressUndoButton(page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -107,10 +102,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
 
     await pressUndoButton(page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -138,10 +130,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/layout-distorted.mol', page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -160,10 +149,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
 
     await pressUndoButton(page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -176,10 +162,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/clean-appoints.mol', page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -201,10 +184,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
 
     await pressUndoButton(page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
 
     await pressUndoButton(page);
@@ -227,10 +207,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
 
     await pressUndoButton(page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -252,10 +229,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
 
     await pressUndoButton(page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -276,10 +250,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
 
     await pressUndoButton(page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -292,10 +263,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('KET/stereolabels.ket', page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
 
     await pressUndoButton(page);
@@ -317,10 +285,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
 
     await pressUndoButton(page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -362,10 +327,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
     );
     await selectPartOfChain(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -379,10 +341,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
     );
     await selectPartOfChain(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -399,10 +358,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -416,16 +372,10 @@ test.describe('Indigo Tools - Clean Tools', () => {
     const y = 300;
     const anyAtom = 0;
     await openFileAndAddToCanvas('Molfiles-V2000/toluene.mol', page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await moveOnBond(page, BondType.SINGLE, 0);
     await dragMouseTo(x, y, page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -444,10 +394,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -462,10 +409,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Undo/Redo actions are correct. 
     */
     await openFileAndAddToCanvas('Molfiles-V2000/big-rings.mol', page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await pressUndoButton(page);
     await waitForSpinnerFinishedWork(
       page,
@@ -488,10 +432,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
     );
     await page.getByText(anyRGroupLabel).click();
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -502,10 +443,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Position of the reaction does not change.
     */
     await openFileAndAddToCanvas('Rxn-V2000/distorted-reaction.rxn', page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -520,10 +458,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -546,10 +481,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -562,10 +494,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/distorted-Sgroups.mol', page);
     await selectPartOfMolecules(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -584,10 +513,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
         page,
       );
       await selectPartOfMolecules(page);
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-      );
+      await selectCleanTool(page);
       await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
     },
   );

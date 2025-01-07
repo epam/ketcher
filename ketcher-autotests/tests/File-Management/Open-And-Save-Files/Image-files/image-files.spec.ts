@@ -29,6 +29,7 @@ import {
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
+  selectCleanTool,
   selectClearCanvasTool,
   selectDearomatizeTool,
   selectEraseTool,
@@ -1349,10 +1350,7 @@ test.describe('Image files', () => {
     await dragMouseTo(x, y, page);
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 

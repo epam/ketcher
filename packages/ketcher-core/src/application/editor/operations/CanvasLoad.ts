@@ -18,30 +18,36 @@ import { BaseOperation } from './base';
 import { OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 import { Struct } from 'domain/entities';
+import { KetcherLogger } from 'utilities';
 
 export class CanvasLoad extends BaseOperation {
   data: {
-    struct?: Struct;
+    newStruct?: Struct;
+    oldStruct?: Struct;
   };
 
   constructor(struct?: Struct) {
     super(OperationType.CANVAS_LOAD);
-    this.data = { struct };
+    this.data = { newStruct: struct };
   }
 
   execute(restruct: ReStruct) {
-    const oldStruct = restruct.molecule;
+    KetcherLogger.log('CanvasLoad.execute(), start');
     restruct.clearVisels(); // TODO: What is it?
-    if (this.data.struct) {
-      restruct.render.setMolecule(this.data.struct, true);
+    this.data.oldStruct = restruct.molecule.clone();
+    if (this.data.newStruct) {
+      restruct.render.setMolecule(this.data.newStruct, true);
     }
 
-    this.data.struct = oldStruct;
+    KetcherLogger.log('CanvasLoad.execute(), end');
   }
 
   invert() {
     const inverted = new CanvasLoad();
-    inverted.data = this.data;
+    inverted.data = {
+      oldStruct: this.data.newStruct,
+      newStruct: this.data.oldStruct,
+    };
     return inverted;
   }
 }

@@ -31,6 +31,7 @@ import {
   Struct,
   Vec2,
   ketcherProvider,
+  KetcherLogger,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -132,8 +133,8 @@ class Editor implements KetcherEditor {
   render: Render;
   _selection: Selection | null;
   _tool: Tool | null;
-  historyStack: any;
-  historyPtr: any;
+  historyStack: Action[];
+  historyPtr: number;
   errorHandler: ((message: string) => void) | null;
   highlights: Highlighter;
   hoverIcon: HoverIcon;
@@ -289,10 +290,13 @@ class Editor implements KetcherEditor {
     return this.render.ctab.molecule;
   }
 
+  /** Apply {@link value}: {@link Struct} if provided to {@link render} and  */
   struct(value?: Struct, needToCenterStruct = true): Struct {
     if (arguments.length === 0) {
       return this.render.ctab.molecule;
     }
+
+    KetcherLogger.log('Editor.struct(), start', value, needToCenterStruct);
 
     this.selection(null);
     const struct = value || new Struct();
@@ -303,6 +307,7 @@ class Editor implements KetcherEditor {
     );
 
     this.hoverIcon.create();
+    KetcherLogger.log('Editor.struct(), end');
     return molecule;
   }
 
@@ -322,6 +327,7 @@ class Editor implements KetcherEditor {
     return result;
   }
 
+  /** Apply options from {@link value} */
   options(value?: any) {
     if (arguments.length === 0) {
       return this.render.options;
@@ -337,6 +343,7 @@ class Editor implements KetcherEditor {
       Object.assign({ microModeScale: SCALE }, value),
     );
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
+    this.render.setMolecule(struct);
     this.struct(struct);
     this.render.setZoom(zoom);
     this.render.update();
@@ -551,7 +558,7 @@ class Editor implements KetcherEditor {
     }
   }
 
-  historySize() {
+  historySize(): { readonly undo: number; readonly redo: number } {
     return {
       undo: this.historyPtr,
       redo: this.historyStack.length - this.historyPtr,

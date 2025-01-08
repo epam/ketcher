@@ -343,22 +343,23 @@ test.describe('Ket files', () => {
     expect(ketFile).toEqual(ketFileExpected);
   });
 
-  // eslint-disable-next-line max-len
-  test('When the user adjusts the "Reaction component margin size" settings and clicks the "Apply" button, an informational message should be displayed: "To fully apply these changes, you need to apply the layout."', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'When the user adjusts the "Reaction component margin size" settings and clicks the "Apply" button, an informational message should be displayed: ' +
+      '"To fully apply these changes, you need to apply the layout."',
+    async ({ page }) => {
+      /*
   Test case: https://github.com/epam/Indigo/issues/2176
   Description: When the user adjusts the "Reaction component margin size" settings and clicks the "Apply" button, an
   informational message displayed: "To fully apply these changes, you need to apply the layout."
   */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
-    await bondsSettings(page);
-    await scrollToDownInSetting(page);
-    await setReactionMarginSizeOptionUnit(page, 'px-option');
-    await setReactionMarginSizeValue(page, '47.8');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+      await openSettings(page);
+      await bondsSettings(page);
+      await scrollToDownInSetting(page);
+      await setReactionMarginSizeOptionUnit(page, 'px-option');
+      await setReactionMarginSizeValue(page, '47.8');
+      await pressButton(page, 'Apply');
+      await takeEditorScreenshot(page);
+    },
+  );
 });

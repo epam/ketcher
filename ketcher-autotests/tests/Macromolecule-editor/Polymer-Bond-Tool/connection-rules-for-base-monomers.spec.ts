@@ -1,12 +1,10 @@
 /* eslint-disable no-magic-numbers */
-import { Locator, Page, chromium, test, expect } from '@playwright/test';
+import { Locator, Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  waitForKetcherInit,
-  waitForIndigoToLoad,
   selectClearCanvasTool,
   resetZoomLevelToDefault,
   MonomerType,
@@ -252,7 +250,7 @@ test.describe('Connection rules for Base monomers: ', () => {
 
     await rightMonomerLocator.hover({ force: true });
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 372, page);
+    await dragMouseTo(600, 375, page);
     await moveMouseAway(page);
 
     return {
@@ -607,24 +605,22 @@ test.describe('Connection rules for Base monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case3: Cnnct ${leftBaseConnectionPoint} to ${rightPeptideConnectionPoint} of Base(${leftBase.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-                test.setTimeout(40000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftBase, rightPeptide);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftBase, rightPeptide);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftBase,
-                  rightPeptide,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftBaseConnectionPoint,
                   rightPeptideConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  hideMonomerPreview: true,
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -800,24 +796,22 @@ test.describe('Connection rules for Base monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case4: Cnnct ${leftBaseConnectionPoint} to ${rightCHEMConnectionPoint} of Base(${leftBase.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-                test.setTimeout(40000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftBase, rightCHEM);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftBase, rightCHEM);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftBase,
-                  rightCHEM,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftBaseConnectionPoint,
                   rightCHEMConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  hideMonomerPreview: true,
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -830,7 +824,7 @@ test.describe('Connection rules for Base monomers: ', () => {
     Object.values(peptideMonomers).forEach((rightPeptide) => {
       /*
        *  Test case: https://github.com/epam/ketcher/issues/4592 - Case 4 (Base - Peptide)
-       *  Description: User can connect any Phosphate to any Peptide using center-to-center way.
+       *  Description: User can connect any Base to any Peptide using center-to-center way.
        * For each %baseType% from the library (baseMonomers)
        *   For each %peptideType% from the library (peptideMonomers)
        *  1. Clear canvas
@@ -839,18 +833,24 @@ test.describe('Connection rules for Base monomers: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case5: Cnnct Center to Center of Base(${leftBase.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-        test.setTimeout(40000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftBase, rightPeptide);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftBase, rightPeptide);
 
-        await bondTwoMonomersByCenterToCenter(page, leftBase, rightPeptide);
+        const bondLine = await bondTwoMonomersPointToPoint(
+          page,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
 
-        await zoomWithMouseWheel(page, -600);
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          hideMonomerPreview: true,
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });

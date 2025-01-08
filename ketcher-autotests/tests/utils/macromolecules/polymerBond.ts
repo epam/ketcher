@@ -39,6 +39,64 @@ export async function bondTwoMonomers(
   }
 }
 
+async function getMinFreeConnectionPoint(
+  monomer: Locator,
+): Promise<number | null> {
+  // Find the attribute with the minimum index that has a value of "false"
+  const minIndexWithFalse = await monomer.evaluate((el) => {
+    // Get all attributes of a monomer
+    const attributes = Array.from(el.attributes);
+
+    // Filter attributes that match the pattern "data-R<number>" and the value "false"
+    const falseAttributes = attributes
+      .map((attr) => {
+        // Checking the attribute name
+        const match = attr.name.match(/^data-R(\d+)$/);
+        // Check the value
+        return match && attr.value === 'false' ? Number(match[1]) : null;
+      })
+      // Remove null
+      .filter((index) => index !== null);
+
+    // Return the minimum index if attributes are found, or null
+    return falseAttributes.length > 0 ? Math.min(...falseAttributes) : null;
+  });
+
+  return minIndexWithFalse;
+}
+
+async function chooseFreeConnectionPointsInDialogIfAppeared(
+  page: Page,
+  firstMonomerElement: Locator,
+  secondMonomerElement: Locator,
+) {
+  const firstMonomerConnectionPoint = await getMinFreeConnectionPoint(
+    firstMonomerElement,
+  );
+  const secondMonomerConnectionPoint = await getMinFreeConnectionPoint(
+    secondMonomerElement,
+  );
+
+  if (await page.getByRole('dialog').isVisible()) {
+    if (firstMonomerConnectionPoint && secondMonomerConnectionPoint) {
+      page.getByTitle('R${firstMonomerConnectionPoint}');
+      await page.getByTitle(`R${firstMonomerConnectionPoint}`).first().click();
+
+      (await page.getByTitle(`R${secondMonomerConnectionPoint}`).count()) > 1
+        ? await page
+            .getByTitle(`R${secondMonomerConnectionPoint}`)
+            .nth(1)
+            .click()
+        : await page
+            .getByTitle(`R${secondMonomerConnectionPoint}`)
+            .first()
+            .click();
+    }
+
+    await page.getByTitle('Connect').first().click();
+  }
+}
+
 export async function bondTwoMonomersPointToPoint(
   page: Page,
   firstMonomerElement: Locator,
@@ -46,6 +104,8 @@ export async function bondTwoMonomersPointToPoint(
   firstMonomerConnectionPoint?: string,
   secondMonomerConnectionPoint?: string,
   bondType?: (typeof MacroBondTool)[keyof typeof MacroBondTool],
+  // if true - first free from left connection point will be selected in the dialog for both monomers
+  chooseConnectionPointsInDialogIfAppeared = false,
 ): Promise<Locator> {
   await selectMacroBond(page, bondType);
   await firstMonomerElement.hover({ force: true });
@@ -101,6 +161,14 @@ export async function bondTwoMonomersPointToPoint(
   await page.mouse.up();
 
   await moveMouseAway(page);
+
+  if (chooseConnectionPointsInDialogIfAppeared) {
+    await chooseFreeConnectionPointsInDialogIfAppeared(
+      page,
+      firstMonomerElement,
+      secondMonomerElement,
+    );
+  }
 
   const bondLocator = await getBondLocator(page, {
     fromMonomerId:

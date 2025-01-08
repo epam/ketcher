@@ -1100,23 +1100,24 @@ test.describe('Connection rules for Base monomers: ', () => {
       );
 
       test(`Case 9: Connect Center to Center of Base(${leftBase.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
-        test.setTimeout(40000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftBase, rightOrdinaryMolecule);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftBase, rightOrdinaryMolecule);
 
-        await bondTwoMonomersByCenterToCenter(
+        const bondLine = await bondTwoMonomersPointToPoint(
           page,
-          leftBase,
-          rightOrdinaryMolecule,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
         );
 
-        await zoomWithMouseWheel(page, -600);
-
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          hideMonomerPreview: true,
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });

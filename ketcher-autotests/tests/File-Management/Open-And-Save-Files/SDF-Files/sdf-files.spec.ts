@@ -16,7 +16,13 @@ import {
   selectTopPanelButton,
   TopPanelButton,
   openSettings,
+  setHashSpacingOptionUnit,
+  setHashSpacingValue,
 } from '@utils';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import { getSdf } from '@utils/formats';
 
 test.describe('CDF files', () => {
@@ -709,6 +715,186 @@ test('The Bond length setting with px option is applied and it should be save to
 
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-px-bond-lengh-v2000.sdf',
+    page,
+  );
+  await takeEditorScreenshot(page);
+});
+
+test('The Hash spacing setting with px option is applied and it should be save to sdf 2000 file', async ({
+  page,
+}) => {
+  /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Change Hash spacing for ACS styles settings
+  The Hash spacing setting is applied and it should be save to sdf 2000
+  */
+  await waitForPageInit(page);
+  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openSettings(page);
+  await bondsSettings(page);
+  await setHashSpacingOptionUnit(page, 'px-option');
+  await setHashSpacingValue(page, '79.8');
+  await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
+  await verifyFileExport(
+    page,
+    'SDF/adenosine-triphosphate-px-hash-spacing-v2000-expected.sdf',
+    FileType.SDF,
+    'v2000',
+    [1],
+  );
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/adenosine-triphosphate-px-hash-spacing-v2000-expected.sdf',
+    page,
+  );
+  await takeEditorScreenshot(page);
+});
+
+test('The Hash spacing setting with px option is applied and it should be save to sdf 3000 file', async ({
+  page,
+}) => {
+  /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Change Hash spacing for ACS styles settings
+  The Hash spacing setting is applied and it should be save to sdf 3000
+  */
+  await waitForPageInit(page);
+  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openSettings(page);
+  await bondsSettings(page);
+  await setHashSpacingOptionUnit(page, 'px-option');
+  await setHashSpacingValue(page, '79.8');
+  await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
+  await verifyFileExport(
+    page,
+    'SDF/adenosine-triphosphate-px-hash-spacing-v3000-expected.sdf',
+    FileType.SDF,
+    'v3000',
+    [1],
+  );
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/adenosine-triphosphate-px-hash-spacing-v3000-expected.sdf',
+    page,
+  );
+  await takeEditorScreenshot(page);
+});
+
+test('The Hash spacing setting with cm option is applied and it should be save to sdf 2000 file', async ({
+  page,
+}) => {
+  /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Change Hash spacing for ACS styles settings
+  The Hash spacing setting is applied and it should be save to sdf 2000
+  */
+  await waitForPageInit(page);
+  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openSettings(page);
+  await bondsSettings(page);
+  await setHashSpacingOptionUnit(page, 'cm-option');
+  await setHashSpacingValue(page, '79.8');
+  await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
+  await verifyFileExport(
+    page,
+    'SDF/adenosine-triphosphate-cm-hash-spacing-v2000-expected.sdf',
+    FileType.SDF,
+    'v2000',
+    [1],
+  );
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/adenosine-triphosphate-cm-hash-spacing-v2000-expected.sdf',
+    page,
+  );
+  await takeEditorScreenshot(page);
+});
+
+test('The Hash spacing setting with cm option is applied and it should be save to sdf 3000 file', async ({
+  page,
+}) => {
+  /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Change Hash spacing for ACS styles settings
+  The Hash spacing setting is applied and it should be save to sdf 3000
+  */
+  await waitForPageInit(page);
+  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openSettings(page);
+  await bondsSettings(page);
+  await setHashSpacingOptionUnit(page, 'cm-option');
+  await setHashSpacingValue(page, '79.8');
+  await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
+  await verifyFileExport(
+    page,
+    'SDF/adenosine-triphosphate-cm-hash-spacing-v3000-expected.sdf',
+    FileType.SDF,
+    'v3000',
+    [1],
+  );
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/adenosine-triphosphate-cm-hash-spacing-v3000-expected.sdf',
+    page,
+  );
+  await takeEditorScreenshot(page);
+});
+
+test('The Hash spacing setting with inch option is applied and it should be save to sdf 2000 file', async ({
+  page,
+}) => {
+  /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Change Hash spacing for ACS styles settings
+  The Hash spacing setting is applied and it should be save to sdf 2000
+  */
+  await waitForPageInit(page);
+  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openSettings(page);
+  await bondsSettings(page);
+  await setHashSpacingOptionUnit(page, 'inch-option');
+  await setHashSpacingValue(page, '79.8');
+  await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
+  await verifyFileExport(
+    page,
+    'SDF/adenosine-triphosphate-inch-hash-spacing-v2000-expected.sdf',
+    FileType.SDF,
+    'v2000',
+    [1],
+  );
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/adenosine-triphosphate-inch-hash-spacing-v2000-expected.sdf',
+    page,
+  );
+  await takeEditorScreenshot(page);
+});
+
+test('The Hash spacing setting with inch option is applied and it should be save to sdf 3000 file', async ({
+  page,
+}) => {
+  /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Change Hash spacing for ACS styles settings
+  The Hash spacing setting is applied and it should be save to sdf 3000
+  */
+  await waitForPageInit(page);
+  await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
+  await openSettings(page);
+  await bondsSettings(page);
+  await setHashSpacingOptionUnit(page, 'inch-option');
+  await setHashSpacingValue(page, '79.8');
+  await pressButton(page, 'Apply');
+  await takeEditorScreenshot(page);
+  await verifyFileExport(
+    page,
+    'SDF/adenosine-triphosphate-inch-hash-spacing-v3000-expected.sdf',
+    FileType.SDF,
+    'v3000',
+    [1],
+  );
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/adenosine-triphosphate-inch-hash-spacing-v3000-expected.sdf',
     page,
   );
   await takeEditorScreenshot(page);

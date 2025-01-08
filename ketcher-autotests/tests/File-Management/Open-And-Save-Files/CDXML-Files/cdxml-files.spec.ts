@@ -22,6 +22,8 @@ import {
   setReactionMarginSizeValue,
   selectAllStructuresOnCanvas,
   selectClearCanvasTool,
+  setHashSpacingOptionUnit,
+  setHashSpacingValue,
 } from '@utils';
 import {
   FileType,
@@ -589,6 +591,90 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     expect(cdxmlFile).toEqual(cdxmlFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'CDXML/layout-with-catalyst-pt-bond-lengh.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The Hash spacing setting with pt option is applied, click on layout and it should be save to CDXML specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Hash spacing setting is applied, click on layout and it should be save to CDXML specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setHashSpacingOptionUnit(page, 'pt-option');
+    await setHashSpacingValue(page, '54.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'CDXML/layout-with-catalyst-pt-hash-spacing-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/layout-with-catalyst-pt-hash-spacing-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The Hash spacing setting with cm option is applied, click on layout and it should be save to CDXML specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Hash spacing setting is applied, click on layout and it should be save to CDXML specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setHashSpacingOptionUnit(page, 'cm-option');
+    await setHashSpacingValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'CDXML/layout-with-catalyst-cm-hash-spacing-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/layout-with-catalyst-cm-hash-spacing-expected.cdxml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The Hash spacing setting with inch option is applied, click on layout and it should be save to CDXML specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Hash spacing setting is applied, click on layout and it should be save to CDXML specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setHashSpacingOptionUnit(page, 'inch-option');
+    await setHashSpacingValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'CDXML/layout-with-catalyst-inch-hash-spacing-expected.cdxml',
+      FileType.CDXML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/layout-with-catalyst-inch-hash-spacing-expected.cdxml',
       page,
     );
     await takeEditorScreenshot(page);

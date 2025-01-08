@@ -30,9 +30,15 @@ import {
   setBondLengthValue,
   openSettings,
   clickOnCanvas,
+  setHashSpacingValue,
+  setHashSpacingOptionUnit,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 /* eslint-disable no-magic-numbers */
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
@@ -1209,6 +1215,63 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     expect(rxnFile).toEqual(rxnFileExpected);
   });
 
+  test('The Hash spacing setting with px option is applied and it should be save to RXN2000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Hash spacing setting is applied and it should be save to RXN2000
+  */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setHashSpacingOptionUnit(page, 'px-option');
+    await setHashSpacingValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/layout-with-catalyst-px-hash-spacing-expected.rxn',
+      FileType.RXN,
+      'v2000',
+      [2, 7, 34, 65, 100, 118],
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/layout-with-catalyst-px-hash-spacing-expected.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The Hash spacing setting with px option is applied and it should be save to RXN3000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Hash spacing setting is applied and it should be save to RXN3000
+  */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setHashSpacingOptionUnit(page, 'px-option');
+    await setHashSpacingValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await verifyFileExport(
+      page,
+      'Rxn-V3000/layout-with-catalyst-px-hash-spacing-expected.rxn',
+      FileType.RXN,
+      'v3000',
+      [2],
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/layout-with-catalyst-px-hash-spacing-expected.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('The Bond length setting with pt option is applied and it should be save to RXN2000', async ({
     page,
   }) => {
@@ -1240,6 +1303,62 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+  });
+
+  test('The Hash spacing setting with pt option is applied and it should be save to RXN2000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Hash spacing setting is applied and it should be save to RXN2000
+  */
+    await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setHashSpacingOptionUnit(page, 'pt-option');
+    await setHashSpacingValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/layout-with-diagonally-arrow-pt-hash-spacing-expected.rxn',
+      FileType.RXN,
+      'v2000',
+      [2, 7, 44, 106, 128, 135],
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/layout-with-diagonally-arrow-pt-hash-spacing-expected.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The Hash spacing setting with pt option is applied and it should be save to RXN3000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Hash spacing setting is applied and it should be save to RXN3000
+  */
+    await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setHashSpacingOptionUnit(page, 'pt-option');
+    await setHashSpacingValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await verifyFileExport(
+      page,
+      'Rxn-V3000/layout-with-diagonally-arrow-pt-hash-spacing-expected.rxn',
+      FileType.RXN,
+      'v3000',
+      [2],
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/layout-with-diagonally-arrow-pt-hash-spacing-expected.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('The Bond length setting with cm option is applied and it should be save to RXN2000', async ({
@@ -1277,6 +1396,62 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     expect(rxnFile).toEqual(rxnFileExpected);
   });
 
+  test('The Hash spacing setting with cm option is applied and it should be save to RXN2000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Hash spacing setting is applied and it should be save to RXN2000
+  */
+    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setHashSpacingOptionUnit(page, 'cm-option');
+    await setHashSpacingValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/layout-with-dif-elements-cm-hash-spacing-expected.rxn',
+      FileType.RXN,
+      'v2000',
+      [2, 7, 14, 21, 28, 35, 53, 60, 67, 74, 81, 93, 100],
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/layout-with-dif-elements-cm-hash-spacing-expected.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The Hash spacing setting with cm option is applied and it should be save to RXN3000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Hash spacing setting is applied and it should be save to RXN3000
+  */
+    await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setHashSpacingOptionUnit(page, 'cm-option');
+    await setHashSpacingValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await verifyFileExport(
+      page,
+      'Rxn-V3000/layout-with-dif-elements-cm-hash-spacing-expected.rxn',
+      FileType.RXN,
+      'v3000',
+      [2],
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/layout-with-dif-elements-cm-hash-spacing-expected.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('The Bond length setting with inch option is applied and it should be save to RXN2000', async ({
     page,
   }) => {
@@ -1308,6 +1483,62 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+  });
+
+  test('The Hash spacing setting with inch option is applied and it should be save to RXN2000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Hash spacing setting is applied and it should be save to RXN2000
+  */
+    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setHashSpacingOptionUnit(page, 'inch-option');
+    await setHashSpacingValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/layout-with-long-molecule-inch-hash-spacing-expected.rxn',
+      FileType.RXN,
+      'v2000',
+      [2, 7, 32, 54],
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/layout-with-long-molecule-inch-hash-spacing-expected.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The Hash spacing setting with inch option is applied and it should be save to RXN3000', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Hash spacing setting is applied and it should be save to RXN3000
+  */
+    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setHashSpacingOptionUnit(page, 'inch-option');
+    await setHashSpacingValue(page, '7.8');
+    await pressButton(page, 'Apply');
+    await verifyFileExport(
+      page,
+      'Rxn-V3000/layout-with-long-molecule-inch-hash-spacing-expected.rxn',
+      FileType.RXN,
+      'v3000',
+      [2],
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/layout-with-long-molecule-inch-hash-spacing-expected.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('The Reaction component margin size setting with px option is applied, click on layout and it should be save to RXN2000', async ({

@@ -1,7 +1,9 @@
+/* eslint-disable max-len */
 import { expect, test } from '@playwright/test';
 import {
   bondsSettings,
   openFileAndAddToCanvas,
+  openFileAndAddToCanvasAsNewProject,
   openSettings,
   pressButton,
   receiveFileComparisonData,
@@ -10,12 +12,18 @@ import {
   selectTopPanelButton,
   setBondLengthOptionUnit,
   setBondLengthValue,
+  setHashSpacingOptionUnit,
+  setHashSpacingValue,
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
   takeEditorScreenshot,
   TopPanelButton,
   waitForPageInit,
 } from '@utils';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import { getKet } from '@utils/formats';
 
 test('Open KET file with properties and check properties are saved in struct', async ({
@@ -111,6 +119,36 @@ test.describe('Ket files', () => {
     expect(ketFile).toEqual(ketFileExpected);
   });
 
+  test('The Hash spacing setting with px option is applied, click on layout and it should be saved to KET specification', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/Indigo/issues/2176
+      Description: Add new settings for ACS style for convert and layout functions.
+      The Hash spacing setting is applied, click on layout, and it should be saved to KET specification.
+    */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await takeEditorScreenshot(page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await scrollToDownInSetting(page);
+    await setHashSpacingOptionUnit(page, 'px-option');
+    await setHashSpacingValue(page, '57.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'KET/layout-with-catalyst-px-hash-spacing-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/layout-with-catalyst-px-hash-spacing-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('The Bond length setting with pt option is applied, click on layout and it should be save to KET specification', async ({
     page,
   }) => {
@@ -144,6 +182,35 @@ test.describe('Ket files', () => {
     expect(ketFile).toEqual(ketFileExpected);
   });
 
+  test('The Hash spacing setting with pt option is applied, click on layout and it should be save to KET specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Hash spacing setting is applied, click on layout and it should be save to KET specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await scrollToDownInSetting(page);
+    await setHashSpacingOptionUnit(page, 'pt-option');
+    await setHashSpacingValue(page, '27.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'KET/layout-with-diagonally-arrow-pt-hash-spacing-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/layout-with-diagonally-arrow-pt-hash-spacing-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
   test('The Bond length setting with inch option is applied, click on layout and it should be save to KET specification', async ({
     page,
   }) => {
@@ -175,6 +242,35 @@ test.describe('Ket files', () => {
       });
 
     expect(ketFile).toEqual(ketFileExpected);
+  });
+
+  test('The Hash spacing setting with inch option is applied, click on layout and it should be save to KET specification', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/Indigo/issues/2176
+  Description: Add new settings for ACS style for convert and layout functions
+  The Hash spacing setting is applied, click on layout and it should be save to KET specification
+  */
+    await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await scrollToDownInSetting(page);
+    await setHashSpacingOptionUnit(page, 'inch-option');
+    await setHashSpacingValue(page, '1.8');
+    await pressButton(page, 'Apply');
+    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'KET/layout-with-long-molecule-inch-hash-spacing-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/layout-with-long-molecule-inch-hash-spacing-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('The Reaction component margin size setting with px option is applied, click on layout and it should be save to KET specification', async ({

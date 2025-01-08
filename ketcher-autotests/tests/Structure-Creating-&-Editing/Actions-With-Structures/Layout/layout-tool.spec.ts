@@ -1,10 +1,9 @@
 import { test } from '@playwright/test';
 import {
-  selectTopPanelButton,
   openFileAndAddToCanvas,
-  TopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
+  selectLayoutTool,
 } from '@utils';
 
 test.describe('Layout', () => {
@@ -20,7 +19,7 @@ test.describe('Layout', () => {
     Description: The structures are displayed orderly in the middle of the screen
     */
     await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -32,7 +31,7 @@ test.describe('Layout', () => {
     Description: The structures are displayed orderly in the middle of the screen
     */
     await openFileAndAddToCanvas('KET/two-atoms-and-bond.ket', page);
-    await page.keyboard.press('Control+l');
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -47,7 +46,7 @@ test.describe('Layout', () => {
       'KET/two-templates-rings-and-functional-groups.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 });

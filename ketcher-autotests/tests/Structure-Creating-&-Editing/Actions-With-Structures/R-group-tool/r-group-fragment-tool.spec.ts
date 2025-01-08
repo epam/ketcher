@@ -11,8 +11,6 @@ import {
   openFileAndAddToCanvas,
   pressButton,
   clickOnAtom,
-  TopPanelButton,
-  selectTopPanelButton,
   LeftPanelButton,
   selectLeftPanelButton,
   receiveFileComparisonData,
@@ -26,6 +24,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectClearCanvasTool,
+  selectLayoutTool,
 } from '@utils';
 import { getExtendedSmiles, getMolfile } from '@utils/formats';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
@@ -281,7 +280,7 @@ test.describe('Open Ketcher', () => {
       'Molfiles-V2000/r1-several-distorted.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 

@@ -30,6 +30,7 @@ import {
   setBondLengthValue,
   openSettings,
   clickOnCanvas,
+  selectLayoutTool,
 } from '@utils';
 import { getRxn } from '@utils/formats';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
@@ -1325,7 +1326,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await setReactionMarginSizeValue(page, '47.8');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const METADATA_STRINGS_INDEXES = [2, 7, 34, 65, 100, 118];
 
@@ -1363,7 +1364,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const METADATA_STRINGS_INDEXES = [2, 7, 32, 54];
 
@@ -1401,7 +1402,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const METADATA_STRINGS_INDEXES = [2, 7, 32, 54];
 

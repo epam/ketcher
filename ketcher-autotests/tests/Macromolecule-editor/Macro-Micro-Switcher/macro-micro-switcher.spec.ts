@@ -75,6 +75,7 @@ import {
   selectAromatizeTool,
   selectDearomatizeTool,
   selectCleanTool,
+  selectLayoutTool,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -1887,7 +1888,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 

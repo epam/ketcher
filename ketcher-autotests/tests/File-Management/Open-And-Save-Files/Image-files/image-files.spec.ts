@@ -33,6 +33,7 @@ import {
   selectClearCanvasTool,
   selectDearomatizeTool,
   selectEraseTool,
+  selectLayoutTool,
   selectLeftPanelButton,
   selectRectangleSelectionTool,
   selectRing,
@@ -1315,10 +1316,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

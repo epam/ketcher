@@ -525,3 +525,10 @@ export async function selectCleanTool(page: Page) {
     async () => await selectTopPanelButton(TopPanelButton.Clean, page),
   );
 }
+
+export async function selectLayoutTool(page: Page) {
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+  );
+}

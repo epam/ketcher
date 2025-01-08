@@ -7,13 +7,12 @@ import {
   receiveFileComparisonData,
   saveToFile,
   scrollToDownInSetting,
-  selectTopPanelButton,
+  selectLayoutTool,
   setBondLengthOptionUnit,
   setBondLengthValue,
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
   takeEditorScreenshot,
-  TopPanelButton,
   waitForPageInit,
 } from '@utils';
 import { getKet } from '@utils/formats';
@@ -93,7 +92,7 @@ test.describe('Ket files', () => {
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '57.8');
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const expectedFile = await getKet(page);
     await saveToFile(
@@ -126,7 +125,7 @@ test.describe('Ket files', () => {
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '27.8');
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const expectedFile = await getKet(page);
     await saveToFile(
@@ -159,7 +158,7 @@ test.describe('Ket files', () => {
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '1.8');
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const expectedFile = await getKet(page);
     await saveToFile(
@@ -193,7 +192,7 @@ test.describe('Ket files', () => {
     await setReactionMarginSizeValue(page, '47.8');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const expectedFile = await getKet(page);
     await saveToFile(
@@ -227,7 +226,7 @@ test.describe('Ket files', () => {
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const expectedFile = await getKet(page);
     await saveToFile(
@@ -261,7 +260,7 @@ test.describe('Ket files', () => {
     await setReactionMarginSizeValue(page, '3.8');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const expectedFile = await getKet(page);
     await saveToFile(
@@ -295,7 +294,7 @@ test.describe('Ket files', () => {
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const expectedFile = await getKet(page);
     await saveToFile(
@@ -325,7 +324,7 @@ test.describe('Ket files', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const expectedFile = await getKet(page);
     await saveToFile(
@@ -343,22 +342,23 @@ test.describe('Ket files', () => {
     expect(ketFile).toEqual(ketFileExpected);
   });
 
-  // eslint-disable-next-line max-len
-  test('When the user adjusts the "Reaction component margin size" settings and clicks the "Apply" button, an informational message should be displayed: "To fully apply these changes, you need to apply the layout."', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'When the user adjusts the "Reaction component margin size" settings and clicks the "Apply" button, an informational message should be displayed: ' +
+      '"To fully apply these changes, you need to apply the layout."',
+    async ({ page }) => {
+      /*
   Test case: https://github.com/epam/Indigo/issues/2176
   Description: When the user adjusts the "Reaction component margin size" settings and clicks the "Apply" button, an
   informational message displayed: "To fully apply these changes, you need to apply the layout."
   */
-    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
-    await bondsSettings(page);
-    await scrollToDownInSetting(page);
-    await setReactionMarginSizeOptionUnit(page, 'px-option');
-    await setReactionMarginSizeValue(page, '47.8');
-    await pressButton(page, 'Apply');
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+      await openSettings(page);
+      await bondsSettings(page);
+      await scrollToDownInSetting(page);
+      await setReactionMarginSizeOptionUnit(page, 'px-option');
+      await setReactionMarginSizeValue(page, '47.8');
+      await pressButton(page, 'Apply');
+      await takeEditorScreenshot(page);
+    },
+  );
 });

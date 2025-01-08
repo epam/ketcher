@@ -6,8 +6,6 @@ import {
   openFileAndAddToCanvas,
   selectNestedTool,
   RgroupTool,
-  selectTopPanelButton,
-  TopPanelButton,
   selectAtomInToolbar,
   AtomButton,
   LeftPanelButton,
@@ -26,10 +24,10 @@ import {
   AttachmentPoint,
   waitForPageInit,
   waitForRender,
-  waitForSpinnerFinishedWork,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectCleanTool,
+  selectLayoutTool,
 } from '@utils';
 import {
   pressRedoButton,
@@ -907,9 +905,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Layout, page);
-    });
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
     await waitForRender(page, async () => {

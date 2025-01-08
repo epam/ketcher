@@ -1,17 +1,19 @@
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
-  saveToFile,
-  receiveFileComparisonData,
   pasteFromClipboardAndAddToCanvas,
   FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
   selectTopPanelButton,
   TopPanelButton,
 } from '@utils';
-import { clickOnFileFormatDropdown, getCdx } from '@utils/formats';
+import { clickOnFileFormatDropdown } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 async function saveFileAsCdxFormat(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
@@ -33,21 +35,12 @@ test.describe('Reagents CDX format', () => {
     // The reason of test failing will be investigated after release 2.21.0-rc.1
     test.fail();
     await openFileAndAddToCanvas('KET/two-reagents-above-and-below.ket', page);
-    const expectedFile = await getCdx(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDX/two-reagents-above-and-below-expected.cdx',
-      expectedFile,
+      FileType.CDX,
     );
-
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/two-reagents-above-and-below-expected.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
-    await takeEditorScreenshot(page);
   });
 
   test('Open file in "CDX" format', async ({ page }) => {

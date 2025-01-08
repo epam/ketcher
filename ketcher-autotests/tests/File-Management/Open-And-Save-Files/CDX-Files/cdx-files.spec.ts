@@ -1,11 +1,9 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   pasteFromClipboardAndAddToCanvas,
-  receiveFileComparisonData,
-  saveToFile,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   readFileContents,
@@ -16,7 +14,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getCdx } from '@utils/formats';
 
 test.describe('CDX files', () => {
   test.beforeEach(async ({ page }) => {
@@ -38,16 +35,8 @@ test.describe('CDX files', () => {
     Description: Open CDX files with R-group
     */
     await openFileAndAddToCanvas('CDX/r-group.cdx', page);
-    const expectedFile = await getCdx(page);
-    await saveToFile('CDX/r-group-expected.cdx', expectedFile);
 
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/CDX/r-group-expected.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
+    await verifyFileExport(page, 'CDX/r-group-expected.cdx', FileType.CDX);
     await takeEditorScreenshot(page);
   });
 
@@ -76,20 +65,12 @@ test.describe('CDX files', () => {
       'CDX/functional-group-exp-and-contr.cdx',
       page,
     );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDX/functional-group-exp-and-contr-expected.cdx',
-      expectedFile,
+      FileType.CDX,
     );
-
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/functional-group-exp-and-contr-expected.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -101,17 +82,12 @@ test.describe('CDX files', () => {
     Description: Abbreviation appears contracted.
     */
     await openFileAndAddToCanvas('CDX/salts-exp-and-contr.cdx', page);
-    const expectedFile = await getCdx(page);
-    await saveToFile('CDX/salts-exp-and-contr-expected.cdx', expectedFile);
 
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/salts-exp-and-contr-expected.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
+    await verifyFileExport(
+      page,
+      'CDX/salts-exp-and-contr-expected.cdx',
+      FileType.CDX,
+    );
     await takeEditorScreenshot(page);
   });
 });
@@ -133,20 +109,12 @@ test.describe('CDX files without screenshots', () => {
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
     );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDX/unsplit-nucleotides-connected-with-nucleotides.cdx',
-      expectedFile,
+      FileType.CDX,
     );
-
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/unsplit-nucleotides-connected-with-nucleotides.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
   });
 
   test('Validate that unsplit nucleotides connected with chems could be saved to Cdx file and loaded back', async ({
@@ -161,20 +129,12 @@ test.describe('CDX files without screenshots', () => {
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
     );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDX/unsplit-nucleotides-connected-with-chems.cdx',
-      expectedFile,
+      FileType.CDX,
     );
-
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/unsplit-nucleotides-connected-with-chems.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
   });
 
   test('Validate that unsplit nucleotides connected with bases could be saved to Cdx file and loaded back', async ({
@@ -189,20 +149,12 @@ test.describe('CDX files without screenshots', () => {
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
     );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDX/unsplit-nucleotides-connected-with-bases.cdx',
-      expectedFile,
+      FileType.CDX,
     );
-
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/unsplit-nucleotides-connected-with-bases.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
   });
 
   test('Validate that unsplit nucleotides connected with sugars could be saved to Cdx file and loaded back', async ({
@@ -217,20 +169,12 @@ test.describe('CDX files without screenshots', () => {
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
     );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDX/unsplit-nucleotides-connected-with-sugars.cdx',
-      expectedFile,
+      FileType.CDX,
     );
-
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/unsplit-nucleotides-connected-with-sugars.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
   });
 
   test('Validate that unsplit nucleotides connected with phosphates could be saved to Cdx file and loaded back', async ({
@@ -245,20 +189,11 @@ test.describe('CDX files without screenshots', () => {
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
     );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'CDX/unsplit-nucleotides-connected-with-phosphates.cdx',
-      expectedFile,
+      FileType.CDX,
     );
-
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/unsplit-nucleotides-connected-with-phosphates.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
   });
 
   test('Validate that unsplit nucleotides connected with peptides could be saved to Cdx file and loaded back', async ({
@@ -273,20 +208,12 @@ test.describe('CDX files without screenshots', () => {
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
     );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDX/unsplit-nucleotides-connected-with-peptides.cdx',
-      expectedFile,
+      FileType.CDX,
     );
-
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/unsplit-nucleotides-connected-with-peptides.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
   });
 
   test('Validate that simple schema with retrosynthetic arrow could be saved to Cdx file and loaded back', async ({
@@ -294,27 +221,19 @@ test.describe('CDX files without screenshots', () => {
   }) => {
     /*
     Test case: #2097
-    Description: Validate that schema schema with retrosynthetic arrow could be saved to Cdx file and loaded back
+    Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
     */
 
     await openFileAndAddToCanvas(
       'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
     );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDX/simple-schema-with-retrosynthetic-arrow.cdx',
-      expectedFile,
+      FileType.CDX,
     );
-
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/simple-schema-with-retrosynthetic-arrow.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
   });
 
   test('Validate that the schema with retrosynthetic, angel arrows and plus could be saved to Cdx file and loaded back', async ({
@@ -330,20 +249,12 @@ test.describe('CDX files without screenshots', () => {
       'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
     );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDX/schema-with-retrosynthetic-angel-arrows-and-plus.cdx',
-      expectedFile,
+      FileType.CDX,
     );
-
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/schema-with-retrosynthetic-angel-arrows-and-plus.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
   });
 
   test('Validate that the schema with two retrosynthetic arrows could be saved to Cdx file and loaded back', async ({
@@ -358,20 +269,12 @@ test.describe('CDX files without screenshots', () => {
       'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
     );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDX/schema-with-two-retrosynthetic-arrows.cdx',
-      expectedFile,
+      FileType.CDX,
     );
-
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/schema-with-two-retrosynthetic-arrows.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
   });
 
   test('Validate that the schema with reverse retrosynthetic arrow and pluses could be saved to Cdx file and loaded back', async ({
@@ -386,20 +289,12 @@ test.describe('CDX files without screenshots', () => {
       'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       page,
     );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDX/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdx',
-      expectedFile,
+      FileType.CDX,
     );
-
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
   });
 
   test(
@@ -417,20 +312,12 @@ test.describe('CDX files without screenshots', () => {
         'KET/schema-with-vertical-retrosynthetic-arrow.ket',
         page,
       );
-      const expectedFile = await getCdx(page);
-      await saveToFile(
+
+      await verifyFileExport(
+        page,
         'CDX/schema-with-vertical-retrosynthetic-arrow.cdx',
-        expectedFile,
+        FileType.CDX,
       );
-
-      const { fileExpected: cdxFileExpected, file: cdxFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CDX/schema-with-vertical-retrosynthetic-arrow.cdx',
-        });
-
-      expect(cdxFile).toEqual(cdxFileExpected);
     },
   );
 
@@ -449,20 +336,12 @@ test.describe('CDX files without screenshots', () => {
         'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
         page,
       );
-      const expectedFile = await getCdx(page);
-      await saveToFile(
+
+      await verifyFileExport(
+        page,
         'CDX/schema-with-diagonal-retrosynthetic-arrow.cdx',
-        expectedFile,
+        FileType.CDX,
       );
-
-      const { fileExpected: cdxFileExpected, file: cdxFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CDX/schema-with-diagonal-retrosynthetic-arrow.cdx',
-        });
-
-      expect(cdxFile).toEqual(cdxFileExpected);
     },
   );
 

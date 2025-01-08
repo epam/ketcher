@@ -6,7 +6,7 @@ import {
   selectClearCanvasTool,
   waitForPageInit,
   resetZoomLevelToDefault,
-  removeExplicitHydrogens,
+  selectAddRemoveExplicitHydrogens,
 } from '@utils';
 
 let page: Page;
@@ -349,10 +349,10 @@ test.describe('1. User can expand hydrogens for ', () => {
         `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/All types of bond/${fileName}`,
         page,
       );
-      await removeExplicitHydrogens(page);
+      await selectAddRemoveExplicitHydrogens(page);
       await takeEditorScreenshot(page);
 
-      await removeExplicitHydrogens(page);
+      await selectAddRemoveExplicitHydrogens(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -654,10 +654,10 @@ test.describe('2. User can expand hydrogens for ', () => {
         `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/A on the canvas/${fileName}`,
         page,
       );
-      await removeExplicitHydrogens(page);
+      await selectAddRemoveExplicitHydrogens(page);
       await takeEditorScreenshot(page);
 
-      await removeExplicitHydrogens(page);
+      await selectAddRemoveExplicitHydrogens(page);
       await takeEditorScreenshot(page);
     });
   }

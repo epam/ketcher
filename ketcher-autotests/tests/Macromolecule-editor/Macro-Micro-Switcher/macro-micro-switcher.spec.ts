@@ -51,7 +51,6 @@ import {
   selectDropdownTool,
   openFileAndAddToCanvasAsNewProject,
   getSdf,
-  getCdx,
   openFile,
   getCdxml,
   getCml,
@@ -99,6 +98,10 @@ import {
 } from '@utils/macromolecules/rnaBuilder';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 const topLeftCorner = {
   x: -325,
@@ -1733,20 +1736,13 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
-      expectedFile,
+      FileType.CDX,
     );
 
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
     await openCdxFile(page);
     await takeEditorScreenshot(page);
     await pageReload(page);

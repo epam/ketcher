@@ -21,7 +21,7 @@ import {
   pasteFromClipboardByKeyboard,
   pressButton,
   readFileContents,
-  removeExplicitHydrogens,
+  selectAddRemoveExplicitHydrogens,
   resetCurrentTool,
   resetZoomLevelToDefault,
   RingButton,
@@ -1453,9 +1453,9 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await removeExplicitHydrogens(page);
+    await selectAddRemoveExplicitHydrogens(page);
     await takeEditorScreenshot(page);
-    await removeExplicitHydrogens(page);
+    await selectAddRemoveExplicitHydrogens(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

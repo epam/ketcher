@@ -22,6 +22,7 @@ import {
   setReactionMarginSizeValue,
   selectAllStructuresOnCanvas,
   selectClearCanvasTool,
+  selectLayoutTool,
 } from '@utils';
 import {
   FileType,
@@ -571,7 +572,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '54.8');
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const expectedFile = await getCdxml(page);
     await saveToFile(
@@ -608,7 +609,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const expectedFile = await getCdxml(page);
     await saveToFile(
@@ -645,7 +646,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const expectedFile = await getCdxml(page);
     await saveToFile(

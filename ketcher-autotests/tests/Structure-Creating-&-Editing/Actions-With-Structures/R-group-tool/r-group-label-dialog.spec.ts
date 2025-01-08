@@ -7,8 +7,6 @@ import {
   getCoordinatesTopAtomOfBenzeneRing,
   selectRingButton,
   RingButton,
-  TopPanelButton,
-  selectTopPanelButton,
   pressButton,
   dragMouseTo,
   openFileAndAddToCanvas,
@@ -24,6 +22,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
+  selectLayoutTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRxn, getSmiles } from '@utils/formats';
@@ -478,7 +477,7 @@ test.describe('R-Group Label Tool', () => {
       'Molfiles-V2000/distorted-structure-with-r-group.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 });

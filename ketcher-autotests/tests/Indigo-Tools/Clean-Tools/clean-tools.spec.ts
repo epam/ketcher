@@ -1,13 +1,10 @@
 import { test } from '@playwright/test';
 import {
-  selectTopPanelButton,
   openFileAndAddToCanvas,
-  TopPanelButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   waitForPageInit,
   takeTopToolbarScreenshot,
-  waitForSpinnerFinishedWork,
   moveOnBond,
   BondType,
   dragMouseTo,
@@ -18,6 +15,7 @@ import {
   selectPartOfMolecules,
   saveToFile,
   selectCleanTool,
+  selectLayoutTool,
 } from '@utils';
 import { getMolfile } from '@utils/formats/formats';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
@@ -51,10 +49,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
     );
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);
@@ -72,10 +67,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas('Molfiles-V3000/different-angle-fr.mol', page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);
@@ -94,10 +86,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/four-bonds.mol', page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);
@@ -115,10 +104,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/layout-distorted.mol', page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -141,10 +127,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/clean-structure.mol', page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);
@@ -176,10 +159,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
       page,
     );
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);
@@ -199,10 +179,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/clean-stereo.mol', page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);
@@ -221,10 +198,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/clean-rgroups.mol', page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);
@@ -242,10 +216,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/clean-sgroups.mol', page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);
@@ -277,10 +248,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('Rxn-V2000/mapping-reaction.rxn', page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);
@@ -296,10 +264,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/cyclic-structures.mol', page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -310,10 +275,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/several-structures.mol', page);
 
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -411,10 +373,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/big-rings.mol', page);
     await selectCleanTool(page);
     await pressUndoButton(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 

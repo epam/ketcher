@@ -31,6 +31,7 @@ import {
   selectDearomatizeTool,
   selectDropdownTool,
   selectEraseTool,
+  selectLayoutTool,
   selectLeftPanelButton,
   selectPartOfMolecules,
   selectRectangleSelectionTool,
@@ -3664,7 +3665,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
        */
       await openFileAndAddToCanvasAsNewProject(file, page);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Layout, page);
+      await selectLayoutTool(page);
       await takeEditorScreenshot(page);
       await verifyFileExport(page, expectedFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(expectedFile, page);
@@ -3699,7 +3700,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(700, 340, page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

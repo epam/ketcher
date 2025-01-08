@@ -7,8 +7,7 @@ import {
   clickOnSaveFileAndOpenDropdown,
   openSettings,
   pressButton,
-  selectTopPanelButton,
-  TopPanelButton,
+  selectLayoutTool,
 } from '@utils';
 
 test.describe('Saving in .png files', () => {
@@ -170,7 +169,7 @@ test.describe('Saving in .png files', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     await clickOnSaveFileAndOpenDropdown(page);
     await selectFormatForSaving(page, 'PNG Image');

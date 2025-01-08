@@ -11,10 +11,9 @@ import {
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
-  selectTopPanelButton,
-  TopPanelButton,
   setReactionMarginSizeValue,
   openSettings,
+  selectLayoutTool,
 } from '@utils';
 import { getCml } from '@utils/formats';
 
@@ -568,7 +567,7 @@ test.describe('CML files', () => {
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '67.8');
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const expectedFile = await getCml(page);
     await saveToFile(
@@ -606,7 +605,7 @@ test.describe('CML files', () => {
     await setReactionMarginSizeValue(page, '1.8');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const expectedFile = await getCml(page);
     await saveToFile(
@@ -641,7 +640,7 @@ test.describe('CML files', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     const expectedFile = await getCml(page);
     await saveToFile(

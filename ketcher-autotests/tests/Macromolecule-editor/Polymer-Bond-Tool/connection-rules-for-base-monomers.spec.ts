@@ -829,7 +829,7 @@ test.describe('Connection rules for Base monomers: ', () => {
        *   For each %peptideType% from the library (peptideMonomers)
        *  1. Clear canvas
        *  2. Load %baseType% and %peptideType% and put them on the canvas
-       *  3. Establish connection between %baseType%(center) and %peptideType%(center)
+       *  3. Establish connection between %baseType%(center) and %peptideType%(center) (select free connection points in appeared dialog)
        *  4. Validate canvas (connection should appear)
        */
       test(`Case5: Cnnct Center to Center of Base(${leftBase.alias}) and Peptide(${rightPeptide.alias})`, async () => {
@@ -864,22 +864,28 @@ test.describe('Connection rules for Base monomers: ', () => {
        *   For each %CHEMType% from the library (chemMonomers)
        *  1. Clear canvas
        *  2. Load %baseType% and %CHEMType% and put them on the canvas
-       *  3. Establish connection between %baseType%(center) and %CHEMType%(center)
+       *  3. Establish connection between %baseType%(center) and %CHEMType%(center) (select free connection points in appeared dialog)
        *  4. Validate canvas (connection should appear)
        */
       test(`Case6: Cnnct Center to Center of Base(${leftBase.alias}) and CHEM(${rightCHEM.alias})`, async () => {
         test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftBase, rightCHEM);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftBase, rightCHEM);
 
-        await bondTwoMonomersByCenterToCenter(page, leftBase, rightCHEM);
+        const bondLine = await bondTwoMonomersPointToPoint(
+          page,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
 
-        await zoomWithMouseWheel(page, -600);
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          hideMonomerPreview: true,
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });

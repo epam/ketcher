@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, chromium, test } from '@playwright/test';
+import { Locator, Page, chromium, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectClearCanvasTool,
@@ -9,11 +9,13 @@ import {
   waitForKetcherInit,
   waitForIndigoToLoad,
   resetZoomLevelToDefault,
+  MonomerType,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
@@ -62,7 +64,7 @@ test.describe('Connection rules for chems: ', () => {
   });
 
   interface IMonomer {
-    monomerType: string;
+    monomerType: MonomerType;
     fileName: string;
     alias: string;
     connectionPoints: { [connectionPointName: string]: string };
@@ -70,7 +72,7 @@ test.describe('Connection rules for chems: ', () => {
 
   const chemMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -78,7 +80,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
@@ -86,7 +88,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
@@ -94,7 +96,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     '(R1,R2) - R3 gap': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -103,7 +105,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     // '(R1,R3) - R2 gap': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
     //   connectionPoints: {
@@ -112,7 +114,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R2,R3) - R1 gap': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
     //   connectionPoints: {
@@ -121,7 +123,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R3,R4)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -130,7 +132,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
@@ -140,7 +142,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -150,7 +152,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -160,7 +162,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -170,7 +172,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     '(R1,R2,R3,R4)': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/12 - (R1,R2,R3,R4).ket',
       alias: '(R1,R2,R3,R4)',
       connectionPoints: {
@@ -181,7 +183,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -192,7 +194,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -203,7 +205,7 @@ test.describe('Connection rules for chems: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -218,7 +220,7 @@ test.describe('Connection rules for chems: ', () => {
 
   const tmpChemMonomers: { [monomerName: string]: IMonomer } = {
     'Test-6-Ch': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/Test-6-Ch.ket',
       alias: 'Test-6-Ch',
       connectionPoints: {
@@ -230,7 +232,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     'Test-6-Ch-1': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-1',
       connectionPoints: {
@@ -243,7 +245,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     'Test-6-Ch-2': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-2',
       connectionPoints: {
@@ -256,7 +258,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     'Test-6-Ch-3': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-3',
       connectionPoints: {
@@ -269,7 +271,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     'Test-6-Ch-4': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-4',
       connectionPoints: {
@@ -282,7 +284,7 @@ test.describe('Connection rules for chems: ', () => {
       },
     },
     'Test-6-Ch-5': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/chem-connection-rules-cases-template.ket',
       alias: 'Test-6-Ch-5',
       connectionPoints: {
@@ -356,37 +358,41 @@ test.describe('Connection rules for chems: ', () => {
 
   async function loadTwoMonomers(
     page: Page,
-    leftMonomers: IMonomer,
-    rightMonomers: IMonomer,
-  ) {
-    await openFileAndAddToCanvasMacro(leftMonomers.fileName, page);
-    const canvasLocator = page.getByTestId('ketcher-canvas').first();
-    const leftMonomerLocator = canvasLocator
-      .locator(`text=${leftMonomers.alias}`)
-      .locator('..')
-      .first();
-    // const leftMonomerLocator = page.locator('use').first();
-    await leftMonomerLocator.hover();
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
+  ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
+    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    const leftMonomerLocator = (
+      await getMonomerLocator(page, {
+        monomerAlias: leftMonomer.alias,
+        monomerType: leftMonomer.monomerType,
+      })
+    ).first();
+
+    await leftMonomerLocator.hover({ force: true });
+
     await dragMouseTo(500, 370, page);
     await moveMouseAway(page);
 
-    await openFileAndAddToCanvasMacro(rightMonomers.fileName, page);
+    await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
+    const tmpMonomerLocator = await getMonomerLocator(page, {
+      monomerAlias: rightMonomer.alias,
+      monomerType: rightMonomer.monomerType,
+    });
     const rightMonomerLocator =
-      (await canvasLocator.locator(`text=${leftMonomers.alias}`).count()) > 1
-        ? canvasLocator
-            .locator(`text=${rightMonomers.alias}`)
-            .nth(1)
-            .locator('..')
-            .first()
-        : canvasLocator
-            .locator(`text=${rightMonomers.alias}`)
-            .locator('..')
-            .first();
-    // const rightMonomerLocator = page.locator('use').nth(1);
-    await rightMonomerLocator.hover();
+      (await tmpMonomerLocator.count()) > 1
+        ? tmpMonomerLocator.nth(1)
+        : tmpMonomerLocator.first();
+
+    await rightMonomerLocator.hover({ force: true });
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 372, page);
+    await dragMouseTo(600, 375, page);
     await moveMouseAway(page);
+
+    return {
+      leftMonomer: leftMonomerLocator,
+      rightMonomer: rightMonomerLocator,
+    };
   }
 
   async function bondTwoMonomersByPointToPoint(
@@ -544,24 +550,22 @@ test.describe('Connection rules for chems: ', () => {
                  *               points (for example, R1 and R1 or R2 and R2), a bond is created, and a message occurs.
                  */
                 test(`Case 1: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of ${leftCHEM.alias} and ${rightCHEM.alias}`, async () => {
-                  test.setTimeout(35000);
+                  test.setTimeout(30000);
 
-                  await loadTwoMonomers(page, leftCHEM, rightCHEM);
+                  const {
+                    leftMonomer: leftMonomerLocator,
+                    rightMonomer: rightMonomerLocator,
+                  } = await loadTwoMonomers(page, leftCHEM, rightCHEM);
 
-                  await bondTwoMonomersByPointToPoint(
+                  const bondLine = await bondTwoMonomersPointToPoint(
                     page,
-                    leftCHEM,
-                    rightCHEM,
+                    leftMonomerLocator,
+                    rightMonomerLocator,
                     leftCHEMConnectionPoint,
                     rightCHEMConnectionPoint,
                   );
 
-                  await zoomWithMouseWheel(page, -600);
-                  await hoverOverConnectionLine(page);
-
-                  await takeEditorScreenshot(page, {
-                    hideMonomerPreview: true,
-                  });
+                  await expect(bondLine).toBeVisible();
                 });
               }
             },

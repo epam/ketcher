@@ -132,18 +132,52 @@ async function chooseFreeConnectionPointsInDialogIfAppeared(
   const secondMonomerAvailableConnectionPoints =
     await getAvailableConnectionPoints(secondMonomer);
 
+  if (!firstMonomerConnectionPoint && !secondMonomerConnectionPoint) {
+    if (
+      firstMonomerAvailableConnectionPoints.includes('R2') &&
+      secondMonomerAvailableConnectionPoints.includes('R1')
+    ) {
+      firstMonomerConnectionPoint = 'R2';
+      secondMonomerConnectionPoint = 'R1';
+    } else if (
+      firstMonomerAvailableConnectionPoints.includes('R1') &&
+      secondMonomerAvailableConnectionPoints.includes('R2')
+    ) {
+      firstMonomerConnectionPoint = 'R1';
+      secondMonomerConnectionPoint = 'R2';
+    }
+  }
+
   if (
-    firstMonomerAvailableConnectionPoints.includes('R2') &&
-    secondMonomerAvailableConnectionPoints.includes('R1')
-  ) {
-    firstMonomerConnectionPoint = 'R2';
-    secondMonomerConnectionPoint = 'R1';
-  } else if (
-    firstMonomerAvailableConnectionPoints.includes('R1') &&
+    firstMonomerConnectionPoint === 'R1' &&
+    !secondMonomerConnectionPoint &&
     secondMonomerAvailableConnectionPoints.includes('R2')
   ) {
-    firstMonomerConnectionPoint = 'R1';
     secondMonomerConnectionPoint = 'R2';
+  }
+
+  if (
+    firstMonomerConnectionPoint === 'R2' &&
+    !secondMonomerConnectionPoint &&
+    secondMonomerAvailableConnectionPoints.includes('R1')
+  ) {
+    secondMonomerConnectionPoint = 'R1';
+  }
+
+  if (
+    !firstMonomerConnectionPoint &&
+    firstMonomerAvailableConnectionPoints.includes('R2') &&
+    secondMonomerConnectionPoint === 'R1'
+  ) {
+    firstMonomerConnectionPoint = 'R2';
+  }
+
+  if (
+    !firstMonomerConnectionPoint &&
+    firstMonomerAvailableConnectionPoints.includes('R1') &&
+    secondMonomerConnectionPoint === 'R2'
+  ) {
+    firstMonomerConnectionPoint = 'R1';
   }
 
   if (firstMonomerAvailableConnectionPoints.length === 1) {

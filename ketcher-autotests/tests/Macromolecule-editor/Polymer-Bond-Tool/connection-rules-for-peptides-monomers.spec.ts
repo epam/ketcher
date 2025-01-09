@@ -1009,45 +1009,26 @@ test.describe('Connection rules for peptides: ', () => {
         test(`Case 6: Connect Center to ${rightPeptideConnectionPoint} of ${leftPeptide.alias} and Test-6-P`, async () => {
           test.setTimeout(30000);
 
-          await loadTwoMonomers(
+          const {
+            leftMonomer: leftMonomerLocator,
+            rightMonomer: rightMonomerLocator,
+          } = await loadTwoMonomers(
             page,
             leftPeptide,
             tmpPeptideMonomers['Test-6-P-x'],
           );
 
-          await bondTwoMonomersByCenterToPoint(
+          const bondLine = await bondTwoMonomersPointToPoint(
             page,
-            leftPeptide,
-            tmpPeptideMonomers['Test-6-P-x'],
+            leftMonomerLocator,
+            rightMonomerLocator,
+            undefined,
             rightPeptideConnectionPoint,
+            undefined,
+            true,
           );
 
-          if (
-            !(
-              (Object.values(leftPeptide.connectionPoints).includes('R1') &&
-                rightPeptideConnectionPoint === 'R2') ||
-              (Object.values(leftPeptide.connectionPoints).includes('R2') &&
-                rightPeptideConnectionPoint === 'R1')
-            )
-          ) {
-            if (Object.values(leftPeptide.connectionPoints).length > 1) {
-              const targetConnectionPoint = Object.keys(
-                leftPeptide.connectionPoints,
-              )[0];
-              if (await page.getByRole('dialog').isVisible()) {
-                await page.getByTitle(targetConnectionPoint).first().click();
-                await page.getByTitle('Connect').first().click();
-              }
-            }
-          }
-
-          await zoomWithMouseWheel(page, -600);
-
-          await hoverOverConnectionLine(page);
-
-          await takeEditorScreenshot(page, {
-            hideMonomerPreview: true,
-          });
+          await expect(bondLine).toBeVisible();
         });
       },
     );

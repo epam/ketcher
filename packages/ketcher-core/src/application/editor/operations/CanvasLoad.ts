@@ -22,32 +22,29 @@ import { KetcherLogger } from 'utilities';
 
 export class CanvasLoad extends BaseOperation {
   data: {
-    newStruct?: Struct;
-    oldStruct?: Struct;
+    struct?: Struct;
   };
 
   constructor(struct?: Struct) {
     super(OperationType.CANVAS_LOAD);
-    this.data = { newStruct: struct };
+    this.data = { struct };
   }
 
   execute(restruct: ReStruct) {
     KetcherLogger.log('CanvasLoad.execute(), start');
     restruct.clearVisels(); // TODO: What is it?
-    this.data.oldStruct = restruct.molecule.clone();
-    if (this.data.newStruct) {
-      restruct.render.setMolecule(this.data.newStruct, true);
+    const oldStruct = restruct.molecule.clone();
+    if (this.data.struct) {
+      restruct.render.setMolecule(this.data.struct, true);
     }
 
+    this.data.struct = oldStruct;
     KetcherLogger.log('CanvasLoad.execute(), end');
   }
 
   invert() {
     const inverted = new CanvasLoad();
-    inverted.data = {
-      oldStruct: this.data.newStruct,
-      newStruct: this.data.oldStruct,
-    };
+    inverted.data = this.data;
     return inverted;
   }
 }

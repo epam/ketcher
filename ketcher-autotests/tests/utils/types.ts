@@ -12,6 +12,7 @@ export enum MonomerType {
   CHEM = 'CHEM',
   UnknownMonomer = 'CHEM',
   Molecule = 'CHEM',
+  Nucleotide = 'RNA',
 }
 
 export enum MacroBondType {

@@ -63,32 +63,52 @@ async function getMinFreeConnectionPoint(
   });
 
   if (minIndexWithFalse) {
-    return 'R' + minIndexWithFalse.toString();
-  } else {
-    return undefined;
+    return `R${minIndexWithFalse.toString()}`;
   }
+  return undefined;
+}
+
+async function getAvailableConnectionPoints(
+  monomer: Locator,
+): Promise<string[]> {
+  // Get all attributes of an element
+  const attributes = await monomer.evaluate((element) => {
+    // Get all attributes of the data-Rn type
+    return Array.from(element.attributes)
+      .filter((attr) => attr.name.startsWith('data-R'))
+      .map((attr) => ({ name: attr.name, value: attr.value }));
+  });
+
+  // Filter attributes with the value "false" and remove the prefix "data-"
+  const falseAttributes = attributes
+    .filter((attr) => attr.value === 'false')
+    .map((attr) => attr.name.replace('data-', ''));
+
+  return falseAttributes;
 }
 
 async function chooseFreeConnectionPointsInDialogIfAppeared(
   page: Page,
-  firstMonomerElement: Locator,
-  secondMonomerElement: Locator,
+  firstMonomer: Locator,
+  secondMonomer: Locator,
   firstMonomerConnectionPoint?: string,
   secondMonomerConnectionPoint?: string,
 ): Promise<{
   leftMonomerConnectionPoint: string | undefined;
   rightMonomerConnectionPoint: string | undefined;
 }> {
-  if (!firstMonomerConnectionPoint)
-    firstMonomerConnectionPoint = await getMinFreeConnectionPoint(
-      firstMonomerElement,
-    );
-  if (!secondMonomerConnectionPoint)
-    secondMonomerConnectionPoint = await getMinFreeConnectionPoint(
-      secondMonomerElement,
-    );
-
   if (await page.getByRole('dialog').isVisible()) {
+    if (!firstMonomerConnectionPoint) {
+      firstMonomerConnectionPoint = await getMinFreeConnectionPoint(
+        firstMonomer,
+      );
+    }
+    if (!secondMonomerConnectionPoint) {
+      secondMonomerConnectionPoint = await getMinFreeConnectionPoint(
+        secondMonomer,
+      );
+    }
+
     if (firstMonomerConnectionPoint && secondMonomerConnectionPoint) {
       await page.getByTitle(firstMonomerConnectionPoint).first().click();
 
@@ -98,6 +118,37 @@ async function chooseFreeConnectionPointsInDialogIfAppeared(
     }
 
     await page.getByTitle('Connect').first().click();
+
+    return {
+      leftMonomerConnectionPoint: firstMonomerConnectionPoint,
+      rightMonomerConnectionPoint: secondMonomerConnectionPoint,
+    };
+  }
+
+  const firstMonomerAvailableConnectionPoints =
+    await getAvailableConnectionPoints(firstMonomer);
+  const secondMonomerAvailableConnectionPoints =
+    await getAvailableConnectionPoints(secondMonomer);
+
+  if (
+    firstMonomerAvailableConnectionPoints.includes('R2') &&
+    secondMonomerAvailableConnectionPoints.includes('R1')
+  ) {
+    firstMonomerConnectionPoint = 'R2';
+    secondMonomerConnectionPoint = 'R1';
+  } else if (
+    firstMonomerAvailableConnectionPoints.includes('R1') &&
+    secondMonomerAvailableConnectionPoints.includes('R2')
+  ) {
+    firstMonomerConnectionPoint = 'R1';
+    secondMonomerConnectionPoint = 'R2';
+  }
+
+  if (firstMonomerAvailableConnectionPoints.length === 1) {
+    firstMonomerConnectionPoint = firstMonomerAvailableConnectionPoints[0];
+  }
+  if (secondMonomerAvailableConnectionPoints.length === 1) {
+    secondMonomerConnectionPoint = secondMonomerAvailableConnectionPoints[0];
   }
 
   return {

@@ -646,47 +646,25 @@ test.describe('Connection rules for chems: ', () => {
         test(`Case 3: Connect Center to ${rightCHEMConnectionPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
           test.setTimeout(35000);
 
-          await openFileAndAddToCanvasMacro(
-            tmpChemMonomers['Test-6-Ch'].fileName,
-            page,
-          );
-          let CHEMLocator = page
-            .getByText(tmpChemMonomers['Test-6-Ch'].alias)
-            .locator('..')
-            .first();
-          await CHEMLocator.hover();
-          await dragMouseTo(500, 371, page);
-          await moveMouseAway(page);
-          await openFileAndAddToCanvasMacro(rightCHEM.fileName, page);
-
-          CHEMLocator = page.getByText(rightCHEM.alias).locator('..').first();
-          await CHEMLocator.hover();
-          await dragMouseTo(650, 370, page);
-          await moveMouseAway(page);
-
-          await bondTwoMonomersByCenterToPoint(
+          const {
+            leftMonomer: leftMonomerLocator,
+            rightMonomer: rightMonomerLocator,
+          } = await loadTwoMonomers(
             page,
             tmpChemMonomers['Test-6-Ch'],
             rightCHEM,
-            rightCHEMConnectionPoint,
           );
 
-          await takeEditorScreenshot(page, {
-            hideMonomerPreview: true,
-          });
-
-          if (await page.getByRole('dialog').isVisible()) {
-            await page.getByTitle('R1').first().click();
-            await page.getByTitle('Connect').first().click();
-          }
-
-          await zoomWithMouseWheel(page, -600);
-
-          await hoverOverConnectionLine(page);
-
-          await takeEditorScreenshot(page, {
-            hideMonomerPreview: true,
-          });
+          const bondLine = await bondTwoMonomersPointToPoint(
+            page,
+            leftMonomerLocator,
+            rightMonomerLocator,
+            undefined,
+            rightCHEMConnectionPoint,
+            undefined,
+            true,
+          );
+          await expect(bondLine).toBeVisible();
         });
       },
     );

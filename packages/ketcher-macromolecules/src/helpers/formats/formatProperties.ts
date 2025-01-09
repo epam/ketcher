@@ -24,6 +24,7 @@ export type SupportedFormats =
   | 'ket'
   | 'fasta'
   | 'sequence'
+  | 'sequence-3-letter'
   | 'idt'
   | 'helm'
   | 'svg';
@@ -56,6 +57,13 @@ const formatProperties: FormatProperties = {
   ),
   sequence: new SupportedFormatProperties(
     'SEQUENCE',
+    ChemicalMimeType.Sequence,
+    ['.seq'],
+    false,
+    {},
+  ),
+  'sequence-3-letter': new SupportedFormatProperties(
+    'SEQUENCE (3-letter code)',
     ChemicalMimeType.Sequence,
     ['.seq'],
     false,

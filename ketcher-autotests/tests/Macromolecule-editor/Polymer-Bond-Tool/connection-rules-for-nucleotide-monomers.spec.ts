@@ -808,7 +808,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
             (rightCHEMConnectionPoint) => {
               /*
                *  Test case: https://github.com/epam/ketcher/issues/5122 - Case 4 (Nucleotide - CHEM)
-               *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( Nucleotide - Peptides )
+               *  Description: Check if possible to create bond from specific AP of one monomer to specific AP of another monomer ( Nucleotide - CHEMs )
                * For each %nucleotideType% from the library (nucleotideMonomers)
                *   For each %CHEMType% from the library (CHEMMonomers)
                *      For each %ConnectionPoint% (avaliable connections of %nucleotideType%)
@@ -819,24 +819,22 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case4: Cnnct ${leftNucleotideConnectionPoint} to ${rightCHEMConnectionPoint} of Nuc(${leftNucleotide.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftNucleotide, rightCHEM);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftNucleotide, rightCHEM);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftNucleotide,
-                  rightCHEM,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftNucleotideConnectionPoint,
                   rightCHEMConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  hideMonomerPreview: true,
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );

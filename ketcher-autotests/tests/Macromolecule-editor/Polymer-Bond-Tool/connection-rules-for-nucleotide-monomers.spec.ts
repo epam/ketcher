@@ -245,7 +245,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
 
     await rightMonomerLocator.hover({ force: true });
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 375, page);
+    await dragMouseTo(600, 380, page);
     await moveMouseAway(page);
 
     return {
@@ -1517,7 +1517,7 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     //     R5: 'R5',
     //   },
     // },
-    N: {
+    W: {
       monomerType: MonomerType.Base,
       fileName:
         'KET/Base-Templates/16 - W - ambiguous alternatives from library (R1).ket',
@@ -1555,36 +1555,22 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case11: Cnnct ${leftNucleotideConnectionPoint} to ${rightBaseConnectionPoint} of Nuc(${leftNucleotide.alias}) and Base(${rightBase.alias})`, async () => {
-                test.setTimeout(40000);
+                test.setTimeout(30000);
 
-                /* In order to fix problem with label renderer (one pixel shift) 
-                   we have to try to reload page
-                */
-                if (
-                  leftNucleotideConnectionPoint === 'R1' &&
-                  rightBaseConnectionPoint === 'R1' &&
-                  leftNucleotide.alias === '(R1)_-_Left_only' &&
-                  rightBase.alias === '(R1)_-_Left_only'
-                ) {
-                  await pageReload(page);
-                }
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftNucleotide, rightBase);
 
-                await loadTwoMonomers(page, leftNucleotide, rightBase);
-
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftNucleotide,
-                  rightBase,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftNucleotideConnectionPoint,
                   rightBaseConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  hideMonomerPreview: true,
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );

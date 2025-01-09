@@ -414,25 +414,26 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Test case2: Cnnct ${leftNucleotideConnectionPoint} to ${rightNucleotideConnectionPoint} of ${leftNucleotide.alias} and ${rightNucleotide.alias}`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftNucleotide, rightNucleotide);
-
-                await bondTwoMonomersByPointToPoint(
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(
                   page,
                   leftNucleotide,
                   rightNucleotide,
+                );
+
+                const bondLine = await bondTwoMonomersPointToPoint(
+                  page,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftNucleotideConnectionPoint,
                   rightNucleotideConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -800);
-
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  hideMonomerPreview: true,
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );

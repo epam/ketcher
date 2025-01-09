@@ -20,7 +20,7 @@ import { FlexModePolymerBondRenderer } from 'application/render/renderers/Polyme
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
-import { UnresolvedMonomer } from 'domain/entities';
+import { UnresolvedMonomer, UnsplitNucleotide } from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Chem } from 'domain/entities/Chem';
 import { Command } from 'domain/entities/Command';
@@ -601,7 +601,9 @@ class PolymerBond implements BaseTool {
     );
     if (
       (firstMonomerIsRNA && secondMonomer instanceof Peptide) ||
-      (secondMonomerIsRNA && firstMonomer instanceof Peptide)
+      (secondMonomerIsRNA && firstMonomer instanceof Peptide) ||
+      (firstMonomerIsRNA && secondMonomer instanceof UnsplitNucleotide) ||
+      (secondMonomerIsRNA && firstMonomer instanceof UnsplitNucleotide)
     ) {
       return true;
     }

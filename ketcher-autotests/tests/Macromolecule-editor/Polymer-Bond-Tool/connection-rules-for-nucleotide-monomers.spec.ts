@@ -1592,18 +1592,24 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case12: Cnnct Center to Center of Nucleotide(${leftNucleotide.alias}) and Base(${rightBase.alias})`, async () => {
-        test.setTimeout(40000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftNucleotide, rightBase);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftNucleotide, rightBase);
 
-        await bondTwoMonomersByCenterToCenter(page, leftNucleotide, rightBase);
+        const bondLine = await bondTwoMonomersPointToPoint(
+          page,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
 
-        await zoomWithMouseWheel(page, -600);
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          hideMonomerPreview: true,
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });

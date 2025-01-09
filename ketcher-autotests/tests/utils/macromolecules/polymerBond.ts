@@ -124,6 +124,8 @@ async function chooseFreeConnectionPointsInDialogIfAppeared(
       rightMonomerConnectionPoint: secondMonomerConnectionPoint,
     };
   }
+  // const firstMonomerType = firstMonomer.getAttribute('data-monomertype');
+  // const secondMonomerType = firstMonomer.getAttribute('data-monomertype');
 
   const firstMonomerAvailableConnectionPoints =
     await getAvailableConnectionPoints(firstMonomer);

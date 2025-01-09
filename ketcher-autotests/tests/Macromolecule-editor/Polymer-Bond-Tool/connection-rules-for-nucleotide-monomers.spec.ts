@@ -234,10 +234,6 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
     };
   }
 
-  // test(`temporary test for debug purposes`, async () => {
-  //    await bondTwoMonomersByCenterToCenter(page, nucleotideMonomers['(R1,R2,R3)'], nucleotideMonomers['(R1,R2,R3)']);
-  //  });
-
   Object.values(nucleotideMonomers).forEach((leftNucleotide) => {
     Object.values(nucleotideMonomers).forEach((rightNucleotide) => {
       /*

@@ -852,26 +852,28 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
        *   For each %peptideType% from the library (peptideMonomers)
        *  1. Clear canvas
        *  2. Load %nucleotideType% and %peptideType% and put them on the canvas
-       *  3. Establish connection between %snucleotideType%(center) and %peptideType%(center)
+       *  3. Establish connection between %nucleotideType%(center) and %peptideType%(center)
        *  4. Validate canvas (connection should appear)
        */
       test(`Case5: Cnnct Center to Center of Nucleotide(${leftNucleotide.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-        test.setTimeout(40000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftNucleotide, rightPeptide);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftNucleotide, rightPeptide);
 
-        await bondTwoMonomersByCenterToCenter(
+        const bondLine = await bondTwoMonomersPointToPoint(
           page,
-          leftNucleotide,
-          rightPeptide,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
         );
 
-        await zoomWithMouseWheel(page, -600);
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          hideMonomerPreview: true,
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });

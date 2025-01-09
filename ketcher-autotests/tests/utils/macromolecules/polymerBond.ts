@@ -120,7 +120,7 @@ export async function bondTwoMonomersPointToPoint(
   await firstMonomer.hover({ force: true });
 
   if (firstMonomerConnectionPoint) {
-    const firstConnectionPoint = firstMonomerElement.locator(
+    const firstConnectionPoint = firstMonomer.locator(
       `xpath=//*[text()="${firstMonomerConnectionPoint}"]/..//*[@r="3"]`,
     );
     const firstConnectionPointBoundingBox =

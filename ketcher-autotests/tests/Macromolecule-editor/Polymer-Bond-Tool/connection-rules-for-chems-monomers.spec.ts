@@ -342,7 +342,10 @@ test.describe('Connection rules for chems: ', () => {
     };
   }
 
-  async function prepareCanvasNoFreeAPLeft(page: Page, CHEM: IMonomer) {
+  async function prepareCanvasNoFreeAPLeft(
+    page: Page,
+    CHEM: IMonomer,
+  ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
     await openFileAndAddToCanvasMacro(
       tmpChemMonomers['Test-6-Ch-Main'].fileName,
       page,
@@ -366,6 +369,26 @@ test.describe('Connection rules for chems: ', () => {
         CHEMConnectionPoint,
       );
     }
+
+    const leftMonomerLocator = (
+      await getMonomerLocator(page, {
+        monomerAlias: tmpChemMonomers['Test-6-Ch-Main'].alias,
+        monomerType: tmpChemMonomers['Test-6-Ch-Main'].monomerType,
+      })
+    ).first();
+    const tmpMonomerLocator = await getMonomerLocator(page, {
+      monomerAlias: CHEM.alias,
+      monomerType: CHEM.monomerType,
+    });
+    const rightMonomerLocator =
+      (await tmpMonomerLocator.count()) > 1
+        ? tmpMonomerLocator.nth(1)
+        : tmpMonomerLocator.first();
+
+    return {
+      leftMonomer: leftMonomerLocator,
+      rightMonomer: rightMonomerLocator,
+    };
   }
 
   async function loadTwoMonomers(
@@ -644,7 +667,7 @@ test.describe('Connection rules for chems: ', () => {
          *       Validate canvas (Connection should appear)
          */
         test(`Case 3: Connect Center to ${rightCHEMConnectionPoint} of Test-6-Ch and ${rightCHEM.alias}`, async () => {
-          test.setTimeout(35000);
+          test.setTimeout(30000);
 
           const {
             leftMonomer: leftMonomerLocator,
@@ -686,19 +709,18 @@ test.describe('Connection rules for chems: ', () => {
         test(`Case 4: Connect ${leftCHEMConnectionPoint} to Center of Test-6-Ch and ${rightCHEM.alias}`, async () => {
           test.setTimeout(35000);
 
-          await prepareCanvasNoFreeAPLeft(page, rightCHEM);
+          const {
+            leftMonomer: leftMonomerLocator,
+            rightMonomer: rightMonomerLocator,
+          } = await prepareCanvasNoFreeAPLeft(page, rightCHEM);
 
-          await bondTwoMonomersByPointToPoint(
+          const bondLine = await bondTwoMonomersPointToPoint(
             page,
-            tmpChemMonomers['Test-6-Ch'],
-            rightCHEM,
+            leftMonomerLocator,
+            rightMonomerLocator,
             leftCHEMConnectionPoint,
           );
-          await zoomWithMouseWheel(page, -600);
-
-          await takeEditorScreenshot(page, {
-            hideMonomerPreview: true,
-          });
+          await expect(bondLine).toBeHidden();
         });
       },
     );

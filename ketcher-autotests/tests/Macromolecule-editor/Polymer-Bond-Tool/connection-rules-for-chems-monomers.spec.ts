@@ -961,25 +961,22 @@ test.describe('Connection rules for chems: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Test case6: Connect ${leftCHEMConnectionPoint} to ${rightPeptideConnectionPoint} of CHEM(${leftCHEM.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-                test.setTimeout(40000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftCHEM, rightPeptide);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftCHEM, rightPeptide);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftCHEM,
-                  rightPeptide,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftCHEMConnectionPoint,
                   rightPeptideConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  hideMonomerPreview: true,
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );

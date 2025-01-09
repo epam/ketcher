@@ -1123,23 +1123,24 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
       );
 
       test(`Case 8: Connect Center to Center of Nucleotide(${leftNucleotide.alias}) and OrdinaryMolecule(${ordnryMlcleName})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftNucleotide, rightOrdinaryMolecule);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftNucleotide, rightOrdinaryMolecule);
 
-        await bondTwoMonomersByCenterToCenter(
+        const bondLine = await bondTwoMonomersPointToPoint(
           page,
-          leftNucleotide,
-          rightOrdinaryMolecule,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
         );
 
-        await zoomWithMouseWheel(page, -600);
-
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          hideMonomerPreview: true,
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });

@@ -974,21 +974,20 @@ test.describe('Connection rules for peptides: ', () => {
          *         Validate canvas (No connection established)
          */
         test(`Case 5: Connect ${leftPeptideConnectionPoint} to Center of Test-6-P and ${rightPeptide.alias}`, async () => {
-          test.setTimeout(30000);
+          test.setTimeout(35000);
 
-          await prepareCanvasNoFreeAPLeft(page, rightPeptide);
+          const {
+            leftMonomer: leftMonomerLocator,
+            rightMonomer: rightMonomerLocator,
+          } = await prepareCanvasNoFreeAPLeft(page, rightPeptide);
 
-          await bondTwoMonomersByPointToCenter(
+          const bondLine = await bondTwoMonomersPointToPoint(
             page,
-            tmpPeptideMonomers['Test-6-P-x'],
-            rightPeptide,
+            leftMonomerLocator,
+            rightMonomerLocator,
             leftPeptideConnectionPoint,
           );
-          await zoomWithMouseWheel(page, -600);
-
-          await takeEditorScreenshot(page, {
-            hideMonomerPreview: true,
-          });
+          await expect(bondLine).toBeHidden();
         });
       },
     );

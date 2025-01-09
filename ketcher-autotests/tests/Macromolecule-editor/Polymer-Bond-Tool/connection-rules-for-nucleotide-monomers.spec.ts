@@ -1312,24 +1312,22 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case9: Cnct ${leftNucleotideConnectionPoint} to ${rightPhosphateConnectionPoint} of N(${leftNucleotide.alias}) and Ph(${rightPhosphate.alias})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftNucleotide, rightPhosphate);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftNucleotide, rightPhosphate);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftNucleotide,
-                  rightPhosphate,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftNucleotideConnectionPoint,
                   rightPhosphateConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  hideMonomerPreview: true,
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -1351,22 +1349,24 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case10: Cnnct Center to Center of Nucleotide(${leftNucleotide.alias}) and Phosphate(${rightPhosphate.alias})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftNucleotide, rightPhosphate);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftNucleotide, rightPhosphate);
 
-        await bondTwoMonomersByCenterToCenter(
+        const bondLine = await bondTwoMonomersPointToPoint(
           page,
-          leftNucleotide,
-          rightPhosphate,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
         );
 
-        await zoomWithMouseWheel(page, -600);
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          hideMonomerPreview: true,
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });

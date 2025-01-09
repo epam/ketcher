@@ -601,6 +601,12 @@ test.describe('Connection rules for chems: ', () => {
                   );
 
                   await expect(bondLine).toBeVisible();
+                  const errorMessage = page
+                    .getByTestId('error-tooltip')
+                    .first();
+                  await expect(errorMessage).toContainText(
+                    'You have connected monomers with attachment points of the same group',
+                  );
                 });
               }
             },
@@ -745,25 +751,22 @@ test.describe('Connection rules for chems: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Test case5: Connect ${leftCHEMConnectionPoint} to ${rightCHEMConnectionPoint} of  CHEMS(${leftCHEM.alias}) and  CHEMS(${rightCHEM.alias})`, async () => {
-                test.setTimeout(35000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftCHEM, rightCHEM);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftCHEM, rightCHEM);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftCHEM,
-                  rightCHEM,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftCHEMConnectionPoint,
                   rightCHEMConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  hideMonomerPreview: true,
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );

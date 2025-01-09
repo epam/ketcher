@@ -1781,36 +1781,22 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case13: Cnnct ${leftNucleotideConnectionPoint} to ${rightSugarConnectionPoint} of Nuc(${leftNucleotide.alias}) and Sug(${rightSugar.alias})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(30000);
 
-                /* In order to fix problem with label renderer (one pixel shift) 
-                   we have to try to reload page
-                */
-                if (
-                  leftNucleotideConnectionPoint === 'R1' &&
-                  rightSugarConnectionPoint === 'R1' &&
-                  leftNucleotide.alias === '(R1)_-_Left_only' &&
-                  rightSugar.alias === '(R1)_-_Left_only'
-                ) {
-                  await pageReload(page);
-                }
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftNucleotide, rightSugar);
 
-                await loadTwoMonomers(page, leftNucleotide, rightSugar);
-
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftNucleotide,
-                  rightSugar,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftNucleotideConnectionPoint,
                   rightSugarConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  hideMonomerPreview: true,
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );

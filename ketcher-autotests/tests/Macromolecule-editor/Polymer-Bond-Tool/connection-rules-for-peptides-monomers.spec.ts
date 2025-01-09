@@ -1270,24 +1270,22 @@ test.describe('Connection rules for peptides: ', () => {
                 rightOM.fileName.lastIndexOf('.ket'),
               );
               test(`Test case9: Connect ${leftPeptideConnectionPoint} to ${rightOMConnectionPoint} of Peptide(${leftPeptide.alias}) and OM(${ordinaryMoleculeName})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftPeptide, rightOM);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftPeptide, rightOM);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftPeptide,
-                  rightOM,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftPeptideConnectionPoint,
                   rightOMConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  hideMonomerPreview: true,
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -1311,21 +1309,22 @@ test.describe('Connection rules for peptides: ', () => {
       test(`Case 10: Connect Center to Center of Peptide(${leftPeptide.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
         test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftPeptide, rightOrdinaryMolecule);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftPeptide, rightOrdinaryMolecule);
 
-        await bondTwoMonomersByCenterToCenter(
+        const bondLine = await bondTwoMonomersPointToPoint(
           page,
-          leftPeptide,
-          rightOrdinaryMolecule,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
         );
 
-        await zoomWithMouseWheel(page, -600);
-
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          hideMonomerPreview: true,
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });

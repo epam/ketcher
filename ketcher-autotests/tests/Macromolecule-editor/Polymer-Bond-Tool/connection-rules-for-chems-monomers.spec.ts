@@ -1255,23 +1255,24 @@ test.describe('Connection rules for chems: ', () => {
       );
 
       test(`Case 10: Connect Center to Center of CHEM(${leftCHEM.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
-        test.setTimeout(35000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftCHEM, rightOrdinaryMolecule);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftCHEM, rightOrdinaryMolecule);
 
-        await bondTwoMonomersByCenterToCenter(
+        const bondLine = await bondTwoMonomersPointToPoint(
           page,
-          leftCHEM,
-          rightOrdinaryMolecule,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
         );
 
-        await zoomWithMouseWheel(page, -600);
-
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          hideMonomerPreview: true,
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });

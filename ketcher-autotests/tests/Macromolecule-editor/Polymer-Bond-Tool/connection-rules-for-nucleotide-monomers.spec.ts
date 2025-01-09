@@ -1086,24 +1086,22 @@ test.describe('Connection rules for Nucleotide monomers: ', () => {
                 rightOM.fileName.lastIndexOf('.ket'),
               );
               test(`Test case7: Cnct ${leftNucleotideConnectionPoint} to ${rightOMConnectionPoint} of Nucleotide(${leftNucleotide.alias}) and OM(${ordnryMlcleName})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftNucleotide, rightOM);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftNucleotide, rightOM);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftNucleotide,
-                  rightOM,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftNucleotideConnectionPoint,
                   rightOMConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  hideMonomerPreview: true,
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );

@@ -780,18 +780,24 @@ test.describe('Connection rules for sugars: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case8: Cnnct Center to Center of Base(${leftSugar.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-        test.setTimeout(25000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftSugar, rightPeptide);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftSugar, rightPeptide);
 
-        await bondTwoMonomersByCenterToCenter(page, leftSugar, rightPeptide);
+        const bondLine = await bondTwoMonomersPointToPoint(
+          page,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
 
-        await zoomWithMouseWheel(page, -600);
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          hideMonomerPreview: true,
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });

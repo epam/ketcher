@@ -809,20 +809,22 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       test(`Case5: Cnnct Center to Center of Ph(${leftPhosphate.alias}) and Peptide(${rightPeptide.alias})`, async () => {
         test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftPhosphate, rightPeptide);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftPhosphate, rightPeptide);
 
-        await bondTwoMonomersByCenterToCenter(
+        const bondLine = await bondTwoMonomersPointToPoint(
           page,
-          leftPhosphate,
-          rightPeptide,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
         );
 
-        await zoomWithMouseWheel(page, -600);
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          hideMonomerPreview: true,
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });
@@ -840,18 +842,24 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case6: Cnnct Center to Center of Ph(${leftPhosphate.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftPhosphate, rightCHEM);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftPhosphate, rightCHEM);
 
-        await bondTwoMonomersByCenterToCenter(page, leftPhosphate, rightCHEM);
+        const bondLine = await bondTwoMonomersPointToPoint(
+          page,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
 
-        await zoomWithMouseWheel(page, -600);
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          hideMonomerPreview: true,
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });

@@ -10,10 +10,7 @@ import {
   resetZoomLevelToDefault,
   MonomerType,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,

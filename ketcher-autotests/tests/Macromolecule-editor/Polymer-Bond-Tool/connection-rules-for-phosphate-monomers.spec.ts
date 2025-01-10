@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { BrowserContext, Page, test, expect, Locator } from '@playwright/test';
+import { Page, test, expect, Locator } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
@@ -10,10 +10,7 @@ import {
   MonomerType,
   waitForPageInit,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,
@@ -198,11 +195,6 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     // },
   };
 
-  async function hoverOverConnectionLine(page: Page) {
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
-    await bondLine.hover();
-  }
-
   async function loadTwoMonomers(
     page: Page,
     leftMonomer: IMonomer,
@@ -241,78 +233,6 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       rightMonomer: rightMonomerLocator,
     };
   }
-
-  async function bondTwoMonomersByPointToPoint(
-    page: Page,
-    leftMonomer: IMonomer,
-    rightMonomer: IMonomer,
-    leftMonomerConnectionPoint?: string,
-    rightMonomerConnectionPoint?: string,
-  ) {
-    const leftMonomerLocator = page
-      .getByText(leftMonomer.alias)
-      .locator('..')
-      .first();
-
-    const rightMonomerLocator =
-      (await page.getByText(leftMonomer.alias).count()) > 1
-        ? page.getByText(rightMonomer.alias).nth(1).locator('..').first()
-        : page.getByText(rightMonomer.alias).locator('..').first();
-
-    await bondTwoMonomersPointToPoint(
-      page,
-      leftMonomerLocator,
-      rightMonomerLocator,
-      leftMonomerConnectionPoint,
-      rightMonomerConnectionPoint,
-    );
-  }
-
-  async function bondTwoMonomersByCenterToCenter(
-    page: Page,
-    leftMonomer: IMonomer,
-    rightMonomer: IMonomer,
-  ) {
-    const leftMonomerLocator = page
-      .getByText(leftMonomer.alias)
-      .locator('..')
-      .first();
-
-    const rightMonomerLocator =
-      (await page.getByText(leftMonomer.alias).count()) > 1
-        ? page.getByText(rightMonomer.alias).nth(1).locator('..').first()
-        : page.getByText(rightMonomer.alias).locator('..').first();
-
-    await bondTwoMonomersPointToPoint(
-      page,
-      leftMonomerLocator,
-      rightMonomerLocator,
-    );
-
-    if (await page.getByRole('dialog').isVisible()) {
-      const firstConnectionPointKeyForLeftMonomer = Object.keys(
-        leftMonomer.connectionPoints,
-      )[0];
-      const leftMonomerConnectionPoint =
-        leftMonomer.connectionPoints[firstConnectionPointKeyForLeftMonomer];
-      await page.getByTitle(leftMonomerConnectionPoint).first().click();
-
-      const firstConnectionPointKeyForRightMonomer = Object.keys(
-        rightMonomer.connectionPoints,
-      )[0];
-      const rightMonomerConnectionPoint =
-        rightMonomer.connectionPoints[firstConnectionPointKeyForRightMonomer];
-      (await page.getByTitle(rightMonomerConnectionPoint).count()) > 1
-        ? await page.getByTitle(rightMonomerConnectionPoint).nth(1).click()
-        : await page.getByTitle(rightMonomerConnectionPoint).first().click();
-
-      await page.getByTitle('Connect').first().click();
-    }
-  }
-
-  // test(`temporary test for debug purposes`, async () => {
-  //    await bondTwoMonomersByCenterToCenter(page, phosphateMonomers['(R1,R2,R3)'], phosphateMonomers['(R1,R2,R3)']);
-  //  });
 
   Object.values(phosphateMonomers).forEach((leftPhosphate) => {
     Object.values(phosphateMonomers).forEach((rightPhosphate) => {

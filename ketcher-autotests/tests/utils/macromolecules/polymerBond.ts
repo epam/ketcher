@@ -4,6 +4,7 @@ import { hideMonomerPreview } from '@utils/macromolecules/index';
 import {
   clickOnCanvas,
   MacroBondType,
+  MonomerType,
   moveMouseAway,
   selectMacroBond,
 } from '..';
@@ -124,8 +125,8 @@ async function chooseFreeConnectionPointsInDialogIfAppeared(
       rightMonomerConnectionPoint: secondMonomerConnectionPoint,
     };
   }
-  // const firstMonomerType = firstMonomer.getAttribute('data-monomertype');
-  // const secondMonomerType = firstMonomer.getAttribute('data-monomertype');
+  const firstMonomerType = await firstMonomer.getAttribute('data-monomertype');
+  const secondMonomerType = await firstMonomer.getAttribute('data-monomertype');
 
   const firstMonomerAvailableConnectionPoints =
     await getAvailableConnectionPoints(firstMonomer);
@@ -146,6 +147,31 @@ async function chooseFreeConnectionPointsInDialogIfAppeared(
       firstMonomerConnectionPoint = 'R1';
       secondMonomerConnectionPoint = 'R2';
     }
+
+    if (
+      firstMonomerType === MonomerType.Sugar &&
+      secondMonomerType === MonomerType.Base &&
+      firstMonomerAvailableConnectionPoints.includes('R3') &&
+      secondMonomerAvailableConnectionPoints.includes('R1')
+    ) {
+      firstMonomerConnectionPoint = 'R3';
+      secondMonomerConnectionPoint = 'R1';
+    }
+
+    if (
+      firstMonomerType === MonomerType.Base &&
+      secondMonomerType === MonomerType.Sugar &&
+      firstMonomerAvailableConnectionPoints.includes('R1') &&
+      secondMonomerAvailableConnectionPoints.includes('R3')
+    ) {
+      firstMonomerConnectionPoint = 'R1';
+      secondMonomerConnectionPoint = 'R3';
+    }
+
+    return {
+      leftMonomerConnectionPoint: firstMonomerConnectionPoint,
+      rightMonomerConnectionPoint: secondMonomerConnectionPoint,
+    };
   }
 
   if (
@@ -178,6 +204,46 @@ async function chooseFreeConnectionPointsInDialogIfAppeared(
     secondMonomerConnectionPoint === 'R2'
   ) {
     firstMonomerConnectionPoint = 'R1';
+  }
+
+  if (
+    firstMonomerType === MonomerType.Base &&
+    secondMonomerType === MonomerType.Sugar &&
+    firstMonomerConnectionPoint === 'R1' &&
+    !secondMonomerConnectionPoint &&
+    secondMonomerAvailableConnectionPoints.includes('R3')
+  ) {
+    secondMonomerConnectionPoint = 'R3';
+  }
+
+  if (
+    firstMonomerType === MonomerType.Base &&
+    secondMonomerType === MonomerType.Sugar &&
+    !firstMonomerConnectionPoint &&
+    firstMonomerAvailableConnectionPoints.includes('R1') &&
+    secondMonomerConnectionPoint === 'R3'
+  ) {
+    firstMonomerConnectionPoint = 'R1';
+  }
+
+  if (
+    firstMonomerType === MonomerType.Sugar &&
+    secondMonomerType === MonomerType.Base &&
+    firstMonomerConnectionPoint === 'R3' &&
+    !secondMonomerConnectionPoint &&
+    secondMonomerAvailableConnectionPoints.includes('R1')
+  ) {
+    secondMonomerConnectionPoint = 'R1';
+  }
+
+  if (
+    firstMonomerType === MonomerType.Sugar &&
+    secondMonomerType === MonomerType.Base &&
+    !firstMonomerConnectionPoint &&
+    firstMonomerAvailableConnectionPoints.includes('R3') &&
+    secondMonomerConnectionPoint === 'R1'
+  ) {
+    firstMonomerConnectionPoint = 'R3';
   }
 
   if (firstMonomerAvailableConnectionPoints.length === 1) {

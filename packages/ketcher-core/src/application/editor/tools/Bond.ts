@@ -20,7 +20,11 @@ import { FlexModePolymerBondRenderer } from 'application/render/renderers/Polyme
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
-import { UnresolvedMonomer, UnsplitNucleotide } from 'domain/entities';
+import {
+  UnresolvedMonomer,
+  UnsplitNucleotide,
+  AmbiguousMonomer,
+} from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Chem } from 'domain/entities/Chem';
 import { Command } from 'domain/entities/Command';
@@ -36,6 +40,7 @@ import { AttachmentPointName } from 'domain/types';
 import { Coordinates } from '../shared/coordinates';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { ToolName } from 'application/editor';
+import { KetMonomerClass } from 'application/formatters';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
@@ -603,7 +608,23 @@ class PolymerBond implements BaseTool {
       (firstMonomerIsRNA && secondMonomer instanceof Peptide) ||
       (secondMonomerIsRNA && firstMonomer instanceof Peptide) ||
       (firstMonomerIsRNA && secondMonomer instanceof UnsplitNucleotide) ||
-      (secondMonomerIsRNA && firstMonomer instanceof UnsplitNucleotide)
+      (secondMonomerIsRNA && firstMonomer instanceof UnsplitNucleotide) ||
+      (firstMonomerIsRNA &&
+        secondMonomer instanceof AmbiguousMonomer &&
+        secondMonomer.monomerClass === KetMonomerClass.AminoAcid) ||
+      (secondMonomerIsRNA &&
+        firstMonomer instanceof AmbiguousMonomer &&
+        firstMonomer.monomerClass === KetMonomerClass.AminoAcid)
+    ) {
+      return true;
+    }
+    if (
+      (firstMonomer instanceof RNABase &&
+        secondMonomer instanceof Sugar &&
+        secondMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R3)) ||
+      (secondMonomer instanceof RNABase &&
+        firstMonomer instanceof Sugar &&
+        firstMonomer.isAttachmentPointExistAndFree(AttachmentPointName.R3))
     ) {
       return true;
     }

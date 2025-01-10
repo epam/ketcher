@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect, Locator } from '@playwright/test';
+import { Page, test, Locator } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectClearCanvasTool,
@@ -589,21 +589,6 @@ test.describe('Connection rules for RNAs: ', () => {
     }
   }
 
-  // test(`temporary test for debug purposes`, async () => {
-  //   await prepareCanvasOneFreeAPLeft(
-  //     page,
-  //     sugarMonomers['(R1,R2,R3,R4,R5)'],
-  //     sugarMonomers['(R1,R2,R3,R4,R5)'],
-  //     'R1',
-  //     'R5',
-  //   );
-  // });
-
-  // Some combinations of monomers on the canvas got its labels rendered differently
-  // (i.e. one pixel down at CI so we got screenshot comparison error). This is why we decided to switch such tests off
-  // till that issue fix.
-  // See https://github.com/epam/ketcher/issues/4586 for more datails.
-
   Object.values(sugarMonomers).forEach((leftSugar) => {
     Object.values(baseMonomers).forEach((rightBase) => {
       /*
@@ -612,36 +597,18 @@ test.describe('Connection rules for RNAs: ', () => {
        *  If no R3 available - open Select Connection Points dialog
        */
       test(`Case 1: Connect Center to Center of Sugar(${leftSugar.alias}) and Base(${rightBase.alias})`, async () => {
-        // test.setTimeout(40000);
+        test.setTimeout(40000);
 
-        // await loadTwoMonomers(page, leftSugar, rightBase);
+        await loadTwoMonomers(page, leftSugar, rightBase);
 
-        // await bondTwoMonomersByCenterToCenter(page, leftSugar, rightBase);
+        await bondTwoMonomersByCenterToCenter(page, leftSugar, rightBase);
 
-        // // await zoomWithMouseWheel(page, -500);
+        // await zoomWithMouseWheel(page, -500);
 
-        // const bondLine = page.locator('g[pointer-events="stroke"]').first();
-        // await bondLine.hover();
+        const bondLine = page.locator('g[pointer-events="stroke"]').first();
+        await bondLine.hover();
 
-        // await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.01 });
-        test.setTimeout(30000);
-
-        const {
-          leftMonomer: leftMonomerLocator,
-          rightMonomer: rightMonomerLocator,
-        } = await loadTwoMonomers(page, leftSugar, rightBase);
-
-        const bondLine = await bondTwoMonomersPointToPoint(
-          page,
-          leftMonomerLocator,
-          rightMonomerLocator,
-          undefined,
-          undefined,
-          undefined,
-          true,
-        );
-
-        await expect(bondLine).toBeVisible();
+        await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.01 });
       });
     });
   });

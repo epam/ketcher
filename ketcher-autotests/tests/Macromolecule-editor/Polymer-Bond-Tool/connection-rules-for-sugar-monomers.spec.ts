@@ -10,10 +10,7 @@ import {
   waitForPageInit,
   MonomerType,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,
@@ -196,10 +193,6 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
   };
-  async function hoverOverConnectionLine(page: Page) {
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
-    await bondLine.hover();
-  }
 
   async function loadTwoMonomers(
     page: Page,
@@ -239,97 +232,6 @@ test.describe('Connection rules for sugars: ', () => {
       rightMonomer: rightMonomerLocator,
     };
   }
-
-  async function bondTwoMonomersByPointToPoint(
-    page: Page,
-    leftMonomer: IMonomer,
-    rightMonomer: IMonomer,
-    leftMonomersConnectionPoint?: string,
-    rightMonomersConnectionPoint?: string,
-  ) {
-    const leftMonomerLocator = page
-      .getByTestId('ketcher-canvas')
-      .locator(`text=${leftMonomer.alias}`)
-      .locator('..')
-      .first();
-
-    const rightMonomerLocator =
-      (await page
-        .getByTestId('ketcher-canvas')
-        .locator(`text=${leftMonomer.alias}`)
-        .count()) > 1
-        ? page
-            .getByTestId('ketcher-canvas')
-            .locator(`text=${rightMonomer.alias}`)
-            .nth(1)
-            .locator('..')
-            .first()
-        : page
-            .getByTestId('ketcher-canvas')
-            .locator(`text=${rightMonomer.alias}`)
-            .locator('..')
-            .first();
-
-    await bondTwoMonomersPointToPoint(
-      page,
-      leftMonomerLocator,
-      rightMonomerLocator,
-      leftMonomersConnectionPoint,
-      rightMonomersConnectionPoint,
-    );
-  }
-
-  async function bondTwoMonomersByCenterToCenter(
-    page: Page,
-    leftMonomer: IMonomer,
-    rightMonomer: IMonomer,
-  ) {
-    const leftMonomerLocator = page
-      .getByText(leftMonomer.alias)
-      .locator('..')
-      .first();
-
-    const rightMonomerLocator =
-      (await page.getByText(leftMonomer.alias).count()) > 1
-        ? page.getByText(rightMonomer.alias).nth(1).locator('..').first()
-        : page.getByText(rightMonomer.alias).locator('..').first();
-
-    await bondTwoMonomersPointToPoint(
-      page,
-      leftMonomerLocator,
-      rightMonomerLocator,
-    );
-
-    if (await page.getByRole('dialog').isVisible()) {
-      const firstConnectionPointKeyForLeftMonomer = Object.keys(
-        leftMonomer.connectionPoints,
-      )[0];
-      const leftMonomerConnectionPoint =
-        leftMonomer.connectionPoints[firstConnectionPointKeyForLeftMonomer];
-      await page.getByTitle(leftMonomerConnectionPoint).first().click();
-
-      const firstConnectionPointKeyForRightMonomer = Object.keys(
-        rightMonomer.connectionPoints,
-      )[0];
-      const rightMonomerConnectionPoint =
-        rightMonomer.connectionPoints[firstConnectionPointKeyForRightMonomer];
-      (await page.getByTitle(rightMonomerConnectionPoint).count()) > 1
-        ? await page.getByTitle(rightMonomerConnectionPoint).nth(1).click()
-        : await page.getByTitle(rightMonomerConnectionPoint).first().click();
-
-      await page.getByTitle('Connect').first().click();
-    }
-  }
-
-  // test(`temporary test for debug purposes`, async () => {
-  //   await prepareCanvasOneFreeAPLeft(
-  //     page,
-  //     sugarMonomers['(R1,R2,R3,R4,R5)'],
-  //     sugarMonomers['(R1,R2,R3,R4,R5)'],
-  //     'R1',
-  //     'R5',
-  //   );
-  // });
 
   Object.values(sugarMonomers).forEach((leftSugar) => {
     Object.values(sugarMonomers).forEach((rightSugar) => {

@@ -1,4 +1,4 @@
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   selectTopPanelButton,
   TopPanelButton,
@@ -6,13 +6,16 @@ import {
   pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  readFileContents,
   pasteFromClipboard,
   waitForLoad,
   waitForPageInit,
   moveMouseAway,
 } from '@utils';
-import { clickOnFileFormatDropdown, getSmarts } from '@utils/formats';
+import {
+  verifyFileExport,
+  FileType,
+} from '@utils/files/receiveFileComparisonData';
+import { clickOnFileFormatDropdown } from '@utils/formats';
 
 async function saveSmarts(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
@@ -46,11 +49,11 @@ test.describe('Reagents SMARTS format', () => {
       page,
     );
 
-    const smartsFileExpected = await readFileContents(
-      'tests/test-data/SMARTS/expected-smarts-file.smarts',
+    await verifyFileExport(
+      page,
+      'SMARTS/expected-smarts-file.smarts',
+      FileType.SMARTS,
     );
-    const smartsFile = await getSmarts(page);
-    expect(smartsFile).toEqual(smartsFileExpected);
 
     await previewSmarts(page);
     await moveMouseAway(page);
@@ -73,11 +76,11 @@ test.describe('Reagents SMARTS format', () => {
       page,
     );
 
-    const smartsFileExpected = await readFileContents(
-      'tests/test-data/SMARTS/expected-smarts-below.smarts',
+    await verifyFileExport(
+      page,
+      'SMARTS/expected-smarts-below.smarts',
+      FileType.SMARTS,
     );
-    const smartsFile = await getSmarts(page);
-    expect(smartsFile).toEqual(smartsFileExpected);
 
     await previewSmarts(page);
     await moveMouseAway(page);
@@ -138,11 +141,11 @@ test.describe('Reagents SMARTS format', () => {
       page,
     );
 
-    const smartsFileExpected = await readFileContents(
-      'tests/test-data/SMARTS/expected-smarts-file.smarts',
+    await verifyFileExport(
+      page,
+      'SMARTS/expected-smarts-file.smarts',
+      FileType.SMARTS,
     );
-    const smartsFile = await getSmarts(page);
-    expect(smartsFile).toEqual(smartsFileExpected);
 
     await saveSmarts(page);
   });

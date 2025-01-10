@@ -557,14 +557,14 @@ test.describe('Connection rules for sugars: ', () => {
                 const {
                   leftMonomer: leftMonomerLocator,
                   rightMonomer: rightMonomerLocator,
-                } = await loadTwoMonomers(page, leftSugar, rightSugar);
+                } = await loadTwoMonomers(page, leftSugar, rightPeptide);
 
                 const bondLine = await bondTwoMonomersPointToPoint(
                   page,
                   leftMonomerLocator,
                   rightMonomerLocator,
                   leftSugarConnectionPoint,
-                  rightSugarConnectionPoint,
+                  rightPeptideConnectionPoint,
                 );
 
                 await expect(bondLine).toBeVisible();

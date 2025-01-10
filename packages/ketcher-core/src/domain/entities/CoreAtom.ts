@@ -176,7 +176,7 @@ export class Atom extends DrawingEntity {
           return radicalAmount + connectionAmount;
         }
       } else if (
-        AtomLabel.S ||
+        label === AtomLabel.S ||
         label === AtomLabel.Se ||
         label === AtomLabel.Po
       ) {

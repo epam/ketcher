@@ -1,14 +1,11 @@
-import { expect, Page, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndOpenAsNewProject,
-  getSmarts,
   openFileAndAddToCanvas,
-  saveToFile,
-  receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
   waitForRender,
 } from '@utils';
@@ -56,19 +53,12 @@ test.describe('Loading SMARTS files', () => {
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
     );
-    const expectedFile = await getSmarts(page);
-    await saveToFile(
-      'SMARTS/unsplit-nucleotides-connected-with-chems.smarts',
-      expectedFile,
-    );
-    const { fileExpected: smartsFileExpected, file: smartsFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SMARTS/unsplit-nucleotides-connected-with-chems.smarts',
-      });
 
-    expect(smartsFile).toEqual(smartsFileExpected);
+    await verifyFileExport(
+      page,
+      'SMARTS/unsplit-nucleotides-connected-with-chems.smarts',
+      FileType.SMARTS,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'SMARTS/unsplit-nucleotides-connected-with-chems.smarts',
@@ -89,19 +79,12 @@ test.describe('Loading SMARTS files', () => {
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
     );
-    const expectedFile = await getSmarts(page);
-    await saveToFile(
-      'SMARTS/unsplit-nucleotides-connected-with-nucleotides.smarts',
-      expectedFile,
-    );
-    const { fileExpected: smartsFileExpected, file: smartsFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SMARTS/unsplit-nucleotides-connected-with-nucleotides.smarts',
-      });
 
-    expect(smartsFile).toEqual(smartsFileExpected);
+    await verifyFileExport(
+      page,
+      'SMARTS/unsplit-nucleotides-connected-with-nucleotides.smarts',
+      FileType.SMARTS,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'SMARTS/unsplit-nucleotides-connected-with-nucleotides.smarts',
@@ -122,19 +105,12 @@ test.describe('Loading SMARTS files', () => {
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
     );
-    const expectedFile = await getSmarts(page);
-    await saveToFile(
-      'SMARTS/unsplit-nucleotides-connected-with-bases.smarts',
-      expectedFile,
-    );
-    const { fileExpected: smartsFileExpected, file: smartsFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SMARTS/unsplit-nucleotides-connected-with-bases.smarts',
-      });
 
-    expect(smartsFile).toEqual(smartsFileExpected);
+    await verifyFileExport(
+      page,
+      'SMARTS/unsplit-nucleotides-connected-with-bases.smarts',
+      FileType.SMARTS,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'SMARTS/unsplit-nucleotides-connected-with-bases.smarts',
@@ -155,19 +131,12 @@ test.describe('Loading SMARTS files', () => {
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
     );
-    const expectedFile = await getSmarts(page);
-    await saveToFile(
-      'SMARTS/unsplit-nucleotides-connected-with-sugars.smarts',
-      expectedFile,
-    );
-    const { fileExpected: smartsFileExpected, file: smartsFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SMARTS/unsplit-nucleotides-connected-with-sugars.smarts',
-      });
 
-    expect(smartsFile).toEqual(smartsFileExpected);
+    await verifyFileExport(
+      page,
+      'SMARTS/unsplit-nucleotides-connected-with-sugars.smarts',
+      FileType.SMARTS,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'SMARTS/unsplit-nucleotides-connected-with-sugars.smarts',
@@ -188,19 +157,12 @@ test.describe('Loading SMARTS files', () => {
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
     );
-    const expectedFile = await getSmarts(page);
-    await saveToFile(
-      'SMARTS/unsplit-nucleotides-connected-with-phosphates.smarts',
-      expectedFile,
-    );
-    const { fileExpected: smartsFileExpected, file: smartsFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SMARTS/unsplit-nucleotides-connected-with-phosphates.smarts',
-      });
 
-    expect(smartsFile).toEqual(smartsFileExpected);
+    await verifyFileExport(
+      page,
+      'SMARTS/unsplit-nucleotides-connected-with-phosphates.smarts',
+      FileType.SMARTS,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'SMARTS/unsplit-nucleotides-connected-with-phosphates.smarts',
@@ -221,19 +183,12 @@ test.describe('Loading SMARTS files', () => {
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
     );
-    const expectedFile = await getSmarts(page);
-    await saveToFile(
-      'SMARTS/unsplit-nucleotides-connected-with-peptides.smarts',
-      expectedFile,
-    );
-    const { fileExpected: smartsFileExpected, file: smartsFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SMARTS/unsplit-nucleotides-connected-with-peptides.smarts',
-      });
 
-    expect(smartsFile).toEqual(smartsFileExpected);
+    await verifyFileExport(
+      page,
+      'SMARTS/unsplit-nucleotides-connected-with-peptides.smarts',
+      FileType.SMARTS,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'SMARTS/unsplit-nucleotides-connected-with-peptides.smarts',
@@ -254,19 +209,12 @@ test.describe('Loading SMARTS files', () => {
       'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
     );
-    const expectedFile = await getSmarts(page);
-    await saveToFile(
-      'SMARTS/simple-schema-with-retrosynthetic-arrow.smarts',
-      expectedFile,
-    );
-    const { fileExpected: smartsFileExpected, file: smartsFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SMARTS/simple-schema-with-retrosynthetic-arrow.smarts',
-      });
 
-    expect(smartsFile).toEqual(smartsFileExpected);
+    await verifyFileExport(
+      page,
+      'SMARTS/simple-schema-with-retrosynthetic-arrow.smarts',
+      FileType.SMARTS,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'SMARTS/simple-schema-with-retrosynthetic-arrow.smarts',
@@ -288,19 +236,12 @@ test.describe('Loading SMARTS files', () => {
         'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
         page,
       );
-      const expectedFile = await getSmarts(page);
-      await saveToFile(
-        'SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
-        expectedFile,
-      );
-      const { fileExpected: smartsFileExpected, file: smartsFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
-        });
 
-      expect(smartsFile).toEqual(smartsFileExpected);
+      await verifyFileExport(
+        page,
+        'SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
+        FileType.SMARTS,
+      );
 
       await openFileAndAddToCanvasAsNewProject(
         'SMARTS/schema-with-retrosynthetic-angel-arrows-and-plus.smarts',
@@ -322,19 +263,12 @@ test.describe('Loading SMARTS files', () => {
       'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       page,
     );
-    const expectedFile = await getSmarts(page);
-    await saveToFile(
-      'SMARTS/schema-with-vertical-retrosynthetic-arrow.smarts',
-      expectedFile,
-    );
-    const { fileExpected: smartsFileExpected, file: smartsFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SMARTS/schema-with-vertical-retrosynthetic-arrow.smarts',
-      });
 
-    expect(smartsFile).toEqual(smartsFileExpected);
+    await verifyFileExport(
+      page,
+      'SMARTS/schema-with-vertical-retrosynthetic-arrow.smarts',
+      FileType.SMARTS,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'SMARTS/schema-with-vertical-retrosynthetic-arrow.smarts',
@@ -355,19 +289,12 @@ test.describe('Loading SMARTS files', () => {
       'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
     );
-    const expectedFile = await getSmarts(page);
-    await saveToFile(
-      'SMARTS/schema-with-two-retrosynthetic-arrows.smarts',
-      expectedFile,
-    );
-    const { fileExpected: smartsFileExpected, file: smartsFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SMARTS/schema-with-two-retrosynthetic-arrows.smarts',
-      });
 
-    expect(smartsFile).toEqual(smartsFileExpected);
+    await verifyFileExport(
+      page,
+      'SMARTS/schema-with-two-retrosynthetic-arrows.smarts',
+      FileType.SMARTS,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'SMARTS/schema-with-two-retrosynthetic-arrows.smarts',
@@ -388,19 +315,12 @@ test.describe('Loading SMARTS files', () => {
       'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
       page,
     );
-    const expectedFile = await getSmarts(page);
-    await saveToFile(
-      'SMARTS/schema-with-diagonal-retrosynthetic-arrow.smarts',
-      expectedFile,
-    );
-    const { fileExpected: smartsFileExpected, file: smartsFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SMARTS/schema-with-diagonal-retrosynthetic-arrow.smarts',
-      });
 
-    expect(smartsFile).toEqual(smartsFileExpected);
+    await verifyFileExport(
+      page,
+      'SMARTS/schema-with-diagonal-retrosynthetic-arrow.smarts',
+      FileType.SMARTS,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'SMARTS/schema-with-diagonal-retrosynthetic-arrow.smarts',
@@ -421,19 +341,12 @@ test.describe('Loading SMARTS files', () => {
       'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       page,
     );
-    const expectedFile = await getSmarts(page);
-    await saveToFile(
-      'SMARTS/schema-with-reverse-retrosynthetic-arrow-and-pluses.smarts',
-      expectedFile,
-    );
-    const { fileExpected: smartsFileExpected, file: smartsFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SMARTS/schema-with-reverse-retrosynthetic-arrow-and-pluses.smarts',
-      });
 
-    expect(smartsFile).toEqual(smartsFileExpected);
+    await verifyFileExport(
+      page,
+      'SMARTS/schema-with-reverse-retrosynthetic-arrow-and-pluses.smarts',
+      FileType.SMARTS,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'SMARTS/schema-with-reverse-retrosynthetic-arrow-and-pluses.smarts',

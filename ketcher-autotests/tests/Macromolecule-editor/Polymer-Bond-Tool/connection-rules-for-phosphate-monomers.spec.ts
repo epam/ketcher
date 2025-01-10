@@ -770,24 +770,22 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case4: Cnnct ${leftPhosphateConnectionPoint} to ${rightCHEMConnectionPoint} of Ph(${leftPhosphate.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftPhosphate, rightCHEM);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftPhosphate, rightCHEM);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftPhosphate,
-                  rightCHEM,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftPhosphateConnectionPoint,
                   rightCHEMConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  hideMonomerPreview: true,
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );

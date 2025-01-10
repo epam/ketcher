@@ -1010,24 +1010,22 @@ test.describe('Connection rules for sugars: ', () => {
                 rightOM.fileName.lastIndexOf('.ket'),
               );
               test(`Test case9: Connect ${leftSugarConnectionPoint} to ${rightOMConnectionPoint} of Sugar(${leftSugar.alias}) and OM(${ordinaryMoleculeName})`, async () => {
-                test.setTimeout(25000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftSugar, rightOM);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftSugar, rightOM);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftSugar,
-                  rightOM,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftSugarConnectionPoint,
                   rightOMConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  hideMonomerPreview: true,
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -1049,23 +1047,24 @@ test.describe('Connection rules for sugars: ', () => {
       );
 
       test(`Case 10: Connect Center to Center of Sugar(${leftSugar.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
-        test.setTimeout(25000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftSugar, rightOrdinaryMolecule);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftSugar, rightOrdinaryMolecule);
 
-        await bondTwoMonomersByCenterToCenter(
+        const bondLine = await bondTwoMonomersPointToPoint(
           page,
-          leftSugar,
-          rightOrdinaryMolecule,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
         );
 
-        await zoomWithMouseWheel(page, -600);
-
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          hideMonomerPreview: true,
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });

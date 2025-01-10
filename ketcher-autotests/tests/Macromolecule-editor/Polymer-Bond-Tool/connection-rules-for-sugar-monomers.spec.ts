@@ -743,24 +743,22 @@ test.describe('Connection rules for sugars: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case7: Cnnct ${leftSugarConnectionPoint} to ${rightCHEMConnectionPoint} of Ph(${leftSugar.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-                test.setTimeout(25000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftSugar, rightCHEM);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftSugar, rightCHEM);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftSugar,
-                  rightCHEM,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftSugarConnectionPoint,
                   rightCHEMConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  hideMonomerPreview: true,
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );

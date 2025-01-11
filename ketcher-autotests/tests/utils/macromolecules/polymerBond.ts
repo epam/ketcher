@@ -57,7 +57,7 @@ async function getMinFreeConnectionPoint(
         return match && attr.value === 'false' ? Number(match[1]) : null;
       })
       // Remove null
-      .filter((index) => index !== null);
+      .filter((index): index is number => index !== null);
 
     // Return the minimum index if attributes are found, or null
     return falseAttributes.length > 0 ? Math.min(...falseAttributes) : null;

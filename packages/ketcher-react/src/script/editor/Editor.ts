@@ -566,6 +566,12 @@ class Editor implements KetcherEditor {
   }
 
   undo() {
+    KetcherLogger.log(
+      'Editor.undo(), start, ',
+      this.historyPtr,
+      this.historyStack,
+    );
+
     const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty');
@@ -591,9 +597,17 @@ class Editor implements KetcherEditor {
     }
 
     this.render.update();
+
+    KetcherLogger.log('Editor.undo(), end');
   }
 
   redo() {
+    KetcherLogger.log(
+      'Editor.redo(), start, ',
+      this.historyPtr,
+      this.historyStack,
+    );
+
     const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
     if (this.historyPtr === this.historyStack.length) {
       throw new Error('Redo stack is empty');
@@ -605,9 +619,14 @@ class Editor implements KetcherEditor {
 
     this.selection(null);
 
-    const action = this.historyStack[this.historyPtr].perform(this.render.ctab);
-    this.historyStack[this.historyPtr] = action;
-    this.historyPtr++;
+    const stack = this.historyStack[this.historyPtr];
+    let action!: Action;
+    try {
+      action = stack.perform(this.render.ctab);
+    } finally {
+      this.historyStack[this.historyPtr] = action;
+      this.historyPtr++;
+    }
 
     if (this._tool instanceof toolsMap.paste) {
       this.event.change.dispatch(); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
@@ -618,6 +637,8 @@ class Editor implements KetcherEditor {
     }
 
     this.render.update();
+
+    KetcherLogger.log('Editor.redo(), end');
   }
 
   subscribe(eventName: any, handler: any) {

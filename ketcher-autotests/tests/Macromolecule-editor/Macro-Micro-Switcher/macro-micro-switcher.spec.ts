@@ -52,7 +52,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   getSdf,
   openFile,
-  getCdxml,
   getCml,
   clickOnFileFormatDropdown,
   takeTopToolbarScreenshot,
@@ -1758,20 +1757,13 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
 
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
     await openCdxmlFile(page);
     await takeEditorScreenshot(page);
   });

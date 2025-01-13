@@ -2,6 +2,7 @@ import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollectio
 import { SequenceNodeRendererFactory } from 'application/render/renderers/sequence/SequenceNodeRendererFactory';
 import {
   BaseMonomer,
+  HydrogenBond,
   MonomerToAtomBond,
   Nucleotide,
   Phosphate,
@@ -108,6 +109,7 @@ export class SequenceRenderer {
     const isEditMode = CoreEditor.provideEditorInstance().isSequenceEditMode;
     const isEditInRnaBuilderMode =
       CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+    const handledNodes = new Set<SubChainNode>();
 
     if (isEditMode) {
       chainsCollection.chains.forEach((chain) => {
@@ -132,33 +134,89 @@ export class SequenceRenderer {
     }
 
     chainsCollection.chains.forEach((chain, chainIndex) => {
+      const { antisenseChainsStartIndexes, antisenseChainsStartIndexesMap } =
+        chainsCollection.getAntisenseChainsWithData(chain);
+      const antisenseNodesToIndexesMap = new Map<
+        number,
+        { node: SubChainNode; chain: Chain }
+      >();
+
+      antisenseChainsStartIndexesMap.forEach(
+        (chainWithData, firstNodeIndex) => {
+          chainWithData.complimentaryChain.nodes.forEach((node, index) => {
+            antisenseNodesToIndexesMap.set(firstNodeIndex + index, {
+              node,
+              chain: chainWithData.complimentaryChain,
+            });
+          });
+        },
+      );
+
       currentMonomerIndexInChain = 0;
-      chain.subChains.forEach((subChain) => {
-        subChain.nodes.forEach((node) => {
-          const renderer = SequenceNodeRendererFactory.fromNode(
-            node,
-            currentChainStartPosition,
+
+      for (
+        let nodeIndex = Math.min(0, ...antisenseChainsStartIndexes);
+        nodeIndex < chain.length;
+        nodeIndex++
+      ) {
+        const antisenseNodeWithData = antisenseNodesToIndexesMap.get(nodeIndex);
+        const node = chain.nodes[nodeIndex];
+
+        if (handledNodes.has(node)) {
+          continue;
+        }
+
+        let antisenseNodeRenderer: BaseSequenceItemRenderer | undefined;
+
+        if (antisenseNodeWithData) {
+          antisenseNodeRenderer = SequenceNodeRendererFactory.fromNode(
+            antisenseNodeWithData.node,
+            currentChainStartPosition.add(new Vec2(0, 30)),
             currentMonomerIndexInChain,
             currentMonomerIndexInChain + 1 + (isEditMode ? 1 : 0) ===
-              chain.subChains.reduce(
-                (prev, curr) => prev + curr.nodes.length,
-                0,
-              ),
-            subChain,
+              antisenseNodeWithData.chain.length,
+            antisenseNodeWithData.chain,
             currentMonomerIndexOverall === SequenceRenderer.caretPosition,
-            node.monomer.renderer,
+            antisenseNodeWithData.node.monomer.renderer,
           );
-          renderer.show();
-          node.monomers?.forEach((monomer) => monomer.setRenderer(renderer));
-          currentMonomerIndexInChain++;
-          currentMonomerIndexOverall++;
 
-          if (node instanceof EmptySequenceNode) {
-            SequenceRenderer.emptySequenceItemRenderers.push(renderer);
-            node.setRenderer(renderer);
-          }
-        });
-      });
+          antisenseNodeRenderer.show();
+          antisenseNodeWithData.node.monomers?.forEach((monomer) =>
+            monomer.setRenderer(
+              antisenseNodeRenderer as BaseSequenceItemRenderer,
+            ),
+          );
+          handledNodes.add(antisenseNodeWithData.node);
+        }
+
+        const renderer = SequenceNodeRendererFactory.fromNode(
+          node,
+          currentChainStartPosition,
+          currentMonomerIndexInChain,
+          currentMonomerIndexInChain + 1 + (isEditMode ? 1 : 0) ===
+            chain.length,
+          chain,
+          currentMonomerIndexOverall === SequenceRenderer.caretPosition,
+          node.monomer.renderer,
+        );
+
+        renderer.show();
+        node.monomers?.forEach((monomer) => monomer.setRenderer(renderer));
+        currentMonomerIndexInChain++;
+        currentMonomerIndexOverall++;
+        handledNodes.add(node);
+
+        if (antisenseNodeRenderer) {
+          renderer.setAntisenseNodeRenderer(antisenseNodeRenderer);
+        }
+
+        if (node instanceof EmptySequenceNode) {
+          SequenceRenderer.emptySequenceItemRenderers.push(
+            renderer as EmptySequenceItemRenderer,
+          );
+          node.setRenderer(renderer);
+        }
+      }
 
       currentChainStartPosition = SequenceRenderer.getNextChainPosition(
         currentChainStartPosition,
@@ -212,6 +270,17 @@ export class SequenceRenderer {
             }
 
             monomer.forEachBond((polymerBond, attachmentPointName) => {
+              if (polymerBond instanceof HydrogenBond) {
+                const bondRenderer = new PolymerBondSequenceRenderer(
+                  polymerBond,
+                );
+
+                bondRenderer.show();
+                polymerBond.setRenderer(bondRenderer);
+
+                return;
+              }
+
               const handledAttachmentPoints =
                 handledMonomersToAttachmentPoints.get(
                   monomer,
@@ -318,6 +387,10 @@ export class SequenceRenderer {
       assert(oldSubChainNode.renderer instanceof BaseSequenceItemRenderer);
       oldSubChainNode.renderer.isEditingSymbol = false;
       oldSubChainNode.renderer?.removeCaret();
+      if (oldSubChainNode.renderer.antisenseNodeRenderer) {
+        oldSubChainNode.renderer.antisenseNodeRenderer.isEditingSymbol = false;
+        oldSubChainNode.renderer.antisenseNodeRenderer?.removeCaret();
+      }
     }
     SequenceRenderer.caretPosition = caretPosition;
     const subChainNode = SequenceRenderer.currentEdittingNode;
@@ -329,6 +402,10 @@ export class SequenceRenderer {
     assert(subChainNode.renderer instanceof BaseSequenceItemRenderer);
     subChainNode.renderer.isEditingSymbol = true;
     subChainNode.renderer?.showCaret();
+    if (subChainNode.renderer.antisenseNodeRenderer) {
+      subChainNode.renderer.antisenseNodeRenderer.isEditingSymbol = true;
+      subChainNode.renderer.antisenseNodeRenderer.showCaret();
+    }
   }
 
   public static forEachNode(

@@ -13,6 +13,7 @@ import {
   EmptySequenceNode,
   LinkerSequenceNode,
   AmbiguousMonomer,
+  PolymerBond,
 } from 'domain/entities';
 import {
   getNextMonomerInChain,
@@ -221,5 +222,11 @@ export class Chain {
       (monomers: BaseMonomer[], node) => [...monomers, ...node.monomers],
       [],
     );
+  }
+
+  public get bonds() {
+    return this.subChains.reduce((bonds: PolymerBond[], subChain) => {
+      return [...bonds, ...subChain.bonds];
+    }, []);
   }
 }

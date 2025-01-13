@@ -171,7 +171,7 @@ class SelectRectangle implements BaseTool {
           drawingEntities,
         ));
     } else if (renderer instanceof BaseSequenceItemRenderer && ModKey) {
-      let drawingEntities: DrawingEntity[] = renderer.currentSubChain.nodes
+      let drawingEntities: DrawingEntity[] = renderer.currentChain.nodes
         .map((node) => {
           if (node instanceof Nucleoside || node instanceof Nucleotide) {
             return node.monomers;
@@ -181,7 +181,7 @@ class SelectRectangle implements BaseTool {
         })
         .flat();
       drawingEntities.forEach((entity) => entity.turnOnSelection());
-      const bondsInsideCurrentChain = renderer.currentSubChain.bonds.filter(
+      const bondsInsideCurrentChain = renderer.currentChain.bonds.filter(
         (bond) => bond.firstMonomer.selected && bond.secondMonomer?.selected,
       );
       drawingEntities = drawingEntities.concat(bondsInsideCurrentChain);

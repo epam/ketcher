@@ -23,9 +23,9 @@ import {
   UnsplitNucleotideSequenceItemRenderer,
 } from 'application/render';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
-import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { AmbiguousSequenceItemRenderer } from 'application/render/renderers/sequence/AmbiguousSequenceItemRenderer';
+import { Chain } from 'domain/entities/monomer-chains/Chain';
 
 export class SequenceNodeRendererFactory {
   static fromNode(
@@ -33,10 +33,10 @@ export class SequenceNodeRendererFactory {
     firstMonomerInChainPosition: Vec2,
     monomerIndexInChain: number,
     isLastMonomerInChain: boolean,
-    subChain: BaseSubChain,
+    chain: Chain,
     isEditingSymbol: boolean,
     renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer,
-  ) {
+  ): BaseSequenceItemRenderer {
     let RendererClass;
 
     switch (node.constructor) {
@@ -83,7 +83,7 @@ export class SequenceNodeRendererFactory {
       firstMonomerInChainPosition,
       monomerIndexInChain,
       isLastMonomerInChain,
-      subChain,
+      chain,
       isEditingSymbol,
       renderer?.monomerSize,
       renderer?.scaledMonomerPosition,

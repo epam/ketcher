@@ -213,7 +213,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     );
   }
 
-  public setRenderer(renderer: BaseMonomerRenderer) {
+  public setRenderer(renderer: BaseMonomerRenderer | BaseSequenceItemRenderer) {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;
   }

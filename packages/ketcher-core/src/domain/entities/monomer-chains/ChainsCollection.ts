@@ -23,6 +23,7 @@ import {
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
+import { isNumber } from 'lodash';
 
 export interface ComplimentaryChainsWithData {
   complimentaryChain: Chain;
@@ -460,5 +461,46 @@ export class ChainsCollection {
     });
 
     return complimentaryChainsWithData;
+  }
+
+  public getAntisenseChainsWithData(chain: Chain) {
+    const complimentaryChainsWithData =
+      this.getComplimentaryChainsWithData(chain);
+    const antisenseChainsWithData = complimentaryChainsWithData.filter(
+      (complimentaryChainWithData) =>
+        complimentaryChainWithData.complimentaryChain.firstMonomer?.monomerItem
+          .isAntisense,
+    );
+    const antisenseChainsStartIndexes = antisenseChainsWithData.map(
+      (antisenseChainWithData) => {
+        const firstConnectedAntisenseNodeIndex =
+          antisenseChainWithData.complimentaryChain.nodes.findIndex((node) => {
+            return (
+              node === antisenseChainWithData.firstConnectedComplimentaryNode
+            );
+          });
+        const senseNodeIndex = chain.nodes.indexOf(
+          antisenseChainWithData.firstConnectedNode,
+        );
+
+        if (!isNumber(senseNodeIndex)) {
+          return -1;
+        }
+
+        return senseNodeIndex - firstConnectedAntisenseNodeIndex;
+      },
+    );
+    const antisenseChainsStartIndexesMap = new Map(
+      antisenseChainsStartIndexes.map((antisenseChainsStartIndex, index) => [
+        antisenseChainsStartIndex,
+        antisenseChainsWithData[index],
+      ]),
+    );
+
+    return {
+      antisenseChainsWithData,
+      antisenseChainsStartIndexes,
+      antisenseChainsStartIndexesMap,
+    };
   }
 }

@@ -189,10 +189,15 @@ async function bondTwoMonomersByCenterToCenter(
     .getByText(leftMonomer.alias, { exact: true })
     .locator('..')
     .first();
-  const monomerId = leftMonomerLocator.getAttribute('data-monomerid');
 
+  let monomerId = await leftMonomerLocator.getAttribute('data-monomerid');
+  if (monomerId === null) {
+    monomerId = await leftMonomerLocator
+      .locator('..')
+      .getAttribute('data-monomerid');
+  }
   leftMonomerLocator = page.locator(
-    `[data-testid="monomer"][data-monomerid=${monomerId}]`,
+    `[data-testid="monomer"][data-monomerid="${monomerId}"]`,
   );
 
   let rightMonomerLocator =
@@ -214,7 +219,7 @@ async function bondTwoMonomersByCenterToCenter(
   if (rightMonomer.monomerType === 'atom') {
     const atomId = await rightMonomerLocator.getAttribute('data-atomid');
     rightMonomerLocator = page.locator(
-      `[data-testid="atom"][data-atomid=${atomId}]`,
+      `[data-testid="atom"][data-atomid="${atomId}"]`,
     );
   }
 

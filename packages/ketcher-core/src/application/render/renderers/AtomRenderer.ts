@@ -1,7 +1,7 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { CoreEditor, ZoomTool } from 'application/editor';
+import { CoreEditor } from 'application/editor';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
@@ -73,20 +73,16 @@ export class AtomRenderer extends BaseRenderer {
         .attr('cx', 0)
         .attr('cy', 0);
     } else {
-      const labelBbox = this.textElement?.node()?.getBoundingClientRect();
+      const labelBbox = this.textElement?.node()?.getBBox();
       const labelX = labelBbox?.x || 0;
       const labelWidth = labelBbox?.width || 8;
       const labelHeight = labelBbox?.height || 8;
-      const canvasBoundingClientRect = ZoomTool.instance.canvasWrapper
-        .node()
-        ?.getBoundingClientRect();
-      const canvasX = canvasBoundingClientRect?.x || 0;
       const HOVER_PADDING = 4;
       const HOVER_RECTANGLE_RADIUS = 10;
 
       return this.rootElement
         ?.insert('rect', ':first-child')
-        .attr('x', labelX - this.scaledPosition.x - canvasX - HOVER_PADDING)
+        .attr('x', labelX - HOVER_PADDING)
         .attr('y', -(labelHeight / 2 + HOVER_PADDING))
         .attr('width', labelWidth + HOVER_PADDING * 2)
         .attr('height', labelHeight + HOVER_PADDING * 2)

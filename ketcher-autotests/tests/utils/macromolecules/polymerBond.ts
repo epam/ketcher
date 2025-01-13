@@ -337,14 +337,27 @@ export async function bondTwoMonomersPointToPoint(
     secondMonomerConnectionPoint = rightMonomerConnectionPoint;
   }
 
-  const bondLocator = await getBondLocator(page, {
-    fromMonomerId:
-      (await firstMonomer.getAttribute('data-monomerid')) || undefined,
-    toMonomerId:
-      (await secondMonomer.getAttribute('data-monomerid')) || undefined,
-    fromConnectionPoint: firstMonomerConnectionPoint,
-    toConnectionPoint: secondMonomerConnectionPoint,
-  });
+  const monomerOrAtom = await secondMonomer.getAttribute('data-testid');
+
+  let bondLocator: Locator = page.locator('');
+  if (monomerOrAtom === 'monomer') {
+    bondLocator = await getBondLocator(page, {
+      fromMonomerId:
+        (await firstMonomer.getAttribute('data-monomerid')) || undefined,
+      toMonomerId:
+        (await secondMonomer.getAttribute('data-monomerid')) || undefined,
+      fromConnectionPoint: firstMonomerConnectionPoint,
+      toConnectionPoint: secondMonomerConnectionPoint,
+    });
+  } else if (monomerOrAtom === 'atom') {
+    bondLocator = await getBondLocator(page, {
+      fromMonomerId:
+        (await firstMonomer.getAttribute('data-monomerid')) || undefined,
+      toAtomId: (await secondMonomer.getAttribute('data-atomid')) || undefined,
+      fromConnectionPoint: firstMonomerConnectionPoint,
+      toConnectionPoint: secondMonomerConnectionPoint,
+    });
+  }
 
   return bondLocator;
 }
@@ -540,6 +553,7 @@ export async function getBondLocator(
     bondid,
     fromMonomerId,
     toMonomerId,
+    toAtomId,
     fromConnectionPoint,
     toConnectionPoint,
   }: {
@@ -547,6 +561,7 @@ export async function getBondLocator(
     bondid?: string | number;
     fromMonomerId?: string | number;
     toMonomerId?: string | number;
+    toAtomId?: string | number;
     fromConnectionPoint?: string;
     toConnectionPoint?: string;
   },
@@ -559,6 +574,7 @@ export async function getBondLocator(
   if (bondid) attributes['data-bondid'] = String(bondid);
   if (fromMonomerId) attributes['data-frommonomerid'] = String(fromMonomerId);
   if (toMonomerId) attributes['data-tomonomerid'] = String(toMonomerId);
+  if (toAtomId) attributes['data-toatomid'] = String(toAtomId);
   if (fromConnectionPoint) {
     attributes['data-fromconnectionpoint'] = fromConnectionPoint;
   }

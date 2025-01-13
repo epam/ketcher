@@ -92,7 +92,6 @@ import {
   RnaDnaNaturalAnaloguesEnum,
   StandardAmbiguousRnaBase,
 } from 'domain/constants/monomers';
-import { isNumber } from 'lodash';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = 30;
@@ -1645,43 +1644,8 @@ export class DrawingEntitiesManager {
           return;
         }
 
-        const complimentaryChainsWithData =
-          chainsCollection.getComplimentaryChainsWithData(chain);
-        const antisenseChainsWithData = complimentaryChainsWithData.filter(
-          (complimentaryChainWithData) =>
-            complimentaryChainWithData.complimentaryChain.firstMonomer
-              ?.monomerItem.isAntisense,
-        );
-        const antisenseChainsStartIndexes = antisenseChainsWithData.map(
-          (antisenseChainWithData) => {
-            const firstConnectedAntisenseNodeIndex =
-              antisenseChainWithData.complimentaryChain.nodes.findIndex(
-                (node) => {
-                  return (
-                    node ===
-                    antisenseChainWithData.firstConnectedComplimentaryNode
-                  );
-                },
-              );
-            const senseNodeIndex = chain.nodes.indexOf(
-              antisenseChainWithData.firstConnectedNode,
-            );
-
-            if (!isNumber(senseNodeIndex)) {
-              return -1;
-            }
-
-            return senseNodeIndex - firstConnectedAntisenseNodeIndex;
-          },
-        );
-        const antisenseChainsStartIndexesMap = new Map(
-          antisenseChainsStartIndexes.map(
-            (antisenseChainsStartIndex, index) => [
-              antisenseChainsStartIndex,
-              antisenseChainsWithData[index],
-            ],
-          ),
-        );
+        const { antisenseChainsStartIndexes, antisenseChainsStartIndexesMap } =
+          chainsCollection.getAntisenseChainsWithData(chain);
 
         let restOfRowsWithAntisense = 0;
         let isPreviousChainWithAntisense = false;

@@ -2,12 +2,12 @@ import { D3SvgElementSelection } from 'application/render/types';
 import { Vec2 } from 'domain/entities';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
-import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { CoreEditor } from 'application/editor/internal';
 import { EmptySequenceNode } from 'domain/entities/EmptySequenceNode';
 import { editorEvents } from 'application/editor/editorEvents';
 import assert from 'assert';
 import { SequenceRenderer } from 'application/render';
+import { Chain } from 'domain/entities/monomer-chains/Chain';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
@@ -18,14 +18,18 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   private selectionRectangle?: D3SvgElementSelection<SVGRectElement, void>;
   public spacerElement?: D3SvgElementSelection<SVGGElement, void>;
   public backgroundElement?: D3SvgElementSelection<SVGRectElement, void>;
-  public caretElement?: D3SvgElementSelection<SVGLineElement, void>;
+  public caretElement?:
+    | D3SvgElementSelection<SVGLineElement, void>
+    | D3SvgElementSelection<SVGGElement, void>;
+
+  public antisenseNodeRenderer?: this | undefined;
 
   constructor(
     public node: SubChainNode,
     private firstNodeInChainPosition: Vec2,
     private monomerIndexInChain: number,
     private isLastMonomerInChain: boolean,
-    private subChain: BaseSubChain,
+    private chain: Chain,
     private _isEditingSymbol: boolean,
     public monomerSize: { width: number; height: number },
     public scaledMonomerPosition: Vec2,
@@ -60,8 +64,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   protected appendHoverAreaElement(): void {}
   moveSelection(): void {}
 
-  public get currentSubChain() {
-    return this.subChain;
+  public get currentChain() {
+    return this.chain;
   }
 
   public get scaledMonomerPositionForSequence() {
@@ -72,7 +76,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       this.firstNodeInChainPosition.x +
         indexInRow * 20 +
         Math.floor(indexInRow / this.nthSeparationInRow) * 10,
-      this.firstNodeInChainPosition.y + 47 * rowIndex,
+      this.firstNodeInChainPosition.y + 100 * rowIndex,
     );
   }
 
@@ -158,7 +162,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return rootElement
       .append('text')
       .attr('x', '2')
-      .attr('y', '-24')
+      .attr('y', this.node.monomer.monomerItem.isAntisense ? '24' : '-24')
       .text(this.monomerIndexInChain + 1)
       .attr('font-family', 'Courier New')
       .attr('font-size', '12px')
@@ -180,14 +184,36 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public showCaret() {
-    this.caretElement = this.spacerElement
-      ?.append('line')
-      .attr('x1', -17)
-      .attr('y1', -1)
-      .attr('x2', -17)
-      .attr('y2', 21)
-      .attr('stroke', '#333')
-      .attr('class', 'blinking');
+    if (this.node.monomer.monomerItem.isAntisense) {
+      this.caretElement = this.spacerElement?.append('g');
+      this.caretElement
+        ?.append('path')
+        .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')
+        .attr('fill', '#7C7C7F')
+        .attr(
+          'transform',
+          `translate(
+          ${-21},
+          ${20}
+          )`,
+        )
+        .attr('stroke', '#7C7C7F');
+      this.caretElement
+        ?.append('path')
+        .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')
+        .attr('fill', '#7C7C7F')
+        .attr('transform', 'translate(-12 -34) rotate(180)')
+        .attr('stroke', '#7C7C7F');
+    } else {
+      this.caretElement = this.spacerElement
+        ?.append('line')
+        .attr('x1', -17)
+        .attr('y1', -1)
+        .attr('x2', -17)
+        .attr('y2', 21)
+        .attr('stroke', '#333')
+        .attr('class', 'blinking');
+    }
   }
 
   public removeCaret() {
@@ -394,5 +420,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.backgroundElement?.on('mouseleave', () => {
       this.removeBackgroundElementHover();
     });
+  }
+
+  public setAntisenseNodeRenderer(antisenseNodeRenderer: this) {
+    this.antisenseNodeRenderer = antisenseNodeRenderer;
   }
 }

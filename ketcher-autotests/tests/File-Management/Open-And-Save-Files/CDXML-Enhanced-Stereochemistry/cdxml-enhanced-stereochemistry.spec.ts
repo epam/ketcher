@@ -156,7 +156,7 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
 
     await verifyFileExport(
       page,
-      'CDXML/mixed-stereo-marks.cdxml',
+      'CDXML/mixed-stereo-marks-expected.cdxml',
       FileType.CDXML,
     );
   });

@@ -8,11 +8,18 @@ import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { isNumber } from 'lodash';
 import { MonomerToAtomBond } from './MonomerToAtomBond';
 
+export enum AtomRadical {
+  None,
+  Single,
+  Doublet,
+  Triplet,
+}
+
 export interface AtomProperties {
   charge?: number | null;
   explicitValence?: number;
   isotope?: number | null;
-  radical?: number;
+  radical?: AtomRadical;
   alias?: string | null;
 }
 export class Atom extends DrawingEntity {
@@ -86,6 +93,10 @@ export class Atom extends DrawingEntity {
     return connectionsAmount;
   }
 
+  public get hasAlias() {
+    return Boolean(this.properties.alias);
+  }
+
   public get hasRadical() {
     return isNumber(this.properties.radical) && this.properties.radical !== 0;
   }
@@ -105,14 +116,108 @@ export class Atom extends DrawingEntity {
     return isNumber(this.properties.isotope) && this.properties.isotope >= 0;
   }
 
+  private get radicalAmount() {
+    switch (this.properties.radical) {
+      case AtomRadical.Single:
+      case AtomRadical.Triplet:
+        return 2;
+      case AtomRadical.Doublet:
+        return 1;
+      default:
+        return 0;
+    }
+  }
+
+  private get valenceWithoutHydrogen() {
+    const charge = this.properties.charge || 0;
+    const label = this.label;
+    const element = Elements.get(this.label);
+    // if (!element) {
+    //   // query atom, skip
+    //   this.implicitH = 0;
+    //   return 0;
+    // }
+
+    const elementGroupNumber = element?.group;
+    const radicalAmount = this.radicalAmount;
+    const connectionAmount = this.calculateConnections();
+    const absoluteCharge = Math.abs(charge);
+
+    if (elementGroupNumber === 3) {
+      if (
+        label === AtomLabel.B ||
+        label === AtomLabel.Al ||
+        label === AtomLabel.Ga ||
+        label === AtomLabel.In
+      ) {
+        if (charge === -1) {
+          if (radicalAmount + connectionAmount <= 4) {
+            return radicalAmount + connectionAmount;
+          }
+        }
+      }
+    } else if (elementGroupNumber === 5) {
+      if (label === AtomLabel.N || label === AtomLabel.P) {
+        if (charge === 1 || charge === 2) {
+          return radicalAmount + connectionAmount;
+        }
+      } else if (
+        label === AtomLabel.Sb ||
+        label === AtomLabel.Bi ||
+        label === AtomLabel.As
+      ) {
+        if (charge === 1 || charge === 2) {
+          return radicalAmount + connectionAmount;
+        }
+      }
+    } else if (elementGroupNumber === 6) {
+      if (label === AtomLabel.O) {
+        if (charge >= 1) {
+          return radicalAmount + connectionAmount;
+        }
+      } else if (
+        label === AtomLabel.S ||
+        label === AtomLabel.Se ||
+        label === AtomLabel.Po
+      ) {
+        if (charge === 1) {
+          return radicalAmount + connectionAmount;
+        }
+      }
+    } else if (elementGroupNumber === 7) {
+      if (
+        label === AtomLabel.Cl ||
+        label === AtomLabel.Br ||
+        label === AtomLabel.I ||
+        label === AtomLabel.At
+      ) {
+        if (charge === 1) {
+          return radicalAmount + connectionAmount;
+        }
+      }
+    }
+
+    return radicalAmount + connectionAmount + absoluteCharge;
+  }
+
   calculateValence() {
+    if (this.hasExplicitValence) {
+      const valence = this.properties.explicitValence as number;
+      const hydrogenAmount = valence - this.valenceWithoutHydrogen;
+
+      return {
+        valence,
+        hydrogenAmount,
+      };
+    }
+
     const label = this.label;
     const element = Elements.get(label);
     const elementGroupNumber = element?.group;
     const connectionAmount = this.calculateConnections();
-    const radicalAmount = this.properties.radical || 0;
-    const absCharge = 0;
+    const radicalAmount = this.radicalAmount;
     const charge = this.properties.charge || 0;
+    const absCharge = Math.abs(charge);
     let valence = connectionAmount;
     let hydrogenAmount = 0;
 
@@ -358,6 +463,7 @@ export class Atom extends DrawingEntity {
       if (connectionAmount + radicalAmount + absCharge === 0) valence = 1;
       else hydrogenAmount = -1;
     }
+
     // if (Atom.isHeteroAtom(label) && this.implicitHCount !== null) {
     //   hydrogenAmount = this.implicitHCount;
     // }

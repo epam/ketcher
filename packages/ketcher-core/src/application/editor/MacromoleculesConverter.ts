@@ -294,6 +294,11 @@ export class MacromoleculesConverter {
       reStruct?.bonds.set(bondId, new ReBond(bond));
     });
 
+    struct.findConnectedComponents();
+    struct.setImplicitHydrogen();
+    struct.setStereoLabelsToAtoms();
+    struct.markFragments();
+
     return { struct, reStruct, conversionErrorMessage };
   }
 

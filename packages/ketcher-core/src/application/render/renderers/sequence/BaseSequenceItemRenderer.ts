@@ -186,18 +186,18 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public showCaret() {
     if (this.node.monomer.monomerItem.isAntisense) {
       this.caretElement = this.spacerElement?.append('g');
-      // this.caretElement
-      //   ?.append('path')
-      //   .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')
-      //   .attr('fill', '#fff')
-      //   .attr(
-      //     'transform',
-      //     `translate(
-      //     ${-21},
-      //     ${18}
-      //     )`,
-      //   )
-      //   .attr('stroke', '#7C7C7F');
+      this.caretElement
+        ?.append('path')
+        .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')
+        .attr('fill', '#fff')
+        .attr(
+          'transform',
+          `translate(
+          ${-21},
+          ${18}
+          )`,
+        )
+        .attr('stroke', '#7C7C7F');
       this.caretElement
         ?.append('path')
         .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')

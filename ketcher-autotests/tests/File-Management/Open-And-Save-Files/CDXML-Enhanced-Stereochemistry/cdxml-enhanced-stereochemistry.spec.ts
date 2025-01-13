@@ -1,17 +1,18 @@
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   LeftPanelButton,
   pressButton,
   selectLeftPanelButton,
-  receiveFileComparisonData,
-  saveToFile,
   clickOnAtom,
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { getCdxml } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 async function selectRadioButtonForNewGroup(
   page: Page,
@@ -92,17 +93,12 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     All enhanced stereochemistry features are present after opening.
     */
     await openFileAndAddToCanvas('CDXML/stereo-and-structure.cdxml', page);
-    const expectedFile = await getCdxml(page);
-    await saveToFile('CDXML/stereo-and-structure-expected.cdxml', expectedFile);
 
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/stereo-and-structure-expected.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CDXML/stereo-and-structure-expected.cdxml',
+      FileType.CDXML,
+    );
   });
 
   test('OR stereo marks - Save as *.cdxml file', async ({ page }) => {
@@ -112,17 +108,12 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     All enhanced stereochemistry features are present after opening.
     */
     await openFileAndAddToCanvas('CDXML/stereo-or-structure.cdxml', page);
-    const expectedFile = await getCdxml(page);
-    await saveToFile('CDXML/stereo-or-structure-expected.cdxml', expectedFile);
 
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/stereo-or-structure-expected.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CDXML/stereo-or-structure-expected.cdxml',
+      FileType.CDXML,
+    );
   });
 
   test('Mixed AND stereo marks - Save as *.cdxml file', async ({ page }) => {
@@ -132,20 +123,12 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     All enhanced stereochemistry features are present after opening.
     */
     await openFileAndAddToCanvas('CDXML/mixed-and-stereo-marks.cdxml', page);
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/mixed-and-stereo-marks-expected.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/mixed-and-stereo-marks-expected.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
   });
 
   test('Mixed OR stereo marks - Save as *.cdxml file', async ({ page }) => {
@@ -155,20 +138,12 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     All enhanced stereochemistry features are present after opening.
     */
     await openFileAndAddToCanvas('CDXML/mixed-or-stereo-marks.cdxml', page);
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/mixed-or-stereo-marks-expected.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/mixed-or-stereo-marks-expected.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
   });
 
   test('Mixed stereo marks - Save as *.cdxml file', async ({ page }) => {
@@ -178,16 +153,11 @@ test.describe('CDXML Enhanced Stereochemistry', () => {
     All enhanced stereochemistry features are present after opening.
     */
     await openFileAndAddToCanvas('CDXML/mixed-stereo-marks.cdxml', page);
-    const expectedFile = await getCdxml(page);
-    await saveToFile('CDXML/mixed-stereo-marks-expected.cdxml', expectedFile);
 
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/mixed-stereo-marks-expected.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CDXML/mixed-stereo-marks.cdxml',
+      FileType.CDXML,
+    );
   });
 });

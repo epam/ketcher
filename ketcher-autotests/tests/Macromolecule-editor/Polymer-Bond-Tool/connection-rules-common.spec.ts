@@ -512,9 +512,7 @@ test.describe('Common connection rules: ', () => {
 
     await hoverMouseOverMonomer(page, 'C');
     await delay(1);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-    });
+    await takeEditorScreenshot(page);
   });
 
   test(`Check that Leaving groups (connection/attchment points) are displayed correctly in preview when switching to Micro mode`, async () => {

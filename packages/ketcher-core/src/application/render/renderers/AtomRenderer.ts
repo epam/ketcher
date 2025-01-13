@@ -31,6 +31,9 @@ export class AtomRenderer extends BaseRenderer {
       .insert('g', ':first-child')
       .data([this])
       .attr('pointer-events', 'all')
+      .attr('data-testid', 'atom')
+      .attr('data-atomalias', this.atom.label)
+      .attr('data-atomid', this.atom.id)
       .attr(
         'transform',
         `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,

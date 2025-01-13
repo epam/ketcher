@@ -185,12 +185,17 @@ async function bondTwoMonomersByCenterToCenter(
 ) {
   const canvasLocator = page.getByTestId('ketcher-canvas').first();
 
-  const leftMonomerLocator = canvasLocator
+  let leftMonomerLocator = canvasLocator
     .getByText(leftMonomer.alias, { exact: true })
     .locator('..')
     .first();
+  const monomerId = leftMonomerLocator.getAttribute('data-monomerid');
 
-  const rightMonomerLocator =
+  leftMonomerLocator = page.locator(
+    `[data-testid="monomer"][data-monomerid=${monomerId}]`,
+  );
+
+  let rightMonomerLocator =
     (await canvasLocator
       .getByText(leftMonomer.alias, { exact: true })
       .count()) > 1
@@ -203,6 +208,15 @@ async function bondTwoMonomersByCenterToCenter(
           .getByText(rightMonomer.alias, { exact: true })
           .locator('..')
           .first();
+
+  // atom has alias that depend on attached bond - it could be "BrH" if no bonds and "Br" if one bond attached,
+  // this is why we have to false exact for atoms
+  if (rightMonomer.monomerType === 'atom') {
+    const atomId = await rightMonomerLocator.getAttribute('data-atomid');
+    rightMonomerLocator = page.locator(
+      `[data-testid="atom"][data-atomid=${atomId}]`,
+    );
+  }
 
   await bondTwoMonomersPointToPoint(
     page,

@@ -106,10 +106,10 @@ export enum Peptides {
 }
 
 export enum Sugars {
-  TwelveddR = "12ddR___1',2'-dideoxyribose",
-  TwentyFiveR = '25R___Ribose (2,5 connectivity)',
-  ThreeA6 = "3A6___6-amino-hexanol (3' end)",
-  ThreeSS6 = "3SS6___Thiol Modifier 6 S-S (3' end)",
+  _12ddR = "12ddR___1',2'-dideoxyribose",
+  _25R = '25R___Ribose (2,5 connectivity)',
+  _3A6 = "3A6___6-amino-hexanol (3' end)",
+  _3SS6 = "3SS6___Thiol Modifier 6 S-S (3' end)",
 }
 
 export async function selectSugar(sugarName: Sugars, page: Page) {

@@ -72,7 +72,7 @@ test.describe('Macromolecules custom presets', () => {
 
   test('Add new preset and duplicate it', async ({ page }) => {
     await selectRNAComponents(page, {
-      sugar: Sugars.TwentyFiveR,
+      sugar: Sugars._25R,
       base: Bases.baA,
       phosphate: 'bP___Boranophosphate',
     });
@@ -120,7 +120,7 @@ test.describe('Macromolecules custom presets', () => {
     await selectSugarSlot(page);
 
     // Click on <div> "25R ★"
-    await page.click(`[data-testid="${Sugars.TwentyFiveR}"]`);
+    await page.click(`[data-testid="${Sugars._25R}"]`);
 
     // Click on <div> "Base Not selected"
     await selectBaseSlot(page);

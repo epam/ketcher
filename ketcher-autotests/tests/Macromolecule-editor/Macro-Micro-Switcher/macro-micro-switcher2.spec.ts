@@ -56,7 +56,7 @@ async function addToFavoritesMonomers(page: Page) {
   await page.getByTestId('meM___N-Methyl-Methionine').getByText('★').click();
   await page.getByTestId('RNA-TAB').click();
   await page.getByTestId('summary-Sugars').click();
-  await page.getByTestId(Sugars.TwentyFiveR).getByText('★').click();
+  await page.getByTestId(Sugars._25R).getByText('★').click();
   await page.getByTestId('summary-Bases').click();
   await page.getByTestId(Bases.baA).getByText('★').click();
   await page.getByTestId('summary-Phosphates').click();

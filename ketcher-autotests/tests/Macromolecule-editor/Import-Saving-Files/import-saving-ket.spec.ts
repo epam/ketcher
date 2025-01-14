@@ -177,7 +177,7 @@ test.describe('Import-Saving .ket Files', () => {
     test.slow();
     await page.getByTestId('RNA-TAB').click();
     await page.getByTestId('summary-Sugars').click();
-    await page.getByTestId(Sugars.TwentyFiveR).click();
+    await page.getByTestId(Sugars._25R).click();
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/25R-expected.ket', FileType.KET);
   });

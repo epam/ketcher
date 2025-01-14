@@ -144,7 +144,7 @@ async function addToFavoritesMonomers(page: Page) {
   await page.getByTestId(Peptides.meM).getByText('★').click();
   await goToRNATab(page);
   await toggleSugarsAccordion(page);
-  await page.getByTestId(Sugars.TwentyFiveR).getByText('★').click();
+  await page.getByTestId(Sugars._25R).getByText('★').click();
   await toggleBasesAccordion(page);
   await page.getByTestId(Bases.baA).getByText('★').click();
   await togglePhosphatesAccordion(page);
@@ -1144,7 +1144,7 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: '25R',
-      monomerTestId: Sugars.TwentyFiveR,
+      monomerTestId: Sugars._25R,
       summaryTestId: 'summary-Sugars',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
@@ -1237,7 +1237,7 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: '25R',
-      monomerTestId: Sugars.TwentyFiveR,
+      monomerTestId: Sugars._25R,
       summaryTestId: 'summary-Sugars',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
@@ -1330,7 +1330,7 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: '25R',
-      monomerTestId: Sugars.TwentyFiveR,
+      monomerTestId: Sugars._25R,
       summaryTestId: 'summary-Sugars',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
@@ -1427,7 +1427,7 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: '25R',
-      monomerTestId: Sugars.TwentyFiveR,
+      monomerTestId: Sugars._25R,
       summaryTestId: 'summary-Sugars',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },

@@ -51,7 +51,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await page.getByTestId(SUGAR).click();
     // should see disabled and nondisabled sugars
     await takeMonomerLibraryScreenshot(page);
-    await page.getByTestId(Sugars.TwentyFiveR).click();
+    await page.getByTestId(Sugars._25R).click();
     await moveMouseAway(page);
     // should see updated sugar, updated title of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page);
@@ -79,7 +79,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await takeRNABuilderScreenshot(page);
     // Update Sugar
     await page.getByTestId(SUGAR).click();
-    await page.getByTestId(Sugars.TwentyFiveR).click();
+    await page.getByTestId(Sugars._25R).click();
     await moveMouseAway(page);
     // Update Phosphate
     await page.getByTestId(PHOSPHATE).click();
@@ -108,7 +108,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await takeRNABuilderScreenshot(page);
     // Update Sugar
     await page.getByTestId(SUGAR).click();
-    await page.getByTestId(Sugars.TwentyFiveR).click();
+    await page.getByTestId(Sugars._25R).click();
     await moveMouseAway(page);
     // Update Phosphate
     await page.getByTestId(PHOSPHATE).click();
@@ -127,7 +127,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await clickOnSequenceSymbol(page, 'T', { button: 'right' });
     await page.getByTestId('modify_in_rna_builder').click();
     await page.getByTestId(SUGAR).click();
-    await page.getByTestId(Sugars.TwentyFiveR).click();
+    await page.getByTestId(Sugars._25R).click();
     await moveMouseAway(page);
     // should see updated sugar, updated title of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page);
@@ -153,7 +153,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     // should see uploaded nucleotides data to RNA Builder and disabled "Update" button
     await takeRNABuilderScreenshot(page);
     await page.getByTestId(SUGAR).click();
-    await page.getByTestId(Sugars.TwentyFiveR).click();
+    await page.getByTestId(Sugars._25R).click();
     await moveMouseAway(page);
     await page.getByTestId(PHOSPHATE).click();
     await page.getByTestId('bP___Boranophosphate').click();
@@ -256,7 +256,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await clickOnSequenceSymbol(page, 'G', { button: 'right' });
     await page.getByTestId('modify_in_rna_builder').click();
     await selectSugarSlot(page);
-    await page.getByTestId(Sugars.ThreeA6).click();
+    await page.getByTestId(Sugars._3A6).click();
     await moveMouseAway(page);
     await selectBaseSlot(page);
     await page

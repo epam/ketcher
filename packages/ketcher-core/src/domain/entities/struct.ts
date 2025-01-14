@@ -156,7 +156,7 @@ export class Struct {
     multitailArrowsSet?: Pile<number> | null,
     bidMap?: Map<number, number> | null,
   ): Struct {
-    return this.mergeInto(
+    const cloneStruct = this.mergeInto(
       new Struct(),
       atomSet,
       bondSet,
@@ -170,6 +170,11 @@ export class Struct {
       multitailArrowsSet,
       bidMap,
     );
+    cloneStruct.findConnectedComponents();
+    cloneStruct.setImplicitHydrogen();
+    cloneStruct.setStereoLabelsToAtoms();
+    cloneStruct.markFragments();
+    return cloneStruct;
   }
 
   getScaffold(): Struct {

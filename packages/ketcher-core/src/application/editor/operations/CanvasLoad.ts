@@ -18,6 +18,7 @@ import { BaseOperation } from './base';
 import { OperationType } from './OperationType';
 import { ReStruct } from '../../render';
 import { Struct } from 'domain/entities';
+import { KetcherLogger } from 'utilities';
 
 export class CanvasLoad extends BaseOperation {
   data: {
@@ -30,13 +31,20 @@ export class CanvasLoad extends BaseOperation {
   }
 
   execute(restruct: ReStruct) {
-    const oldStruct = restruct.molecule;
+    KetcherLogger.log('CanvasLoad.execute(), start');
+    if (restruct.molecule === this.data.struct)
+      throw new Error(
+        `Unexpected data.struct loaded is equal to the restruct.molecule current`,
+      );
+
     restruct.clearVisels(); // TODO: What is it?
+    const oldStruct = restruct.molecule;
     if (this.data.struct) {
       restruct.render.setMolecule(this.data.struct, true);
     }
 
     this.data.struct = oldStruct;
+    KetcherLogger.log('CanvasLoad.execute(), end');
   }
 
   invert() {

@@ -293,7 +293,7 @@ class BondTool implements Tool {
           delete dragCtx.action;
         }
         this.restoreBondWhenHoveringOnCanvas(event);
-        this.editor.update(dragCtx.action, true);
+        if (dragCtx.action) this.editor.update(dragCtx.action, true);
         return true;
       }
     }

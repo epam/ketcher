@@ -13,19 +13,25 @@ import {
   toggleNucleotidesAccordion,
 } from './rnaBuilder';
 
-export async function goToRNATab(page: Page) {
+export async function goToFavoritesTab(page: Page) {
   await moveMouseAway(page);
   await page.getByTestId(FAVORITES_TAB).click();
-  await page.getByTestId(RNA_TAB).click();
-}
-export async function goToCHEMTab(page: Page) {
-  await page.getByTestId(CHEM_TAB).click();
 }
 
 export async function goToPeptidesTab(page: Page) {
   await moveMouseAway(page);
   await page.getByTestId(FAVORITES_TAB).click();
   await page.getByTestId(PEPTIDES_TAB).click();
+}
+
+export async function goToRNATab(page: Page) {
+  await moveMouseAway(page);
+  await page.getByTestId(FAVORITES_TAB).click();
+  await page.getByTestId(RNA_TAB).click();
+}
+
+export async function goToCHEMTab(page: Page) {
+  await page.getByTestId(CHEM_TAB).click();
 }
 
 export enum MonomerLocationTabs {

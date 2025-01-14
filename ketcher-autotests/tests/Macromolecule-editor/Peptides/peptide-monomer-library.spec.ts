@@ -14,13 +14,14 @@ import {
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { goToRNATab } from '@utils/macromolecules/library';
+import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
 import { Chems } from '@utils/selectors/macromoleculeEditor';
 
 test.describe('Peptide library testing', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
+    await goToPeptidesTab(page);
   });
 
   test('Monomer library', async ({ page }) => {

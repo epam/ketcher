@@ -313,7 +313,7 @@ class Editor implements KetcherEditor {
 
   // this is used by API addFragment method
   structToAddFragment(value: Struct): Struct {
-    const superStruct = value.mergeInto(this.render.ctab.molecule);
+    const superStruct = value.mergeInto(this.render.ctab.molecule.clone());
 
     return this.renderAndRecoordinateStruct(superStruct);
   }

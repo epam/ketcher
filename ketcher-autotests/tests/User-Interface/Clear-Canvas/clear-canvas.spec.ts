@@ -97,20 +97,16 @@ test.describe('Clear canvas', () => {
     page,
   }) => {
     // Test case: EPMLSOPKET-1706
+    // Legend: h: ... is for Editor.historyStack, (*) is for Editor.historyPtr
     await openFileAndAddToCanvas('SMILES/chain-with-r-group.smi', page); // h: open (*)
     await clickInTheMiddleOfTheScreen(page);
-
-    // Clear & Undo
-    await selectTopPanelButton(TopPanelButton.Clear, page); //   // h: open, clear (*)
-    await pressUndoButton(page); // Undo TopPanelButton.Clear    // h: open (*), clear
-
-    // Clear & Undo
-    await selectClearCanvasTool(page); //                        // h: open, clear (*)
-    await pressUndoButton(page); // undo clear canvas            // h: open (*), clear
-
-    await pressUndoButton(page); // undo open file               // h: (*) open, clear
-    await pressRedoButton(page); // redo open file               // h: open (*), clear
-    await pressRedoButton(page); // redo clear canvas            // h: open, clear (*)
+    await selectTopPanelButton(TopPanelButton.Clear, page); //   // h:     open    , clear (*)
+    await pressUndoButton(page); //                              // h:     open (*), clear
+    await selectClearCanvasTool(page); //                        // h:     open    , clear (*)
+    await pressUndoButton(page); //                              // h:     open (*), clear
+    await pressUndoButton(page); // undo open file               // h: (*) open    , clear
+    await pressRedoButton(page); // redo open file               // h:     open (*), clear
+    await pressRedoButton(page); // redo clear canvas            // h:     open    , clear (*)
     await takeEditorScreenshot(page);
   });
   /* eslint-enable no-inline-comments */

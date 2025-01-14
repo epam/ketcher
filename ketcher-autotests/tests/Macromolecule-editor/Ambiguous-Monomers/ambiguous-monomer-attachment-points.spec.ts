@@ -357,7 +357,7 @@ test.describe('Monomer APs checks: ', () => {
       await selectMacroBond(page, MacroBondTool.SINGLE);
       await hoverMouseOverMonomer(page, ambiguousMonomer.monomerLocatorIndex);
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
 
       await zoomWithMouseWheel(page, 600);

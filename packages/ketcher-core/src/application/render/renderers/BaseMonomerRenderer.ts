@@ -319,7 +319,9 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         'data-monomertype',
         this.monomer instanceof AmbiguousMonomer
           ? AmbiguousMonomer.getMonomerClass(this.monomer.monomers)
-          : this.monomer.monomerItem.props.MonomerClass || '',
+          : (this.monomer.monomerItem.props.isMicromoleculeFragment
+              ? 'CHEM'
+              : this.monomer.monomerItem.props.MonomerClass) || '',
       )
       .attr('data-monomeralias', this.monomer.label)
       .attr('data-monomerid', this.monomer.id)

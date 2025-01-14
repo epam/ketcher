@@ -1,7 +1,13 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
-import { clickOnCanvas, moveMouseAway, selectMacroBond } from '..';
+import {
+  clickOnCanvas,
+  MacroBondType,
+  MonomerType,
+  moveMouseAway,
+  selectMacroBond,
+} from '..';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 export async function bondTwoMonomers(
@@ -34,19 +40,240 @@ export async function bondTwoMonomers(
   }
 }
 
+async function getMinFreeConnectionPoint(
+  monomer: Locator,
+): Promise<string | undefined> {
+  // Find the attribute with the minimum index that has a value of "false"
+  const minIndexWithFalse = await monomer.evaluate((el) => {
+    // Get all attributes of a monomer
+    const attributes = Array.from(el.attributes);
+
+    // Filter attributes that match the pattern "data-R<number>" and the value "false"
+    const falseAttributes = attributes
+      .map((attr) => {
+        // Checking the attribute name
+        const match = attr.name.match(/^data-R(\d+)$/);
+        // Check the value
+        return match && attr.value === 'false' ? Number(match[1]) : null;
+      })
+      // Remove null
+      .filter((index): index is number => index !== null);
+
+    // Return the minimum index if attributes are found, or null
+    return falseAttributes.length > 0 ? Math.min(...falseAttributes) : null;
+  });
+
+  if (minIndexWithFalse) {
+    return `R${minIndexWithFalse.toString()}`;
+  }
+  return undefined;
+}
+
+async function getAvailableConnectionPoints(
+  monomer: Locator,
+): Promise<string[]> {
+  // Get all attributes of an element
+  const attributes = await monomer.evaluate((element) => {
+    // Get all attributes of the data-Rn type
+    return Array.from(element.attributes)
+      .filter((attr) => attr.name.startsWith('data-R'))
+      .map((attr) => ({ name: attr.name, value: attr.value }));
+  });
+
+  // Filter attributes with the value "false" and remove the prefix "data-"
+  const falseAttributes = attributes
+    .filter((attr) => attr.value === 'false')
+    .map((attr) => attr.name.replace('data-', ''));
+
+  return falseAttributes;
+}
+
+async function chooseFreeConnectionPointsInDialogIfAppeared(
+  page: Page,
+  firstMonomer: Locator,
+  secondMonomer: Locator,
+  firstMonomerConnectionPoint?: string,
+  secondMonomerConnectionPoint?: string,
+): Promise<{
+  leftMonomerConnectionPoint: string | undefined;
+  rightMonomerConnectionPoint: string | undefined;
+}> {
+  if (await page.getByRole('dialog').isVisible()) {
+    if (!firstMonomerConnectionPoint) {
+      firstMonomerConnectionPoint = await getMinFreeConnectionPoint(
+        firstMonomer,
+      );
+    }
+    if (!secondMonomerConnectionPoint) {
+      secondMonomerConnectionPoint = await getMinFreeConnectionPoint(
+        secondMonomer,
+      );
+    }
+
+    if (firstMonomerConnectionPoint && secondMonomerConnectionPoint) {
+      await page.getByTitle(firstMonomerConnectionPoint).first().click();
+
+      (await page.getByTitle(secondMonomerConnectionPoint).count()) > 1
+        ? await page.getByTitle(secondMonomerConnectionPoint).nth(1).click()
+        : await page.getByTitle(secondMonomerConnectionPoint).first().click();
+    }
+
+    await page.getByTitle('Connect').first().click();
+
+    return {
+      leftMonomerConnectionPoint: firstMonomerConnectionPoint,
+      rightMonomerConnectionPoint: secondMonomerConnectionPoint,
+    };
+  }
+  const firstMonomerType = await firstMonomer.getAttribute('data-monomertype');
+  const secondMonomerType = await firstMonomer.getAttribute('data-monomertype');
+
+  const firstMonomerAvailableConnectionPoints =
+    await getAvailableConnectionPoints(firstMonomer);
+  const secondMonomerAvailableConnectionPoints =
+    await getAvailableConnectionPoints(secondMonomer);
+
+  if (!firstMonomerConnectionPoint && !secondMonomerConnectionPoint) {
+    if (
+      firstMonomerAvailableConnectionPoints.includes('R2') &&
+      secondMonomerAvailableConnectionPoints.includes('R1')
+    ) {
+      firstMonomerConnectionPoint = 'R2';
+      secondMonomerConnectionPoint = 'R1';
+    } else if (
+      firstMonomerAvailableConnectionPoints.includes('R1') &&
+      secondMonomerAvailableConnectionPoints.includes('R2')
+    ) {
+      firstMonomerConnectionPoint = 'R1';
+      secondMonomerConnectionPoint = 'R2';
+    }
+
+    if (
+      firstMonomerType === MonomerType.Sugar &&
+      secondMonomerType === MonomerType.Base &&
+      firstMonomerAvailableConnectionPoints.includes('R3') &&
+      secondMonomerAvailableConnectionPoints.includes('R1')
+    ) {
+      firstMonomerConnectionPoint = 'R3';
+      secondMonomerConnectionPoint = 'R1';
+    }
+
+    if (
+      firstMonomerType === MonomerType.Base &&
+      secondMonomerType === MonomerType.Sugar &&
+      firstMonomerAvailableConnectionPoints.includes('R1') &&
+      secondMonomerAvailableConnectionPoints.includes('R3')
+    ) {
+      firstMonomerConnectionPoint = 'R1';
+      secondMonomerConnectionPoint = 'R3';
+    }
+
+    return {
+      leftMonomerConnectionPoint: firstMonomerConnectionPoint,
+      rightMonomerConnectionPoint: secondMonomerConnectionPoint,
+    };
+  }
+
+  if (
+    firstMonomerConnectionPoint === 'R1' &&
+    !secondMonomerConnectionPoint &&
+    secondMonomerAvailableConnectionPoints.includes('R2')
+  ) {
+    secondMonomerConnectionPoint = 'R2';
+  }
+
+  if (
+    firstMonomerConnectionPoint === 'R2' &&
+    !secondMonomerConnectionPoint &&
+    secondMonomerAvailableConnectionPoints.includes('R1')
+  ) {
+    secondMonomerConnectionPoint = 'R1';
+  }
+
+  if (
+    !firstMonomerConnectionPoint &&
+    firstMonomerAvailableConnectionPoints.includes('R2') &&
+    secondMonomerConnectionPoint === 'R1'
+  ) {
+    firstMonomerConnectionPoint = 'R2';
+  }
+
+  if (
+    !firstMonomerConnectionPoint &&
+    firstMonomerAvailableConnectionPoints.includes('R1') &&
+    secondMonomerConnectionPoint === 'R2'
+  ) {
+    firstMonomerConnectionPoint = 'R1';
+  }
+
+  if (
+    firstMonomerType === MonomerType.Base &&
+    secondMonomerType === MonomerType.Sugar &&
+    firstMonomerConnectionPoint === 'R1' &&
+    !secondMonomerConnectionPoint &&
+    secondMonomerAvailableConnectionPoints.includes('R3')
+  ) {
+    secondMonomerConnectionPoint = 'R3';
+  }
+
+  if (
+    firstMonomerType === MonomerType.Base &&
+    secondMonomerType === MonomerType.Sugar &&
+    !firstMonomerConnectionPoint &&
+    firstMonomerAvailableConnectionPoints.includes('R1') &&
+    secondMonomerConnectionPoint === 'R3'
+  ) {
+    firstMonomerConnectionPoint = 'R1';
+  }
+
+  if (
+    firstMonomerType === MonomerType.Sugar &&
+    secondMonomerType === MonomerType.Base &&
+    firstMonomerConnectionPoint === 'R3' &&
+    !secondMonomerConnectionPoint &&
+    secondMonomerAvailableConnectionPoints.includes('R1')
+  ) {
+    secondMonomerConnectionPoint = 'R1';
+  }
+
+  if (
+    firstMonomerType === MonomerType.Sugar &&
+    secondMonomerType === MonomerType.Base &&
+    !firstMonomerConnectionPoint &&
+    firstMonomerAvailableConnectionPoints.includes('R3') &&
+    secondMonomerConnectionPoint === 'R1'
+  ) {
+    firstMonomerConnectionPoint = 'R3';
+  }
+
+  if (firstMonomerAvailableConnectionPoints.length === 1) {
+    firstMonomerConnectionPoint = firstMonomerAvailableConnectionPoints[0];
+  }
+  if (secondMonomerAvailableConnectionPoints.length === 1) {
+    secondMonomerConnectionPoint = secondMonomerAvailableConnectionPoints[0];
+  }
+
+  return {
+    leftMonomerConnectionPoint: firstMonomerConnectionPoint,
+    rightMonomerConnectionPoint: secondMonomerConnectionPoint,
+  };
+}
+
 export async function bondTwoMonomersPointToPoint(
   page: Page,
-  firstMonomerElement: Locator,
-  secondMonomerElement: Locator,
+  firstMonomer: Locator,
+  secondMonomer: Locator,
   firstMonomerConnectionPoint?: string,
   secondMonomerConnectionPoint?: string,
   bondType?: (typeof MacroBondTool)[keyof typeof MacroBondTool],
-) {
+  // if true - first free from left connection point will be selected in the dialog for both monomers
+  chooseConnectionPointsInDialogIfAppeared = false,
+): Promise<Locator> {
   await selectMacroBond(page, bondType);
-  await firstMonomerElement.hover({ force: true });
+  await firstMonomer.hover({ force: true });
 
   if (firstMonomerConnectionPoint) {
-    const firstConnectionPoint = firstMonomerElement.locator(
+    const firstConnectionPoint = firstMonomer.locator(
       `xpath=//*[text()="${firstMonomerConnectionPoint}"]/..//*[@r="3"]`,
     );
     const firstConnectionPointBoundingBox =
@@ -69,9 +296,9 @@ export async function bondTwoMonomersPointToPoint(
   }
   await page.mouse.down();
 
-  await secondMonomerElement.hover({ force: true });
+  await secondMonomer.hover({ force: true });
   if (secondMonomerConnectionPoint) {
-    const secondConnectionPoint = secondMonomerElement.locator(
+    const secondConnectionPoint = secondMonomer.locator(
       `xpath=//*[text()="${secondMonomerConnectionPoint}"]/..//*[@r="3"]`,
     );
 
@@ -96,6 +323,43 @@ export async function bondTwoMonomersPointToPoint(
   await page.mouse.up();
 
   await moveMouseAway(page);
+
+  if (chooseConnectionPointsInDialogIfAppeared) {
+    const { leftMonomerConnectionPoint, rightMonomerConnectionPoint } =
+      await chooseFreeConnectionPointsInDialogIfAppeared(
+        page,
+        firstMonomer,
+        secondMonomer,
+        firstMonomerConnectionPoint,
+        secondMonomerConnectionPoint,
+      );
+    firstMonomerConnectionPoint = leftMonomerConnectionPoint;
+    secondMonomerConnectionPoint = rightMonomerConnectionPoint;
+  }
+
+  const monomerOrAtom = await secondMonomer.getAttribute('data-testid');
+
+  let bondLocator: Locator = page.locator('');
+  if (monomerOrAtom === 'monomer') {
+    bondLocator = await getBondLocator(page, {
+      fromMonomerId:
+        (await firstMonomer.getAttribute('data-monomerid')) || undefined,
+      toMonomerId:
+        (await secondMonomer.getAttribute('data-monomerid')) || undefined,
+      fromConnectionPoint: firstMonomerConnectionPoint,
+      toConnectionPoint: secondMonomerConnectionPoint,
+    });
+  } else if (monomerOrAtom === 'atom') {
+    bondLocator = await getBondLocator(page, {
+      fromMonomerId:
+        (await firstMonomer.getAttribute('data-monomerid')) || undefined,
+      toAtomId: (await secondMonomer.getAttribute('data-atomid')) || undefined,
+      fromConnectionPoint: firstMonomerConnectionPoint,
+      toConnectionPoint: secondMonomerConnectionPoint,
+    });
+  }
+
+  return bondLocator;
 }
 
 export async function bondMonomerPointToMoleculeAtom(
@@ -109,15 +373,11 @@ export async function bondMonomerPointToMoleculeAtom(
   await monomer.hover({ force: true });
 
   if (monomerConnectionPoint) {
-    // const connectionPoint = monomer.locator(
-    //   `xpath=//*[text()="${monomerConnectionPoint}"]/..//*[@r="3"]`,
-    // );
     const connectionPoint = page
       .locator('g')
       .filter({ hasText: new RegExp(`^${monomerConnectionPoint}$`) })
       .locator('circle');
 
-    // await connectionPoint.hover({ force: true });
     const connectionPointBoundingBox = await connectionPoint.boundingBox();
     const monomerBoundingBox = await monomer.boundingBox();
 
@@ -149,7 +409,6 @@ export async function bondMonomerPointToMoleculeAtom(
   }
   await page.mouse.down();
 
-  // await atom.hover({ force: true });
   if (connectionPointShift) {
     const atomBoundingBox = await atom.boundingBox();
 
@@ -285,4 +544,49 @@ export async function clickOnMicroBondByIndex(page: Page, bondIndex: number) {
       boundingBox.y + boundingBox.height / 2 + 2,
     );
   }
+}
+
+export async function getBondLocator(
+  page: Page,
+  {
+    bondType,
+    bondid,
+    fromMonomerId,
+    toMonomerId,
+    toAtomId,
+    fromConnectionPoint,
+    toConnectionPoint,
+  }: {
+    bondType?: MacroBondType;
+    bondid?: string | number;
+    fromMonomerId?: string | number;
+    toMonomerId?: string | number;
+    toAtomId?: string | number;
+    fromConnectionPoint?: string;
+    toConnectionPoint?: string;
+  },
+): Promise<Locator> {
+  const attributes: { [key: string]: string } = {};
+
+  attributes['data-testid'] = 'bond';
+
+  if (bondType) attributes['data-bondtype'] = bondType;
+  if (bondid) attributes['data-bondid'] = String(bondid);
+  if (fromMonomerId) attributes['data-frommonomerid'] = String(fromMonomerId);
+  if (toMonomerId) attributes['data-tomonomerid'] = String(toMonomerId);
+  if (toAtomId) attributes['data-toatomid'] = String(toAtomId);
+  if (fromConnectionPoint) {
+    attributes['data-fromconnectionpoint'] = fromConnectionPoint;
+  }
+  if (toConnectionPoint) {
+    attributes['data-toconnectionpoint'] = toConnectionPoint;
+  }
+
+  const attributeSelectors = Object.entries(attributes)
+    .map(([key, value]) => `[${key}="${value}"]`)
+    .join('');
+
+  const locator = page.locator(attributeSelectors);
+
+  return locator;
 }

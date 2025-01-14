@@ -1193,7 +1193,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const bondLine = page.locator('g[pointer-events="stroke"]').first();
       await bondLine.hover();
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   }

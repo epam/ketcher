@@ -291,6 +291,7 @@
                 ]
             }
         ],
+        "class": "Base",
         "classHELM": "RNA",
         "id": "_R3__-_Side_only",
         "alias": "(R3)_-_Side_only",

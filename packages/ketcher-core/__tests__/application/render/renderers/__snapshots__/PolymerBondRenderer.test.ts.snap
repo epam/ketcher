@@ -27,6 +27,7 @@ exports[`Polymer Bond Renderer should render bond 1`] = `
         data-bondtype="covalent"
         data-frommonomerid="0"
         data-testid="bond"
+        data-tomonomerid="1"
         pointer-events="stroke"
         stroke="#333333"
         stroke-width="1"

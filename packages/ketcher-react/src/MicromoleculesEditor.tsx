@@ -44,7 +44,7 @@ export interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
   onInit?: (ketcher: Ketcher) => void;
 }
 
-function Editor(props: EditorProps) {
+function MicromoleculesEditor(props: EditorProps) {
   const initPromiseRef = useRef<ReturnType<typeof init> | null>(null);
   const appRootRef = useRef<Root | null>(null);
   const cleanupRef = useRef<(() => unknown) | null>(null);
@@ -119,4 +119,4 @@ function Editor(props: EditorProps) {
   );
 }
 
-export { Editor };
+export { MicromoleculesEditor };

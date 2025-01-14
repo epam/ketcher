@@ -51,11 +51,12 @@ You can find the instruction for service installation
 
 ## Packages
 
-| Project                                                                                       | Status                                                                                                              | Description                                                                       |
-| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| [ketcher-core](https://github.com/epam/ketcher/tree/master/packages/ketcher-core)             | [![npm version](https://badge.fury.io/js/ketcher-core.svg)](https://www.npmjs.com/package/ketcher-core)             | Core functionality: domain, shared services, functions and interface declarations |
-| [ketcher-standalone](https://github.com/epam/ketcher/tree/master/packages/ketcher-standalone) | [![npm version](https://badge.fury.io/js/ketcher-standalone.svg)](https://www.npmjs.com/package/ketcher-standalone) | Contains only the functionality necessary to start Ketcher in standalone mode     |
-| [ketcher-react](https://github.com/epam/ketcher/tree/master/packages/ketcher-react)           | [![npm version](https://badge.fury.io/js/ketcher-react.svg)](https://www.npmjs.com/package/ketcher-react)           | Package contains only the functionality necessary to define components.           |
+| Project                                                                                               | Status                                                                                                                      | Description                                                                       |
+|-------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| [ketcher-core](https://github.com/epam/ketcher/tree/master/packages/ketcher-core)                     | [![npm version](https://badge.fury.io/js/ketcher-core.svg)](https://www.npmjs.com/package/ketcher-core)                     | Core functionality: domain, shared services, functions and interface declarations |
+| [ketcher-standalone](https://github.com/epam/ketcher/tree/master/packages/ketcher-standalone)         | [![npm version](https://badge.fury.io/js/ketcher-standalone.svg)](https://www.npmjs.com/package/ketcher-standalone)         | Contains only the functionality necessary to start Ketcher in standalone mode     |
+| [ketcher-react](https://github.com/epam/ketcher/tree/master/packages/ketcher-react)                   | [![npm version](https://badge.fury.io/js/ketcher-react.svg)](https://www.npmjs.com/package/ketcher-react)                   | Package contains only the functionality necessary to define components.           |
+| [ketcher-macromolecules](https://github.com/epam/ketcher/tree/master/packages/ketcher-macromolecules) | [![npm version](https://badge.fury.io/js/ketcher-macromolecules.svg)](https://www.npmjs.com/package/ketcher-macromolecules) | Package contains the macromolecules editor functionality and UI components        |
 
 ## 3D Viewer
 

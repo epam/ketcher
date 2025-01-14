@@ -344,7 +344,7 @@ class Editor implements KetcherEditor {
     );
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
     this.render.setMolecule(struct);
-    this.struct(struct);
+    this.struct(struct.clone());
     this.render.setZoom(zoom);
     this.render.update();
     return this.render.options;

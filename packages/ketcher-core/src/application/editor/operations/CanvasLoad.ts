@@ -32,8 +32,13 @@ export class CanvasLoad extends BaseOperation {
 
   execute(restruct: ReStruct) {
     KetcherLogger.log('CanvasLoad.execute(), start');
+    if (restruct.molecule === this.data.struct)
+      throw new Error(
+        `Unexpected data.struct loaded is equal to the restruct.molecule current`,
+      );
+
     restruct.clearVisels(); // TODO: What is it?
-    const oldStruct = restruct.molecule.clone();
+    const oldStruct = restruct.molecule;
     if (this.data.struct) {
       restruct.render.setMolecule(this.data.struct, true);
     }

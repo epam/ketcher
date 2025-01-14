@@ -17,11 +17,11 @@
 import { useState, useRef } from 'react';
 import styled from '@emotion/styled';
 import { Button, Popover } from '@mui/material';
+import { Icon } from 'components';
 import {
-  Icon,
-  KETCHER_ROOT_NODE_CSS_SELECTOR,
   KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
-} from 'ketcher-react';
+  KETCHER_ROOT_NODE_CSS_SELECTOR,
+} from '../../../../../constants';
 
 interface IStyledIconProps {
   expanded?: boolean;

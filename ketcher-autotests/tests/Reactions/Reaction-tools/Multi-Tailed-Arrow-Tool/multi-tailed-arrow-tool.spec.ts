@@ -43,7 +43,6 @@ import {
   TopPanelButton,
   waitForPageInit,
   waitForRender,
-  selectZoomInTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {

@@ -1,11 +1,12 @@
+import 'ketcher-react/dist/index.css';
+
 import { useState } from 'react';
-import { ButtonsConfig, InfoModal } from 'ketcher-react';
+import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import {
   Ketcher,
   RemoteStructServiceProvider,
   StructServiceProvider,
 } from 'ketcher-core';
-import { KetcherEditors } from 'ketcher-macromolecules';
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -54,7 +55,7 @@ const App = () => {
 
   return (
     <>
-      <KetcherEditors
+      <Editor
         errorHandler={(message: string) => {
           setHasError(true);
           setErrorMessage(message.toString());

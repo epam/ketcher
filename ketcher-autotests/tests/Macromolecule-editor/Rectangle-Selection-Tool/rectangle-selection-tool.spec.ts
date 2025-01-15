@@ -22,6 +22,10 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { moveMonomer } from '@utils/macromolecules/monomer';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 /* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(
@@ -393,9 +397,9 @@ test.describe('Rectangle Selection Tool', () => {
     await selectRectangleSelectionTool(page);
     await page.getByText('2Nal').locator('..').first().hover();
     await dragMouseTo(x, y, page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('redo').click();
+    await pressRedoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -442,7 +446,7 @@ test.describe('Rectangle Selection Tool', () => {
     await selectAllStructuresOnCanvas(page);
     await page.getByTestId('erase').click();
     await takeEditorScreenshot(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 });

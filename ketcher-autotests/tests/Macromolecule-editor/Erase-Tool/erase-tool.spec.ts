@@ -33,6 +33,7 @@ import {
 } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
@@ -185,7 +186,7 @@ test.describe('Erase Tool', () => {
     await selectEraseTool(page);
     await bondLine.locator('..').click();
     await takeEditorScreenshot(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -263,7 +264,7 @@ test.describe('Erase Tool', () => {
     await selectEraseTool(page);
     await page.getByText('A6OH').locator('..').first().click();
     await takeEditorScreenshot(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -281,7 +282,7 @@ test.describe('Erase Tool', () => {
     await selectPartOfMolecules(page);
     await selectEraseTool(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -300,7 +301,7 @@ test.describe('Erase Tool', () => {
     await selectPartOfMolecules(page);
     await selectEraseTool(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 

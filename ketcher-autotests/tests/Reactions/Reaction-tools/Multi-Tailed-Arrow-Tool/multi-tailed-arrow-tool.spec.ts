@@ -570,11 +570,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await page.getByTestId('zoom-input').click();
-    for (let i = 0; i < 19; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-in').click();
-      });
-    }
+    await selectZoomInTool(page, 19);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await page.getByTestId('zoom-input').click();

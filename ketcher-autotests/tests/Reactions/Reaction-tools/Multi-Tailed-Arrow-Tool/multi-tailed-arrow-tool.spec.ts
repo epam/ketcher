@@ -43,6 +43,7 @@ import {
   TopPanelButton,
   waitForPageInit,
   waitForRender,
+  selectZoomInTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -569,7 +570,6 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     }
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-input').click();
     await selectZoomInTool(page, 19);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

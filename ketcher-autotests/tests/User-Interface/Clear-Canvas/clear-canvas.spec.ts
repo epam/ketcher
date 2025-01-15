@@ -92,19 +92,22 @@ test.describe('Clear canvas', () => {
     await takeEditorScreenshot(page);
   });
 
+  /* eslint-disable no-inline-comments */
   test('Clear Canvas - Structure is opened from smile-string', async ({
     page,
   }) => {
     // Test case: EPMLSOPKET-1706
-    await openFileAndAddToCanvas('SMILES/chain-with-r-group.smi', page);
+    // Legend: h: ... is for Editor.historyStack, (*) is for Editor.historyPtr
+    await openFileAndAddToCanvas('SMILES/chain-with-r-group.smi', page); // h: open (*)
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.Clear, page);
-    await pressUndoButton(page);
-    await selectClearCanvasTool(page);
-    await pressUndoButton(page);
-    await pressUndoButton(page);
-    await pressRedoButton(page);
-    await pressRedoButton(page);
+    await selectTopPanelButton(TopPanelButton.Clear, page); //   // h:     open    , clear (*)
+    await pressUndoButton(page); //                              // h:     open (*), clear
+    await selectClearCanvasTool(page); //                        // h:     open    , clear (*)
+    await pressUndoButton(page); //                              // h:     open (*), clear
+    await pressUndoButton(page); // undo open file               // h: (*) open    , clear
+    await pressRedoButton(page); // redo open file               // h:     open (*), clear
+    await pressRedoButton(page); // redo clear canvas            // h:     open    , clear (*)
     await takeEditorScreenshot(page);
   });
+  /* eslint-enable no-inline-comments */
 });

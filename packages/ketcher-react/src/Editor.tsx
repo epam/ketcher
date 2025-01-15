@@ -1,4 +1,4 @@
-import { lazy, startTransition, StrictMode, Suspense, useState } from 'react';
+import { lazy, StrictMode, Suspense, useState } from 'react';
 import { MicromoleculesEditor, EditorProps } from './MicromoleculesEditor';
 import { ModeControl } from './script/ui/views/toolbars/ModeControl';
 import { LoadingCircles } from './script/ui/views/components';
@@ -24,10 +24,8 @@ export const Editor = (props: Props) => {
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
 
   const togglePolymerEditor = (toggleValue: boolean) => {
-    startTransition(() => {
-      setShowPolymerEditor(toggleValue);
-      window.isPolymerEditorTurnedOn = toggleValue;
-    });
+    setShowPolymerEditor(toggleValue);
+    window.isPolymerEditorTurnedOn = toggleValue;
   };
 
   const togglerComponent = !props.disableMacromoleculesEditor ? (

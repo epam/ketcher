@@ -9,7 +9,6 @@
     "ketcher-autotests",
     "example",
     "example-ssr",
-    "example-separate-editors",
     "demo"
   ],
   "scripts": {

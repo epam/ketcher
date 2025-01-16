@@ -1,14 +1,15 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
-  saveToFile,
-  receiveFileComparisonData,
   waitForRender,
   selectAllStructuresOnCanvas,
 } from '@utils';
-import { getKet } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Attachment Point Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -45,19 +46,11 @@ test.describe('Attachment Point Tool', () => {
       'Molfiles-V2000/s-group-with-attachment-points.mol',
       page,
     );
-    const expectedFile = await getKet(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'KET/S-Group-structure-with-Attachment-point.ket',
-      expectedFile,
+      FileType.KET,
     );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/S-Group-structure-with-Attachment-point.ket',
-      });
-    expect(ketFile).toEqual(ketFileExpected);
   });
 
   test('Opening saved .ket file and doing some action on it', async ({

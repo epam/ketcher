@@ -28,7 +28,11 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getCml, getKet, getMolfile } from '@utils/formats';
+import { getCml, getMolfile } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 const CANVAS_CLICK_X = 600;
 const CANVAS_CLICK_Y = 600;
@@ -457,16 +461,12 @@ test.describe('Data S-Group tool', () => {
       '8',
       'Absolute',
     );
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/cyclopropane-and-h2o-expected.ket', expectedFile);
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/cyclopropane-and-h2o-expected.ket',
-      });
 
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/cyclopropane-and-h2o-expected.ket',
+      FileType.KET,
+    );
     await takeEditorScreenshot(page);
   });
 });

@@ -25,12 +25,15 @@ import {
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
   clickOnFileFormatDropdown,
-  getKet,
   getMolfile,
   getRxn,
   getSdf,
   getSmiles,
 } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 const RING_OFFSET = 150;
 const ARROW_OFFSET = 20;
@@ -121,17 +124,11 @@ test.describe('Save files', () => {
       ARROW_LENGTH,
     );
 
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/ket-2934-to-compare-expected.ket', expectedFile);
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/ket-2934-to-compare-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/ket-2934-to-compare-expected.ket',
+      FileType.KET,
+    );
   });
 
   test('Click and Save as *.smi file', async ({ page }) => {
@@ -427,20 +424,12 @@ test.describe('Open/Save/Paste files', () => {
       page,
     );
 
-    const expectedFile = await getKet(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'KET/benzene-with-atom-list-and-all-atom-and-query-attributes-to-compare.ket',
-      expectedFile,
+      FileType.KET,
     );
 
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/benzene-with-atom-list-and-all-atom-and-query-attributes-to-compare.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
     await takeEditorScreenshot(page);
   });
 });

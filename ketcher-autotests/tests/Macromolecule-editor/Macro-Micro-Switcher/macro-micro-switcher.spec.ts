@@ -1601,16 +1601,12 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     const expectedFile = await getKet(page);
-    await saveToFile(
-      'KET/chem-connected-to-micro-structure-expected.ket',
-      expectedFile,
-    );
 
-    await receiveFileComparisonData({
+    await verifyFileExport(
       page,
-      expectedFileName:
-        'tests/test-data/KET/chem-connected-to-micro-structure-expected.ket',
-    });
+      'KET/chem-connected-to-micro-structure-expected.ket',
+      FileType.KET,
+    );
 
     const hasConnectionTypeSingle = expectedFile.includes(
       '"connectionType": "single"',
@@ -2251,17 +2247,11 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/micro-macro-structure.ket',
         page,
       );
-      const expectedFile = await getKet(page);
-      await saveToFile('KET/micro-macro-structure-expected.ket', expectedFile);
-
-      const { fileExpected: ketFileExpected, file: ketFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/KET/micro-macro-structure-expected.ket',
-        });
-
-      expect(ketFile).toEqual(ketFileExpected);
+      await verifyFileExport(
+        page,
+        'KET/micro-macro-structure-expected.ket',
+        FileType.KET,
+      );
       await openFileAndAddToCanvasAsNewProject(
         'KET/micro-macro-structure-expected.ket',
         page,

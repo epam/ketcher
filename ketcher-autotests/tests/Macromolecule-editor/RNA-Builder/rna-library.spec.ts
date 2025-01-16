@@ -1054,9 +1054,9 @@ test.describe('RNA Library', () => {
   const rnaNucleotides = [
     `2-damdA___2,6-Diaminopurine`,
     `5hMedC___Hydroxymethyl dC`,
-    `Super G___8-aza-7-deazaguanosine`,
+    `Super-G___8-aza-7-deazaguanosine`,
     `AmMC6T___Amino Modifier C6 dT`,
-    `Super T___5-hydroxybutynl-2’-deoxyuridine`,
+    `Super-T___5-hydroxybutynl-2’-deoxyuridine`,
     `5Br-dU___5-Bromo-deoxyuridine`,
     `5NitInd___5-Nitroindole`,
   ];
@@ -1149,9 +1149,9 @@ test.describe('RNA Library', () => {
   const rnaNucleotides1 = [
     `2-damdA___2,6-Diaminopurine`,
     `5hMedC___Hydroxymethyl dC`,
-    `Super G___8-aza-7-deazaguanosine`,
+    `Super-G___8-aza-7-deazaguanosine`,
     `AmMC6T___Amino Modifier C6 dT`,
-    `Super T___5-hydroxybutynl-2’-deoxyuridine`,
+    `Super-T___5-hydroxybutynl-2’-deoxyuridine`,
     `5Br-dU___5-Bromo-deoxyuridine`,
     `5NitInd___5-Nitroindole`,
   ];
@@ -1179,9 +1179,9 @@ test.describe('RNA Library', () => {
   const rnaNucleotides2 = [
     `2-damdA___2,6-Diaminopurine`,
     `5hMedC___Hydroxymethyl dC`,
-    `Super G___8-aza-7-deazaguanosine`,
+    `Super-G___8-aza-7-deazaguanosine`,
     `AmMC6T___Amino Modifier C6 dT`,
-    `Super T___5-hydroxybutynl-2’-deoxyuridine`,
+    `Super-T___5-hydroxybutynl-2’-deoxyuridine`,
     `5Br-dU___5-Bromo-deoxyuridine`,
     `5NitInd___5-Nitroindole`,
   ];

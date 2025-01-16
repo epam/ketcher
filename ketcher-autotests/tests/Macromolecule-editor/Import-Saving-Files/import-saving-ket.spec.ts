@@ -328,7 +328,7 @@ test.describe('Import-Saving .ket Files', () => {
 
     await verifyFileExport(
       page,
-      'KET/AllAmbiguousMonomers-expected.ket',
+      'KET/Ambiguous-monomers/AllAmbiguousMonomers-expected.ket',
       FileType.KET,
     );
     await zoomWithMouseWheel(page, 250);

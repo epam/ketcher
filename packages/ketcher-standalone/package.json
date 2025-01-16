@@ -56,6 +56,8 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-replace": "^5.0.7",
     "@rollup/plugin-strip": "^2.0.0",
+    "@rollup/plugin-url": "^8.0.2",
+    "@rollup/plugin-wasm": "^6.2.2",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.12",
     "cross-env": "^7.0.3",
@@ -79,20 +81,20 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/index.modern.js",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/cjs/index.js"
     },
     "./dist/binaryWasm": {
-      "import": "./dist/binaryWasm/index.modern.js",
-      "require": "./dist/binaryWasm/index.js"
+      "import": "./dist/binaryWasm/index.js",
+      "require": "./dist/cjs/binaryWasm/index.js"
     },
     "./dist/jsNoRender": {
-      "import": "./dist/jsNoRender/index.modern.js",
-      "require": "./dist/jsNoRender/index.js"
+      "import": "./dist/jsNoRender/index.js",
+      "require": "./dist/cjs/jsNoRender/index.js"
     },
     "./dist/binaryWasmNoRender": {
-      "import": "./dist/binaryWasmNoRender/index.modern.js",
-      "require": "./dist/binaryWasmNoRender/index.js"
+      "import": "./dist/binaryWasmNoRender/index.js",
+      "require": "./dist/cjs/binaryWasmNoRender/index.js"
     }
   }
 }

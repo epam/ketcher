@@ -7,11 +7,12 @@ import pkg from './package.json';
 import resolve from '@rollup/plugin-node-resolve';
 import strip from '@rollup/plugin-strip';
 import typescript from 'rollup-plugin-typescript2';
-import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import copy from 'rollup-plugin-copy';
 import alias from '@rollup/plugin-alias';
 import { license } from '../../license.ts';
 import replace from '@rollup/plugin-replace';
+import wasm from '@rollup/plugin-wasm';
+import url from '@rollup/plugin-url';
 
 const mode = {
   PRODUCTION: 'production',
@@ -23,18 +24,15 @@ const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const includePattern = 'src/**/*';
 
 const baseConfig = {
-  input: pkg.source,
+  input: {
+    index: 'src/index.ts',
+    indigoWorker: 'src/infrastructure/services/struct/indigoWorker.ts',
+  },
   external: ['ketcher-core', /@babel\/runtime/],
   plugins: [
     nodePolyfills(),
     resolve({ extensions }),
     commonjs(),
-    webWorkerLoader({
-      extensions,
-      sourcemap: false,
-      targetPlatform: 'browser',
-      external: ['@babel/runtime'],
-    }),
     typescript(),
     babel({
       extensions,
@@ -50,6 +48,7 @@ const baseConfig = {
       'process.env.SEPARATE_INDIGO_RENDER': process.env.SEPARATE_INDIGO_RENDER,
     }),
     ...(isProduction ? [strip({ include: includePattern })] : []),
+    wasm(),
   ],
 };
 
@@ -57,15 +56,15 @@ const configWithWasmBase64 = {
   ...baseConfig,
   output: [
     {
-      file: pkg.exports['.'].require,
+      dir: 'dist/cjs',
       exports: 'named',
       format: 'cjs',
       banner: license,
     },
     {
-      file: pkg.exports['.'].import,
+      dir: 'dist',
       exports: 'named',
-      format: 'es',
+      format: 'esm',
       banner: license,
     },
   ],
@@ -90,15 +89,15 @@ const configWithWasmFetch = {
   ...baseConfig,
   output: [
     {
-      file: pkg.exports['./dist/binaryWasm'].require,
+      dir: 'dist/cjs/binaryWasm',
       exports: 'named',
       format: 'cjs',
       banner: license,
     },
     {
-      file: pkg.exports['./dist/binaryWasm'].import,
+      dir: 'dist/binaryWasm',
       exports: 'named',
-      format: 'es',
+      format: 'esm',
       banner: license,
     },
   ],
@@ -112,14 +111,6 @@ const configWithWasmFetch = {
         },
       ],
     }),
-    copy({
-      targets: [
-        {
-          src: '../../node_modules/indigo-ketcher/*.wasm',
-          dest: 'dist/binaryWasm',
-        },
-      ],
-    }),
   ],
 };
 
@@ -127,15 +118,15 @@ const configBase64WithoutRender = {
   ...baseConfig,
   output: [
     {
-      file: pkg.exports['./dist/jsNoRender'].require,
+      dir: 'dist/cjs/jsNoRender',
       exports: 'named',
       format: 'cjs',
       banner: license,
     },
     {
-      file: pkg.exports['./dist/jsNoRender'].import,
+      dir: 'dist/jsNoRender',
       exports: 'named',
-      format: 'es',
+      format: 'esm',
       banner: license,
     },
   ],
@@ -156,15 +147,15 @@ const configWithWasmWithoutRender = {
   ...baseConfig,
   output: [
     {
-      file: pkg.exports['./dist/binaryWasmNoRender'].require,
+      dir: 'dist/cjs/binaryWasmNoRender',
       exports: 'named',
       format: 'cjs',
       banner: license,
     },
     {
-      file: pkg.exports['./dist/binaryWasmNoRender'].import,
+      dir: 'dist/binaryWasmNoRender',
       exports: 'named',
-      format: 'es',
+      format: 'esm',
       banner: license,
     },
   ],
@@ -175,14 +166,6 @@ const configWithWasmWithoutRender = {
         {
           find: '_indigo-ketcher-import-alias_',
           replacement: 'indigo-ketcher/binaryWasmNoRender',
-        },
-      ],
-    }),
-    copy({
-      targets: [
-        {
-          src: '../../node_modules/indigo-ketcher/*.wasm',
-          dest: 'dist/binaryWasmNoRender',
         },
       ],
     }),

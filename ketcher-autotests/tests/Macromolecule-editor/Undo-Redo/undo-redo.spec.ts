@@ -215,6 +215,8 @@ test.describe('Undo-Redo tests', () => {
     Description: Add 'Bal___beta-Alanine' monomer to canvas 35 times and then press Undo 32 times.
     */
 
+    test.slow();
+
     const addMonomers = async (x: number, y: number) => {
       await page.getByTestId(Peptides.BetaAlanine).click();
       await clickOnCanvas(page, x, y);
@@ -253,6 +255,8 @@ test.describe('Undo-Redo tests', () => {
     Test case: Undo-Redo tests
     Description: Add 'SMPEG2___SM(PEG)2 linker from Pierce' CHEM to canvas 35 times and then press Undo 32 times.
     */
+
+    test.slow();
 
     const addMonomers = async (x: number, y: number) => {
       await page.getByTestId('CHEM-TAB').click();

@@ -159,6 +159,7 @@ docker-compose run --rm --user $(id -u) ketcher bash /app/test_build.sh
 Prepare tests
 
 ```
+mkdir build
 docker-compose build autotests
 docker-compose run --rm --user $(id -u) autotests bash /app/test_prepare.sh
 ```

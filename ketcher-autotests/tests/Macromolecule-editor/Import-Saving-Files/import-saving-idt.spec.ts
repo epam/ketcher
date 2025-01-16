@@ -64,6 +64,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
 
 let page: Page;
 
@@ -112,6 +113,7 @@ test.beforeAll(async ({ browser }) => {
   page = await sharedContext.newPage();
   await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
+  await goToPeptidesTab(page);
 });
 
 test.afterEach(async ({ context: _ }, testInfo) => {
@@ -799,6 +801,7 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/4431
     Description: Connect unresolved IDT monomer to known monomers through R2/R1 connections.
     */
+    await goToPeptidesTab(page);
     const x = 650;
     const y = 400;
     const firstMonomer = await page.getByText('iMe-dC').locator('..');

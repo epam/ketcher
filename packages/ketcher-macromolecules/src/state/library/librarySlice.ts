@@ -41,6 +41,7 @@ import {
   NoNaturalAnalogueGroupCode,
   DNA_TEMPLATE_NAME_PART,
   RNA_TEMPLATE_NAME_PART,
+  LIBRARY_TAB_INDEX,
 } from 'src/constants';
 import { RootState } from 'state';
 import { localStorageWrapper } from 'helpers/localStorage';
@@ -66,7 +67,7 @@ const initialState: LibraryState = {
   monomers: [],
   favorites: {},
   searchFilter: '',
-  selectedTabIndex: 1,
+  selectedTabIndex: LIBRARY_TAB_INDEX.RNA,
 };
 
 export function getMonomerUniqueKey(monomer: MonomerOrAmbiguousType) {

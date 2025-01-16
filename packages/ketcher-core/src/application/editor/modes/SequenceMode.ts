@@ -1713,7 +1713,11 @@ export class SequenceMode extends BaseMode {
 
       modelChanges.addOperation(new ReinitializeModeOperation());
       editor.renderersContainer.update(modelChanges);
-      SequenceRenderer.moveCaretForward();
+      if (SequenceRenderer.caretPosition === 0) {
+        SequenceRenderer.setCaretPosition(2);
+      } else {
+        SequenceRenderer.moveCaretForward();
+      }
       history.update(modelChanges);
     }
   }

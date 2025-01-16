@@ -13,6 +13,8 @@ import { license } from '../../license.ts';
 import replace from '@rollup/plugin-replace';
 import wasm from '@rollup/plugin-wasm';
 import url from '@rollup/plugin-url';
+import { importMetaAssets } from '@web/rollup-plugin-import-meta-assets';
+import OMT from '@surma/rollup-plugin-off-main-thread';
 
 const mode = {
   PRODUCTION: 'production',
@@ -26,7 +28,6 @@ const includePattern = 'src/**/*';
 const baseConfig = {
   input: {
     index: 'src/index.ts',
-    indigoWorker: 'src/infrastructure/services/struct/indigoWorker.ts',
   },
   external: ['ketcher-core', /@babel\/runtime/],
   plugins: [
@@ -48,7 +49,6 @@ const baseConfig = {
       'process.env.SEPARATE_INDIGO_RENDER': process.env.SEPARATE_INDIGO_RENDER,
     }),
     ...(isProduction ? [strip({ include: includePattern })] : []),
-    wasm(),
   ],
 };
 
@@ -89,12 +89,6 @@ const configWithWasmFetch = {
   ...baseConfig,
   output: [
     {
-      dir: 'dist/cjs/binaryWasm',
-      exports: 'named',
-      format: 'cjs',
-      banner: license,
-    },
-    {
       dir: 'dist/binaryWasm',
       exports: 'named',
       format: 'esm',
@@ -111,6 +105,7 @@ const configWithWasmFetch = {
         },
       ],
     }),
+    OMT(),
   ],
 };
 

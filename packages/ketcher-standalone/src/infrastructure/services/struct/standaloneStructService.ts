@@ -78,7 +78,7 @@ import {
 } from './constants';
 
 const indigoWorker: Worker = new Worker(
-  new URL('./indigoWorker', import.meta.url),
+  new URL('./indigoWorker2.js', import.meta.url),
   { type: 'module' },
 );
 

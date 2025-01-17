@@ -39,7 +39,6 @@ import {
   selectEraseTool,
   clickUndo,
   clickOnAtom,
-  getKet,
   saveToFile,
   receiveFileComparisonData,
   getMolfile,
@@ -1604,18 +1603,12 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/chem-connected-to-micro-structure.ket',
       page,
     );
-    const expectedFile = await getKet(page);
 
     await verifyFileExport(
       page,
       'KET/chem-connected-to-micro-structure-expected.ket',
       FileType.KET,
     );
-
-    const hasConnectionTypeSingle = expectedFile.includes(
-      '"connectionType": "single"',
-    );
-    expect(hasConnectionTypeSingle).toBe(true);
   });
 
   test(

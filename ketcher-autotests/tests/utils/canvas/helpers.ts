@@ -8,6 +8,8 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   clickOnCanvas,
+  dragMouseTo,
+  moveOnAtom,
   pressButton,
 } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
@@ -531,4 +533,16 @@ export async function selectLayoutTool(page: Page) {
     page,
     async () => await selectTopPanelButton(TopPanelButton.Layout, page),
   );
+}
+
+export async function copyStructureByCtrlMove(
+  page: Page,
+  atom: string,
+  atomIndex: number,
+  targetCoordinates: { x: number; y: number } = { x: 300, y: 300 },
+) {
+  await moveOnAtom(page, atom, atomIndex);
+  await page.keyboard.down('Control');
+  await dragMouseTo(targetCoordinates.x, targetCoordinates.y, page);
+  await page.keyboard.up('Control');
 }

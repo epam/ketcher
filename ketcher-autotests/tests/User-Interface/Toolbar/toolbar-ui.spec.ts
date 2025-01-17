@@ -19,7 +19,7 @@ import {
   AtomButton,
   selectAromatizeTool,
   selectDearomatizeTool,
-  removeExplicitHydrogens,
+  selectAddRemoveExplicitHydrogens,
 } from '@utils';
 
 test.describe('Open Ketcher', () => {
@@ -198,9 +198,9 @@ test.describe('Open Ketcher', () => {
     */
     await takeTopToolbarScreenshot(page);
     await drawBenzeneRing(page);
-    await removeExplicitHydrogens(page);
+    await selectAddRemoveExplicitHydrogens(page);
     await takeEditorScreenshot(page);
-    await removeExplicitHydrogens(page);
+    await selectAddRemoveExplicitHydrogens(page);
     await takeEditorScreenshot(page);
   });
 });

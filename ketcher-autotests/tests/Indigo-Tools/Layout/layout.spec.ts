@@ -12,13 +12,13 @@ import {
   selectAtomInToolbar,
   AtomButton,
   clickOnAtom,
-  waitForSpinnerFinishedWork,
   getCoordinatesOfTheMiddleOfTheScreen,
   waitForPageInit,
   takeTopToolbarScreenshot,
   selectPartOfMolecules,
   selectPartOfChain,
   clickOnCanvas,
+  selectLayoutTool,
 } from '@utils';
 
 async function openFileWithShift(filename: string, page: Page) {
@@ -61,20 +61,14 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfChain(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
   test('Center molecule after layout', async ({ page }) => {
     // Related Github issue: https://github.com/epam/ketcher/issues/2078
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-rings.mol', page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -86,7 +80,7 @@ test.describe('Indigo Tools - Layout', () => {
     const numberOfIterations = 3;
     await openFileWithShift(structureWithStereoFlags, page);
     for (let i = 0; i < numberOfIterations; i++) {
-      await selectTopPanelButton(TopPanelButton.Layout, page);
+      await selectLayoutTool(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -99,10 +93,7 @@ test.describe('Indigo Tools - Layout', () => {
       'Molfiles-V2000/chloro-ethylamino-dimethyl-propoxy-propan-ol.mol',
       page,
     );
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -116,14 +107,10 @@ test.describe('Indigo Tools - Layout', () => {
     const y = 300;
     const anyAtom = 0;
     await openFileAndAddToCanvas('Molfiles-V2000/toluene.mol', page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Layout, page);
-    });
+    await selectLayoutTool(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Layout, page);
-    });
+    await selectLayoutTool(page);
     await selectAtomInToolbar(AtomButton.Oxygen, page);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -136,10 +123,7 @@ test.describe('Indigo Tools - Layout', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/distorted-Sgroups.mol', page);
     await selectPartOfMolecules(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -155,10 +139,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -174,10 +155,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -193,10 +171,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -213,10 +188,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -228,10 +200,7 @@ test.describe('Indigo Tools - Layout', () => {
     We have a bug https://github.com/epam/Indigo/issues/2229
     */
     await openFileAndAddToCanvas('Rxn-V2000/distorted-reaction.rxn', page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -243,10 +212,7 @@ test.describe('Indigo Tools - Layout', () => {
     Description: After Layout the structures are displayed orderly in the middle of the screen.
     */
     await openFileAndAddToCanvas('KET/four-benzene-at-edges.ket', page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -258,7 +224,7 @@ test.describe('Indigo Tools - Layout', () => {
     Description: After Layout the structures are displayed orderly in the middle of the screen.
     */
     await openFileAndAddToCanvas('KET/four-benzene-at-edges.ket', page);
-    await page.keyboard.press('Control+l');
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -276,10 +242,7 @@ test.describe('Indigo Tools - Layout', () => {
         page,
       );
       await selectPartOfMolecules(page);
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-      );
+      await selectLayoutTool(page);
       await takeEditorScreenshot(page);
     },
   );

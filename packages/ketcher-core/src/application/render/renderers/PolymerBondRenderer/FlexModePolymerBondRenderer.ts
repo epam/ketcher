@@ -110,7 +110,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
         ),
       )
       .attr(
-        'data-tomonomerid',
+        'data-toconnectionpoint',
         this.polymerBond.secondMonomer?.getAttachmentPointByBond(
           this.polymerBond,
         ),

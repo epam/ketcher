@@ -51,9 +51,7 @@ import {
   selectDropdownTool,
   openFileAndAddToCanvasAsNewProject,
   getSdf,
-  getCdx,
   openFile,
-  getCdxml,
   getCml,
   clickOnFileFormatDropdown,
   takeTopToolbarScreenshot,
@@ -75,6 +73,8 @@ import {
   selectZoomReset,
   selectAromatizeTool,
   selectDearomatizeTool,
+  selectCleanTool,
+  selectLayoutTool,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
@@ -88,6 +88,7 @@ import { Chems, Peptides } from '@utils/selectors/macromoleculeEditor';
 import { moveMonomerOnMicro } from '@utils/macromolecules/monomer';
 import {
   goToCHEMTab,
+  goToFavoritesTab,
   goToPeptidesTab,
   goToRNATab,
 } from '@utils/macromolecules/library';
@@ -98,6 +99,10 @@ import {
 } from '@utils/macromolecules/rnaBuilder';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 const topLeftCorner = {
   x: -325,
@@ -327,6 +332,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Macro mode is visible on Micro mode when
     */
+    await pageReload(page);
     await turnOnMacromoleculesEditor(page);
     await openFileAndAddToCanvasMacro('KET/stereo-and-structure.ket', page);
     await turnOnMicromoleculesEditor(page);
@@ -447,6 +453,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Zoomed In/Out structure from Macro mode become standart 100% when switch to Micro mode and again to Macro mode
     */
+    await pageReload(page);
     const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
@@ -472,9 +479,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await pageReload(page);
 
     await addToFavoritesMonomers(page);
-    await page.getByTestId('FAVORITES-TAB').click();
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
+    await goToFavoritesTab(page);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -845,6 +852,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await page.getByTestId('fullscreen-mode-button').click();
     await turnOnMacromoleculesEditor(page);
+    await goToRNATab(page);
     await takePageScreenshot(page);
   });
 
@@ -1189,7 +1197,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const bondLine = page.locator('g[pointer-events="stroke"]').first();
       await bondLine.hover();
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   }
@@ -1732,20 +1740,13 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    const expectedFile = await getCdx(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
-      expectedFile,
+      FileType.CDX,
     );
 
-    const { fileExpected: cdxFileExpected, file: cdxFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
-      });
-
-    expect(cdxFile).toEqual(cdxFileExpected);
     await openCdxFile(page);
     await takeEditorScreenshot(page);
     await pageReload(page);
@@ -1760,20 +1761,13 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
 
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
     await openCdxmlFile(page);
     await takeEditorScreenshot(page);
   });
@@ -1890,7 +1884,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1901,10 +1895,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvas('KET/distorted-r1-attachment-point.ket', page);
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -3039,6 +3030,7 @@ test('Switch to Macro mode, verify that user cant open reactions from RDF RXN V2
   Test case: https://github.com/epam/Indigo/issues/2102
   Description: In Macro mode, user can't open reactions from RDF RXN V2000/V3000 - error message is displayed. 
   */
+  await pageReload(page);
   await selectOpenTool(page);
   await openFile('RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf', page);
   await pressButton(page, 'Open as New');

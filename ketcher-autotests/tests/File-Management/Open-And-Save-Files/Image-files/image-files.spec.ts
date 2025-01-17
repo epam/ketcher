@@ -21,7 +21,7 @@ import {
   pasteFromClipboardByKeyboard,
   pressButton,
   readFileContents,
-  removeExplicitHydrogens,
+  selectAddRemoveExplicitHydrogens,
   resetCurrentTool,
   resetZoomLevelToDefault,
   RingButton,
@@ -29,9 +29,11 @@ import {
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
+  selectCleanTool,
   selectClearCanvasTool,
   selectDearomatizeTool,
   selectEraseTool,
+  selectLayoutTool,
   selectLeftPanelButton,
   selectRectangleSelectionTool,
   selectRing,
@@ -1314,10 +1316,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-    );
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1349,10 +1348,7 @@ test.describe('Image files', () => {
     await dragMouseTo(x, y, page);
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -1455,9 +1451,9 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await removeExplicitHydrogens(page);
+    await selectAddRemoveExplicitHydrogens(page);
     await takeEditorScreenshot(page);
-    await removeExplicitHydrogens(page);
+    await selectAddRemoveExplicitHydrogens(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

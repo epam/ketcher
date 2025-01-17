@@ -10,18 +10,14 @@ import {
 const FunctionalGroupMenuItems: FC<
   MenuItemsProps<FunctionalGroupsContextMenuProps>
 > = (props) => {
-  const [
-    handleExpandOrContract,
-    ExpandOrContractHidden,
-    ExpandOrContractDisabled,
-  ] = useFunctionalGroupEoc();
+  const [handleExpandOrContract, ExpandOrContractHidden] =
+    useFunctionalGroupEoc();
   const handleRemove = useFunctionalGroupRemove();
 
   return (
     <>
       <Item
         {...props}
-        disabled={(params) => ExpandOrContractDisabled(params)}
         hidden={(params) => ExpandOrContractHidden(params, true)}
         onClick={(params) => handleExpandOrContract(params, true)}
       >
@@ -29,7 +25,6 @@ const FunctionalGroupMenuItems: FC<
       </Item>
       <Item
         {...props}
-        disabled={(params) => ExpandOrContractDisabled(params)}
         hidden={(params) => ExpandOrContractHidden(params, false)}
         onClick={(params) => handleExpandOrContract(params, false)}
       >

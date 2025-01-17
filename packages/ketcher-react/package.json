@@ -1,6 +1,6 @@
 {
   "name": "ketcher-react",
-  "version": "2.28.0-rc.3",
+  "version": "3.0.0-rc.1",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -21,8 +21,6 @@
   "bugs": {
     "url": "https://github.com/epam/ketcher/issues"
   },
-  "main": "dist/index.js",
-  "module": "dist/index.modern.js",
   "types": "dist/index.d.ts",
   "source": "src/index.tsx",
   "engines": {
@@ -138,5 +136,15 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/cjs/index.js"
+    },
+    "./dist/index.css": {
+      "import": "./dist/index.css",
+      "require": "./dist/index.css"
+    }
+  }
 }

@@ -152,9 +152,11 @@ test.describe('Zoom Tool', () => {
     for (let i = 0; i < 10; i++) {
       await ZoomOutByKeyboard(page);
     }
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectZoomReset(page);
     await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 
@@ -371,9 +373,9 @@ test.describe('Zoom Tool', () => {
     page,
     browser,
   }) => {
-    /* 
+    /*
     Test case: Zoom Tool
-    Description: When zoomed to 175% and more, buttons in 
+    Description: When zoomed to 175% and more, buttons in
     Paste from Clipboard window not change their position and not overlap each other.
     After fix bug https://github.com/epam/ketcher/issues/4174 need to update snapshot.
     */
@@ -385,7 +387,7 @@ test.describe('Zoom Tool', () => {
   });
 
   test('Maximum browser zoom out', async ({ page, browser }) => {
-    /* 
+    /*
     Test case: Zoom Tool
     Description: When zoomed out to 25%, buttons and toolbars have the correct appearance
     */
@@ -397,7 +399,7 @@ test.describe('Zoom Tool', () => {
   });
 
   test('Maximum browser zoom in', async ({ page, browser }) => {
-    /* 
+    /*
     Test case: https://github.com/epam/ketcher/issues/4422 - Case 29
     Description: When zoomed to maximum, buttons in Paste from Clipboard window not change their position and not overlap each other
     */

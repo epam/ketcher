@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   AtomButton,
   clickInTheMiddleOfTheScreen,
@@ -9,8 +9,6 @@ import {
   selectAtomInToolbar,
   selectLeftPanelButton,
   LeftPanelButton,
-  receiveFileComparisonData,
-  saveToFile,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   bondsSettings,
@@ -22,12 +20,12 @@ import {
   setReactionMarginSizeValue,
   selectAllStructuresOnCanvas,
   selectClearCanvasTool,
+  selectLayoutTool,
 } from '@utils';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getCdxml } from '@utils/formats';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
@@ -153,16 +151,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Description: Open/Import structure CDXML file
      */
     await openFileAndAddToCanvas('CDXML/cdxml-6969.cdxml', page);
-    const expectedFile = await getCdxml(page);
-    await saveToFile('CDXML/cdxml-6969-expected.cdxml', expectedFile);
 
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/CDXML/cdxml-6969-expected.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CDXML/cdxml-6969-expected.cdxml',
+      FileType.CDXML,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -178,20 +172,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
     );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/unsplit-nucleotides-connected-with-nucleotides.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/unsplit-nucleotides-connected-with-nucleotides.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
   });
 
   test('Validate that unsplit nucleotides connected with chems could be saved to Cdxml file and loaded back', async ({
@@ -206,20 +192,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
     );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/unsplit-nucleotides-connected-with-chems.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/unsplit-nucleotides-connected-with-chems.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -235,20 +213,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
     );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/unsplit-nucleotides-connected-with-bases.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/unsplit-nucleotides-connected-with-bases.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -264,20 +234,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
     );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/unsplit-nucleotides-connected-with-sugars.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/unsplit-nucleotides-connected-with-sugars.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -293,20 +255,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
     );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/unsplit-nucleotides-connected-with-phosphates.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/unsplit-nucleotides-connected-with-phosphates.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -322,20 +276,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
     );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/unsplit-nucleotides-connected-with-peptides.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/unsplit-nucleotides-connected-with-peptides.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -351,20 +297,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
     );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/simple-schema-with-retrosynthetic-arrow.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/simple-schema-with-retrosynthetic-arrow.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'CDXML/simple-schema-with-retrosynthetic-arrow.cdxml',
@@ -387,20 +325,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
     );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/schema-with-retrosynthetic-angel-arrows-and-plus.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/schema-with-retrosynthetic-angel-arrows-and-plus.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'CDXML/schema-with-retrosynthetic-angel-arrows-and-plus.cdxml',
@@ -421,20 +351,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
     );
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/schema-with-two-retrosynthetic-arrows.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
-
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/schema-with-two-retrosynthetic-arrows.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'CDXML/schema-with-two-retrosynthetic-arrows.cdxml',
@@ -458,20 +380,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
         page,
       );
-      const expectedFile = await getCdxml(page);
-      await saveToFile(
+
+      await verifyFileExport(
+        page,
         'CDXML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdxml',
-        expectedFile,
+        FileType.CDXML,
       );
-
-      const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CDXML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdxml',
-        });
-
-      expect(cdxmlFile).toEqual(cdxmlFileExpected);
 
       await openFileAndAddToCanvasAsNewProject(
         'CDXML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cdxml',
@@ -496,20 +410,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         'KET/schema-with-vertical-retrosynthetic-arrow.ket',
         page,
       );
-      const expectedFile = await getCdxml(page);
-      await saveToFile(
+
+      await verifyFileExport(
+        page,
         'CDXML/schema-with-vertical-retrosynthetic-arrow.cdxml',
-        expectedFile,
+        FileType.CDXML,
       );
-
-      const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CDXML/schema-with-vertical-retrosynthetic-arrow.cdxml',
-        });
-
-      expect(cdxmlFile).toEqual(cdxmlFileExpected);
 
       await openFileAndAddToCanvasAsNewProject(
         'CDXML/schema-with-vertical-retrosynthetic-arrow.cdxml',
@@ -534,20 +440,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
         page,
       );
-      const expectedFile = await getCdxml(page);
-      await saveToFile(
+
+      await verifyFileExport(
+        page,
         'CDXML/schema-with-diagonal-retrosynthetic-arrow.cdxml',
-        expectedFile,
+        FileType.CDXML,
       );
-
-      const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CDXML/schema-with-diagonal-retrosynthetic-arrow.cdxml',
-        });
-
-      expect(cdxmlFile).toEqual(cdxmlFileExpected);
 
       await openFileAndAddToCanvasAsNewProject(
         'CDXML/schema-with-diagonal-retrosynthetic-arrow.cdxml',
@@ -571,22 +469,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '54.8');
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/layout-with-catalyst-pt-bond-lengh.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
 
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/layout-with-catalyst-pt-bond-lengh.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'CDXML/layout-with-catalyst-pt-bond-lengh.cdxml',
       page,
@@ -608,22 +499,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/layout-with-catalyst-px-margin-size.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
 
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/layout-with-catalyst-px-margin-size.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'CDXML/layout-with-catalyst-px-margin-size.cdxml',
       page,
@@ -645,22 +529,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getCdxml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CDXML/layout-with-dif-elements-acs-style.cdxml',
-      expectedFile,
+      FileType.CDXML,
     );
 
-    const { fileExpected: cdxmlFileExpected, file: cdxmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CDXML/layout-with-dif-elements-acs-style.cdxml',
-      });
-
-    expect(cdxmlFile).toEqual(cdxmlFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'CDXML/layout-with-dif-elements-acs-style.cdxml',
       page,

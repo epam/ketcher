@@ -521,6 +521,20 @@ export async function selectDearomatizeTool(page: Page) {
   );
 }
 
+export async function selectCleanTool(page: Page) {
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await selectTopPanelButton(TopPanelButton.Clean, page),
+  );
+}
+
+export async function selectLayoutTool(page: Page) {
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+  );
+}
+
 export async function copyStructureByCtrlMove(
   page: Page,
   atom: string,

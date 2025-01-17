@@ -1,22 +1,29 @@
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { Vec2 } from 'domain/entities/vec2';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { Bond } from 'domain/entities/CoreBond';
-import { Bond as MicromoleculesBond } from 'domain/entities/bond';
+import { Bond, BondType } from 'domain/entities/CoreBond';
 import { BaseRenderer } from 'application/render';
 import { AtomLabel, Elements } from 'domain/constants';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { isNumber } from 'lodash';
+import { MonomerToAtomBond } from './MonomerToAtomBond';
+
+export enum AtomRadical {
+  None,
+  Single,
+  Doublet,
+  Triplet,
+}
 
 export interface AtomProperties {
   charge?: number | null;
   explicitValence?: number;
   isotope?: number | null;
-  radical?: number;
+  radical?: AtomRadical;
   alias?: string | null;
 }
 export class Atom extends DrawingEntity {
-  public bonds: Bond[] = [];
+  public bonds: Array<Bond | MonomerToAtomBond> = [];
   public renderer: AtomRenderer | undefined = undefined;
   constructor(
     position: Vec2,
@@ -32,8 +39,14 @@ export class Atom extends DrawingEntity {
     return this.position;
   }
 
-  public addBond(bond: Bond) {
-    this.bonds.push(bond);
+  public addBond(bond: Bond | MonomerToAtomBond) {
+    if (!this.bonds.includes(bond)) {
+      this.bonds.push(bond);
+    }
+  }
+
+  public deleteBond(bondId: number) {
+    this.bonds = this.bonds.filter((bond) => bond.id !== bondId);
   }
 
   public setRenderer(renderer: AtomRenderer) {
@@ -49,29 +62,39 @@ export class Atom extends DrawingEntity {
     let connectionsAmount = 0;
 
     for (let i = 0; i < this.bonds.length; i++) {
-      switch (this.bonds[i].type) {
-        case MicromoleculesBond.PATTERN.TYPE.SINGLE:
-          connectionsAmount += 1;
-          break;
-        case MicromoleculesBond.PATTERN.TYPE.DOUBLE:
-          connectionsAmount += 2;
-          break;
-        case MicromoleculesBond.PATTERN.TYPE.TRIPLE:
-          connectionsAmount += 3;
-          break;
-        case MicromoleculesBond.PATTERN.TYPE.DATIVE:
-          break;
-        case MicromoleculesBond.PATTERN.TYPE.HYDROGEN:
-          break;
-        case MicromoleculesBond.PATTERN.TYPE.AROMATIC:
-          if (this.bonds.length === 1) return 0;
-          return this.bonds.length;
-        default:
-          return 0;
+      const bond = this.bonds[i];
+      if (bond instanceof MonomerToAtomBond) {
+        connectionsAmount += 1;
+      } else {
+        switch (bond.type) {
+          case BondType.Single:
+            connectionsAmount += 1;
+            break;
+          case BondType.Double:
+            connectionsAmount += 2;
+            break;
+          case BondType.Triple:
+            connectionsAmount += 3;
+            break;
+          case BondType.Dative:
+          case BondType.Hydrogen:
+            break;
+          case BondType.Aromatic:
+            if (this.bonds.length === 1) {
+              return -1;
+            }
+            return this.bonds.length;
+          default:
+            return -1;
+        }
       }
     }
 
     return connectionsAmount;
+  }
+
+  public get hasAlias() {
+    return Boolean(this.properties.alias);
   }
 
   public get hasRadical() {
@@ -93,16 +116,117 @@ export class Atom extends DrawingEntity {
     return isNumber(this.properties.isotope) && this.properties.isotope >= 0;
   }
 
+  private get radicalAmount() {
+    switch (this.properties.radical) {
+      case AtomRadical.Single:
+      case AtomRadical.Triplet:
+        return 2;
+      case AtomRadical.Doublet:
+        return 1;
+      default:
+        return 0;
+    }
+  }
+
+  private get valenceWithoutHydrogen() {
+    const charge = this.properties.charge || 0;
+    const label = this.label;
+    const element = Elements.get(this.label);
+    // if (!element) {
+    //   // query atom, skip
+    //   this.implicitH = 0;
+    //   return 0;
+    // }
+
+    const elementGroupNumber = element?.group;
+    const radicalAmount = this.radicalAmount;
+    const connectionAmount = this.calculateConnections();
+    const absoluteCharge = Math.abs(charge);
+
+    if (elementGroupNumber === 3) {
+      if (
+        label === AtomLabel.B ||
+        label === AtomLabel.Al ||
+        label === AtomLabel.Ga ||
+        label === AtomLabel.In
+      ) {
+        if (charge === -1) {
+          if (radicalAmount + connectionAmount <= 4) {
+            return radicalAmount + connectionAmount;
+          }
+        }
+      }
+    } else if (elementGroupNumber === 5) {
+      if (label === AtomLabel.N || label === AtomLabel.P) {
+        if (charge === 1 || charge === 2) {
+          return radicalAmount + connectionAmount;
+        }
+      } else if (
+        label === AtomLabel.Sb ||
+        label === AtomLabel.Bi ||
+        label === AtomLabel.As
+      ) {
+        if (charge === 1 || charge === 2) {
+          return radicalAmount + connectionAmount;
+        }
+      }
+    } else if (elementGroupNumber === 6) {
+      if (label === AtomLabel.O) {
+        if (charge >= 1) {
+          return radicalAmount + connectionAmount;
+        }
+      } else if (
+        label === AtomLabel.S ||
+        label === AtomLabel.Se ||
+        label === AtomLabel.Po
+      ) {
+        if (charge === 1) {
+          return radicalAmount + connectionAmount;
+        }
+      }
+    } else if (elementGroupNumber === 7) {
+      if (
+        label === AtomLabel.Cl ||
+        label === AtomLabel.Br ||
+        label === AtomLabel.I ||
+        label === AtomLabel.At
+      ) {
+        if (charge === 1) {
+          return radicalAmount + connectionAmount;
+        }
+      }
+    }
+
+    return radicalAmount + connectionAmount + absoluteCharge;
+  }
+
   calculateValence() {
+    if (this.hasExplicitValence) {
+      const valence = this.properties.explicitValence as number;
+      const hydrogenAmount = valence - this.valenceWithoutHydrogen;
+
+      return {
+        valence,
+        hydrogenAmount,
+      };
+    }
+
     const label = this.label;
     const element = Elements.get(label);
     const elementGroupNumber = element?.group;
     const connectionAmount = this.calculateConnections();
-    const radicalAmount = this.properties.radical || 0;
-    const absCharge = 0;
+    const radicalAmount = this.radicalAmount;
     const charge = this.properties.charge || 0;
-    let valence = this.calculateConnections();
+    const absCharge = Math.abs(charge);
+    let valence = connectionAmount;
     let hydrogenAmount = 0;
+
+    if (connectionAmount === -1) {
+      return {
+        valence,
+        hydrogenAmount,
+      };
+    }
 
     if (elementGroupNumber === undefined) {
       if (label === AtomLabel.D || label === AtomLabel.T) {
@@ -339,6 +463,7 @@ export class Atom extends DrawingEntity {
       if (connectionAmount + radicalAmount + absCharge === 0) valence = 1;
       else hydrogenAmount = -1;
     }
+
     // if (Atom.isHeteroAtom(label) && this.implicitHCount !== null) {
     //   hydrogenAmount = this.implicitHCount;
     // }

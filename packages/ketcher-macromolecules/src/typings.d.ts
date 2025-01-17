@@ -33,6 +33,10 @@ interface Document {
   webkitExitFullscreen?: () => void;
 }
 
+interface Window {
+  isPolymerEditorTurnedOn: boolean;
+}
+
 interface HTMLElement {
   msRequestFullscreen?: () => void;
   mozRequestFullScreen?: () => void;

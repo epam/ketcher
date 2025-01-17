@@ -24,13 +24,14 @@ import {
   waitForPageInit,
   waitForRender,
   openDropdown,
-  waitForSpinnerFinishedWork,
   selectRectangleArea,
   copyToClipboardByKeyboard,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectCleanTool,
+  selectLayoutTool,
 } from '@utils';
 import {
   pressRedoButton,
@@ -458,13 +459,10 @@ test.describe('Plus and Arrows tools ', () => {
     await page.mouse.move(point.x - 30, point.y);
     await dragMouseTo(point.x + 20, point.y + 50, page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
 
     test.fixme(
       true,

@@ -1981,6 +1981,7 @@ export class DrawingEntitiesManager {
         monomerToNewMonomer.get(atom.monomer) as BaseMonomer,
         atom.atomIdInMicroMode,
         atom.label,
+        atom.properties,
       );
       const addedAtom = atomAddCommand.operations[0].atom as Atom;
 
@@ -2447,8 +2448,9 @@ export class DrawingEntitiesManager {
         if (bond.selected) {
           return;
         }
-
-        command.merge(this.deleteBond(bond));
+        if (bond instanceof Bond) {
+          command.merge(this.deleteBond(bond));
+        }
       });
 
       this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
@@ -2553,12 +2555,12 @@ export class DrawingEntitiesManager {
     if (_monomerToAtomBond) {
       this.monomerToAtomBonds.set(_monomerToAtomBond.id, _monomerToAtomBond);
       monomer.setBond(attachmentPoint, _monomerToAtomBond);
-
+      atom.addBond(_monomerToAtomBond);
       return _monomerToAtomBond;
     }
 
     const monomerToAtomBond = new MonomerToAtomBond(monomer, atom);
-
+    atom.addBond(monomerToAtomBond);
     this.monomerToAtomBonds.set(monomerToAtomBond.id, monomerToAtomBond);
 
     monomerToAtomBond.moveToLinkedEntities();
@@ -2579,7 +2581,7 @@ export class DrawingEntitiesManager {
       monomerAtomBond.monomer.unsetBond(attachmentPointName);
     }
     this.monomerToAtomBonds.delete(monomerAtomBond.id);
-
+    monomerAtomBond.atom.deleteBond(monomerAtomBond.id);
     return monomerAtomBond;
   }
 

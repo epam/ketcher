@@ -20,16 +20,18 @@ import {
   pasteFromClipboardByKeyboard,
   pressButton,
   readFileContents,
-  removeExplicitHydrogens,
+  selectAddRemoveExplicitHydrogens,
   resetCurrentTool,
   RingButton,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
+  selectCleanTool,
   selectClearCanvasTool,
   selectDearomatizeTool,
   selectDropdownTool,
   selectEraseTool,
+  selectLayoutTool,
   selectLeftPanelButton,
   selectPartOfMolecules,
   selectRectangleSelectionTool,
@@ -41,7 +43,6 @@ import {
   TopPanelButton,
   waitForPageInit,
   waitForRender,
-  waitForSpinnerFinishedWork,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -3664,7 +3665,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
        */
       await openFileAndAddToCanvasAsNewProject(file, page);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Layout, page);
+      await selectLayoutTool(page);
       await takeEditorScreenshot(page);
       await verifyFileExport(page, expectedFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(expectedFile, page);
@@ -3699,7 +3700,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(700, 340, page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -3739,10 +3740,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(700, 340, page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-    );
+    await selectCleanTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -3880,9 +3878,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await removeExplicitHydrogens(page);
+    await selectAddRemoveExplicitHydrogens(page);
     await takeEditorScreenshot(page);
-    await removeExplicitHydrogens(page);
+    await selectAddRemoveExplicitHydrogens(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

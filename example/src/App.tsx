@@ -1,13 +1,12 @@
 import 'ketcher-react/dist/index.css';
 
-import { useState, StrictMode } from 'react';
+import { useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import {
   Ketcher,
   RemoteStructServiceProvider,
   StructServiceProvider,
 } from 'ketcher-core';
-import { ModeControl } from './ModeControl';
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
   const searchParams = new URLSearchParams(window.location.search);
@@ -49,45 +48,13 @@ if (process.env.MODE === 'standalone') {
   }
 }
 
-const enablePolymerEditor = process.env.ENABLE_POLYMER_EDITOR === 'true';
-
-type PolymerType = ({
-  togglerComponent,
-}: {
-  togglerComponent?: JSX.Element;
-}) => JSX.Element | null;
-
-let PolymerEditor: PolymerType = () => null;
-if (enablePolymerEditor) {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { Editor } = require('ketcher-macromolecules');
-  PolymerEditor = Editor as PolymerType;
-}
-
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig();
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [showPolymerEditor, setShowPolymerEditor] = useState(false);
 
-  const togglePolymerEditor = (toggleValue: boolean) => {
-    setShowPolymerEditor(toggleValue);
-    window.isPolymerEditorTurnedOn = toggleValue;
-  };
-
-  const togglerComponent = enablePolymerEditor ? (
-    <ModeControl
-      toggle={togglePolymerEditor}
-      isPolymerEditor={showPolymerEditor}
-    />
-  ) : undefined;
-
-  return showPolymerEditor ? (
+  return (
     <>
-      <PolymerEditor togglerComponent={togglerComponent} />
-    </>
-  ) : (
-    <StrictMode>
       <Editor
         errorHandler={(message: string) => {
           setHasError(true);
@@ -107,7 +74,6 @@ const App = () => {
           );
           window.scrollTo(0, 0);
         }}
-        togglerComponent={togglerComponent}
       />
       {hasError && (
         <InfoModal
@@ -122,7 +88,7 @@ const App = () => {
           }}
         />
       )}
-    </StrictMode>
+    </>
   );
 };
 

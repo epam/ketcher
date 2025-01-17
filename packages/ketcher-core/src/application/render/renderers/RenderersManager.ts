@@ -345,6 +345,7 @@ export class RenderersManager {
 
   public addMonomerToAtomBond(bond: MonomerToAtomBond) {
     const bondRenderer = new MonomerToAtomBondRenderer(bond);
+    this.redrawDrawingEntity(bond.atom);
 
     bondRenderer.show();
     bond.monomer.renderer?.redrawAttachmentPoints();
@@ -353,6 +354,7 @@ export class RenderersManager {
 
   public deleteMonomerToAtomBond(bond: MonomerToAtomBond) {
     bond.renderer?.remove();
+    this.redrawDrawingEntity(bond.atom);
   }
 
   public runPostRenderMethods() {

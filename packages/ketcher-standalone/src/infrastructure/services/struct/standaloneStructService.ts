@@ -830,8 +830,6 @@ class IndigoService implements StructService {
   public destroy() {
     this.worker.terminate();
     this.worker.onmessage = null;
-    // this.worker = null;
-    // indigoWorker = null;
   }
 }
 

@@ -33,7 +33,7 @@ import {
   clickOnCanvas,
   selectAromatizeTool,
   selectDearomatizeTool,
-  removeExplicitHydrogens,
+  selectAddRemoveExplicitHydrogens,
 } from '@utils';
 
 test.describe('Hot keys', () => {
@@ -446,9 +446,9 @@ test.describe('Hot keys', () => {
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
-    await removeExplicitHydrogens(page);
+    await selectAddRemoveExplicitHydrogens(page);
     await takeEditorScreenshot(page);
-    await removeExplicitHydrogens(page);
+    await selectAddRemoveExplicitHydrogens(page);
     await takeEditorScreenshot(page);
   });
 

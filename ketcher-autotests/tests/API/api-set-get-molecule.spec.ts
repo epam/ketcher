@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@playwright/test';
 import {
   AtomButton,
@@ -810,10 +811,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(
-    '1. Verify absence "Enhanced Stereochemistry" flag and stereocenters when load structure by API',
-    async ({ page }) => {
-      /*
+  test('1. Verify absence "Enhanced Stereochemistry" flag and stereocenters when load structure by API', async ({
+    page,
+  }) => {
+    /*
     Test case: https://github.com/epam/ketcher/issues/6161
     Description: Absence "Enhanced Stereochemistry" flag and stereocenters
     Case:
@@ -821,22 +822,21 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       2. Load structure from API
       3. Take a screenshot
     */
-      const MolV2000File = await readFileContents(
-        'tests/test-data/Molfiles-V2000/non-proprietary-structure.mol',
-      );
-      await applyIgnoreChiralFlag(page);
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await setMolecule(page, MolV2000File),
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+    const MolV2000File = await readFileContents(
+      'tests/test-data/Molfiles-V2000/non-proprietary-structure.mol',
+    );
+    await applyIgnoreChiralFlag(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, MolV2000File),
+    );
+    await takeEditorScreenshot(page);
+  });
 
-  test(
-    '2. Verify absence "Enhanced Stereochemistry" flag and stereocenters when load structure by API',
-    async ({ page }) => {
-      /*
+  test('2. Verify absence "Enhanced Stereochemistry" flag and stereocenters when load structure by API', async ({
+    page,
+  }) => {
+    /*
     Test case: https://github.com/epam/ketcher/issues/6161
     Description: Absence "Enhanced Stereochemistry" flag and stereocenters
     Case:
@@ -845,16 +845,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       3. Apply "Ignore the chiral flag" setting
       4. Take a screenshot
     */
-      const MolV2000File = await readFileContents(
-        'tests/test-data/Molfiles-V2000/non-proprietary-structure.mol',
-      );
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await setMolecule(page, MolV2000File),
-      );
-      await takeEditorScreenshot(page);
-      await applyIgnoreChiralFlag(page);
-      await takeEditorScreenshot(page);
-    },
-  );
+    const MolV2000File = await readFileContents(
+      'tests/test-data/Molfiles-V2000/non-proprietary-structure.mol',
+    );
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, MolV2000File),
+    );
+    await takeEditorScreenshot(page);
+    await applyIgnoreChiralFlag(page);
+    await takeEditorScreenshot(page);
+  });
 });

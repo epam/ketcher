@@ -68,19 +68,14 @@ import {
   pickStandardServerOptions,
 } from 'ketcher-core';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-// import indigoWorker from './indigoWorker';
 import EventEmitter from 'events';
 import {
   STRUCT_SERVICE_INITIALIZED_EVENT,
   STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT,
 } from './constants';
-
-const indigoWorker: Worker = new Worker(
-  new URL('./indigoWorker2.js', import.meta.url),
-  { type: 'module' },
-);
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { indigoWorker } from '_indigo-worker-import-alias_';
 
 interface KeyValuePair {
   [key: string]: number | string | boolean | object;

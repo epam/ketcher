@@ -3,17 +3,14 @@ import cleanup from 'rollup-plugin-cleanup';
 import commonjs from '@rollup/plugin-commonjs';
 import del from 'rollup-plugin-delete';
 import nodePolyfills from 'rollup-plugin-node-polyfills';
-import pkg from './package.json';
 import resolve from '@rollup/plugin-node-resolve';
 import strip from '@rollup/plugin-strip';
 import typescript from 'rollup-plugin-typescript2';
+import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 import copy from 'rollup-plugin-copy';
 import alias from '@rollup/plugin-alias';
 import { license } from '../../license.ts';
 import replace from '@rollup/plugin-replace';
-import wasm from '@rollup/plugin-wasm';
-import url from '@rollup/plugin-url';
-import { importMetaAssets } from '@web/rollup-plugin-import-meta-assets';
 import OMT from '@surma/rollup-plugin-off-main-thread';
 
 const mode = {
@@ -24,6 +21,38 @@ const mode = {
 const extensions = ['.js', '.ts'];
 const isProduction = process.env.NODE_ENV === mode.PRODUCTION;
 const includePattern = 'src/**/*';
+export const INDIGO_WORKER_IMPORTS = {
+  WASM_LOADER: './indigoWorkerImports/useWasmLoader',
+  OFF_MAIN_THREAD_PLUGIN: './indigoWorkerImports/useOffMainThreadPlugin',
+};
+const configureWebWorkerLoader = () => {
+  return webWorkerLoader({
+    extensions,
+    sourcemap: false,
+    targetPlatform: 'browser',
+    external: ['@babel/runtime'],
+  });
+};
+const replaceIndigoAlias = (replacement) => {
+  return alias({
+    entries: [
+      {
+        find: '_indigo-ketcher-import-alias_',
+        replacement,
+      },
+    ],
+  });
+};
+const useIndigoWorkerImport = (importToUse) => {
+  return alias({
+    entries: [
+      {
+        find: '_indigo-worker-import-alias_',
+        replacement: importToUse,
+      },
+    ],
+  });
+};
 
 const baseConfig = {
   input: {
@@ -56,12 +85,6 @@ const configWithWasmBase64 = {
   ...baseConfig,
   output: [
     {
-      dir: 'dist/cjs',
-      exports: 'named',
-      format: 'cjs',
-      banner: license,
-    },
-    {
       dir: 'dist',
       exports: 'named',
       format: 'esm',
@@ -74,14 +97,27 @@ const configWithWasmBase64 = {
       runOnce: true,
     }),
     ...baseConfig.plugins,
-    alias({
-      entries: [
-        {
-          find: '_indigo-ketcher-import-alias_',
-          replacement: 'indigo-ketcher',
-        },
-      ],
-    }),
+    replaceIndigoAlias('indigo-ketcher'),
+    useIndigoWorkerImport(INDIGO_WORKER_IMPORTS.WASM_LOADER),
+    OMT(),
+  ],
+};
+
+const configWithWasmBase64Cjs = {
+  ...baseConfig,
+  output: [
+    {
+      dir: 'dist/cjs',
+      exports: 'named',
+      format: 'cjs',
+      banner: license,
+    },
+  ],
+  plugins: [
+    ...baseConfig.plugins,
+    replaceIndigoAlias('indigo-ketcher'),
+    useIndigoWorkerImport(INDIGO_WORKER_IMPORTS.WASM_LOADER),
+    configureWebWorkerLoader(),
   ],
 };
 
@@ -97,11 +133,13 @@ const configWithWasmFetch = {
   ],
   plugins: [
     ...baseConfig.plugins,
-    alias({
-      entries: [
+    replaceIndigoAlias('indigo-ketcher/binaryWasm'),
+    useIndigoWorkerImport(INDIGO_WORKER_IMPORTS.OFF_MAIN_THREAD_PLUGIN),
+    copy({
+      targets: [
         {
-          find: '_indigo-ketcher-import-alias_',
-          replacement: 'indigo-ketcher/binaryWasm',
+          src: '../../node_modules/indigo-ketcher/*.wasm',
+          dest: 'dist/binaryWasm',
         },
       ],
     }),
@@ -113,12 +151,6 @@ const configBase64WithoutRender = {
   ...baseConfig,
   output: [
     {
-      dir: 'dist/cjs/jsNoRender',
-      exports: 'named',
-      format: 'cjs',
-      banner: license,
-    },
-    {
       dir: 'dist/jsNoRender',
       exports: 'named',
       format: 'esm',
@@ -127,26 +159,33 @@ const configBase64WithoutRender = {
   ],
   plugins: [
     ...baseConfig.plugins,
-    alias({
-      entries: [
-        {
-          find: '_indigo-ketcher-import-alias_',
-          replacement: 'indigo-ketcher/jsNoRender',
-        },
-      ],
-    }),
+    replaceIndigoAlias('indigo-ketcher/jsNoRender'),
+    useIndigoWorkerImport(INDIGO_WORKER_IMPORTS.WASM_LOADER),
+    OMT(),
+  ],
+};
+
+const configBase64WithoutRenderCjs = {
+  ...baseConfig,
+  output: [
+    {
+      dir: 'dist/cjs/jsNoRender',
+      exports: 'named',
+      format: 'cjs',
+      banner: license,
+    },
+  ],
+  plugins: [
+    ...baseConfig.plugins,
+    replaceIndigoAlias('indigo-ketcher/jsNoRender'),
+    useIndigoWorkerImport(INDIGO_WORKER_IMPORTS.WASM_LOADER),
+    configureWebWorkerLoader(),
   ],
 };
 
 const configWithWasmWithoutRender = {
   ...baseConfig,
   output: [
-    {
-      dir: 'dist/cjs/binaryWasmNoRender',
-      exports: 'named',
-      format: 'cjs',
-      banner: license,
-    },
     {
       dir: 'dist/binaryWasmNoRender',
       exports: 'named',
@@ -156,21 +195,26 @@ const configWithWasmWithoutRender = {
   ],
   plugins: [
     ...baseConfig.plugins,
-    alias({
-      entries: [
+    replaceIndigoAlias('indigo-ketcher/binaryWasmNoRender'),
+    useIndigoWorkerImport(INDIGO_WORKER_IMPORTS.OFF_MAIN_THREAD_PLUGIN),
+    copy({
+      targets: [
         {
-          find: '_indigo-ketcher-import-alias_',
-          replacement: 'indigo-ketcher/binaryWasmNoRender',
+          src: '../../node_modules/indigo-ketcher/*.wasm',
+          dest: 'dist/binaryWasmNoRender',
         },
       ],
     }),
+    OMT(),
   ],
 };
 
 const modulesMap = {
   base64: configWithWasmBase64,
+  base64Cjs: configWithWasmBase64Cjs,
   wasm: configWithWasmFetch,
   base64WithoutRender: configBase64WithoutRender,
+  base64WithoutRenderCjs: configBase64WithoutRenderCjs,
   wasmWithoutRender: configWithWasmWithoutRender,
 };
 

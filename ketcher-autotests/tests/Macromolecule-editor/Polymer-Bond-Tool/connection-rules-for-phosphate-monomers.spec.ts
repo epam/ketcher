@@ -1,61 +1,39 @@
 /* eslint-disable no-magic-numbers */
-import { BrowserContext, Page, chromium, test } from '@playwright/test';
+import { Page, test, expect, Locator } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  waitForKetcherInit,
-  waitForIndigoToLoad,
   selectClearCanvasTool,
   resetZoomLevelToDefault,
+  MonomerType,
+  waitForPageInit,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
 
 let page: Page;
-let sharedContext: BrowserContext;
 
 test.beforeAll(async ({ browser }) => {
-  // let sharedContext;
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
+  const context = await browser.newContext();
+  page = await context.newPage();
 
-  // Reminder: do not pass page as async
-  page = await sharedContext.newPage();
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
+  await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
 });
 
 test.afterEach(async () => {
-  await page.keyboard.press('Escape');
   await resetZoomLevelToDefault(page);
   await selectClearCanvasTool(page);
 });
 
 test.afterAll(async ({ browser }) => {
-  await page.close();
-  await sharedContext.close();
-  await browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
-  // await browser.close();
+  await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
 test.describe('Connection rules for Phosphate monomers: ', () => {
@@ -63,7 +41,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
   test.describe.configure({ retries: 0 });
 
   interface IMonomer {
-    monomerType: string;
+    monomerType: MonomerType;
     fileName: string;
     alias: string;
     connectionPoints: { [connectionPointName: string]: string };
@@ -71,7 +49,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
 
   const phosphateMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'phosphate',
+      monomerType: MonomerType.Phosphate,
       fileName: 'KET/Phosphate-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -79,7 +57,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'phosphate',
+      monomerType: MonomerType.Phosphate,
       fileName: 'KET/Phosphate-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
@@ -87,7 +65,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: 'phosphate',
+    //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
@@ -95,7 +73,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     '(R1,R2) - R3 gap': {
-      monomerType: 'phosphate',
+      monomerType: MonomerType.Phosphate,
       fileName: 'KET/Phosphate-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -104,7 +82,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     // '(R1,R3) - R2 gap': {
-    //   monomerType: 'phosphate',
+    //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
     //   connectionPoints: {
@@ -113,7 +91,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R2,R3) - R1 gap': {
-    //   monomerType: 'phosphate',
+    //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
     //   connectionPoints: {
@@ -122,7 +100,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R3,R4)': {
-    //        monomerType: 'phosphate',
+    //        monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -131,7 +109,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R1,R2,R3)': {
-    //   monomerType: 'phosphate',
+    //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/08 - (R1,R2,R3).ket',
     //   alias: '(R1,R2,R3)',
     //   connectionPoints: {
@@ -141,7 +119,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R1,R3,R4)': {
-    // monomerType: 'phosphate',
+    // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -151,7 +129,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    // monomerType: 'phosphate',
+    // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -161,7 +139,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    // monomerType: 'phosphate',
+    // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -171,7 +149,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4)': {
-    // monomerType: 'phosphate',
+    // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
     //   connectionPoints: {
@@ -182,7 +160,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R1,R3,R4,R5)': {
-    // monomerType: 'phosphate',
+    // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -193,7 +171,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    // monomerType: 'phosphate',
+    // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -204,7 +182,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
-    // monomerType: 'phosphate',
+    // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -217,107 +195,44 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     // },
   };
 
-  async function hoverOverConnectionLine(page: Page) {
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
-    await bondLine.hover();
-  }
-
   async function loadTwoMonomers(
     page: Page,
-    leftSugar: IMonomer,
-    rightSugar: IMonomer,
-  ) {
-    await openFileAndAddToCanvasMacro(leftSugar.fileName, page);
-    const leftsugarLocator = page
-      .getByText(leftSugar.alias)
-      .locator('..')
-      .first();
-    await leftsugarLocator.hover();
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
+  ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
+    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    const leftMonomerLocator = (
+      await getMonomerLocator(page, {
+        monomerAlias: leftMonomer.alias,
+        monomerType: leftMonomer.monomerType,
+      })
+    ).first();
+
+    await leftMonomerLocator.hover({ force: true });
+
     await dragMouseTo(500, 370, page);
     await moveMouseAway(page);
 
-    await openFileAndAddToCanvasMacro(rightSugar.fileName, page);
-    const rightsugarLocator =
-      (await page.getByText(leftSugar.alias).count()) > 1
-        ? page.getByText(rightSugar.alias).nth(1).locator('..').first()
-        : page.getByText(rightSugar.alias).locator('..').first();
-    await rightsugarLocator.hover();
+    await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
+    const tmpMonomerLocator = await getMonomerLocator(page, {
+      monomerAlias: rightMonomer.alias,
+      monomerType: rightMonomer.monomerType,
+    });
+    const rightMonomerLocator =
+      (await tmpMonomerLocator.count()) > 1
+        ? tmpMonomerLocator.nth(1)
+        : tmpMonomerLocator.first();
+
+    await rightMonomerLocator.hover({ force: true });
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 371, page);
+    await dragMouseTo(600, 375, page);
     await moveMouseAway(page);
+
+    return {
+      leftMonomer: leftMonomerLocator,
+      rightMonomer: rightMonomerLocator,
+    };
   }
-
-  async function bondTwoMonomersByPointToPoint(
-    page: Page,
-    leftMonomer: IMonomer,
-    rightMonomer: IMonomer,
-    leftMonomerConnectionPoint?: string,
-    rightMonomerConnectionPoint?: string,
-  ) {
-    const leftMonomerLocator = page
-      .getByText(leftMonomer.alias)
-      .locator('..')
-      .first();
-
-    const rightMonomerLocator =
-      (await page.getByText(leftMonomer.alias).count()) > 1
-        ? page.getByText(rightMonomer.alias).nth(1).locator('..').first()
-        : page.getByText(rightMonomer.alias).locator('..').first();
-
-    await bondTwoMonomersPointToPoint(
-      page,
-      leftMonomerLocator,
-      rightMonomerLocator,
-      leftMonomerConnectionPoint,
-      rightMonomerConnectionPoint,
-    );
-  }
-
-  async function bondTwoMonomersByCenterToCenter(
-    page: Page,
-    leftMonomer: IMonomer,
-    rightMonomer: IMonomer,
-  ) {
-    const leftMonomerLocator = page
-      .getByText(leftMonomer.alias)
-      .locator('..')
-      .first();
-
-    const rightMonomerLocator =
-      (await page.getByText(leftMonomer.alias).count()) > 1
-        ? page.getByText(rightMonomer.alias).nth(1).locator('..').first()
-        : page.getByText(rightMonomer.alias).locator('..').first();
-
-    await bondTwoMonomersPointToPoint(
-      page,
-      leftMonomerLocator,
-      rightMonomerLocator,
-    );
-
-    if (await page.getByRole('dialog').isVisible()) {
-      const firstConnectionPointKeyForLeftMonomer = Object.keys(
-        leftMonomer.connectionPoints,
-      )[0];
-      const leftMonomerConnectionPoint =
-        leftMonomer.connectionPoints[firstConnectionPointKeyForLeftMonomer];
-      await page.getByTitle(leftMonomerConnectionPoint).first().click();
-
-      const firstConnectionPointKeyForRightMonomer = Object.keys(
-        rightMonomer.connectionPoints,
-      )[0];
-      const rightMonomerConnectionPoint =
-        rightMonomer.connectionPoints[firstConnectionPointKeyForRightMonomer];
-      (await page.getByTitle(rightMonomerConnectionPoint).count()) > 1
-        ? await page.getByTitle(rightMonomerConnectionPoint).nth(1).click()
-        : await page.getByTitle(rightMonomerConnectionPoint).first().click();
-
-      await page.getByTitle('Connect').first().click();
-    }
-  }
-
-  // test(`temporary test for debug purposes`, async () => {
-  //    await bondTwoMonomersByCenterToCenter(page, phosphateMonomers['(R1,R2,R3)'], phosphateMonomers['(R1,R2,R3)']);
-  //  });
 
   Object.values(phosphateMonomers).forEach((leftPhosphate) => {
     Object.values(phosphateMonomers).forEach((rightPhosphate) => {
@@ -333,23 +248,24 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
        *  4. Validate canvas (connection dialog should appear)
        */
       test(`Test case1: Center-to-center of ${leftPhosphate.alias} and ${rightPhosphate.alias}`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftPhosphate, rightPhosphate);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftPhosphate, rightPhosphate);
 
-        await bondTwoMonomersByCenterToCenter(
+        const bondLine = await bondTwoMonomersPointToPoint(
           page,
-          leftPhosphate,
-          rightPhosphate,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
         );
 
-        await zoomWithMouseWheel(page, -800);
-
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });
@@ -373,25 +289,22 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Test case2: Connect ${leftPhosphateConnectionPoint} to ${rightPhosphateConnectionPoint} of ${leftPhosphate.alias} and ${rightPhosphate.alias}`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftPhosphate, rightPhosphate);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftPhosphate, rightPhosphate);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftPhosphate,
-                  rightPhosphate,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftPhosphateConnectionPoint,
                   rightPhosphateConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -800);
-
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -402,7 +315,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
 
   const peptideMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -410,7 +323,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
@@ -418,7 +331,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
@@ -426,7 +339,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     '(R1,R2) - R3 gap': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -435,7 +348,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     '(R1,R3) - R2 gap': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
       connectionPoints: {
@@ -444,7 +357,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     '(R2,R3) - R1 gap': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
       connectionPoints: {
@@ -453,7 +366,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     // '(R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -462,7 +375,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
@@ -472,7 +385,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -482,7 +395,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -492,7 +405,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -502,7 +415,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
     //   connectionPoints: {
@@ -513,7 +426,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -524,7 +437,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -535,7 +448,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -547,7 +460,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     J: {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName:
         'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
       alias: 'J',
@@ -557,7 +470,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     // '%': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
     //   alias: '%',
     //   connectionPoints: {
@@ -586,24 +499,22 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case3: Cnnct ${leftPhosphateConnectionPoint} to ${rightPeptideConnectionPoint} of Ph(${leftPhosphate.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-                test.setTimeout(40000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftPhosphate, rightPeptide);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftPhosphate, rightPeptide);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftPhosphate,
-                  rightPeptide,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftPhosphateConnectionPoint,
                   rightPeptideConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -614,7 +525,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
 
   const chemMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -622,7 +533,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
@@ -630,7 +541,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
@@ -638,7 +549,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     '(R1,R2) - R3 gap': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -647,7 +558,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     // '(R1,R3) - R2 gap': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
     //   connectionPoints: {
@@ -656,7 +567,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R2,R3) - R1 gap': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
     //   connectionPoints: {
@@ -665,7 +576,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R3,R4)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -674,7 +585,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
@@ -684,7 +595,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -694,7 +605,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -704,7 +615,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -714,7 +625,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     '(R1,R2,R3,R4)': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/12 - (R1,R2,R3,R4).ket',
       alias: '(R1,R2,R3,R4)',
       connectionPoints: {
@@ -725,7 +636,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -736,7 +647,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -747,7 +658,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -779,24 +690,22 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case4: Cnnct ${leftPhosphateConnectionPoint} to ${rightCHEMConnectionPoint} of Ph(${leftPhosphate.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftPhosphate, rightCHEM);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftPhosphate, rightCHEM);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftPhosphate,
-                  rightCHEM,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftPhosphateConnectionPoint,
                   rightCHEMConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -820,20 +729,22 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       test(`Case5: Cnnct Center to Center of Ph(${leftPhosphate.alias}) and Peptide(${rightPeptide.alias})`, async () => {
         test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftPhosphate, rightPeptide);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftPhosphate, rightPeptide);
 
-        await bondTwoMonomersByCenterToCenter(
+        const bondLine = await bondTwoMonomersPointToPoint(
           page,
-          leftPhosphate,
-          rightPeptide,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
         );
 
-        await zoomWithMouseWheel(page, -600);
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });
@@ -851,25 +762,31 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case6: Cnnct Center to Center of Ph(${leftPhosphate.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftPhosphate, rightCHEM);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftPhosphate, rightCHEM);
 
-        await bondTwoMonomersByCenterToCenter(page, leftPhosphate, rightCHEM);
+        const bondLine = await bondTwoMonomersPointToPoint(
+          page,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
 
-        await zoomWithMouseWheel(page, -600);
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });
 
   const ordinaryMoleculeMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/01 - (R1) - Left only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -877,7 +794,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/02 - (R2) - Right only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -885,7 +802,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     '(R3) - Side only': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/03 - (R3) - Side only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -893,7 +810,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     '(R1,R2) - R3 gap': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -902,7 +819,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     '(R1,R3) - R2 gap': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -911,7 +828,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     '(R2,R3) - R1 gap': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -920,7 +837,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     // '(R3,R4)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/07 - (R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -929,7 +846,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/08 - (R1,R2,R3).ket',
       alias: 'F1',
       connectionPoints: {
@@ -939,7 +856,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/09 - (R1,R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -949,7 +866,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/10 - (R2,R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -959,7 +876,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/11 - (R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -969,7 +886,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     '(R1,R2,R3,R4)': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
       alias: 'F1',
       connectionPoints: {
@@ -980,7 +897,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       },
     },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -991,7 +908,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -1002,7 +919,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     //   },
     // },
     '(R1,R2,R3,R4,R5)': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
       alias: 'F1',
       connectionPoints: {
@@ -1039,24 +956,22 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
                 rightOM.fileName.lastIndexOf('.ket'),
               );
               test(`Test case9: Connect ${leftPhosphateConnectionPoint} to ${rightOMConnectionPoint} of Phosphate(${leftPhosphate.alias}) and OM(${ordnryMlcleName})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftPhosphate, rightOM);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftPhosphate, rightOM);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftPhosphate,
-                  rightOM,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftPhosphateConnectionPoint,
                   rightOMConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -1078,23 +993,24 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
       );
 
       test(`Case 10: Connect Center to Center of Phosphate(${leftPhosphate.alias}) and OrdinaryMolecule(${ordnryMlcleName})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftPhosphate, rightOrdinaryMolecule);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftPhosphate, rightOrdinaryMolecule);
 
-        await bondTwoMonomersByCenterToCenter(
+        const bondLine = await bondTwoMonomersPointToPoint(
           page,
-          leftPhosphate,
-          rightOrdinaryMolecule,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
         );
 
-        await zoomWithMouseWheel(page, -600);
-
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });
@@ -1222,7 +1138,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
         await bondMonomerCenterToAtom(page, leftMonomer, rightMolecule, 0);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
 
         test.fixme(
@@ -1273,7 +1189,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
         }
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });

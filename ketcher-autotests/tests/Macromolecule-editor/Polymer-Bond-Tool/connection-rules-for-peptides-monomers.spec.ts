@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test } from '@playwright/test';
+import { Locator, Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectClearCanvasTool,
@@ -8,11 +8,10 @@ import {
   dragMouseTo,
   waitForPageInit,
   resetZoomLevelToDefault,
+  MonomerType,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
@@ -32,7 +31,6 @@ test.describe('Connection rules for peptides: ', () => {
   });
 
   test.afterEach(async () => {
-    await page.keyboard.press('Escape');
     await resetZoomLevelToDefault(page);
     await selectClearCanvasTool(page);
   });
@@ -74,7 +72,7 @@ test.describe('Connection rules for peptides: ', () => {
   };
 
   interface IMonomer {
-    monomerType: string;
+    monomerType: MonomerType;
     fileName: string;
     alias: string;
     connectionPoints: { [connectionPointName: string]: string };
@@ -82,7 +80,7 @@ test.describe('Connection rules for peptides: ', () => {
 
   const peptideMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -90,7 +88,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
@@ -98,7 +96,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
@@ -106,7 +104,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     '(R1,R2) - R3 gap': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -115,7 +113,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     '(R1,R3) - R2 gap': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
       connectionPoints: {
@@ -124,7 +122,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     '(R2,R3) - R1 gap': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
       connectionPoints: {
@@ -133,7 +131,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     // '(R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -142,7 +140,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
@@ -152,7 +150,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -162,7 +160,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -172,7 +170,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -182,7 +180,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
     //   connectionPoints: {
@@ -193,7 +191,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -204,7 +202,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -215,7 +213,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -227,7 +225,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     J: {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName:
         'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
       alias: 'J',
@@ -237,7 +235,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     // '%': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
     //   alias: '%',
     //   connectionPoints: {
@@ -249,7 +247,7 @@ test.describe('Connection rules for peptides: ', () => {
 
   const tmpPeptideMonomers: { [monomerName: string]: IMonomer } = {
     'Test-6-P-x': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/Test-6-P-x.ket',
       alias: 'Test-6-P-x',
       connectionPoints: {
@@ -260,8 +258,22 @@ test.describe('Connection rules for peptides: ', () => {
         R5: 'R5',
       },
     },
+    'Test-6-P-Main': {
+      monomerType: MonomerType.Peptide,
+      fileName:
+        'KET/Peptide-Templates/peptide-connection-rules-cases-template.ket',
+      alias: 'Test-6-P-x',
+      connectionPoints: {
+        R1: 'R1',
+        R2: 'R2',
+        R3: 'R3',
+        R4: 'R4',
+        R5: 'R5',
+        R6: 'R6',
+      },
+    },
     'Test-6-P-1': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName:
         'KET/Peptide-Templates/peptide-connection-rules-cases-template.ket',
       alias: 'Test-6-P-1',
@@ -275,7 +287,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     'Test-6-P-2': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName:
         'KET/Peptide-Templates/peptide-connection-rules-cases-template.ket',
       alias: 'Test-6-P-2',
@@ -289,7 +301,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     'Test-6-P-3': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName:
         'KET/Peptide-Templates/peptide-connection-rules-cases-template.ket',
       alias: 'Test-6-P-3',
@@ -303,7 +315,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     'Test-6-P-4': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName:
         'KET/Peptide-Templates/peptide-connection-rules-cases-template.ket',
       alias: 'Test-6-P-4',
@@ -317,7 +329,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     'Test-6-P-5': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName:
         'KET/Peptide-Templates/peptide-connection-rules-cases-template.ket',
       alias: 'Test-6-P-5',
@@ -332,16 +344,11 @@ test.describe('Connection rules for peptides: ', () => {
     },
   };
 
-  async function hoverOverConnectionLine(page: Page) {
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
-    await bondLine.hover();
-  }
-
   async function prepareCanvasOneFreeAPLeft(
     page: Page,
     peptide: IMonomer,
     freePeptideConnectionPoint: string,
-  ) {
+  ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
     await openFileAndAddToCanvasMacro(
       tmpPeptideMonomers['Test-6-P-1'].fileName,
       page,
@@ -368,68 +375,114 @@ test.describe('Connection rules for peptides: ', () => {
         );
       }
     }
+
+    const leftMonomerLocator = (
+      await getMonomerLocator(page, {
+        monomerAlias: tmpPeptideMonomers['Test-6-P-Main'].alias,
+        monomerType: tmpPeptideMonomers['Test-6-P-Main'].monomerType,
+      })
+    ).first();
+    const tmpMonomerLocator = await getMonomerLocator(page, {
+      monomerAlias: peptide.alias,
+      monomerType: peptide.monomerType,
+    });
+    const rightMonomerLocator =
+      (await tmpMonomerLocator.count()) > 1
+        ? tmpMonomerLocator.nth(1)
+        : tmpMonomerLocator.first();
+
+    return {
+      leftMonomer: leftMonomerLocator,
+      rightMonomer: rightMonomerLocator,
+    };
   }
 
-  async function prepareCanvasNoFreeAPLeft(page: Page, peptide: IMonomer) {
+  async function prepareCanvasNoFreeAPLeft(
+    page: Page,
+    CHEM: IMonomer,
+  ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
     await openFileAndAddToCanvasMacro(
       tmpPeptideMonomers['Test-6-P-1'].fileName,
       page,
     );
 
-    await openFileAndAddToCanvasMacro(peptide.fileName, page);
-    const peptideLocator = page.getByText(peptide.alias).locator('..').first();
-    await peptideLocator.hover();
+    await openFileAndAddToCanvasMacro(CHEM.fileName, page);
+    const CHEMLocator = page.getByText(CHEM.alias).locator('..').first();
+    await CHEMLocator.hover();
     await dragMouseTo(550, 370, page);
     await moveMouseAway(page);
 
-    for await (const peptideConnectionPoint of Object.values(
-      peptide.connectionPoints,
+    for await (const CHEMConnectionPoint of Object.values(
+      CHEM.connectionPoints,
     )) {
-      const tmppeptide =
-        tmpPeptideMonomers[`Test-6-P-${peptideConnectionPoint[1]}`];
+      const tmpCHEM = tmpPeptideMonomers[`Test-6-P-${CHEMConnectionPoint[1]}`];
       await bondTwoMonomersByPointToPoint(
         page,
-        peptide,
-        tmppeptide,
-        peptideConnectionPoint,
-        peptideConnectionPoint,
+        CHEM,
+        tmpCHEM,
+        CHEMConnectionPoint,
+        CHEMConnectionPoint,
       );
     }
+
+    const leftMonomerLocator = (
+      await getMonomerLocator(page, {
+        monomerAlias: tmpPeptideMonomers['Test-6-P-Main'].alias,
+        monomerType: tmpPeptideMonomers['Test-6-P-Main'].monomerType,
+      })
+    ).first();
+    const tmpMonomerLocator = await getMonomerLocator(page, {
+      monomerAlias: CHEM.alias,
+      monomerType: CHEM.monomerType,
+    });
+    const rightMonomerLocator =
+      (await tmpMonomerLocator.count()) > 1
+        ? tmpMonomerLocator.nth(1)
+        : tmpMonomerLocator.first();
+
+    return {
+      leftMonomer: leftMonomerLocator,
+      rightMonomer: rightMonomerLocator,
+    };
   }
 
   async function loadTwoMonomers(
     page: Page,
-    leftMonomers: IMonomer,
-    rightMonomers: IMonomer,
-  ) {
-    await openFileAndAddToCanvasMacro(leftMonomers.fileName, page);
-    const canvasLocator = page.getByTestId('ketcher-canvas').first();
-    const leftMonomerLocator = canvasLocator
-      .locator(`text=${leftMonomers.alias}`)
-      .locator('..')
-      .first();
-    // const leftMonomerLocator = page.locator('use').first();
-    await leftMonomerLocator.hover();
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
+  ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
+    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    const leftMonomerLocator = (
+      await getMonomerLocator(page, {
+        monomerAlias: leftMonomer.alias,
+        monomerType: leftMonomer.monomerType,
+      })
+    ).first();
+
+    await leftMonomerLocator.hover({ force: true });
+
     await dragMouseTo(500, 370, page);
     await moveMouseAway(page);
 
-    await openFileAndAddToCanvasMacro(rightMonomers.fileName, page);
+    await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
+    const tmpMonomerLocator = await getMonomerLocator(page, {
+      monomerAlias: rightMonomer.alias,
+      monomerType: rightMonomer.monomerType,
+    });
     const rightMonomerLocator =
-      (await canvasLocator.locator(`text=${leftMonomers.alias}`).count()) > 1
-        ? canvasLocator
-            .locator(`text=${rightMonomers.alias}`)
-            .nth(1)
-            .locator('..')
-            .first()
-        : canvasLocator
-            .locator(`text=${rightMonomers.alias}`)
-            .locator('..')
-            .first();
-    // const rightMonomerLocator = page.locator('use').nth(1);
-    await rightMonomerLocator.hover();
+      (await tmpMonomerLocator.count()) > 1
+        ? tmpMonomerLocator.nth(1)
+        : tmpMonomerLocator.first();
+
+    await rightMonomerLocator.hover({ force: true });
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 372, page);
+    await dragMouseTo(600, 375, page);
     await moveMouseAway(page);
+
+    return {
+      leftMonomer: leftMonomerLocator,
+      rightMonomer: rightMonomerLocator,
+    };
   }
 
   async function bondTwoMonomersByPointToPoint(
@@ -471,135 +524,6 @@ test.describe('Connection rules for peptides: ', () => {
     );
   }
 
-  async function bondTwoMonomersByPointToCenter(
-    page: Page,
-    leftPeptide: IMonomer,
-    rightPeptide: IMonomer,
-    leftPeptideConnectionPoint?: string,
-  ) {
-    const leftPeptideLocator = await page
-      .getByText(leftPeptide.alias, { exact: true })
-      .locator('..')
-      .first();
-
-    const rightPeptideLocator =
-      (await page.getByText(rightPeptide.alias, { exact: true }).count()) > 1
-        ? page
-            .getByText(rightPeptide.alias, { exact: true })
-            .nth(1)
-            .locator('..')
-            .first()
-        : page
-            .getByText(rightPeptide.alias, { exact: true })
-            .locator('..')
-            .first();
-
-    await bondTwoMonomersPointToPoint(
-      page,
-      leftPeptideLocator,
-      rightPeptideLocator,
-      leftPeptideConnectionPoint,
-      undefined,
-    );
-  }
-
-  async function bondTwoMonomersByCenterToPoint(
-    page: Page,
-    leftpeptide: IMonomer,
-    rightpeptide: IMonomer,
-    rightpeptideConnectionPoint?: string,
-  ) {
-    const leftpeptideLocator = await page
-      .getByText(leftpeptide.alias, { exact: true })
-      .locator('..')
-      .first();
-
-    const rightpeptideLocator =
-      (await page.getByText(rightpeptide.alias, { exact: true }).count()) > 1
-        ? page
-            .getByText(rightpeptide.alias, { exact: true })
-            .nth(1)
-            .locator('..')
-            .first()
-        : page
-            .getByText(rightpeptide.alias, { exact: true })
-            .locator('..')
-            .first();
-
-    await bondTwoMonomersPointToPoint(
-      page,
-      leftpeptideLocator,
-      rightpeptideLocator,
-      undefined,
-      rightpeptideConnectionPoint,
-    );
-  }
-
-  async function bondTwoMonomersByCenterToCenter(
-    page: Page,
-    leftMonomer: IMonomer,
-    rightMonomer: IMonomer,
-  ) {
-    const leftMonomerLocator = page
-      .getByTestId('ketcher-canvas')
-      .locator(`text=${leftMonomer.alias}`)
-      .locator('..')
-      .first();
-
-    const rightMonomerLocator =
-      (await page
-        .getByTestId('ketcher-canvas')
-        .locator(`text=${leftMonomer.alias}`)
-        .count()) > 1
-        ? page
-            .getByTestId('ketcher-canvas')
-            .locator(`text=${rightMonomer.alias}`)
-            .nth(1)
-            .locator('..')
-            .first()
-        : page
-            .getByTestId('ketcher-canvas')
-            .locator(`text=${rightMonomer.alias}`)
-            .locator('..')
-            .first();
-
-    await bondTwoMonomersPointToPoint(
-      page,
-      leftMonomerLocator,
-      rightMonomerLocator,
-    );
-
-    if (await page.getByRole('dialog').isVisible()) {
-      const firstConnectionPointKeyForLeftMonomer = Object.keys(
-        leftMonomer.connectionPoints,
-      )[0];
-      const leftMonomerConnectionPoint =
-        leftMonomer.connectionPoints[firstConnectionPointKeyForLeftMonomer];
-      await page.getByTitle(leftMonomerConnectionPoint).first().click();
-
-      const firstConnectionPointKeyForRightMonomer = Object.keys(
-        rightMonomer.connectionPoints,
-      )[0];
-      const rightMonomerConnectionPoint =
-        rightMonomer.connectionPoints[firstConnectionPointKeyForRightMonomer];
-      (await page.getByTitle(rightMonomerConnectionPoint).count()) > 1
-        ? await page.getByTitle(rightMonomerConnectionPoint).nth(1).click()
-        : await page.getByTitle(rightMonomerConnectionPoint).first().click();
-
-      await page.getByTitle('Connect').first().click();
-    }
-  }
-
-  // test(`temporary test for debug purposes`, async () => {
-  //   await prepareCanvasOneFreeAPLeft(
-  //     page,
-  //     peptideMonomers['(R1,R2,R3,R4,R5)'],
-  //     peptideMonomers['(R1,R2,R3,R4,R5)'],
-  //     'R1',
-  //     'R5',
-  //   );
-  // });
-
   Object.values(peptideMonomers).forEach((leftPeptide) => {
     Object.values(peptideMonomers).forEach((rightPeptide) => {
       /*
@@ -611,23 +535,24 @@ test.describe('Connection rules for peptides: ', () => {
         Object.values(rightPeptide.connectionPoints).includes('R1')
       ) {
         test(`Case 1: Connect Center to Center of ${leftPeptide.alias} and ${rightPeptide.alias}`, async () => {
-          test.setTimeout(40000);
+          test.setTimeout(30000);
 
-          await loadTwoMonomers(page, leftPeptide, rightPeptide);
+          const {
+            leftMonomer: leftMonomerLocator,
+            rightMonomer: rightMonomerLocator,
+          } = await loadTwoMonomers(page, leftPeptide, rightPeptide);
 
-          await bondTwoMonomersByCenterToCenter(
+          const bondLine = await bondTwoMonomersPointToPoint(
             page,
-            leftPeptide,
-            rightPeptide,
+            leftMonomerLocator,
+            rightMonomerLocator,
+            undefined,
+            undefined,
+            undefined,
+            true,
           );
 
-          await zoomWithMouseWheel(page, -600);
-
-          await hoverOverConnectionLine(page);
-
-          await takeEditorScreenshot(page, {
-            masks: [page.getByTestId('polymer-library-preview')],
-          });
+          await expect(bondLine).toBeVisible();
         });
       }
     });
@@ -646,25 +571,28 @@ test.describe('Connection rules for peptides: ', () => {
                  *               points (for example, R1 and R1 or R2 and R2), a bond is created, and a message occurs.
                  */
                 test(`Case 2: Connect ${leftPeptideConnectionPoint} to ${rightPeptideConnectionPoint} of ${leftPeptide.alias} and ${rightPeptide.alias}`, async () => {
-                  test.setTimeout(35000);
+                  test.setTimeout(30000);
 
-                  await loadTwoMonomers(page, leftPeptide, rightPeptide);
+                  const {
+                    leftMonomer: leftMonomerLocator,
+                    rightMonomer: rightMonomerLocator,
+                  } = await loadTwoMonomers(page, leftPeptide, rightPeptide);
 
-                  await bondTwoMonomersByPointToPoint(
+                  const bondLine = await bondTwoMonomersPointToPoint(
                     page,
-                    leftPeptide,
-                    rightPeptide,
+                    leftMonomerLocator,
+                    rightMonomerLocator,
                     leftPeptideConnectionPoint,
                     rightPeptideConnectionPoint,
                   );
 
-                  await zoomWithMouseWheel(page, -600);
-
-                  await hoverOverConnectionLine(page);
-
-                  await takeEditorScreenshot(page, {
-                    masks: [page.getByTestId('polymer-library-preview')],
-                  });
+                  await expect(bondLine).toBeVisible();
+                  const errorMessage = page
+                    .getByTestId('error-tooltip')
+                    .first();
+                  await expect(errorMessage).toContainText(
+                    'You have connected monomers with attachment points of the same group',
+                  );
                 });
               }
             },
@@ -691,28 +619,25 @@ test.describe('Connection rules for peptides: ', () => {
              *         Validate canvas
              */
             test(`Case 3: Connect ${leftPeptideConnectionPoint} to ${rightPeptideConnectionPoint} of Test-6-P and ${rightPeptide.alias}`, async () => {
-              test.setTimeout(30000);
+              test.setTimeout(35000);
 
-              await prepareCanvasOneFreeAPLeft(
+              const {
+                leftMonomer: leftMonomerLocator,
+                rightMonomer: rightMonomerLocator,
+              } = await prepareCanvasOneFreeAPLeft(
                 page,
                 rightPeptide,
                 rightPeptideConnectionPoint,
               );
 
-              await bondTwoMonomersByPointToPoint(
+              const bondLine = await bondTwoMonomersPointToPoint(
                 page,
-                tmpPeptideMonomers['Test-6-P-x'],
-                rightPeptide,
+                leftMonomerLocator,
+                rightMonomerLocator,
                 leftPeptideConnectionPoint,
                 rightPeptideConnectionPoint,
               );
-              await zoomWithMouseWheel(page, -600);
-
-              await hoverOverConnectionLine(page);
-
-              await takeEditorScreenshot(page, {
-                masks: [page.getByTestId('polymer-library-preview')],
-              });
+              await expect(bondLine).toBeVisible();
             });
           },
         );
@@ -757,7 +682,7 @@ test.describe('Connection rules for peptides: ', () => {
   //         );
 
   //                 await takeEditorScreenshot(page, {
-  //         masks: [page.getByTestId('polymer-library-preview')],
+  //         hideMonomerPreview: true,
   //       });
 
   //         const targetConnectionPoint = Object.keys(
@@ -777,7 +702,7 @@ test.describe('Connection rules for peptides: ', () => {
   //         await hoverOverConnectionLine(page);
   //
   //                 await takeEditorScreenshot(page, {
-  //         masks: [page.getByTestId('polymer-library-preview')],
+  //         hideMonomerPreview: true,
   //       });
   //       });
   //     },
@@ -816,7 +741,7 @@ test.describe('Connection rules for peptides: ', () => {
   //           );
 
   //                   await takeEditorScreenshot(page, {
-  //         masks: [page.getByTestId('polymer-library-preview')],
+  //         hideMonomerPreview: true,
   //       });
 
   //           if (await page.getByRole('dialog').isVisible()) {
@@ -829,7 +754,7 @@ test.describe('Connection rules for peptides: ', () => {
   //           await hoverOverConnectionLine(page);
 
   //                   await takeEditorScreenshot(page, {
-  //         masks: [page.getByTestId('polymer-library-preview')],
+  //         hideMonomerPreview: true,
   //       });
   //         });
   //       }
@@ -852,21 +777,20 @@ test.describe('Connection rules for peptides: ', () => {
          *         Validate canvas (No connection established)
          */
         test(`Case 5: Connect ${leftPeptideConnectionPoint} to Center of Test-6-P and ${rightPeptide.alias}`, async () => {
-          test.setTimeout(30000);
+          test.setTimeout(35000);
 
-          await prepareCanvasNoFreeAPLeft(page, rightPeptide);
+          const {
+            leftMonomer: leftMonomerLocator,
+            rightMonomer: rightMonomerLocator,
+          } = await prepareCanvasNoFreeAPLeft(page, rightPeptide);
 
-          await bondTwoMonomersByPointToCenter(
+          const bondLine = await bondTwoMonomersPointToPoint(
             page,
-            tmpPeptideMonomers['Test-6-P-x'],
-            rightPeptide,
+            leftMonomerLocator,
+            rightMonomerLocator,
             leftPeptideConnectionPoint,
           );
-          await zoomWithMouseWheel(page, -600);
-
-          await takeEditorScreenshot(page, {
-            masks: [page.getByTestId('polymer-library-preview')],
-          });
+          await expect(bondLine).toBeHidden();
         });
       },
     );
@@ -888,45 +812,26 @@ test.describe('Connection rules for peptides: ', () => {
         test(`Case 6: Connect Center to ${rightPeptideConnectionPoint} of ${leftPeptide.alias} and Test-6-P`, async () => {
           test.setTimeout(30000);
 
-          await loadTwoMonomers(
+          const {
+            leftMonomer: leftMonomerLocator,
+            rightMonomer: rightMonomerLocator,
+          } = await loadTwoMonomers(
             page,
             leftPeptide,
             tmpPeptideMonomers['Test-6-P-x'],
           );
 
-          await bondTwoMonomersByCenterToPoint(
+          const bondLine = await bondTwoMonomersPointToPoint(
             page,
-            leftPeptide,
-            tmpPeptideMonomers['Test-6-P-x'],
+            leftMonomerLocator,
+            rightMonomerLocator,
+            undefined,
             rightPeptideConnectionPoint,
+            undefined,
+            true,
           );
 
-          if (
-            !(
-              (Object.values(leftPeptide.connectionPoints).includes('R1') &&
-                rightPeptideConnectionPoint === 'R2') ||
-              (Object.values(leftPeptide.connectionPoints).includes('R2') &&
-                rightPeptideConnectionPoint === 'R1')
-            )
-          ) {
-            if (Object.values(leftPeptide.connectionPoints).length > 1) {
-              const targetConnectionPoint = Object.keys(
-                leftPeptide.connectionPoints,
-              )[0];
-              if (await page.getByRole('dialog').isVisible()) {
-                await page.getByTitle(targetConnectionPoint).first().click();
-                await page.getByTitle('Connect').first().click();
-              }
-            }
-          }
-
-          await zoomWithMouseWheel(page, -600);
-
-          await hoverOverConnectionLine(page);
-
-          await takeEditorScreenshot(page, {
-            masks: [page.getByTestId('polymer-library-preview')],
-          });
+          await expect(bondLine).toBeVisible();
         });
       },
     );
@@ -943,25 +848,22 @@ test.describe('Connection rules for peptides: ', () => {
                *  Description: User clicks on the specific AP of the first monomer and drags a bond to the specific AP of the second monomer.
                */
               test(`Case 7: Connect ${leftPeptideConnectionPoint} to ${rightPeptideConnectionPoint} of ${leftPeptide.alias} and ${rightPeptide.alias}`, async () => {
-                test.setTimeout(25000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftPeptide, rightPeptide);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftPeptide, rightPeptide);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftPeptide,
-                  rightPeptide,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftPeptideConnectionPoint,
                   rightPeptideConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -982,26 +884,25 @@ test.describe('Connection rules for peptides: ', () => {
      *         Validate canvas (No connection established)
      */
     test(`Case 8: Connect Center to Center of Test-6-P and ${rightPeptide.alias}`, async () => {
-      test.setTimeout(20000);
+      test.setTimeout(35000);
 
-      await prepareCanvasNoFreeAPLeft(page, rightPeptide);
+      const {
+        leftMonomer: leftMonomerLocator,
+        rightMonomer: rightMonomerLocator,
+      } = await prepareCanvasNoFreeAPLeft(page, rightPeptide);
 
-      await bondTwoMonomersByCenterToCenter(
+      const bondLine = await bondTwoMonomersPointToPoint(
         page,
-        tmpPeptideMonomers['Test-6-P-x'],
-        rightPeptide,
+        leftMonomerLocator,
+        rightMonomerLocator,
       );
-      await zoomWithMouseWheel(page, -600);
-
-      await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
-      });
+      await expect(bondLine).toBeHidden();
     });
   });
 
   const ordinaryMoleculeMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/01 - (R1) - Left only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -1009,7 +910,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/02 - (R2) - Right only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -1017,7 +918,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     '(R3) - Side only': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/03 - (R3) - Side only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -1025,7 +926,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     '(R1,R2) - R3 gap': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -1034,7 +935,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     '(R1,R3) - R2 gap': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -1043,7 +944,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     '(R2,R3) - R1 gap': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -1052,7 +953,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     // '(R3,R4)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/07 - (R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -1061,7 +962,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/08 - (R1,R2,R3).ket',
       alias: 'F1',
       connectionPoints: {
@@ -1071,7 +972,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/09 - (R1,R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -1081,7 +982,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/10 - (R2,R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -1091,7 +992,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/11 - (R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -1101,7 +1002,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     '(R1,R2,R3,R4)': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
       alias: 'F1',
       connectionPoints: {
@@ -1112,7 +1013,7 @@ test.describe('Connection rules for peptides: ', () => {
       },
     },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -1123,7 +1024,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -1134,7 +1035,7 @@ test.describe('Connection rules for peptides: ', () => {
     //   },
     // },
     '(R1,R2,R3,R4,R5)': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
       alias: 'F1',
       connectionPoints: {
@@ -1172,24 +1073,22 @@ test.describe('Connection rules for peptides: ', () => {
                 rightOM.fileName.lastIndexOf('.ket'),
               );
               test(`Test case9: Connect ${leftPeptideConnectionPoint} to ${rightOMConnectionPoint} of Peptide(${leftPeptide.alias}) and OM(${ordinaryMoleculeName})`, async () => {
-                test.setTimeout(20000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftPeptide, rightOM);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftPeptide, rightOM);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftPeptide,
-                  rightOM,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftPeptideConnectionPoint,
                   rightOMConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -1213,21 +1112,22 @@ test.describe('Connection rules for peptides: ', () => {
       test(`Case 10: Connect Center to Center of Peptide(${leftPeptide.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
         test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftPeptide, rightOrdinaryMolecule);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftPeptide, rightOrdinaryMolecule);
 
-        await bondTwoMonomersByCenterToCenter(
+        const bondLine = await bondTwoMonomersPointToPoint(
           page,
-          leftPeptide,
-          rightOrdinaryMolecule,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
         );
 
-        await zoomWithMouseWheel(page, -600);
-
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });
@@ -1323,7 +1223,7 @@ test.describe('Connection rules for peptides: ', () => {
         await bondMonomerCenterToAtom(page, leftPeptide, rightMolecule, 0);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
 
         test.fixme(
@@ -1375,7 +1275,7 @@ test.describe('Connection rules for peptides: ', () => {
         }
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });

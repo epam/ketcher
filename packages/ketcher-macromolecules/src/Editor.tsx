@@ -333,4 +333,4 @@ function Editor({
   );
 }
 
-export { EditorContainer as Editor };
+export default EditorContainer;

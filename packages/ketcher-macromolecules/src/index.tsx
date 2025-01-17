@@ -14,6 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './Editor';
-export * from './KetcherEditors';
-export * from './constants';
+export { default } from './Editor';

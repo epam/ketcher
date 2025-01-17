@@ -8,9 +8,13 @@ export enum MonomerType {
   Sugar = 'Sugar',
   Base = 'Base',
   Phosphate = 'Phosphate',
-  UnresovedNucleotide = 'RNA',
+  UnsplitNucleotide = 'RNA',
   CHEM = 'CHEM',
   UnknownMonomer = 'CHEM',
+  Molecule = 'CHEM',
+  Nucleotide = 'RNA',
+  // Atom is for compatibility
+  Atom = 'atom',
 }
 
 export enum MacroBondType {

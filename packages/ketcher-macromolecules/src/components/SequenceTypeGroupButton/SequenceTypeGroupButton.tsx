@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { useEffect, useState } from 'react';
-import { useAppSelector, useLayoutMode } from 'hooks';
+import { useAppDispatch, useAppSelector, useLayoutMode } from 'hooks';
 import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
@@ -23,6 +23,8 @@ import {
 import { SequenceType } from 'ketcher-core';
 import styled from '@emotion/styled';
 import { ButtonGroup, Button, Box } from '@mui/material';
+import { setSelectedTabIndex } from 'state/library';
+import { LIBRARY_TAB_INDEX, MONOMER_TYPES } from 'src/constants';
 
 const SequenceTypeButton = styled(Button)(({ theme, variant }) => ({
   color:
@@ -77,6 +79,8 @@ export const SequenceTypeGroupButton = () => {
   const layoutMode = useLayoutMode();
   const isDisabled = !!isSequenceEditInRNABuilderMode;
 
+  const dispatch = useAppDispatch();
+
   const onToggleSequenceMode = (data) => {
     const mode = typeof data === 'object' ? data.mode : data;
     setIsSequenceMode(mode === 'sequence-layout-mode');
@@ -99,6 +103,13 @@ export const SequenceTypeGroupButton = () => {
   }, [layoutMode]);
 
   const handleSelectSequenceType = (sequenceType: string) => {
+    dispatch(
+      setSelectedTabIndex(
+        sequenceType === MONOMER_TYPES.PEPTIDE
+          ? LIBRARY_TAB_INDEX.PEPTIDES
+          : LIBRARY_TAB_INDEX.RNA,
+      ),
+    );
     editor.events.changeSequenceTypeEnterMode.dispatch(sequenceType);
   };
 

@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: apt-get update -y && apt-get install -y git
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Git safe
@@ -40,7 +40,7 @@ jobs:
       - name: Build all packages
         run: npm run build:packages && npm run build:example:standalone
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ketcher-dist-micro
           path: example/dist
@@ -54,7 +54,7 @@ jobs:
       - name: Install dependencies
         run: apt-get update -y && apt-get install -y git
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Git safe
@@ -64,7 +64,7 @@ jobs:
       - name: Build all packages
         run: npm run build:packages && npm run build:example:standalone
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ketcher-dist-macro
           path: example/dist
@@ -81,7 +81,7 @@ jobs:
         shardTotal: [2]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Install dependencies
@@ -89,7 +89,7 @@ jobs:
       - name: Create folder for dist
         run: mkdir -p example/dist
       - name: Download compiled ketcher
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ketcher-dist-micro
           path: example/dist/
@@ -113,7 +113,7 @@ jobs:
           npm i
           npx playwright install chromium
           npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         # run even if previous steps fails
         if: always()
         with:
@@ -133,7 +133,7 @@ jobs:
         shardTotal: [4]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Install dependencies
@@ -141,7 +141,7 @@ jobs:
       - name: Create folder for dist
         run: mkdir -p example/dist
       - name: Download compiled ketcher
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ketcher-dist-macro
           path: example/dist/
@@ -165,7 +165,7 @@ jobs:
           npm i
           npx playwright install chromium
           npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         # run even if previous steps fails
         if: always()
         with:

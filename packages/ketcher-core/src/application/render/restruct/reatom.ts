@@ -76,10 +76,12 @@ export enum ShowHydrogenLabelNames {
 class ReAtom extends ReObject {
   a: Atom;
   showLabel: boolean;
+  showInfoLabel: boolean;
   hydrogenOnTheLeft: boolean;
   color: string;
   component: number;
   label?: ElemAttr;
+  infoLabel?: string;
   cip?: {
     // Raphael paths
     path: any;
@@ -91,6 +93,7 @@ class ReAtom extends ReObject {
     super('atom');
     this.a = atom; // TODO rename a to item
     this.showLabel = false;
+    this.showInfoLabel = false;
 
     this.hydrogenOnTheLeft = false;
 
@@ -360,6 +363,7 @@ class ReAtom extends ReObject {
       }
       restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true);
     }
+
     if (options.showAtomIds) {
       index = {};
       index.text = aid.toString();
@@ -605,6 +609,44 @@ class ReAtom extends ReObject {
         restruct: render.ctab,
         visel: this.visel,
       });
+    }
+
+    if (this.showLabel && this.showInfoLabel) {
+      const path = render.paper.text(ps.x, ps.y, this.infoLabel).attr({
+        font: options.font,
+        'font-size': options.fontszsubInPx * 0.75,
+        fill: '#309BBF',
+      });
+
+      const bbTooltip = path.getBBox();
+      const paddingX = 5;
+      const paddingY = 2;
+
+      const halfWidthInfoLabel = bbTooltip.width / 2 + paddingX;
+      const halfHeightInfoLabel = bbTooltip.height / 2 + paddingY;
+
+      path.translateAbs(
+        rightMargin + halfWidthInfoLabel,
+        -path.getBBox().height / 2 - halfHeightInfoLabel,
+      );
+
+      const rect = render.paper
+        .rect(
+          bbTooltip.x - paddingX,
+          bbTooltip.y - paddingY,
+          bbTooltip.width + paddingX * 2,
+          bbTooltip.height + paddingY * 2,
+          6,
+        )
+        .attr({ fill: '#CDF1FC', stroke: 'none' });
+
+      restruct.addReObjectPath(
+        LayerMap.data,
+        this.visel,
+        [rect, path],
+        ps,
+        true,
+      );
     }
   }
 

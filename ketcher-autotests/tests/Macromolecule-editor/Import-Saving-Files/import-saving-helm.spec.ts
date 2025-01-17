@@ -442,6 +442,10 @@ const correctHELMStrings: IHELMString[] = [
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2339',
   },
+  {
+    helmDescription: '60. The character “*” represents 0..n unknown monomers',
+    HELMString: 'CHEM1{*}$$$$V2.0',
+  },
 ];
 
 test.describe('Import correct HELM sequence: ', () => {
@@ -608,151 +612,147 @@ const incorrectHELMStrings: IHELMString[] = [
     HELMString: 'PEPTIDE1{X}$$$$V2.0',
   },
   {
-    helmDescription: '24. The character “*” represents 0..n unknown monomers',
-    HELMString: 'CHEM1{*}$$$$V2.0',
-  },
-  {
     helmDescription:
-      '25. Unknown Polymers are marked as BLOB type polymers. These polymers do not contain a list of monomers ' +
+      '24. Unknown Polymers are marked as BLOB type polymers. These polymers do not contain a list of monomers ' +
       'but they specify their type inside the curly braces. The polymer BLOB1{Bead} for example represents a polymer with the type “Bead”.',
     HELMString: 'BLOB1{}V2.0',
   },
   {
-    helmDescription: '26. No monomer index',
+    helmDescription: '25. No monomer index',
     HELMString: 'BLOB{Bead}V2.0',
   },
   {
-    helmDescription: '27. CHEM could be the chain of monomers',
+    helmDescription: '26. CHEM could be the chain of monomers',
     HELMString:
       'CHEM1{[A6OH].[Az].[EG].[MCC].[PEG2].[SMCC].[SMPEG2].[SS3].[hxy].[sDBL]}$$$$V2.0',
   },
   {
-    helmDescription: '28. Missing ratio token (PEPTIDE)',
+    helmDescription: '27. Missing ratio token (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:+C:0.1)}$$$$V2.0',
   },
   {
-    helmDescription: '29. Wrong ratio token type (PEPTIDE)',
+    helmDescription: '28. Wrong ratio token type (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:1.5+C:aaaa)}$$$$V2.0',
   },
   {
-    helmDescription: '30. Negative ratio (PEPTIDE)',
+    helmDescription: '29. Negative ratio (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:-10+C:0.1)}$$$$V2.0',
   },
   {
-    helmDescription: '31. Missing ratio token (CHEM)',
+    helmDescription: '30. Missing ratio token (CHEM)',
     HELMString: 'CHEM1{([A6OH]:+[Az]:0.1)}$$$$V2.0',
   },
   {
-    helmDescription: '32. Wrong ratio token type (CHEM)',
+    helmDescription: '31. Wrong ratio token type (CHEM)',
     HELMString: 'CHEM1{([A6OH]:1.5+[Az]:aaa)}$$$$V2.0',
   },
   {
-    helmDescription: '33. Negative ratio (CHEM)',
+    helmDescription: '32. Negative ratio (CHEM)',
     HELMString: 'CHEM1{([A6OH]:-10+[Az]:0.1)}$$$$V2.0',
   },
   {
-    helmDescription: '34. Missing ratio token (RNA)',
+    helmDescription: '33. Missing ratio token (RNA)',
     HELMString: 'RNA1{R(A:+C:200)P}$$$$V2.0',
   },
   {
-    helmDescription: '35. Wrong ratio token type (RNA)',
+    helmDescription: '34. Wrong ratio token type (RNA)',
     HELMString: 'RNA1{R(A:100+C:aaa)P}$$$$V2.0',
   },
   {
-    helmDescription: '36. Negative ratio (RNA)',
+    helmDescription: '35. Negative ratio (RNA)',
     HELMString: 'RNA1{R(A:-100+C:200)P}$$$$V2.0',
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2270',
   },
   {
-    helmDescription: '37. Missing probability token (PEPTIDE)',
+    helmDescription: '36. Missing probability token (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:,C:20)}$$$$V2.0',
   },
   {
-    helmDescription: '38. Wrong probability token type (PEPTIDE)',
+    helmDescription: '37. Wrong probability token type (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:10,C:aaa)}$$$$V2.0',
   },
   {
-    helmDescription: '39. Negative probability (PEPTIDE)',
+    helmDescription: '38. Negative probability (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:-10,C:20)}$$$$V2.0',
   },
   {
-    helmDescription: '40. Probability is greater than 100 (PEPTIDE)',
+    helmDescription: '39. Probability is greater than 100 (PEPTIDE)',
     HELMString: 'PEPTIDE1{(A:10,C:1000)}$$$$V2.0',
   },
   {
-    helmDescription: '41. Missing probability token (CHEM)',
+    helmDescription: '40. Missing probability token (CHEM)',
     HELMString: 'CHEM1{([A6OH]:,[Az]:20)}$$$$V2.0',
   },
   {
-    helmDescription: '42. Wrong probability token type (CHEM)',
+    helmDescription: '41. Wrong probability token type (CHEM)',
     HELMString: 'CHEM1{([A6OH]:10,[Az]:aaa)}$$$$V2.0',
   },
   {
-    helmDescription: '43. Negative probability (CHEM)',
+    helmDescription: '42. Negative probability (CHEM)',
     HELMString: 'CHEM1{([A6OH]:-10,[Az]:20)}$$$$V2.0',
   },
   // {
-  //   helmDescription: '44. Probability is greater than 100 (CHEM)',
+  //   helmDescription: '43. Probability is greater than 100 (CHEM)',
   //   HELMString: 'CHEM1{([A6OH]:10,[Az]:1000)}$$$$V2.0',
   // },
   // It is not a bug because of Aleksandr Savelev suggestion
   {
-    helmDescription: '45. Missing probability token (RNA)',
+    helmDescription: '44. Missing probability token (RNA)',
     HELMString: 'RNA1{R(A:,C:90)P}$$$$V2.0',
   },
   {
-    helmDescription: '46. Wrong probability token type (RNA)',
+    helmDescription: '45. Wrong probability token type (RNA)',
     HELMString: 'RNA1{(R(A:10,C:aaa)P}$$$$V2.0',
   },
   {
-    helmDescription: '47. Negative probability (RNA)',
+    helmDescription: '46. Negative probability (RNA)',
     HELMString: 'RNA1{(R(A:-10,C:90)P}$$$$V2.0',
   },
   {
-    helmDescription: '48. Probability is greater than 100 (RNA)',
+    helmDescription: '47. Probability is greater than 100 (RNA)',
     HELMString: 'RNA1{(R(A:10,C:1000)P}$$$$V2.0',
   },
   {
     helmDescription:
-      '49. CHEM monomers cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
+      '48. CHEM monomers cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
     HELMString: "CHEM1{[SMPEG2]'5'}$$$$V2.0",
   },
   {
-    helmDescription: '50. Negative repeating number (RNA)',
+    helmDescription: '49. Negative repeating number (RNA)',
     HELMString: "RNA1{[Sm5moe]([m2nprn])[mepo2]'-5'}$$$$V2.0",
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2062',
   },
   {
-    helmDescription: '51. Negative repeating number (PEPTIDE)',
+    helmDescription: '50. Negative repeating number (PEPTIDE)',
     HELMString: "PEPTIDE1{[D-gGlu]'-5'}$$$$V2.0",
   },
   {
-    helmDescription: '52. Negative repeating number (CHEM)',
+    helmDescription: '51. Negative repeating number (CHEM)',
     HELMString: "CHEM1{[SMPEG2]'-5'}$$$$V2.0",
   },
   {
     helmDescription:
-      '53. Repeating in groups for CHEMS cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
+      '52. Repeating in groups for CHEMS cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
     HELMString:
       "CHEM1{[A6OH].[Az]'2'.[EG]'3'.[MCC]'4'.[PEG2]'5'.[SMCC]'6'}$$$$V2.0",
   },
   {
     helmDescription:
-      '54. Group of CHEM monomers cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
+      '53. Group of CHEM monomers cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
     HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'5'}$$$$V2.0",
   },
   {
-    helmDescription: '55. Negative repeating number (PEPTIDE)',
+    helmDescription: '54. Negative repeating number (PEPTIDE)',
     HELMString: "PEPTIDE1{([Aad]+[Abu]+[Aca]+[Aib]+[Apm])'-5'}$$$$V2.0",
   },
   {
-    helmDescription: '56. Negative repeating number (CHEM)',
+    helmDescription: '55. Negative repeating number (CHEM)',
     HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'-5'}$$$$V2.0",
   },
   {
-    helmDescription: '57. Negative repeating number',
+    helmDescription: '56. Negative repeating number',
     HELMString:
       "RNA1{([Sm5moe]([m2nprn])[mepo2]+[menoe2]([nobn6p])[m2nen]+[bnoe2r]([nC6n2G])[fl2me]+[m2nc2r]([nC6n8A])[mepo2])'-5'}$$$$V2.0",
     shouldFail: true,
@@ -760,42 +760,42 @@ const incorrectHELMStrings: IHELMString[] = [
   },
   {
     helmDescription:
-      '58. CHEM monomers cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
+      '57. CHEM monomers cannot be at the terminus of a set of repeating monomers as the connection order is not defined for CHEMs.',
     HELMString: "CHEM1{[SMPEG2]'3-7'}$$$$V2.0",
   },
   {
-    helmDescription: '59. Invalid range (RNA)',
+    helmDescription: '58. Invalid range (RNA)',
     HELMString: "RNA1{[Sm5moe]([m2nprn])[mepo2]'5-i'}$$$$V2.0",
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2062',
   },
   {
-    helmDescription: '60. Invalid range (PEPTIDE)',
+    helmDescription: '59. Invalid range (PEPTIDE)',
     HELMString: "PEPTIDE1{[D-gGlu]'5-i'}$$$$V2.0",
   },
   {
-    helmDescription: '61. Invalid range (CHEM)',
+    helmDescription: '60. Invalid range (CHEM)',
     HELMString: "CHEM1{[SMPEG2]'5-i'}$$$$V2.0",
   },
   {
-    helmDescription: '62. Range for CHEMS is impossible',
+    helmDescription: '61. Range for CHEMS is impossible',
     HELMString:
       "CHEM1{[A6OH]'1-2'.[Az]'2-3'.[EG]'3-4'.[MCC]'4-5'.[PEG2]'5-6'.[SMCC]'6-7'}$$$$V2.0",
   },
   {
-    helmDescription: '63. Range for CHEMS is impossible',
+    helmDescription: '62. Range for CHEMS is impossible',
     HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'3-7'}$$$$V2.0",
   },
   {
-    helmDescription: '64. Invalid range (PEPTIDE)',
+    helmDescription: '63. Invalid range (PEPTIDE)',
     HELMString: "PEPTIDE1{([Aad]+[Abu]+[Aca]+[Aib]+[Apm])'5-i'}$$$$V2.0",
   },
   {
-    helmDescription: '65. Invalid range (CHEM)',
+    helmDescription: '64. Invalid range (CHEM)',
     HELMString: "CHEM1{([Az]+[EG]+[MCC]+[PEG2]+[SMCC])'5-i'}$$$$V2.0",
   },
   {
-    helmDescription: '66. Invalid range (RNA)',
+    helmDescription: '65. Invalid range (RNA)',
     HELMString:
       "RNA1{([Sm5moe]([m2nprn])[mepo2]+[menoe2]([nobn6p])[m2nen]+[bnoe2r]([nC6n2G])[fl2me]+[m2nc2r]([nC6n8A])[mepo2])'5-i'}$$$$V2.0",
     shouldFail: true,

@@ -199,12 +199,12 @@ test.describe('Undo-Redo tests', () => {
     const numberOfPress = 9;
 
     for (let i = 0; i < numberOfPress; i++) {
-      await page.getByTestId('undo').click();
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < numberOfPress; i++) {
-      await page.getByTestId('redo').click();
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -214,6 +214,8 @@ test.describe('Undo-Redo tests', () => {
     Test case: Undo-Redo tests
     Description: Add 'Bal___beta-Alanine' monomer to canvas 35 times and then press Undo 32 times.
     */
+
+    test.slow();
 
     const addMonomers = async (x: number, y: number) => {
       await page.getByTestId(Peptides.BetaAlanine).click();
@@ -237,13 +239,13 @@ test.describe('Undo-Redo tests', () => {
 
     const maxUndoHistorySize = 32;
     for (let i = 0; i < maxUndoHistorySize; i++) {
-      await page.getByTestId('undo').click();
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
 
     const maxRedoHistorySize = 32;
     for (let i = 0; i < maxRedoHistorySize; i++) {
-      await page.getByTestId('redo').click();
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -253,6 +255,8 @@ test.describe('Undo-Redo tests', () => {
     Test case: Undo-Redo tests
     Description: Add 'SMPEG2___SM(PEG)2 linker from Pierce' CHEM to canvas 35 times and then press Undo 32 times.
     */
+
+    test.slow();
 
     const addMonomers = async (x: number, y: number) => {
       await page.getByTestId('CHEM-TAB').click();
@@ -277,13 +281,13 @@ test.describe('Undo-Redo tests', () => {
 
     const maxUndoHistorySize = 32;
     for (let i = 0; i < maxUndoHistorySize; i++) {
-      await page.getByTestId('undo').click();
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
 
     const maxRedoHistorySize = 32;
     for (let i = 0; i < maxRedoHistorySize; i++) {
-      await page.getByTestId('redo').click();
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -334,9 +338,9 @@ test.describe('Undo-Redo tests', () => {
     Description: Undo/Redo after opening  a .ket file is working.
     */
     await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('redo').click();
+    await pressRedoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -351,9 +355,9 @@ test.describe('Undo-Redo tests', () => {
       'Molfiles-V3000/monomers-connected-with-bonds.mol',
       page,
     );
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('redo').click();
+    await pressRedoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -367,9 +371,9 @@ test.describe('Undo-Redo tests', () => {
       page,
     );
     await selectSnakeLayoutModeTool(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takePageScreenshot(page);
-    await page.getByTestId('redo').click();
+    await pressRedoButton(page);
     await takeEditorScreenshot(page);
     await takePageScreenshot(page);
   });
@@ -402,13 +406,13 @@ test.describe('Undo-Redo tests', () => {
     await connectMonomersWithBonds(page, monomerNames);
     const maxUndoHistorySize = 5;
     for (let i = 0; i < maxUndoHistorySize; i++) {
-      await page.getByTestId('undo').click();
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
 
     const maxRedoHistorySize = 5;
     for (let i = 0; i < maxRedoHistorySize; i++) {
-      await page.getByTestId('redo').click();
+      await pressRedoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -424,9 +428,9 @@ test.describe('Undo-Redo tests', () => {
     await takePageScreenshot(page);
     await page.getByTestId('Edc___S-ethylthiocysteine').click();
     await clickInTheMiddleOfTheScreen(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takePageScreenshot(page);
-    await page.getByTestId('redo').click();
+    await pressRedoButton(page);
     await takePageScreenshot(page);
   });
 
@@ -448,9 +452,9 @@ test.describe('Undo-Redo tests', () => {
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('redo').click();
+    await pressRedoButton(page);
     await takeEditorScreenshot(page);
   });
 

@@ -3,6 +3,7 @@ const {
   addBundleVisualizer,
   addWebpackModuleRule,
   addWebpackPlugin,
+  addWebpackResolve,
 } = require('customize-cra');
 const webpack = require('webpack');
 const HtmlReplaceWebpackPlugin = require('html-replace-webpack-plugin');
@@ -26,6 +27,9 @@ module.exports = override(
     loader: 'source-map-loader',
     exclude: /node_modules/,
   }),
+  addWebpackResolve({
+    fallback: { url: false },
+  }),
   addWebpackPlugin(new webpack.EnvironmentPlugin(envVariables)),
   addWebpackPlugin(
     new HtmlReplaceWebpackPlugin([
@@ -34,16 +38,6 @@ module.exports = override(
         replacement: applicationVersion,
       },
     ]),
-  ),
-  addWebpackPlugin(
-    new CopyPlugin({
-      patterns: [
-        {
-          from: '../node_modules/ketcher-standalone/**/*.wasm',
-          to: '[name][ext]',
-        },
-      ],
-    }),
   ),
 );
 

@@ -51,6 +51,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectUndoByKeyboard,
+  selectZoomOutTool,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -337,8 +338,7 @@ test.describe('Template Manupulations', () => {
     Click the Zoom In button several times.
     Click the Zoom Out button several times.
     */
-    await page.getByTestId('zoom-input').click();
-    await page.getByTestId('zoom-out').click();
+    await selectZoomOutTool(page);
     await clickInTheMiddleOfTheScreen(page);
     await drawBenzeneRing(page);
     await page.getByTestId('reaction-plus').click();

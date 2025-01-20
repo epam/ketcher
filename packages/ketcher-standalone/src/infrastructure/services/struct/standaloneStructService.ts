@@ -68,14 +68,14 @@ import {
   pickStandardServerOptions,
 } from 'ketcher-core';
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import IndigoWorker from 'web-worker:./indigoWorker';
 import EventEmitter from 'events';
 import {
   STRUCT_SERVICE_INITIALIZED_EVENT,
   STRUCT_SERVICE_NO_RENDER_INITIALIZED_EVENT,
 } from './constants';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { indigoWorker } from '_indigo-worker-import-alias_';
 
 interface KeyValuePair {
   [key: string]: number | string | boolean | object;
@@ -215,17 +215,14 @@ const messageTypeToEventMapping: {
   [Command.ExplicitHydrogens]: WorkerEvent.ExplicitHydrogens,
 };
 
-let worker: IndigoWorker;
-
 class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions;
-  private worker: IndigoWorker;
+  private worker: Worker;
   private readonly EE: EventEmitter = new EventEmitter();
 
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions;
-    this.worker = worker || new IndigoWorker();
-    worker = this.worker;
+    this.worker = indigoWorker;
     this.worker.onmessage = (e: MessageEvent<OutputMessage<string>>) => {
       if (e.data.type === Command.Info) {
         const callbackMethod = process.env.SEPARATE_INDIGO_RENDER
@@ -833,8 +830,6 @@ class IndigoService implements StructService {
   public destroy() {
     this.worker.terminate();
     this.worker.onmessage = null;
-    this.worker = null;
-    worker = null;
   }
 }
 

@@ -48,10 +48,6 @@ const MyComponent = () => {
 }
 ```
 
-Starting with Ketcher v3.0, the macromolecules editor is enabled by default in the app. It is lazily loaded within the `Editor` component. The macromolecules editor is still under active development. Should you wish to opt-out of using it, you can pass the `disableMacromoleculesEditor={true}` prop to the `Editor` component.
-
-```js
-
 ### Indigo Service
 
 Ketcher uses Indigo Service for server operations.

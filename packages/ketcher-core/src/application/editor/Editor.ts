@@ -315,27 +315,27 @@ export class CoreEditor {
         event.clientY <= canvasBoundingClientRect.bottom;
 
       if (eventData instanceof BaseSequenceItemRenderer) {
-        this.events.rightClickSequence.dispatch(
+        this.events.rightClickSequence.dispatch([
           event,
           SequenceRenderer.selections,
-        );
+        ]);
       } else if (
         eventData instanceof FlexModePolymerBondRenderer ||
         (eventData instanceof SnakeModePolymerBondRenderer &&
           !(eventData.polymerBond instanceof HydrogenBond))
       ) {
-        this.events.rightClickPolymerBond.dispatch(event, eventData);
+        this.events.rightClickPolymerBond.dispatch([event, eventData]);
       } else if (
         eventData instanceof BaseMonomerRenderer &&
         eventData.monomer.selected
       ) {
-        this.events.rightClickSelectedMonomers.dispatch(event);
-        this.events.rightClickSelectedMonomers.dispatch(
+        this.events.rightClickSelectedMonomers.dispatch([event]);
+        this.events.rightClickSelectedMonomers.dispatch([
           event,
           this.drawingEntitiesManager.selectedEntities
             .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
             .map(([, drawingEntity]) => drawingEntity as BaseMonomer),
-        );
+        ]);
       } else if (isClickOnCanvas) {
         this.events.rightClickCanvas.dispatch(event);
       }
@@ -347,7 +347,7 @@ export class CoreEditor {
   private subscribeEvents() {
     this.events.selectMonomer.add((monomer) => this.onSelectMonomer(monomer));
     this.events.selectPreset.add((preset) => this.onSelectRNAPreset(preset));
-    this.events.selectTool.add((tool, options) =>
+    this.events.selectTool.add(([tool, options]) =>
       this.onSelectTool(tool, options),
     );
     this.events.createBondViaModal.add((payload) => this.onCreateBond(payload));

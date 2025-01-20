@@ -91,6 +91,7 @@ export class SequenceRenderer {
     chainsCollection: ChainsCollection,
     chainBeforeEmptyChainIndex?: number,
   ) {
+    const NUMBER_OF_SYMBOLS_IN_ROW = 30;
     const firstNode = chainsCollection.firstNode;
     const emptyChainIndex = isNumber(chainBeforeEmptyChainIndex)
       ? chainBeforeEmptyChainIndex + 1
@@ -106,6 +107,8 @@ export class SequenceRenderer {
 
     let currentMonomerIndexInChain = 0;
     let currentMonomerIndexOverall = 0;
+    let hasAntisenseInRow = false;
+    let previousRowsWithAntisense = 0;
     const isEditMode = CoreEditor.provideEditorInstance().isSequenceEditMode;
     const isEditInRnaBuilderMode =
       CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
@@ -138,7 +141,7 @@ export class SequenceRenderer {
         chainsCollection.getAntisenseChainsWithData(chain);
       const antisenseNodesToIndexesMap = new Map<
         number,
-        { node: SubChainNode; chain: Chain }
+        { node: SubChainNode; chain: Chain; nodeIndex: number }
       >();
 
       antisenseChainsStartIndexesMap.forEach(
@@ -147,12 +150,15 @@ export class SequenceRenderer {
             antisenseNodesToIndexesMap.set(firstNodeIndex + index, {
               node,
               chain: chainWithData.complimentaryChain,
+              nodeIndex: index,
             });
           });
         },
       );
 
       currentMonomerIndexInChain = 0;
+
+      console.log(antisenseNodesToIndexesMap, antisenseChainsStartIndexesMap);
 
       for (
         let nodeIndex = Math.min(0, ...antisenseChainsStartIndexes);
@@ -166,6 +172,11 @@ export class SequenceRenderer {
           continue;
         }
 
+        if (nodeIndex % NUMBER_OF_SYMBOLS_IN_ROW === 0 && hasAntisenseInRow) {
+          hasAntisenseInRow = false;
+          previousRowsWithAntisense++;
+        }
+
         let antisenseNodeRenderer: BaseSequenceItemRenderer | undefined;
 
         if (antisenseNodeWithData) {
@@ -177,7 +188,9 @@ export class SequenceRenderer {
               antisenseNodeWithData.chain.length,
             antisenseNodeWithData.chain,
             currentMonomerIndexOverall === SequenceRenderer.caretPosition,
+            previousRowsWithAntisense,
             antisenseNodeWithData.node.monomer.renderer,
+            antisenseNodeWithData.nodeIndex,
           );
 
           antisenseNodeRenderer.show();
@@ -187,6 +200,10 @@ export class SequenceRenderer {
             ),
           );
           handledNodes.add(antisenseNodeWithData.node);
+
+          if (!hasAntisenseInRow) {
+            hasAntisenseInRow = true;
+          }
         }
 
         const renderer = SequenceNodeRendererFactory.fromNode(
@@ -197,6 +214,7 @@ export class SequenceRenderer {
             chain.length,
           chain,
           currentMonomerIndexOverall === SequenceRenderer.caretPosition,
+          previousRowsWithAntisense,
           node.monomer.renderer,
         );
 
@@ -221,9 +239,10 @@ export class SequenceRenderer {
       currentChainStartPosition = SequenceRenderer.getNextChainPosition(
         currentChainStartPosition,
         chain,
+        previousRowsWithAntisense,
       );
 
-      if (!isEditInRnaBuilderMode) {
+      if (!isEditInRnaBuilderMode && !chain.isAntisense) {
         this.showNewSequenceButton(chainIndex);
       }
     });
@@ -242,6 +261,7 @@ export class SequenceRenderer {
   public static getNextChainPosition(
     currentChainStartPosition: Vec2 = SequenceRenderer.lastChainStartPosition,
     lastChain: Chain = SequenceRenderer.lastChain,
+    previousRowsWithAntisense = 0,
   ) {
     return new Vec2(
       currentChainStartPosition.x,
@@ -256,6 +276,7 @@ export class SequenceRenderer {
       BaseMonomer,
       Set<AttachmentPointName>
     > = new Map();
+    const handledHydrogenBonds: Set<HydrogenBond> = new Set();
 
     chainsCollection.chains.forEach((chain) => {
       chain.subChains.forEach((subChain) => {
@@ -271,12 +292,17 @@ export class SequenceRenderer {
 
             monomer.forEachBond((polymerBond, attachmentPointName) => {
               if (polymerBond instanceof HydrogenBond) {
+                if (handledHydrogenBonds.has(polymerBond)) {
+                  return;
+                }
+
                 const bondRenderer = new PolymerBondSequenceRenderer(
                   polymerBond,
                 );
 
                 bondRenderer.show();
                 polymerBond.setRenderer(bondRenderer);
+                handledHydrogenBonds.add(polymerBond);
 
                 return;
               }
@@ -646,7 +672,7 @@ export class SequenceRenderer {
 
   public static getNodeByPointer(sequencePointer?: SequencePointer) {
     if (sequencePointer === undefined) return;
-    let nodeToReturn;
+    let nodeToReturn: SubChainNode | undefined;
 
     SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
       if (nodeIndexOverall === sequencePointer) {

@@ -17,6 +17,8 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
     _isEditingSymbol: boolean,
     public monomerSize: { width: number; height: number },
     public scaledMonomerPosition: Vec2,
+    _previousRowsWithAntisense = 0,
+    _nodeIndexInAntisenseChain?: number,
   ) {
     super(
       node,
@@ -27,6 +29,8 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
       _isEditingSymbol,
       monomerSize,
       scaledMonomerPosition,
+      _previousRowsWithAntisense,
+      _nodeIndexInAntisenseChain,
     );
   }
 

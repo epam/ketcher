@@ -2698,7 +2698,7 @@ export class DrawingEntitiesManager {
     };
   }
 
-  private get antisenseChainBasesMap() {
+  private static get antisenseChainBasesMap() {
     return {
       [RnaDnaNaturalAnaloguesEnum.ADENINE]: RnaDnaNaturalAnaloguesEnum.URACIL,
       [RnaDnaNaturalAnaloguesEnum.CYTOSINE]: RnaDnaNaturalAnaloguesEnum.GUANINE,
@@ -2839,12 +2839,36 @@ export class DrawingEntitiesManager {
     );
   }
 
-  private getAntisenseBaseLabel(rnaBase: RNABase | AmbiguousMonomer) {
-    return this.antisenseChainBasesMap[
+  private static getAntisenseBaseLabel(rnaBase: RNABase | AmbiguousMonomer) {
+    return DrawingEntitiesManager.antisenseChainBasesMap[
       rnaBase instanceof AmbiguousMonomer
         ? rnaBase.monomerItem.label
         : rnaBase.monomerItem.props.MonomerNaturalAnalogCode
     ];
+  }
+
+  public static createAntisenseNode(
+    node: Nucleoside | Nucleotide,
+    handleOnlySelectedPhosphate = false,
+  ) {
+    const antisenseBaseLabel = DrawingEntitiesManager.getAntisenseBaseLabel(
+      node.rnaBase,
+    );
+
+    if (!antisenseBaseLabel) {
+      return;
+    }
+
+    return (
+      node instanceof Nucleotide &&
+      (handleOnlySelectedPhosphate ? node.phosphate.selected : true)
+        ? Nucleotide
+        : Nucleoside
+    ).createOnCanvas(
+      antisenseBaseLabel,
+      node.monomer.position.add(new Vec2(0, 3)),
+      RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
+    );
   }
 
   public createAntisenseChain() {
@@ -2860,7 +2884,9 @@ export class DrawingEntitiesManager {
           subChain.nodes.some(
             (node) =>
               (node instanceof Nucleotide || node instanceof Nucleoside) &&
-              Boolean(this.getAntisenseBaseLabel(node.rnaBase)) &&
+              Boolean(
+                DrawingEntitiesManager.getAntisenseBaseLabel(node.rnaBase),
+              ) &&
               node.monomer.selected,
           ),
         );
@@ -2913,21 +2939,15 @@ export class DrawingEntitiesManager {
         }
 
         if (node instanceof Nucleotide || node instanceof Nucleoside) {
-          const antisenseBaseLabel = this.getAntisenseBaseLabel(node.rnaBase);
+          const antisenseNodeCreationResult =
+            DrawingEntitiesManager.createAntisenseNode(node, true);
 
-          if (!antisenseBaseLabel) {
+          if (!antisenseNodeCreationResult) {
             return;
           }
 
-          const { modelChanges: addNucleotideCommand, node: addedNode } = (
-            node instanceof Nucleotide && node.phosphate.selected
-              ? Nucleotide
-              : Nucleoside
-          ).createOnCanvas(
-            antisenseBaseLabel,
-            node.monomer.position.add(new Vec2(0, 3)),
-            RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
-          );
+          const { modelChanges: addNucleotideCommand, node: addedNode } =
+            antisenseNodeCreationResult;
 
           command.merge(addNucleotideCommand);
 

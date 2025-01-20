@@ -8,6 +8,7 @@ import { editorEvents } from 'application/editor/editorEvents';
 import assert from 'assert';
 import { SequenceRenderer } from 'application/render';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
+import { isNumber } from 'lodash';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
@@ -33,6 +34,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     private _isEditingSymbol: boolean,
     public monomerSize: { width: number; height: number },
     public scaledMonomerPosition: Vec2,
+    private previousRowsWithAntisense = 0,
+    private nodeIndexInAntisenseChain?: number,
   ) {
     super(node.monomer);
     this.editorEvents = editorEvents;
@@ -68,6 +71,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return this.chain;
   }
 
+  public get currentChainNodesWithoutEmptyNodes() {
+    return this.chain.nodes.filter(
+      (node) => !(node instanceof EmptySequenceNode),
+    );
+  }
+
   public get scaledMonomerPositionForSequence() {
     const indexInRow = this.monomerIndexInChain % this.symbolsInRow;
     const rowIndex = Math.floor(this.monomerIndexInChain / this.symbolsInRow);
@@ -76,7 +85,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       this.firstNodeInChainPosition.x +
         indexInRow * 20 +
         Math.floor(indexInRow / this.nthSeparationInRow) * 10,
-      this.firstNodeInChainPosition.y + 100 * rowIndex,
+      this.firstNodeInChainPosition.y +
+        47 * rowIndex +
+        53 * this.previousRowsWithAntisense,
     );
   }
 
@@ -163,7 +174,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .append('text')
       .attr('x', '2')
       .attr('y', this.node.monomer.monomerItem.isAntisense ? '24' : '-24')
-      .text(this.monomerIndexInChain + 1)
+      .text(
+        isNumber(this.nodeIndexInAntisenseChain)
+          ? this.currentChainNodesWithoutEmptyNodes.length -
+              this.nodeIndexInAntisenseChain
+          : this.monomerIndexInChain + 1,
+      )
       .attr('font-family', 'Courier New')
       .attr('font-size', '12px')
       .attr('font-weight', '700')
@@ -172,10 +188,15 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private get needDisplayCounter() {
+    // For simple chains or sense chains counter appears above each 10th symbol
+    // For antisense same but in opposite direction, that's why we compare division remainder with 1
     return (
-      ((this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0 ||
-        this.isLastMonomerInChain) &&
-      !(this.node instanceof EmptySequenceNode)
+      !(this.node instanceof EmptySequenceNode) &&
+      (isNumber(this.nodeIndexInAntisenseChain)
+        ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
+          this.nodeIndexInAntisenseChain === 0
+        : (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0 ||
+          this.isLastMonomerInChain)
     );
   }
 

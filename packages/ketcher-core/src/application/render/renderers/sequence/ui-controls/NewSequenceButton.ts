@@ -8,7 +8,7 @@ import { drawnStructuresSelector } from 'application/editor/constants';
 const TEXT_COLOR = '#333333';
 const HOVER_COLOR = '#167782';
 const BUTTON_OFFSET_FROM_CANVAS = 20;
-const BUTTON_Y_OFFSET_FROM_ROW = 18;
+const BUTTON_Y_OFFSET_FROM_ROW = 25;
 
 export class NewSequenceButton {
   private buttonElement?: D3SvgElementSelection<SVGElement, void>;

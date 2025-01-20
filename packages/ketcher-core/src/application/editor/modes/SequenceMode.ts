@@ -53,6 +53,7 @@ import {
 import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -508,7 +509,7 @@ export class SequenceMode extends BaseMode {
 
     modelChanges.merge(this.insertNewSequenceFragment(newPeptideNode));
 
-    return modelChanges;
+    return { modelChanges, node: newPeptideNode };
   }
 
   private handleRnaDnaNodeAddition(
@@ -539,7 +540,7 @@ export class SequenceMode extends BaseMode {
 
     modelChanges.merge(this.insertNewSequenceFragment(nodeToAdd));
 
-    return modelChanges;
+    return { modelChanges, node: nodeToAdd };
   }
 
   private connectNodes(
@@ -774,6 +775,21 @@ export class SequenceMode extends BaseMode {
             },
           ],
         ];
+        if (nodeToDelete.monomer.monomerItem.isSense) {
+          nodeToDelete.renderer.antisenseNodeRenderer.node.monomers.forEach(
+            (monomer) => {
+              modelChanges.merge(
+                editor.drawingEntitiesManager.deleteMonomer(monomer),
+              );
+            },
+          );
+          nodesToDelete.push([
+            {
+              node: nodeToDelete.renderer.antisenseNodeRenderer.node,
+              nodeIndexOverall: caretPosition,
+            },
+          ]);
+        }
       } else {
         return;
       }
@@ -879,14 +895,51 @@ export class SequenceMode extends BaseMode {
           const enteredSymbol = event.code.replace('Key', '');
           const editor = CoreEditor.provideEditorInstance();
           const history = new EditorHistory(editor);
-          const modelChanges = this.insertNewSequenceItem(
+          const currentNode = SequenceRenderer.currentEdittingNode;
+          const isSenseChain = currentNode?.monomer.monomerItem.isSense;
+          const insertNewSequenceItemResult = this.insertNewSequenceItem(
             editor,
             enteredSymbol,
           );
 
           // Case when user type symbol that does not exist in current sequence type mode
-          if (!modelChanges) {
+          if (!insertNewSequenceItemResult) {
             return;
+          }
+
+          const { modelChanges, node: addedNode } = insertNewSequenceItemResult;
+
+          if (
+            (addedNode instanceof Nucleotide ||
+              addedNode instanceof Nucleoside) &&
+            isSenseChain
+          ) {
+            const antisenseNodeCreationResult =
+              DrawingEntitiesManager.createAntisenseNode(addedNode);
+            const currentAntisenseNode =
+              currentNode?.renderer?.antisenseNodeRenderer.node;
+            const previousAntisenseNode =
+              SequenceRenderer.getPreviousNode(currentAntisenseNode);
+
+            if (antisenseNodeCreationResult) {
+              modelChanges.merge(
+                this.insertNewSequenceFragment(
+                  antisenseNodeCreationResult.node,
+                  currentAntisenseNode,
+                  previousAntisenseNode,
+                ),
+              );
+              modelChanges.merge(antisenseNodeCreationResult.modelChanges);
+              modelChanges.merge(
+                editor.drawingEntitiesManager.createPolymerBond(
+                  addedNode?.rnaBase,
+                  antisenseNodeCreationResult.node.rnaBase,
+                  AttachmentPointName.HYDROGEN,
+                  AttachmentPointName.HYDROGEN,
+                  MACROMOLECULES_BOND_TYPES.HYDROGEN,
+                ),
+              );
+            }
           }
 
           modelChanges.addOperation(new ReinitializeModeOperation());
@@ -1721,7 +1774,6 @@ export class SequenceMode extends BaseMode {
   private insertNewSequenceItem(editor: CoreEditor, enteredSymbol: string) {
     const currentNode = SequenceRenderer.currentEdittingNode;
     const newNodePosition = this.getNewNodePosition();
-    let modelChanges;
     const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
 
     if (
@@ -1748,18 +1800,14 @@ export class SequenceMode extends BaseMode {
       }
     }
     if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
-      modelChanges = this.handlePeptideNodeAddition(
-        enteredSymbol,
-        newNodePosition,
-      );
+      return this.handlePeptideNodeAddition(enteredSymbol, newNodePosition);
     } else {
-      modelChanges = this.handleRnaDnaNodeAddition(
+      return this.handleRnaDnaNodeAddition(
         enteredSymbol,
         currentNode,
         newNodePosition,
       );
     }
-    return modelChanges;
   }
 
   private showMergeWarningModal(message?: string | null) {

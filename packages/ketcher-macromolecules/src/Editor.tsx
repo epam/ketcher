@@ -178,7 +178,7 @@ function Editor({
   useSetRnaPresets();
 
   useEffect(() => {
-    editor?.events.rightClickSequence.add((event, selections) => {
+    editor?.events.rightClickSequence.add(([event, selections]) => {
       setSelections(selections);
       showSequenceContextMenu({
         event,

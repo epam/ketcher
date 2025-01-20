@@ -43,6 +43,9 @@ import {
   TopPanelButton,
   waitForPageInit,
   waitForRender,
+  selectZoomOutTool,
+  selectZoomReset,
+  selectZoomInTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -561,26 +564,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-input').click();
-    for (let i = 0; i < 8; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out').click();
-      });
-    }
+    await selectZoomOutTool(page, 8);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-input').click();
-    for (let i = 0; i < 19; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-in').click();
-      });
-    }
+    await selectZoomInTool(page, 19);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-input').click();
-    await waitForRender(page, async () => {
-      await page.getByTestId('zoom-default').click();
-    });
+    await selectZoomReset(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

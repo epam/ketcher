@@ -5,7 +5,60 @@ import ZoomTool from 'application/editor/tools/Zoom';
 import { SequenceType } from 'domain/entities/monomer-chains/types';
 import { ToolName } from 'application/editor/tools/types';
 
-export let editorEvents;
+export interface IEditorEvents {
+  selectMonomer: Subscription;
+  selectPreset: Subscription;
+  selectTool: Subscription;
+  createBondViaModal: Subscription;
+  cancelBondCreationViaModal: Subscription;
+  selectMode: Subscription;
+  layoutModeChange: Subscription;
+  selectHistory: Subscription;
+  error: Subscription;
+  openErrorModal: Subscription;
+  openMonomerConnectionModal: Subscription;
+  mouseOverPolymerBond: Subscription;
+  mouseLeavePolymerBond: Subscription;
+  mouseOnMovePolymerBond: Subscription;
+  mouseOverMonomer: Subscription;
+  mouseOnMoveMonomer: Subscription;
+  mouseLeaveMonomer: Subscription;
+  mouseOverAttachmentPoint: Subscription;
+  mouseLeaveAttachmentPoint: Subscription;
+  mouseUpAttachmentPoint: Subscription;
+  mouseDownAttachmentPoint: Subscription;
+  mouseOverDrawingEntity: Subscription;
+  mouseLeaveDrawingEntity: Subscription;
+  mouseUpMonomer: Subscription;
+  rightClickSequence: Subscription;
+  rightClickCanvas: Subscription;
+  rightClickPolymerBond: Subscription;
+  rightClickSelectedMonomers: Subscription;
+  keyDown: Subscription;
+  editSequence: Subscription;
+  startNewSequence: Subscription;
+  turnOnSequenceEditInRNABuilderMode: Subscription;
+  turnOffSequenceEditInRNABuilderMode: Subscription;
+  modifySequenceInRnaBuilder: Subscription;
+  mouseOverSequenceItem: Subscription;
+  mouseOnMoveSequenceItem: Subscription;
+  mouseLeaveSequenceItem: Subscription;
+  changeSequenceTypeEnterMode: Subscription;
+  toggleSequenceEditMode: Subscription;
+  toggleSequenceEditInRNABuilderMode: Subscription;
+  clickOnSequenceItem: Subscription;
+  mousedownBetweenSequenceItems: Subscription;
+  mouseDownOnSequenceItem: Subscription;
+  doubleClickOnSequenceItem: Subscription;
+  openConfirmationDialog: Subscription;
+  mouseUpAtom: Subscription;
+  updateMonomersLibrary: Subscription;
+  createAntisenseChain: Subscription;
+  copySelectedStructure: Subscription;
+  deleteSelectedStructure: Subscription;
+}
+
+export let editorEvents: IEditorEvents;
 
 export function resetEditorEvents() {
   editorEvents = {
@@ -37,6 +90,7 @@ export function resetEditorEvents() {
     rightClickCanvas: new Subscription(),
     rightClickPolymerBond: new Subscription(),
     rightClickSelectedMonomers: new Subscription(),
+    keyDown: new Subscription(),
     editSequence: new Subscription(),
     startNewSequence: new Subscription(),
     turnOnSequenceEditInRNABuilderMode: new Subscription(),

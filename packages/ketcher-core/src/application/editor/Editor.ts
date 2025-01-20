@@ -3,6 +3,7 @@ import { Editor, EditorType } from 'application/editor/editor.types';
 import {
   editorEvents,
   hotkeysConfiguration,
+  IEditorEvents,
   renderersEvents,
   resetEditorEvents,
 } from 'application/editor/editorEvents';
@@ -78,8 +79,9 @@ let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
 
 let editor;
+
 export class CoreEditor {
-  public events;
+  public events: IEditorEvents;
 
   public _type: EditorType;
   public renderersContainer: RenderersManager;
@@ -96,6 +98,7 @@ export class CoreEditor {
   public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
   private tool?: Tool | BaseTool | undefined;
+
   public get selectedTool(): Tool | BaseTool | undefined {
     return this.tool;
   }
@@ -103,7 +106,7 @@ export class CoreEditor {
   public mode: BaseMode;
   public sequenceTypeEnterMode = SequenceType.RNA;
   private micromoleculesEditor: Editor;
-  private hotKeyEventHandler: (event: unknown) => void = () => {};
+  private hotKeyEventHandler: (event: KeyboardEvent) => void = () => {};
   private copyEventHandler: (event: ClipboardEvent) => void = () => {};
   private pasteEventHandler: (event: ClipboardEvent) => void = () => {};
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
@@ -135,6 +138,7 @@ export class CoreEditor {
     this.domEventSetup();
     this.setupContextMenuEvents();
     this.setupKeyboardEvents();
+    this.setupHotKeysEvents();
     this.setupCopyPasteEvent();
     this.canvasOffset = this.canvas.getBoundingClientRect();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
@@ -259,7 +263,8 @@ export class CoreEditor {
       ) as IKetMonomerGroupTemplate[];
   }
 
-  private handleHotKeyEvents(event) {
+  private handleHotKeyEvents(event: KeyboardEvent) {
+    if (!(event.target instanceof HTMLElement)) return;
     const keySettings = hotkeysConfiguration;
     const hotKeys = initHotKeys(keySettings);
     const shortcutKey = keyNorm.lookup(hotKeys, event);
@@ -273,9 +278,9 @@ export class CoreEditor {
   }
 
   private setupKeyboardEvents() {
-    this.setupHotKeysEvents();
     this.keydownEventHandler = async (event: KeyboardEvent) => {
-      await this.mode.onKeyDown(event);
+      this.events.keyDown.dispatch(event);
+      if (!event.cancelBubble) await this.mode.onKeyDown(event);
     };
 
     document.addEventListener('keydown', this.keydownEventHandler);

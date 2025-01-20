@@ -1,3 +1,6 @@
 dist/
 docs/
 node_modules/
+
+# ajv validation file generated with npm run ajv
+src/domain/serializers/ket/compiledSchema.js

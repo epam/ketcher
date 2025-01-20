@@ -69,7 +69,7 @@ export const EditorEvents = () => {
   }, [editor]);
 
   useEffect(() => {
-    const handler = (toolName: string) => {
+    const handler = ([toolName]: [string]) => {
       if (toolName !== activeTool) {
         dispatch(selectTool(toolName));
       }
@@ -125,7 +125,7 @@ export const EditorEvents = () => {
   );
 
   useEffect(() => {
-    const handler = (toolName: string) => {
+    const handler = ([toolName]: [string]) => {
       if (toolName !== activeTool) {
         dispatch(selectTool(toolName));
       }

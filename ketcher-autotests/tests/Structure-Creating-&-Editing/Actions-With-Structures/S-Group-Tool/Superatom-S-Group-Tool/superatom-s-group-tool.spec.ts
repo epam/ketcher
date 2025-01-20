@@ -24,7 +24,11 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getKet, getMolfile } from '@utils/formats';
+import { getMolfile } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 let point: { x: number; y: number };
 
 async function addNameToSuperatom(
@@ -287,19 +291,11 @@ test.describe('Superatom S-Group tool', () => {
     await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
-    const expectedFile = await getKet(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'KET/cyclopropane-and-h2o-superatom-expected.ket',
-      expectedFile,
+      FileType.KET,
     );
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/cyclopropane-and-h2o-superatom-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -315,19 +311,12 @@ test.describe('Superatom S-Group tool', () => {
     await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await addQueryComponent(page);
-    const expectedFile = await getKet(page);
-    await saveToFile(
-      'KET/cyclopropane-and-h2o-query-expected.ket',
-      expectedFile,
-    );
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/cyclopropane-and-h2o-query-expected.ket',
-      });
 
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/cyclopropane-and-h2o-query-expected.ket',
+      FileType.KET,
+    );
     await takeEditorScreenshot(page);
   });
 });

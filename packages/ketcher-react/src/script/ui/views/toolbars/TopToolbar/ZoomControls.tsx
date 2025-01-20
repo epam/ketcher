@@ -161,7 +161,7 @@ export const ZoomControls = ({
 
   return (
     <ElementAndDropdown ref={containerRef}>
-      <DropDownButton onClick={onExpand}>
+      <DropDownButton onClick={onExpand} data-testid="zoom-selector">
         <ZoomLabel data-testid="zoom-input">
           {Math.round(currentZoom)}%
         </ZoomLabel>

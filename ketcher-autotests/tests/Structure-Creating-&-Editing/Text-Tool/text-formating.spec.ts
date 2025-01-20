@@ -1,4 +1,4 @@
-import { Page, test, expect } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectTopPanelButton,
@@ -9,21 +9,22 @@ import {
   openFromFileViaClipboard,
   waitForLoad,
   readFileContents,
-  saveToFile,
   openFileAndAddToCanvas,
   copyAndPaste,
   cutAndPaste,
   waitForRender,
-  receiveFileComparisonData,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
-import { getKet } from '@utils/formats';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 async function openFromFileViaTextBox(filename: string, page: Page) {
   const fileText = await readFileContents(filename);
@@ -145,16 +146,8 @@ test.describe('Text tools test cases', () => {
   test('Saving text object as a .ket file', async ({ page }) => {
     // Test case: EPMLSOPKET-2235
     await openFileAndAddToCanvas('KET/ketfile01.ket', page);
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/ketfile01-expected.ket', expectedFile);
 
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/KET/ketfile01-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(page, 'KET/ketfile01-expected.ket', FileType.KET);
     await takeEditorScreenshot(page);
   });
 

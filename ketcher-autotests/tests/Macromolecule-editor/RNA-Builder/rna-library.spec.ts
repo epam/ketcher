@@ -14,8 +14,6 @@ import {
   dragMouseTo,
   openFileAndAddToCanvasMacro,
   pressButton,
-  receiveFileComparisonData,
-  saveToFile,
   selectEraseTool,
   selectMonomer,
   selectRectangleSelectionTool,
@@ -37,7 +35,6 @@ import {
   clickOnCanvas,
   selectMacroBond,
 } from '@utils';
-import { getKet } from '@utils/formats';
 import {
   expandCollapseRnaBuilder,
   pressAddToPresetsButton,
@@ -68,6 +65,10 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -1006,19 +1007,11 @@ test.describe('RNA Library', () => {
       'KET/monomers-connected-with-bonds.ket',
       page,
     );
-    const expectedFile = await getKet(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'KET/monomers-connected-with-bonds-expected.ket',
-      expectedFile,
+      FileType.KET,
     );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/monomers-connected-with-bonds-expected.ket',
-      });
-    expect(ketFile).toEqual(ketFileExpected);
   });
 
   test('Open Sugar-Base-Phosphate from .ket file and switch to Micromolecule mode', async () => {

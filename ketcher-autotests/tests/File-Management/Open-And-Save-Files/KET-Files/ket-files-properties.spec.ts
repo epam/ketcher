@@ -4,8 +4,6 @@ import {
   openFileAndAddToCanvas,
   openSettings,
   pressButton,
-  receiveFileComparisonData,
-  saveToFile,
   scrollToDownInSetting,
   selectLayoutTool,
   setBondLengthOptionUnit,
@@ -15,7 +13,10 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { getKet } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test('Open KET file with properties and check properties are saved in struct', async ({
   page,
@@ -59,16 +60,11 @@ test('Save a structure with properties to KET format', async ({ page }) => {
 
   await openFileAndAddToCanvas('KET/ket-with-properties.ket', page);
 
-  const expectedFile = await getKet(page);
-  await saveToFile('KET/ket-with-properties-expected.ket', expectedFile);
-
-  const { fileExpected: ketFileExpected, file: ketFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName: 'tests/test-data/KET/ket-with-properties-expected.ket',
-    });
-
-  expect(ketFile).toEqual(ketFileExpected);
+  await verifyFileExport(
+    page,
+    'KET/ket-with-properties-expected.ket',
+    FileType.KET,
+  );
 });
 
 test.describe('Ket files', () => {
@@ -94,20 +90,12 @@ test.describe('Ket files', () => {
     await pressButton(page, 'Apply');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getKet(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'KET/layout-with-catalyst-px-bond-lengh.ket',
-      expectedFile,
+      FileType.KET,
     );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/layout-with-catalyst-px-bond-lengh.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
   });
 
   test('The Bond length setting with pt option is applied, click on layout and it should be save to KET specification', async ({
@@ -127,20 +115,12 @@ test.describe('Ket files', () => {
     await pressButton(page, 'Apply');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getKet(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'KET/layout-with-diagonally-arrow-pt-bond-lengh.ket',
-      expectedFile,
+      FileType.KET,
     );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/layout-with-diagonally-arrow-pt-bond-lengh.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
   });
 
   test('The Bond length setting with inch option is applied, click on layout and it should be save to KET specification', async ({
@@ -160,20 +140,12 @@ test.describe('Ket files', () => {
     await pressButton(page, 'Apply');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getKet(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'KET/layout-with-long-molecule-inch-bond-lengh.ket',
-      expectedFile,
+      FileType.KET,
     );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/layout-with-long-molecule-inch-bond-lengh.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
   });
 
   test('The Reaction component margin size setting with px option is applied, click on layout and it should be save to KET specification', async ({
@@ -194,20 +166,12 @@ test.describe('Ket files', () => {
     await pressButton(page, 'OK');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getKet(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'KET/layout-with-catalyst-px-margin-size.ket',
-      expectedFile,
+      FileType.KET,
     );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/layout-with-catalyst-px-margin-size.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
   });
 
   test('The Reaction component margin size setting with pt option is applied, click on layout and it should be save to KET specification', async ({
@@ -228,20 +192,12 @@ test.describe('Ket files', () => {
     await pressButton(page, 'OK');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getKet(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'KET/layout-with-diagonally-arrow-pt-margin-size.ket',
-      expectedFile,
+      FileType.KET,
     );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/layout-with-diagonally-arrow-pt-margin-size.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
   });
 
   test('The Reaction component margin size setting with cm option is applied, click on layout and it should be save to KET specification', async ({
@@ -262,20 +218,12 @@ test.describe('Ket files', () => {
     await pressButton(page, 'OK');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getKet(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'KET/layout-with-dif-elements-cm-margin-size.ket',
-      expectedFile,
+      FileType.KET,
     );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/layout-with-dif-elements-cm-margin-size.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
   });
 
   test('The Reaction component margin size setting with inch option is applied, click on layout and it should be save to KET specification', async ({
@@ -296,20 +244,12 @@ test.describe('Ket files', () => {
     await pressButton(page, 'OK');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getKet(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'KET/layout-with-long-molecule-inch-margin-size.ket',
-      expectedFile,
+      FileType.KET,
     );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/layout-with-long-molecule-inch-margin-size.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
   });
 
   test('Verify ACS Style setting, click on layout and it should be save to KET specification', async ({
@@ -326,20 +266,12 @@ test.describe('Ket files', () => {
     await pressButton(page, 'OK');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getKet(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'KET/layout-with-diagonally-arrow-acs-style.ket',
-      expectedFile,
+      FileType.KET,
     );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/layout-with-diagonally-arrow-acs-style.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
   });
 
   test(

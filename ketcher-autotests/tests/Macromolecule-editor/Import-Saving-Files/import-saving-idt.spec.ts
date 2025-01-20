@@ -25,7 +25,6 @@ import {
   openStructurePasteFromClipboard,
   clickInTheMiddleOfTheScreen,
   selectEraseTool,
-  getKet,
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
   waitForSpinnerFinishedWork,
@@ -61,6 +60,10 @@ import {
   processResetToDefaultState,
 } from '@utils/testAnnotations/resetToDefaultState';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 
 let page: Page;
@@ -1026,20 +1029,13 @@ test.describe('Import-Saving .idt Files', () => {
       'IDT',
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
     );
-    const expectedFile = await getKet(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'KET/sequence-with-unresolved-idt-monomers-expected.ket',
-      expectedFile,
+      FileType.KET,
     );
 
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/sequence-with-unresolved-idt-monomers-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'KET/sequence-with-unresolved-idt-monomers-expected.ket',
       page,

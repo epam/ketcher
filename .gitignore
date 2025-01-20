@@ -37,6 +37,9 @@ yarn-error.log*
 nohup.out
 ketcher-autotests/results.json
 
+# ajv validation file generated with npm run ajv
+/packages/ketcher-core/src/domain/serializers/ket/compiledSchema.js
+
 .pnp.*
 .yarn/*
 tests/test-data/KET/Nucleotide-Templates/01 - (R1) - Left only.ket

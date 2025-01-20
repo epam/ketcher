@@ -697,8 +697,10 @@ test.describe('Snake Bond Tool', () => {
       page,
     );
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);

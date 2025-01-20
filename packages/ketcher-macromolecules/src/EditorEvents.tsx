@@ -86,7 +86,7 @@ export const EditorEvents = () => {
       );
 
       dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch('select-rectangle');
+      editor.events.selectTool.dispatch(['select-rectangle']);
       editor.events.openMonomerConnectionModal.add(
         (additionalProps: MonomerConnectionOnlyProps) =>
           dispatch(
@@ -142,7 +142,7 @@ export const EditorEvents = () => {
       );
 
       dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch('select-rectangle');
+      editor.events.selectTool.dispatch(['select-rectangle']);
       editor.events.openMonomerConnectionModal.add(
         (additionalProps: MonomerConnectionOnlyProps) =>
           dispatch(

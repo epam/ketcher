@@ -173,7 +173,7 @@ export const hotkeysConfiguration = {
   exit: {
     shortcut: ['Shift+Tab', 'Escape'],
     handler: (editor: CoreEditor) => {
-      editor.events.selectTool.dispatch(ToolName.selectRectangle);
+      editor.events.selectTool.dispatch([ToolName.selectRectangle]);
     },
   },
   undo: {
@@ -193,15 +193,15 @@ export const hotkeysConfiguration = {
     handler: (editor: CoreEditor) => {
       // TODO create an ability to stop event propagation from mode event handlers to keyboard shortcuts handlers
       if (editor.isSequenceEditMode) return;
-      editor.events.selectTool.dispatch(ToolName.erase);
-      editor.events.selectTool.dispatch(ToolName.selectRectangle);
+      editor.events.selectTool.dispatch([ToolName.erase]);
+      editor.events.selectTool.dispatch([ToolName.selectRectangle]);
     },
   },
   clear: {
     shortcut: ['Mod+Delete', 'Mod+Backspace'],
     handler: (editor: CoreEditor) => {
-      editor.events.selectTool.dispatch(ToolName.clear);
-      editor.events.selectTool.dispatch(ToolName.selectRectangle);
+      editor.events.selectTool.dispatch([ToolName.clear]);
+      editor.events.selectTool.dispatch([ToolName.selectRectangle]);
     },
   },
   'zoom-plus': {
@@ -233,7 +233,7 @@ export const hotkeysConfiguration = {
   hand: {
     shortcut: 'Mod+Alt+h',
     handler: (editor: CoreEditor) => {
-      editor.events.selectTool.dispatch(ToolName.hand);
+      editor.events.selectTool.dispatch([ToolName.hand]);
     },
   },
 };

@@ -14,13 +14,10 @@
  * limitations under the License.
  ***************************************************************************/
 
-import Ajv from 'ajv';
-import schema from './schema.json';
+import compiledSchema from './compiledSchema';
 import { validateMultitailArrows } from './multitailArrowsValidator';
 
 export function validate(ket: any): boolean {
-  const ajv = new Ajv();
-  const validate = ajv.compile(schema);
-  const result = validate(ket);
+  const result = compiledSchema(ket);
   return result ? validateMultitailArrows(ket) : result;
 }

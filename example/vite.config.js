@@ -12,6 +12,7 @@ import { valuesToReplace as ketcherReactValues } from '../packages/ketcher-react
 import ketcherReactTSConfig from '../packages/ketcher-react/tsconfig.json';
 import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.json';
 import { envVariables as exampleEnv } from './config/webpack.config';
+import commonjs from 'vite-plugin-commonjs';
 
 const dotEnv = loadEnv('development', '.', '');
 Object.assign(process.env, dotEnv, exampleEnv);
@@ -146,6 +147,7 @@ export default defineConfig({
       },
     }),
     HtmlReplaceVitePlugin(),
+    commonjs(),
   ],
   define: {
     'process.env': process.env,

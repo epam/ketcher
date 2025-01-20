@@ -27,7 +27,11 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
-import { getKet, getMolfile } from '@utils/formats';
+import { getMolfile } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -370,19 +374,12 @@ test.describe('Multiple S-Group tool', () => {
     await selectAllStructuresOnCanvas(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '8', 'Apply');
-    const expectedFile = await getKet(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'KET/cyclopropane-and-h2o-multiple-expected.ket',
-      expectedFile,
+      FileType.KET,
     );
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/cyclopropane-and-h2o-multiple-expected.ket',
-      });
 
-    expect(ketFile).toEqual(ketFileExpected);
     await takeEditorScreenshot(page);
   });
 });

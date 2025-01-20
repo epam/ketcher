@@ -16,7 +16,6 @@ import {
   takeMonomerLibraryScreenshot,
   waitForPageInit,
   selectSnakeLayoutModeTool,
-  getKet,
   saveToFile,
   receiveFileComparisonData,
   getMolfile,
@@ -43,6 +42,10 @@ import {
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 async function addToFavoritesMonomers(page: Page) {
   await page.getByTestId(Peptides.BetaAlanine).getByText('★').click();
@@ -134,20 +137,13 @@ test.describe('Macro-Micro-Switcher2', () => {
     await page.getByText('R1').locator('..').click();
     await page.getByText('R2').locator('..').click();
     await page.keyboard.up('Shift');
-    const expectedFile = await getKet(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'KET/structure-with-two-attachment-points-expected.ket',
-      expectedFile,
+      FileType.KET,
     );
 
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/structure-with-two-attachment-points-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'KET/structure-with-two-attachment-points-expected.ket',
       page,
@@ -166,20 +162,13 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    const expectedFile = await getKet(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'KET/one-attachment-point-added-in-micro-mode-expected.ket',
-      expectedFile,
+      FileType.KET,
     );
 
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/one-attachment-point-added-in-micro-mode-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'KET/one-attachment-point-added-in-micro-mode-expected.ket',
       page,

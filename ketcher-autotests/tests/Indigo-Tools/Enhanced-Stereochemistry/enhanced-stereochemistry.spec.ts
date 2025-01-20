@@ -22,7 +22,11 @@ import {
   waitForPageInit,
   openSettings,
 } from '@utils';
-import { getKet, getMolfile } from '@utils/formats';
+import { getMolfile } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 async function selectLabelDisplayAtStereogenicCenters(
   page: Page,
@@ -296,17 +300,12 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
     await openFileAndAddToCanvas('KET/stereo-and-structure.ket', page);
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/stereo-and-structure-expected.ket', expectedFile);
 
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/stereo-and-structure-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/stereo-and-structure-expected.ket',
+      FileType.KET,
+    );
 
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
@@ -324,17 +323,12 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
     await openFileAndAddToCanvas('KET/stereo-or-structure.ket', page);
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/stereo-or-structure-expected.ket', expectedFile);
 
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/stereo-or-structure-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/stereo-or-structure-expected.ket',
+      FileType.KET,
+    );
 
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');
@@ -352,17 +346,12 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
     await openFileAndAddToCanvas('KET/stereo-mixed-structure.ket', page);
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/stereo-mixed-structure-expected.ket', expectedFile);
 
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/stereo-mixed-structure-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/stereo-mixed-structure-expected.ket',
+      FileType.KET,
+    );
 
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
@@ -382,17 +371,12 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
     await openFileAndAddToCanvas('KET/mixed-and-stereomarks.ket', page);
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/mixed-and-stereomarks-expected.ket', expectedFile);
 
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/mixed-and-stereomarks-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/mixed-and-stereomarks-expected.ket',
+      FileType.KET,
+    );
 
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new OR Group');
@@ -412,17 +396,12 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     It's possible to edit the stereo marks assignment after opening the saved file.
     */
     await openFileAndAddToCanvas('KET/mixed-or-stereomarks.ket', page);
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/mixed-or-stereomarks-expected.ket', expectedFile);
 
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/mixed-or-stereomarks-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/mixed-or-stereomarks-expected.ket',
+      FileType.KET,
+    );
 
     await clickOnAtom(page, 'C', 1);
     await selectRadioButtonForNewGroup(page, 'Create new AND Group');

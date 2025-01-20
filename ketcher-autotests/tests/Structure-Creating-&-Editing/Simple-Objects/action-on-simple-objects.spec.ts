@@ -1,4 +1,4 @@
-import { Page, test, expect } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   LeftPanelButton,
   openFileAndAddToCanvas,
@@ -15,8 +15,6 @@ import {
   copyAndPaste,
   selectTopPanelButton,
   TopPanelButton,
-  saveToFile,
-  receiveFileComparisonData,
   pressButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   cutAndPaste,
@@ -24,8 +22,11 @@ import {
   clickOnCanvas,
   ZoomInByKeyboard,
 } from '@utils';
-import { getKet } from '@utils/formats';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -186,20 +187,12 @@ test.describe('Action on simples objects', () => {
   test('Simple objects - Open and save as .ket file', async ({ page }) => {
     // Test case: EPMLSOPKET-1982
     await openFileAndAddToCanvas('KET/simple-objects-with-changes.ket', page);
-    const expectedFile = await getKet(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'KET/simple-objects-with-changes-expected.ket',
-      expectedFile,
+      FileType.KET,
     );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/simple-objects-with-changes-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
     await takeEditorScreenshot(page);
   });
 

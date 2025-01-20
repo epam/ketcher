@@ -1,27 +1,20 @@
+import { Bases, Phosphates, Sugars } from '@constants/monomers';
+import { BUTTON__ADD_TO_PRESETS, RNA_TAB } from '@constants/testIdConstants';
 import { Page, test } from '@playwright/test';
 import {
-  RNA_TAB,
-  SUGAR,
-  BASE,
-  PHOSPHATE,
-  BUTTON__ADD_TO_PRESETS,
-} from '@constants/testIdConstants';
-import { waitForPageInit } from '@utils/common';
-import {
-  Bases,
   moveMouseToTheMiddleOfTheScreen,
-  Sugars,
+  selectCustomPreset,
+  selectMonomers,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
 } from '@utils';
+import { waitForPageInit } from '@utils/common';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { goToRNATab } from '@utils/macromolecules/library';
 import {
   pressAddToPresetsButton,
   pressSaveButton,
-  selectBaseSlot,
-  selectSugarSlot,
 } from '@utils/macromolecules/rnaBuilder';
-import { goToRNATab } from '@utils/macromolecules/library';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
@@ -31,28 +24,6 @@ async function createRNA(page: Page) {
   await expandRnaBuilder(page);
   await page.fill('[placeholder="Name your structure"]', 'MyRNA');
   await page.press('[placeholder="Name your structure"]', 'Enter');
-}
-
-async function selectRNAComponents(
-  page: Page,
-  {
-    sugar,
-    base,
-    phosphate,
-  }: {
-    sugar: string;
-    base: string;
-    phosphate: string;
-  },
-) {
-  await page.getByTestId(SUGAR).click();
-  await page.getByTestId(sugar).click();
-
-  await page.getByTestId(BASE).click();
-  await page.getByTestId(base).click();
-
-  await page.getByTestId(PHOSPHATE).click();
-  await page.getByTestId(phosphate).click();
 }
 
 async function expandRnaBuilder(page: Page) {
@@ -71,11 +42,7 @@ test.describe('Macromolecules custom presets', () => {
   });
 
   test('Add new preset and duplicate it', async ({ page }) => {
-    await selectRNAComponents(page, {
-      sugar: Sugars._25R,
-      base: Bases.baA,
-      phosphate: 'bP___Boranophosphate',
-    });
+    await selectMonomers(page, [Sugars._25R, Bases.baA, Phosphates.bP]);
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.getByTestId(BUTTON__ADD_TO_PRESETS).click();
 
@@ -83,12 +50,7 @@ test.describe('Macromolecules custom presets', () => {
 
     await page.getByTestId('duplicate-btn').click();
 
-    await selectRNAComponents(page, {
-      sugar: "12ddR___1',2'-dideoxyribose",
-      base: 'A___Adenine',
-      phosphate: 'P___Phosphate',
-    });
-
+    await selectMonomers(page, [Sugars._12ddR, Bases.A, Phosphates.P]);
     await pressSaveButton(page);
 
     await takeMonomerLibraryScreenshot(page);
@@ -116,24 +78,14 @@ test.describe('Macromolecules custom presets', () => {
     // Press Enter on input
     await page.press('[placeholder="Name your structure"]', 'Enter');
 
-    // Click on <div> "Sugar Not selected"
-    await selectSugarSlot(page);
-
-    // Click on <div> "25R ★"
-    await page.click(`[data-testid="${Sugars._25R}"]`);
-
-    // Click on <div> "Base Not selected"
-    await selectBaseSlot(page);
-
-    // Click on <div> "baA ★"
-    await page.click(`[data-testid="${Bases.baA}"]`);
+    await selectMonomers(page, [Sugars._25R, Bases.baA]);
 
     // Click on <button> "Add to Presets"
     await pressAddToPresetsButton(page);
 
     await takeMonomerLibraryScreenshot(page);
 
-    await page.click('[data-testid="MyRNA_baA_25R_."]');
+    await selectCustomPreset(page, 'MyRNA_baA_25R_.');
 
     await page.click('#polymer-editor-canvas');
     await takeEditorScreenshot(page);

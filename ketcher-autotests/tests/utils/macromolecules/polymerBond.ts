@@ -16,7 +16,7 @@ export async function bondTwoMonomers(
   secondMonomerElement: Locator,
   connectTitle1?: string,
   connectTitle2?: string,
-  bondType: (typeof MacroBondTool)[keyof typeof MacroBondTool] = MacroBondTool.SINGLE,
+  bondType: typeof MacroBondTool[keyof typeof MacroBondTool] = MacroBondTool.SINGLE,
   needSelectAttachmentPoint = true,
   needConnect = true,
 ) {
@@ -265,7 +265,7 @@ export async function bondTwoMonomersPointToPoint(
   secondMonomer: Locator,
   firstMonomerConnectionPoint?: string,
   secondMonomerConnectionPoint?: string,
-  bondType?: (typeof MacroBondTool)[keyof typeof MacroBondTool],
+  bondType?: typeof MacroBondTool[keyof typeof MacroBondTool],
   // if true - first free from left connection point will be selected in the dialog for both monomers
   chooseConnectionPointsInDialogIfAppeared = false,
 ): Promise<Locator> {

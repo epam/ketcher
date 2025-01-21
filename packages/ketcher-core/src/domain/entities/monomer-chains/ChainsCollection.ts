@@ -540,7 +540,7 @@ export class ChainsCollection {
     };
   }
 
-  public getAlignedSenseAntisenseChains(chain: Chain) {
+  public getAlignedSenseAntisenseChainItems(chain: Chain) {
     const handledNodes = new Set<SubChainNode>();
     const { antisenseChainsStartIndexes, antisenseNodesToIndexesMap } =
       this.getAntisenseChainsWithData(chain);
@@ -574,7 +574,7 @@ export class ChainsCollection {
         });
         handledNodes.add(senseNode);
         currentSenseIterationIndex++;
-        currentAntisenseIterationIndex++;
+        currentAntisenseIterationIndex = currentSenseIterationIndex;
       } else if (
         senseNode.monomers.some((monomer) => {
           return monomer.hydrogenBonds.some((hydrogenBond) => {
@@ -606,6 +606,7 @@ export class ChainsCollection {
         })
       ) {
         twoStrandedChainItems.push({
+          node: '-',
           antisenseNode,
         });
         handledNodes.add(antisenseNode);
@@ -623,6 +624,7 @@ export class ChainsCollection {
       ) {
         twoStrandedChainItems.push({
           node: senseNode,
+          antisenseNode: '-',
         });
         handledNodes.add(senseNode);
         currentSenseIterationIndex++;

@@ -26,6 +26,8 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 import { AmbiguousSequenceItemRenderer } from 'application/render/renderers/sequence/AmbiguousSequenceItemRenderer';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
+import { BackBoneSequenceItemRenderer } from 'application/render/renderers/sequence/BackBoneSequenceItemRenderer';
+import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 
 export class SequenceNodeRendererFactory {
   static fromNode(
@@ -50,6 +52,9 @@ export class SequenceNodeRendererFactory {
         break;
       case EmptySequenceNode:
         RendererClass = EmptySequenceItemRenderer;
+        break;
+      case BackBoneSequenceNode:
+        RendererClass = BackBoneSequenceItemRenderer;
         break;
       case LinkerSequenceNode:
         RendererClass = ChemSequenceItemRenderer;

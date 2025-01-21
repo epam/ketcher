@@ -139,75 +139,57 @@ export class SequenceRenderer {
     }
 
     chainsCollection.chains.forEach((chain, chainIndex) => {
-      const { antisenseChainsStartIndexes, antisenseChainsStartIndexesMap } =
-        chainsCollection.getAntisenseChainsWithData(chain);
-      const antisenseNodesToIndexesMap = new Map<
-        number,
-        { node: SubChainNode; chain: Chain; nodeIndex: number }
-      >();
-
-      antisenseChainsStartIndexesMap.forEach(
-        (chainWithData, firstNodeIndex) => {
-          chainWithData.complimentaryChain.nodes.forEach((node, index) => {
-            antisenseNodesToIndexesMap.set(firstNodeIndex + index, {
-              node,
-              chain: chainWithData.complimentaryChain,
-              nodeIndex: index,
-            });
-          });
-        },
-      );
+      const alignedSenseAntisenseChainItems =
+        chainsCollection.getAlignedSenseAntisenseChainItems(chain);
 
       currentMonomerIndexInChain = 0;
 
-      console.log(
-        SequenceRenderer.chainsCollection.getAlignedSenseAntisenseChains(chain),
-      );
+      alignedSenseAntisenseChainItems.forEach((chainItem, chainItemIndex) => {
+        const node = chainItem.node;
 
-      for (
-        let nodeIndex = Math.min(0, ...antisenseChainsStartIndexes);
-        nodeIndex < chain.length;
-        nodeIndex++
-      ) {
-        const antisenseNodeWithData = antisenseNodesToIndexesMap.get(nodeIndex);
-        const node = chain.nodes[nodeIndex];
-
-        if (handledNodes.has(node)) {
-          continue;
+        if (node && handledNodes.has(node)) {
+          return;
         }
 
-        if (nodeIndex % NUMBER_OF_SYMBOLS_IN_ROW === 0 && hasAntisenseInRow) {
+        if (
+          chainItemIndex % NUMBER_OF_SYMBOLS_IN_ROW === 0 &&
+          hasAntisenseInRow
+        ) {
           hasAntisenseInRow = false;
           previousRowsWithAntisense++;
         }
 
         let antisenseNodeRenderer: BaseSequenceItemRenderer | undefined;
 
-        if (antisenseNodeWithData) {
+        if (chainItem.antisenseNode) {
           antisenseNodeRenderer = SequenceNodeRendererFactory.fromNode(
-            antisenseNodeWithData.node,
+            chainItem.antisenseNode,
             currentChainStartPosition.add(new Vec2(0, 30)),
             currentMonomerIndexInChain,
             currentMonomerIndexInChain + 1 + (isEditMode ? 1 : 0) ===
-              antisenseNodeWithData.chain.length,
-            antisenseNodeWithData.chain,
+              chain.length,
+            chain,
             currentMonomerIndexOverall === SequenceRenderer.caretPosition,
             previousRowsWithAntisense,
-            antisenseNodeWithData.node.monomer.renderer,
-            antisenseNodeWithData.nodeIndex,
+            chainItem.antisenseNode?.monomer?.renderer,
+            chainItemIndex,
           );
 
           antisenseNodeRenderer.show();
-          antisenseNodeWithData.node.monomers?.forEach((monomer) =>
+          chainItem.antisenseNode.monomers?.forEach((monomer) =>
             monomer.setRenderer(
               antisenseNodeRenderer as BaseSequenceItemRenderer,
             ),
           );
-          handledNodes.add(antisenseNodeWithData.node);
+          handledNodes.add(chainItem.antisenseNode);
 
           if (!hasAntisenseInRow) {
             hasAntisenseInRow = true;
           }
+        }
+
+        if (!node) {
+          return;
         }
 
         const renderer = SequenceNodeRendererFactory.fromNode(
@@ -238,7 +220,7 @@ export class SequenceRenderer {
           );
           node.setRenderer(renderer);
         }
-      }
+      });
 
       currentChainStartPosition = SequenceRenderer.getNextChainPosition(
         currentChainStartPosition,

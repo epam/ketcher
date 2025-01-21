@@ -29,7 +29,6 @@ const MonomerItem = ({
   onMouseLeave,
   onMouseMove,
   isSelected,
-  isPeptideTab,
   disabled,
   onClick = EmptyFunction,
 }: IMonomerItemProps) => {
@@ -44,14 +43,16 @@ const MonomerItem = ({
     : item.props.MonomerNaturalAnalogCode;
 
   const monomerKey: string = getMonomerUniqueKey(item);
-
+  const monomerItem = isAmbiguousMonomerLibraryItem(item)
+    ? undefined
+    : (item as MonomerItemType);
   return (
     <Card
       selected={isSelected}
       disabled={isDisabled}
       data-testid={monomerKey}
       data-monomer-item-id={monomerKey}
-      isPeptideTab={isPeptideTab}
+      item={monomerItem}
       isVariantMonomer={item.isAmbiguous}
       code={colorCode}
       onMouseLeave={onMouseLeave}

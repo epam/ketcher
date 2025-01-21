@@ -24,5 +24,4 @@ export interface IMonomerItemProps {
   onMouseLeave?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onMouseMove?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   onStarClick?: VoidFunction;
-  isPeptideTab?: boolean;
 }

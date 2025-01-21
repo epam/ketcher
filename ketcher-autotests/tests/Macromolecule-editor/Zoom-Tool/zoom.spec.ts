@@ -26,6 +26,7 @@ import {
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { goToCHEMTab, goToRNATab } from '@utils/macromolecules/library';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
 import { Chems, Peptides } from '@utils/selectors/macromoleculeEditor';
 
@@ -332,11 +333,11 @@ test.describe('Zoom Tool', () => {
     await page.getByTestId(Peptides.BetaAlanine).click();
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await page.getByTestId('C_C_R_P').click();
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('CHEM-TAB').click();
+    await goToCHEMTab(page);
     await page.getByTestId(Chems.SMPEG2).click();
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

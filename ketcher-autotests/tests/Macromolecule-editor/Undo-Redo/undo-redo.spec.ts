@@ -31,7 +31,7 @@ import {
   getControlModifier,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { goToRNATab } from '@utils/macromolecules/library';
+import { goToCHEMTab, goToRNATab } from '@utils/macromolecules/library';
 import {
   connectMonomersWithBonds,
   moveMonomer,
@@ -259,7 +259,7 @@ test.describe('Undo-Redo tests', () => {
     test.slow();
 
     const addMonomers = async (x: number, y: number) => {
-      await page.getByTestId('CHEM-TAB').click();
+      await goToCHEMTab(page);
       await page.getByTestId('SMPEG2___SM(PEG)2').click();
       await clickOnCanvas(page, x, y);
     };
@@ -443,7 +443,7 @@ test.describe('Undo-Redo tests', () => {
     */
     const x = 200;
     const y = 200;
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await page.getByTestId('C_C_R_P').click();
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);

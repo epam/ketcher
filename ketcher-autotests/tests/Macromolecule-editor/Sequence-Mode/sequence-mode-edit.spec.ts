@@ -24,6 +24,7 @@ import {
   enterSequence,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
+import { goToCHEMTab, goToRNATab } from '@utils/macromolecules/library';
 import {
   expandCollapseRnaBuilder,
   toggleBasesAccordion,
@@ -363,7 +364,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Sugar type of monomer in the library appears.
     */
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await toggleSugarsAccordion(page);
     await page.getByTestId('25d3r___3-Deoxyribose (2,5 connectivity)').click();
     await takePageScreenshot(page);
@@ -376,7 +377,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Base type of monomer in the library appears.
     */
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await toggleBasesAccordion(page);
     await page.getByTestId('c7A___7-Deazaadenine').click();
     await takePageScreenshot(page);
@@ -389,7 +390,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Phosphate type of monomer in the library appears.
     */
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await togglePhosphatesAccordion(page);
     await page.getByTestId('ibun___Isobutylamino').click();
     await takePageScreenshot(page);
@@ -402,7 +403,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Nucleotide type of monomer in the library appears.
     */
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await toggleNucleotidesAccordion(page);
     await page.getByTestId('Super T___5-hydroxybutynl-2’-deoxyuridine').click();
     await takePageScreenshot(page);
@@ -415,7 +416,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for CHEM type of monomer in the library appears.
     */
-    await page.getByTestId('CHEM-TAB').click();
+    await goToCHEMTab(page);
     await page.getByTestId('DOTA___Tetraxetan').click();
     await takePageScreenshot(page);
   });
@@ -446,7 +447,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4928
     Description: System show full set of IDT aliases at preview tooltip.
     */
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await expandCollapseRnaBuilder(page);
     await page.getByTestId('dR(U)P_U_dR_P').hover();
     await takePageScreenshot(page);

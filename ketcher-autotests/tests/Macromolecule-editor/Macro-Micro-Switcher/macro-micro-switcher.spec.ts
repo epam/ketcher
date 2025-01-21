@@ -546,7 +546,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Remove abbreviation restricted for CHEMs in micro mode.
     */
     await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('CHEM-TAB').click();
+    await goToCHEMTab(page);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
@@ -568,7 +568,7 @@ test.describe('Macro-Micro-Switcher', () => {
 
     */
       await turnOnMacromoleculesEditor(page);
-      await page.getByTestId('PEPTIDES-TAB').click();
+      await goToPeptidesTab(page);
       await page.getByTestId(Peptides.BetaAlanine).click();
       await clickInTheMiddleOfTheScreen(page);
       await turnOnMicromoleculesEditor(page);
@@ -1182,7 +1182,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
       );
       await turnOnMacromoleculesEditor(page);
-      await page.getByTestId('RNA-TAB').click();
+      await goToRNATab(page);
       await page.getByTestId(data.summaryTestId).click();
       await page.getByTestId(data.monomerTestId).click();
       await clickOnCanvas(page, x, y);
@@ -1218,7 +1218,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('CHEM-TAB').click();
+    await goToCHEMTab(page);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
@@ -1276,7 +1276,7 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       await turnOnMacromoleculesEditor(page);
       await selectSnakeLayoutModeTool(page);
-      await page.getByTestId('RNA-TAB').click();
+      await goToRNATab(page);
       await page.getByTestId(data.summaryTestId).click();
       await page.getByTestId(data.monomerTestId).click();
       await clickOnCanvas(page, x, y);
@@ -1311,7 +1311,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMacromoleculesEditor(page);
     await selectSnakeLayoutModeTool(page);
-    await page.getByTestId('CHEM-TAB').click();
+    await goToCHEMTab(page);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
@@ -1368,7 +1368,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
       );
       await turnOnMacromoleculesEditor(page);
-      await page.getByTestId('RNA-TAB').click();
+      await goToRNATab(page);
       await page.getByTestId(data.summaryTestId).click();
       await page.getByTestId(data.monomerTestId).click();
       await clickOnCanvas(page, x, y);
@@ -1405,7 +1405,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('CHEM-TAB').click();
+    await goToCHEMTab(page);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
@@ -1465,7 +1465,7 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
       );
       await turnOnMacromoleculesEditor(page);
-      await page.getByTestId('RNA-TAB').click();
+      await goToRNATab(page);
       await page.getByTestId(data.summaryTestId).click();
       await page.getByTestId(data.monomerTestId).click();
       await clickOnCanvas(page, x, y);
@@ -1540,7 +1540,7 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('CHEM-TAB').click();
+    await goToCHEMTab(page);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(

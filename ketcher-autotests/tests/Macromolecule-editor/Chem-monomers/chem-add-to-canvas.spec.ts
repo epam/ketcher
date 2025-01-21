@@ -12,6 +12,7 @@ import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
+import { goToCHEMTab } from '@utils/macromolecules/library';
 
 /* 
 Test case: #2497 - Add chem to canvas
@@ -22,7 +23,7 @@ test('Select chem and drag it to canvas', async ({ page }) => {
 
   // Click on POLYMER_TOGGLER
   await turnOnMacromoleculesEditor(page);
-  await page.getByText('CHEM').click();
+  await goToCHEMTab(page);
 
   // Click on <div> "sDBL___Symmetric Doubler"
   await page.click('[data-testid="sDBL___Symmetric Doubler"]');

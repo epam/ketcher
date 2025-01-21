@@ -12,6 +12,7 @@ import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
+import { goToFavoritesTab } from '@utils/macromolecules/library';
 
 test('Add molecule to favorites, switch to Favorites tab and drag it to the canvas', async ({
   page,
@@ -20,7 +21,7 @@ test('Add molecule to favorites, switch to Favorites tab and drag it to the canv
   await turnOnMacromoleculesEditor(page);
 
   await page.click(getFavoriteButtonSelector(ALANINE));
-  await page.getByText('Favorites').click();
+  await goToFavoritesTab(page);
   await page.click(ALANINE);
   await clickInTheMiddleOfTheScreen(page);
   await hideMonomerPreview(page);

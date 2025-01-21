@@ -6,12 +6,13 @@ import {
   waitForPageInit,
 } from '@utils';
 import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
+import { goToRNATab } from '@utils/macromolecules/library';
 
 test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await toggleRnaBuilderAccordion(page);
   });
 

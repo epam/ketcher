@@ -50,6 +50,7 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+import { goToCHEMTab, goToRNATab } from '@utils/macromolecules/library';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -190,7 +191,7 @@ test('Create bond between two chems', async () => {
     Description: Polymer bond tool
     */
   // Choose chems
-  await page.getByText('CHEM').click();
+  await goToCHEMTab(page);
   await page.getByTestId(Chems.hxy).click();
 
   // Create 2 chems on canvas
@@ -285,7 +286,7 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
   const x = 800;
   const y = 350;
   await page.locator('.css-1kbfai8').click();
-  await page.getByTestId('RNA-TAB').click();
+  await goToRNATab(page);
   await page.getByTestId('MOE(A)P_A_MOE_P').click();
   await clickInTheMiddleOfTheScreen(page);
   await page.getByTestId('dR(U)P_U_dR_P').click();
@@ -305,7 +306,7 @@ test('Check in full-screen mode it is possible to add a bond between a CHEM mono
   const x = 800;
   const y = 350;
   await page.locator('.css-1kbfai8').click();
-  await page.getByTestId('CHEM-TAB').click();
+  await goToCHEMTab(page);
   await page.getByTestId('A6OH___6-amino-hexanol').click();
   await clickInTheMiddleOfTheScreen(page);
   await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
@@ -631,7 +632,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     Description: Changes made in the "Edit Connection Points" dialog are saved when the structure is saved to a IDT file and can be loaded.
     */
   const bondLine = await getConnectionLine(page, 1);
-  await page.getByTestId('RNA-TAB').click();
+  await goToRNATab(page);
   await page.getByTestId('MOE(A)P_A_MOE_P').click();
   await clickInTheMiddleOfTheScreen(page);
   await openEditConnectionPointsMenu(page, bondLine);

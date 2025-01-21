@@ -30,7 +30,7 @@ import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
-import { goToRNATab } from '@utils/macromolecules/library';
+import { goToCHEMTab, goToRNATab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
@@ -146,7 +146,7 @@ test.describe('Erase Tool', () => {
     Test case: Erase Tool
     Description: CHEM is deleted.
     */
-    await page.getByTestId('CHEM-TAB').click();
+    await goToCHEMTab(page);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);

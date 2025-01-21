@@ -14,7 +14,12 @@ import {
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
+import {
+  goToCHEMTab,
+  goToFavoritesTab,
+  goToPeptidesTab,
+  goToRNATab,
+} from '@utils/macromolecules/library';
 import { Chems } from '@utils/selectors/macromoleculeEditor';
 
 test.describe('Peptide library testing', () => {
@@ -73,9 +78,9 @@ test.describe('Peptide library testing', () => {
     await page.getByTestId('Edc___S-ethylthiocysteine').getByText('★').click();
     await goToRNATab(page);
     await page.getByTestId('A_A_R_P').getByText('★').click();
-    await page.getByTestId('CHEM-TAB').click();
+    await goToCHEMTab(page);
     await page.getByTestId('A6OH___6-amino-hexanol').getByText('★').click();
-    await page.getByTestId('FAVORITES-TAB').click();
+    await goToFavoritesTab(page);
     await takeMonomerLibraryScreenshot(page);
     await page.getByTestId('A6OH___6-amino-hexanol').getByText('★').click();
     await page.getByTestId('dA___D-Alanine').getByText('★').click();
@@ -93,11 +98,11 @@ test.describe('Peptide library testing', () => {
     */
     await page.getByTestId('dA___D-Alanine').getByText('★').click();
     await page.getByTestId('Edc___S-ethylthiocysteine').getByText('★').click();
-    await page.getByTestId('FAVORITES-TAB').click();
+    await goToFavoritesTab(page);
     await takeMonomerLibraryScreenshot(page);
-    await page.getByTestId('PEPTIDES-TAB').click();
+    await goToPeptidesTab(page);
     await page.getByTestId('Edc___S-ethylthiocysteine').getByText('★').click();
-    await page.getByTestId('FAVORITES-TAB').click();
+    await goToFavoritesTab(page);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -164,7 +169,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: Selected CHEM discards when mouse hovered on canvas and ESC button is clicked.
     */
-    await page.getByTestId('CHEM-TAB').click();
+    await goToCHEMTab(page);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -179,7 +184,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a CHEM on canvas while Erase tool is selected.
     */
-    await page.getByTestId('CHEM-TAB').click();
+    await goToCHEMTab(page);
     await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
     await clickInTheMiddleOfTheScreen(page);
     await selectEraseTool(page);
@@ -194,7 +199,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a CHEM on canvas while Bond tool is selected.
     */
-    await page.getByTestId('CHEM-TAB').click();
+    await goToCHEMTab(page);
     await page
       .getByTestId('MCC___4-(N-maleimidomethyl)cyclohexane-1-carboxylate')
       .click();
@@ -211,7 +216,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a CHEM on canvas while Selection tool is selected.
     */
-    await page.getByTestId('CHEM-TAB').click();
+    await goToCHEMTab(page);
     await page.getByTestId(Chems.SMPEG2).click();
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);

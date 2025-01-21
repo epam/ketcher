@@ -7,6 +7,7 @@ import {
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { goToCHEMTab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */
 
@@ -16,7 +17,7 @@ test.describe('Modal window', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
-    await page.getByText('CHEM').click();
+    await goToCHEMTab(page);
     const MONOMER_NAME = 'Test-6-Ch___Test-6-AP-Chem';
     const MONOMER_ALIAS = 'Test-6-Ch';
 

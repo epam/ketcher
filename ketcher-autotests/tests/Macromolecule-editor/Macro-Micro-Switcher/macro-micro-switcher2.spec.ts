@@ -46,6 +46,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { goToFavoritesTab } from '@utils/macromolecules/library';
 
 async function addToFavoritesMonomers(page: Page) {
   await page.getByTestId(Peptides.BetaAlanine).getByText('★').click();
@@ -83,7 +84,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await page.getByText('Hide').click();
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('FAVORITES-TAB').click();
+    await goToFavoritesTab(page);
     await takeMonomerLibraryScreenshot(page);
   });
 

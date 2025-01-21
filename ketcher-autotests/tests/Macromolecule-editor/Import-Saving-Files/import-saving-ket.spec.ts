@@ -31,6 +31,7 @@ import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
+import { goToRNATab } from '@utils/macromolecules/library';
 import { Peptides } from '@utils/selectors/macromoleculeEditor';
 import {
   markResetToDefaultState,
@@ -175,7 +176,7 @@ test.describe('Import-Saving .ket Files', () => {
     markResetToDefaultState('tabSelection');
 
     test.slow();
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await page.getByTestId('summary-Sugars').click();
     await page.getByTestId(Sugars.TwentyFiveR).click();
     await clickInTheMiddleOfTheScreen(page);

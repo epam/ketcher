@@ -8,6 +8,7 @@ import {
   BaseMonomer,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
+  isRnaBaseOrAmbiguousRnaBase,
   RNABase,
   Sugar,
 } from 'ketcher-core';
@@ -24,10 +25,10 @@ export const SelectedMonomersContextMenu = ({
   const isAntisenseCreationDisabled = selectedMonomers?.some(
     (selectedMonomer) => {
       return (
+        (isRnaBaseOrAmbiguousRnaBase(selectedMonomer) &&
+          selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode === '') ||
         (selectedMonomer instanceof RNABase &&
-          (selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode === '' ||
-            selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode ===
-              'X' ||
+          (selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode === 'X' ||
             selectedMonomer.hydrogenBonds.length > 0 ||
             selectedMonomer.covalentBonds.length > 1)) ||
         (selectedMonomer instanceof Sugar &&

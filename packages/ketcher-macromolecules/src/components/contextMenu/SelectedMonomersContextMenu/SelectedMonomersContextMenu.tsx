@@ -24,6 +24,10 @@ export const SelectedMonomersContextMenu = ({
   const editor = useAppSelector(selectEditor);
   const isAntisenseCreationDisabled = selectedMonomers?.some(
     (selectedMonomer) => {
+      const rnaBaseForSugar =
+        selectedMonomer instanceof Sugar &&
+        getRnaBaseFromSugar(selectedMonomer);
+
       return (
         (isRnaBaseOrAmbiguousRnaBase(selectedMonomer) &&
           selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode === '') ||
@@ -31,8 +35,11 @@ export const SelectedMonomersContextMenu = ({
           (selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode === 'X' ||
             selectedMonomer.hydrogenBonds.length > 0 ||
             selectedMonomer.covalentBonds.length > 1)) ||
-        (selectedMonomer instanceof Sugar &&
-          (getRnaBaseFromSugar(selectedMonomer)?.hydrogenBonds.length || 0) > 0)
+        (rnaBaseForSugar &&
+          ((rnaBaseForSugar.hydrogenBonds.length || 0) > 0 ||
+            (isRnaBaseOrAmbiguousRnaBase(rnaBaseForSugar) &&
+              rnaBaseForSugar.monomerItem.props.MonomerNaturalAnalogCode ===
+                '')))
       );
     },
   );

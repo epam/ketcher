@@ -28,4 +28,8 @@ export class MonomerToAtomBond extends BaseBond {
   get secondEndEntity(): Atom {
     return this.atom;
   }
+
+  public get isClosingBondInCycle() {
+    return false;
+  }
 }

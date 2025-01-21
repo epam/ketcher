@@ -55,4 +55,8 @@ export class HydrogenBond extends BaseBond {
   public getAnotherMonomer(monomer: BaseMonomer): BaseMonomer | undefined {
     return super.getAnotherEntity(monomer) as BaseMonomer;
   }
+
+  public get isClosingBondInCycle() {
+    return false;
+  }
 }

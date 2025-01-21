@@ -127,6 +127,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
 
+    if (cells && this.polymerBond.isClosingBondInCycle) {
+      this.appendSideConnectionBond(rootElement, cells);
+      return this.bodyElement;
+    }
+
     if (
       this.polymerBond.isSideChainConnection &&
       (!this.isHydrogenBond || editor.mode instanceof SnakeMode) &&

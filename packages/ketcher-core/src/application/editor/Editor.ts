@@ -151,6 +151,7 @@ export class CoreEditor {
     this.micromoleculesEditor = ketcher?.editor;
     this.switchToMacromolecules();
     this.rerenderSequenceMode();
+    this.drawingEntitiesManager.detectCycles();
   }
 
   static provideEditorInstance(): CoreEditor {

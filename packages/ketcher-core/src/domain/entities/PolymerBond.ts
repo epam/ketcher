@@ -11,6 +11,7 @@ import {
 import { AttachmentPointName } from 'domain/types';
 import { BaseMonomer } from './BaseMonomer';
 import { BaseBond } from 'domain/entities/BaseBond';
+import { CoreEditor } from 'application/editor';
 
 export type FlexOrSequenceOrSnakeModePolymerBondRenderer =
   | BackBoneBondSequenceRenderer
@@ -58,6 +59,11 @@ export class PolymerBond extends BaseBond {
 
   public get secondMonomerAttachmentPoint() {
     return this.secondMonomer?.getAttachmentPointByBond(this);
+  }
+
+  public get isClosingBondInCycle() {
+    const editor = CoreEditor.provideEditorInstance();
+    return editor.drawingEntitiesManager.closingBonds.has(this.id);
   }
 
   public get isSideChainConnection() {

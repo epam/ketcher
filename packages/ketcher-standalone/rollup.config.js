@@ -99,7 +99,7 @@ const configWithWasmBase64 = {
     ...baseConfig.plugins,
     replaceIndigoAlias('indigo-ketcher'),
     useIndigoWorkerImport(INDIGO_WORKER_IMPORTS.WASM_LOADER),
-    OMT(),
+    configureWebWorkerLoader(),
   ],
 };
 
@@ -161,7 +161,7 @@ const configBase64WithoutRender = {
     ...baseConfig.plugins,
     replaceIndigoAlias('indigo-ketcher/jsNoRender'),
     useIndigoWorkerImport(INDIGO_WORKER_IMPORTS.WASM_LOADER),
-    OMT(),
+    configureWebWorkerLoader(),
   ],
 };
 

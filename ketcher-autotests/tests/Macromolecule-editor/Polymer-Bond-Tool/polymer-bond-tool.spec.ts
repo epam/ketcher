@@ -32,6 +32,7 @@ import {
   selectOptionInTypeDropdown2,
   clickOnCanvas,
   selectMacroBond,
+  selectMonomer,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
@@ -45,11 +46,11 @@ import {
 } from '@utils/macromolecules';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { Chems, Peptides } from '@utils/selectors/macromoleculeEditor';
 import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+import { Chem, Peptides, Presets } from '@constants/monomers';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -190,8 +191,7 @@ test('Create bond between two chems', async () => {
     Description: Polymer bond tool
     */
   // Choose chems
-  await page.getByText('CHEM').click();
-  await page.getByTestId(Chems.hxy).click();
+  await selectMonomer(page, Chem.hxy);
 
   // Create 2 chems on canvas
   await clickOnCanvas(page, 300, 300);
@@ -266,9 +266,9 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
   const x = 800;
   const y = 350;
   await page.locator('.css-1kbfai8').click();
-  await page.getByTestId(Peptides.BetaAlanine).click();
+  await selectMonomer(page, Peptides.bAla);
   await clickInTheMiddleOfTheScreen(page);
-  await page.getByTestId(Peptides.Ethylthiocysteine).click();
+  await selectMonomer(page, Peptides.Edc);
   await clickOnCanvas(page, x, y);
   await connectMonomersWithBonds(page, ['Bal', 'Edc']);
   await takeEditorScreenshot(page, {
@@ -285,10 +285,9 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
   const x = 800;
   const y = 350;
   await page.locator('.css-1kbfai8').click();
-  await page.getByTestId('RNA-TAB').click();
-  await page.getByTestId('MOE(A)P_A_MOE_P').click();
+  await selectMonomer(page, Presets.MOE_A_P);
   await clickInTheMiddleOfTheScreen(page);
-  await page.getByTestId('dR(U)P_U_dR_P').click();
+  await selectMonomer(page, Presets.dR_U_P);
   await clickOnCanvas(page, x, y);
   await connectMonomersWithBonds(page, ['P', 'dR']);
   await takeEditorScreenshot(page, {
@@ -305,10 +304,9 @@ test('Check in full-screen mode it is possible to add a bond between a CHEM mono
   const x = 800;
   const y = 350;
   await page.locator('.css-1kbfai8').click();
-  await page.getByTestId('CHEM-TAB').click();
-  await page.getByTestId('A6OH___6-amino-hexanol').click();
+  await selectMonomer(page, Chem.A6OH);
   await clickInTheMiddleOfTheScreen(page);
-  await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+  await selectMonomer(page, Chem.Test_6_Ch);
   await clickOnCanvas(page, x, y);
   await connectMonomersWithBonds(page, ['A6OH', 'Test-6-Ch']);
   await page
@@ -631,8 +629,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     Description: Changes made in the "Edit Connection Points" dialog are saved when the structure is saved to a IDT file and can be loaded.
     */
   const bondLine = await getConnectionLine(page, 1);
-  await page.getByTestId('RNA-TAB').click();
-  await page.getByTestId('MOE(A)P_A_MOE_P').click();
+  await selectMonomer(page, Presets.MOE_A_P);
   await clickInTheMiddleOfTheScreen(page);
   await openEditConnectionPointsMenu(page, bondLine);
   await page.getByRole('button', { name: 'R1' }).first().click();

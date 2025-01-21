@@ -1,3 +1,4 @@
+import { Bases, Chem, Peptides, Presets } from '@constants/monomers';
 import { Locator, test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -14,13 +15,11 @@ import {
   takePageScreenshot,
   turnOnMacromoleculesEditor,
   waitForPageInit,
-  Peptides as Peptides2,
   selectMonomer,
   clickOnTheCanvas,
   selectRectangleSelectionTool,
   zoomWithMouseWheel,
   selectEraseTool,
-  Bases,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
@@ -41,7 +40,6 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
-import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Undo Redo', () => {
@@ -218,7 +216,7 @@ test.describe('Undo-Redo tests', () => {
     test.slow();
 
     const addMonomers = async (x: number, y: number) => {
-      await page.getByTestId(Peptides.BetaAlanine).click();
+      await selectMonomer(page, Peptides.bAla);
       await clickOnCanvas(page, x, y);
     };
 
@@ -259,8 +257,7 @@ test.describe('Undo-Redo tests', () => {
     test.slow();
 
     const addMonomers = async (x: number, y: number) => {
-      await page.getByTestId('CHEM-TAB').click();
-      await page.getByTestId('SMPEG2___SM(PEG)2').click();
+      await selectMonomer(page, Chem.SMPEG2);
       await clickOnCanvas(page, x, y);
     };
 
@@ -426,7 +423,7 @@ test.describe('Undo-Redo tests', () => {
     The test is not working correctly because we have an unresolved bug. https://github.com/epam/ketcher/issues/3922
     */
     await takePageScreenshot(page);
-    await page.getByTestId('Edc___S-ethylthiocysteine').click();
+    await selectMonomer(page, Peptides.Edc);
     await clickInTheMiddleOfTheScreen(page);
     await pressUndoButton(page);
     await takePageScreenshot(page);
@@ -443,8 +440,7 @@ test.describe('Undo-Redo tests', () => {
     */
     const x = 200;
     const y = 200;
-    await page.getByTestId('RNA-TAB').click();
-    await page.getByTestId('C_C_R_P').click();
+    await selectMonomer(page, Presets.C);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
@@ -475,7 +471,7 @@ test.describe('Undo-Redo tests', () => {
           9. Take screenshot to make sure it is on canvas
     */
     await goToRNATab(page);
-    await selectMonomer(page, Peptides2.X);
+    await selectMonomer(page, Peptides.X);
     await clickOnTheCanvas(page, 0, 0);
 
     await selectRectangleSelectionTool(page);

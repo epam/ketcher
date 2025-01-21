@@ -14,9 +14,6 @@ import {
 } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
 import {
-  Bases,
-  Phosphates,
-  Sugars,
   selectMonomer,
   AtomButton,
   RingButton,
@@ -43,6 +40,7 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+import { Sugars, Bases, Phosphates } from '@constants/monomers';
 
 export async function drawBenzeneRing(page: Page) {
   await selectRing(RingButton.Benzene, page);
@@ -408,12 +406,6 @@ export async function addRnaPresetOnCanvas(
     .nth(phosphateIndex);
 
   return { sugar, phosphate };
-}
-
-export async function addChemOnCanvas(page: Page, chemId: string) {
-  await page.getByTestId('CHEM-TAB').click();
-  await page.getByTestId(chemId).click();
-  await clickInTheMiddleOfTheScreen(page);
 }
 
 export async function copyToClipboardByKeyboard(

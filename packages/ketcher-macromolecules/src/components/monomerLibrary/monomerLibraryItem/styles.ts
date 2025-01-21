@@ -14,13 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled';
+import { MonomerItemType, MonomerOrAmbiguousType } from 'ketcher-core';
 
 export const Card = styled.div<{
   code?: string;
   selected?: boolean;
   disabled?: boolean;
   isVariantMonomer?: boolean;
-  isPeptideTab?: boolean;
+  item?: MonomerOrAmbiguousType;
 }>`
   background: white;
   height: 48px;
@@ -66,7 +67,11 @@ export const Card = styled.div<{
     height: 8px;
     border-bottom: ${({ isVariantMonomer }) =>
       isVariantMonomer ? '1px solid #CAD3DD' : 'none'};
-    background: ${({ code, theme, isPeptideTab }) => {
+    background: ${({ code, theme, item }) => {
+      if (!item) return theme.ketcher.monomer.color.default?.regular;
+
+      const monomerItem = item as MonomerItemType;
+      const isPeptideTab = monomerItem.props?.MonomerType === 'PEPTIDE';
       if (
         isPeptideTab &&
         theme.ketcher.peptide.color[code as string]?.regular

@@ -47,7 +47,6 @@ import {
   toggleNucleotidesAccordion,
   togglePhosphatesAccordion,
   toggleSugarsAccordion,
-  toggleRnaBuilderAccordion,
   RnaAccordionType,
   toggleRnaAccordionItem,
   toggleRnaBuilder,
@@ -1356,16 +1355,14 @@ test.describe('RNA Library', () => {
 
     await toggleSugarsAccordion(page);
     await scrollAccordionContentToTheTop(page, 'rna-accordion-details-Sugars');
-    await page.getByText('12ddR').hover();
+    await page.getByTestId(Sugars._12ddR).hover();
     await expect(toolTipPreviewWindow).toBeVisible();
     await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page);
 
-    await goToRNATab(page);
-    await toggleRnaBuilderAccordion(page);
     await toggleBasesAccordion(page);
     await scrollAccordionContentToTheTop(page, 'rna-accordion-details-Bases');
-    await page.getByText('2imen2').hover();
+    await page.getByTestId(Bases._2imen2).hover();
     await expect(toolTipPreviewWindow).toBeVisible();
     await moveMouseAway(page);
     await takeMonomerLibraryScreenshot(page);

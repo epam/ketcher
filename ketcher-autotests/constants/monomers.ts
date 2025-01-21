@@ -1,5 +1,6 @@
 export enum Bases {
   A = 'A___Adenine',
+  _2imen2 = '2imen2___N2-[(Imidazo-2-yl)ethylamino]adenine',
   _5meC = '5meC___5-methylcytosine',
   baA = 'baA___N6-benzyladenine',
   c7A = 'c7A___7-Deazaadenine',

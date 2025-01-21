@@ -1,3 +1,4 @@
+import { Peptides } from '@constants/monomers';
 import { test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -18,7 +19,6 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
-import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Clear Canvas Tool', () => {

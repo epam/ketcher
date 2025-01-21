@@ -1,12 +1,19 @@
-import { test, expect } from '@playwright/test';
+import { Chem, Peptides, Presets } from '@constants/monomers';
+import { FAVORITES_TAB } from '@constants/testIdConstants';
+import { expect, test } from '@playwright/test';
 import {
+  addMonomersToFavorites,
+  addMonomerToFavorites,
   addPeptideOnCanvas,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
+  removeMonomerFromFavorites,
+  removeMonomersFromFavorites,
   selectEraseTool,
   selectMacroBond,
+  selectMonomer,
   selectRectangleSelectionTool,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
@@ -14,13 +21,7 @@ import {
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import {
-  goToCHEMTab,
-  goToFavoritesTab,
-  goToPeptidesTab,
-  goToRNATab,
-} from '@utils/macromolecules/library';
-import { Chems } from '@utils/selectors/macromoleculeEditor';
+import { goToPeptidesTab, goToTab } from '@utils/macromolecules/library';
 
 test.describe('Peptide library testing', () => {
   test.beforeEach(async ({ page }) => {
@@ -35,7 +36,7 @@ test.describe('Peptide library testing', () => {
 
   test('Structure displaying in library', async ({ page }) => {
     // structure preview, molecule hovered state check
-    await page.getByTestId('A___Alanine').hover();
+    await page.getByTestId(Peptides.A).hover();
     await page.waitForSelector('[data-testid="polymer-library-preview"]');
     await takeMonomerLibraryScreenshot(page);
   });
@@ -49,10 +50,7 @@ test.describe('Peptide library testing', () => {
   test('add molecule in favourites', async ({ page }) => {
     // favourites check. there is a bug - favourite sign (star) is golden when hovered(should be dark grey)
     // https://github.com/epam/ketcher/issues/3477
-    await page.waitForSelector('.star');
-    await page.getByTestId('A___Alanine').getByText('★').click();
-    await clickInTheMiddleOfTheScreen(page);
-    await page.getByTestId('A___Alanine').getByText('★').hover();
+    await addMonomerToFavorites(page, Peptides.A);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -74,18 +72,23 @@ test.describe('Peptide library testing', () => {
     Description: Monomers is getting removed from favourites when clicking star sign.
     The test is currently not functioning correctly as the bug has not been fixed https://github.com/epam/ketcher/issues/3963
     */
-    await page.getByTestId('dA___D-Alanine').getByText('★').click();
-    await page.getByTestId('Edc___S-ethylthiocysteine').getByText('★').click();
-    await goToRNATab(page);
-    await page.getByTestId('A_A_R_P').getByText('★').click();
-    await goToCHEMTab(page);
-    await page.getByTestId('A6OH___6-amino-hexanol').getByText('★').click();
-    await goToFavoritesTab(page);
+    await addMonomersToFavorites(page, [
+      Peptides.dA,
+      Peptides.Edc,
+      Presets.A,
+      Chem.A6OH,
+    ]);
+
+    await goToTab(page, FAVORITES_TAB);
     await takeMonomerLibraryScreenshot(page);
-    await page.getByTestId('A6OH___6-amino-hexanol').getByText('★').click();
-    await page.getByTestId('dA___D-Alanine').getByText('★').click();
-    await page.getByTestId('Edc___S-ethylthiocysteine').getByText('★').click();
-    await page.getByText('★').click();
+
+    await removeMonomersFromFavorites(page, [
+      Peptides.dA,
+      Peptides.Edc,
+      Chem.A6OH,
+    ]);
+
+    await removeMonomerFromFavorites(page, Presets.A);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -96,13 +99,13 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: Peptide is getting removed from favourites when clicking star sign again in Peptide tab section.
     */
-    await page.getByTestId('dA___D-Alanine').getByText('★').click();
-    await page.getByTestId('Edc___S-ethylthiocysteine').getByText('★').click();
-    await goToFavoritesTab(page);
+
+    await addMonomersToFavorites(page, [Peptides.dA, Peptides.Edc]);
+    await goToTab(page, FAVORITES_TAB);
     await takeMonomerLibraryScreenshot(page);
-    await goToPeptidesTab(page);
-    await page.getByTestId('Edc___S-ethylthiocysteine').getByText('★').click();
-    await goToFavoritesTab(page);
+
+    await removeMonomerFromFavorites(page, Peptides.Edc, false);
+    await goToTab(page, FAVORITES_TAB);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -113,7 +116,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: Selected Peptide discards when mouse hovered on canvas and ESC button is clicked.
     */
-    await page.getByTestId('dA___D-Alanine').click();
+    await selectMonomer(page, Peptides.dA);
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await page.keyboard.press('Escape');
@@ -127,7 +130,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a Peptide on canvas while Erase tool is selected.
     */
-    await page.getByTestId('dA___D-Alanine').click();
+    await selectMonomer(page, Peptides.dA);
     await clickInTheMiddleOfTheScreen(page);
     await selectEraseTool(page);
     await page.getByText('dA').locator('..').first().hover();
@@ -141,7 +144,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a Peptide on canvas while Bond tool is selected.
     */
-    await page.getByTestId('Edc___S-ethylthiocysteine').click();
+    await selectMonomer(page, Peptides.Edc);
     await clickInTheMiddleOfTheScreen(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('Edc').locator('..').first().hover();
@@ -155,7 +158,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a Peptide on canvas while Selection tool is selected.
     */
-    await page.getByTestId('Edc___S-ethylthiocysteine').click();
+    await selectMonomer(page, Peptides.Edc);
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
     await page.getByText('Edc').locator('..').first().hover();
@@ -169,8 +172,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: Selected CHEM discards when mouse hovered on canvas and ESC button is clicked.
     */
-    await goToCHEMTab(page);
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await selectMonomer(page, Chem.Test_6_Ch);
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await page.keyboard.press('Escape');
@@ -184,8 +186,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a CHEM on canvas while Erase tool is selected.
     */
-    await goToCHEMTab(page);
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await selectMonomer(page, Chem.Test_6_Ch);
     await clickInTheMiddleOfTheScreen(page);
     await selectEraseTool(page);
     await page.getByText('Test-6-Ch').locator('..').first().hover();
@@ -199,10 +200,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a CHEM on canvas while Bond tool is selected.
     */
-    await goToCHEMTab(page);
-    await page
-      .getByTestId('MCC___4-(N-maleimidomethyl)cyclohexane-1-carboxylate')
-      .click();
+    await selectMonomer(page, Chem.MCC);
     await clickInTheMiddleOfTheScreen(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('MCC').locator('..').first().hover();
@@ -216,8 +214,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures
     Description: A tooltip appears when hovering over a CHEM on canvas while Selection tool is selected.
     */
-    await goToCHEMTab(page);
-    await page.getByTestId(Chems.SMPEG2).click();
+    await selectMonomer(page, Chem.SMPEG2);
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
     await page.getByText('SMPEG2').locator('..').first().hover();
@@ -231,8 +228,7 @@ test.describe('Peptide library testing', () => {
     Test case: Actions with structures https://github.com/epam/ketcher/issues/3986
     Description: Selected RNA discards when mouse hovered on canvas and ESC button is clicked.
     */
-    await goToRNATab(page);
-    await page.getByTestId('C_C_R_P').click();
+    await selectMonomer(page, Presets.C);
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await page.keyboard.press('Escape');

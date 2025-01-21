@@ -1,3 +1,4 @@
+import { Bases, Peptides, Presets, Sugars } from '@constants/monomers';
 import { Page, test, expect, BrowserContext, chromium } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -33,7 +34,6 @@ import {
 } from '@utils/macromolecules';
 import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
 const MONOMER_NAME_TZA = Peptides.Tza;
@@ -222,7 +222,7 @@ test.describe('Snake Bond Tool', () => {
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
-      'A_A_R_P',
+      Presets.A,
       300,
       300,
       0,
@@ -230,7 +230,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar1, phosphate: phosphate1 } = await addRnaPresetOnCanvas(
       page,
-      'C_C_R_P',
+      Presets.C,
       400,
       600,
       1,
@@ -238,7 +238,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar2 } = await addRnaPresetOnCanvas(
       page,
-      'G_G_R_P',
+      Presets.G,
       600,
       400,
       2,
@@ -259,7 +259,7 @@ test.describe('Snake Bond Tool', () => {
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
-      'A_A_R_P',
+      Presets.A,
       300,
       300,
       0,
@@ -267,7 +267,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar1, phosphate: phosphate1 } = await addRnaPresetOnCanvas(
       page,
-      'C_C_R_P',
+      Presets.C,
       400,
       600,
       1,
@@ -275,7 +275,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar2, phosphate: phosphate2 } = await addRnaPresetOnCanvas(
       page,
-      'G_G_R_P',
+      Presets.G,
       600,
       400,
       2,
@@ -283,7 +283,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar3, phosphate: phosphate3 } = await addRnaPresetOnCanvas(
       page,
-      'T_T_R_P',
+      Presets.T,
       800,
       200,
       3,
@@ -291,7 +291,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar4, phosphate: phosphate4 } = await addRnaPresetOnCanvas(
       page,
-      'T_T_R_P',
+      Presets.T,
       100,
       100,
       4,
@@ -299,7 +299,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar5, phosphate: phosphate5 } = await addRnaPresetOnCanvas(
       page,
-      'T_T_R_P',
+      Presets.T,
       200,
       200,
       5,
@@ -307,7 +307,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar6, phosphate: phosphate6 } = await addRnaPresetOnCanvas(
       page,
-      'T_T_R_P',
+      Presets.T,
       300,
       200,
       6,
@@ -315,7 +315,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar7, phosphate: phosphate7 } = await addRnaPresetOnCanvas(
       page,
-      'T_T_R_P',
+      Presets.T,
       400,
       200,
       7,
@@ -323,7 +323,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar8, phosphate: phosphate8 } = await addRnaPresetOnCanvas(
       page,
-      'T_T_R_P',
+      Presets.T,
       500,
       200,
       8,
@@ -331,7 +331,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar9 } = await addRnaPresetOnCanvas(
       page,
-      'T_T_R_P',
+      Presets.T,
       600,
       200,
       9,
@@ -371,7 +371,7 @@ test.describe('Snake Bond Tool', () => {
     await goToPeptidesTab(page);
     await addBondedMonomersToCanvas(
       page,
-      Peptides.BetaAlanine,
+      Peptides.bAla,
       'bAla',
       700,
       500,
@@ -383,7 +383,7 @@ test.describe('Snake Bond Tool', () => {
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
-      'A_A_R_P',
+      Presets.A,
       200,
       200,
       0,
@@ -391,7 +391,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar1, phosphate: phosphate1 } = await addRnaPresetOnCanvas(
       page,
-      'C_C_R_P',
+      Presets.C,
       300,
       500,
       1,
@@ -399,7 +399,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar2, phosphate: phosphate2 } = await addRnaPresetOnCanvas(
       page,
-      'G_G_R_P',
+      Presets.G,
       400,
       300,
       2,
@@ -427,7 +427,7 @@ test.describe('Snake Bond Tool', () => {
 
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
-      'A_A_R_P',
+      Presets.A,
       200,
       200,
       0,
@@ -435,7 +435,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar } = await addRnaPresetOnCanvas(
       page,
-      'G_G_R_P',
+      Presets.G,
       700,
       300,
       1,
@@ -445,7 +445,7 @@ test.describe('Snake Bond Tool', () => {
     await page.getByTestId('summary-Sugars').click();
     const sugarOfNucleoside = await addSingleMonomerToCanvas(
       page,
-      'R___Ribose',
+      Sugars.R,
       'R',
       500,
       500,
@@ -454,7 +454,7 @@ test.describe('Snake Bond Tool', () => {
     await page.getByTestId('summary-Bases').click();
     const baseOfNucleoside = await addSingleMonomerToCanvas(
       page,
-      'A___Adenine',
+      Bases.A,
       'A',
       600,
       600,
@@ -480,7 +480,7 @@ test.describe('Snake Bond Tool', () => {
     await goToRNATab(page);
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
-      'C_C_R_P',
+      Presets.C,
       200,
       200,
       0,
@@ -488,7 +488,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar1, phosphate: phosphate1 } = await addRnaPresetOnCanvas(
       page,
-      'G_G_R_P',
+      Presets.G,
       500,
       300,
       1,
@@ -496,7 +496,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const { sugar: sugar2, phosphate: phosphate2 } = await addRnaPresetOnCanvas(
       page,
-      'T_T_R_P',
+      Presets.T,
       700,
       300,
       2,
@@ -506,7 +506,7 @@ test.describe('Snake Bond Tool', () => {
     await page.getByTestId('summary-Sugars').click();
     const sugarOfNucleoside = await addSingleMonomerToCanvas(
       page,
-      'R___Ribose',
+      Sugars.R,
       'R',
       350,
       350,
@@ -515,7 +515,7 @@ test.describe('Snake Bond Tool', () => {
     await page.getByTestId('summary-Bases').click();
     const baseOfNucleoside = await addSingleMonomerToCanvas(
       page,
-      'nC6n8A___6-Aminohexyl-8-aminoadenine',
+      Bases.nC6n8A,
       'nC6n8A',
       350,
       500,
@@ -525,7 +525,7 @@ test.describe('Snake Bond Tool', () => {
     await goToPeptidesTab(page);
     const [peptide] = await addBondedMonomersToCanvas(
       page,
-      'A___Alanine',
+      Peptides.A,
       'A',
       500,
       500,
@@ -536,7 +536,7 @@ test.describe('Snake Bond Tool', () => {
 
     const [hcyPeptide, hcyPeptide1] = await addBondedMonomersToCanvas(
       page,
-      'Hcy___homocysteine',
+      Peptides.Hcy,
       'Hcy',
       600,
       500,
@@ -547,7 +547,7 @@ test.describe('Snake Bond Tool', () => {
 
     const [balPeptide] = await addBondedMonomersToCanvas(
       page,
-      Peptides.BetaAlanine,
+      Peptides.bAla,
       'bAla',
       700,
       700,
@@ -557,7 +557,7 @@ test.describe('Snake Bond Tool', () => {
     );
     const balPeptide1 = await addSingleMonomerToCanvas(
       page,
-      Peptides.BetaAlanine,
+      Peptides.bAla,
       'bAla',
       850,
       650,
@@ -582,19 +582,12 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake mode for single monomer and nucleoside', async () => {
-    await addSingleMonomerToCanvas(
-      page,
-      Peptides.BetaAlanine,
-      'bAla',
-      300,
-      300,
-      0,
-    );
+    await addSingleMonomerToCanvas(page, Peptides.bAla, 'bAla', 300, 300, 0);
     await goToRNATab(page);
     await page.getByTestId('summary-Sugars').click();
     const sugarOfNucleoside = await addSingleMonomerToCanvas(
       page,
-      'R___Ribose',
+      Sugars.R,
       'R',
       500,
       500,
@@ -603,7 +596,7 @@ test.describe('Snake Bond Tool', () => {
     await page.getByTestId('summary-Bases').click();
     const baseOfNucleoside = await addSingleMonomerToCanvas(
       page,
-      'A___Adenine',
+      Bases.A,
       'A',
       600,
       600,

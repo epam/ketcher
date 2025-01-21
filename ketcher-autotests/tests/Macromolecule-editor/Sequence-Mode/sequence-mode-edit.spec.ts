@@ -1,4 +1,13 @@
 /* eslint-disable no-magic-numbers */
+import {
+  Bases,
+  Chem,
+  Nucleotides,
+  Peptides,
+  Phosphates,
+  Presets,
+  Sugars,
+} from '@constants/monomers';
 import { test } from '@playwright/test';
 import {
   clickOnCanvas,
@@ -9,6 +18,7 @@ import {
   selectAllStructuresOnCanvas,
   selectClearCanvasTool,
   selectFlexLayoutModeTool,
+  selectMonomer,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   SequenceType,
@@ -24,14 +34,8 @@ import {
   enterSequence,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
-import { goToCHEMTab, goToRNATab } from '@utils/macromolecules/library';
-import {
-  expandCollapseRnaBuilder,
-  toggleBasesAccordion,
-  toggleNucleotidesAccordion,
-  togglePhosphatesAccordion,
-  toggleSugarsAccordion,
-} from '@utils/macromolecules/rnaBuilder';
+import { goToRNATab } from '@utils/macromolecules/library';
+import { expandCollapseRnaBuilder } from '@utils/macromolecules/rnaBuilder';
 import {
   clickOnSequenceSymbol,
   doubleClickOnSequenceSymbol,
@@ -353,7 +357,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Peptide type of monomer in the library appears.
     */
-    await page.getByTestId('A___Alanine').click();
+    await selectMonomer(page, Peptides.A);
     await takePageScreenshot(page);
   });
 
@@ -364,9 +368,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Sugar type of monomer in the library appears.
     */
-    await goToRNATab(page);
-    await toggleSugarsAccordion(page);
-    await page.getByTestId('25d3r___3-Deoxyribose (2,5 connectivity)').click();
+    await selectMonomer(page, Sugars._25d3r);
     await takePageScreenshot(page);
   });
 
@@ -377,9 +379,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Base type of monomer in the library appears.
     */
-    await goToRNATab(page);
-    await toggleBasesAccordion(page);
-    await page.getByTestId('c7A___7-Deazaadenine').click();
+    await selectMonomer(page, Bases.c7A);
     await takePageScreenshot(page);
   });
 
@@ -390,9 +390,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Phosphate type of monomer in the library appears.
     */
-    await goToRNATab(page);
-    await togglePhosphatesAccordion(page);
-    await page.getByTestId('ibun___Isobutylamino').click();
+    await selectMonomer(page, Phosphates.ibun);
     await takePageScreenshot(page);
   });
 
@@ -403,9 +401,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for Nucleotide type of monomer in the library appears.
     */
-    await goToRNATab(page);
-    await toggleNucleotidesAccordion(page);
-    await page.getByTestId('Super T___5-hydroxybutynl-2’-deoxyuridine').click();
+    await selectMonomer(page, Nucleotides.Super_T);
     await takePageScreenshot(page);
   });
 
@@ -416,8 +412,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Preview tooltip for CHEM type of monomer in the library appears.
     */
-    await goToCHEMTab(page);
-    await page.getByTestId('DOTA___Tetraxetan').click();
+    await selectMonomer(page, Chem.DOTA);
     await takePageScreenshot(page);
   });
 
@@ -449,7 +444,7 @@ test.describe('Sequence edit mode', () => {
     */
     await goToRNATab(page);
     await expandCollapseRnaBuilder(page);
-    await page.getByTestId('dR(U)P_U_dR_P').hover();
+    await page.getByTestId(Presets.dR_U_P).hover();
     await takePageScreenshot(page);
   });
 

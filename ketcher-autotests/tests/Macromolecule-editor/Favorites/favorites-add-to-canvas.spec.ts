@@ -1,18 +1,16 @@
 import { test } from '@playwright/test';
 import {
+  addMonomerToFavorites,
   clickInTheMiddleOfTheScreen,
+  selectMonomer,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import {
-  ALANINE,
-  getFavoriteButtonSelector,
-} from '@utils/selectors/macromoleculeEditor';
-import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
-import { goToFavoritesTab } from '@utils/macromolecules/library';
+import { Peptides } from '@constants/monomers';
 
 test('Add molecule to favorites, switch to Favorites tab and drag it to the canvas', async ({
   page,
@@ -20,9 +18,8 @@ test('Add molecule to favorites, switch to Favorites tab and drag it to the canv
   await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
 
-  await page.click(getFavoriteButtonSelector(ALANINE));
-  await goToFavoritesTab(page);
-  await page.click(ALANINE);
+  await addMonomerToFavorites(page, Peptides.A);
+  await selectMonomer(page, Peptides.A, true);
   await clickInTheMiddleOfTheScreen(page);
   await hideMonomerPreview(page);
 

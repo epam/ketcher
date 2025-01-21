@@ -1,107 +1,97 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
+import { Bases, Chem, Peptides, Phosphates, Sugars } from '@constants/monomers';
+import { FAVORITES_TAB } from '@constants/testIdConstants';
+import { Page, expect, test } from '@playwright/test';
 import {
-  chooseTab,
-  enterSequence,
-  Tabs,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@utils/macromolecules';
-import { Page, test, expect } from '@playwright/test';
-import {
-  FILE_TEST_DATA,
-  TopPanelButton,
-  clickInTheMiddleOfTheScreen,
-  dragMouseTo,
-  openFileAndAddToCanvas,
-  openFileAndAddToCanvasMacro,
-  pressButton,
-  selectTopPanelButton,
-  takeEditorScreenshot,
-  takeMonomerLibraryScreenshot,
-  takePageScreenshot,
-  waitForLoad,
-  waitForRender,
-  moveMouseToTheMiddleOfTheScreen,
-  selectOptionInDropdown,
-  waitForSpinnerFinishedWork,
-  selectRing,
-  RingButton,
-  moveMouseAway,
-  selectAtomInToolbar,
   AtomButton,
-  selectFunctionalGroups,
+  FILE_TEST_DATA,
   FunctionalGroups,
-  selectSaltsAndSolvents,
-  SaltsAndSolvents,
-  drawBenzeneRing,
-  selectSnakeLayoutModeTool,
-  selectEraseTool,
-  clickUndo,
-  clickOnAtom,
-  saveToFile,
-  receiveFileComparisonData,
-  getMolfile,
-  selectSequenceLayoutModeTool,
-  switchSequenceEnteringButtonType,
-  SequenceType,
-  selectLeftPanelButton,
   LeftPanelButton,
-  selectDropdownTool,
-  openFileAndAddToCanvasAsNewProject,
-  getSdf,
-  openFile,
-  getCml,
-  clickOnFileFormatDropdown,
-  takeTopToolbarScreenshot,
-  setAttachmentPoints,
-  selectClearCanvasTool,
-  Sugars,
-  Bases,
-  Phosphates,
-  getControlModifier,
-  readFileContents,
-  openPasteFromClipboard,
-  waitForPageInit,
-  selectAllStructuresOnCanvas,
+  RingButton,
+  SaltsAndSolvents,
+  SequenceType,
+  TopPanelButton,
+  addMonomersToFavorites,
+  clickInTheMiddleOfTheScreen,
+  clickOnAtom,
   clickOnCanvas,
+  clickOnFileFormatDropdown,
+  clickUndo,
+  dragMouseTo,
+  drawBenzeneRing,
+  getCml,
+  getControlModifier,
+  getMolfile,
+  getSdf,
+  moveMouseAway,
+  moveMouseToTheMiddleOfTheScreen,
+  openFile,
+  openFileAndAddToCanvas,
+  openFileAndAddToCanvasAsNewProject,
+  openFileAndAddToCanvasMacro,
+  openPasteFromClipboard,
+  pressButton,
+  readFileContents,
+  receiveFileComparisonData,
+  saveToFile,
+  selectAllStructuresOnCanvas,
+  selectAromatizeTool,
+  selectAtomInToolbar,
+  selectCleanTool,
+  selectClearCanvasTool,
+  selectDearomatizeTool,
+  selectDropdownTool,
+  selectEraseTool,
+  selectFunctionalGroups,
+  selectLayoutTool,
+  selectLeftPanelButton,
   selectMacroBond,
+  selectMonomer,
   selectOpenTool,
+  selectOptionInDropdown,
+  selectRing,
+  selectSaltsAndSolvents,
+  selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+  selectTopPanelButton,
   selectZoomInTool,
   selectZoomOutTool,
   selectZoomReset,
-  selectAromatizeTool,
-  selectDearomatizeTool,
-  selectCleanTool,
-  selectLayoutTool,
+  setAttachmentPoints,
+  switchSequenceEnteringButtonType,
+  takeEditorScreenshot,
+  takeMonomerLibraryScreenshot,
+  takePageScreenshot,
+  takeTopToolbarScreenshot,
+  waitForLoad,
+  waitForPageInit,
+  waitForRender,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import {
   addSuperatomAttachmentPoint,
   removeSuperatomAttachmentPoint,
 } from '@utils/canvas/atoms/superatomAttachmentPoints';
-import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
-import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
-import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
-import { pageReload } from '@utils/common/helpers';
-import { Chems, Peptides } from '@utils/selectors/macromoleculeEditor';
-import { moveMonomerOnMicro } from '@utils/macromolecules/monomer';
-import {
-  goToCHEMTab,
-  goToFavoritesTab,
-  goToPeptidesTab,
-  goToRNATab,
-} from '@utils/macromolecules/library';
-import {
-  toggleBasesAccordion,
-  togglePhosphatesAccordion,
-  toggleSugarsAccordion,
-} from '@utils/macromolecules/rnaBuilder';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import { pageReload } from '@utils/common/helpers';
+import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import {
+  Tabs,
+  chooseTab,
+  enterSequence,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@utils/macromolecules';
+import { goToRNATab, goToTab } from '@utils/macromolecules/library';
+import { moveMonomerOnMicro } from '@utils/macromolecules/monomer';
+import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
+import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 const topLeftCorner = {
   x: -325,
@@ -138,19 +128,15 @@ async function pasteFromClipboard(
 }
 
 async function addToFavoritesMonomers(page: Page) {
-  await goToPeptidesTab(page);
-  await page.getByTestId(Peptides.BetaAlanine).getByText('★').click();
-  await page.getByTestId(Peptides.Phe4Me).getByText('★').click();
-  await page.getByTestId(Peptides.meM).getByText('★').click();
-  await goToRNATab(page);
-  await toggleSugarsAccordion(page);
-  await page.getByTestId(Sugars.TwentyFiveR).getByText('★').click();
-  await toggleBasesAccordion(page);
-  await page.getByTestId(Bases.baA).getByText('★').click();
-  await togglePhosphatesAccordion(page);
-  await page.getByTestId(Phosphates.bP).getByText('★').click();
-  await goToCHEMTab(page);
-  await page.getByTestId(Chems.Test_6_Ch).getByText('★').click();
+  await addMonomersToFavorites(page, [
+    Peptides.bAla,
+    Peptides.Phe4Me,
+    Peptides.meM,
+    Sugars._25R,
+    Bases.baA,
+    Phosphates.bP,
+    Chem.Test_6_Ch,
+  ]);
 }
 
 async function setAtomAndBondSettings(page: Page) {
@@ -480,7 +466,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await addToFavoritesMonomers(page);
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
-    await goToFavoritesTab(page);
+    await goToTab(page, FAVORITES_TAB);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -528,8 +514,7 @@ test.describe('Macro-Micro-Switcher', () => {
       Description: Pressing Layout or Clean Up button not erase all macromolecules from canvas
       */
       await turnOnMacromoleculesEditor(page);
-      await chooseTab(page, Tabs.Peptides);
-      await page.getByTestId('A___Alanine').click();
+      await selectMonomer(page, Peptides.A);
       await clickInTheMiddleOfTheScreen(page);
       await turnOnMicromoleculesEditor(page);
       await waitForSpinnerFinishedWork(
@@ -546,8 +531,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Remove abbreviation restricted for CHEMs in micro mode.
     */
     await turnOnMacromoleculesEditor(page);
-    await goToCHEMTab(page);
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await selectMonomer(page, Chem.Test_6_Ch);
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
     await page.getByText('Test-6-Ch').click({ button: 'right' });
@@ -568,8 +552,7 @@ test.describe('Macro-Micro-Switcher', () => {
 
     */
       await turnOnMacromoleculesEditor(page);
-      await goToPeptidesTab(page);
-      await page.getByTestId(Peptides.BetaAlanine).click();
+      await selectMonomer(page, Peptides.bAla);
       await clickInTheMiddleOfTheScreen(page);
       await turnOnMicromoleculesEditor(page);
       await selectRing(RingButton.Benzene, page);
@@ -595,7 +578,7 @@ test.describe('Macro-Micro-Switcher', () => {
       }
     });
     await turnOnMacromoleculesEditor(page);
-    await page.getByTestId(Peptides.BetaAlanine).click();
+    await selectMonomer(page, Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
@@ -1144,22 +1127,19 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: '25R',
-      monomerTestId: Sugars.TwentyFiveR,
-      summaryTestId: 'summary-Sugars',
+      monomerTestId: Sugars._25R,
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
     {
       description: 'Base',
       monomer: 'meA',
       monomerTestId: Bases.meA,
-      summaryTestId: 'summary-Bases',
       bondEndpoints: { first: 'R1', second: 'R1' },
     },
     {
       description: 'Phosphate',
       monomer: 'sP-',
       monomerTestId: Phosphates.sP_,
-      summaryTestId: 'summary-Phosphates',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
   ];
@@ -1172,19 +1152,14 @@ test.describe('Macro-Micro-Switcher', () => {
       */
       const x = 750;
       const y = 370;
-      const firstMonomer = await page.getByText('F1').locator('..');
-      const secondMonomer = await page
-        .getByText(data.monomer)
-        .locator('..')
-        .first();
+      const firstMonomer = page.getByText('F1').locator('..');
+      const secondMonomer = page.getByText(data.monomer).locator('..').first();
       await openFileAndAddToCanvas(
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
       await turnOnMacromoleculesEditor(page);
-      await goToRNATab(page);
-      await page.getByTestId(data.summaryTestId).click();
-      await page.getByTestId(data.monomerTestId).click();
+      await selectMonomer(page, data.monomerTestId);
       await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
@@ -1208,18 +1183,14 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     const x = 750;
     const y = 370;
-    const firstMonomer = await page.getByText('F1').locator('..');
-    const secondMonomer = await page
-      .getByText('Test-6-Ch')
-      .locator('..')
-      .first();
+    const firstMonomer = page.getByText('F1').locator('..');
+    const secondMonomer = page.getByText('Test-6-Ch').locator('..').first();
     await openFileAndAddToCanvas(
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
     await turnOnMacromoleculesEditor(page);
-    await goToCHEMTab(page);
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await selectMonomer(page, Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -1237,22 +1208,19 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: '25R',
-      monomerTestId: Sugars.TwentyFiveR,
-      summaryTestId: 'summary-Sugars',
+      monomerTestId: Sugars._25R,
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
     {
       description: 'Base',
       monomer: 'meA',
       monomerTestId: Bases.meA,
-      summaryTestId: 'summary-Bases',
       bondEndpoints: { first: 'R1', second: 'R1' },
     },
     {
       description: 'Phosphate',
       monomer: 'moen',
-      monomerTestId: 'moen___2-Methoxyethylamino',
-      summaryTestId: 'summary-Phosphates',
+      monomerTestId: Phosphates.moen,
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
   ];
@@ -1265,20 +1233,15 @@ test.describe('Macro-Micro-Switcher', () => {
       */
       const x = 750;
       const y = 370;
-      const firstMonomer = await page.getByText('F1').locator('..');
-      const secondMonomer = await page
-        .getByText(data.monomer)
-        .locator('..')
-        .first();
+      const firstMonomer = page.getByText('F1').locator('..');
+      const secondMonomer = page.getByText(data.monomer).locator('..').first();
       await openFileAndAddToCanvas(
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
       await turnOnMacromoleculesEditor(page);
       await selectSnakeLayoutModeTool(page);
-      await goToRNATab(page);
-      await page.getByTestId(data.summaryTestId).click();
-      await page.getByTestId(data.monomerTestId).click();
+      await selectMonomer(page, data.monomerTestId);
       await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
@@ -1311,8 +1274,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMacromoleculesEditor(page);
     await selectSnakeLayoutModeTool(page);
-    await goToCHEMTab(page);
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await selectMonomer(page, Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -1330,22 +1292,19 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: '25R',
-      monomerTestId: Sugars.TwentyFiveR,
-      summaryTestId: 'summary-Sugars',
+      monomerTestId: Sugars._25R,
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
     {
       description: 'Base',
       monomer: 'meA',
       monomerTestId: Bases.meA,
-      summaryTestId: 'summary-Bases',
       bondEndpoints: { first: 'R1', second: 'R1' },
     },
     {
       description: 'Phosphate',
       monomer: 'sP-',
       monomerTestId: Phosphates.sP_,
-      summaryTestId: 'summary-Phosphates',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
   ];
@@ -1358,19 +1317,14 @@ test.describe('Macro-Micro-Switcher', () => {
       */
       const x = 750;
       const y = 370;
-      const firstMonomer = await page.getByText('F1').locator('..');
-      const secondMonomer = await page
-        .getByText(data.monomer)
-        .locator('..')
-        .first();
+      const firstMonomer = page.getByText('F1').locator('..');
+      const secondMonomer = page.getByText(data.monomer).locator('..').first();
       await openFileAndAddToCanvas(
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
       await turnOnMacromoleculesEditor(page);
-      await goToRNATab(page);
-      await page.getByTestId(data.summaryTestId).click();
-      await page.getByTestId(data.monomerTestId).click();
+      await selectMonomer(page, data.monomerTestId);
       await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
@@ -1395,18 +1349,14 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     const x = 750;
     const y = 370;
-    const firstMonomer = await page.getByText('F1').locator('..');
-    const secondMonomer = await page
-      .getByText('Test-6-Ch')
-      .locator('..')
-      .first();
+    const firstMonomer = page.getByText('F1').locator('..');
+    const secondMonomer = page.getByText('Test-6-Ch').locator('..').first();
     await openFileAndAddToCanvas(
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
     await turnOnMacromoleculesEditor(page);
-    await goToCHEMTab(page);
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await selectMonomer(page, Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -1427,22 +1377,19 @@ test.describe('Macro-Micro-Switcher', () => {
     {
       description: 'Sugar',
       monomer: '25R',
-      monomerTestId: Sugars.TwentyFiveR,
-      summaryTestId: 'summary-Sugars',
+      monomerTestId: Sugars._25R,
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
     {
       description: 'Base',
       monomer: 'meA',
       monomerTestId: Bases.meA,
-      summaryTestId: 'summary-Bases',
       bondEndpoints: { first: 'R1', second: 'R1' },
     },
     {
       description: 'Phosphate',
       monomer: 'sP-',
       monomerTestId: Phosphates.sP_,
-      summaryTestId: 'summary-Phosphates',
       bondEndpoints: { first: 'R1', second: 'R2' },
     },
   ];
@@ -1455,19 +1402,14 @@ test.describe('Macro-Micro-Switcher', () => {
       */
       const x = 750;
       const y = 370;
-      const firstMonomer = await page.getByText('F1').locator('..');
-      const secondMonomer = await page
-        .getByText(data.monomer)
-        .locator('..')
-        .first();
+      const firstMonomer = page.getByText('F1').locator('..');
+      const secondMonomer = page.getByText(data.monomer).locator('..').first();
       await openFileAndAddToCanvas(
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
       await turnOnMacromoleculesEditor(page);
-      await goToRNATab(page);
-      await page.getByTestId(data.summaryTestId).click();
-      await page.getByTestId(data.monomerTestId).click();
+      await selectMonomer(page, data.monomerTestId);
       await clickOnCanvas(page, x, y);
       await bondTwoMonomersPointToPoint(
         page,
@@ -1493,18 +1435,14 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     const x = 750;
     const y = 370;
-    const firstMonomer = await page.getByText('F1').locator('..');
-    const secondMonomer = await page
-      .getByText('Test-6-Ch')
-      .locator('..')
-      .first();
+    const firstMonomer = page.getByText('F1').locator('..');
+    const secondMonomer = page.getByText('Test-6-Ch').locator('..').first();
     await openFileAndAddToCanvas(
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
     await turnOnMacromoleculesEditor(page);
-    await goToCHEMTab(page);
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await selectMonomer(page, Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -1530,18 +1468,14 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     const x = 750;
     const y = 370;
-    const firstMonomer = await page.getByText('F1').locator('..');
-    const secondMonomer = await page
-      .getByText('Test-6-Ch')
-      .locator('..')
-      .first();
+    const firstMonomer = page.getByText('F1').locator('..');
+    const secondMonomer = page.getByText('Test-6-Ch').locator('..').first();
     await openFileAndAddToCanvas(
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
     await turnOnMacromoleculesEditor(page);
-    await goToCHEMTab(page);
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await selectMonomer(page, Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,

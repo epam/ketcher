@@ -1,14 +1,13 @@
+import { Bases, Peptides } from '@constants/monomers';
 import { test } from '@playwright/test';
 import {
-  waitForPageInit,
-  Bases,
-  Peptides,
+  clickOnTheCanvas,
   selectMonomer,
   takeEditorScreenshot,
-  clickOnTheCanvas,
+  waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { goToRNATab, MonomerLocationTabs } from '@utils/macromolecules/library';
+import { MonomerLocationTabs } from '@utils/macromolecules/library';
 
 interface IAmbiguousMonomerName {
   testDescription: string;
@@ -141,7 +140,6 @@ test.describe('Put ambiguous monomer on the canvas from library:', () => {
           2. Click at the center of canvas
           3. Take screenshot of the canvas to make sure selected monomer appeared on the canvas
         */
-      await goToRNATab(page);
       await selectMonomer(page, AmbiguousMonomer.AmbiguousMonomerName);
       await clickOnTheCanvas(page, 0, 0);
       await takeEditorScreenshot(page);

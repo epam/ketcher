@@ -24,6 +24,7 @@ import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 import { isNumber } from 'lodash';
+import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 
 export interface ComplimentaryChainsWithData {
   complimentaryChain: Chain;
@@ -606,7 +607,7 @@ export class ChainsCollection {
         })
       ) {
         twoStrandedChainItems.push({
-          node: '-',
+          node: new BackBoneSequenceNode(),
           antisenseNode,
         });
         handledNodes.add(antisenseNode);
@@ -624,7 +625,7 @@ export class ChainsCollection {
       ) {
         twoStrandedChainItems.push({
           node: senseNode,
-          antisenseNode: '-',
+          antisenseNode: new BackBoneSequenceNode(),
         });
         handledNodes.add(senseNode);
         currentSenseIterationIndex++;

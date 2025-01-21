@@ -1,9 +1,11 @@
-import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
-import { EmptySequenceNode, SubChainNode } from 'domain/entities';
-import { Chain } from 'domain/entities/monomer-chains/Chain';
+import {
+  ChainsCollection,
+  ITwoStrandedChainItem,
+} from 'domain/entities/monomer-chains/ChainsCollection';
+import { EmptySequenceNode } from 'domain/entities';
 
 interface ISequenceViewModelRow {
-  sequenceViewModelItems: ISequenceViewModelItem[];
+  sequenceViewModelItems: ITwoStrandedChainItem[];
   hasAntisenseInRow: boolean;
 }
 
@@ -19,86 +21,37 @@ export class SequenceViewModel {
 
   private fillViewModel() {
     const NUMBER_OF_SYMBOLS_IN_ROW = 30;
-    const handledNodes = new Set<SubChainNode>();
     let hasAntisenseInRow = false;
 
     this.chainsCollection.chains.forEach((chain) => {
-      const { antisenseChainsStartIndexes, antisenseChainsStartIndexesMap } =
-        this.chainsCollection.getAntisenseChainsWithData(chain);
-      const antisenseNodesToIndexesMap = new Map<
-        number,
-        { node: SubChainNode; chain: Chain; nodeIndex: number }
-      >();
-
-      antisenseChainsStartIndexesMap.forEach(
-        (chainWithData, firstNodeIndex) => {
-          chainWithData.complimentaryChain.nodes.forEach((node, index) => {
-            antisenseNodesToIndexesMap.set(firstNodeIndex + index, {
-              node,
-              chain: chainWithData.complimentaryChain,
-              nodeIndex: index,
-            });
-          });
-        },
-      );
-
-      const sequenceViewModelChain: ISequenceViewModelChain = { rows: [] };
-
-      for (
-        let nodeIndex = Math.min(0, ...antisenseChainsStartIndexes);
-        nodeIndex < chain.length;
-        nodeIndex++
-      ) {
-        const antisenseNodeWithData = antisenseNodesToIndexesMap.get(nodeIndex);
-        const node: SubChainNode | undefined = chain.nodes[nodeIndex];
-        const isNewRow = nodeIndex % NUMBER_OF_SYMBOLS_IN_ROW === 0;
-
-        if (node && handledNodes.has(node)) {
-          continue;
-        }
-
-        if (isNewRow) {
+      const alignedSenseAntisenseChainItems =
+        this.chainsCollection.getAlignedSenseAntisenseChainItems(chain);
+      const viewModelChain: ISequenceViewModelChain = { rows: [] };
+      alignedSenseAntisenseChainItems.forEach((chainItem, chainItemIndex) => {
+        if (chainItemIndex % NUMBER_OF_SYMBOLS_IN_ROW === 0) {
+          this.chains.push(viewModelChain);
           hasAntisenseInRow = false;
         }
 
-        let antisenseNode: SubChainNode | undefined;
-
-        if (antisenseNodeWithData) {
-          antisenseNode = antisenseNodeWithData.node;
-          handledNodes.add(antisenseNodeWithData.node);
+        if (chainItem.antisenseNode) {
           hasAntisenseInRow = true;
         }
 
-        const sequenceViewModelItem: ISequenceViewModelItem = {
-          node,
-          antisenseNode,
-        };
+        const lastRow = viewModelChain.rows[viewModelChain.rows.length - 1];
 
-        if (isNewRow) {
-          sequenceViewModelChain.rows.push({
-            hasAntisenseInRow,
-            sequenceViewModelItems: [sequenceViewModelItem],
-          });
-        } else {
-          const currentRow =
-            sequenceViewModelChain[sequenceViewModelChain.rows.length - 1];
+        lastRow.hasAntisenseInRow = hasAntisenseInRow;
+        lastRow.sequenceViewModelItems.push({
+          node: chainItem.node || new EmptySequenceNode(),
+          antisenseNode: chainItem.antisenseNode || new EmptySequenceNode(),
+        });
+      });
 
-          currentRow.sequenceViewModelItems.push(sequenceViewModelItem);
-          currentRow.hasAntisenseInRow = hasAntisenseInRow;
-        }
-
-        handledNodes.add(node);
-      }
-
-      const lastRow =
-        sequenceViewModelChain.rows[sequenceViewModelChain.rows.length - 1];
+      const lastRow = viewModelChain.rows[viewModelChain.rows.length - 1];
 
       lastRow.sequenceViewModelItems.push({
         node: new EmptySequenceNode(),
         antisenseNode: new EmptySequenceNode(),
       });
-
-      this.chains.push(sequenceViewModelChain);
     });
   }
 }

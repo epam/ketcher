@@ -64,6 +64,7 @@ export class SequenceRenderer {
     emptyChainIndex?: number,
   ) {
     SequenceRenderer.chainsCollection = chainsCollection;
+    this.sequencesViewModel = new SequenceViewModel(chainsCollection);
     this.removeEmptyNodes();
     this.removeNewSequenceButtons();
     this.showNodes(

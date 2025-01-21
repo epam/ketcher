@@ -35,6 +35,7 @@ import { Command } from 'domain/entities/Command';
 import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
 import { isNumber } from 'lodash';
 import { MonomerToAtomBondSequenceRenderer } from 'application/render/renderers/sequence/MonomerToAtomBondSequenceRenderer';
+import { SequenceViewModel } from 'application/render/renderers/sequence/SequenceViewModel';
 
 export type SequencePointer = number;
 export type NumberOfSymbolsInRow = number;
@@ -57,6 +58,7 @@ export class SequenceRenderer {
   public static lastChainStartPosition: Vec2;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
   private static newSequenceButtons: NewSequenceButton[] = [];
+  public static sequencesViewModel: SequenceViewModel;
   public static show(
     chainsCollection: ChainsCollection,
     emptyChainIndex?: number,
@@ -158,7 +160,9 @@ export class SequenceRenderer {
 
       currentMonomerIndexInChain = 0;
 
-      console.log(antisenseNodesToIndexesMap, antisenseChainsStartIndexesMap);
+      console.log(
+        SequenceRenderer.chainsCollection.getAlignedSenseAntisenseChains(chain),
+      );
 
       for (
         let nodeIndex = Math.min(0, ...antisenseChainsStartIndexes);

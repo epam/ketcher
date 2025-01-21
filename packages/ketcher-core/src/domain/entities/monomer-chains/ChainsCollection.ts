@@ -38,6 +38,26 @@ export type GrouppedChain = {
   chain: Chain;
 };
 
+interface IOnlySenseTwoStrandedChainItem {
+  node: SubChainNode;
+  antisenseNode?: SubChainNode;
+}
+
+interface IOnlyAntisenseTwoStrandedChainItem {
+  node?: SubChainNode;
+  antisenseNode: SubChainNode;
+}
+
+interface ISenseAndAntisenseTwoStrandedChainItem {
+  node: SubChainNode;
+  antisenseNode: SubChainNode;
+}
+
+export type ITwoStrandedChainItem =
+  | IOnlySenseTwoStrandedChainItem
+  | IOnlyAntisenseTwoStrandedChainItem
+  | ISenseAndAntisenseTwoStrandedChainItem;
+
 export class ChainsCollection {
   public chains: Chain[] = [];
 
@@ -497,10 +517,128 @@ export class ChainsCollection {
       ]),
     );
 
+    const antisenseNodesToIndexesMap = new Map<
+      number,
+      { node: SubChainNode; chain: Chain; nodeIndex: number }
+    >();
+
+    antisenseChainsStartIndexesMap.forEach((chainWithData, firstNodeIndex) => {
+      chainWithData.complimentaryChain.nodes.forEach((node, index) => {
+        antisenseNodesToIndexesMap.set(firstNodeIndex + index, {
+          node,
+          chain: chainWithData.complimentaryChain,
+          nodeIndex: index,
+        });
+      });
+    });
+
     return {
       antisenseChainsWithData,
       antisenseChainsStartIndexes,
       antisenseChainsStartIndexesMap,
+      antisenseNodesToIndexesMap,
     };
+  }
+
+  public getAlignedSenseAntisenseChains(chain: Chain) {
+    const handledNodes = new Set<SubChainNode>();
+    const { antisenseChainsStartIndexes, antisenseNodesToIndexesMap } =
+      this.getAntisenseChainsWithData(chain);
+    const twoStrandedChainItems: ITwoStrandedChainItem[] = [];
+    let currentSenseIterationIndex = 0;
+    let currentAntisenseIterationIndex = Math.min(
+      ...antisenseChainsStartIndexes,
+    );
+    let isIterationFinished = false;
+
+    while (!isIterationFinished) {
+      const antisenseNodeWithData = antisenseNodesToIndexesMap.get(
+        currentAntisenseIterationIndex,
+      );
+      const antisenseNode = antisenseNodeWithData?.node;
+      const antisenseChain = antisenseNodeWithData?.chain;
+      const senseNode = chain.nodes[currentSenseIterationIndex];
+
+      if (!senseNode && !antisenseNode) {
+        isIterationFinished = true;
+        continue;
+      }
+
+      if (senseNode && handledNodes.has(senseNode)) {
+        continue;
+      }
+
+      if (!antisenseNode) {
+        twoStrandedChainItems.push({
+          node: senseNode,
+        });
+        handledNodes.add(senseNode);
+        currentSenseIterationIndex++;
+        currentAntisenseIterationIndex++;
+      } else if (
+        senseNode.monomers.some((monomer) => {
+          return monomer.hydrogenBonds.some((hydrogenBond) => {
+            const anotherMonomer = hydrogenBond.getAnotherMonomer(monomer);
+            const anotherNode =
+              anotherMonomer && this.monomerToNode.get(anotherMonomer);
+
+            return anotherNode === antisenseNode;
+          });
+        })
+      ) {
+        twoStrandedChainItems.push({
+          node: senseNode,
+          antisenseNode,
+        });
+        handledNodes.add(senseNode);
+        handledNodes.add(antisenseNode);
+        currentSenseIterationIndex++;
+        currentAntisenseIterationIndex++;
+      } else if (
+        senseNode.monomers.some((monomer) => {
+          return monomer.hydrogenBonds.some((hydrogenBond) => {
+            const anotherMonomer = hydrogenBond.getAnotherMonomer(monomer);
+            const anotherChain =
+              anotherMonomer && this.monomerToChain.get(anotherMonomer);
+
+            return anotherChain === antisenseChain;
+          });
+        })
+      ) {
+        twoStrandedChainItems.push({
+          antisenseNode,
+        });
+        handledNodes.add(antisenseNode);
+        currentAntisenseIterationIndex++;
+      } else if (
+        antisenseNode.monomers.some((monomer) => {
+          return monomer.hydrogenBonds.some((hydrogenBond) => {
+            const anotherMonomer = hydrogenBond.getAnotherMonomer(monomer);
+            const anotherChain =
+              anotherMonomer && this.monomerToChain.get(anotherMonomer);
+
+            return anotherChain === chain;
+          });
+        })
+      ) {
+        twoStrandedChainItems.push({
+          node: senseNode,
+        });
+        handledNodes.add(senseNode);
+        currentSenseIterationIndex++;
+      } else {
+        twoStrandedChainItems.push({
+          node: senseNode,
+          antisenseNode,
+        });
+        handledNodes.add(senseNode);
+        handledNodes.add(antisenseNode);
+        currentSenseIterationIndex++;
+        currentAntisenseIterationIndex++;
+      }
+    }
+
+    console.log(twoStrandedChainItems);
+    return twoStrandedChainItems;
   }
 }

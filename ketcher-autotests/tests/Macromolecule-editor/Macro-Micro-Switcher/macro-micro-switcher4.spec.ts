@@ -262,6 +262,7 @@ test(`Verify that all 16 bond types are saved/loaded correctly in macromolecules
     'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.mol',
     FileType.MOL,
     'v3000',
+    [1],
   );
 
   await openFileAndAddToCanvasAsNewProject(
@@ -381,6 +382,7 @@ test(`Verify that all 16 types of bonds saved in macro mode can be opened in mic
     'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.mol',
     FileType.MOL,
     'v3000',
+    [1],
   );
 
   await turnOnMicromoleculesEditor(page);

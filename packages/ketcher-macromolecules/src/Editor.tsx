@@ -302,11 +302,13 @@ function Editor({
         <Layout.Right hide={isMonomerLibraryHidden}>
           <MonomerLibrary />
         </Layout.Right>
+        <Layout.InsideRoot>
+          <MonomerLibraryToggle
+            isHidden={isMonomerLibraryHidden}
+            onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
+          />
+        </Layout.InsideRoot>
       </Layout>
-      <MonomerLibraryToggle
-        isHidden={isMonomerLibraryHidden}
-        onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
-      />
       <Preview />
       <SequenceItemContextMenu selections={selections} />
       <PolymerBondContextMenu />

@@ -27,6 +27,7 @@ import {
   selectFlexLayoutModeTool,
   selectRectangleSelectionTool,
   dragMouseTo,
+  moveMouseAway,
 } from '@utils';
 import {
   BondType,
@@ -38,7 +39,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { closeErrorMessage } from '@utils/common/helpers';
+import { closeErrorMessage, pageReload } from '@utils/common/helpers';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -142,6 +143,7 @@ test(`Verify that deleting a bond in macro mode removes the bond while maintaini
    *       3. Delete all bonds at the center of every molecule
    *       4. Take screenshot to witness final state
    */
+  await pageReload(page);
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All Bonds on Macro.ket',
     page,
@@ -424,6 +426,8 @@ test(`Verify that switching back from macromolecules mode to molecules mode does
 
   await turnOnMicromoleculesEditor(page);
   await takeEditorScreenshot(page);
+
+  await turnOnMacromoleculesEditor(page);
 });
 
 test(`Verify that deleting a bond in macromolecules mode removes only the selected bond without affecting adjacent structures`, async () => {
@@ -436,6 +440,7 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
    * 2. Take screenshot to witness initial state
    * 3. Delete every bond one by one and take screenshot after each deletion
    */
+  await pageReload(page);
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
     page,
@@ -592,6 +597,7 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
    * 3. Grab every bond and move it to the new position
    * 4. Take screenshot to witness new molecule's state
    */
+  await pageReload(page);
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
     page,
@@ -620,6 +626,7 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
     await selectAllStructuresOnCanvas(page);
     await bondLocator.first().hover({ force: true });
     await dragMouseTo(400, 400, page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   }
 });

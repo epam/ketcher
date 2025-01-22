@@ -597,8 +597,8 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
   await selectRectangleSelectionTool(page);
 
   const bondsToDrag = [
-    { bondType: BondType.Single, bondStereo: BondStereo.None },
-    { bondType: BondType.Double },
+    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
+    { bondType: BondType.Double, bondStereo: BondStereo.None },
     { bondType: BondType.Triple },
     { bondType: BondType.Any },
     { bondType: BondType.Aromatic },
@@ -615,8 +615,9 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
 
   for (const bond of bondsToDrag) {
     const bondLocator = await getBondLocator(page, bond);
-    await bondLocator.hover();
-    await dragMouseTo(100, 100, page);
+    await selectAllStructuresOnCanvas(page);
+    await bondLocator.first().hover({ force: true });
+    await dragMouseTo(400, 400, page);
     await takeEditorScreenshot(page);
   }
 });

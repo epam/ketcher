@@ -11,6 +11,7 @@
     "test:trace": "npx playwright test --trace on",
     "check:code": "npm run check:types && npm run check:lint",
     "check:types": "tsc --noEmit",
+    "test:types": "tsc --noEmit",
     "check:lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prettier:write": "prettier --write \"./**/*.{js,ts}\" ",

@@ -13,9 +13,8 @@ import {
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
-  selectTopPanelButton,
-  TopPanelButton,
   openSettings,
+  selectLayoutTool,
   setHashSpacingOptionUnit,
   setHashSpacingValue,
 } from '@utils';
@@ -959,7 +958,7 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 3
   await pressButton(page, 'Set ACS Settings');
   await pressButton(page, 'Apply');
   await pressButton(page, 'OK');
-  await selectTopPanelButton(TopPanelButton.Layout, page);
+  await selectLayoutTool(page);
   await takeEditorScreenshot(page);
 
   const expectedFile = await getSdf(page, 'v3000');
@@ -1002,7 +1001,7 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 2
   await pressButton(page, 'Set ACS Settings');
   await pressButton(page, 'Apply');
   await pressButton(page, 'OK');
-  await selectTopPanelButton(TopPanelButton.Layout, page);
+  await selectLayoutTool(page);
   await takeEditorScreenshot(page);
 
   const expectedFile = await getSdf(page, 'v2000');

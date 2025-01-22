@@ -12,10 +12,9 @@ import {
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
-  selectTopPanelButton,
-  TopPanelButton,
   openSettings,
   selectAllStructuresOnCanvas,
+  selectLayoutTool,
 } from '@utils';
 import { getMolfile } from '@utils/formats';
 
@@ -975,7 +974,7 @@ test.describe('Open and Save file', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
     const expectedFile = await getMolfile(page, 'v2000');
@@ -1015,7 +1014,7 @@ test.describe('Open and Save file', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
     const expectedFile = await getMolfile(page, 'v3000');

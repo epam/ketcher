@@ -1,16 +1,29 @@
+import {
+  Bases,
+  Chem,
+  Nucleotides,
+  Peptides,
+  Phosphates,
+  Presets,
+  Sugars,
+} from '@constants/monomers';
 import { Page, expect } from '@playwright/test';
 import {
   LeftPanelButton,
+  STRUCTURE_LIBRARY_BUTTON_NAME,
   clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
+  pressButton,
   selectLeftPanelButton,
   takeEditorScreenshot,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
-  pressButton,
-  clickOnCanvas,
 } from '@utils';
+import {
+  MonomerLocationTabs,
+  goToMonomerLocationTab,
+} from '@utils/macromolecules/library';
 import { ElementLabel } from 'ketcher-core';
 
 export enum SaltsAndSolvents {
@@ -96,103 +109,145 @@ export enum TemplateLibrary {
   Arabinofuranose = 'Arabinofuranose',
 }
 
-export enum Peptides {
-  X = '_A___Alanine_C___Cysteine_D___Aspartic acid_E___Glutamic acid_F___Phenylalanine_G___Glycine_H___' +
-    'Histidine_I___Isoleucine_K___Lysine_L___Leucine_M___Methionine_N___Asparagine_O___Pyrrolysine_P__' +
-    '_Proline_Q___Glutamine_R___Arginine_S___Serine_T___Threonine_U___Selenocysteine_V___Valine_W___Tryptophan_Y___Tyrosine',
-  B = '_D___Aspartic acid_N___Asparagine',
-  J = '_L___Leucine_I___Isoleucine',
-  Z = '_E___Glutamic acid_Q___Glutamine',
-}
-
-export enum Sugars {
-  TwelveddR = "12ddR___1',2'-dideoxyribose",
-  TwentyFiveR = '25R___Ribose (2,5 connectivity)',
-  ThreeA6 = "3A6___6-amino-hexanol (3' end)",
-  ThreeSS6 = "3SS6___Thiol Modifier 6 S-S (3' end)",
-}
-
-export async function selectSugar(sugarName: Sugars, page: Page) {
-  await page.getByTestId('RNA-TAB').click();
-  await page.getByTestId('summary-Sugars').click();
-  await page.getByTestId(sugarName).click();
-}
-
-export enum Bases {
-  Adenine = 'A___Adenine',
-  baA = 'baA___N6-benzyladenine',
-  TClampOMe = 'clA___T-clamp OMe',
-  meA = 'meA___N6-methyladenine',
-  DNA_N = '_A___Adenine_C___Cytosine_G___Guanine_T___Thymine',
-  DNA_B = '_C___Cytosine_G___Guanine_T___Thymine',
-  DNA_D = '_A___Adenine_G___Guanine_T___Thymine',
-  DNA_H = '_A___Adenine_C___Cytosine_T___Thymine',
-  DNA_K = '_G___Guanine_T___Thymine',
-  DNA_W = '_A___Adenine_T___Thymine',
-  DNA_Y = '_C___Cytosine_T___Thymine',
-  RNA_N = '_A___Adenine_C___Cytosine_G___Guanine_U___Uracil',
-  RNA_B = '_C___Cytosine_G___Guanine_U___Uracil',
-  RNA_D = '_A___Adenine_G___Guanine_U___Uracil',
-  RNA_H = '_A___Adenine_C___Cytosine_U___Uracil',
-  RNA_K = '_G___Guanine_U___Uracil',
-  RNA_W = '_A___Adenine_U___Uracil',
-  RNA_Y = '_C___Cytosine_U___Uracil',
-  M = '_A___Adenine_C___Cytosine',
-  R = '_A___Adenine_G___Guanine',
-  S = '_C___Cytosine_G___Guanine',
-  V = '_A___Adenine_C___Cytosine_G___Guanine',
-}
-
-export async function selectBase(baseName: Bases, page: Page) {
-  await page.getByTestId('RNA-TAB').click();
-  await page.getByTestId('summary-Bases').click();
-  await page.getByTestId(baseName).click();
-}
-
-export enum Phosphates {
-  Test6Ph = 'Test-6-Ph___Test-6-AP-Phosphate',
-  Phosphate = 'P___Phosphate',
-  Boranophosphate = 'bP___Boranophosphate',
-  sP_ = 'sP-___Dihydrogen phosphorothioate',
-  bP = 'bP___Boranophosphate',
-}
-
-export async function selectPhosphate(phosphateName: Phosphates, page: Page) {
-  await page.getByTestId('RNA-TAB').click();
-  await page.getByTestId('summary-Phosphates').click();
-  await page.getByTestId(phosphateName).click();
-}
-
 export enum RnaPartDropDown {
   Sugars = 'summary-Sugars',
   Bases = 'summary-Bases',
   Phosphates = 'summary-Phosphates',
 }
 
+const monomerTabMapping: Partial<Record<MonomerLocationTabs, string[]>> = {
+  [MonomerLocationTabs.BASES]: Object.values(Bases),
+  [MonomerLocationTabs.CHEM]: Object.values(Chem),
+  [MonomerLocationTabs.NUCLEOTIDES]: Object.values(Nucleotides),
+  [MonomerLocationTabs.PHOSPHATES]: Object.values(Phosphates),
+  [MonomerLocationTabs.PEPTIDES]: Object.values(Peptides),
+  [MonomerLocationTabs.PRESETS]: Object.values(Presets),
+  [MonomerLocationTabs.SUGARS]: Object.values(Sugars),
+};
+
+export type Monomer =
+  | Bases
+  | Chem
+  | Nucleotides
+  | Phosphates
+  | Peptides
+  | Presets
+  | Sugars;
+
+const getMonomerLocationTabNameBymonomer = (
+  monomer: Monomer,
+): MonomerLocationTabs => {
+  for (const [tabName, tabmonomers] of Object.entries(monomerTabMapping)) {
+    if (tabmonomers.includes(monomer)) {
+      return tabName as MonomerLocationTabs;
+    }
+  }
+
+  throw new Error(`MonomerLocationTab is not defined for monomer ${monomer}`);
+};
+
+/**
+ * Selects a monomer by navigating to the corresponding tab and clicking on the monomer.
+ * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
+ */
 export async function selectMonomer(
   page: Page,
-  monomerType: Sugars | Bases | Phosphates | Peptides,
+  monomer: Monomer,
+  selectOnFavoritesTab = false,
 ) {
-  const isSugar = Object.values(Sugars).includes(monomerType as Sugars);
-  const isBase = Object.values(Bases).includes(monomerType as Bases);
-  const isPhosphate = Object.values(Phosphates).includes(
-    monomerType as Phosphates,
-  );
-  const isPeptide = Object.values(Peptides).includes(monomerType as Peptides);
+  const tab = selectOnFavoritesTab
+    ? MonomerLocationTabs.Favorites
+    : getMonomerLocationTabNameBymonomer(monomer);
 
-  if (isSugar) {
-    await page.getByTestId(RnaPartDropDown.Sugars).click();
+  await goToMonomerLocationTab(page, tab);
+  await page.getByTestId(monomer).click();
+}
+
+/**
+ * Selects a custom preset by navigating to the Presets tab and clicking on the preset.
+ */
+export async function selectCustomPreset(page: Page, presetTestId: string) {
+  await goToMonomerLocationTab(page, MonomerLocationTabs.PRESETS);
+  await page.getByTestId(presetTestId).click();
+}
+
+/**
+ * Adds a monomer to favorites by navigating to the corresponding tab and clicking on the monomer's favorite icon.
+ * If the monomer belongs to an RNA-specific accordion group, it expands the accordion item.
+ */
+export async function addMonomerToFavorites(page: Page, monomer: Monomer) {
+  const tab = getMonomerLocationTabNameBymonomer(monomer);
+  await goToMonomerLocationTab(page, tab);
+
+  const favoritesStar = page.getByTestId(monomer).getByText('★');
+  const isFavorite = (await favoritesStar.getAttribute('class'))?.includes(
+    'visible',
+  );
+
+  if (!isFavorite) {
+    await favoritesStar.click();
   }
-  if (isBase) {
-    await page.getByTestId(RnaPartDropDown.Bases).click();
+}
+
+/**
+ * Removes a monomer from favorites by navigating to the Favorites tab and clicking on the monomer's favorite icon.
+ */
+export async function removeMonomerFromFavorites(
+  page: Page,
+  monomer: Monomer,
+  removeFromFavoritesTab = true,
+) {
+  const tab = removeFromFavoritesTab
+    ? MonomerLocationTabs.Favorites
+    : getMonomerLocationTabNameBymonomer(monomer);
+
+  await goToMonomerLocationTab(page, tab);
+
+  const favoritesStar = page.getByTestId(monomer).getByText('★');
+  const isFavorite = (await favoritesStar.getAttribute('class'))?.includes(
+    'visible',
+  );
+
+  if (isFavorite) {
+    await favoritesStar.click();
   }
-  if (isPhosphate) {
-    await page.getByTestId(RnaPartDropDown.Phosphates).click();
+}
+
+/**
+ * Selects multiple monomers by iterating through the provided list of monomers.
+ * For each monomer, it navigates to the corresponding tab and clicks on the monomer.
+ * If a monomer belongs to an RNA-specific accordion group, it expands the accordion item.
+ */
+export async function selectMonomers(page: Page, monomers: Array<Monomer>) {
+  for (const monomer of monomers) {
+    await selectMonomer(page, monomer);
   }
-  if (isPeptide) {
-    await page.getByTestId('PEPTIDES-TAB').click();
+}
+
+/**
+ * Adds multiple monomers to favorites by iterating through the provided list of monomers.
+ * For each monomer, it navigates to the corresponding tab, expands the accordion (if needed),
+ * and clicks on the monomer's favorite icon.
+ */
+export async function addMonomersToFavorites(
+  page: Page,
+  monomers: Array<Monomer>,
+) {
+  for (const monomer of monomers) {
+    await addMonomerToFavorites(page, monomer);
   }
-  await page.getByTestId(monomerType).click();
+}
+
+/**
+ * Removes multiple monomers from favorites by iterating through the provided list of monomers.
+ */
+export async function removeMonomersFromFavorites(
+  page: Page,
+  monomers: Array<Monomer>,
+) {
+  for (const monomer of monomers) {
+    await removeMonomerFromFavorites(page, monomer);
+  }
 }
 
 export async function selectSaltsAndSolvents(

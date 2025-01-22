@@ -1981,6 +1981,7 @@ export class DrawingEntitiesManager {
         monomerToNewMonomer.get(atom.monomer) as BaseMonomer,
         atom.atomIdInMicroMode,
         atom.label,
+        atom.properties,
       );
       const addedAtom = atomAddCommand.operations[0].atom as Atom;
 

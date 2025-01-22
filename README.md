@@ -51,11 +51,12 @@ You can find the instruction for service installation
 
 ## Packages
 
-| Project                                                                                       | Status                                                                                                              | Description                                                                       |
-| --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| [ketcher-core](https://github.com/epam/ketcher/tree/master/packages/ketcher-core)             | [![npm version](https://badge.fury.io/js/ketcher-core.svg)](https://www.npmjs.com/package/ketcher-core)             | Core functionality: domain, shared services, functions and interface declarations |
-| [ketcher-standalone](https://github.com/epam/ketcher/tree/master/packages/ketcher-standalone) | [![npm version](https://badge.fury.io/js/ketcher-standalone.svg)](https://www.npmjs.com/package/ketcher-standalone) | Contains only the functionality necessary to start Ketcher in standalone mode     |
-| [ketcher-react](https://github.com/epam/ketcher/tree/master/packages/ketcher-react)           | [![npm version](https://badge.fury.io/js/ketcher-react.svg)](https://www.npmjs.com/package/ketcher-react)           | Package contains only the functionality necessary to define components.           |
+| Project                                                                                               | Status                                                                                                                      | Description                                                                       |
+|-------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| [ketcher-core](https://github.com/epam/ketcher/tree/master/packages/ketcher-core)                     | [![npm version](https://badge.fury.io/js/ketcher-core.svg)](https://www.npmjs.com/package/ketcher-core)                     | Core functionality: domain, shared services, functions and interface declarations |
+| [ketcher-standalone](https://github.com/epam/ketcher/tree/master/packages/ketcher-standalone)         | [![npm version](https://badge.fury.io/js/ketcher-standalone.svg)](https://www.npmjs.com/package/ketcher-standalone)         | Contains only the functionality necessary to start Ketcher in standalone mode     |
+| [ketcher-react](https://github.com/epam/ketcher/tree/master/packages/ketcher-react)                   | [![npm version](https://badge.fury.io/js/ketcher-react.svg)](https://www.npmjs.com/package/ketcher-react)                   | Package contains only the functionality necessary to define components.           |
+| [ketcher-macromolecules](https://github.com/epam/ketcher/tree/master/packages/ketcher-macromolecules) | [![npm version](https://badge.fury.io/js/ketcher-macromolecules.svg)](https://www.npmjs.com/package/ketcher-macromolecules) | Package contains the macromolecules editor functionality and UI components        |
 
 ## 3D Viewer
 
@@ -63,6 +64,25 @@ Ketcher uses Miew-React for viewing and editing data in 3D.
 
 You can find the latest version of Miew-React [here](https://github.com/epam/miew/tree/master/packages/miew-react).
 The last checked version - [1.0.0](https://www.npmjs.com/package/miew-react).
+
+## Macromolecules mode
+Starting with version 3.0, Ketcher supports a new control in the top toolbar that allows switching to macromolecules editing mode. If you prefer having only small molecules editing mode available, you can remove the mode switcher from the toolbar by passing `disableMacromoleculesEditor` property to the `Editor` component.
+
+```js
+import { Editor } from 'ketcher-react';
+
+const App = () => {
+  return (
+    <Editor
+      {/* ...rest of the properties */}
+      disableMacromoleculesEditor
+    />
+  );
+};
+```
+
+Please refer to the `example/src/App.tsx` file for a complete example of how to integrate Ketcher editor into your application.
+
 
 ## Ketcher API
 Ketcher can return drawn structures using the following methods:

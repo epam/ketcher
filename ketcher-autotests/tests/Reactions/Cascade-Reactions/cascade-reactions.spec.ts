@@ -28,7 +28,7 @@ import {
   RingButton,
   selectRectangleSelectionTool,
   waitForRender,
-  waitForSpinnerFinishedWork,
+  selectLayoutTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -2709,10 +2709,7 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(ketFile, page);
       await takeEditorScreenshot(page);
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-      );
+      await selectLayoutTool(page);
       await takeEditorScreenshot(page);
     });
   });

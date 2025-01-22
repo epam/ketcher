@@ -1,19 +1,20 @@
 /* eslint-disable no-magic-numbers */
-import { Page, chromium, test } from '@playwright/test';
+import { Page, test, Locator } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectClearCanvasTool,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  waitForKetcherInit,
-  waitForIndigoToLoad,
   resetZoomLevelToDefault,
+  waitForPageInit,
+  MonomerType,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
   // zoomWithMouseWheel,
 } from '@utils/macromolecules';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
 test.describe('Connection rules for RNAs: ', () => {
@@ -22,44 +23,24 @@ test.describe('Connection rules for RNAs: ', () => {
   test.describe.configure({ retries: 0 });
 
   test.beforeAll(async ({ browser }) => {
-    let sharedContext;
-    try {
-      sharedContext = await browser.newContext();
-    } catch (error) {
-      console.error('Error on creation browser context:', error);
-      console.log('Restarting browser...');
-      await browser.close();
-      browser = await chromium.launch();
-      sharedContext = await browser.newContext();
-    }
+    const context = await browser.newContext();
+    page = await context.newPage();
 
-    // Reminder: do not pass page as async
-    page = await sharedContext.newPage();
-
-    await page.goto('', { waitUntil: 'domcontentloaded' });
-    await waitForKetcherInit(page);
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
 
   test.afterEach(async () => {
-    await page.keyboard.press('Escape');
     await resetZoomLevelToDefault(page);
     await selectClearCanvasTool(page);
   });
 
   test.afterAll(async ({ browser }) => {
-    const cntxt = page.context();
-    await page.close();
-    await cntxt.close();
-    await browser.contexts().forEach((someContext) => {
-      someContext.close();
-    });
-    // await browser.close();
+    await Promise.all(browser.contexts().map((context) => context.close()));
   });
 
   interface IMonomer {
-    monomerType: string;
+    monomerType: MonomerType;
     fileName: string;
     alias: string;
     connectionPoints: { [connectionPointName: string]: string };
@@ -67,7 +48,7 @@ test.describe('Connection rules for RNAs: ', () => {
 
   const sugarMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'sugar',
+      monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -75,7 +56,7 @@ test.describe('Connection rules for RNAs: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'sugar',
+      monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
@@ -83,7 +64,7 @@ test.describe('Connection rules for RNAs: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: 'sugar',
+    //   monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
@@ -91,7 +72,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     '(R1,R2) - R3 gap': {
-      monomerType: 'sugar',
+      monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -100,7 +81,7 @@ test.describe('Connection rules for RNAs: ', () => {
       },
     },
     '(R1,R3) - R2 gap': {
-      monomerType: 'sugar',
+      monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
       connectionPoints: {
@@ -109,7 +90,7 @@ test.describe('Connection rules for RNAs: ', () => {
       },
     },
     '(R2,R3) - R1 gap': {
-      monomerType: 'sugar',
+      monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
       connectionPoints: {
@@ -118,7 +99,7 @@ test.describe('Connection rules for RNAs: ', () => {
       },
     },
     // '(R3,R4)': {
-    //        monomerType: 'sugar',
+    //        monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -127,7 +108,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
-      monomerType: 'sugar',
+      monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
@@ -137,7 +118,7 @@ test.describe('Connection rules for RNAs: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    // monomerType: 'sugar',
+    // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -147,7 +128,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    // monomerType: 'sugar',
+    // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -157,7 +138,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    // monomerType: 'sugar',
+    // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -167,7 +148,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4)': {
-    // monomerType: 'sugar',
+    // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
     //   connectionPoints: {
@@ -178,7 +159,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R1,R3,R4,R5)': {
-    // monomerType: 'sugar',
+    // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -189,7 +170,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    // monomerType: 'sugar',
+    // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -200,7 +181,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
-    // monomerType: 'sugar',
+    // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -215,7 +196,7 @@ test.describe('Connection rules for RNAs: ', () => {
 
   const baseMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'base',
+      monomerType: MonomerType.Base,
       fileName: 'KET/Base-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -223,7 +204,7 @@ test.describe('Connection rules for RNAs: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'base',
+      monomerType: MonomerType.Base,
       fileName: 'KET/Base-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
@@ -231,7 +212,7 @@ test.describe('Connection rules for RNAs: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: 'base',
+    //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
@@ -239,7 +220,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     '(R1,R2) - R3 gap': {
-      monomerType: 'base',
+      monomerType: MonomerType.Base,
       fileName: 'KET/Base-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -248,7 +229,7 @@ test.describe('Connection rules for RNAs: ', () => {
       },
     },
     // '(R1,R3) - R2 gap': {
-    //   monomerType: 'base',
+    //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
     //   connectionPoints: {
@@ -257,7 +238,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R2,R3) - R1 gap': {
-    //   monomerType: 'base',
+    //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
     //   connectionPoints: {
@@ -266,7 +247,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R3,R4)': {
-    //        monomerType: 'base',
+    //        monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -275,7 +256,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R1,R2,R3)': {
-    //   monomerType: 'base',
+    //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/08 - (R1,R2,R3).ket',
     //   alias: '(R1,R2,R3)',
     //   connectionPoints: {
@@ -285,7 +266,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R1,R3,R4)': {
-    // monomerType: 'base',
+    // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -295,7 +276,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    // monomerType: 'base',
+    // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -305,7 +286,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    // monomerType: 'base',
+    // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -315,7 +296,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4)': {
-    // monomerType: 'base',
+    // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
     //   connectionPoints: {
@@ -326,7 +307,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R1,R3,R4,R5)': {
-    // monomerType: 'base',
+    // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -337,7 +318,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    // monomerType: 'base',
+    // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -348,7 +329,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
-    // monomerType: 'base',
+    // monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -360,7 +341,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     N: {
-      monomerType: 'base',
+      monomerType: MonomerType.Base,
       fileName:
         'KET/Base-Templates/16 - W - ambiguous alternatives from library (R1).ket',
       alias: 'W',
@@ -369,7 +350,7 @@ test.describe('Connection rules for RNAs: ', () => {
       },
     },
     // '%': {
-    //   monomerType: 'base',
+    //   monomerType: MonomerType.Base,
     //   fileName: 'KET/Base-Templates/17 - W - ambiguous mixed (R1).ket',
     //   alias: '%',
     //   connectionPoints: {
@@ -380,7 +361,7 @@ test.describe('Connection rules for RNAs: ', () => {
 
   const phosphateMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'phosphate',
+      monomerType: MonomerType.Phosphate,
       fileName: 'KET/Phosphate-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -388,7 +369,7 @@ test.describe('Connection rules for RNAs: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'phosphate',
+      monomerType: MonomerType.Phosphate,
       fileName: 'KET/Phosphate-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
@@ -396,7 +377,7 @@ test.describe('Connection rules for RNAs: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: 'phosphate',
+    //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
@@ -404,7 +385,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     '(R1,R2) - R3 gap': {
-      monomerType: 'phosphate',
+      monomerType: MonomerType.Phosphate,
       fileName: 'KET/Phosphate-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -413,7 +394,7 @@ test.describe('Connection rules for RNAs: ', () => {
       },
     },
     // '(R1,R3) - R2 gap': {
-    //   monomerType: 'phosphate',
+    //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
     //   connectionPoints: {
@@ -422,7 +403,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R2,R3) - R1 gap': {
-    //   monomerType: 'phosphate',
+    //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
     //   connectionPoints: {
@@ -431,7 +412,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R3,R4)': {
-    //        monomerType: 'phosphate',
+    //        monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -440,7 +421,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R1,R2,R3)': {
-    //   monomerType: 'phosphate',
+    //   monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/08 - (R1,R2,R3).ket',
     //   alias: '(R1,R2,R3)',
     //   connectionPoints: {
@@ -450,7 +431,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R1,R3,R4)': {
-    // monomerType: 'phosphate',
+    // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -460,7 +441,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    // monomerType: 'phosphate',
+    // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -470,7 +451,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    // monomerType: 'phosphate',
+    // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -480,7 +461,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4)': {
-    // monomerType: 'phosphate',
+    // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
     //   connectionPoints: {
@@ -491,7 +472,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R1,R3,R4,R5)': {
-    // monomerType: 'phosphate',
+    // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -502,7 +483,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    // monomerType: 'phosphate',
+    // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -513,7 +494,7 @@ test.describe('Connection rules for RNAs: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
-    // monomerType: 'phosphate',
+    // monomerType: MonomerType.Phosphate,
     //   fileName: 'KET/Phosphate-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -528,27 +509,41 @@ test.describe('Connection rules for RNAs: ', () => {
 
   async function loadTwoMonomers(
     page: Page,
-    leftSugar: IMonomer,
-    rightSugar: IMonomer,
-  ) {
-    await openFileAndAddToCanvasMacro(leftSugar.fileName, page);
-    const leftsugarLocator = page
-      .getByText(leftSugar.alias)
-      .locator('..')
-      .first();
-    await leftsugarLocator.hover();
-    await dragMouseTo(400, 371, page);
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
+  ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
+    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    const leftMonomerLocator = (
+      await getMonomerLocator(page, {
+        monomerAlias: leftMonomer.alias,
+        monomerType: leftMonomer.monomerType,
+      })
+    ).first();
+
+    await leftMonomerLocator.hover({ force: true });
+
+    await dragMouseTo(500, 370, page);
     await moveMouseAway(page);
 
-    await openFileAndAddToCanvasMacro(rightSugar.fileName, page);
-    const rightsugarLocator =
-      (await page.getByText(leftSugar.alias).count()) > 1
-        ? page.getByText(rightSugar.alias).nth(1).locator('..').first()
-        : page.getByText(rightSugar.alias).locator('..').first();
-    await rightsugarLocator.hover();
+    await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
+    const tmpMonomerLocator = await getMonomerLocator(page, {
+      monomerAlias: rightMonomer.alias,
+      monomerType: rightMonomer.monomerType,
+    });
+    const rightMonomerLocator =
+      (await tmpMonomerLocator.count()) > 1
+        ? tmpMonomerLocator.nth(1)
+        : tmpMonomerLocator.first();
+
+    await rightMonomerLocator.hover({ force: true });
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(700, 372, page);
+    await dragMouseTo(600, 375, page);
     await moveMouseAway(page);
+
+    return {
+      leftMonomer: leftMonomerLocator,
+      rightMonomer: rightMonomerLocator,
+    };
   }
 
   async function bondTwoMonomersByCenterToCenter(
@@ -593,21 +588,6 @@ test.describe('Connection rules for RNAs: ', () => {
       await page.getByTitle('Connect').first().click();
     }
   }
-
-  // test(`temporary test for debug purposes`, async () => {
-  //   await prepareCanvasOneFreeAPLeft(
-  //     page,
-  //     sugarMonomers['(R1,R2,R3,R4,R5)'],
-  //     sugarMonomers['(R1,R2,R3,R4,R5)'],
-  //     'R1',
-  //     'R5',
-  //   );
-  // });
-
-  // Some combinations of monomers on the canvas got its labels rendered differently
-  // (i.e. one pixel down at CI so we got screenshot comparison error). This is why we decided to switch such tests off
-  // till that issue fix.
-  // See https://github.com/epam/ketcher/issues/4586 for more datails.
 
   Object.values(sugarMonomers).forEach((leftSugar) => {
     Object.values(baseMonomers).forEach((rightBase) => {

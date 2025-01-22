@@ -1,7 +1,7 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
-import { Atom } from 'domain/entities/CoreAtom';
+import { Atom, AtomRadical } from 'domain/entities/CoreAtom';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import { CoreEditor, ZoomTool } from 'application/editor';
+import { CoreEditor } from 'application/editor';
 import { AtomLabel, ElementColor, Elements } from 'domain/constants';
 import { D3SvgElementSelection } from 'application/render/types';
 import { VALENCE_MAP } from 'application/render/restruct/constants';
@@ -31,6 +31,9 @@ export class AtomRenderer extends BaseRenderer {
       .insert('g', ':first-child')
       .data([this])
       .attr('pointer-events', 'all')
+      .attr('data-testid', 'atom')
+      .attr('data-atomalias', this.atom.label)
+      .attr('data-atomid', this.atom.id)
       .attr(
         'transform',
         `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
@@ -70,20 +73,16 @@ export class AtomRenderer extends BaseRenderer {
         .attr('cx', 0)
         .attr('cy', 0);
     } else {
-      const labelBbox = this.textElement?.node()?.getBoundingClientRect();
+      const labelBbox = this.textElement?.node()?.getBBox();
       const labelX = labelBbox?.x || 0;
       const labelWidth = labelBbox?.width || 8;
       const labelHeight = labelBbox?.height || 8;
-      const canvasBoundingClientRect = ZoomTool.instance.canvasWrapper
-        .node()
-        ?.getBoundingClientRect();
-      const canvasX = canvasBoundingClientRect?.x || 0;
       const HOVER_PADDING = 4;
       const HOVER_RECTANGLE_RADIUS = 10;
 
       return this.rootElement
         ?.insert('rect', ':first-child')
-        .attr('x', labelX - this.scaledPosition.x - canvasX - HOVER_PADDING)
+        .attr('x', labelX - HOVER_PADDING)
         .attr('y', -(labelHeight / 2 + HOVER_PADDING))
         .attr('width', labelWidth + HOVER_PADDING * 2)
         .attr('height', labelHeight + HOVER_PADDING * 2)
@@ -163,7 +162,7 @@ export class AtomRenderer extends BaseRenderer {
     const isAtomInMiddleOfChain = (atomNeighborsHalfEdges?.length || 0) >= 2;
     const hasCharge = this.atom.hasCharge;
     const hasRadical = this.atom.hasRadical;
-    const hasAlias = this.atom.properties.alias;
+    const hasAlias = this.atom.hasAlias;
     const hasExplicitValence = this.atom.hasExplicitValence;
     const hasExplicitIsotope = this.atom.hasExplicitIsotope;
 
@@ -263,24 +262,27 @@ export class AtomRenderer extends BaseRenderer {
       textElement
         ?.append('tspan')
         .attr('dy', this.atom.hasExplicitIsotope ? 4 : 0)
-        .text(this.atom.properties.alias || this.atom.label);
+        .text(this.labelText);
     }
 
-    if (hydrogenAmount > 0) {
+    if (!this.atom.hasAlias && hydrogenAmount > 0) {
       textElement
         ?.append('tspan')
-        .attr('dy', this.atom.hasExplicitIsotope ? 4 : 0)
+        .attr(
+          'dy',
+          this.atom.hasExplicitIsotope && shouldHydrogenBeOnLeft ? 4 : 0,
+        )
         .text('H');
-    }
 
-    if (hydrogenAmount > 1) {
-      textElement?.append('tspan').text(hydrogenAmount).attr('dy', 3);
+      if (hydrogenAmount > 1) {
+        textElement?.append('tspan').text(hydrogenAmount).attr('dy', 3);
+      }
     }
 
     if (shouldHydrogenBeOnLeft) {
       textElement
         ?.append('tspan')
-        .text(this.atom.properties.alias || this.atom.label)
+        .text(this.labelText)
         .attr('dy', hydrogenAmount > 1 ? -3 : 0);
     }
 
@@ -345,7 +347,7 @@ export class AtomRenderer extends BaseRenderer {
         ?.append('tspan')
         .text(
           (Math.abs(charge) > 1 ? Math.abs(charge) : '') +
-            (charge > 0 ? '+' : '-'),
+            (charge > 0 ? '+' : '–'),
         )
         .attr('fill', this.labelColor)
         .attr('dy', -4);
@@ -362,7 +364,7 @@ export class AtomRenderer extends BaseRenderer {
     this.radicalElement = this.rootElement?.append('g');
 
     switch (radical) {
-      case 1:
+      case AtomRadical.Single:
         this.radicalElement
           ?.append('circle')
           .attr('cx', 3)
@@ -376,7 +378,7 @@ export class AtomRenderer extends BaseRenderer {
           .attr('r', 2)
           .attr('fill', this.labelColor);
         break;
-      case 2:
+      case AtomRadical.Doublet:
         this.radicalElement
           ?.append('circle')
           .attr('cx', 0)
@@ -384,7 +386,7 @@ export class AtomRenderer extends BaseRenderer {
           .attr('r', 2)
           .attr('fill', this.labelColor);
         break;
-      case 3:
+      case AtomRadical.Triplet:
         this.radicalElement
           ?.append('path')
           .attr('d', `M 0 -5 L 2 -10 L 4 -5 M -6 -5 L -4 -10 L -2 -5`)
@@ -413,6 +415,12 @@ export class AtomRenderer extends BaseRenderer {
       const explicitIsotope = this.atom.properties.isotope as number;
 
       this.textElement
+        /*
+         * TODO: Currently it's always appended in front of the atom (1H3C or 1CH3), however, in micro mode isotope is placed before the exact atom, not the hydrogen (H31C or 1CH3)
+         * While the latter is displayed correctly, the former has to be fixed. Can go through all the tspans and use label tspan instead of :first-child here
+         * However, now it leads to the atom properties being positioned incorrectly due to 'dy' attribute being relative to the previous tspan
+         * Probably we could consider another approach for positioning the atom properties?
+         */
         ?.insert('tspan', ':first-child')
         .text(explicitIsotope)
         .attr('fill', this.labelColor)

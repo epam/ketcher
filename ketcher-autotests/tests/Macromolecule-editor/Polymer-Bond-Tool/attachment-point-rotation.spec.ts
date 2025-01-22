@@ -1,3 +1,4 @@
+import { Peptides } from '@constants/monomers';
 import { test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -11,7 +12,6 @@ import {
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Check attachment point rotation', () => {
@@ -80,7 +80,7 @@ test.describe('Check attachment point rotation', () => {
     await page.waitForSelector('[data-testid="polymer-library-preview"]');
 
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
 
     // Hover 2nd peptide
@@ -91,7 +91,7 @@ test.describe('Check attachment point rotation', () => {
     await page.waitForSelector('[data-testid="polymer-library-preview"]');
 
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
   });
 
@@ -135,7 +135,7 @@ test.describe('Check attachment point rotation', () => {
     await peptide1.hover();
 
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
 
     // Move selected monomer
@@ -149,7 +149,7 @@ test.describe('Check attachment point rotation', () => {
     await peptide1.hover();
     await page.getByTestId('polymer-library-preview');
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('polymer-library-preview')],
+      hideMonomerPreview: true,
     });
   });
 });

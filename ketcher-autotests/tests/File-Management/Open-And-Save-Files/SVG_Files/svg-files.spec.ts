@@ -5,9 +5,8 @@ import {
   openSettings,
   pressButton,
   selectFormatForSaving,
-  selectTopPanelButton,
+  selectLayoutTool,
   takeEditorScreenshot,
-  TopPanelButton,
   waitForPageInit,
 } from '@utils';
 
@@ -131,7 +130,7 @@ test.describe('Saving in .svg files', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     await clickOnSaveFileAndOpenDropdown(page);
     await selectFormatForSaving(page, 'SVG Document');

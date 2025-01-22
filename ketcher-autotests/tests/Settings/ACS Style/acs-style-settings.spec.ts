@@ -1,16 +1,15 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
-  selectTopPanelButton,
   waitForPageInit,
   takeEditorScreenshot,
   pressButton,
-  TopPanelButton,
   bondsSettings,
   scrollToDownInSetting,
   openFileAndAddToCanvas,
   openSettings,
   resetAllSettingsToDefault,
+  selectLayoutTool,
 } from '@utils';
 
 test.describe('ACS Style Settings', () => {
@@ -39,7 +38,7 @@ test.describe('ACS Style Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -55,7 +54,7 @@ test.describe('ACS Style Settings', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     await openSettings(page);
     await pressButton(page, 'Reset');

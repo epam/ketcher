@@ -1,8 +1,8 @@
+import { Bases, Chem, Peptides } from '@constants/monomers';
 import { test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   clickInTheMiddleOfTheScreen,
-  getKet,
   getMolfile,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
@@ -14,11 +14,9 @@ import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   waitForPageInit,
-  Peptides as Peptides2,
   selectMonomer,
   clickOnTheCanvas,
   selectRectangleSelectionTool,
-  Bases,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectMacroBond,
@@ -31,9 +29,12 @@ import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
-import { goToRNATab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { Peptides } from '@utils/selectors/macromoleculeEditor';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {
@@ -142,8 +143,7 @@ test.describe('Erase Tool', () => {
     Test case: Erase Tool
     Description: CHEM is deleted.
     */
-    await page.getByTestId('CHEM-TAB').click();
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await selectMonomer(page, Chem.Test_6_Ch);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -185,7 +185,7 @@ test.describe('Erase Tool', () => {
     await selectEraseTool(page);
     await bondLine.locator('..').click();
     await takeEditorScreenshot(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -263,7 +263,7 @@ test.describe('Erase Tool', () => {
     await selectEraseTool(page);
     await page.getByText('A6OH').locator('..').first().click();
     await takeEditorScreenshot(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -281,7 +281,7 @@ test.describe('Erase Tool', () => {
     await selectPartOfMolecules(page);
     await selectEraseTool(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -300,7 +300,7 @@ test.describe('Erase Tool', () => {
     await selectPartOfMolecules(page);
     await selectEraseTool(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -373,16 +373,13 @@ test.describe('Erase Tool', () => {
     await selectEraseTool(page);
     await page.getByText('Bal').locator('..').first().click();
     await page.getByText('D-2Nal').locator('..').first().click();
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/peptides-flex-chain-expected.ket', expectedFile);
 
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/peptides-flex-chain-expected.ket',
-      });
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/peptides-flex-chain-expected.ket',
+      FileType.KET,
+    );
+
     await openFileAndAddToCanvasMacro(
       'KET/peptides-flex-chain-expected.ket',
       page,
@@ -438,8 +435,7 @@ test.describe('Erase Tool', () => {
           4. Press Delete tool
           5. Take screenshot to make sure canvas is empty
     */
-    await goToRNATab(page);
-    await selectMonomer(page, Peptides2.X);
+    await selectMonomer(page, Peptides.X);
     await clickOnTheCanvas(page, 0, 0);
 
     await selectRectangleSelectionTool(page);
@@ -465,7 +461,6 @@ test.describe('Erase Tool', () => {
           4. Press Delete tool
           5. Take screenshot to make sure canvas is empty
     */
-    await goToRNATab(page);
     await selectMonomer(page, Bases.DNA_N);
     await clickOnTheCanvas(page, 0, 0);
 
@@ -492,8 +487,7 @@ test.describe('Erase Tool', () => {
           4. Press Del key
           5. Take screenshot to make sure canvas is empty
     */
-    await goToRNATab(page);
-    await selectMonomer(page, Peptides2.Z);
+    await selectMonomer(page, Peptides.Z);
     await clickOnTheCanvas(page, 0, 0);
 
     await selectRectangleSelectionTool(page);
@@ -519,7 +513,6 @@ test.describe('Erase Tool', () => {
           4. Press Del key
           5. Take screenshot to make sure canvas is empty
     */
-    await goToRNATab(page);
     await selectMonomer(page, Bases.RNA_N);
     await clickOnTheCanvas(page, 0, 0);
 

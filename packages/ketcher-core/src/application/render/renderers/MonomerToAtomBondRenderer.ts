@@ -34,6 +34,17 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
     this.rootElement = this.canvas
       .insert('g', `.monomer`)
       .data([this])
+      .attr('data-testid', 'bond')
+      .attr('data-type', 'covalent')
+      .attr('data-bondid', this.monomerToAtomBond.id)
+      .attr('data-frommonomerid', this.monomerToAtomBond.monomer.id)
+      .attr('data-toatomid', this.monomerToAtomBond.atom.id)
+      .attr(
+        'data-fromconnectionpoint',
+        this.monomerToAtomBond.monomer.getAttachmentPointByBond(
+          this.monomerToAtomBond,
+        ) || '',
+      )
       .attr(
         'transform',
         `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,

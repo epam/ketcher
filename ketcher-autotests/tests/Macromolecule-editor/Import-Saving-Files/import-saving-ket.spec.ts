@@ -1,4 +1,5 @@
 /* eslint-disable no-magic-numbers */
+import { Peptides, Sugars } from '@constants/monomers';
 import { test, expect, Page } from '@playwright/test';
 import {
   TopPanelButton,
@@ -7,9 +8,6 @@ import {
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
   waitForPageInit,
-  getKet,
-  saveToFile,
-  receiveFileComparisonData,
   selectTopPanelButton,
   openFile,
   pressButton,
@@ -20,10 +18,10 @@ import {
   clickUndo,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProjectMacro,
-  Sugars,
   selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   selectZoomOutTool,
+  selectMonomer,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -34,7 +32,6 @@ import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
-import { Peptides } from '@utils/selectors/macromoleculeEditor';
 import {
   markResetToDefaultState,
   processResetToDefaultState,
@@ -84,15 +81,12 @@ test.describe('Import-Saving .ket Files', () => {
     await pageReload(page);
 
     await openFileAndAddToCanvasMacro('KET/fifty-monomers.ket', page);
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/fifty-monomers-expected.ket', expectedFile);
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/KET/fifty-monomers-expected.ket',
-      });
 
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/fifty-monomers-expected.ket',
+      FileType.KET,
+    );
 
     const numberOfPressZoomOut = 6;
     await selectZoomOutTool(page, numberOfPressZoomOut);
@@ -109,15 +103,12 @@ test.describe('Import-Saving .ket Files', () => {
     await pageReload(page);
 
     await openFileAndAddToCanvasMacro('KET/hundred-monomers.ket', page);
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/hundred-monomers-expected.ket', expectedFile);
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/KET/hundred-monomers-expected.ket',
-      });
 
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/hundred-monomers-expected.ket',
+      FileType.KET,
+    );
 
     const numberOfPressZoomOut = 7;
     await selectZoomOutTool(page, numberOfPressZoomOut);
@@ -130,15 +121,8 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: Empty file can be saved in .ket format
     */
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/empty-canvas-expected.ket', expectedFile);
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/KET/empty-canvas-expected.ket',
-      });
 
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(page, 'KET/empty-canvas-expected.ket', FileType.KET);
   });
 
   test('Validate that saving to .ket file of any monomer from our Library does not change after loading it back from .ket file to canvas', async () => {
@@ -148,18 +132,9 @@ test.describe('Import-Saving .ket Files', () => {
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
     await pageReload(page);
-
-    await page.getByTestId(Peptides.BetaAlanine).click();
+    await selectMonomer(page, Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/monomer-expected.ket', expectedFile);
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/KET/monomer-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(page, 'KET/monomer-expected.ket', FileType.KET);
     await selectClearCanvasTool(page);
     await openFileAndAddToCanvasMacro('KET/monomer-expected.ket', page);
     await page.getByText('Bal').locator('..').first().hover();
@@ -199,19 +174,9 @@ test.describe('Import-Saving .ket Files', () => {
     markResetToDefaultState('tabSelection');
 
     test.slow();
-    await page.getByTestId('RNA-TAB').click();
-    await page.getByTestId('summary-Sugars').click();
-    await page.getByTestId(Sugars.TwentyFiveR).click();
+    await selectMonomer(page, Sugars._25R);
     await clickInTheMiddleOfTheScreen(page);
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/25R-expected.ket', expectedFile);
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/KET/25R-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(page, 'KET/25R-expected.ket', FileType.KET);
   });
 
   test('Check .ket file that "leavingGroup" section contain information about number of atoms', async () => {
@@ -221,18 +186,9 @@ test.describe('Import-Saving .ket Files', () => {
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
     await pageReload(page);
-
-    await page.getByTestId(Peptides.D2Nal).click();
+    await selectMonomer(page, Peptides.D_2Nal);
     await clickInTheMiddleOfTheScreen(page);
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/D-2Nal-expected.ket', expectedFile);
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/KET/D-2Nal-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(page, 'KET/D-2Nal-expected.ket', FileType.KET);
   });
 
   test('Check that system does not let importing empty .ket file', async () => {
@@ -320,16 +276,12 @@ test.describe('Import-Saving .ket Files', () => {
     await pageReload(page);
 
     await openFileAndAddToCanvasMacro('KET/unresolved-monomers.ket', page);
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/unresolved-monomers-expected.ket', expectedFile);
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/unresolved-monomers-expected.ket',
-      });
 
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/unresolved-monomers-expected.ket',
+      FileType.KET,
+    );
   });
 
   test('Validate that unsplit nucleotides connected with another monomers could be saved to ket file and loaded back', async () => {
@@ -344,19 +296,12 @@ test.describe('Import-Saving .ket Files', () => {
       'KET/unsplit-nucleotides-connected-with-another-monomers.ket',
       page,
     );
-    const expectedFile = await getKet(page);
-    await saveToFile(
-      'KET/unsplit-nucleotides-connected-with-another-monomers-expected.ket',
-      expectedFile,
-    );
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/unsplit-nucleotides-connected-with-another-monomers-expected.ket',
-      });
 
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/unsplit-nucleotides-connected-with-another-monomers-expected.ket',
+      FileType.KET,
+    );
   });
 
   test('Verify saving and load to canvas ambiguous monomers in KET format (macro mode)', async () => {
@@ -377,19 +322,11 @@ test.describe('Import-Saving .ket Files', () => {
     await zoomWithMouseWheel(page, -250);
     await takeEditorScreenshot(page);
 
-    const expectedFile = await getKet(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'KET/Ambiguous-monomers/AllAmbiguousMonomers-expected.ket',
-      expectedFile,
+      FileType.KET,
     );
-
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/Ambiguous-monomers/AllAmbiguousMonomers-expected.ket',
-      });
-    expect(ketFile).toEqual(ketFileExpected);
     await zoomWithMouseWheel(page, 250);
   });
 });
@@ -425,18 +362,11 @@ test.describe('Base monomers on the canvas, their connection points and preview 
       await page.getByText('R1').locator('..').hover();
       await takeEditorScreenshot(page);
 
-      const expectedFile = await getKet(page);
-      await saveToFile(
+      await verifyFileExport(
+        page,
         `KET/Base-Templates/${fileName}-expected.ket`,
-        expectedFile,
+        FileType.KET,
       );
-      const { file: ketFile, fileExpected: ketFileExpected } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: `tests/test-data/KET/Base-Templates/${fileName}-expected.ket`,
-        });
-
-      expect(ketFile).toEqual(ketFileExpected);
     });
   }
 });
@@ -479,18 +409,11 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
       await page.getByText('(R').locator('..').first().hover();
       await takeEditorScreenshot(page);
 
-      const expectedFile = await getKet(page);
-      await saveToFile(
+      await verifyFileExport(
+        page,
         `KET/CHEM-Templates/${fileName}-expected.ket`,
-        expectedFile,
+        FileType.KET,
       );
-      const { file: ketFile, fileExpected: ketFileExpected } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: `tests/test-data/KET/CHEM-Templates/${fileName}-expected.ket`,
-        });
-
-      expect(ketFile).toEqual(ketFileExpected);
     });
   }
 });
@@ -533,18 +456,11 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
       await page.getByText('(R').locator('..').first().hover();
       await takeEditorScreenshot(page);
 
-      const expectedFile = await getKet(page);
-      await saveToFile(
+      await verifyFileExport(
+        page,
         `KET/Peptide-Templates/${fileName}-expected.ket`,
-        expectedFile,
+        FileType.KET,
       );
-      const { file: ketFile, fileExpected: ketFileExpected } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: `tests/test-data/KET/Peptide-Templates/${fileName}-expected.ket`,
-        });
-
-      expect(ketFile).toEqual(ketFileExpected);
     });
   }
 });
@@ -587,18 +503,11 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
       await page.getByText('(R').locator('..').first().hover();
       await takeEditorScreenshot(page);
 
-      const expectedFile = await getKet(page);
-      await saveToFile(
+      await verifyFileExport(
+        page,
         `KET/Phosphate-Templates/${fileName}-expected.ket`,
-        expectedFile,
+        FileType.KET,
       );
-      const { file: ketFile, fileExpected: ketFileExpected } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: `tests/test-data/KET/Phosphate-Templates/${fileName}-expected.ket`,
-        });
-
-      expect(ketFile).toEqual(ketFileExpected);
     });
   }
 });
@@ -641,18 +550,11 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
       await page.getByText('(R').locator('..').first().hover();
       await takeEditorScreenshot(page);
 
-      const expectedFile = await getKet(page);
-      await saveToFile(
+      await verifyFileExport(
+        page,
         `KET/Sugar-Templates/${fileName}-expected.ket`,
-        expectedFile,
+        FileType.KET,
       );
-      const { file: ketFile, fileExpected: ketFileExpected } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: `tests/test-data/KET/Sugar-Templates/${fileName}-expected.ket`,
-        });
-
-      expect(ketFile).toEqual(ketFileExpected);
     });
   }
 });

@@ -28,12 +28,17 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectAromatizeTool,
+  selectLayoutTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
-import { getKet, getMolfile } from '@utils/formats';
+import { getMolfile } from '@utils/formats';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -101,7 +106,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
 
     await takeEditorScreenshot(page);
 
@@ -484,19 +489,12 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForRender(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
-    const expectedFile = await getKet(page);
-    await saveToFile(
-      'KET/structure-with-stereo-bonds-expected.ket',
-      expectedFile,
-    );
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/structure-with-stereo-bonds-expected.ket',
-      });
 
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/structure-with-stereo-bonds-expected.ket',
+      FileType.KET,
+    );
   });
 
   // TODO: It's unstable, skip for now

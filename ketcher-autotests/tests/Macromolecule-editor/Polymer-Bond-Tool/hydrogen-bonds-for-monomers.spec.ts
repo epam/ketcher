@@ -185,12 +185,22 @@ async function bondTwoMonomersByCenterToCenter(
 ) {
   const canvasLocator = page.getByTestId('ketcher-canvas').first();
 
-  const leftMonomerLocator = canvasLocator
+  let leftMonomerLocator = canvasLocator
     .getByText(leftMonomer.alias, { exact: true })
     .locator('..')
     .first();
 
-  const rightMonomerLocator =
+  let monomerId = await leftMonomerLocator.getAttribute('data-monomerid');
+  if (monomerId === null) {
+    monomerId = await leftMonomerLocator
+      .locator('..')
+      .getAttribute('data-monomerid');
+  }
+  leftMonomerLocator = page.locator(
+    `[data-testid="monomer"][data-monomerid="${monomerId}"]`,
+  );
+
+  let rightMonomerLocator =
     (await canvasLocator
       .getByText(leftMonomer.alias, { exact: true })
       .count()) > 1
@@ -203,6 +213,15 @@ async function bondTwoMonomersByCenterToCenter(
           .getByText(rightMonomer.alias, { exact: true })
           .locator('..')
           .first();
+
+  // atom has alias that depend on attached bond - it could be "BrH" if no bonds and "Br" if one bond attached,
+  // this is why we have to false exact for atoms
+  if (rightMonomer.monomerType === 'atom') {
+    const atomId = await rightMonomerLocator.getAttribute('data-atomid');
+    rightMonomerLocator = page.locator(
+      `[data-testid="atom"][data-atomid="${atomId}"]`,
+    );
+  }
 
   await bondTwoMonomersPointToPoint(
     page,
@@ -263,7 +282,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       await callContexMenuOverConnectionLine(page);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });
@@ -372,7 +391,7 @@ Object.values(monomersWithNoFreeConnectionPoint).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });
@@ -415,7 +434,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });
@@ -478,7 +497,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
 
       test.fixme(
@@ -521,7 +540,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       await selectSnakeLayoutModeTool(page);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
 
       await selectFlexLayoutModeTool(page);
@@ -668,17 +687,17 @@ Object.values(monomers).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
 
       await pressUndoButton(page);
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
 
       await pressRedoButton(page);
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });
@@ -714,14 +733,14 @@ Object.values(monomers).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
 
       await selectEraseTool(page);
       await clickOnConnectionLine(page);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });
@@ -763,7 +782,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });
@@ -912,7 +931,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       await zoomWithMouseWheel(page, -600);
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
 
       await selectEraseTool(page);
@@ -926,7 +945,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       );
 
       await takeEditorScreenshot(page, {
-        masks: [page.getByTestId('polymer-library-preview')],
+        hideMonomerPreview: true,
       });
     });
   });

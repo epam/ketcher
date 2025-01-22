@@ -1,46 +1,51 @@
 /* eslint-disable no-magic-numbers */
+import { BrowserContext, chromium, expect, Page, test } from '@playwright/test';
+import {
+  clickOnCanvas,
+  copyToClipboardByKeyboard,
+  getFasta,
+  getIdt,
+  getKet,
+  getMolfile,
+  getSequence,
+  Monomer,
+  moveMouseToTheMiddleOfTheScreen,
+  openFileAndAddToCanvasMacro,
+  pasteFromClipboardByKeyboard,
+  receiveFileComparisonData,
+  resetZoomLevelToDefault,
+  saveToFile,
+  selectClearCanvasTool,
+  selectCustomPreset,
+  selectFlexLayoutModeTool,
+  selectMonomer,
+  selectSequenceLayoutModeTool,
+  takeEditorScreenshot,
+  waitForIndigoToLoad,
+  waitForKetcherInit,
+} from '@utils';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
-import { Page, test, BrowserContext, chromium, expect } from '@playwright/test';
-import {
-  takeEditorScreenshot,
-  selectClearCanvasTool,
-  waitForIndigoToLoad,
-  waitForKetcherInit,
-  selectFlexLayoutModeTool,
-  openFileAndAddToCanvasMacro,
-  selectSequenceLayoutModeTool,
-  receiveFileComparisonData,
-  moveMouseToTheMiddleOfTheScreen,
-  getMolfile,
-  getSequence,
-  getIdt,
-  getFasta,
-  getKet,
-  saveToFile,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
-  clickOnCanvas,
-  resetZoomLevelToDefault,
-} from '@utils';
 
 import {
-  goToCHEMTab,
-  goToPeptidesTab,
-  goToRNATab,
-} from '@utils/macromolecules/library';
+  Bases,
+  Chem,
+  Nucleotides,
+  Peptides,
+  Phosphates,
+  Presets,
+  Sugars,
+} from '@constants/monomers';
+import { pageReload } from '@utils/common/helpers';
+import { goToRNATab } from '@utils/macromolecules/library';
 import {
   pressAddToPresetsButton,
   pressNewPresetButton,
   selectBaseSlot,
   selectPhosphateSlot,
   selectSugarSlot,
-  toggleBasesAccordion,
-  toggleNucleotidesAccordion,
-  togglePhosphatesAccordion,
-  toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
 import {
   clickOnSequenceSymbolByIndex,
@@ -49,7 +54,6 @@ import {
   pressYesInConfirmYourActionDialog,
 } from '@utils/macromolecules/sequence';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
-import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -99,6 +103,7 @@ interface IReplaceMonomer {
   MonomerAlias: string;
   MonomerTestId: string;
   MonomerDescription: string;
+  IsCustomPreset?: boolean;
   // ShouldFail?: boolean;
   // KnownBugs?: boolean;
   // BugsInTests?: IBugsInTests[];
@@ -148,7 +153,7 @@ const replaceMonomers: IReplaceMonomer[] = [
     Id: <number>monomerIDs.peptide_Cys_Bn,
     MonomerType: 'Peptide',
     MonomerAlias: 'Cys_Bn',
-    MonomerTestId: 'Cys_Bn___S-benzylcysteine',
+    MonomerTestId: Peptides.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   },
   {
@@ -156,7 +161,7 @@ const replaceMonomers: IReplaceMonomer[] = [
     MonomerType: 'RNA',
     MonomerSubType: 'Presets',
     MonomerAlias: 'C',
-    MonomerTestId: 'C_C_R_P',
+    MonomerTestId: Presets.C,
     MonomerDescription: 'preset (C)',
   },
   {
@@ -167,6 +172,7 @@ const replaceMonomers: IReplaceMonomer[] = [
     MonomerAlias: 'R()P',
     MonomerTestId: 'R()P_._R_P',
     MonomerDescription: 'preset (R()P)',
+    IsCustomPreset: true,
   },
   {
     // Custom preset created at BeforeAll section
@@ -176,13 +182,14 @@ const replaceMonomers: IReplaceMonomer[] = [
     MonomerAlias: 'R(A)',
     MonomerTestId: 'R(A)_A_R_.',
     MonomerDescription: 'preset (R(A))',
+    IsCustomPreset: true,
   },
   {
     Id: <number>monomerIDs.sugar_R,
     MonomerType: 'RNA',
     MonomerSubType: 'Sugars',
     MonomerAlias: 'R',
-    MonomerTestId: 'R___Ribose',
+    MonomerTestId: Sugars.R,
     MonomerDescription: 'sugar (R)',
   },
   {
@@ -190,7 +197,7 @@ const replaceMonomers: IReplaceMonomer[] = [
     MonomerType: 'RNA',
     MonomerSubType: 'Bases',
     MonomerAlias: 'oC64m5',
-    MonomerTestId: 'oC64m5___4-Hexan-6-ol-5-methylcytosine',
+    MonomerTestId: Bases.oC64m5,
     MonomerDescription: 'base (oC64m5)',
   },
   {
@@ -198,7 +205,7 @@ const replaceMonomers: IReplaceMonomer[] = [
     MonomerType: 'RNA',
     MonomerSubType: 'Phosphates',
     MonomerAlias: 'P',
-    MonomerTestId: 'P___Phosphate',
+    MonomerTestId: Phosphates.P,
     MonomerDescription: 'phosphate (P)',
   },
   {
@@ -206,7 +213,7 @@ const replaceMonomers: IReplaceMonomer[] = [
     MonomerType: 'RNA',
     MonomerSubType: 'Nucleotides',
     MonomerAlias: 'AmMC6T',
-    MonomerTestId: 'AmMC6T___Amino Modifier C6 dT',
+    MonomerTestId: Nucleotides.AmMC6T,
     MonomerDescription: 'nucleotide (AmMC6T)',
   },
   {
@@ -215,14 +222,14 @@ const replaceMonomers: IReplaceMonomer[] = [
     MonomerType: 'RNA',
     MonomerSubType: 'Nucleotides',
     MonomerAlias: '5NitInd',
-    MonomerTestId: '5NitInd___5-Nitroindole',
+    MonomerTestId: Nucleotides._5NitInd,
     MonomerDescription: 'nucleotide (5NitInd)',
   },
   {
     Id: <number>monomerIDs.CHEM_Mal,
     MonomerType: 'CHEM',
     MonomerAlias: 'Mal',
-    MonomerTestId: 'Mal___Maleimide',
+    MonomerTestId: Chem.Mal,
     MonomerDescription: 'CHEM (Mal)',
   },
 ];
@@ -563,99 +570,63 @@ async function createTestPresets(page: Page) {
   // Create preset without base
   await pressNewPresetButton(page);
   await selectSugarSlot(page);
-  await page.getByTestId('R___Ribose').click();
+  await selectMonomer(page, Sugars.R);
 
   await selectPhosphateSlot(page);
-  await page.getByTestId('P___Phosphate').click();
+  await selectMonomer(page, Phosphates.P);
 
   await pressAddToPresetsButton(page);
 
   // Create preset without phosphate
   await pressNewPresetButton(page);
   await selectSugarSlot(page);
-  await page.getByTestId('R___Ribose').click();
+  await selectMonomer(page, Sugars.R);
 
   await selectBaseSlot(page);
-  await page.getByTestId('A___Adenine').click();
+  await selectMonomer(page, Bases.A);
 
   await pressAddToPresetsButton(page);
 
   // Create preset 25mo3r(nC6n5C)Test-6-Ph
   await pressNewPresetButton(page);
   await selectSugarSlot(page);
-  await page
-    .getByTestId('25mo3r___3-O-Methylribose (2,5 connectivity)')
-    .click();
+  await selectMonomer(page, Sugars._25mo3r);
 
   await selectBaseSlot(page);
-  await page.getByTestId('nC6n5C___Amino-Modier C6 dC').click();
+  await selectMonomer(page, Bases.nC6n5C);
 
   await selectPhosphateSlot(page);
-  await page.getByTestId('Test-6-Ph___Test-6-AP-Phosphate').click();
+  await selectMonomer(page, Phosphates.Test_6_Ph);
 
   await pressAddToPresetsButton(page);
 
   // Create preset 25mo3r(nC6n5C)
   await pressNewPresetButton(page);
   await selectSugarSlot(page);
-  await page
-    .getByTestId('25mo3r___3-O-Methylribose (2,5 connectivity)')
-    .click();
+  await selectMonomer(page, Sugars._25mo3r);
 
   await selectBaseSlot(page);
-  await page.getByTestId('nC6n5C___Amino-Modier C6 dC').click();
+  await selectMonomer(page, Bases.nC6n5C);
 
   await pressAddToPresetsButton(page);
 
   // Create preset 25mo3r()Test-6-Ph
   await pressNewPresetButton(page);
   await selectSugarSlot(page);
-  await page
-    .getByTestId('25mo3r___3-O-Methylribose (2,5 connectivity)')
-    .click();
+  await selectMonomer(page, Sugars._25mo3r);
 
   await selectPhosphateSlot(page);
-  await page.getByTestId('Test-6-Ph___Test-6-AP-Phosphate').click();
+  await selectMonomer(page, Phosphates.Test_6_Ph);
 
   await pressAddToPresetsButton(page);
 }
 
 async function clickOnMonomerFromLibrary(page: Page, monomer: IReplaceMonomer) {
-  switch (monomer.MonomerType) {
-    case 'Peptide':
-      await goToPeptidesTab(page);
-      break;
-    case 'RNA':
-      await goToRNATab(page);
-      switch (monomer.MonomerSubType) {
-        case 'Presets':
-          // await togglePresetsAccordion(page);
-          break;
-        case 'Sugars':
-          await toggleSugarsAccordion(page);
-          break;
-        case 'Bases':
-          await toggleBasesAccordion(page);
-          break;
-        case 'Phosphates':
-          await togglePhosphatesAccordion(page);
-          break;
-        case 'Nucleotides':
-          await toggleNucleotidesAccordion(page);
-          break;
-        default:
-          throw new Error(
-            `Tab with name "${monomer.MonomerSubType}" not found.`,
-          );
-      }
-      break;
-    case 'CHEM':
-      await goToCHEMTab(page);
-      break;
-    default:
-      throw new Error(`Tab with name "${monomer.MonomerType}" not found.`);
+  if (monomer.IsCustomPreset) {
+    await selectCustomPreset(page, monomer.MonomerTestId);
+  } else {
+    await selectMonomer(page, monomer.MonomerTestId as Monomer);
   }
-  await page.getByTestId(monomer.MonomerTestId).click();
 }
 
 async function selectAndReplaceSymbol(
@@ -1098,14 +1069,14 @@ const noR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
     Id: 11,
     MonomerType: 'Peptide',
     MonomerAlias: 'Ala-al',
-    MonomerTestId: 'Ala-al___(2S)-2-aminopropanal',
+    MonomerTestId: Peptides.Ala_al,
     MonomerDescription: 'peptide w/o R2 (Ala-al)',
   },
   {
     Id: 12,
     MonomerType: 'Peptide',
     MonomerAlias: '-NHBn',
-    MonomerTestId: '-NHBn___C-Terminal benzylamino',
+    MonomerTestId: Peptides._NHBn,
     MonomerDescription: 'peptide w/o natural analog w/o R2 (-NHBn)',
   },
   {
@@ -1113,14 +1084,14 @@ const noR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
     MonomerType: 'RNA',
     MonomerSubType: 'Bases',
     MonomerAlias: '5meC',
-    MonomerTestId: '5meC___5-methylcytosine',
+    MonomerTestId: Bases._5meC,
     MonomerDescription: 'base w/o R2 (5meC)',
   },
   {
     Id: 14,
     MonomerType: 'CHEM',
     MonomerAlias: 'Az',
-    MonomerTestId: 'Az___4-azidobutyric acid',
+    MonomerTestId: Chem.Az,
     MonomerDescription: 'CHEM w/o R2 (Mal)',
   },
 ];
@@ -1168,14 +1139,14 @@ const noR1ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
     Id: <number>monomerIDs.peptide_w_o_R1_D_OAla,
     MonomerType: 'Peptide',
     MonomerAlias: 'D-OAla',
-    MonomerTestId: 'D-OAla___D-Lactic acid',
+    MonomerTestId: Peptides.D_OAla,
     MonomerDescription: 'peptide w/o R1 (D-OAla)',
   },
   {
     Id: <number>monomerIDs.peptide_w_o_R1_Boc_,
     MonomerType: 'Peptide',
     MonomerAlias: 'Boc-',
-    MonomerTestId: 'Boc-___N-Terminal tert-butyloxycarbonyl',
+    MonomerTestId: Peptides.Boc_,
     MonomerDescription: 'peptide w/o R1 (Boc-)',
   },
   {
@@ -1183,7 +1154,7 @@ const noR1ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
     MonomerType: 'RNA',
     MonomerSubType: 'Sugars',
     MonomerAlias: '5cGT',
-    MonomerTestId: "5cGT___2-(methylamino)acetamidate (5' end)",
+    MonomerTestId: Sugars._5cGT,
     MonomerDescription: 'sugar w/o R1 (5cGT)',
   },
 ];
@@ -1685,14 +1656,14 @@ const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
     Id: 11,
     MonomerType: 'Peptide',
     MonomerAlias: 'Hcy',
-    MonomerTestId: 'Hcy___homocysteine',
+    MonomerTestId: Peptides.Hcy,
     MonomerDescription: 'peptide (Hcy)',
   },
   {
     Id: 12,
     MonomerType: 'Peptide',
     MonomerAlias: 'Test-6-P',
-    MonomerTestId: 'Test-6-P___Test-6-AP-Peptide',
+    MonomerTestId: Peptides.Test_6_P,
     MonomerDescription: 'peptide w/o natural analog(Test-6-P)',
   },
   {
@@ -1703,6 +1674,7 @@ const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
     MonomerAlias: '25mo3r(nC6n5C)Test-6-Ph',
     MonomerTestId: '25mo3r(nC6n5C)Test-6-Ph_nC6n5C_25mo3r_Test-6-Ph',
     MonomerDescription: 'preset (25mo3r(nC6n5C)Test-6-Ph)',
+    IsCustomPreset: true,
   },
   {
     // Custom preset created at BeforeAll section
@@ -1712,6 +1684,7 @@ const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
     MonomerAlias: '25mo3r(nC6n5C)',
     MonomerTestId: '25mo3r(nC6n5C)_nC6n5C_25mo3r_.',
     MonomerDescription: 'preset w/o phosphate (25mo3r(nC6n5C))',
+    IsCustomPreset: true,
   },
   {
     // Custom preset created at BeforeAll section
@@ -1721,13 +1694,14 @@ const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
     MonomerAlias: '25mo3r()Test-6-Ph',
     MonomerTestId: '25mo3r()Test-6-Ph_._25mo3r_Test-6-Ph',
     MonomerDescription: 'preset without base (25mo3r()Test-6-Ph)',
+    IsCustomPreset: true,
   },
   {
     Id: 16,
     MonomerType: 'RNA',
     MonomerSubType: 'Sugars',
     MonomerAlias: '5formD',
-    MonomerTestId: '5formD___5-Formyl-2-deoxyribose',
+    MonomerTestId: Sugars._5formD,
     MonomerDescription: 'sugar (5formD)',
   },
   {
@@ -1735,7 +1709,7 @@ const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
     MonomerType: 'RNA',
     MonomerSubType: 'Bases',
     MonomerAlias: 'nC6n2G',
-    MonomerTestId: 'nC6n2G___6-Aminohexyl-2-aminoguanine',
+    MonomerTestId: Bases.nC6n2G,
     MonomerDescription: 'base (nC6n2G)',
   },
   {
@@ -1743,7 +1717,7 @@ const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
     MonomerType: 'RNA',
     MonomerSubType: 'Phosphates',
     MonomerAlias: 'Test-6-Ph',
-    MonomerTestId: 'Test-6-Ph___Test-6-AP-Phosphate',
+    MonomerTestId: Phosphates.Test_6_Ph,
     MonomerDescription: 'phosphate (Test-6-Ph)',
   },
   {
@@ -1751,14 +1725,14 @@ const withSideConnectionReplaceMonomers: IReplaceMonomer[] = [
     MonomerType: 'RNA',
     MonomerSubType: 'Nucleotides',
     MonomerAlias: 'AmMC6T',
-    MonomerTestId: 'AmMC6T___Amino Modifier C6 dT',
+    MonomerTestId: Nucleotides.AmMC6T,
     MonomerDescription: 'nucleotide (AmMC6T)',
   },
   {
     Id: 20,
     MonomerType: 'CHEM',
     MonomerAlias: 'sDBL',
-    MonomerTestId: 'sDBL___Symmetric Doubler',
+    MonomerTestId: Chem.sDBL,
     MonomerDescription: 'CHEM (sDBL)',
   },
 ];
@@ -2036,7 +2010,7 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
     Id: <number>monomerIDs.peptide_Cys_Bn,
     MonomerType: 'Peptide',
     MonomerAlias: 'Cys_Bn',
-    MonomerTestId: 'Cys_Bn___S-benzylcysteine',
+    MonomerTestId: Peptides.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
@@ -2090,7 +2064,7 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
     Id: <number>monomerIDs.peptide_Cys_Bn,
     MonomerType: 'Peptide',
     MonomerAlias: 'Cys_Bn',
-    MonomerTestId: 'Cys_Bn___S-benzylcysteine',
+    MonomerTestId: Peptides.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
@@ -2152,7 +2126,7 @@ test(`25. Verify undo/redo functionality after replacing monomers`, async () => 
     Id: <number>monomerIDs.peptide_Cys_Bn,
     MonomerType: 'Peptide',
     MonomerAlias: 'Cys_Bn',
-    MonomerTestId: 'Cys_Bn___S-benzylcysteine',
+    MonomerTestId: Peptides.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
@@ -2202,7 +2176,7 @@ test(`26. Copy and paste replaced monomers`, async () => {
     Id: <number>monomerIDs.peptide_Cys_Bn,
     MonomerType: 'Peptide',
     MonomerAlias: 'Cys_Bn',
-    MonomerTestId: 'Cys_Bn___S-benzylcysteine',
+    MonomerTestId: Peptides.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
@@ -2252,7 +2226,7 @@ test(`27. Verify switching from Macro mode to Micro mode and back without data l
     Id: <number>monomerIDs.peptide_Cys_Bn,
     MonomerType: 'Peptide',
     MonomerAlias: 'Cys_Bn',
-    MonomerTestId: 'Cys_Bn___S-benzylcysteine',
+    MonomerTestId: Peptides.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
@@ -2300,7 +2274,7 @@ test(`28. Verify saving and reopening a structure with replaced monomers in KET`
     MonomerType: 'RNA',
     MonomerSubType: 'Presets',
     MonomerAlias: 'C',
-    MonomerTestId: 'C_C_R_P',
+    MonomerTestId: Presets.C,
     MonomerDescription: 'preset (C)',
   };
 
@@ -2356,7 +2330,7 @@ test(`29. Verify saving and reopening a structure with replaced monomers in MOL 
     MonomerType: 'RNA',
     MonomerSubType: 'Presets',
     MonomerAlias: 'C',
-    MonomerTestId: 'C_C_R_P',
+    MonomerTestId: Presets.C,
     MonomerDescription: 'preset (C)',
   };
 
@@ -2416,7 +2390,7 @@ test(`30. Verify saving and reopening a structure with replaced monomers in Sequ
     MonomerType: 'RNA',
     MonomerSubType: 'Presets',
     MonomerAlias: 'C',
-    MonomerTestId: 'C_C_R_P',
+    MonomerTestId: Presets.C,
     MonomerDescription: 'preset (C)',
   };
 
@@ -2474,7 +2448,7 @@ test(`31. Verify saving and reopening a structure with replaced monomers in FAST
     MonomerType: 'RNA',
     MonomerSubType: 'Presets',
     MonomerAlias: 'C',
-    MonomerTestId: 'C_C_R_P',
+    MonomerTestId: Presets.C,
     MonomerDescription: 'preset (C)',
   };
 
@@ -2537,7 +2511,7 @@ test(`32. Verify saving and reopening a structure with replaced monomers in IDT`
     MonomerType: 'RNA',
     MonomerSubType: 'Presets',
     MonomerAlias: 'C',
-    MonomerTestId: 'C_C_R_P',
+    MonomerTestId: Presets.C,
     MonomerDescription: 'preset (C)',
   };
 

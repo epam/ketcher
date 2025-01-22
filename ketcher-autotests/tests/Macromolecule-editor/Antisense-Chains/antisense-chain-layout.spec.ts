@@ -168,7 +168,7 @@ const shortMonomerList: IMonomer[] = [
     id: 7,
     monomerDescription: '7. Unsplit monomer 2-damdA (from library)',
     alias: '2-damdA',
-    type: MonomerType.UnresovedNucleotide,
+    type: MonomerType.UnsplitNucleotide,
     contentType: MacroFileType.Ket,
     KETFile:
       'KET/Antisense-Chains/18. Unsplit monomer 2-damdA (from library).ket',

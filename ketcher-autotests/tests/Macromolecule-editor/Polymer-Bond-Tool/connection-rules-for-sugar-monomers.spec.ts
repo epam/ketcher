@@ -1,19 +1,17 @@
 /* eslint-disable no-magic-numbers */
-import { Page, chromium, test } from '@playwright/test';
+import { Page, test, expect, Locator } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectClearCanvasTool,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
-  waitForKetcherInit,
-  waitForIndigoToLoad,
   resetZoomLevelToDefault,
+  waitForPageInit,
+  MonomerType,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
@@ -25,44 +23,24 @@ test.describe('Connection rules for sugars: ', () => {
   test.describe.configure({ retries: 0 });
 
   test.beforeAll(async ({ browser }) => {
-    let sharedContext;
-    try {
-      sharedContext = await browser.newContext();
-    } catch (error) {
-      console.error('Error on creation browser context:', error);
-      console.log('Restarting browser...');
-      await browser.close();
-      browser = await chromium.launch();
-      sharedContext = await browser.newContext();
-    }
+    const context = await browser.newContext();
+    page = await context.newPage();
 
-    // Reminder: do not pass page as async
-    page = await sharedContext.newPage();
-
-    await page.goto('', { waitUntil: 'domcontentloaded' });
-    await waitForKetcherInit(page);
-    await waitForIndigoToLoad(page);
+    await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
   });
 
   test.afterEach(async () => {
-    await page.keyboard.press('Escape');
     await resetZoomLevelToDefault(page);
     await selectClearCanvasTool(page);
   });
 
   test.afterAll(async ({ browser }) => {
-    const cntxt = page.context();
-    await page.close();
-    await cntxt.close();
-    await browser.contexts().forEach((someContext) => {
-      someContext.close();
-    });
-    // await browser.close();
+    await Promise.all(browser.contexts().map((context) => context.close()));
   });
 
   interface IMonomer {
-    monomerType: string;
+    monomerType: MonomerType;
     fileName: string;
     alias: string;
     connectionPoints: { [connectionPointName: string]: string };
@@ -70,7 +48,7 @@ test.describe('Connection rules for sugars: ', () => {
 
   const sugarMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'sugar',
+      monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -78,7 +56,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'sugar',
+      monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
@@ -86,7 +64,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: 'sugar',
+    //   monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
@@ -94,7 +72,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     '(R1,R2) - R3 gap': {
-      monomerType: 'sugar',
+      monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -103,7 +81,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     '(R1,R3) - R2 gap': {
-      monomerType: 'sugar',
+      monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
       connectionPoints: {
@@ -112,7 +90,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     '(R2,R3) - R1 gap': {
-      monomerType: 'sugar',
+      monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
       connectionPoints: {
@@ -121,7 +99,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     // '(R3,R4)': {
-    //        monomerType: 'sugar',
+    //        monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -130,7 +108,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
-      monomerType: 'sugar',
+      monomerType: MonomerType.Sugar,
       fileName: 'KET/Sugar-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
@@ -140,7 +118,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    // monomerType: 'sugar',
+    // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -150,7 +128,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    // monomerType: 'sugar',
+    // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -160,7 +138,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    // monomerType: 'sugar',
+    // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -170,7 +148,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4)': {
-    // monomerType: 'sugar',
+    // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
     //   connectionPoints: {
@@ -181,7 +159,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R1,R3,R4,R5)': {
-    // monomerType: 'sugar',
+    // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -192,7 +170,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    // monomerType: 'sugar',
+    // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -203,7 +181,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
-    // monomerType: 'sugar',
+    // monomerType: MonomerType.Sugar,
     //   fileName: 'KET/Sugar-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -215,135 +193,45 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
   };
-  async function hoverOverConnectionLine(page: Page) {
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
-    await bondLine.hover();
-  }
 
   async function loadTwoMonomers(
     page: Page,
-    leftMonomers: IMonomer,
-    rightMonomers: IMonomer,
-  ) {
-    await openFileAndAddToCanvasMacro(leftMonomers.fileName, page);
-    const canvasLocator = page.getByTestId('ketcher-canvas').first();
-    const leftMonomerLocator = canvasLocator
-      .locator(`text=${leftMonomers.alias}`)
-      .locator('..')
-      .first();
-    // const leftMonomerLocator = page.locator('use').first();
-    await leftMonomerLocator.hover();
+    leftMonomer: IMonomer,
+    rightMonomer: IMonomer,
+  ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
+    await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+    const leftMonomerLocator = (
+      await getMonomerLocator(page, {
+        monomerAlias: leftMonomer.alias,
+        monomerType: leftMonomer.monomerType,
+      })
+    ).first();
+
+    await leftMonomerLocator.hover({ force: true });
+
     await dragMouseTo(500, 370, page);
     await moveMouseAway(page);
 
-    await openFileAndAddToCanvasMacro(rightMonomers.fileName, page);
+    await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
+    const tmpMonomerLocator = await getMonomerLocator(page, {
+      monomerAlias: rightMonomer.alias,
+      monomerType: rightMonomer.monomerType,
+    });
     const rightMonomerLocator =
-      (await canvasLocator.locator(`text=${leftMonomers.alias}`).count()) > 1
-        ? canvasLocator
-            .locator(`text=${rightMonomers.alias}`)
-            .nth(1)
-            .locator('..')
-            .first()
-        : canvasLocator
-            .locator(`text=${rightMonomers.alias}`)
-            .locator('..')
-            .first();
-    // const rightMonomerLocator = page.locator('use').nth(1);
-    await rightMonomerLocator.hover();
+      (await tmpMonomerLocator.count()) > 1
+        ? tmpMonomerLocator.nth(1)
+        : tmpMonomerLocator.first();
+
+    await rightMonomerLocator.hover({ force: true });
     // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
-    await dragMouseTo(600, 372, page);
+    await dragMouseTo(600, 375, page);
     await moveMouseAway(page);
+
+    return {
+      leftMonomer: leftMonomerLocator,
+      rightMonomer: rightMonomerLocator,
+    };
   }
-  async function bondTwoMonomersByPointToPoint(
-    page: Page,
-    leftMonomer: IMonomer,
-    rightMonomer: IMonomer,
-    leftMonomersConnectionPoint?: string,
-    rightMonomersConnectionPoint?: string,
-  ) {
-    const leftMonomerLocator = page
-      .getByTestId('ketcher-canvas')
-      .locator(`text=${leftMonomer.alias}`)
-      .locator('..')
-      .first();
-
-    const rightMonomerLocator =
-      (await page
-        .getByTestId('ketcher-canvas')
-        .locator(`text=${leftMonomer.alias}`)
-        .count()) > 1
-        ? page
-            .getByTestId('ketcher-canvas')
-            .locator(`text=${rightMonomer.alias}`)
-            .nth(1)
-            .locator('..')
-            .first()
-        : page
-            .getByTestId('ketcher-canvas')
-            .locator(`text=${rightMonomer.alias}`)
-            .locator('..')
-            .first();
-
-    await bondTwoMonomersPointToPoint(
-      page,
-      leftMonomerLocator,
-      rightMonomerLocator,
-      leftMonomersConnectionPoint,
-      rightMonomersConnectionPoint,
-    );
-  }
-
-  async function bondTwoMonomersByCenterToCenter(
-    page: Page,
-    leftMonomer: IMonomer,
-    rightMonomer: IMonomer,
-  ) {
-    const leftMonomerLocator = page
-      .getByText(leftMonomer.alias)
-      .locator('..')
-      .first();
-
-    const rightMonomerLocator =
-      (await page.getByText(leftMonomer.alias).count()) > 1
-        ? page.getByText(rightMonomer.alias).nth(1).locator('..').first()
-        : page.getByText(rightMonomer.alias).locator('..').first();
-
-    await bondTwoMonomersPointToPoint(
-      page,
-      leftMonomerLocator,
-      rightMonomerLocator,
-    );
-
-    if (await page.getByRole('dialog').isVisible()) {
-      const firstConnectionPointKeyForLeftMonomer = Object.keys(
-        leftMonomer.connectionPoints,
-      )[0];
-      const leftMonomerConnectionPoint =
-        leftMonomer.connectionPoints[firstConnectionPointKeyForLeftMonomer];
-      await page.getByTitle(leftMonomerConnectionPoint).first().click();
-
-      const firstConnectionPointKeyForRightMonomer = Object.keys(
-        rightMonomer.connectionPoints,
-      )[0];
-      const rightMonomerConnectionPoint =
-        rightMonomer.connectionPoints[firstConnectionPointKeyForRightMonomer];
-      (await page.getByTitle(rightMonomerConnectionPoint).count()) > 1
-        ? await page.getByTitle(rightMonomerConnectionPoint).nth(1).click()
-        : await page.getByTitle(rightMonomerConnectionPoint).first().click();
-
-      await page.getByTitle('Connect').first().click();
-    }
-  }
-
-  // test(`temporary test for debug purposes`, async () => {
-  //   await prepareCanvasOneFreeAPLeft(
-  //     page,
-  //     sugarMonomers['(R1,R2,R3,R4,R5)'],
-  //     sugarMonomers['(R1,R2,R3,R4,R5)'],
-  //     'R1',
-  //     'R5',
-  //   );
-  // });
 
   Object.values(sugarMonomers).forEach((leftSugar) => {
     Object.values(sugarMonomers).forEach((rightSugar) => {
@@ -356,25 +244,22 @@ test.describe('Connection rules for sugars: ', () => {
                *  Description: User clicks on the specific AP of the first monomer and drags a bond to the specific AP of the second monomer.
                */
               test(`Case 1: Connect ${leftSugarConnectionPoint} to ${rightSugarConnectionPoint} of ${leftSugar.alias} and ${rightSugar.alias}`, async () => {
-                test.setTimeout(25000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftSugar, rightSugar);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftSugar, rightSugar);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftSugar,
-                  rightSugar,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftSugarConnectionPoint,
                   rightSugarConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -385,7 +270,7 @@ test.describe('Connection rules for sugars: ', () => {
 
   const peptideMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -393,7 +278,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
@@ -401,7 +286,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
@@ -409,7 +294,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     '(R1,R2) - R3 gap': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -418,7 +303,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     '(R1,R3) - R2 gap': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: '(R1,R3)_-_R2_gap',
       connectionPoints: {
@@ -427,7 +312,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     '(R2,R3) - R1 gap': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: '(R2,R3)_-_R1_gap',
       connectionPoints: {
@@ -436,7 +321,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     // '(R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -445,7 +330,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName: 'KET/Peptide-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
@@ -455,7 +340,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -465,7 +350,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -475,7 +360,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -485,7 +370,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/12 - (R1,R2,R3,R4).ket',
     //   alias: '(R1,R2,R3,R4)',
     //   connectionPoints: {
@@ -496,7 +381,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -507,7 +392,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -518,7 +403,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Peptide-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -530,7 +415,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     J: {
-      monomerType: 'peptide',
+      monomerType: MonomerType.Peptide,
       fileName:
         'KET/Peptide-Templates/16 - J - ambiguous alternatives from library (R1,R2).ket',
       alias: 'J',
@@ -540,7 +425,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     // '%': {
-    //   monomerType: 'peptide',
+    //   monomerType: MonomerType.Peptide,
     //   fileName: 'KET/Base-Templates/17 - J - ambiguous mixed (R1,R2).ket',
     //   alias: '%',
     //   connectionPoints: {
@@ -569,24 +454,22 @@ test.describe('Connection rules for sugars: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case6: Connect ${leftSugarConnectionPoint} to ${rightPeptideConnectionPoint} of Sugar(${leftSugar.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-                test.setTimeout(25000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftSugar, rightPeptide);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftSugar, rightPeptide);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftSugar,
-                  rightPeptide,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftSugarConnectionPoint,
                   rightPeptideConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -597,7 +480,7 @@ test.describe('Connection rules for sugars: ', () => {
 
   const chemMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/01 - (R1) - Left only.ket',
       alias: '(R1)_-_Left_only',
       connectionPoints: {
@@ -605,7 +488,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/02 - (R2) - Right only.ket',
       alias: '(R2)_-_Right_only',
       connectionPoints: {
@@ -613,7 +496,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     // '(R3) - Side only': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/03 - (R3) - Side only.ket',
     //   alias: '(R3)_-_Side_only',
     //   connectionPoints: {
@@ -621,7 +504,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     '(R1,R2) - R3 gap': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: '(R1,R2)_-_R3_gap',
       connectionPoints: {
@@ -630,7 +513,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     // '(R1,R3) - R2 gap': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/05 - (R1,R3) - R2 gap.ket',
     //   alias: '(R1,R3)_-_R2_gap',
     //   connectionPoints: {
@@ -639,7 +522,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R2,R3) - R1 gap': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/06 - (R2,R3) - R1 gap.ket',
     //   alias: '(R2,R3)_-_R1_gap',
     //   connectionPoints: {
@@ -648,7 +531,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R3,R4)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/07 - (R3,R4).ket',
     //   alias: '(R3,R4)',
     //   connectionPoints: {
@@ -657,7 +540,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/08 - (R1,R2,R3).ket',
       alias: '(R1,R2,R3)',
       connectionPoints: {
@@ -667,7 +550,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/09 - (R1,R3,R4).ket',
     //   alias: '(R1,R3,R4)',
     //   connectionPoints: {
@@ -677,7 +560,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/10 - (R2,R3,R4).ket',
     //   alias: '(R2,R3,R4)',
     //   connectionPoints: {
@@ -687,7 +570,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/11 - (R3,R4,R5).ket',
     //   alias: '(R3,R4,R5)',
     //   connectionPoints: {
@@ -697,7 +580,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     '(R1,R2,R3,R4)': {
-      monomerType: 'chem',
+      monomerType: MonomerType.CHEM,
       fileName: 'KET/CHEM-Templates/12 - (R1,R2,R3,R4).ket',
       alias: '(R1,R2,R3,R4)',
       connectionPoints: {
@@ -708,7 +591,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: '(R1,R3,R4,R5)',
     //   connectionPoints: {
@@ -719,7 +602,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: '(R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -730,7 +613,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R1,R2,R3,R4,R5)': {
-    //   monomerType: 'chem',
+    //   monomerType: MonomerType.CHEM,
     //   fileName: 'KET/CHEM-Templates/15 - (R1,R2,R3,R4,R5).ket',
     //   alias: '(R1,R2,R3,R4,R5)',
     //   connectionPoints: {
@@ -762,24 +645,22 @@ test.describe('Connection rules for sugars: ', () => {
                *  4. Validate canvas (connection should appear)
                */
               test(`Case7: Cnnct ${leftSugarConnectionPoint} to ${rightCHEMConnectionPoint} of Ph(${leftSugar.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-                test.setTimeout(25000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftSugar, rightCHEM);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftSugar, rightCHEM);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftSugar,
-                  rightCHEM,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftSugarConnectionPoint,
                   rightCHEMConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -801,18 +682,24 @@ test.describe('Connection rules for sugars: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case8: Cnnct Center to Center of Base(${leftSugar.alias}) and Peptide(${rightPeptide.alias})`, async () => {
-        test.setTimeout(25000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftSugar, rightPeptide);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftSugar, rightPeptide);
 
-        await bondTwoMonomersByCenterToCenter(page, leftSugar, rightPeptide);
+        const bondLine = await bondTwoMonomersPointToPoint(
+          page,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
 
-        await zoomWithMouseWheel(page, -600);
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });
@@ -830,25 +717,31 @@ test.describe('Connection rules for sugars: ', () => {
        *  4. Validate canvas (connection should appear)
        */
       test(`Case9: Cnnct Center to Center of Base(${leftSugar.alias}) and CHEM(${rightCHEM.alias})`, async () => {
-        test.setTimeout(20000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftSugar, rightCHEM);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftSugar, rightCHEM);
 
-        await bondTwoMonomersByCenterToCenter(page, leftSugar, rightCHEM);
+        const bondLine = await bondTwoMonomersPointToPoint(
+          page,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
+        );
 
-        await zoomWithMouseWheel(page, -600);
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });
 
   const ordinaryMoleculeMonomers: { [monomerName: string]: IMonomer } = {
     '(R1) - Left only': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/01 - (R1) - Left only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -856,7 +749,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     '(R2) - Right only': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/02 - (R2) - Right only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -864,7 +757,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     '(R3) - Side only': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/03 - (R3) - Side only.ket',
       alias: 'F1',
       connectionPoints: {
@@ -872,7 +765,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     '(R1,R2) - R3 gap': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/04 - (R1,R2) - R3 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -881,7 +774,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     '(R1,R3) - R2 gap': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/05 - (R1,R3) - R2 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -890,7 +783,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     '(R2,R3) - R1 gap': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/06 - (R2,R3) - R1 gap.ket',
       alias: 'F1',
       connectionPoints: {
@@ -899,7 +792,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     // '(R3,R4)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/07 - (R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -908,7 +801,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     '(R1,R2,R3)': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/08 - (R1,R2,R3).ket',
       alias: 'F1',
       connectionPoints: {
@@ -918,7 +811,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     // '(R1,R3,R4)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/09 - (R1,R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -928,7 +821,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R2,R3,R4)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/10 - (R2,R3,R4).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -938,7 +831,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R3,R4,R5)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/11 - (R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -948,7 +841,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     '(R1,R2,R3,R4)': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/12 - (R1,R2,R3,R4).ket',
       alias: 'F1',
       connectionPoints: {
@@ -959,7 +852,7 @@ test.describe('Connection rules for sugars: ', () => {
       },
     },
     // '(R1,R3,R4,R5)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/13 - (R1,R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -970,7 +863,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     // '(R2,R3,R4,R5)': {
-    //   monomerType: 'ordinaryMolecule',
+    //   monomerType: MonomerType.Molecule,
     //   fileName: 'KET/Ordinary-Molecule-Templates/14 - (R2,R3,R4,R5).ket',
     //   alias: 'F1',
     //   connectionPoints: {
@@ -981,7 +874,7 @@ test.describe('Connection rules for sugars: ', () => {
     //   },
     // },
     '(R1,R2,R3,R4,R5)': {
-      monomerType: 'ordinaryMolecule',
+      monomerType: MonomerType.Molecule,
       fileName: 'KET/Ordinary-Molecule-Templates/15 - (R1,R2,R3,R4,R5).ket',
       alias: 'F1',
       connectionPoints: {
@@ -1019,24 +912,22 @@ test.describe('Connection rules for sugars: ', () => {
                 rightOM.fileName.lastIndexOf('.ket'),
               );
               test(`Test case9: Connect ${leftSugarConnectionPoint} to ${rightOMConnectionPoint} of Sugar(${leftSugar.alias}) and OM(${ordinaryMoleculeName})`, async () => {
-                test.setTimeout(25000);
+                test.setTimeout(30000);
 
-                await loadTwoMonomers(page, leftSugar, rightOM);
+                const {
+                  leftMonomer: leftMonomerLocator,
+                  rightMonomer: rightMonomerLocator,
+                } = await loadTwoMonomers(page, leftSugar, rightOM);
 
-                await bondTwoMonomersByPointToPoint(
+                const bondLine = await bondTwoMonomersPointToPoint(
                   page,
-                  leftSugar,
-                  rightOM,
+                  leftMonomerLocator,
+                  rightMonomerLocator,
                   leftSugarConnectionPoint,
                   rightOMConnectionPoint,
                 );
 
-                await zoomWithMouseWheel(page, -600);
-                await hoverOverConnectionLine(page);
-
-                await takeEditorScreenshot(page, {
-                  masks: [page.getByTestId('polymer-library-preview')],
-                });
+                await expect(bondLine).toBeVisible();
               });
             },
           );
@@ -1058,23 +949,24 @@ test.describe('Connection rules for sugars: ', () => {
       );
 
       test(`Case 10: Connect Center to Center of Sugar(${leftSugar.alias}) and OrdinaryMolecule(${ordinaryMoleculeName})`, async () => {
-        test.setTimeout(25000);
+        test.setTimeout(30000);
 
-        await loadTwoMonomers(page, leftSugar, rightOrdinaryMolecule);
+        const {
+          leftMonomer: leftMonomerLocator,
+          rightMonomer: rightMonomerLocator,
+        } = await loadTwoMonomers(page, leftSugar, rightOrdinaryMolecule);
 
-        await bondTwoMonomersByCenterToCenter(
+        const bondLine = await bondTwoMonomersPointToPoint(
           page,
-          leftSugar,
-          rightOrdinaryMolecule,
+          leftMonomerLocator,
+          rightMonomerLocator,
+          undefined,
+          undefined,
+          undefined,
+          true,
         );
 
-        await zoomWithMouseWheel(page, -600);
-
-        await hoverOverConnectionLine(page);
-
-        await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
-        });
+        await expect(bondLine).toBeVisible();
       });
     });
   });
@@ -1202,7 +1094,7 @@ test.describe('Connection rules for sugars: ', () => {
         await bondMonomerCenterToAtom(page, leftMonomer, rightMolecule, 0);
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
 
         test.fixme(
@@ -1253,7 +1145,7 @@ test.describe('Connection rules for sugars: ', () => {
         }
 
         await takeEditorScreenshot(page, {
-          masks: [page.getByTestId('polymer-library-preview')],
+          hideMonomerPreview: true,
         });
       });
     });

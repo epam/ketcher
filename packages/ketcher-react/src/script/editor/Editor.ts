@@ -31,6 +31,7 @@ import {
   Struct,
   Vec2,
   ketcherProvider,
+  KetcherLogger,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -132,8 +133,8 @@ class Editor implements KetcherEditor {
   render: Render;
   _selection: Selection | null;
   _tool: Tool | null;
-  historyStack: any;
-  historyPtr: any;
+  historyStack: Action[];
+  historyPtr: number;
   errorHandler: ((message: string) => void) | null;
   highlights: Highlighter;
   hoverIcon: HoverIcon;
@@ -289,10 +290,13 @@ class Editor implements KetcherEditor {
     return this.render.ctab.molecule;
   }
 
+  /** Apply {@link value}: {@link Struct} if provided to {@link render} and  */
   struct(value?: Struct, needToCenterStruct = true): Struct {
     if (arguments.length === 0) {
       return this.render.ctab.molecule;
     }
+
+    KetcherLogger.log('Editor.struct(), start', value, needToCenterStruct);
 
     this.selection(null);
     const struct = value || new Struct();
@@ -303,12 +307,13 @@ class Editor implements KetcherEditor {
     );
 
     this.hoverIcon.create();
+    KetcherLogger.log('Editor.struct(), end');
     return molecule;
   }
 
   // this is used by API addFragment method
   structToAddFragment(value: Struct): Struct {
-    const superStruct = value.mergeInto(this.render.ctab.molecule);
+    const superStruct = value.mergeInto(this.render.ctab.molecule.clone());
 
     return this.renderAndRecoordinateStruct(superStruct);
   }
@@ -322,6 +327,7 @@ class Editor implements KetcherEditor {
     return result;
   }
 
+  /** Apply options from {@link value} */
   options(value?: any) {
     if (arguments.length === 0) {
       return this.render.options;
@@ -337,7 +343,8 @@ class Editor implements KetcherEditor {
       Object.assign({ microModeScale: SCALE }, value),
     );
     this.updateToolAfterOptionsChange(wasViewOnlyEnabled);
-    this.struct(struct);
+    this.render.setMolecule(struct);
+    this.struct(struct.clone());
     this.render.setZoom(zoom);
     this.render.update();
     return this.render.options;
@@ -551,7 +558,7 @@ class Editor implements KetcherEditor {
     }
   }
 
-  historySize() {
+  historySize(): { readonly undo: number; readonly redo: number } {
     return {
       undo: this.historyPtr,
       redo: this.historyStack.length - this.historyPtr,
@@ -559,6 +566,12 @@ class Editor implements KetcherEditor {
   }
 
   undo() {
+    KetcherLogger.log(
+      'Editor.undo(), start, ',
+      this.historyPtr,
+      this.historyStack,
+    );
+
     const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
     if (this.historyPtr === 0) {
       throw new Error('Undo stack is empty');
@@ -584,9 +597,17 @@ class Editor implements KetcherEditor {
     }
 
     this.render.update();
+
+    KetcherLogger.log('Editor.undo(), end');
   }
 
   redo() {
+    KetcherLogger.log(
+      'Editor.redo(), start, ',
+      this.historyPtr,
+      this.historyStack,
+    );
+
     const ketcherChangeEvent = ketcherProvider.getKetcher().changeEvent;
     if (this.historyPtr === this.historyStack.length) {
       throw new Error('Redo stack is empty');
@@ -598,9 +619,14 @@ class Editor implements KetcherEditor {
 
     this.selection(null);
 
-    const action = this.historyStack[this.historyPtr].perform(this.render.ctab);
-    this.historyStack[this.historyPtr] = action;
-    this.historyPtr++;
+    const stack = this.historyStack[this.historyPtr];
+    let action!: Action;
+    try {
+      action = stack.perform(this.render.ctab);
+    } finally {
+      this.historyStack[this.historyPtr] = action;
+      this.historyPtr++;
+    }
 
     if (this._tool instanceof toolsMap.paste) {
       this.event.change.dispatch(); // TODO: stoppable here. This has to be removed, however some implicit subscription to change event exists somewhere in the app and removing it leads to unexpected behavior, investigate further
@@ -611,6 +637,8 @@ class Editor implements KetcherEditor {
     }
 
     this.render.update();
+
+    KetcherLogger.log('Editor.redo(), end');
   }
 
   subscribe(eventName: any, handler: any) {

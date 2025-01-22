@@ -20,6 +20,13 @@ import { Action } from './action';
 import { Vec2 } from 'domain/entities';
 import { atomGetAttr } from './utils';
 import { fromBondAddition } from './bond';
+import { ReAtom, ReStruct } from 'application/render';
+
+export const removeInfoLabelFromAtoms = (restruct: ReStruct) => {
+  restruct.atoms.forEach((atom: ReAtom) => {
+    atom.showInfoLabel = false;
+  });
+};
 
 export function fromChain(restruct, p0, v, nSect, atomId) {
   // eslint-disable-line max-params
@@ -37,6 +44,8 @@ export function fromChain(restruct, p0, v, nSect, atomId) {
     atoms: [],
     bonds: [],
   };
+
+  let addedAtoms = atomId ? -1 : 0;
 
   let id0 =
     atomId !== null
@@ -66,6 +75,12 @@ export function fromChain(restruct, p0, v, nSect, atomId) {
     chainItems.bonds.push(ret[3]);
     chainItems.atoms.push(id0);
   }
+
+  addedAtoms += chainItems.atoms.length;
+
+  const lastAtomInChain = restruct.atoms.get(id0);
+  lastAtomInChain.showInfoLabel = true;
+  lastAtomInChain.infoLabel = addedAtoms;
 
   return [action, chainItems];
 }

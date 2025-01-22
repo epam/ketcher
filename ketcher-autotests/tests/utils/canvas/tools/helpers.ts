@@ -540,7 +540,7 @@ export async function selectZoomOutTool(page: Page, count = 1) {
   await clickInTheMiddleOfTheScreen(page);
 }
 
-export async function removeExplicitHydrogens(page: Page) {
+export async function selectAddRemoveExplicitHydrogens(page: Page) {
   await waitForSpinnerFinishedWork(page, async () => {
     await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
   });

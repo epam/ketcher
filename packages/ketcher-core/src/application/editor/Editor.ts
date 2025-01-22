@@ -324,6 +324,7 @@ export class CoreEditor {
         eventData instanceof BaseMonomerRenderer &&
         eventData.monomer.selected
       ) {
+        this.events.rightClickSelectedMonomers.dispatch(event);
         this.events.rightClickSelectedMonomers.dispatch(
           event,
           this.drawingEntitiesManager.selectedEntities

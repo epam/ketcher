@@ -20,7 +20,7 @@ import {
   pasteFromClipboardByKeyboard,
   pressButton,
   readFileContents,
-  removeExplicitHydrogens,
+  selectAddRemoveExplicitHydrogens,
   resetCurrentTool,
   RingButton,
   screenshotBetweenUndoRedo,
@@ -31,6 +31,7 @@ import {
   selectDearomatizeTool,
   selectDropdownTool,
   selectEraseTool,
+  selectLayoutTool,
   selectLeftPanelButton,
   selectPartOfMolecules,
   selectRectangleSelectionTool,
@@ -42,6 +43,9 @@ import {
   TopPanelButton,
   waitForPageInit,
   waitForRender,
+  selectZoomOutTool,
+  selectZoomReset,
+  selectZoomInTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -560,26 +564,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-input').click();
-    for (let i = 0; i < 8; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-out').click();
-      });
-    }
+    await selectZoomOutTool(page, 8);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-input').click();
-    for (let i = 0; i < 19; i++) {
-      await waitForRender(page, async () => {
-        await page.getByTestId('zoom-in').click();
-      });
-    }
+    await selectZoomInTool(page, 19);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('zoom-input').click();
-    await waitForRender(page, async () => {
-      await page.getByTestId('zoom-default').click();
-    });
+    await selectZoomReset(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -3664,7 +3655,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
        */
       await openFileAndAddToCanvasAsNewProject(file, page);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Layout, page);
+      await selectLayoutTool(page);
       await takeEditorScreenshot(page);
       await verifyFileExport(page, expectedFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(expectedFile, page);
@@ -3699,7 +3690,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(700, 340, page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -3877,9 +3868,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await removeExplicitHydrogens(page);
+    await selectAddRemoveExplicitHydrogens(page);
     await takeEditorScreenshot(page);
-    await removeExplicitHydrogens(page);
+    await selectAddRemoveExplicitHydrogens(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

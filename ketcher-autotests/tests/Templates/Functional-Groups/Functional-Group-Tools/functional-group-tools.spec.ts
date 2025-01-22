@@ -29,12 +29,12 @@ import {
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   copyToClipboardByKeyboard,
-  waitForSpinnerFinishedWork,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectAromatizeTool,
   selectDearomatizeTool,
   selectCleanTool,
+  selectLayoutTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -813,9 +813,7 @@ test.describe('Templates - Functional Group Tools3', () => {
       await page.getByText('Expand Abbreviation').click();
     });
 
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Layout, page);
-    });
+    await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
     await selectCleanTool(page);

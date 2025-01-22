@@ -8,13 +8,12 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   clickOnCanvas,
+  dragMouseTo,
+  moveOnAtom,
   pressButton,
 } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
 import {
-  Bases,
-  Phosphates,
-  Sugars,
   selectMonomer,
   AtomButton,
   RingButton,
@@ -41,6 +40,7 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+import { Sugars, Bases, Phosphates } from '@constants/monomers';
 
 export async function drawBenzeneRing(page: Page) {
   await selectRing(RingButton.Benzene, page);
@@ -408,12 +408,6 @@ export async function addRnaPresetOnCanvas(
   return { sugar, phosphate };
 }
 
-export async function addChemOnCanvas(page: Page, chemId: string) {
-  await page.getByTestId('CHEM-TAB').click();
-  await page.getByTestId(chemId).click();
-  await clickInTheMiddleOfTheScreen(page);
-}
-
 export async function copyToClipboardByKeyboard(
   page: Page,
   options?:
@@ -524,4 +518,23 @@ export async function selectCleanTool(page: Page) {
     page,
     async () => await selectTopPanelButton(TopPanelButton.Clean, page),
   );
+}
+
+export async function selectLayoutTool(page: Page) {
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+  );
+}
+
+export async function copyStructureByCtrlMove(
+  page: Page,
+  atom: string,
+  atomIndex: number,
+  targetCoordinates: { x: number; y: number } = { x: 300, y: 300 },
+) {
+  await moveOnAtom(page, atom, atomIndex);
+  await page.keyboard.down('Control');
+  await dragMouseTo(targetCoordinates.x, targetCoordinates.y, page);
+  await page.keyboard.up('Control');
 }

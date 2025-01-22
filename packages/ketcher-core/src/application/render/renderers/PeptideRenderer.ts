@@ -33,11 +33,15 @@ export class PeptideRenderer extends BaseMonomerRenderer {
     rootElement: Selection<SVGGElement, void, HTMLElement, never>,
     theme,
   ) {
+    const isPeptide = this.monomer.monomerItem.props?.MonomerType === 'PEPTIDE';
+    const color = isPeptide
+      ? this.getPeptideColor(theme)
+      : this.getMonomerColor(theme);
     return rootElement
       .append('use')
       .data([this])
       .attr('href', PEPTIDE_SYMBOL_ELEMENT_ID)
-      .attr('fill', this.getPeptideColor(theme));
+      .attr('fill', color);
   }
 
   public get textColor() {

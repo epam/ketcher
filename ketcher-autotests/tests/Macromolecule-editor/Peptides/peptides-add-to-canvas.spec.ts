@@ -3,15 +3,16 @@ import {
   clickInTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   selectMacroBond,
+  selectMonomer,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { ALANINE } from '@utils/selectors/macromoleculeEditor';
 import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { Peptides } from '@constants/monomers';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
@@ -24,7 +25,7 @@ test.describe('Peptide', () => {
   });
 
   test('Select peptide and drag it to canvas', async ({ page }) => {
-    await page.click(ALANINE);
+    await selectMonomer(page, Peptides.A);
     await clickInTheMiddleOfTheScreen(page);
     await hideMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -35,7 +36,7 @@ test.describe('Peptide', () => {
     Test case: #2869 - Preview of monomer structures on canvas
     Description: Add monomer preview on canvas
     */
-    await page.click(ALANINE);
+    await selectMonomer(page, Peptides.A);
     await clickInTheMiddleOfTheScreen(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await moveMouseToTheMiddleOfTheScreen(page);

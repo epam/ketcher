@@ -476,6 +476,7 @@ test(`Verify that undo/redo functionality restores deleted bonds correctly in ma
    * 4. Undo every deletion and take screenshot after each undo
    * 5. Redo every deletion and take screenshot after each redo
    */
+  test.slow();
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
     page,

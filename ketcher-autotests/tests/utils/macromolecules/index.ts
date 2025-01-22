@@ -90,7 +90,7 @@ export const Tabs = {
 
 export async function chooseTab(
   page: Page,
-  tab: typeof Tabs[keyof typeof Tabs],
+  tab: (typeof Tabs)[keyof typeof Tabs],
 ) {
   await page.getByTestId(tab.testId).click();
 }

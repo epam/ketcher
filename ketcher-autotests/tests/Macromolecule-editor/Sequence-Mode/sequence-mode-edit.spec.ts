@@ -404,7 +404,7 @@ test.describe('Sequence edit mode', () => {
     */
     await page.getByTestId('RNA-TAB').click();
     await toggleNucleotidesAccordion(page);
-    await page.getByTestId('Super T___5-hydroxybutynl-2’-deoxyuridine').click();
+    await page.getByTestId('Super-T___5-hydroxybutynl-2’-deoxyuridine').click();
     await takePageScreenshot(page);
   });
 

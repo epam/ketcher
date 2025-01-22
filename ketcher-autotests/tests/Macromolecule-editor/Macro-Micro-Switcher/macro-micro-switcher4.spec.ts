@@ -29,8 +29,8 @@ import {
   dragMouseTo,
 } from '@utils';
 import {
-  BondStereo,
   BondType,
+  BondStereo,
   clickOnMicroBondByIndex,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
@@ -441,8 +441,8 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
   await selectEraseTool(page);
 
   const bondsToDelete = [
-    { bondType: BondType.Single, bondStereo: BondStereo.None },
-    { bondType: BondType.Double },
+    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
+    { bondType: BondType.Double, bondStereo: BondStereo.None },
     { bondType: BondType.Triple },
     { bondType: BondType.Any },
     { bondType: BondType.Aromatic },
@@ -459,7 +459,7 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
 
   for (const bond of bondsToDelete) {
     const bondLocator = await getBondLocator(page, bond);
-    await bondLocator.click();
+    await bondLocator.first().click({ force: true });
     await takeEditorScreenshot(page);
   }
 });
@@ -483,8 +483,8 @@ test(`Verify that undo/redo functionality restores deleted bonds correctly in ma
   await selectEraseTool(page);
 
   const bondsToDelete = [
-    { bondType: BondType.Single, bondStereo: BondStereo.None },
-    { bondType: BondType.Double },
+    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
+    { bondType: BondType.Double, bondStereo: BondStereo.None },
     { bondType: BondType.Triple },
     { bondType: BondType.Any },
     { bondType: BondType.Aromatic },
@@ -501,7 +501,7 @@ test(`Verify that undo/redo functionality restores deleted bonds correctly in ma
 
   for (const bond of bondsToDelete) {
     const bondLocator = await getBondLocator(page, bond);
-    await bondLocator.click();
+    await bondLocator.first().click({ force: true });
   }
 
   for (let i = bondsToDelete.length - 1; i >= 0; i--) {

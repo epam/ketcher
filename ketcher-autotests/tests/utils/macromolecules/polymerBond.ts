@@ -10,7 +10,7 @@ import {
 } from '..';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
-export declare enum BondType {
+export enum BondType {
   None = 0,
   Single = 1,
   Double = 2,
@@ -23,7 +23,7 @@ export declare enum BondType {
   Dative = 9,
   Hydrogen = 10,
 }
-export declare enum BondStereo {
+export enum BondStereo {
   None = 0,
   Up = 1,
   Either = 4,
@@ -572,7 +572,7 @@ export async function getBondLocator(
   {
     bondType,
     bondStereo,
-    bondid,
+    bondId,
     fromMonomerId,
     toMonomerId,
     toAtomId,
@@ -581,7 +581,7 @@ export async function getBondLocator(
   }: {
     bondType?: MacroBondType | number;
     bondStereo?: BondStereo;
-    bondid?: string | number;
+    bondId?: string | number;
     fromMonomerId?: string | number;
     toMonomerId?: string | number;
     toAtomId?: string | number;
@@ -593,16 +593,19 @@ export async function getBondLocator(
 
   attributes['data-testid'] = 'bond';
 
-  if (bondType) attributes['data-bondtype'] = String(bondType);
-  if (bondStereo) attributes['data-bondstereo'] = String(bondStereo);
-  if (bondid) attributes['data-bondid'] = String(bondid);
-  if (fromMonomerId) attributes['data-frommonomerid'] = String(fromMonomerId);
-  if (toMonomerId) attributes['data-tomonomerid'] = String(toMonomerId);
-  if (toAtomId) attributes['data-toatomid'] = String(toAtomId);
-  if (fromConnectionPoint) {
+  if (bondType !== undefined) attributes['data-bondtype'] = String(bondType);
+  if (bondStereo !== undefined)
+    attributes['data-bondstereo'] = String(bondStereo);
+  if (bondId !== undefined) attributes['data-bondid'] = String(bondId);
+  if (fromMonomerId !== undefined)
+    attributes['data-frommonomerid'] = String(fromMonomerId);
+  if (toMonomerId !== undefined)
+    attributes['data-tomonomerid'] = String(toMonomerId);
+  if (toAtomId !== undefined) attributes['data-toatomid'] = String(toAtomId);
+  if (fromConnectionPoint !== undefined) {
     attributes['data-fromconnectionpoint'] = fromConnectionPoint;
   }
-  if (toConnectionPoint) {
+  if (toConnectionPoint !== undefined) {
     attributes['data-toconnectionpoint'] = toConnectionPoint;
   }
 

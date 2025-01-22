@@ -235,6 +235,12 @@ export class BondRenderer extends BaseRenderer {
     return this.canvas
       .append('g')
       .data([this])
+      .attr('data-testid', 'bond')
+      .attr('data-bondtype', this.bond.type)
+      .attr('data-bondstereo', this.bond.stereo)
+      .attr('data-bondid', this.bond.id)
+      .attr('data-fromatomid', this.bond.firstAtom.id)
+      .attr('data-toatomid', this.bond.secondAtom.id)
       .attr(
         'transform',
         `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,

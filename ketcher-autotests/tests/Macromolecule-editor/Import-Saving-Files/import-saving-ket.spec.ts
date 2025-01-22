@@ -1,4 +1,5 @@
 /* eslint-disable no-magic-numbers */
+import { Peptides, Sugars } from '@constants/monomers';
 import { test, expect, Page } from '@playwright/test';
 import {
   TopPanelButton,
@@ -17,10 +18,10 @@ import {
   clickUndo,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProjectMacro,
-  Sugars,
   selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   selectZoomOutTool,
+  selectMonomer,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -31,7 +32,6 @@ import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
-import { Peptides } from '@utils/selectors/macromoleculeEditor';
 import {
   markResetToDefaultState,
   processResetToDefaultState,
@@ -132,8 +132,7 @@ test.describe('Import-Saving .ket Files', () => {
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
     await pageReload(page);
-
-    await page.getByTestId(Peptides.BetaAlanine).click();
+    await selectMonomer(page, Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/monomer-expected.ket', FileType.KET);
     await selectClearCanvasTool(page);
@@ -175,9 +174,7 @@ test.describe('Import-Saving .ket Files', () => {
     markResetToDefaultState('tabSelection');
 
     test.slow();
-    await page.getByTestId('RNA-TAB').click();
-    await page.getByTestId('summary-Sugars').click();
-    await page.getByTestId(Sugars.TwentyFiveR).click();
+    await selectMonomer(page, Sugars._25R);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/25R-expected.ket', FileType.KET);
   });
@@ -189,8 +186,7 @@ test.describe('Import-Saving .ket Files', () => {
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
     await pageReload(page);
-
-    await page.getByTestId(Peptides.D2Nal).click();
+    await selectMonomer(page, Peptides.D_2Nal);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/D-2Nal-expected.ket', FileType.KET);
   });

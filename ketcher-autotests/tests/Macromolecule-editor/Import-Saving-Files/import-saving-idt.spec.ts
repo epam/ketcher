@@ -1,39 +1,47 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect, Page, chromium } from '@playwright/test';
 import {
-  TopPanelButton,
-  openFileAndAddToCanvasMacro,
-  selectTopPanelButton,
-  takeEditorScreenshot,
-  waitForPageInit,
-  saveToFile,
-  openFile,
-  receiveFileComparisonData,
+  Chem,
+  Nucleotides,
+  Peptides,
+  Phosphates,
+  Presets,
+} from '@constants/monomers';
+import { chromium, expect, Page, test } from '@playwright/test';
+import {
   chooseFileFormat,
-  readFileContents,
-  moveMouseAway,
+  clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
+  copyToClipboardByKeyboard,
   getIdt,
+  MacromoleculesTopPanelButton,
+  moveMouseAway,
+  openFile,
+  openFileAndAddToCanvasAsNewProject,
+  openFileAndAddToCanvasAsNewProjectMacro,
+  openFileAndAddToCanvasMacro,
+  openStructurePasteFromClipboard,
+  pasteFromClipboardByKeyboard,
+  pressButton,
+  readFileContents,
+  receiveFileComparisonData,
+  resetZoomLevelToDefault,
+  saveToFile,
+  selectAllStructuresOnCanvas,
+  selectClearCanvasTool,
+  selectEraseTool,
+  selectMacroBond,
+  selectMacromoleculesPanelButton,
+  selectMonomer,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
-  waitForLoad,
-  pressButton,
-  selectMacromoleculesPanelButton,
-  MacromoleculesTopPanelButton,
-  selectClearCanvasTool,
-  waitForRender,
+  selectTopPanelButton,
+  takeEditorScreenshot,
   takePolymerEditorScreenshot,
-  openStructurePasteFromClipboard,
-  clickInTheMiddleOfTheScreen,
-  selectEraseTool,
-  openFileAndAddToCanvasAsNewProject,
-  resetZoomLevelToDefault,
+  TopPanelButton,
+  waitForLoad,
+  waitForPageInit,
+  waitForRender,
   waitForSpinnerFinishedWork,
-  openFileAndAddToCanvasAsNewProjectMacro,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
-  selectMacroBond,
-  clickOnCanvas,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
@@ -42,6 +50,10 @@ import {
   pageReload,
 } from '@utils/common/helpers';
 import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
+import {
   chooseTab,
   enterSequence,
   Tabs,
@@ -49,22 +61,18 @@ import {
   turnOnMicromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import {
   toggleNucleotidesAccordion,
   togglePhosphatesAccordion,
 } from '@utils/macromolecules/rnaBuilder';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 import {
   markResetToDefaultState,
   processResetToDefaultState,
 } from '@utils/testAnnotations/resetToDefaultState';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
-import {
-  FileType,
-  verifyFileExport,
-} from '@utils/files/receiveFileComparisonData';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
 
 let page: Page;
 
@@ -196,7 +204,7 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/#4495
     Description: In case of peptide monomers are on canvas, error "Peptide monomers are not supported in IDT" appear.
     */
-    await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
+    await selectMonomer(page, Peptides._1Nal);
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
@@ -265,19 +273,19 @@ test.describe('Import-Saving .idt Files', () => {
     await chooseTab(page, Tabs.Rna);
     await togglePhosphatesAccordion(page);
     await waitForRender(page, async () => {
-      await page.getByTestId('P___Phosphate').hover();
+      await page.getByTestId(Phosphates.P).hover();
     });
     await takePolymerEditorScreenshot(page);
   });
 
   const rnaNucleotides = [
-    `2-damdA___2,6-Diaminopurine`,
-    `5hMedC___Hydroxymethyl dC`,
-    `Super G___8-aza-7-deazaguanosine`,
-    `AmMC6T___Amino Modifier C6 dT`,
-    `Super T___5-hydroxybutynl-2’-deoxyuridine`,
-    `5Br-dU___5-Bromo-deoxyuridine`,
-    `5NitInd___5-Nitroindole`,
+    Nucleotides._2_damdA,
+    Nucleotides._5hMedC,
+    Nucleotides.Super_G,
+    Nucleotides.AmMC6T,
+    Nucleotides.Super_T,
+    Nucleotides._5Br_dU,
+    Nucleotides._5NitInd,
   ];
 
   for (const monomer of rnaNucleotides) {
@@ -298,11 +306,11 @@ test.describe('Import-Saving .idt Files', () => {
   }
 
   const rnaMonomers = [
-    'MOE(G)P_G_MOE_P',
-    'MOE(A)P_A_MOE_P',
-    'MOE(5meC)P_5meC_MOE_P',
-    'MOE(T)P_T_MOE_P',
-    'dR(U)P_U_dR_P',
+    Presets.MOE_A_P,
+    Presets.MOE_G_P,
+    Presets.MOE_5meC_P,
+    Presets.MOE_T_P,
+    Presets.dR_U_P,
   ];
 
   for (const monomer of rnaMonomers) {
@@ -804,10 +812,10 @@ test.describe('Import-Saving .idt Files', () => {
     await goToPeptidesTab(page);
     const x = 650;
     const y = 400;
-    const firstMonomer = await page.getByText('iMe-dC').locator('..');
-    const secondMonomer = await page.getByText('1Nal').locator('..').first();
+    const firstMonomer = page.getByText('iMe-dC').locator('..');
+    const secondMonomer = page.getByText('1Nal').locator('..').first();
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
-    await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
+    await selectMonomer(page, Peptides._1Nal);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -830,14 +838,10 @@ test.describe('Import-Saving .idt Files', () => {
 
     const x = 650;
     const y = 400;
-    const firstMonomer = await page.getByText('iMe-dC').locator('..');
-    const secondMonomer = await page
-      .getByText('Test-6-Ch')
-      .locator('..')
-      .first();
+    const firstMonomer = page.getByText('iMe-dC').locator('..');
+    const secondMonomer = page.getByText('Test-6-Ch').locator('..').first();
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
-    await chooseTab(page, Tabs.Chem);
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await selectMonomer(page, Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -854,12 +858,12 @@ test.describe('Import-Saving .idt Files', () => {
   test('Delete bond between unresolved and known monomers connected through R2/R1 and Undo', async () => {
     const x = 650;
     const y = 400;
-    const firstMonomer = await page.getByText('iMe-dC').locator('..');
-    const secondMonomer = await page.getByText('1Nal').locator('..').first();
+    const firstMonomer = page.getByText('iMe-dC').locator('..');
+    const secondMonomer = page.getByText('1Nal').locator('..').first();
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
-    await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
+    await selectMonomer(page, Peptides._1Nal);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -891,15 +895,11 @@ test.describe('Import-Saving .idt Files', () => {
 
     const x = 650;
     const y = 400;
-    const firstMonomer = await page.getByText('iMe-dC').locator('..');
-    const secondMonomer = await page
-      .getByText('Test-6-Ch')
-      .locator('..')
-      .first();
+    const firstMonomer = page.getByText('iMe-dC').locator('..');
+    const secondMonomer = page.getByText('Test-6-Ch').locator('..').first();
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
-    await chooseTab(page, Tabs.Chem);
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await selectMonomer(page, Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
       page,
@@ -941,7 +941,7 @@ test.describe('Import-Saving .idt Files', () => {
     const x = 650;
     const y = 400;
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
-    await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
+    await selectMonomer(page, Peptides._1Nal);
     await clickOnCanvas(page, x, y);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('1Nal').locator('..').first().click();
@@ -961,7 +961,7 @@ test.describe('Import-Saving .idt Files', () => {
     const x = 650;
     const y = 400;
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
-    await page.getByTestId('1Nal___3-(1-naphthyl)-alanine').click();
+    await selectMonomer(page, Peptides._1Nal);
     await clickOnCanvas(page, x, y);
     await selectSnakeLayoutModeTool(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
@@ -982,8 +982,7 @@ test.describe('Import-Saving .idt Files', () => {
     const x = 650;
     const y = 400;
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
-    await chooseTab(page, Tabs.Chem);
-    await page.getByTestId('Test-6-Ch___Test-6-AP-Chem').click();
+    await selectMonomer(page, Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('iMe-dC').locator('..').click();

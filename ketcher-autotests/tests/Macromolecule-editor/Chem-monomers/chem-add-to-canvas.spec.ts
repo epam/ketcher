@@ -1,9 +1,11 @@
+import { Chem } from '@constants/monomers';
 import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pressButton,
   selectMacroBond,
+  selectMonomer,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -22,11 +24,7 @@ test('Select chem and drag it to canvas', async ({ page }) => {
 
   // Click on POLYMER_TOGGLER
   await turnOnMacromoleculesEditor(page);
-  await page.getByText('CHEM').click();
-
-  // Click on <div> "sDBL___Symmetric Doubler"
-  await page.click('[data-testid="sDBL___Symmetric Doubler"]');
-
+  await selectMonomer(page, Chem.sDBL);
   // Click on <svg> #polymer-editor-canvas
   await clickInTheMiddleOfTheScreen(page);
   await hideMonomerPreview(page);

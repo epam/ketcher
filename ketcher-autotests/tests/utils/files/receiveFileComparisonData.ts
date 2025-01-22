@@ -27,12 +27,11 @@ export enum FileType {
   SDF = 'sdf',
 }
 
-const fileTypeHandlers: {
-  [key in FileType]: (
-    page: Page,
-    format?: 'v2000' | 'v3000',
-  ) => Promise<string>;
-} = {
+type FileTypeHandler =
+  | ((page: Page) => Promise<string>)
+  | ((page: Page, fileFormat?: MolfileFormat) => Promise<string>);
+
+const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.KET]: getKet,
   [FileType.CDX]: getCdx,
   [FileType.CDXML]: getCdxml,

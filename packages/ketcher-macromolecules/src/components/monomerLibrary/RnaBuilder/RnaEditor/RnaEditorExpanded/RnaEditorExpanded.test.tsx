@@ -42,7 +42,12 @@ describe('Test Rna Editor Expanded component', () => {
       withThemeAndStoreProvider(
         <RnaEditorExpanded isEditMode onDuplicate={EmptyFunction} />,
         {
-          editor: { editor: { isSequenceEditInRNABuilderMode: true } },
+          editor: {
+            editor: {
+              isSequenceEditInRNABuilderMode: true,
+              events: { keyDown: { add: () => true, remove: () => true } },
+            },
+          },
           rnaBuilder: {
             activePreset: {},
             sequenceSelectionName: '2 nucleotides',

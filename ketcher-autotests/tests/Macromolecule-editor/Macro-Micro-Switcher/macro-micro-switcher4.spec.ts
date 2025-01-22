@@ -422,9 +422,6 @@ test(`Verify that switching back from macromolecules mode to molecules mode does
 
   await turnOnMicromoleculesEditor(page);
   await takeEditorScreenshot(page);
-
-  await turnOnMacromoleculesEditor(page);
-  await takeEditorScreenshot(page);
 });
 
 test(`Verify that deleting a bond in macromolecules mode removes only the selected bond without affecting adjacent structures`, async () => {

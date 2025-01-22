@@ -639,8 +639,8 @@ test(`Verify that selecting a bond highlights it properly, even in complex struc
   await selectRectangleSelectionTool(page);
 
   const bondsToDrag = [
-    { bondType: BondType.Single, bondStereo: BondStereo.None },
-    { bondType: BondType.Double },
+    { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
+    { bondType: BondType.Double, bondStereo: BondStereo.None },
     { bondType: BondType.Triple },
     { bondType: BondType.Any },
     { bondType: BondType.Aromatic },
@@ -657,7 +657,7 @@ test(`Verify that selecting a bond highlights it properly, even in complex struc
 
   for (const bond of bondsToDrag) {
     const bondLocator = await getBondLocator(page, bond);
-    await bondLocator.click();
+    await bondLocator.first().click({ force: true });
     await takeEditorScreenshot(page);
   }
 });

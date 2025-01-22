@@ -594,13 +594,16 @@ export async function getBondLocator(
   attributes['data-testid'] = 'bond';
 
   if (bondType !== undefined) attributes['data-bondtype'] = String(bondType);
-  if (bondStereo !== undefined)
+  if (bondStereo !== undefined) {
     attributes['data-bondstereo'] = String(bondStereo);
+  }
   if (bondId !== undefined) attributes['data-bondid'] = String(bondId);
-  if (fromMonomerId !== undefined)
+  if (fromMonomerId !== undefined) {
     attributes['data-frommonomerid'] = String(fromMonomerId);
-  if (toMonomerId !== undefined)
+  }
+  if (toMonomerId !== undefined) {
     attributes['data-tomonomerid'] = String(toMonomerId);
+  }
   if (toAtomId !== undefined) attributes['data-toatomid'] = String(toAtomId);
   if (fromConnectionPoint !== undefined) {
     attributes['data-fromconnectionpoint'] = fromConnectionPoint;

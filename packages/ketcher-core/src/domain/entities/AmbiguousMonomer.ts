@@ -19,6 +19,7 @@ export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
 export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   public monomers: BaseMonomer[];
   public monomerClass: KetMonomerClass;
+  public subtype: KetAmbiguousMonomerTemplateSubType;
   constructor(
     public variantMonomerItem: AmbiguousMonomerType,
     position?: Vec2,
@@ -52,6 +53,7 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
     this.monomerClass = AmbiguousMonomer.getMonomerClass(
       variantMonomerItem.monomers,
     );
+    this.subtype = variantMonomerItem.subtype;
   }
 
   public static getMonomerClass(monomers: BaseMonomer[]) {

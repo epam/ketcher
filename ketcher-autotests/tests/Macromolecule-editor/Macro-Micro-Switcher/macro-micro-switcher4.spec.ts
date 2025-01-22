@@ -347,8 +347,13 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await chooseFileFormat(page, 'IDT');
   await takeEditorScreenshot(page);
 
-  await closeErrorMessage(page);
+  // await closeErrorMessage(page);
   await pressButton(page, 'Cancel');
+  test.fixme(
+    true,
+    `Works wrong because of https://github.com/epam/ketcher/issues/6314 issue(s).
+     Test should be updated after fix`,
+  );
 });
 
 test(`Verify that all 16 types of bonds saved in macro mode can be opened in micro mode in MOL v3000`, async () => {

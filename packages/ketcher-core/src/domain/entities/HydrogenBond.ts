@@ -56,7 +56,7 @@ export class HydrogenBond extends BaseBond {
     return super.getAnotherEntity(monomer) as BaseMonomer;
   }
 
-  public get isClosingBondInCycle() {
+  public get isCyclicOverlappingBond() {
     return false;
   }
 }

@@ -187,7 +187,6 @@ export const EditorEvents = () => {
       }
 
       if (polymerBond) {
-        console.log('Bond', polymerBond.id);
         const style = calculateBondPreviewPosition(
           polymerBond,
           e.target.getBoundingClientRect(),
@@ -216,8 +215,6 @@ export const EditorEvents = () => {
         debouncedShowPreview(ambiguousMonomerPreviewData);
         return;
       }
-
-      console.log('Monomer', monomer.id);
 
       const monomerItem = monomer.monomerItem;
       const attachmentPointsToBonds = { ...monomer.attachmentPointsToBonds };

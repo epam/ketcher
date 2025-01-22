@@ -115,21 +115,13 @@ type RnaPresetAdditionParams = {
   existingNode?: Nucleotide | Nucleoside | LinkerSequenceNode;
 };
 
-type DFSStackItem = {
-  currentMonomerId: number;
-  previousMonomerId: number;
-  bondId: number;
-  path: number[];
-};
-
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond | HydrogenBond> = new Map();
   public atoms: Map<number, Atom> = new Map();
   public bonds: Map<number, Bond> = new Map();
   public monomerToAtomBonds: Map<number, MonomerToAtomBond> = new Map();
-  public cycles: Set<Set<number>> = new Set();
-  public closingBonds: Set<number> = new Set();
+  public cycles: Chain[] = [];
 
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
@@ -2680,7 +2672,7 @@ export class DrawingEntitiesManager {
   }
 
   // TODO create separate class for BoundingBox
-  public static geStructureBbox(monomers: BaseMonomer[]) {
+  public static getStructureBbox(monomers: BaseMonomer[]) {
     let left;
     let right;
     let top;
@@ -2798,7 +2790,7 @@ export class DrawingEntitiesManager {
         const chainsToCenters = new Map<GrouppedChain, Vec2>();
 
         largestChains.forEach(([chainToCheck, monomers]) => {
-          const chainBbox = DrawingEntitiesManager.geStructureBbox(monomers);
+          const chainBbox = DrawingEntitiesManager.getStructureBbox(monomers);
 
           chainsToCenters.set(
             chainToCheck,
@@ -3046,92 +3038,8 @@ export class DrawingEntitiesManager {
   }
 
   public detectCycles() {
-    this.dfs();
-    console.log('cycles', this.cycles);
-    console.log('closing bonds', this.closingBonds);
-  }
-
-  private dfs() {
-    const visited = new Set<number>();
-    const stack: Array<DFSStackItem> = [];
-
-    const chains = ChainsCollection.fromMonomers(this.monomersArray);
-
-    chains.forEachNode((nodeData) => {
-      const monomerId = nodeData.node.monomer.id;
-      if (!visited.has(monomerId)) {
-        stack.push({
-          currentMonomerId: monomerId,
-          previousMonomerId: -1,
-          bondId: -1,
-          path: [],
-        });
-        this.processStack(stack, visited);
-      }
-    });
-
-    // for (const monomer of this.monomers.values()) {
-    //   if (!visited.has(monomer.id)) {
-    //     stack.push({ currentMonomerId: monomer.id, previousMonomerId: -1, bondId: -1, path: [] });
-    //     this.processStack(stack, visited);
-    //   }
-    // }
-  }
-
-  private processStack(stack: Array<DFSStackItem>, visited: Set<number>) {
-    while (stack.length > 0) {
-      // It's safe to use non-null assertion here because the length of the stack is checked
-      // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-      const node = stack.pop()!;
-      const { currentMonomerId, previousMonomerId, bondId, path } = node;
-
-      if (!visited.has(currentMonomerId)) {
-        visited.add(currentMonomerId);
-        const newPath = path.concat(currentMonomerId);
-        stack.push({
-          currentMonomerId,
-          previousMonomerId,
-          bondId,
-          path: newPath,
-        });
-        // It's safe to use non-null assertion here because monomer id was previously gathered from this map
-        // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
-        const currentMonomer = this.monomers.get(currentMonomerId)!;
-        for (const bond of currentMonomer.covalentBonds) {
-          if (bond instanceof MonomerToAtomBond) {
-            continue;
-          }
-
-          const adjacentMonomerId =
-            bond.firstMonomer.id === currentMonomerId
-              ? bond.secondMonomer?.id
-              : bond.firstMonomer.id;
-          if (adjacentMonomerId === undefined) {
-            continue;
-          }
-
-          if (adjacentMonomerId !== previousMonomerId) {
-            stack.push({
-              currentMonomerId: adjacentMonomerId,
-              previousMonomerId: currentMonomerId,
-              bondId: bond.id,
-              path: newPath,
-            });
-          }
-        }
-      } else if (
-        visited.has(currentMonomerId) &&
-        path.length > 2 &&
-        path[0] === currentMonomerId
-      ) {
-        if (bondId !== -1) {
-          this.closingBonds.add(bondId);
-        }
-
-        const cycle = new Set<number>(path);
-        this.cycles.add(cycle);
-      }
-    }
+    const chainsCollection = ChainsCollection.fromMonomers(this.monomersArray);
+    this.cycles = chainsCollection.chains.filter((chain) => chain.isCyclic);
   }
 }
 

@@ -61,9 +61,52 @@ export class PolymerBond extends BaseBond {
     return this.secondMonomer?.getAttachmentPointByBond(this);
   }
 
-  public get isClosingBondInCycle() {
+  public get isCyclicOverlappingBond() {
+    const secondMonomer = this.secondMonomer;
+    if (!secondMonomer) {
+      return false;
+    }
+
     const editor = CoreEditor.provideEditorInstance();
-    return editor.drawingEntitiesManager.closingBonds.has(this.id);
+
+    // if (this.isCyclic === undefined) {
+    //   this.isCyclic = editor.drawingEntitiesManager.cycles.some(chain => {
+    //     return chain.monomers.includes(this.firstMonomer) && chain.monomers.includes(secondMonomer);
+    //   });
+    // }
+
+    // if (!this.isCyclic) {
+    //   return false;
+    // }
+
+    const cyclesWithThisBond = editor.drawingEntitiesManager.cycles.filter(
+      (chain) => {
+        return (
+          chain.monomers.includes(this.firstMonomer) &&
+          chain.monomers.includes(secondMonomer)
+        );
+      },
+    );
+
+    if (!cyclesWithThisBond.length) {
+      return false;
+    }
+
+    return cyclesWithThisBond.some((chain) => {
+      return chain.monomers.some((monomer) => {
+        if (monomer === this.firstMonomer || monomer === secondMonomer) {
+          return false;
+        }
+
+        const distanceFromMonomerToLine =
+          monomer.center.calculateDistanceToLine([
+            this.firstMonomer.center,
+            secondMonomer.center,
+          ]);
+
+        return distanceFromMonomerToLine < 0.375;
+      });
+    });
   }
 
   public get isSideChainConnection() {

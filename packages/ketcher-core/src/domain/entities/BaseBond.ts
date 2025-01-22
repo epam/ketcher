@@ -6,7 +6,7 @@ export abstract class BaseBond extends DrawingEntity {
 
   abstract get firstEndEntity(): DrawingEntity;
   abstract get secondEndEntity(): DrawingEntity | undefined;
-  abstract get isClosingBondInCycle(): boolean;
+  abstract get isCyclicOverlappingBond(): boolean;
 
   public get finished() {
     return Boolean(this.firstEndEntity && this.secondEndEntity);

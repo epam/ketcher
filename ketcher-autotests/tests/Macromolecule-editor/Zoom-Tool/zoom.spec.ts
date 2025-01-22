@@ -28,7 +28,6 @@ import {
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { goToCHEMTab, goToRNATab } from '@utils/macromolecules/library';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {

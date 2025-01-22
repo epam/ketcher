@@ -30,7 +30,7 @@ import {
   getControlModifier,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { goToCHEMTab, goToRNATab } from '@utils/macromolecules/library';
+import { goToRNATab } from '@utils/macromolecules/library';
 import {
   connectMonomersWithBonds,
   moveMonomer,

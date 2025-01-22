@@ -14,6 +14,9 @@ export type Tabs =
   | typeof RNA_TAB
   | typeof CHEM_TAB;
 
+export const goToFavoritesTab = async (page: Page) =>
+  goToTab(page, FAVORITES_TAB);
+
 export const goToRNATab = async (page: Page) => goToTab(page, RNA_TAB);
 
 export const goToCHEMTab = async (page: Page) => goToTab(page, CHEM_TAB);

@@ -14,7 +14,6 @@ import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
-import { goToCHEMTab } from '@utils/macromolecules/library';
 
 /* 
 Test case: #2497 - Add chem to canvas

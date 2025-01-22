@@ -57,9 +57,9 @@ export enum Chem {
 export enum Nucleotides {
   _2_damdA = '2-damdA___2,6-Diaminopurine',
   _5hMedC = '5hMedC___Hydroxymethyl dC',
-  Super_G = 'Super G___8-aza-7-deazaguanosine',
+  Super_G = 'Super-G___8-aza-7-deazaguanosine',
   AmMC6T = 'AmMC6T___Amino Modifier C6 dT',
-  Super_T = 'Super T___5-hydroxybutynl-2’-deoxyuridine',
+  Super_T = 'Super-T___5-hydroxybutynl-2’-deoxyuridine',
   _5Br_dU = '5Br-dU___5-Bromo-deoxyuridine',
   _5NitInd = '5NitInd___5-Nitroindole',
 }

@@ -27,11 +27,12 @@ export enum FileType {
   SDF = 'sdf',
 }
 
-type FileTypeHandler =
-  | ((page: Page) => Promise<string>)
-  | ((page: Page, fileFormat?: MolfileFormat) => Promise<string>);
-
-const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
+const fileTypeHandlers: {
+  [key in FileType]: (
+    page: Page,
+    format?: 'v2000' | 'v3000',
+  ) => Promise<string>;
+} = {
   [FileType.KET]: getKet,
   [FileType.CDX]: getCdx,
   [FileType.CDXML]: getCdxml,
@@ -53,7 +54,10 @@ async function getFileContent(
   if (!handler) {
     throw new Error(`Unsupported file type: ${fileType}`);
   }
-  if (fileType === FileType.MOL && typeof fileFormat !== 'undefined') {
+  if (
+    (fileType === FileType.MOL || fileType === FileType.RXN) &&
+    typeof fileFormat !== 'undefined'
+  ) {
     return (
       handler as (page: Page, fileFormat?: MolfileFormat) => Promise<string>
     )(page, fileFormat);

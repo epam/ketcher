@@ -4,9 +4,12 @@ import { readFileContents, saveToFile } from './readFile';
 import {
   getCdx,
   getCdxml,
+  getCml,
   getKet,
   getMolfile,
   getRdf,
+  getRxn,
+  getSdf,
   getSmarts,
 } from '@utils/formats';
 import { selectSaveTool } from '@utils/canvas';
@@ -19,16 +22,26 @@ export enum FileType {
   CDXML = 'cdxml',
   SMARTS = 'smarts',
   MOL = 'mol',
+  RXN = 'rxn',
+  CML = 'cml',
+  SDF = 'sdf',
 }
 
-const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
-  {
-    [FileType.KET]: getKet,
-    [FileType.CDX]: getCdx,
-    [FileType.CDXML]: getCdxml,
-    [FileType.SMARTS]: getSmarts,
-    [FileType.MOL]: getMolfile,
-  };
+const fileTypeHandlers: {
+  [key in FileType]: (
+    page: Page,
+    format?: 'v2000' | 'v3000',
+  ) => Promise<string>;
+} = {
+  [FileType.KET]: getKet,
+  [FileType.CDX]: getCdx,
+  [FileType.CDXML]: getCdxml,
+  [FileType.SMARTS]: getSmarts,
+  [FileType.MOL]: getMolfile,
+  [FileType.RXN]: getRxn,
+  [FileType.CML]: getCml,
+  [FileType.SDF]: getSdf,
+};
 
 export async function verifyFileExport(
   page: Page,
@@ -44,7 +57,7 @@ export async function verifyFileExport(
   }
 
   // This two lines for creating from scratch or for updating exampled files
-  const expectedFileContent = await getFileContent(page);
+  const expectedFileContent = await getFileContent(page, format);
   await saveToFile(expectedFilename, expectedFileContent);
 
   // This line for filtering out example file content (named as fileExpected)

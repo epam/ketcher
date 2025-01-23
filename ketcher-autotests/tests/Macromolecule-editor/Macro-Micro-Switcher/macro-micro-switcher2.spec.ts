@@ -8,7 +8,7 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
-import { Page, test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
@@ -37,7 +37,18 @@ import {
   pasteFromClipboardByKeyboard,
   copyToClipboardByIcon,
   addMonomersToFavorites,
+  selectTopPanelButton,
+  TopPanelButton,
+  setZoomInputValue,
+  resetCurrentTool,
+  selectAllStructuresOnCanvas,
+  selectEraseTool,
+  screenshotBetweenUndoRedo,
+  screenshotBetweenUndoRedoInMacro,
+  copyAndPaste,
+  copyToClipboardByKeyboard,
 } from '@utils';
+
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { Bases, Chem, Peptides, Phosphates, Sugars } from '@constants/monomers';
@@ -45,6 +56,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [
@@ -56,6 +68,14 @@ async function addToFavoritesMonomers(page: Page) {
     Phosphates.bP,
     Chem.Test_6_Ch,
   ]);
+}
+
+export async function doubleClickOnAtom(page: Page, atomText: string) {
+  const atomLocator = page
+    .locator('g', { hasText: new RegExp(`^${atomText}$`) })
+    .locator('rect')
+    .first();
+  await atomLocator.dblclick();
 }
 
 test.describe('Macro-Micro-Switcher2', () => {
@@ -403,6 +423,307 @@ test.describe('Macro-Micro-Switcher2', () => {
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
     await clickOnCanvas(page, 300, 300);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that single atom properties are preserved when switching from molecules mode to macromolecules mode', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/6027
+      Description: Single atom properties such as alias, charge, isotope, valence, and radical are displayed correctly in macromolecules mode.
+      Case:
+      1. Add file with atom properties in Micro mode.
+      2. Switch to Macro mode.
+      3. Check that atom properties are preserved.
+      Expected: Atom properties are preserved.
+    */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/single-atom-properties.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that the property of an atom is non-editable in macromolecules mode', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/6027
+      Description: The property of an atom is non-editable in macromolecules mode.
+      Case:
+      1. Add file with atom properties in Micro mode.
+      2. Switch to Macro mode.
+      3. Try to edit atom properties.
+      Expected: Atom properties are non-editable.
+    */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/single-atom-properties.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page);
+    await doubleClickOnAtom(page, 'Zn');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that structures with single atom properties can be saved/load in macro mode in KET format', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/6027
+      Description: The structures with single atom properties can be saved/load in macro mode in KET format.
+      Case:
+      1. Add file with atom properties in Macro mode.
+      2. Save and load the file.
+      Expected: The file is saved and loaded correctly.
+    */
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/single-atom-properties.ket',
+      page,
+    );
+    await verifyFileExport(
+      page,
+      'KET/single-atom-properties-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/single-atom-properties-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that structures with single atom properties can be saved/load in macro mode in MOL V3000 format', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/6027
+      Description: The structures with single atom properties can be saved/load in macro mode in MOL V3000 format.
+      Case:
+      1. Add file with atom properties in Macro mode.
+      2. Save and load the file.
+      Expected: The file is saved and loaded correctly.
+    */
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/single-atom-properties.ket',
+      page,
+    );
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/single-atom-properties-expected.mol',
+      FileType.MOL,
+      'v3000',
+      [1],
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/single-atom-properties-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that structures with single atom properties can be saved/load in macro mode in SVG format', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/6027
+      Description: The structures with single atom properties can be saved/load in macro mode in SVG format.
+      Case:
+      1. Add file with atom properties in Macro mode.
+      2. Save as SVG file.
+      3. Look at the SVG preview.
+      Expected: The SVG preview is correct.
+    */
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/single-atom-properties.ket',
+      page,
+    );
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'SVG Document');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that single atom properties are correctly displayed in different zoom levels in macromolecules mode', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/6027
+      Description: Single atom properties are correctly displayed in different zoom levels in macromolecules mode.
+      Case:
+      1. Add file with atom properties in Macro mode.
+      2. Zoom in and out.
+      3. Check that atom properties are displayed correctly.
+      Expected: Atom properties are displayed correctly.
+    */
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/single-atom-properties.ket',
+      page,
+    );
+    await setZoomInputValue(page, '50');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '120');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+    await setZoomInputValue(page, '150');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that the transition from macromolecules mode back to molecules mode does not alter the single atom properties', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/6027
+      Description: The transition from macromolecules mode back to molecules mode does not alter the single atom properties.
+      Case:
+      1. Add file with atom properties in Micro mode.
+      2. Switch to Macro mode.
+      3. Switch back to Micro mode.
+      Expected: Atom properties are preserved.
+    */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/single-atom-properties.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that undo and redo actions correctly preserve changes to single atom properties in both molecules and macromolecules modes', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/6027
+      Description: Undo and redo actions correctly preserve changes to single atom properties in both molecules and macromolecules modes.
+      Case:
+      1. Add file with atom properties in Micro mode.
+      2. Delete atom with properties.
+      3. Undo and redo actions.
+      4. Switch to Macro mode.
+      5. Delete atom with properties.
+      6. Undo and redo actions.
+      Expected: Undo and redo actions correctly preserve changes to single atom properties.
+    */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/single-atom-properties.ket',
+      page,
+    );
+    await selectAllStructuresOnCanvas(page);
+    await selectEraseTool(page);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedo(page);
+    await takeEditorScreenshot(page);
+    await pressUndoButton(page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await selectAllStructuresOnCanvas(page);
+    await selectEraseTool(page);
+    await takeEditorScreenshot(page);
+    await screenshotBetweenUndoRedoInMacro(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that copying and pasting a structure with single atom properties preserves the properties in both modes', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/6027
+      Description: Copying and pasting a structure with single atom properties preserves the properties in both modes.
+      Case:
+      1. Add file with atom properties in Micro mode.
+      2. Copy and paste the structure.
+      3. Switch to Macro mode.
+      4. Copy and paste the structure.
+      Expected: Atom properties are preserved.
+    */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/single-atom-properties.ket',
+      page,
+    );
+    await copyAndPaste(page);
+    await clickOnCanvas(page, 400, 400);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify saving a structure with single atom properties in macromolecules mode and opening it in molecules mode KET', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/6027
+      Description: Saving a structure with single atom properties in macromolecules mode and opening it in molecules mode KET.
+      Case:
+      1. Add file with atom properties in Macro mode.
+      2. Save in KET format.
+      3. Open the file in Micro mode.
+      Expected: The file is saved and loaded correctly.
+    */
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/single-atom-properties.ket',
+      page,
+    );
+    await verifyFileExport(
+      page,
+      'KET/single-atom-properties-saved-in-macro-expected.ket',
+      FileType.KET,
+    );
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/single-atom-properties-saved-in-macro-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify saving a structure with single atom properties in macromolecules mode and opening it in molecules mode MOL V3000', async ({
+    page,
+  }) => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/6027
+      Description: Saving a structure with single atom properties in macromolecules mode and opening it in molecules mode MOL V3000.
+      Case:
+      1. Add file with atom properties in Macro mode.
+      2. Save in MOL V3000 format.
+      3. Open the file in Micro mode.
+      Expected: The file is saved and loaded correctly.
+    */
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/single-atom-properties.ket',
+      page,
+    );
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/single-atom-properties-saved-in-macro-expected.mol',
+      FileType.MOL,
+      'v3000',
+      [1],
+    );
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/single-atom-properties-saved-in-macro-expected.mol',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 });

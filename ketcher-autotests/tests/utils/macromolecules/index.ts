@@ -38,6 +38,13 @@ export async function turnOnMicromoleculesEditor(page: Page) {
   await page.getByTestId(MOLECULES_MODE).click();
 }
 
+export async function turnOnMacromoleculesEditor2(page: Page) {
+  await expect(page.getByTestId(POLYMER_TOGGLER)).toBeVisible();
+  await page.getByTestId(POLYMER_TOGGLER).click();
+  await expect(page.getByTestId(MACROMOLECULES_MODE)).toBeVisible();
+  await page.getByTestId(MACROMOLECULES_MODE).click();
+}
+
 export async function hideMonomerPreview(page: Page) {
   await page.mouse.move(9999, 9999);
   await page

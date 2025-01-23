@@ -9,7 +9,7 @@ const StyledMonomerLibraryToggle = styled.div(({ theme }) => {
     position: 'absolute',
     cursor: 'pointer',
     top: 'calc(8px + 12px)',
-    right: 'calc(16px + 12px)',
+    right: 'calc(4px + 12px)',
     visibility: 'visible',
     opacity: 1,
     whiteSpace: 'nowrap',

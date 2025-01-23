@@ -171,7 +171,6 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
             attachmentPoint.attachmentPointNumber,
       ),
   );
-
   const highlightAtomWithColor = (color: string) => {
     const atomIds = props.propsFromTrigger?.atomIds || [];
     editor.highlights.create({
@@ -181,6 +180,22 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
       color: color === '' ? 'transparent' : color,
     });
   };
+
+  const isAddAttachmentPointDisabled =
+    !onlyOneAtomSelected ||
+    (() => {
+      if (!isNumber(selectedAtomId)) return true;
+
+      const connectedComponents = struct.findConnectedComponent(selectedAtomId);
+      for (const connectedAtomId of connectedComponents) {
+        const connectedGroup = struct.getGroupFromAtomId(connectedAtomId);
+        if (connectedGroup?.isMonomer) {
+          return true;
+        }
+      }
+
+      return false;
+    })();
 
   if (isAtomSuperatomLeavingGroup && onlyOneAtomSelected) {
     return (
@@ -231,7 +246,11 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
         !atomInSgroupWithLabel &&
         !maxAttachmentPointsAmount &&
         !isAtomSuperatomLeavingGroup && (
-          <Item {...props} onClick={handleAddAttachmentPoint}>
+          <Item
+            {...props}
+            onClick={handleAddAttachmentPoint}
+            disabled={isAddAttachmentPointDisabled}
+          >
             Add attachment point
           </Item>
         )}

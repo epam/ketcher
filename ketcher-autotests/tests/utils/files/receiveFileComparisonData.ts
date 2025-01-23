@@ -4,9 +4,12 @@ import { readFileContents, saveToFile } from './readFile';
 import {
   getCdx,
   getCdxml,
+  getCml,
   getKet,
   getMolfile,
   getRdf,
+  getRxn,
+  getSdf,
   getSmarts,
 } from '@utils/formats';
 import { selectSaveTool } from '@utils/canvas';
@@ -19,6 +22,9 @@ export enum FileType {
   CDXML = 'cdxml',
   SMARTS = 'smarts',
   MOL = 'mol',
+  RXN = 'rxn',
+  CML = 'cml',
+  SDF = 'sdf',
 }
 
 const fileTypeHandlers: {
@@ -32,6 +38,9 @@ const fileTypeHandlers: {
   [FileType.CDXML]: getCdxml,
   [FileType.SMARTS]: getSmarts,
   [FileType.MOL]: getMolfile,
+  [FileType.RXN]: getRxn,
+  [FileType.CML]: getCml,
+  [FileType.SDF]: getSdf,
 };
 
 export async function verifyFileExport(

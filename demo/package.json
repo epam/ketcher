@@ -21,6 +21,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --passWithNoTests --watchAll=false",
+    "test:types": "tsc --noEmit",
     "eject": "react-scripts eject",
     "serve": "serve -s build"
   },

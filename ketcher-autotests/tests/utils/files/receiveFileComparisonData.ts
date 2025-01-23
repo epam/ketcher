@@ -5,7 +5,6 @@ import {
   getCdx,
   getCdxml,
   getCml,
-  getCml,
   getKet,
   getMolfile,
   getRdf,
@@ -38,6 +37,9 @@ const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.CDXML]: getCdxml,
   [FileType.SMARTS]: getSmarts,
   [FileType.MOL]: getMolfile,
+  [FileType.RXN]: getRxn,
+  [FileType.CML]: getCml,
+  [FileType.SDF]: getSdf,
 };
 
 
@@ -51,7 +53,10 @@ async function getFileContent(
   if (!handler) {
     throw new Error(`Unsupported file type: ${fileType}`);
   }
-  if (fileType === FileType.MOL && typeof fileFormat !== 'undefined') {
+  if (
+    (fileType === FileType.MOL || fileType === FileType.RXN) &&
+    typeof fileFormat !== 'undefined'
+  ) {
     return (
       handler as (page: Page, fileFormat?: MolfileFormat) => Promise<string>
     )(page, fileFormat);

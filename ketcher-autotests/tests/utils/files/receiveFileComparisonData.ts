@@ -5,6 +5,7 @@ import {
   getCdx,
   getCdxml,
   getCml,
+  getCml,
   getKet,
   getMolfile,
   getRdf,

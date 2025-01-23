@@ -5,12 +5,9 @@ import {
   getCdx,
   getCdxml,
   getCml,
-  getCml,
   getKet,
   getMolfile,
   getRdf,
-  getRxn,
-  getSdf,
   getRxn,
   getSdf,
   getSmarts,
@@ -40,6 +37,9 @@ const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.CDXML]: getCdxml,
   [FileType.SMARTS]: getSmarts,
   [FileType.MOL]: getMolfile,
+  [FileType.RXN]: getRxn,
+  [FileType.CML]: getCml,
+  [FileType.SDF]: getSdf,
 };
 
 

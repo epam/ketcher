@@ -22,12 +22,15 @@ interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>;
 }
 
-const Column = styled.div<{ fullWidth?: boolean }>(({ fullWidth }) => ({
-  width: fullWidth ? '100%' : 'fit-content',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-}));
+const Column = styled.div<{ fullWidth?: boolean; withPaddingRight?: boolean }>(
+  ({ fullWidth, withPaddingRight }) => ({
+    width: fullWidth ? '100%' : 'fit-content',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    paddingRight: withPaddingRight ? '12px' : 0,
+  }),
+);
 
 const RowMain = styled.div(({ theme }) => ({
   height: '100%',
@@ -38,7 +41,6 @@ const RowMain = styled.div(({ theme }) => ({
   backgroundColor: theme.ketcher.color.background.canvas,
   display: 'flex',
   justifyContent: 'space-between',
-  columnGap: '12px',
   containerType: 'size',
   overflow: 'hidden',
 }));
@@ -117,7 +119,7 @@ export const Layout = ({ children }: LayoutProps) => {
 
   return (
     <RowMain>
-      <Column fullWidth>
+      <Column fullWidth withPaddingRight>
         {subcomponents.Top}
         <Row>
           {subcomponents.Left}

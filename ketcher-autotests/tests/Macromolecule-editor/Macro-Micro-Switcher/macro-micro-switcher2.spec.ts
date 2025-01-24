@@ -7,7 +7,6 @@ and can't be executed in "clear canvas way"
 import {
   chooseFileFormat,
   turnOnMacromoleculesEditor,
-  turnOnMacromoleculesEditor2,
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
 import { test, expect, Page } from '@playwright/test';
@@ -751,7 +750,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/benzene-ring-with-two-atoms.ket',
       page,
     );
-    await turnOnMacromoleculesEditor2(page);
+    await turnOnMacromoleculesEditor(page, false, false);
     await takePageScreenshot(page);
   });
 
@@ -768,11 +767,11 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Switch to Micro mode
       4. Switch to Macromolecules mode
     */
-    await turnOnMacromoleculesEditor2(page);
+    await turnOnMacromoleculesEditor(page, false, false);
     await selectSnakeLayoutModeTool(page);
     await takePageScreenshot(page);
     await turnOnMicromoleculesEditor(page);
-    await turnOnMacromoleculesEditor2(page);
+    await turnOnMacromoleculesEditor(page, false, false);
     await takePageScreenshot(page);
   });
 
@@ -787,7 +786,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       1. Switch to Macromolecules mode
       2. Verify that Sequence mode is opened
     */
-    await turnOnMacromoleculesEditor2(page);
+    await turnOnMacromoleculesEditor(page, false, false);
     await takePageScreenshot(page);
   });
 
@@ -805,11 +804,11 @@ test.describe('Macro-Micro-Switcher2', () => {
       4. Switch to Micro mode
       5. Switch to Macromolecules mode
     */
-    await turnOnMacromoleculesEditor2(page);
+    await turnOnMacromoleculesEditor(page, false, false);
     await selectFlexLayoutModeTool(page);
     await selectSequenceLayoutModeTool(page);
     await turnOnMicromoleculesEditor(page);
-    await turnOnMacromoleculesEditor2(page);
+    await turnOnMacromoleculesEditor(page, false, false);
     await takePageScreenshot(page);
   });
 
@@ -829,7 +828,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/benzene-ring-with-two-atoms.ket',
       page,
     );
-    await turnOnMacromoleculesEditor2(page);
+    await turnOnMacromoleculesEditor(page, false, false);
     await selectClearCanvasTool(page);
     await pressUndoButton(page);
     await takePageScreenshot(page);

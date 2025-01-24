@@ -61,6 +61,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { goToFavoritesTab } from '@utils/macromolecules/library';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -104,7 +105,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await page.getByText('Hide').click();
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('FAVORITES-TAB').click();
+    await goToFavoritesTab(page);
     await takeMonomerLibraryScreenshot(page);
   });
 

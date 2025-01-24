@@ -22,15 +22,18 @@ interface LayoutProps {
   children: JSX.Element | Array<JSX.Element>;
 }
 
-const Column = styled.div<{ fullWidth?: boolean }>(({ fullWidth }) => ({
-  width: fullWidth ? '100%' : 'fit-content',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-}));
+const Column = styled.div<{ fullWidth?: boolean; withPaddingRight?: boolean }>(
+  ({ fullWidth, withPaddingRight }) => ({
+    width: fullWidth ? '100%' : 'fit-content',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    paddingRight: withPaddingRight ? '12px' : 0,
+  }),
+);
 
 const RowMain = styled.div(({ theme }) => ({
-  height: '100vh',
+  height: '100%',
   width: '100%',
   position: 'relative',
   padding: '12px',
@@ -38,8 +41,8 @@ const RowMain = styled.div(({ theme }) => ({
   backgroundColor: theme.ketcher.color.background.canvas,
   display: 'flex',
   justifyContent: 'space-between',
-  columnGap: '12px',
   containerType: 'size',
+  overflow: 'hidden',
 }));
 
 const Row = styled.div(({ theme }) => ({
@@ -84,11 +87,13 @@ const Main = styled.div({
   position: 'relative',
 });
 
+const InsideRoot = styled.div({});
+
 const DummyDiv = styled.div({
   height: '40px',
 });
 
-type LayoutSection = 'Left' | 'Right' | 'Main' | 'Top';
+type LayoutSection = 'Left' | 'Right' | 'Main' | 'Top' | 'InsideRoot';
 
 export const Layout = ({ children }: LayoutProps) => {
   const subcomponents: Record<LayoutSection, JSX.Element | null> = {
@@ -96,6 +101,7 @@ export const Layout = ({ children }: LayoutProps) => {
     Main: null,
     Right: null,
     Top: null,
+    InsideRoot: null,
   };
   React.Children.forEach(children, (child) => {
     if (child.type === Left) {
@@ -106,12 +112,14 @@ export const Layout = ({ children }: LayoutProps) => {
       subcomponents.Top = child;
     } else if (child.type === Main) {
       subcomponents.Main = child;
+    } else if (child.type === InsideRoot) {
+      subcomponents.InsideRoot = child;
     }
   });
 
   return (
     <RowMain>
-      <Column fullWidth>
+      <Column fullWidth withPaddingRight>
         {subcomponents.Top}
         <Row>
           {subcomponents.Left}
@@ -120,6 +128,7 @@ export const Layout = ({ children }: LayoutProps) => {
         </Row>
       </Column>
       <Column>{subcomponents.Right}</Column>
+      {subcomponents.InsideRoot}
     </RowMain>
   );
 };
@@ -128,3 +137,4 @@ Layout.Left = Left;
 Layout.Top = Top;
 Layout.Right = Right;
 Layout.Main = Main;
+Layout.InsideRoot = InsideRoot;

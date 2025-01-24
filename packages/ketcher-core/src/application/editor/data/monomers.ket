@@ -2236,10 +2236,10 @@
         "$ref": "monomerTemplate-5hMedC___5-Hydroxymethyl dC"
       },
       {
-        "$ref": "monomerTemplate-Super-dG___Super G"
+        "$ref": "monomerTemplate-Super-dG___Super-G"
       },
       {
-        "$ref": "monomerTemplate-Super-dT___Super T"
+        "$ref": "monomerTemplate-Super-dT___Super-T"
       },
       {
         "$ref": "monomerTemplate-5Br-dU___5-Bromo-deoxyuridine"
@@ -170745,11 +170745,11 @@
       }
     ]
   },
-  "monomerTemplate-Super-dG___Super G": {
+  "monomerTemplate-Super-dG___Super-G": {
     "type": "monomerTemplate",
-    "id": "Super-dG___Super G",
+    "id": "Super-dG___Super-G",
     "fullName": "8-aza-7-deazaguanosine",
-    "alias": "Super G",
+    "alias": "Super-G",
     "naturalAnalogShort": "G",
     "class": "RNA",
     "classHELM": "RNA",
@@ -171161,11 +171161,11 @@
       }
     ]
   },
-  "monomerTemplate-Super-dT___Super T": {
+  "monomerTemplate-Super-dT___Super-T": {
     "type": "monomerTemplate",
-    "id": "Super-dT___Super T",
+    "id": "Super-dT___Super-T",
     "fullName": "5-hydroxybutynl-2’-deoxyuridine",
-    "alias": "Super T",
+    "alias": "Super-T",
     "naturalAnalogShort": "T",
     "class": "RNA",
     "classHELM": "RNA",

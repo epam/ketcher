@@ -4,9 +4,12 @@ import { readFileContents, saveToFile } from './readFile';
 import {
   getCdx,
   getCdxml,
+  getCml,
   getKet,
   getMolfile,
   getRdf,
+  getRxn,
+  getSdf,
   getSmarts,
 } from '@utils/formats';
 import { selectSaveTool } from '@utils/canvas';
@@ -19,32 +22,56 @@ export enum FileType {
   CDXML = 'cdxml',
   SMARTS = 'smarts',
   MOL = 'mol',
+  RXN = 'rxn',
+  CML = 'cml',
+  SDF = 'sdf',
 }
 
-const fileTypeHandlers: { [key in FileType]: (page: Page) => Promise<string> } =
-  {
-    [FileType.KET]: getKet,
-    [FileType.CDX]: getCdx,
-    [FileType.CDXML]: getCdxml,
-    [FileType.SMARTS]: getSmarts,
-    [FileType.MOL]: getMolfile,
-  };
+type FileTypeHandler =
+  | ((page: Page) => Promise<string>)
+  | ((page: Page, fileFormat?: MolfileFormat) => Promise<string>);
+
+const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
+  [FileType.KET]: getKet,
+  [FileType.CDX]: getCdx,
+  [FileType.CDXML]: getCdxml,
+  [FileType.SMARTS]: getSmarts,
+  [FileType.MOL]: getMolfile,
+  [FileType.RXN]: getRxn,
+  [FileType.CML]: getCml,
+  [FileType.SDF]: getSdf,
+};
+
+async function getFileContent(
+  page: Page,
+  fileType: FileType,
+  fileFormat?: MolfileFormat,
+): Promise<string> {
+  const handler = fileTypeHandlers[fileType];
+
+  if (!handler) {
+    throw new Error(`Unsupported file type: ${fileType}`);
+  }
+  if (
+    (fileType === FileType.MOL || fileType === FileType.RXN) &&
+    typeof fileFormat !== 'undefined'
+  ) {
+    return (
+      handler as (page: Page, fileFormat?: MolfileFormat) => Promise<string>
+    )(page, fileFormat);
+  }
+  return (handler as (page: Page) => Promise<string>)(page);
+}
 
 export async function verifyFileExport(
   page: Page,
   expectedFilename: string,
   fileType: FileType,
-  format: 'v2000' | 'v3000' = 'v2000',
+  format: MolfileFormat = 'v2000',
   metaDataIndexes: number[] = [],
 ) {
-  const getFileContent = fileTypeHandlers[fileType];
-
-  if (!getFileContent) {
-    throw new Error(`Unsupported file type: ${fileType}`);
-  }
-
   // This two lines for creating from scratch or for updating exampled files
-  const expectedFileContent = await getFileContent(page);
+  const expectedFileContent = await getFileContent(page, fileType, format);
   await saveToFile(expectedFilename, expectedFileContent);
 
   // This line for filtering out example file content (named as fileExpected)
@@ -57,27 +84,6 @@ export async function verifyFileExport(
   });
 
   expect(file).toEqual(fileExpected);
-}
-
-export async function verifyMolfile(
-  page: Page,
-  format: 'v2000' | 'v3000',
-  filename: string,
-  expectedFilename: string,
-  metaDataIndexes: number[] = [],
-) {
-  const expectedFile = await getMolfile(page, format);
-  await saveToFile(filename, expectedFile);
-
-  const { fileExpected: molFileExpected, file: molFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName: expectedFilename,
-      fileFormat: format,
-      metaDataIndexes,
-    });
-
-  expect(molFile).toEqual(molFileExpected);
 }
 
 export async function verifyRdfFile(

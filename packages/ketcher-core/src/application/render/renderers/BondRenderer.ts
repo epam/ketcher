@@ -26,7 +26,7 @@ import {
 import util from 'application/render/util';
 
 const BOND_WIDTH = 2;
-const BOND_WIDTH_HOVER = 10;
+// const BOND_WIDTH_HOVER = 10;
 
 export class BondRenderer extends BaseRenderer {
   private selectionElement:
@@ -235,6 +235,12 @@ export class BondRenderer extends BaseRenderer {
     return this.canvas
       .append('g')
       .data([this])
+      .attr('data-testid', 'bond')
+      .attr('data-bondtype', this.bond.type)
+      .attr('data-bondstereo', this.bond.stereo)
+      .attr('data-bondid', this.bond.id)
+      .attr('data-fromatomid', this.bond.firstAtom.id)
+      .attr('data-toatomid', this.bond.secondAtom.id)
       .attr(
         'transform',
         `translate(${this.scaledPosition.startPosition.x}, ${this.scaledPosition.startPosition.y})`,
@@ -441,7 +447,10 @@ export class BondRenderer extends BaseRenderer {
       .attr('d', combinedPath)
       .attr('fill', 'none')
       .attr('stroke', 'transparent')
-      .attr('stroke-width', `${combinedPathWidth * BOND_WIDTH_HOVER}`);
+      // BOND_WIDTH_HOVER was replaced with 4 because otherwise - hover area for bond is too big
+      // and it is bad if triple bond is close to another bond (double in my case - see
+      // ketcher/ketcher-autotests/tests/test-data/KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket)
+      .attr('stroke-width', `${combinedPathWidth * 4}`);
 
     hoverPath
       .on('mouseenter', () => {

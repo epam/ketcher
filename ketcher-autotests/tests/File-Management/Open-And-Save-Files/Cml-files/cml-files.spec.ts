@@ -14,7 +14,13 @@ import {
   setReactionMarginSizeValue,
   openSettings,
   selectLayoutTool,
+  setHashSpacingOptionUnit,
+  setHashSpacingValue,
 } from '@utils';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import { getCml } from '@utils/formats';
 
 async function openFileAddToCanvasTakeScreenshot(page: Page, fileName: string) {
@@ -584,6 +590,34 @@ test.describe('CML files', () => {
     expect(cmlFile).toEqual(cmlFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'CML/layout-with-catalyst-px-bond-lengh.cml',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('The Hash spacing setting with pt option is applied, click on layout and it should be save to CML specification', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/Indigo/issues/2176
+    Description: Add new settings for ACS style for convert and layout functions
+    The Hash spacing setting is applied, click on layout and it should be save to CML specification
+    */
+    await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
+    await openSettings(page);
+    await bondsSettings(page);
+    await setHashSpacingOptionUnit(page, 'pt-option');
+    await setHashSpacingValue(page, '54.8');
+    await pressButton(page, 'Apply');
+    await selectLayoutTool(page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'CML/layout-with-catalyst-pt-hash-spacing-expected.cml',
+      FileType.CML,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'CML/layout-with-catalyst-pt-hash-spacing-expected.cml',
       page,
     );
     await takeEditorScreenshot(page);

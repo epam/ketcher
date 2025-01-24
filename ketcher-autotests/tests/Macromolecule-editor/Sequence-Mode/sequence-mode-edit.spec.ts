@@ -34,6 +34,7 @@ import {
   enterSequence,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
+import { goToRNATab } from '@utils/macromolecules/library';
 import { expandCollapseRnaBuilder } from '@utils/macromolecules/rnaBuilder';
 import {
   clickOnSequenceSymbol,
@@ -441,7 +442,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4928
     Description: System show full set of IDT aliases at preview tooltip.
     */
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await expandCollapseRnaBuilder(page);
     await page.getByTestId(Presets.dR_U_P).hover();
     await takePageScreenshot(page);

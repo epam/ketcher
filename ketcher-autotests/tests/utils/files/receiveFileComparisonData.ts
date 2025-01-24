@@ -42,7 +42,6 @@ const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.SDF]: getSdf,
 };
 
-
 async function getFileContent(
   page: Page,
   fileType: FileType,

@@ -16,6 +16,7 @@
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import { ChemRenderer } from 'application/render/renderers/ChemRenderer';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
@@ -102,6 +103,12 @@ class PolymerBond implements BaseTool {
 
   public mousedown(event) {
     const selectedRenderer = event.target.__data__;
+    if (selectedRenderer instanceof ChemRenderer) {
+      this.editor.events.error.dispatch(
+        'Selected CHEM monomer supports only attachment points for bond creation',
+      );
+      return;
+    }
     if (
       selectedRenderer instanceof BaseMonomerRenderer ||
       selectedRenderer instanceof AttachmentPoint
@@ -114,10 +121,6 @@ class PolymerBond implements BaseTool {
           "Selected monomer doesn't have any free attachment points",
         );
         return;
-      }
-
-      if (startAttachmentPoint) {
-        this.removePreviouslyCreatedBond(startAttachmentPoint);
       }
 
       const { polymerBond, command: modelChanges } =
@@ -337,21 +340,6 @@ class PolymerBond implements BaseTool {
       this.bondRenderer = undefined;
       event.stopPropagation();
     }
-  }
-
-  private removePreviouslyCreatedBond(attachmentPoint: AttachmentPointName) {
-    this.editor.drawingEntitiesManager.monomerToAtomBonds.forEach(
-      (monomerToAtomBond) => {
-        const bond =
-          monomerToAtomBond.monomer.attachmentPointsToBonds[attachmentPoint];
-
-        if (bond?.id === monomerToAtomBond.id) {
-          this.editor.renderersContainer.deleteMonomerToAtomBond(
-            monomerToAtomBond,
-          );
-        }
-      },
-    );
   }
 
   private finishBondCreation(secondMonomer: BaseMonomer) {

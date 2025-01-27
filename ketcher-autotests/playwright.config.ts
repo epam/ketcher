@@ -29,22 +29,22 @@ const ignoredTests = [
   'utils/**',
 ];
 
-const regularTests = [
-  'API/**',
-  'Examples/**',
-  'File-Management/**',
-  'Indigo-Tools/**',
-  'R-group-tool/**',
-  'Reactions/**',
-  'Reaction-tool/**',
-  'Reagents/**',
-  'Settings/**',
-  'Structure-Creating-&-Editing/**',
-  'Templates/**',
-  'User-Interface/**',
-];
+// const regularTests = [
+//   'API/**',
+//   'Examples/**',
+//   'File-Management/**',
+//   'Indigo-Tools/**',
+//   'R-group-tool/**',
+//   'Reactions/**',
+//   'Reaction-tool/**',
+//   'Reagents/**',
+//   'Settings/**',
+//   'Structure-Creating-&-Editing/**',
+//   'Templates/**',
+//   'User-Interface/**',
+// ];
 
-const macromoleculeTests = ['Macromolecule-editor/**'];
+// const macromoleculeTests = ['Macromolecule-editor/**'];
 
 const testDir = './tests';
 
@@ -73,11 +73,11 @@ function getIgnoredFiles(): string[] {
   if (process.env.IGNORE_UNSTABLE_TESTS) {
     ignored = ignoredTests;
   }
-  if (process.env.ENABLE_POLYMER_EDITOR === 'true') {
-    ignored = [...ignored, ...regularTests];
-  } else {
-    ignored = [...ignored, ...macromoleculeTests];
-  }
+  // if (process.env.ENABLE_POLYMER_EDITOR === 'true') {
+  //   ignored = [...ignored, ...regularTests];
+  // } else {
+  //   ignored = [...ignored, ...macromoleculeTests];
+  // }
   return ignored;
 }
 

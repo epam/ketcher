@@ -6,6 +6,13 @@ export class Command {
   private undoOperationReverse = false;
   private setUndoOperationByPriority = false;
 
+  private static objCounter = -1;
+  private objId = ++Command.objCounter;
+
+  private toLog(): string {
+    return `${this.constructor.name}<${this.objId}>`;
+  }
+
   public addOperation(operation: Operation) {
     this.operations.push(operation);
   }
@@ -40,12 +47,25 @@ export class Command {
   }
 
   public execute(renderersManagers: RenderersManager) {
+    console.debug(
+      `${this.toLog()}, execute(), start, ` +
+        `this.operations: ${this.operationsToString()}`,
+    );
+
     this.operations.forEach((operation) =>
       operation.execute(renderersManagers),
     );
     renderersManagers.reinitializeViewModel();
     this.executeAfterAllOperations(renderersManagers);
     renderersManagers.runPostRenderMethods();
+  }
+
+  private operationsToString(): string {
+    return this.operations.length === 0
+      ? '[]'
+      : `\n${this.operations
+          .map((o) => `  ${o.constructor.name}`)
+          .join('\n')}\n`;
   }
 
   public executeAfterAllOperations(

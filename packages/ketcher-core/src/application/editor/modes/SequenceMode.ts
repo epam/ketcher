@@ -68,6 +68,22 @@ export interface StartNewSequenceEventData {
   indexOfRowBefore: number;
 }
 
+function nodeToString(currentNode: SubChainNode | undefined) {
+  if (currentNode === undefined) return 'undefined';
+  if (currentNode === null) return 'null';
+
+  let content;
+  const typeName = currentNode.constructor.name;
+  switch (typeName) {
+    case 'MonomerSequenceNode': {
+      const monomer = currentNode.monomer;
+      content = `${monomer.constructor.name}: ${monomer.label}`;
+    }
+  }
+
+  return `${typeName}${content ? `{ ${content} }` : ''}`;
+}
+
 export class SequenceMode extends BaseMode {
   private _isEditMode = false;
   private _isEditInRNABuilderMode = false;
@@ -95,11 +111,19 @@ export class SequenceMode extends BaseMode {
     this._isEditInRNABuilderMode = isEditInRNABuilderMode;
   }
 
+  private static objCounter = -1;
+  private objId = ++SequenceMode.objCounter;
+
+  private toLog(): string {
+    return `${this.constructor.name}<${this.objId}>`;
+  }
+
   public initialize(
     needScroll = true,
     needRemoveSelection = true,
     needReArrangeChains = true,
   ) {
+    console.log(`${this.toLog()}.initialize()`);
     const command = super.initialize(needRemoveSelection);
     const editor = CoreEditor.provideEditorInstance();
 
@@ -245,7 +269,11 @@ export class SequenceMode extends BaseMode {
       const currentNode = SequenceRenderer.getNodeByPointer(nodeIndexOverall);
 
       // Update Sugar monomerItem object
-      if (currentNode.sugar && sugarMonomerItem) {
+      if (
+        currentNode instanceof Nucleotide &&
+        currentNode.sugar &&
+        sugarMonomerItem
+      ) {
         modelChanges.merge(
           editor.drawingEntitiesManager.modifyMonomerItem(
             currentNode.sugar,
@@ -254,7 +282,11 @@ export class SequenceMode extends BaseMode {
         );
       }
       // Update Base monomerItem object
-      if (currentNode.rnaBase && baseMonomerItem) {
+      if (
+        currentNode instanceof Nucleotide &&
+        currentNode.rnaBase &&
+        baseMonomerItem
+      ) {
         modelChanges.merge(
           editor.drawingEntitiesManager.modifyMonomerItem(
             currentNode.rnaBase,
@@ -299,7 +331,10 @@ export class SequenceMode extends BaseMode {
             ),
           );
           // Update Phosphate monomerItem object
-        } else if (currentNode.monomer instanceof Phosphate) {
+        } else if (
+          currentNode instanceof MonomerSequenceNode &&
+          currentNode.monomer instanceof Phosphate
+        ) {
           modelChanges.merge(
             editor.drawingEntitiesManager.modifyMonomerItem(
               currentNode.monomer,
@@ -1652,74 +1687,98 @@ export class SequenceMode extends BaseMode {
 
   public insertPresetFromLibrary(preset: IRnaPreset) {
     const editor = CoreEditor.provideEditorInstance();
-    const history = new EditorHistory(editor);
-    const modelChanges = new Command();
     const selections = SequenceRenderer.selections;
 
     if (selections.length > 0) {
-      if (!this.presetHasNeededAttachmentPoints(preset)) {
-        this.showMergeWarningModal();
-        return;
-      }
-
-      if (this.selectionsContainLinkerNode(selections)) {
-        editor.events.openConfirmationDialog.dispatch({
-          confirmationText:
-            'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
-          onConfirm: () => {
-            this.replaceSelectionsWithPreset(selections, preset);
-          },
-        });
-      } else if (
-        this.selectionsCantPreserveConnectionsWithPreset(
-          selections,
-          preset,
-          true,
-        )
-      ) {
-        editor.events.openConfirmationDialog.dispatch({
-          confirmationText:
-            'Side chain connections will be deleted during replacement. Do you want to proceed?',
-          onConfirm: () => {
-            this.replaceSelectionsWithPreset(selections, preset);
-          },
-        });
-      } else {
-        this.replaceSelectionsWithPreset(selections, preset);
-      }
+      this.insertPresetFromLibraryOverSelection(preset, editor, selections);
     } else {
-      const newNodePosition = this.getNewNodePosition();
+      this.insertPresetFromLibraryWithoutSelection(preset, editor);
+    }
+  }
 
-      const newPresetNode = this.createRnaPresetNode(preset, newNodePosition);
+  private insertPresetFromLibraryWithoutSelection(
+    preset: IRnaPreset,
+    editor: CoreEditor,
+  ) {
+    const history = new EditorHistory(editor);
+    const modelChanges = new Command();
 
-      assert(newPresetNode);
+    const newNodePosition = this.getNewNodePosition();
 
-      const { nodeCanBeInserted, missingAttachmentPoint } =
-        this.checkNodeInsertionPossibility(newPresetNode);
+    const newPresetNode = this.createRnaPresetNode(preset, newNodePosition);
 
-      if (!nodeCanBeInserted) {
-        const message =
-          missingAttachmentPoint &&
-          `The monomer lacks ${missingAttachmentPoint} attachment point and cannot be inserted at current position`;
-        this.showMergeWarningModal(message);
-        return;
-      }
+    assert(newPresetNode);
 
-      const rnaPresetAddModelChanges =
-        editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
+    const { nodeCanBeInserted, missingAttachmentPoint } =
+      this.checkNodeInsertionPossibility(newPresetNode);
 
-      modelChanges.merge(rnaPresetAddModelChanges);
-      modelChanges.merge(this.insertNewSequenceFragment(newPresetNode));
+    if (!nodeCanBeInserted) {
+      const message =
+        missingAttachmentPoint &&
+        `The monomer lacks ${missingAttachmentPoint} attachment point and cannot be inserted at current position`;
+      this.showMergeWarningModal(message);
+      return;
+    }
 
-      modelChanges.addOperation(new ReinitializeModeOperation());
-      editor.renderersContainer.update(modelChanges);
-      SequenceRenderer.moveCaretForward();
-      history.update(modelChanges);
+    const rnaPresetAddModelChanges =
+      editor.drawingEntitiesManager.addRnaPresetFromNode(newPresetNode);
+
+    modelChanges.merge(rnaPresetAddModelChanges);
+    modelChanges.merge(this.insertNewSequenceFragment(newPresetNode));
+    // TODO: Adjust SequenceRenderer.caretPosition
+    // modelChanges.merge(
+    //   new RestoreSequenceCaretPositionOperation(
+    //     SequenceRenderer.caretPosition,
+    //     SequenceRenderer.caretPosition + 1,
+    //   ),
+    // );
+
+    modelChanges.addOperation(new ReinitializeModeOperation());
+    editor.renderersContainer.update(modelChanges);
+    // if (SequenceRenderer.caretPosition === 0) {
+    //   SequenceRenderer.setCaretPosition(2);
+    // } else {
+    //   SequenceRenderer.moveCaretForward();
+    // }
+    history.update(modelChanges);
+  }
+
+  private insertPresetFromLibraryOverSelection(
+    preset: IRnaPreset,
+    editor: CoreEditor,
+    selections: NodeSelection[][],
+  ) {
+    if (!this.presetHasNeededAttachmentPoints(preset)) {
+      this.showMergeWarningModal();
+      return;
+    }
+
+    if (this.selectionsContainLinkerNode(selections)) {
+      editor.events.openConfirmationDialog.dispatch({
+        confirmationText:
+          'Symbol @ can represent multiple monomers, all of them are going to be deleted. Do you want to proceed?',
+        onConfirm: () => {
+          this.replaceSelectionsWithPreset(selections, preset);
+        },
+      });
+    } else if (
+      this.selectionsCantPreserveConnectionsWithPreset(selections, preset, true)
+    ) {
+      editor.events.openConfirmationDialog.dispatch({
+        confirmationText:
+          'Side chain connections will be deleted during replacement. Do you want to proceed?',
+        onConfirm: () => {
+          this.replaceSelectionsWithPreset(selections, preset);
+        },
+      });
+    } else {
+      this.replaceSelectionsWithPreset(selections, preset);
     }
   }
 
   private insertNewSequenceItem(editor: CoreEditor, enteredSymbol: string) {
     const currentNode = SequenceRenderer.currentEdittingNode;
+    assert(currentNode, 'currentEdittingNode is undefined');
     const newNodePosition = this.getNewNodePosition();
     let modelChanges;
     const previousNodeInSameChain = SequenceRenderer.previousNodeInSameChain;
@@ -1786,17 +1845,37 @@ export class SequenceMode extends BaseMode {
         : new ChainsCollection().add(
             new Chain().addNode(chainsCollectionOrNode),
           );
-    const currentNode =
+    let currentNode =
       nextNodeToConnect === null
         ? undefined
         : nextNodeToConnect || SequenceRenderer.currentEdittingNode;
-    const previousNodeInSameChain =
+    let previousNodeInSameChain =
       previousNodeToConnect || SequenceRenderer.previousNodeInSameChain;
+    let newNodePosition = this.getNewNodePosition();
+    if (
+      previousNodeInSameChain instanceof Nucleoside &&
+      currentNode?.monomer instanceof Phosphate &&
+      currentNode instanceof MonomerSequenceNode &&
+      currentNode.monomer.unUsedAttachmentPointsNamesList.includes(
+        AttachmentPointName.R2,
+      )
+    ) {
+      [previousNodeInSameChain, currentNode] = [
+        currentNode,
+        SequenceRenderer.getNextNode(currentNode),
+      ];
+      newNodePosition = newNodePosition.add(new Vec2(1.5, 0, 0)); // ??
+    }
+
+    console.log(
+      `${this.toLog()}.insertNewSequenceFragment(), ` +
+        `currentNode: ${nodeToString(currentNode)}, ` +
+        `previousNodeInSameChain: ${nodeToString(previousNodeInSameChain)}`,
+    );
+
     const modelChanges = new Command();
     const lastNodeOfNewFragment = chainsCollection.lastNode;
     const firstNodeOfNewFragment = chainsCollection.firstNode;
-    const newNodePosition = this.getNewNodePosition();
-
     if (needConnectWithPreviousNodeInChain) {
       this.deleteBondToNextNodeInChain(previousNodeInSameChain, modelChanges);
       this.connectNodes(

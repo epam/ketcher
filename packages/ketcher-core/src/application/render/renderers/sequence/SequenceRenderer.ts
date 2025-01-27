@@ -56,6 +56,7 @@ export class SequenceRenderer {
   public static lastChainStartPosition: Vec2;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
   private static newSequenceButtons: NewSequenceButton[] = [];
+
   public static show(
     chainsCollection: ChainsCollection,
     emptyChainIndex?: number,
@@ -456,23 +457,27 @@ export class SequenceRenderer {
   }
 
   private static get currentChainRow() {
+    const currentNode = this.currentEdittingNode;
+    assert(currentNode, 'currentEdittingNode is undefined');
     return (
-      this.nodesGroupedByRows.find((idexRow) =>
-        idexRow.includes(this.currentEdittingNode),
-      ) || []
+      this.nodesGroupedByRows.find((row) => row.includes(currentNode)) || []
     );
   }
 
   private static get previousRowOfNodes() {
+    const currentNode = this.currentEdittingNode;
+    assert(currentNode, 'currentEdittingNode is undefined');
     const index = this.nodesGroupedByRows.findIndex((row) =>
-      row.includes(this.currentEdittingNode),
+      row.includes(currentNode),
     );
     return index > 0 ? this.nodesGroupedByRows[index - 1] : [];
   }
 
   private static get nextRowOfNodes() {
+    const currentNode = this.currentEdittingNode;
+    assert(currentNode, 'currentEdittingNode is undefined');
     const currentIndex = this.nodesGroupedByRows.findIndex((row) =>
-      row.includes(this.currentEdittingNode),
+      row.includes(currentNode),
     );
     return currentIndex !== -1 &&
       currentIndex + 1 < this.nodesGroupedByRows.length
@@ -481,9 +486,9 @@ export class SequenceRenderer {
   }
 
   public static moveCaretUp() {
-    const currentNodeIndexInRow = this.currentChainRow.indexOf(
-      this.currentEdittingNode,
-    );
+    const currentNode = this.currentEdittingNode;
+    assert(currentNode, 'currentEdittingNode is undefined');
+    const currentNodeIndexInRow = this.currentChainRow.indexOf(currentNode);
 
     let newCaretPosition = this.caretPosition;
     const symbolsBeforeCaretInCurrentRow = currentNodeIndexInRow;
@@ -500,9 +505,9 @@ export class SequenceRenderer {
   }
 
   public static moveCaretDown() {
-    const currentNodeIndexInRow = this.currentChainRow.indexOf(
-      this.currentEdittingNode,
-    );
+    const currentNode = this.currentEdittingNode;
+    assert(currentNode, 'currentEdittingNode is undefined');
+    const currentNodeIndexInRow = this.currentChainRow.indexOf(currentNode);
 
     let newCaretPosition = this.caretPosition;
     const lastUserDefinedCursorPositionInRow =
@@ -569,7 +574,7 @@ export class SequenceRenderer {
 
   public static getNodeByPointer(sequencePointer?: SequencePointer) {
     if (sequencePointer === undefined) return;
-    let nodeToReturn;
+    let nodeToReturn: SubChainNode | undefined;
 
     SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
       if (nodeIndexOverall === sequencePointer) {
@@ -643,9 +648,9 @@ export class SequenceRenderer {
   }
 
   public static get previousNodeInSameChain() {
-    return SequenceRenderer.getPreviousNodeInSameChain(
-      SequenceRenderer.currentEdittingNode,
-    );
+    const currentNode = this.currentEdittingNode;
+    assert(currentNode, 'currentEdittingNode is undefined');
+    return SequenceRenderer.getPreviousNodeInSameChain(currentNode);
   }
 
   private static get nextCaretPosition(): SequencePointer | undefined {
@@ -761,13 +766,15 @@ export class SequenceRenderer {
   }
 
   public static shiftArrowSelectionInEditMode(event) {
+    const currentNode = this.currentEdittingNode;
+    assert(currentNode, 'currentEdittingNode is undefined');
     const editor = CoreEditor.provideEditorInstance();
     let modelChanges = new Command();
     const arrowKey = event.code;
     if (arrowKey === 'ArrowRight') {
       modelChanges = SequenceRenderer.getShiftArrowChanges(
         editor,
-        this.currentEdittingNode.monomer,
+        currentNode.monomer,
       );
       modelChanges.addOperation(this.moveCaretForward());
     } else if (arrowKey === 'ArrowLeft') {

@@ -6,6 +6,7 @@ import { Vec2 } from 'domain/entities';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseRenderer } from '../BaseRenderer';
+import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
 export class FlexModePolymerBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -73,17 +74,26 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
 
   // TODO: Specify the types.
   public appendBond(rootElement) {
-    this.appendBondGraph(rootElement);
+    if (this.polymerBond.isCyclicOverlappingBond) {
+      console.log(this.polymerBond.id, 'bond is cyclic overlapping');
+      this.appendEnvelopingBond(rootElement);
+    } else {
+      this.appendBondGraph(rootElement);
+    }
     return this.bodyElement;
   }
 
   public isMonomersOnSameHorizontalLine(): boolean {
-    if (!this.polymerBond.secondMonomer) return false;
+    if (!this.polymerBond.secondMonomer) {
+      return false;
+    }
 
-    const monomer1Y = this.polymerBond.firstMonomer.position.y;
-    const monomer2Y = this.polymerBond.secondMonomer.position.y;
-    const difference = monomer1Y - monomer2Y;
-    return difference < 0.5 && difference > -0.5;
+    return (
+      Math.abs(
+        this.polymerBond.firstMonomer.position.y -
+          this.polymerBond.secondMonomer.position.y,
+      ) < 0.5
+    );
   }
 
   // TODO: Specify the types.
@@ -117,6 +127,93 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       );
 
     return this.bodyElement;
+  }
+
+  private appendEnvelopingBond(rootElement: any) {
+    if (!this.polymerBond.secondMonomer) {
+      return this.bodyElement;
+    }
+
+    const subStructureBBox = DrawingEntitiesManager.getStructureBbox([
+      this.polymerBond.firstMonomer,
+      this.polymerBond.secondMonomer,
+    ]);
+    const expandedBBox = this.getExpandedBoundingBox(subStructureBBox);
+
+    // const canvasLeftTop = Coordinates.modelToCanvas(new Vec2(expandedBBox.left, expandedBBox.top));
+    // const canvasRightBottom = Coordinates.modelToCanvas(new Vec2(expandedBBox.left + expandedBBox.width, expandedBBox.top + expandedBBox.height));
+
+    // this.bodyElement = rootElement
+    //   .append('rect')
+    //   .attr('x', canvasLeftTop.x)
+    //   .attr('y', canvasLeftTop.y)
+    //   .attr('width', canvasRightBottom.x - canvasLeftTop.x)
+    //   .attr('height', canvasRightBottom.y - canvasLeftTop.y)
+    //   .attr('stroke', 'red')
+    //   .attr('stroke-width', 1)
+    //   .attr('fill', 'none');
+
+    const startBorder = this.getBorderPoint(
+      this.polymerBond.startPosition,
+      expandedBBox,
+      true,
+    );
+    const endBorder = this.getBorderPoint(
+      this.polymerBond.endPosition,
+      expandedBBox,
+      false,
+    );
+    const intermediatePoint = new Vec2(startBorder.x, endBorder.y);
+
+    const path = `
+      M${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y}
+      L${startBorder.x},${startBorder.y} 
+      L${intermediatePoint.x},${intermediatePoint.y}
+      L${endBorder.x},${endBorder.y}
+      L${this.scaledPosition.endPosition.x},${this.scaledPosition.endPosition.y}
+    `;
+
+    this.bodyElement = rootElement
+      .append('path')
+      .attr('d', path)
+      .attr('stroke', '#333333')
+      .attr('stroke-width', 1)
+      .attr('fill', 'none');
+
+    return this.bodyElement;
+  }
+
+  private getExpandedBoundingBox(bbox) {
+    const expansionFactor = 0.75;
+    let { left, top, width, height } = bbox;
+
+    if (width < 2 * expansionFactor || height < 2 * expansionFactor) {
+      if (width < height) {
+        left -= expansionFactor;
+        width += 2 * expansionFactor;
+      } else {
+        top -= expansionFactor;
+        height += 2 * expansionFactor;
+      }
+    }
+
+    return { left, top, width, height };
+  }
+
+  private getBorderPoint(position: Vec2, bbox, isStart: boolean): Vec2 {
+    const { left, top, width, height } = bbox;
+    const midX = left + width / 2;
+    const midY = top + height / 2;
+
+    let result: Vec2;
+
+    if (Math.abs(position.x - midX) < Math.abs(position.y - midY)) {
+      result = new Vec2(isStart ? left : left + width, position.y);
+    } else {
+      result = new Vec2(position.x, isStart ? top + height : top);
+    }
+
+    return Coordinates.modelToCanvas(result);
   }
 
   // TODO: Specify the types.

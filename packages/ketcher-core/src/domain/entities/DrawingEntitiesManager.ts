@@ -2673,10 +2673,10 @@ export class DrawingEntitiesManager {
 
   // TODO create separate class for BoundingBox
   public static getStructureBbox(monomers: BaseMonomer[]) {
-    let left;
-    let right;
-    let top;
-    let bottom;
+    let left = 0;
+    let right = 0;
+    let top = 0;
+    let bottom = 0;
 
     monomers.forEach((monomer) => {
       const monomerPosition = monomer.position;

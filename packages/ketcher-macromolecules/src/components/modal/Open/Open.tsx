@@ -194,6 +194,8 @@ const addToCanvas = ({
     }
   }
 
+  editor.drawingEntitiesManager.detectCycles();
+
   editor.renderersContainer.update(modelChanges);
   editorHistory.update(modelChanges);
 
@@ -216,8 +218,6 @@ const addToCanvas = ({
   if (isCanvasEmptyBeforeOpenStructure) {
     editor.zoomToStructuresIfNeeded();
   }
-
-  editor.drawingEntitiesManager.detectCycles();
 };
 
 // TODO: replace after the implementation of the function for processing the structure from the file

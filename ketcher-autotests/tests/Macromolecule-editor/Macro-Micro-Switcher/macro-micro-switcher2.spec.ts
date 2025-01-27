@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 /*
 Tests below moved here from macro-micro-switcher since they are designed to be executed in isolated environment 
@@ -47,6 +48,9 @@ import {
   screenshotBetweenUndoRedoInMacro,
   copyAndPaste,
   copyToClipboardByKeyboard,
+  takePageScreenshot,
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
 } from '@utils';
 
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
@@ -57,7 +61,10 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { goToFavoritesTab } from '@utils/macromolecules/library';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [
@@ -726,5 +733,106 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
     );
     await takeEditorScreenshot(page);
+  });
+
+  test('Verify that flex mode is opened by default when a user enters macromolecules mode for the first time and there is a drawing on the canvas', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/6029
+      Description: Flex mode is opened by default when a user enters macromolecules mode for the first time and there is a drawing on the canvas
+      Case: 
+      1. Open KET file with drawing in Micro mode
+      2. Switch to Macromolecules mode
+      3. Verify that Flex mode is opened
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-ring-with-two-atoms.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page, false, false);
+    await takePageScreenshot(page);
+  });
+
+  test('Verify that flex mode is not opened by default if the user previously entered macromolecules mode change macro mode to (Snake, Sequence) and re-entering it from Micro mode', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/6029
+      Description: Flex mode is not opened by default if the user previously entered macromolecules mode change 
+      macro mode to (Snake, Sequence) and re-entering it from Micro mode
+      Case: 
+      1. Switch to Macromolecules mode
+      2. Change macro mode to Snake
+      3. Switch to Micro mode
+      4. Switch to Macromolecules mode
+    */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await selectSnakeLayoutModeTool(page);
+    await takePageScreenshot(page);
+    await turnOnMicromoleculesEditor(page);
+    await turnOnMacromoleculesEditor(page, false, false);
+    await takePageScreenshot(page);
+  });
+
+  test('Verify that flex mode is not triggered if the canvas is empty when the user enters macromolecules mode for the first time (Sequence mode by default)', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/6029
+      Description: Flex mode is not triggered if the canvas is empty when the user enters 
+      macromolecules mode for the first time (Sequence mode by default)
+      Case: 
+      1. Switch to Macromolecules mode
+      2. Verify that Sequence mode is opened
+    */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await takePageScreenshot(page);
+  });
+
+  test('Verify the behavior when the user manually switches to sequence mode after flex mode and then switches to micro and back to macro (Sequence should be by default)', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/6029
+      Description: Behavior when the user manually switches to sequence mode after flex mode and 
+      then switches to micro and back to macro (Sequence should be by default)
+      Case: 
+      1. Switch to Macromolecules mode
+      2. Change macro mode to Flex
+      3. Change macro mode to Sequence
+      4. Switch to Micro mode
+      5. Switch to Macromolecules mode
+    */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await selectFlexLayoutModeTool(page);
+    await selectSequenceLayoutModeTool(page);
+    await turnOnMicromoleculesEditor(page);
+    await turnOnMacromoleculesEditor(page, false, false);
+    await takePageScreenshot(page);
+  });
+
+  test('Verify undo/redo functionality when entering macromolecules mode for the first time and modifying a drawing in flex mode (undo/redo not changes layout modes)', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/6029
+      Description: Undo/redo functionality when entering macromolecules mode for the first time and 
+      modifying a drawing in flex mode (undo/redo not changes layout modes)
+      Case: 
+      1. Switch to Macromolecules mode
+      2. Modify drawing in Flex mode
+      3. Undo/redo
+    */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/benzene-ring-with-two-atoms.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page, false, false);
+    await selectClearCanvasTool(page);
+    await pressUndoButton(page);
+    await takePageScreenshot(page);
+    await pressRedoButton(page);
+    await takePageScreenshot(page);
   });
 });

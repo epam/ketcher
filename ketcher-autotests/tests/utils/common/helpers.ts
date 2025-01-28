@@ -13,9 +13,7 @@ export async function pageReload(page: Page) {
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);
   await waitForIndigoToLoad(page);
-  if (process.env.ENABLE_POLYMER_EDITOR === 'true') {
-    await turnOnMacromoleculesEditor(page);
-  }
+  await turnOnMacromoleculesEditor(page);
 }
 
 export async function contextReload(page: Page): Promise<Page> {
@@ -34,9 +32,7 @@ export async function contextReload(page: Page): Promise<Page> {
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);
   await waitForIndigoToLoad(page);
-  if (process.env.ENABLE_POLYMER_EDITOR === 'true') {
-    await turnOnMacromoleculesEditor(page);
-  }
+  await turnOnMacromoleculesEditor(page);
   return page;
 }
 

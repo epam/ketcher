@@ -1,4 +1,4 @@
-import { lazy, StrictMode, Suspense, useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { MicromoleculesEditor, EditorProps } from './MicromoleculesEditor';
 import { ModeControl } from './script/ui/views/toolbars/ModeControl';
 import { LoadingCircles } from './script/ui/views/components';
@@ -36,7 +36,7 @@ export const Editor = (props: Props) => {
   ) : undefined;
 
   return (
-    <StrictMode>
+    <>
       {showPolymerEditor ? (
         <Suspense
           fallback={
@@ -61,6 +61,6 @@ export const Editor = (props: Props) => {
           />
         </Suspense>
       )}
-    </StrictMode>
+    </>
   );
 };

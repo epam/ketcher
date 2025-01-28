@@ -371,8 +371,9 @@ export class Ketcher {
   }
 
   async setMolecule(structStr: string): Promise<void | undefined> {
-    if (CoreEditor.provideEditorInstance()?.isSequenceEditInRNABuilderMode)
-      return;
+    const macromoleculesEditor = CoreEditor.provideEditorInstance();
+
+    if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
     runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
@@ -380,6 +381,7 @@ export class Ketcher {
       if (window.isPolymerEditorTurnedOn) {
         deleteAllEntitiesOnCanvas();
         await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
+        macromoleculesEditor?.zoomToStructuresIfNeeded();
       } else {
         const struct: Struct = await prepareStructToRender(
           structStr,
@@ -411,14 +413,22 @@ export class Ketcher {
   }
 
   async addFragment(structStr: string): Promise<void | undefined> {
-    if (CoreEditor.provideEditorInstance()?.isSequenceEditInRNABuilderMode)
-      return;
+    const macromoleculesEditor = CoreEditor.provideEditorInstance();
+
+    if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
 
     runAsyncAction<void>(async () => {
       assert(typeof structStr === 'string');
 
       if (window.isPolymerEditorTurnedOn) {
+        const isCanvasEmptyBeforeOpenStructure =
+          !macromoleculesEditor.drawingEntitiesManager.hasDrawingEntities;
+
         await parseAndAddMacromoleculesOnCanvas(structStr, this.structService);
+
+        if (isCanvasEmptyBeforeOpenStructure) {
+          macromoleculesEditor?.zoomToStructuresIfNeeded();
+        }
       } else {
         const struct: Struct = await prepareStructToRender(
           structStr,

@@ -9,7 +9,7 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
-import { test, expect, Page } from '@playwright/test';
+import { test, Page } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
@@ -17,9 +17,6 @@ import {
   takeMonomerLibraryScreenshot,
   waitForPageInit,
   selectSnakeLayoutModeTool,
-  saveToFile,
-  receiveFileComparisonData,
-  getMolfile,
   selectLeftPanelButton,
   LeftPanelButton,
   openFileAndAddToCanvasAsNewProject,
@@ -208,24 +205,13 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/chem-connected-to-micro-structure.ket',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/chem-connected-to-micro-structure-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-
-    const METADATA_STRINGS_INDEXES = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/chem-connected-to-micro-structure-expected.mol',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(molFile).toEqual(molFileExpected);
   });
 
   test('Check that attachment points and leaving groups are correctly represented in Mol V3000 format', async ({
@@ -239,24 +225,13 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-
-    const METADATA_STRINGS_INDEXES = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
       page,
@@ -293,24 +268,13 @@ test.describe('Macro-Micro-Switcher2', () => {
       Description: It is possible to save micro-macro connection to mol v3000 file.
       */
     await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/micro-macro-structure-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-
-    const METADATA_STRINGS_INDEXES = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/micro-macro-structure-expected.mol',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V3000/micro-macro-structure-expected.mol',
       page,

@@ -3,12 +3,9 @@ import { test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   clickInTheMiddleOfTheScreen,
-  getMolfile,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
-  receiveFileComparisonData,
-  saveToFile,
   selectEraseTool,
   selectPartOfMolecules,
   selectSnakeLayoutModeTool,
@@ -399,23 +396,13 @@ test.describe('Erase Tool', () => {
     await selectEraseTool(page);
     await page.getByText('Bal').locator('..').first().click();
     await page.getByText('D-2Nal').locator('..').first().click();
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/peptides-flex-chain-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/peptides-flex-chain-expected.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await openFileAndAddToCanvasMacro(
       'Molfiles-V3000/peptides-flex-chain-expected.mol',
       page,

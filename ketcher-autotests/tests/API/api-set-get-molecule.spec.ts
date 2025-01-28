@@ -20,6 +20,10 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
+import {
   addFragment,
   disableQueryElements,
   enableDearomatizeOnLoad,
@@ -193,7 +197,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10095
     Description:  Molecule set and get using V3000 format
     */
-    const ignoredLineIndigo = 1;
     const orEnantiomer = await readFileContents(
       'tests/test-data/Molfiles-V3000/or-enantiomer.mol',
     );
@@ -202,21 +205,14 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       async () => await setMolecule(page, orEnantiomer),
     );
 
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/test-data-for-enatiomer.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/test-data-for-enatiomer.mol',
-        metaDataIndexes: [ignoredLineIndigo],
-        fileFormat: 'v3000',
-      });
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 

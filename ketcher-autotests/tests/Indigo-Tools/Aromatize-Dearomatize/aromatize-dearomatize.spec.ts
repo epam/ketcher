@@ -19,6 +19,10 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import { getCml, getMolfile, getRxn, getSmiles } from '@utils/formats';
 import {
   pressRedoButton,
@@ -230,24 +234,13 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V3000/aromatic-benzene-v3000.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/aromatic-benzene-v3000-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/aromatic-benzene-v3000-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v3000',
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 

@@ -11,6 +11,10 @@ import {
   takeLeftToolbarScreenshot,
   waitForPageInit,
 } from '@utils';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import { getMolfile } from '@utils/formats';
 
 test.describe('R-Group', () => {
@@ -108,22 +112,13 @@ test.describe('R-Group', () => {
       'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/r-group-with-allkind-attachment-points-expectedV3000.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { file: molFile, fileExpected: molFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/r-group-with-allkind-attachment-points-expectedV3000.mol',
-        fileFormat: 'v3000',
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 

@@ -6,14 +6,17 @@ import { waitForKetcherInit, waitForIndigoToLoad } from './loaders';
 export async function emptyFunction() {}
 
 export async function pageReload(page: Page) {
-  /* In order to fix problem with label renderer (one pixel shift) 
-        we have to try to reload page
-    */
+  await page.reload();
+  await page.goto('', { waitUntil: 'domcontentloaded' });
+  await waitForKetcherInit(page);
+  await turnOnMacromoleculesEditor(page);
+}
+
+export async function pageReloadMicro(page: Page) {
   await page.reload();
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);
   await waitForIndigoToLoad(page);
-  await turnOnMacromoleculesEditor(page);
 }
 
 export async function contextReload(page: Page): Promise<Page> {

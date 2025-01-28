@@ -23,7 +23,11 @@ import {
   Struct,
   Vec2,
 } from 'domain/entities';
-import { LayerMap, StereoColoringType } from './generalEnumTypes';
+import {
+  LayerMap,
+  StereLabelStyleType,
+  StereoColoringType,
+} from './generalEnumTypes';
 import { getColorFromStereoLabel } from './reatom';
 
 import ReObject from './reobject';
@@ -465,7 +469,7 @@ class ReBond extends ReObject {
       );
     }
 
-    if (bond.cip) {
+    if (bond.cip && options.stereoLabelStyle !== StereLabelStyleType.Off) {
       this.cip = util.drawCIPLabel({
         atomOrBond: bond,
         position: bond.center,

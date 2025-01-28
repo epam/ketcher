@@ -36,8 +36,10 @@ export const Editor = (props: Props) => {
   ) : undefined;
 
   useEffect(() => {
-    window.isPolymerEditorTurnedOn = false;
-  });
+    return () => {
+      window.isPolymerEditorTurnedOn = false;
+    };
+  }, []);
 
   return (
     <>

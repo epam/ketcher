@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { MicromoleculesEditor, EditorProps } from './MicromoleculesEditor';
 import { ModeControl } from './script/ui/views/toolbars/ModeControl';
 import { LoadingCircles } from './script/ui/views/components';
@@ -34,6 +34,12 @@ export const Editor = (props: Props) => {
       isPolymerEditor={showPolymerEditor}
     />
   ) : undefined;
+
+  useEffect(() => {
+    return () => {
+      window.isPolymerEditorTurnedOn = false;
+    };
+  }, []);
 
   return (
     <>

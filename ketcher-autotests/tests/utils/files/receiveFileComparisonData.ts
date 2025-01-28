@@ -52,14 +52,20 @@ async function getFileContent(
   if (!handler) {
     throw new Error(`Unsupported file type: ${fileType}`);
   }
-  if (
-    (fileType === FileType.MOL || fileType === FileType.RXN) &&
-    typeof fileFormat !== 'undefined'
-  ) {
+
+  // For MOL and RXN files, handle the format explicitly
+  if (fileType === FileType.MOL || fileType === FileType.RXN) {
+    if (fileFormat === 'v2000' || fileFormat === undefined) {
+      // If 'v2000' is explicitly requested or format is not provided, call the handler without format argument
+      return (handler as (page: Page) => Promise<string>)(page);
+    }
+    // If format is explicitly provided (like 'v3000'), pass it to the handler
     return (
       handler as (page: Page, fileFormat?: MolfileFormat) => Promise<string>
     )(page, fileFormat);
   }
+
+  // Default behavior for other file types
   return (handler as (page: Page) => Promise<string>)(page);
 }
 
@@ -73,7 +79,6 @@ export async function verifyFileExport(
   // This two lines for creating from scratch or for updating exampled files
   const expectedFileContent = await getFileContent(page, fileType, format);
   await saveToFile(expectedFilename, expectedFileContent);
-
   // This line for filtering out example file content (named as fileExpected)
   // and file content from memory (named as file) from unnessusary data
   const { fileExpected, file } = await receiveFileComparisonData({
@@ -82,8 +87,22 @@ export async function verifyFileExport(
     fileFormat: format,
     metaDataIndexes,
   });
-
-  expect(file).toEqual(fileExpected);
+  // Function to filter lines
+  const filterLines = (lines: string[], indexes: number[]) => {
+    if (indexes.length === 0) {
+      // Default behavior: ignore lines containing '-INDIGO-' and '$DATM'
+      return lines.filter(
+        (line) => !line.includes('-INDIGO-') && !line.includes('$DATM'),
+      );
+    }
+    // If indexes are specified, filter lines by indexes
+    return filterByIndexes(lines, indexes);
+  };
+  // Apply filtering to both files
+  const filteredFile = filterLines(file, metaDataIndexes);
+  const filteredFileExpected = filterLines(fileExpected, metaDataIndexes);
+  // Compare the filtered files
+  expect(filteredFile).toEqual(filteredFileExpected);
 }
 
 export async function verifyRdfFile(
@@ -165,15 +184,17 @@ async function receiveFile({
       ? GetFileMethod[fileExtension as keyof typeof GetFileMethod]
       : GetFileMethod.ket;
 
-  const pageData = {
-    format: fileFormat,
-    method: methodName,
-  };
+  const pageData =
+    fileFormat === 'v2000'
+      ? { method: methodName }
+      : { format: fileFormat, method: methodName };
 
   await page.waitForFunction(() => window.ketcher);
   const file = await page.evaluate(
     ({ method, format }) =>
-      (window.ketcher[method] as KetcherApiFunction)(format),
+      format
+        ? (window.ketcher[method] as KetcherApiFunction)(format)
+        : (window.ketcher[method] as KetcherApiFunction)(),
     pageData,
   );
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -10,6 +11,10 @@ import {
   pressButton,
   moveMouseAway,
 } from '@utils';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -37,19 +42,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Molfile V2000-option').click();
-
-    const molFileV2000Expected = page
-      .getByTestId('mol-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/Query-Feature/Aromaticity-expected.mol',
-      await molFileV2000Expected,
+      FileType.MOL,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Query-Feature/Aromaticity-expected.mol',
@@ -80,19 +78,13 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SDF V2000-option').click();
-
-    const sdfFileV2000Expected = page
-      .getByTestId('sdf-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/Query-Feature/Aromaticity-expected.sdf',
-      await sdfFileV2000Expected,
+      FileType.SDF,
+      'v2000',
+      [1, 25],
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'SDF/Query-Feature/Aromaticity-expected.sdf',
@@ -123,19 +115,13 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Rxnfile V2000-option').click();
-
-    const rxnFileV2000Expected = page
-      .getByTestId('rxn-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/Query-Feature/Aromaticity2-expected.rxn',
-      await rxnFileV2000Expected,
+      FileType.RXN,
+      'v2000',
+      [2, 7, 31, 49, 67],
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/Query-Feature/Aromaticity2-expected.rxn',
@@ -166,19 +152,13 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Molfile V2000-option').click();
-
-    const molFileV2000Expected = page
-      .getByTestId('mol-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/Query-Feature/Chirality-expected.mol',
-      await molFileV2000Expected,
+      FileType.MOL,
+      'v2000',
+      [1],
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Query-Feature/Chirality-expected.mol',
@@ -210,19 +190,13 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SDF V2000-option').click();
-
-    const sdfFileV2000Expected = page
-      .getByTestId('sdf-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/Query-Feature/Chirality-expected.sdf',
-      await sdfFileV2000Expected,
+      FileType.SDF,
+      'v2000',
+      [1, 19],
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'SDF/Query-Feature/Chirality-expected.sdf',
@@ -254,19 +228,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Rxnfile V2000-option').click();
-
-    const rxnFileV2000Expected = page
-      .getByTestId('rxn-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/Query-Feature/Chirality2-expected.rxn',
-      await rxnFileV2000Expected,
+      FileType.RXN,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/Query-Feature/Chirality2-expected.rxn',
@@ -300,19 +267,12 @@ test.describe('Open Ketcher', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await clickOnFileFormatDropdown(page);
-      await page.getByTestId('MDL Molfile V2000-option').click();
-
-      const molFileV2000Expected = page
-        .getByTestId('mol-preview-area-text')
-        .inputValue();
-      //  Save it to test-data if no file in where
-      await saveToFile(
+      await verifyFileExport(
+        page,
         'Molfiles-V2000/Query-Feature/Connectivity-expected.mol',
-        await molFileV2000Expected,
+        FileType.MOL,
+        'v2000',
       );
-      await pressButton(page, 'Cancel');
 
       await openFileAndAddToCanvasAsNewProject(
         'Molfiles-V2000/Query-Feature/Connectivity-expected.mol',
@@ -347,19 +307,12 @@ test.describe('Open Ketcher', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await clickOnFileFormatDropdown(page);
-      await page.getByTestId('SDF V2000-option').click();
-
-      const sdfFileV2000Expected = page
-        .getByTestId('sdf-preview-area-text')
-        .inputValue();
-      //  Save it to test-data if no file in where
-      await saveToFile(
+      await verifyFileExport(
+        page,
         'SDF/Query-Feature/Connectivity-expected.sdf',
-        await sdfFileV2000Expected,
+        FileType.SDF,
+        'v2000',
       );
-      await pressButton(page, 'Cancel');
 
       await openFileAndAddToCanvasAsNewProject(
         'SDF/Query-Feature/Connectivity-expected.sdf',
@@ -394,19 +347,12 @@ test.describe('Open Ketcher', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await clickOnFileFormatDropdown(page);
-      await page.getByTestId('MDL Rxnfile V2000-option').click();
-
-      const rxnFileV2000Expected = page
-        .getByTestId('rxn-preview-area-text')
-        .inputValue();
-      //  Save it to test-data if no file in where
-      await saveToFile(
+      await verifyFileExport(
+        page,
         'Rxn-V2000/Query-Feature/Connectivity2-expected.rxn',
-        await rxnFileV2000Expected,
+        FileType.RXN,
+        'v2000',
       );
-      await pressButton(page, 'Cancel');
 
       await openFileAndAddToCanvasAsNewProject(
         'Rxn-V2000/Query-Feature/Connectivity2-expected.rxn',
@@ -438,19 +384,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Molfile V2000-option').click();
-
-    const molFileV2000Expected = page
-      .getByTestId('mol-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/Query-Feature/H count-expected.mol',
-      await molFileV2000Expected,
+      FileType.MOL,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Query-Feature/H count-expected.mol',
@@ -481,19 +420,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SDF V2000-option').click();
-
-    const sdfFileV2000Expected = page
-      .getByTestId('sdf-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/Query-Feature/H count-expected.sdf',
-      await sdfFileV2000Expected,
+      FileType.SDF,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'SDF/Query-Feature/H count-expected.sdf',
@@ -524,19 +456,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Rxnfile V2000-option').click();
-
-    const rxnFileV2000Expected = page
-      .getByTestId('rxn-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/Query-Feature/H count2-expected.rxn',
-      await rxnFileV2000Expected,
+      FileType.RXN,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/Query-Feature/H count2-expected.rxn',
@@ -570,19 +495,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Molfile V2000-option').click();
-
-    const molFileV2000Expected = page
-      .getByTestId('mol-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/Query-Feature/Implicit H count-expected.mol',
-      await molFileV2000Expected,
+      FileType.MOL,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Query-Feature/Implicit H count-expected.mol',
@@ -616,19 +534,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SDF V2000-option').click();
-
-    const sdfFileV2000Expected = page
-      .getByTestId('sdf-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/Query-Feature/Implicit H count-expected.sdf',
-      await sdfFileV2000Expected,
+      FileType.SDF,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'SDF/Query-Feature/Implicit H count-expected.sdf',
@@ -662,19 +573,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Rxnfile V2000-option').click();
-
-    const rxnFileV2000Expected = page
-      .getByTestId('rxn-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/Query-Feature/Implicit H count2-expected.rxn',
-      await rxnFileV2000Expected,
+      FileType.RXN,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/Query-Feature/Implicit H count2-expected.rxn',
@@ -707,19 +611,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Molfile V2000-option').click();
-
-    const molFileV2000Expected = page
-      .getByTestId('mol-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/Query-Feature/Ring bond count-expected.mol',
-      await molFileV2000Expected,
+      FileType.MOL,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Query-Feature/Ring bond count-expected.mol',
@@ -750,19 +647,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SDF V2000-option').click();
-
-    const sdfFileV2000Expected = page
-      .getByTestId('sdf-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/Query-Feature/Ring bond count-expected.sdf',
-      await sdfFileV2000Expected,
+      FileType.SDF,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'SDF/Query-Feature/Ring bond count-expected.sdf',
@@ -793,19 +683,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Rxnfile V2000-option').click();
-
-    const rxnFileV2000Expected = page
-      .getByTestId('rxn-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/Query-Feature/Ring bond count2-expected.rxn',
-      await rxnFileV2000Expected,
+      FileType.RXN,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/Query-Feature/Ring bond count2-expected.rxn',
@@ -838,19 +721,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Molfile V2000-option').click();
-
-    const molFileV2000Expected = page
-      .getByTestId('mol-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/Query-Feature/Ring membership-expected.mol',
-      await molFileV2000Expected,
+      FileType.MOL,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Query-Feature/Ring membership-expected.mol',
@@ -883,19 +759,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SDF V2000-option').click();
-
-    const sdfFileV2000Expected = page
-      .getByTestId('sdf-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/Query-Feature/Ring membership-expected.sdf',
-      await sdfFileV2000Expected,
+      FileType.SDF,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'SDF/Query-Feature/Ring membership-expected.sdf',
@@ -928,19 +797,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Rxnfile V2000-option').click();
-
-    const rxnFileV2000Expected = page
-      .getByTestId('rxn-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/Query-Feature/Ring membership2-expected.rxn',
-      await rxnFileV2000Expected,
+      FileType.RXN,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/Query-Feature/Ring membership2-expected.rxn',
@@ -973,19 +835,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Molfile V2000-option').click();
-
-    const molFileV2000Expected = page
-      .getByTestId('mol-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/Query-Feature/Ring size-expected.mol',
-      await molFileV2000Expected,
+      FileType.MOL,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Query-Feature/Ring size-expected.mol',
@@ -1018,19 +873,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SDF V2000-option').click();
-
-    const sdfFileV2000Expected = page
-      .getByTestId('sdf-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/Query-Feature/Ring size-expected.sdf',
-      await sdfFileV2000Expected,
+      FileType.SDF,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'SDF/Query-Feature/Ring size-expected.sdf',
@@ -1063,19 +911,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Rxnfile V2000-option').click();
-
-    const rxnFileV2000Expected = page
-      .getByTestId('rxn-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/Query-Feature/Ring size2-expected.rxn',
-      await rxnFileV2000Expected,
+      FileType.RXN,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/Query-Feature/Ring size2-expected.rxn',
@@ -1108,19 +949,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Molfile V2000-option').click();
-
-    const molFileV2000Expected = page
-      .getByTestId('mol-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/Query-Feature/Substitution count-expected.mol',
-      await molFileV2000Expected,
+      FileType.MOL,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Query-Feature/Substitution count-expected.mol',
@@ -1153,19 +987,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SDF V2000-option').click();
-
-    const sdfFileV2000Expected = page
-      .getByTestId('sdf-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/Query-Feature/Substitution count-expected.sdf',
-      await sdfFileV2000Expected,
+      FileType.SDF,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'SDF/Query-Feature/Substitution count-expected.sdf',
@@ -1198,19 +1025,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Rxnfile V2000-option').click();
-
-    const rxnFileV2000Expected = page
-      .getByTestId('rxn-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/Query-Feature/Substitution count2-expected.rxn',
-      await rxnFileV2000Expected,
+      FileType.RXN,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/Query-Feature/Substitution count2-expected.rxn',
@@ -1241,19 +1061,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Molfile V2000-option').click();
-
-    const molFileV2000Expected = page
-      .getByTestId('mol-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/Query-Feature/Unsaturated-expected.mol',
-      await molFileV2000Expected,
+      FileType.MOL,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Query-Feature/Unsaturated-expected.mol',
@@ -1284,19 +1097,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SDF V2000-option').click();
-
-    const sdfFileV2000Expected = page
-      .getByTestId('sdf-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/Query-Feature/Unsaturated-expected.sdf',
-      await sdfFileV2000Expected,
+      FileType.SDF,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'SDF/Query-Feature/Unsaturated-expected.sdf',
@@ -1327,19 +1133,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Rxnfile V2000-option').click();
-
-    const rxnFileV2000Expected = page
-      .getByTestId('rxn-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/Query-Feature/Unsaturated2-expected.rxn',
-      await rxnFileV2000Expected,
+      FileType.RXN,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/Query-Feature/Unsaturated2-expected.rxn',
@@ -1373,14 +1172,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     /*
-        await selectTopPanelButton(TopPanelButton.Save, page);
-        await clickOnFileFormatDropdown(page);
-        await page.getByTestId('MDL Molfile V2000-option').click();
-
-        const molFileV2000Expected = page.getByTestId('mol-preview-area-text').inputValue();
-        //  Save it to test-data if no file in where
-        await saveToFile('Molfiles-V2000/Query-Feature/Custom-expected.mol', await molFileV2000Expected);
-        await pressButton(page, 'Cancel');
+        await verifyFileExport(
+      page,
+      'Molfiles-V2000/Query-Feature/Custom-expected.mol',
+      FileType.MOL,
+      'v2000',
+    );
 
         await openFileAndAddToCanvasAsNewProject('Molfiles-V2000/Query-Feature/Custom-expected.mol', page);
         await moveMouseAway(page);
@@ -1412,14 +1209,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     /*
-        await selectTopPanelButton(TopPanelButton.Save, page);
-        await clickOnFileFormatDropdown(page);
-        await page.getByTestId('SDF V2000-option').click();
-
-        const sdfFileV2000Expected = page.getByTestId('sdf-preview-area-text').inputValue();
-        //  Save it to test-data if no file in where
-        await saveToFile('SDF/Query-Feature/Custom-expected.sdf', await sdfFileV2000Expected);
-        await pressButton(page, 'Cancel');
+        await verifyFileExport(
+      page,
+      'SDF/Query-Feature/Custom-expected.sdf',
+      FileType.SDF,
+      'v2000',
+    );
 
         await openFileAndAddToCanvasAsNewProject('SDF/Query-Feature/Custom-expected.sdf', page);
         await moveMouseAway(page);
@@ -1451,14 +1246,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     /*
-        await selectTopPanelButton(TopPanelButton.Save, page);
-        await clickOnFileFormatDropdown(page);
-        await page.getByTestId('MDL Rxnfile V2000-option').click();
-
-        const rxnFileV2000Expected = page.getByTestId('rxn-preview-area-text').inputValue();
-        //  Save it to test-data if no file in where
-        await saveToFile('Rxn-V2000/Query-Feature/Custom2-expected.rxn', await rxnFileV2000Expected);
-        await pressButton(page, 'Cancel');
+        await verifyFileExport(
+      page,
+      'Rxn-V2000/Query-Feature/Custom2-expected.rxn',
+      FileType.RXN,
+      'v2000',
+    );
 
         await openFileAndAddToCanvasAsNewProject('Rxn-V2000/Query-Feature/Custom2-expected.rxn', page);
         await moveMouseAway(page);
@@ -1487,19 +1280,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Molfile V2000-option').click();
-
-    const molFileV2000Expected = page
-      .getByTestId('mol-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/Query-Feature/All Atom Query features together-expected.mol',
-      await molFileV2000Expected,
+      FileType.MOL,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Query-Feature/All Atom Query features together-expected.mol',
@@ -1530,19 +1316,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('SDF V2000-option').click();
-
-    const sdfFileV2000Expected = page
-      .getByTestId('sdf-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/Query-Feature/All Atom Query features together-expected.sdf',
-      await sdfFileV2000Expected,
+      FileType.SDF,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'SDF/Query-Feature/All Atom Query features together-expected.sdf',
@@ -1573,19 +1352,12 @@ test.describe('Open Ketcher', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('MDL Rxnfile V2000-option').click();
-
-    const rxnFileV2000Expected = page
-      .getByTestId('rxn-preview-area-text')
-      .inputValue();
-    //  Save it to test-data if no file in where
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/Query-Feature/All Atom Query features together2-expected.rxn',
-      await rxnFileV2000Expected,
+      FileType.RXN,
+      'v2000',
     );
-    await pressButton(page, 'Cancel');
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/Query-Feature/All Atom Query features together2-expected.rxn',

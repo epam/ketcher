@@ -51,13 +51,15 @@ import {
 import { Coordinates, CoreEditor } from 'application/editor/internal';
 import {
   getNextMonomerInChain,
-  getSugarFromRnaBase,
   isAmbiguousMonomerLibraryItem,
   isRnaBaseOrAmbiguousRnaBase,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
-import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
+import {
+  ChainsCollection,
+  GrouppedChain,
+} from 'domain/entities/monomer-chains/ChainsCollection';
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
@@ -1628,6 +1630,7 @@ export class DrawingEntitiesManager {
 
     command.merge(this.recalculateAntisenseChains());
 
+    // not only snake mode???
     if (isSnakeMode) {
       const rearrangedMonomersSet: Set<number> = new Set();
       let lastPosition = new Vec2({
@@ -1635,6 +1638,8 @@ export class DrawingEntitiesManager {
         y: MONOMER_START_Y_POSITION,
       });
       let maxVerticalDistance = 0;
+      let isNeedRearrangeAntisense = true;
+
       chainsCollection = ChainsCollection.fromMonomers([
         ...this.monomers.values(),
       ]);
@@ -1645,49 +1650,51 @@ export class DrawingEntitiesManager {
           return;
         }
 
-        const complimentaryChainsWithData =
+        const currentWithComplementaryData =
           chainsCollection.getComplimentaryChainsWithData(chain);
-        const antisenseChainsWithData = complimentaryChainsWithData.filter(
-          (complimentaryChainWithData) =>
-            complimentaryChainWithData.complimentaryChain.firstMonomer
-              ?.monomerItem.isAntisense,
-        );
-        const antisenseChainsStartIndexes = antisenseChainsWithData.map(
-          (antisenseChainWithData) => {
-            const firstConnectedAntisenseNodeIndex =
-              antisenseChainWithData.complimentaryChain.nodes.findIndex(
-                (node) => {
-                  return (
-                    node ===
-                    antisenseChainWithData.firstConnectedComplimentaryNode
-                  );
-                },
+
+        const shiftAntisenseChainsStartIndexes =
+          currentWithComplementaryData.map(
+            (currentWithComplementaryDataEvery) => {
+              const firstConnectedAntisenseNodeIndex =
+                currentWithComplementaryDataEvery.complimentaryChain.nodes.findIndex(
+                  (node) => {
+                    return (
+                      node ===
+                      currentWithComplementaryDataEvery.firstConnectedComplimentaryNode
+                    );
+                  },
+                );
+              const senseNodeIndex = chain.nodes.indexOf(
+                currentWithComplementaryDataEvery.firstConnectedNode,
               );
-            const senseNodeIndex = chain.nodes.indexOf(
-              antisenseChainWithData.firstConnectedNode,
-            );
 
-            if (!isNumber(senseNodeIndex)) {
-              return -1;
-            }
+              if (!isNumber(senseNodeIndex)) {
+                return -1;
+              }
 
-            return senseNodeIndex - firstConnectedAntisenseNodeIndex;
-          },
-        );
-        const antisenseChainsStartIndexesMap = new Map(
-          antisenseChainsStartIndexes.map(
-            (antisenseChainsStartIndex, index) => [
-              antisenseChainsStartIndex,
-              antisenseChainsWithData[index],
+              return senseNodeIndex - firstConnectedAntisenseNodeIndex;
+            },
+          );
+        const shiftAntisenseChainsStartIndexesToComplimentaryChainMap = new Map(
+          shiftAntisenseChainsStartIndexes.map(
+            (shiftAntisenseChainsStartIndex, index) => [
+              shiftAntisenseChainsStartIndex,
+              currentWithComplementaryData[index],
             ],
           ),
         );
 
         let restOfRowsWithAntisense = 0;
         let isPreviousChainWithAntisense = false;
+        let isNextSenseBackboneSameLine = false;
+        const antisenseIndexShiftToLeft = Math.min(
+          0,
+          ...shiftAntisenseChainsStartIndexes,
+        );
 
         for (
-          let nodeIndex = Math.min(0, ...antisenseChainsStartIndexes);
+          let nodeIndex = antisenseIndexShiftToLeft;
           nodeIndex < chain.length;
           nodeIndex++
         ) {
@@ -1697,13 +1704,35 @@ export class DrawingEntitiesManager {
             return;
           }
 
-          const antisenseChainWithData =
-            antisenseChainsStartIndexesMap.get(nodeIndex);
+          const currentWithComplementaryDataByShiftedIndex =
+            shiftAntisenseChainsStartIndexesToComplimentaryChainMap.get(
+              nodeIndex,
+            );
 
-          if (antisenseChainWithData) {
-            const { rowsUsedByAntisense, command: rearrangedAntisenseCommand } =
-              this.rearrangeAntisenseChain(
-                antisenseChainWithData.complimentaryChain,
+          if (currentWithComplementaryDataByShiftedIndex) {
+            const antisenseChainsWithComplementaryData =
+              chainsCollection.getComplimentaryChainsWithData(
+                currentWithComplementaryDataByShiftedIndex.complimentaryChain,
+              );
+            if (antisenseChainsWithComplementaryData.length > 1) {
+              antisenseChainsWithComplementaryData.forEach((ch) => {
+                const nodeAntiSenseIndex =
+                  nodeIndex - antisenseIndexShiftToLeft;
+                const antisenseHasNextConnectionToAnotherChain =
+                  ch.chainIdxConnection > nodeAntiSenseIndex &&
+                  ch.complimentaryChain !== chain;
+                if (antisenseHasNextConnectionToAnotherChain) {
+                  isNextSenseBackboneSameLine = true;
+                }
+              });
+            }
+
+            if (isNeedRearrangeAntisense) {
+              const {
+                rowsUsedByAntisense,
+                command: rearrangedAntisenseCommand,
+              } = this.rearrangeAntisenseChain(
+                currentWithComplementaryDataByShiftedIndex.complimentaryChain,
                 lastPosition,
                 canvasWidth,
                 rearrangedMonomersSet,
@@ -1711,8 +1740,10 @@ export class DrawingEntitiesManager {
                 needRepositionMonomers,
               );
 
-            restOfRowsWithAntisense = rowsUsedByAntisense;
-            command.merge(rearrangedAntisenseCommand);
+              restOfRowsWithAntisense = rowsUsedByAntisense;
+              command.merge(rearrangedAntisenseCommand);
+            }
+
             isPreviousChainWithAntisense = true;
           }
 
@@ -1773,15 +1804,22 @@ export class DrawingEntitiesManager {
             });
           }
         }
+        isNeedRearrangeAntisense = true;
 
-        lastPosition = getFirstPosition(maxVerticalDistance, lastPosition);
-        maxVerticalDistance = 0;
+        if (!isNextSenseBackboneSameLine) {
+          lastPosition = getFirstPosition(maxVerticalDistance, lastPosition);
+          maxVerticalDistance = 0;
 
-        if (isPreviousChainWithAntisense) {
-          lastPosition = lastPosition.add(
-            new Vec2(0, SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS),
-          );
-          isPreviousChainWithAntisense = false;
+          if (isPreviousChainWithAntisense) {
+            lastPosition = lastPosition.add(
+              new Vec2(0, SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS),
+            );
+            isPreviousChainWithAntisense = false;
+          }
+        } else {
+          lastPosition = lastPosition.add(new Vec2(CELL_WIDTH, 0));
+          isNextSenseBackboneSameLine = false;
+          isNeedRearrangeAntisense = false;
         }
       });
 
@@ -2705,7 +2743,6 @@ export class DrawingEntitiesManager {
     const chainsCollection = ChainsCollection.fromMonomers([
       ...this.monomers.values(),
     ]);
-    const senseToAntisenseChains = new Map<Chain, Chain[]>();
     const handledChains = new Set<Chain>();
 
     this.monomers.forEach((monomer) => {
@@ -2723,43 +2760,14 @@ export class DrawingEntitiesManager {
         return;
       }
 
-      let senseChain: Chain;
-      const complimentaryChainsWithData =
-        chainsCollection.getComplimentaryChainsWithData(chain);
-      const chainsToCheck = new Set<Chain>();
+      let senseChain: GrouppedChain;
+      const chainsToCheck =
+        chainsCollection.getAllChainsWithConnectionInBlock(chain);
 
-      complimentaryChainsWithData.forEach((complimentaryChainWithData) => {
-        const hasHydrogenBondWithRnaBase =
-          complimentaryChainWithData.complimentaryChain.monomers.some(
-            (monomer) => {
-              return (
-                (isRnaBaseOrAmbiguousRnaBase(monomer) &&
-                  Boolean(getSugarFromRnaBase(monomer)) &&
-                  monomer.hydrogenBonds.length > 0) ||
-                monomer.hydrogenBonds.some((hydrogenBond) => {
-                  const anotherMonomer =
-                    hydrogenBond.getAnotherMonomer(monomer);
-
-                  return (
-                    isRnaBaseOrAmbiguousRnaBase(anotherMonomer) &&
-                    Boolean(getSugarFromRnaBase(anotherMonomer))
-                  );
-                })
-              );
-            },
-          );
-
-        if (hasHydrogenBondWithRnaBase) {
-          chainsToCheck.add(complimentaryChainWithData.complimentaryChain);
-        }
-      });
-
-      chainsToCheck.add(chain);
-
-      const chainToMonomers = new Map<Chain, BaseMonomer[]>();
+      const chainToMonomers = new Map<GrouppedChain, BaseMonomer[]>();
 
       chainsToCheck.forEach((chainToCheck) => {
-        chainToMonomers.set(chainToCheck, chainToCheck.monomers);
+        chainToMonomers.set(chainToCheck, chainToCheck.chain.monomers);
       });
 
       const largestChainsMonomersAmount = Math.max(
@@ -2773,7 +2781,7 @@ export class DrawingEntitiesManager {
       if (largestChains.length === 1) {
         senseChain = largestChains[0][0];
       } else {
-        const chainsToCenters = new Map<Chain, Vec2>();
+        const chainsToCenters = new Map<GrouppedChain, Vec2>();
 
         largestChains.forEach(([chainToCheck, monomers]) => {
           const chainBbox = DrawingEntitiesManager.geStructureBbox(monomers);
@@ -2800,32 +2808,18 @@ export class DrawingEntitiesManager {
         senseChain = chainWithLowestCenter[0];
       }
 
-      chainsToCheck.forEach((chainToCheck) => {
-        if (chainToCheck === senseChain) {
-          handledChains.add(chainToCheck);
-
-          return;
+      const { group: senseGroup } = senseChain;
+      chainsToCheck.forEach(({ chain, group }) => {
+        handledChains.add(chain);
+        if (group === senseGroup) {
+          chain.monomers.forEach((monomer) => {
+            command.merge(this.markMonomerAsSense(monomer));
+          });
+        } else {
+          chain.monomers.forEach((monomer) => {
+            command.merge(this.markMonomerAsAntisense(monomer));
+          });
         }
-
-        if (!senseToAntisenseChains.has(senseChain)) {
-          senseToAntisenseChains.set(senseChain, []);
-        }
-
-        senseToAntisenseChains.get(senseChain)?.push(chainToCheck);
-
-        handledChains.add(chainToCheck);
-      });
-    });
-
-    senseToAntisenseChains.forEach((antisenseChains, senseChain) => {
-      senseChain.monomers.forEach((monomer) => {
-        command.merge(this.markMonomerAsSense(monomer));
-      });
-
-      antisenseChains.forEach((antisenseChain) => {
-        antisenseChain.monomers.forEach((monomer) => {
-          command.merge(this.markMonomerAsAntisense(monomer));
-        });
       });
     });
 

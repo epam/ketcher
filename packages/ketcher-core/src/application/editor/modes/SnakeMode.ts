@@ -14,7 +14,7 @@ export class SnakeMode extends BaseMode {
   }
 
   public initialize(_needRemoveSelection: boolean, _isUndo = false) {
-    const command = super.initialize();
+    const command = super.initialize(_needRemoveSelection, _isUndo);
     const editor = CoreEditor.provideEditorInstance();
 
     // Prevent layout to be called if turn on snake mode by undo operation

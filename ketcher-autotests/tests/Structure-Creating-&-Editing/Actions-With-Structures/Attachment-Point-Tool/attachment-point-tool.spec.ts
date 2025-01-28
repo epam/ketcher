@@ -37,6 +37,10 @@ import {
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn, getSmiles } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -443,21 +447,13 @@ test.describe('Attachment Point Tool', () => {
      * Description: Structure with attachment points saved as .mol file V3000
      */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/chain-with-attachment-points-expectedV3000.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/chain-with-attachment-points-expectedV3000.mol',
-        fileFormat: 'v3000',
-      });
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 

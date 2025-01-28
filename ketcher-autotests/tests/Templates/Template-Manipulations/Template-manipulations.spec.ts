@@ -52,6 +52,7 @@ import {
   clickOnCanvas,
   selectUndoByKeyboard,
   selectZoomOutTool,
+  waitForElementInCanvas,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getRxn } from '@utils/formats';
@@ -564,6 +565,8 @@ test.describe('Open Ketcher', () => {
     );
     await moveOnBond(page, BondType.DOUBLE, 1);
     await moveOnBond(page, BondType.DOUBLE, 0);
+    await waitForElementInCanvas(page, 'A=Test');
+
     await takePageScreenshot(page);
     await selectAction(TopPanelButton.Clear, page);
   });

@@ -25,6 +25,7 @@ import {
   selectAllStructuresOnCanvas,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
+  waitForAllStructuresSelected,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -320,6 +321,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await clickInTheMiddleOfTheScreen(page);
         await enableViewOnlyModeBySetOptions(page);
         await selectAllStructuresOnCanvas(page);
+        await waitForAllStructuresSelected(page);
         await waitForSpinnerFinishedWork(
           page,
           async () => await page.keyboard.press(hotkey.keys),

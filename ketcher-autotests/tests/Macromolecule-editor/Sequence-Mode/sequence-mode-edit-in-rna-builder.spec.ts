@@ -19,6 +19,7 @@ import {
 import {
   enterSequence,
   turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { SUGAR } from '@constants/testIdConstants';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
@@ -37,6 +38,8 @@ test.describe('Sequence mode edit in RNA Builder', () => {
   test('Select one nucleotide and modify sugar', async ({ page }) => {
     await clickOnSequenceSymbol(page, 'T');
     await clickOnSequenceSymbol(page, 'T', { button: 'right' });
+    await waitForMonomerPreview(page);
+
     // should see correct context menu title and available 'modify_in_rna_builder' button
     await takeEditorScreenshot(page);
     await page.getByTestId('modify_in_rna_builder').click();
@@ -48,7 +51,6 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     // should see disabled and nondisabled sugars
     await takeMonomerLibraryScreenshot(page);
     await selectMonomer(page, Sugars._25R);
-    await moveMouseAway(page);
     // should see updated sugar, updated title of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page);
     await pressSaveButton(page);
@@ -68,19 +70,17 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     const endY = 200;
     await selectRectangleArea(page, startX, startY, endX, endY);
     await clickOnSequenceSymbol(page, 'T', { button: 'right', nthNumber: 2 });
+    await waitForMonomerPreview(page);
+
     // should see correct context menu title and available 'modify_in_rna_builder' button
     await takeEditorScreenshot(page);
     await page.getByTestId('modify_in_rna_builder').click();
     // should see uploaded nucleotide (nucleoside + phosphate) data to RNA Builder and disabled "Update" button
     await takeRNABuilderScreenshot(page);
-    // Update Sugar
-    await selectMonomer(page, Sugars._25R);
-    await moveMouseAway(page);
-    // Update Phosphate
-    await selectMonomer(page, Phosphates.bP);
-    await moveMouseAway(page);
+    // Update Sugar and Phosphate
+    await selectMonomers(page, [Sugars._25R, Phosphates.bP]);
     // should see updated sugar and phosphate, updated title of preset and nondisabled "Update" button
-    await takeRNABuilderScreenshot(page);
+    await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
     await pressSaveButton(page);
     await takePageScreenshot(page);
   });
@@ -95,19 +95,17 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     const endY = 200;
     await selectRectangleArea(page, startX, startY, endX, endY);
     await clickOnSequenceSymbol(page, 'T', { button: 'right', nthNumber: 2 });
+    await waitForMonomerPreview(page);
+
     // should see correct context menu title and available 'modify_in_rna_builder' button
     await takeEditorScreenshot(page);
     await page.getByTestId('modify_in_rna_builder').click();
     // should see uploaded data to RNA Builder and disabled "Update" button
     await takeRNABuilderScreenshot(page);
-    // Update Sugar
-    await selectMonomer(page, Sugars._25R);
-    await moveMouseAway(page);
-    // Update Phosphate
-    await selectMonomer(page, Phosphates.bP);
-    await moveMouseAway(page);
+    // Update Sugar and Phosphate
+    await selectMonomers(page, [Sugars._25R, Phosphates.bP]);
     // should see updated sugar and phosphate of preset and nondisabled "Update" button
-    await takeRNABuilderScreenshot(page);
+    await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
     await pressSaveButton(page);
     // Click 'Yes' in modal
     await page.getByText('Yes').click();
@@ -119,9 +117,8 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await clickOnSequenceSymbol(page, 'T', { button: 'right' });
     await page.getByTestId('modify_in_rna_builder').click();
     await selectMonomer(page, Sugars._25R);
-    await moveMouseAway(page);
     // should see updated sugar, updated title of preset and nondisabled "Update" button
-    await takeRNABuilderScreenshot(page);
+    await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
     await page.getByTestId('cancel-btn').click();
     // should see not updated nucleotide in chain
     await takeEditorScreenshot(page);
@@ -138,17 +135,15 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await selectRectangleArea(page, startX, startY, endX, endY);
     await takeEditorScreenshot(page);
     await clickOnSequenceSymbol(page, 'T', { button: 'right' });
+    await waitForMonomerPreview(page);
     // should see correct context menu title and available 'modify_in_rna_builder' button
     await takeEditorScreenshot(page);
     await page.getByTestId('modify_in_rna_builder').click();
     // should see uploaded nucleotides data to RNA Builder and disabled "Update" button
     await takeRNABuilderScreenshot(page);
-    await selectMonomer(page, Sugars._25R);
-    await moveMouseAway(page);
-    await selectMonomer(page, Phosphates.bP);
-    await moveMouseAway(page);
+    await selectMonomers(page, [Sugars._25R, Phosphates.bP]);
     // should see updated sugar and phosphate, and nondisabled "Update" button
-    await takeRNABuilderScreenshot(page);
+    await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
     await pressSaveButton(page);
     // should see modal to apply or cancel modification
     await takeEditorScreenshot(page);
@@ -245,8 +240,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await clickOnSequenceSymbol(page, 'G', { button: 'right' });
     await page.getByTestId('modify_in_rna_builder').click();
     await selectMonomers(page, [Sugars._3A6, Bases.dabA, Phosphates.sP_]);
-    await moveMouseAway(page);
-    await takeRNABuilderScreenshot(page);
+    await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check that Nucleoside editable in RNA builder', async ({ page }) => {

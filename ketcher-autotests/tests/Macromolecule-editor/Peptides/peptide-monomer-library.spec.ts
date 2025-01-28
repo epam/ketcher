@@ -20,7 +20,10 @@ import {
   waitForPageInit,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
+} from '@utils/macromolecules';
 import { goToPeptidesTab, goToTab } from '@utils/macromolecules/library';
 
 test.describe('Peptide library testing', () => {
@@ -37,7 +40,7 @@ test.describe('Peptide library testing', () => {
   test('Structure displaying in library', async ({ page }) => {
     // structure preview, molecule hovered state check
     await page.getByTestId(Peptides.A).hover();
-    await page.waitForSelector('[data-testid="polymer-library-preview"]');
+    await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -51,6 +54,7 @@ test.describe('Peptide library testing', () => {
     // favourites check. there is a bug - favourite sign (star) is golden when hovered(should be dark grey)
     // https://github.com/epam/ketcher/issues/3477
     await addMonomerToFavorites(page, Peptides.A);
+    await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -89,6 +93,7 @@ test.describe('Peptide library testing', () => {
     ]);
 
     await removeMonomerFromFavorites(page, Presets.A);
+    await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
 

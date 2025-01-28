@@ -30,6 +30,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import {
   turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
 import {
@@ -138,6 +139,7 @@ test.describe('Import-Saving .ket Files', () => {
     await selectClearCanvasTool(page);
     await openFileAndAddToCanvasMacro('KET/monomer-expected.ket', page);
     await page.getByText('Bal').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -360,6 +362,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
       );
       await page.getByTestId('single-bond').click();
       await page.getByText('R1').locator('..').hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -407,6 +410,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
       );
       await page.getByTestId('single-bond').click();
       await page.getByText('(R').locator('..').first().hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -454,6 +458,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
       );
       await page.getByTestId('single-bond').click();
       await page.getByText('(R').locator('..').first().hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -501,6 +506,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
       );
       await page.getByTestId('single-bond').click();
       await page.getByText('(R').locator('..').first().hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
@@ -548,6 +554,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
       );
       await page.getByTestId('single-bond').click();
       await page.getByText('(R').locator('..').first().hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       await verifyFileExport(

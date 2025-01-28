@@ -8,6 +8,7 @@ import {
   chooseFileFormat,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
+  waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { test, Page } from '@playwright/test';
 import {
@@ -257,6 +258,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await turnOnMacromoleculesEditor(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('F1').locator('..').hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

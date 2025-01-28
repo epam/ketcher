@@ -40,10 +40,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  hideMonomerPreview,
-  turnOnMacromoleculesEditor,
-} from '@utils/macromolecules';
+import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import {
@@ -208,14 +205,11 @@ test('Create bond between two chems', async () => {
   // Create bonds between chems, taking screenshots in middle states
   await chem1.hover();
   await page.mouse.down();
-  await hideMonomerPreview(page);
-
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
   await chem2.hover();
   await page.mouse.up();
-  await hideMonomerPreview(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });

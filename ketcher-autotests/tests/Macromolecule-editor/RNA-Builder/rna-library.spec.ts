@@ -23,7 +23,6 @@ import {
   waitForPageInit,
   waitForRender,
   moveMouseAway,
-  delay,
   takeElementScreenshot,
   takeTopToolbarScreenshot,
   selectSnakeLayoutModeTool,
@@ -328,6 +327,7 @@ test.describe('RNA Library', () => {
     */
     await addMonomerToCenterOfCanvas(page, Sugars._12ddR);
     await page.getByText('12ddR').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -340,6 +340,7 @@ test.describe('RNA Library', () => {
     */
     await addMonomerToCenterOfCanvas(page, Bases.clA);
     await page.getByText('clA').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -352,6 +353,7 @@ test.describe('RNA Library', () => {
     */
     await addMonomerToCenterOfCanvas(page, Phosphates.Test_6_Ph);
     await page.getByText('Test-6-Ph').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

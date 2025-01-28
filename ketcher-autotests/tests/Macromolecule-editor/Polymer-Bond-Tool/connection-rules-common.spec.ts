@@ -529,11 +529,7 @@ test.describe('Common connection rules: ', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await page.getByText('C', { exact: true }).locator('..').first().hover();
-    await delay(1);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-    });
-
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await turnOnMacromoleculesEditor(page);
   });
 

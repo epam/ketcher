@@ -139,6 +139,7 @@ test.describe('Peptide library testing', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectEraseTool(page);
     await page.getByText('dA').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -153,6 +154,7 @@ test.describe('Peptide library testing', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('Edc').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -167,6 +169,7 @@ test.describe('Peptide library testing', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
     await page.getByText('Edc').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -195,6 +198,7 @@ test.describe('Peptide library testing', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectEraseTool(page);
     await page.getByText('Test-6-Ch').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -209,6 +213,7 @@ test.describe('Peptide library testing', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('MCC').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -223,6 +228,7 @@ test.describe('Peptide library testing', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
     await page.getByText('SMPEG2').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

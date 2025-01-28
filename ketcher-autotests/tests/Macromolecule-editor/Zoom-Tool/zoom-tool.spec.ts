@@ -26,6 +26,7 @@ import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   zoomWithMouseWheel,
   turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
 } from '@utils/macromolecules';
 
 let page: Page;
@@ -122,18 +123,20 @@ test.describe('Zoom Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await peptide.hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
 
     await selectZoomReset(page);
     await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
 
     const zoomOutCount = 2;
     await selectZoomOutTool(page, zoomOutCount);
     await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
-
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -142,15 +145,17 @@ test.describe('Zoom Tool', () => {
     await page.mouse.wheel(deltas.x, deltas.y);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await peptide.hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
 
     await page.mouse.wheel(deltas.x, -deltas.y);
     await peptide.hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
 
     await page.mouse.wheel(deltas.x, -deltas.y);
     await peptide.hover();
-
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

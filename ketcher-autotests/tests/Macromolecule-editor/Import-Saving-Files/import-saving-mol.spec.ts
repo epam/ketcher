@@ -31,6 +31,7 @@ import { pageReload } from '@utils/common/helpers';
 import {
   chooseFileFormat,
   turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
 } from '@utils/macromolecules';
 
 function removeNotComparableData(file: string) {
@@ -162,6 +163,7 @@ test.describe('Import-Saving .mol Files', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
     await page.getByText('K').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
 
     // Closing page since test expects it to have closed at the end
@@ -184,6 +186,7 @@ test.describe('Import-Saving .mol Files', () => {
     );
     await page.getByTestId('select-rectangle').click();
     await page.getByText('cdaC').locator('..').hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -758,6 +761,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
       );
       await page.getByTestId('single-bond').click();
       await page.getByText('R1').locator('..').hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       const expectedFile = await getMolfile(page);
@@ -817,6 +821,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
       );
       await page.getByTestId('single-bond').click();
       await page.getByText('(R').locator('..').first().hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       const expectedFile = await getMolfile(page);
@@ -876,6 +881,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
       );
       await page.getByTestId('single-bond').click();
       await page.getByText('(R').locator('..').first().hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       const expectedFile = await getMolfile(page);
@@ -936,6 +942,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
       );
       await page.getByTestId('single-bond').click();
       await page.getByText('(R').locator('..').first().hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       const expectedFile = await getMolfile(page);
@@ -995,6 +1002,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
       );
       await page.getByTestId('single-bond').click();
       await page.getByText('(R').locator('..').first().hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       const expectedFile = await getMolfile(page);

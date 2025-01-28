@@ -815,7 +815,6 @@ test.describe('Image files', () => {
        * Test case: #4897
        * Description: Error message is displayed - "Unsupported image type"
        */
-      await pageReload(page);
       await openImageAndAddToCanvas(`Images/${fileName}`, page);
       await takeEditorScreenshot(page);
     });

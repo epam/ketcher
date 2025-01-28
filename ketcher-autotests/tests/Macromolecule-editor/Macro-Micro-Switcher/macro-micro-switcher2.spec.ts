@@ -9,7 +9,7 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
-import { test, expect, Page } from '@playwright/test';
+import { test, Page } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
@@ -17,9 +17,6 @@ import {
   takeMonomerLibraryScreenshot,
   waitForPageInit,
   selectSnakeLayoutModeTool,
-  saveToFile,
-  receiveFileComparisonData,
-  getMolfile,
   selectLeftPanelButton,
   LeftPanelButton,
   openFileAndAddToCanvasAsNewProject,

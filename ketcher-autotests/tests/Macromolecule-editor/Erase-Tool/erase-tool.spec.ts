@@ -3,12 +3,9 @@ import { test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   clickInTheMiddleOfTheScreen,
-  getMolfile,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
-  receiveFileComparisonData,
-  saveToFile,
   selectEraseTool,
   selectPartOfMolecules,
   selectSnakeLayoutModeTool,

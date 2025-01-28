@@ -197,7 +197,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10095
     Description:  Molecule set and get using V3000 format
     */
-    const ignoredLineIndigo = 1;
     const orEnantiomer = await readFileContents(
       'tests/test-data/Molfiles-V3000/or-enantiomer.mol',
     );

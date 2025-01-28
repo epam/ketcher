@@ -10,15 +10,31 @@ export function getRnaPartLibraryItem(
   rnaBaseName: string,
   monomerClass?: KetMonomerClass,
 ) {
-  return editor.monomersLibrary.find((libraryItem) =>
-    isAmbiguousMonomerLibraryItem(libraryItem)
-      ? (!monomerClass ||
-          AmbiguousMonomer.getMonomerClass(libraryItem.monomers) ===
-            monomerClass) &&
-        libraryItem.label === rnaBaseName
-      : (!monomerClass || libraryItem.props.MonomerClass === monomerClass) &&
-        libraryItem.props.MonomerName === rnaBaseName,
-  );
+  return editor.monomersLibrary.find((libraryItem) => {
+    if (isAmbiguousMonomerLibraryItem(libraryItem)) {
+      if (
+        monomerClass &&
+        AmbiguousMonomer.getMonomerClass(libraryItem.monomers) !== monomerClass
+      ) {
+        return false;
+      }
+
+      if (libraryItem.label !== rnaBaseName) {
+        return false;
+      }
+
+      return libraryItem.options.every(
+        (option) =>
+          option.templateId.includes('Uracil') ||
+          !option.templateId.includes('Thymine'),
+      );
+    }
+
+    return (
+      (!monomerClass || libraryItem.props.MonomerClass === monomerClass) &&
+      libraryItem.props.MonomerName === rnaBaseName
+    );
+  });
 }
 
 export function getPeptideLibraryItem(editor: CoreEditor, peptideName: string) {

@@ -13,18 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+import { CELL_WIDTH, Sugar, Vec2, RNABase, Phosphate } from 'domain/entities';
 import { Tool, IRnaPreset } from 'application/editor/tools/Tool';
-import { Sugar } from 'domain/entities/Sugar';
-import { Vec2 } from 'domain/entities';
-
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseMonomerRenderer } from 'application/render/renderers';
 import { MonomerItemType } from 'domain/types';
 import { monomerFactory } from '../operations/monomer/monomerFactory';
-import { RNABase } from 'domain/entities/RNABase';
-import { Phosphate } from 'domain/entities/Phosphate';
 import { Coordinates } from '../shared/coordinates';
-import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 
 class RnaPresetTool implements Tool {
   rnaBase: MonomerItemType | undefined;

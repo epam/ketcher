@@ -269,11 +269,7 @@ export class SequenceMode extends BaseMode {
       const currentNode = SequenceRenderer.getNodeByPointer(nodeIndexOverall);
 
       // Update Sugar monomerItem object
-      if (
-        currentNode instanceof Nucleotide &&
-        currentNode.sugar &&
-        sugarMonomerItem
-      ) {
+      if (currentNode instanceof Nucleoside && sugarMonomerItem) {
         modelChanges.merge(
           editor.drawingEntitiesManager.modifyMonomerItem(
             currentNode.sugar,
@@ -282,11 +278,7 @@ export class SequenceMode extends BaseMode {
         );
       }
       // Update Base monomerItem object
-      if (
-        currentNode instanceof Nucleotide &&
-        currentNode.rnaBase &&
-        baseMonomerItem
-      ) {
+      if (currentNode instanceof Nucleoside && baseMonomerItem) {
         modelChanges.merge(
           editor.drawingEntitiesManager.modifyMonomerItem(
             currentNode.rnaBase,

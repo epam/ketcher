@@ -3,6 +3,7 @@ import { SequenceNodeRendererFactory } from 'application/render/renderers/sequen
 import {
   BaseMonomer,
   MonomerToAtomBond,
+  Nucleoside,
   Nucleotide,
   Phosphate,
   Sugar,
@@ -16,7 +17,6 @@ import {
   getSugarFromRnaBase,
   isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
-import { Nucleoside } from 'domain/entities/Nucleoside';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';

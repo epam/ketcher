@@ -1,3 +1,4 @@
+import { CELL_WIDTH } from './consts';
 import { RNABase } from 'domain/entities/RNABase';
 import { Sugar } from 'domain/entities/Sugar';
 import assert from 'assert';
@@ -17,7 +18,6 @@ import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { SugarRenderer } from 'application/render';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
-import { CELL_WIDTH } from './DrawingEntitiesManager';
 import { KetMonomerClass } from 'application/formatters';
 
 export class Nucleoside {
@@ -113,11 +113,11 @@ export class Nucleoside {
     return [this.sugar, this.rnaBase];
   }
 
-  public get firstMonomerInNode() {
+  public get firstMonomerInNode(): BaseMonomer {
     return this.sugar;
   }
 
-  public get lastMonomerInNode() {
+  public get lastMonomerInNode(): BaseMonomer {
     return this.sugar;
   }
 

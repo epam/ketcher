@@ -1,3 +1,5 @@
+import { CELL_WIDTH } from './consts';
+import { Nucleoside } from './Nucleoside';
 import { RNABase } from 'domain/entities/RNABase';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { Sugar } from 'domain/entities/Sugar';
@@ -16,15 +18,16 @@ import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { SugarRenderer } from 'application/render';
-import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 import { KetMonomerClass } from 'application/formatters';
 
-export class Nucleotide {
+export class Nucleotide extends Nucleoside {
   constructor(
-    public sugar: Sugar,
-    public rnaBase: RNABase | AmbiguousMonomer,
+    sugar: Sugar,
+    rnaBase: RNABase | AmbiguousMonomer,
     public phosphate: Phosphate,
-  ) {}
+  ) {
+    super(sugar, rnaBase);
+  }
 
   static fromSugar(sugar: Sugar, needValidation = true) {
     if (needValidation) {
@@ -112,11 +115,11 @@ export class Nucleotide {
     return [this.sugar, this.rnaBase, this.phosphate];
   }
 
-  public get firstMonomerInNode() {
+  public get firstMonomerInNode(): BaseMonomer {
     return this.sugar;
   }
 
-  public get lastMonomerInNode() {
+  public get lastMonomerInNode(): BaseMonomer {
     return this.phosphate;
   }
 

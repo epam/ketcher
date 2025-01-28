@@ -1,3 +1,17 @@
+import {
+  Connection,
+  ConnectionDirectionInDegrees,
+  ConnectionDirectionOfLastCell,
+} from 'domain/entities/canvas-matrix/Connection';
+import { Cell } from 'domain/entities/canvas-matrix/Cell';
+import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import {
+  HydrogenBond,
+  PolymerBond,
+  BaseMonomer,
+  Vec2,
+  CELL_WIDTH,
+} from 'domain/entities';
 import { editorEvents } from 'application/editor/editorEvents';
 import { CoreEditor } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -7,19 +21,8 @@ import {
 } from 'application/render';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
-import { BaseMonomer, Vec2 } from 'domain/entities';
-import { Cell } from 'domain/entities/canvas-matrix/Cell';
-import {
-  Connection,
-  ConnectionDirectionInDegrees,
-  ConnectionDirectionOfLastCell,
-} from 'domain/entities/canvas-matrix/Connection';
-import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
-import { DrawingEntity } from 'domain/entities/DrawingEntity';
-import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { BaseRenderer } from '../BaseRenderer';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { SnakeMode } from 'application/editor';
 
 enum LineDirection {
@@ -72,7 +75,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   public get rootBBox(): DOMRect | undefined {
     const rootNode = this.rootElement?.node();
-    if (!rootNode) return;
+    if (!rootNode) return undefined;
 
     return rootNode.getBBox();
   }

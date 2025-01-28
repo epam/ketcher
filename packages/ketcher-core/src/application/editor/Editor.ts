@@ -38,14 +38,13 @@ import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { ketcherProvider } from 'application/utils';
 import assert from 'assert';
-import { SequenceType, Struct, Vec2 } from 'domain/entities';
+import { CELL_WIDTH, SequenceType, Struct, Vec2 } from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import {
   DrawingEntitiesManager,
   MONOMER_START_X_POSITION,
   MONOMER_START_Y_POSITION,
-  CELL_WIDTH,
 } from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';

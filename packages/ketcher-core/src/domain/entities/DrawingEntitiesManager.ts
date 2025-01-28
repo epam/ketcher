@@ -94,11 +94,12 @@ import {
 } from 'domain/constants/monomers';
 import { isNumber } from 'lodash';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
+import { CELL_WIDTH } from './consts';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = 30;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
 const DISTANCE_FROM_RIGHT = 55;
-export const CELL_WIDTH = 60;
+
 export const SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS = CELL_WIDTH * 2 + 30;
 export const MONOMER_START_X_POSITION = 20 + CELL_WIDTH / 2;
 export const MONOMER_START_Y_POSITION = 20 + CELL_WIDTH / 2;
@@ -123,6 +124,7 @@ export class DrawingEntitiesManager {
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
   public snakeLayoutMatrix?: Matrix<Cell>;
+
   public get bottomRightMonomerPosition(): Vec2 {
     let position: Vec2 | null = null;
 
@@ -3017,6 +3019,7 @@ export class DrawingEntitiesManager {
     });
   }
 }
+
 function getFirstPosition(
   height: number,
   lastPosition: Vec2,

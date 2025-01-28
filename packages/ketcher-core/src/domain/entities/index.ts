@@ -14,6 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
+export * from './consts';
 export * from './atom';
 export * from './atomList';
 export * from './bond';

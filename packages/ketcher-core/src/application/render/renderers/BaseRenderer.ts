@@ -10,6 +10,7 @@ import {
 
 export interface IBaseRenderer {
   show(theme): void;
+
   remove(): void;
 }
 
@@ -42,6 +43,7 @@ export abstract class BaseRenderer implements IBaseRenderer {
   protected canvasWrapper: D3SvgElementSelection<SVGSVGElement, void>;
 
   protected canvas: D3SvgElementSelection<SVGSVGElement, void>;
+
   protected constructor(public drawingEntity: DrawingEntity) {
     this.canvasWrapper =
       ZoomTool.instance?.canvasWrapper || select(canvasSelector);
@@ -52,9 +54,9 @@ export abstract class BaseRenderer implements IBaseRenderer {
     return provideEditorSettings();
   }
 
-  public get rootBBox() {
+  public get rootBBox(): DOMRect | undefined {
     const rootNode = this.rootElement?.node();
-    if (!rootNode) return;
+    if (!rootNode) return undefined;
 
     return rootNode.getBBox();
   }
@@ -83,8 +85,11 @@ export abstract class BaseRenderer implements IBaseRenderer {
   }
 
   public abstract show(theme, force?: boolean): void;
+
   public abstract drawSelection(): void;
+
   public abstract moveSelection(): void;
+
   protected abstract appendHover(
     hoverArea,
   ):
@@ -96,6 +101,7 @@ export abstract class BaseRenderer implements IBaseRenderer {
     | void;
 
   protected abstract removeHover(): void;
+
   protected abstract appendHoverAreaElement(): void;
 
   public remove() {

@@ -14,15 +14,15 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { PolymerBond } from 'domain/entities/PolymerBond';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
-import { HydrogenBond } from 'domain/entities';
+import { HydrogenBond, PolymerBond } from 'domain/entities';
 
 export class PolymerBondAddOperation implements Operation {
   public polymerBond;
   public priority = 1;
+
   constructor(
     private addPolymerBondChangeModel: (
       polymerBond?: PolymerBond | HydrogenBond,
@@ -45,6 +45,7 @@ export class PolymerBondAddOperation implements Operation {
 
 export class PolymerBondDeleteOperation implements Operation {
   public priority = -1;
+
   constructor(
     public polymerBond: PolymerBond | HydrogenBond,
     private deletePolymerBondChangeModel: () => void,
@@ -107,6 +108,7 @@ export class PolymerBondCancelCreationOperation implements Operation {
 export class PolymerBondFinishCreationOperation implements Operation {
   public polymerBond;
   public priority = 1;
+
   constructor(
     private finishPolymerBondCreationModelChange: (
       polymerBond?: PolymerBond,
@@ -154,6 +156,7 @@ export class SelectLayoutModeOperation implements Operation {
 
 export class ReconnectPolymerBondOperation implements Operation {
   public polymerBond;
+
   constructor(
     private reconnectPolymerBondModelChange: () => PolymerBond,
     private revertReconnectPolymerBondModelChange: () => PolymerBond,

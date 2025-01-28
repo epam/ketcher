@@ -578,6 +578,7 @@ test.describe('Import-Saving .idt Files', () => {
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await bondLine.hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

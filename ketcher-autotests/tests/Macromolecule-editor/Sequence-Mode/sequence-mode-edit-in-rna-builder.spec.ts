@@ -159,6 +159,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await clickOnSequenceSymbol(page, 'T');
     await page.keyboard.up('Control');
     // should see the whole chain selected
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
     await clickOnSequenceSymbol(page, 'T', { button: 'right' });
     // should see correct context menu title and enabled 'modify_in_rna_builder' button

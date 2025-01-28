@@ -770,6 +770,7 @@ test.describe('RNA Library', () => {
     const bondLine = page.locator('g[pointer-events="stroke"]');
     await drawSugarBase(page);
     await bondLine.hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

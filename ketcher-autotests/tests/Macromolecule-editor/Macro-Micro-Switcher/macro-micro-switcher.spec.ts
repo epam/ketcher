@@ -1215,6 +1215,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await bondLine.hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

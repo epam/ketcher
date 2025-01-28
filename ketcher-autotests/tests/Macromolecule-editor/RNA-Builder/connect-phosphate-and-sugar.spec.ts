@@ -5,7 +5,10 @@ import {
   selectMacroBond,
   takeEditorScreenshot,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
+} from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
@@ -31,7 +34,7 @@ test.describe('Macromolecules connect phosphate and sugar', () => {
     const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
 
     bondLine.hover();
-
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 });

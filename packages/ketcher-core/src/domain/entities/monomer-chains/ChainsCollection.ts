@@ -16,6 +16,7 @@ import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
   getRnaBaseFromSugar,
+  getSugarFromRnaBase,
   isMonomerConnectedToR2RnaBase,
   isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
@@ -359,7 +360,10 @@ export class ChainsCollection {
       const hydrogenBond = monomer.hydrogenBonds[0];
 
       if (hydrogenBond) {
-        return hydrogenBond.getAnotherMonomer(monomer);
+        return {
+          monomer,
+          complimentaryMonomer: hydrogenBond.getAnotherMonomer(monomer),
+        };
       }
     }
 
@@ -386,15 +390,25 @@ export class ChainsCollection {
     while (chains.length) {
       const { group, chain } = chains.pop() as GrouppedChain;
       chain.forEachNode(({ node }) => {
-        const complimentaryMonomer = this.getFirstAntisenseMonomerInNode(node);
+        const { monomer, complimentaryMonomer } =
+          this.getFirstAntisenseMonomerInNode(node) || {};
         const complimentaryNode =
           complimentaryMonomer && this.monomerToNode.get(complimentaryMonomer);
         const complimentaryChain =
           complimentaryMonomer && monomerToChain.get(complimentaryMonomer);
 
+        const isRnaMonomer =
+          isRnaBaseOrAmbiguousRnaBase(monomer) &&
+          Boolean(getSugarFromRnaBase(monomer));
+        const isRnaComplimentaryMonomer =
+          isRnaBaseOrAmbiguousRnaBase(complimentaryMonomer) &&
+          Boolean(getSugarFromRnaBase(complimentaryMonomer));
+
         if (
           !complimentaryNode ||
           !complimentaryChain ||
+          !isRnaMonomer ||
+          !isRnaComplimentaryMonomer ||
           handledChains.has(complimentaryChain)
         ) {
           return;
@@ -433,7 +447,8 @@ export class ChainsCollection {
     const monomerToChain = this.monomerToChain;
 
     chain.forEachNode(({ node, nodeIndex }) => {
-      const complimentaryMonomer = this.getFirstAntisenseMonomerInNode(node);
+      const { complimentaryMonomer } =
+        this.getFirstAntisenseMonomerInNode(node) || {};
       const complimentaryNode =
         complimentaryMonomer && this.monomerToNode.get(complimentaryMonomer);
       const complimentaryChain =

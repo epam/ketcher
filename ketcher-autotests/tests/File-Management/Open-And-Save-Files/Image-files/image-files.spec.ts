@@ -808,9 +808,7 @@ test.describe('Image files', () => {
   ];
 
   for (const fileName of fileNames1) {
-    test(`Verify that image of not supported format ${fileName} cannot be added using "Add Image" button`, async ({
-      page,
-    }) => {
+    test(`Verify that image of not supported format ${fileName} cannot be added using "Add Image" button`, async () => {
       /**
        * Test case: #4897
        * Description: Error message is displayed - "Unsupported image type"

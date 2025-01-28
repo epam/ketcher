@@ -34,6 +34,7 @@ import {
   Nucleotide,
   PolymerBond,
   HydrogenBond,
+  SubChainNode,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
 import {
@@ -196,7 +197,7 @@ export const EditorEvents = () => {
       }
 
       // TODO: Split to separate functions for monomers and presets
-      const sequenceNode = e.target.__data__?.node;
+      const sequenceNode: SubChainNode = e.target.__data__?.node;
       const monomer: BaseMonomer | AmbiguousMonomer =
         e.target.__data__?.monomer || sequenceNode?.monomer;
 
@@ -250,14 +251,14 @@ export const EditorEvents = () => {
         });
 
         let position: PresetPosition;
-        if (sequenceNode instanceof Nucleoside) {
-          position = PresetPosition.ChainEnd;
-        } else if (
-          sequenceNode.firstMonomerInNode.R1AttachmentPoint !== undefined
-        ) {
-          position = PresetPosition.ChainStart;
+        if (sequenceNode instanceof Nucleotide) {
+          if (sequenceNode.firstMonomerInNode.R1AttachmentPoint !== undefined) {
+            position = PresetPosition.ChainStart;
+          } else {
+            position = PresetPosition.ChainMiddle;
+          }
         } else {
-          position = PresetPosition.ChainMiddle;
+          position = PresetPosition.ChainEnd;
         }
 
         const presetPreviewData: PresetPreviewState = {

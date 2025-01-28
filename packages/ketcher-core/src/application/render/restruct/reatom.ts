@@ -559,7 +559,7 @@ class ReAtom extends ReObject {
       restruct.addReObjectPath(LayerMap.hovering, this.visel, path);
     }
 
-    if (atom.cip && options.stereoLabelStyle != StereLabelStyleType.Off) {
+    if (atom.cip && options.stereoLabelStyle !== StereLabelStyleType.Off) {
       this.cip = util.drawCIPLabel({
         atomOrBond: atom,
         position: atom.pp,

@@ -469,7 +469,7 @@ class ReBond extends ReObject {
       );
     }
 
-    if (bond.cip && options.stereoLabelStyle != StereLabelStyleType.Off) {
+    if (bond.cip && options.stereoLabelStyle !== StereLabelStyleType.Off) {
       this.cip = util.drawCIPLabel({
         atomOrBond: bond,
         position: bond.center,

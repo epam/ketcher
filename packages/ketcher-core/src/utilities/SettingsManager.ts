@@ -27,6 +27,7 @@ interface SavedSettings {
 
 interface SavedOptions {
   ignoreChiralFlag?: boolean;
+  showStereoFlags?: boolean;
   disableQueryElements?: string[] | null;
 }
 

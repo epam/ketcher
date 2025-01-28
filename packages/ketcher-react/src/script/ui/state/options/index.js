@@ -25,48 +25,50 @@ import { pick } from 'lodash/fp';
 import { storage } from '../../storage-ext';
 import { reinitializeTemplateLibrary } from '../templates/init-lib';
 
-export const initOptionsState = {
-  app: {
-    server: false,
-    templates: false,
-    functionalGroups: false,
-    saltsAndSolvents: false,
-  },
-  analyse: {
-    values: null,
-    roundWeight: 3,
-    roundMass: 3,
-    roundElAnalysis: 1,
-  },
-  check: {
-    checkOptions: [
-      'valence',
-      'radicals',
-      'pseudoatoms',
-      'stereo',
-      'query',
-      'overlapping_atoms',
-      'overlapping_bonds',
-      'rgroups',
-      'chiral',
-      '3d',
-      'chiral_flag',
-    ],
-  },
-  recognize: {
-    file: null,
-    structStr: null,
-    fragment: false,
-    version: null,
-  },
-  settings: Object.assign(
-    getDefaultOptions(),
-    validation(storage.getItem(KETCHER_SAVED_OPTIONS_KEY)),
-  ),
-  getServerSettings() {
-    return pick(SERVER_OPTIONS, this.settings);
-  },
-};
+export function initOptionsState() {
+  return {
+    app: {
+      server: false,
+      templates: false,
+      functionalGroups: false,
+      saltsAndSolvents: false,
+    },
+    analyse: {
+      values: null,
+      roundWeight: 3,
+      roundMass: 3,
+      roundElAnalysis: 1,
+    },
+    check: {
+      checkOptions: [
+        'valence',
+        'radicals',
+        'pseudoatoms',
+        'stereo',
+        'query',
+        'overlapping_atoms',
+        'overlapping_bonds',
+        'rgroups',
+        'chiral',
+        '3d',
+        'chiral_flag',
+      ],
+    },
+    recognize: {
+      file: null,
+      structStr: null,
+      fragment: false,
+      version: null,
+    },
+    settings: Object.assign(
+      getDefaultOptions(),
+      validation(storage.getItem(KETCHER_SAVED_OPTIONS_KEY)),
+    ),
+    getServerSettings() {
+      return pick(SERVER_OPTIONS, this.settings);
+    },
+  };
+}
 
 export function appUpdate(data) {
   return (dispatch) => {

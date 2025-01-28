@@ -108,7 +108,7 @@ export default function (options, server, setEditor) {
     actionState: null,
     editor: null,
     modal: null,
-    options: Object.assign(initOptionsState, { app: restOptions, buttons }),
+    options: Object.assign(initOptionsState(), { app: restOptions, buttons }),
     server: server || Promise.reject(new Error('Standalone mode!')),
     templates: initTmplsState,
   };

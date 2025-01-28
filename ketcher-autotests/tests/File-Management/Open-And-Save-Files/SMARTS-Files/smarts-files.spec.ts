@@ -9,7 +9,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   waitForRender,
 } from '@utils';
-import { pageReload } from '@utils/common/helpers';
+import { pageReload, pageReloadMicro } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -441,7 +441,7 @@ test.describe('Saving collapsed monomer to SMARTS: ', () => {
        *          3.4 Take screenshot to witness result on the canvas
        */
       if (monomer.pageReloadNeeded) {
-        await pageReload(page);
+        await pageReloadMicro(page);
       }
       await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
       await takeEditorScreenshot(page);

@@ -8,11 +8,14 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseRenderer } from '../BaseRenderer';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 
+const CORNER_LENGTH = 4;
+
 export class FlexModePolymerBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   // TODO: Specify the types.
   private selectionElement;
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
+  private path: string = '';
   public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {
@@ -75,11 +78,13 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   // TODO: Specify the types.
   public appendBond(rootElement) {
     if (this.polymerBond.isCyclicOverlappingBond) {
-      console.log(this.polymerBond.id, 'bond is cyclic overlapping');
-      this.appendEnvelopingBond(rootElement);
+      this.generateEnvelopingBondPath();
     } else {
-      this.appendBondGraph(rootElement);
+      this.generateBondPath();
     }
+
+    this.appendBondGraph(rootElement);
+
     return this.bodyElement;
   }
 
@@ -96,17 +101,140 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     );
   }
 
+  public generateBondPath() {
+    const { startPosition, endPosition } = this.scaledPosition;
+    this.path = `
+      M${startPosition.x},${startPosition.y}
+      L${endPosition.x},${endPosition.y}
+    `;
+  }
+
+  public generateEnvelopingBondPath() {
+    if (!this.polymerBond.secondMonomer) {
+      return;
+    }
+
+    const subStructureBBox = DrawingEntitiesManager.getStructureBbox([
+      this.polymerBond.firstMonomer,
+      this.polymerBond.secondMonomer,
+    ]);
+    const expandedBBox = this.getExpandedBoundingBox(subStructureBBox);
+
+    const { left, top, width, height } = expandedBBox;
+    const midX = left + width / 2;
+    const midY = top + height / 2;
+
+    const isBoundingBoxVertical =
+      Math.abs(this.polymerBond.startPosition.x - midX) <
+      Math.abs(this.polymerBond.startPosition.y - midY);
+
+    const firstPoint = this.getPointOnBBox(
+      this.polymerBond.startPosition,
+      expandedBBox,
+    );
+    const secondPoint = this.getPointOnBBox(
+      this.polymerBond.endPosition,
+      expandedBBox,
+    );
+
+    let thirdPoint: Vec2;
+
+    if (isBoundingBoxVertical) {
+      thirdPoint = new Vec2(firstPoint.x, secondPoint.y);
+    } else {
+      thirdPoint = new Vec2(secondPoint.x, firstPoint.y);
+    }
+
+    this.path = `M${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y} `;
+
+    const adjustedFirstPoint = this.adjustPointForCorner(
+      this.scaledPosition.startPosition,
+      firstPoint,
+    );
+    this.path += `L${adjustedFirstPoint.x},${adjustedFirstPoint.y} `;
+    this.addCornerBasedOnDirection(
+      this.scaledPosition.startPosition,
+      firstPoint,
+      thirdPoint,
+    );
+
+    const adjustedThirdPoint = this.adjustPointForCorner(
+      firstPoint,
+      thirdPoint,
+    );
+    this.path += `L${adjustedThirdPoint.x},${adjustedThirdPoint.y} `;
+    this.addCornerBasedOnDirection(
+      firstPoint,
+      thirdPoint,
+      this.scaledPosition.endPosition,
+    );
+
+    this.path += `L${this.scaledPosition.endPosition.x},${this.scaledPosition.endPosition.y}`;
+  }
+
+  private addCornerBasedOnDirection(
+    prevPoint: Vec2,
+    cornerPoint: Vec2,
+    nextPoint: Vec2,
+  ) {
+    if (prevPoint.x !== cornerPoint.x && cornerPoint.y !== nextPoint.y) {
+      if (prevPoint.x < cornerPoint.x) {
+        if (cornerPoint.y < nextPoint.y) {
+          this.addLineFromLeftToBottom();
+        } else {
+          this.addLineFromLeftToTop();
+        }
+      } else {
+        if (cornerPoint.y < nextPoint.y) {
+          this.addLineFromRightToBottom();
+        } else {
+          this.addLineFromRightToTop();
+        }
+      }
+    } else if (prevPoint.y !== cornerPoint.y && cornerPoint.x !== nextPoint.x) {
+      if (prevPoint.y < cornerPoint.y) {
+        if (cornerPoint.x < nextPoint.x) {
+          this.addLineFromTopToRight();
+        } else {
+          this.addLineFromTopToLeft();
+        }
+      } else {
+        if (cornerPoint.x < nextPoint.x) {
+          this.addLineFromBottomToRight();
+        } else {
+          this.addLineFromBottomToLeft();
+        }
+      }
+    }
+  }
+
+  private adjustPointForCorner(startPoint: Vec2, endPoint: Vec2): Vec2 {
+    const adjustedPoint = new Vec2(endPoint.x, endPoint.y);
+
+    if (startPoint.x > endPoint.x) {
+      adjustedPoint.x += CORNER_LENGTH;
+    } else if (startPoint.x < endPoint.x) {
+      adjustedPoint.x -= CORNER_LENGTH;
+    }
+
+    if (startPoint.y > endPoint.y) {
+      adjustedPoint.y += CORNER_LENGTH;
+    } else if (startPoint.y < endPoint.y) {
+      adjustedPoint.y -= CORNER_LENGTH;
+    }
+
+    return adjustedPoint;
+  }
+
   // TODO: Specify the types.
   public appendBondGraph(rootElement) {
     this.bodyElement = rootElement
-      .append('line')
+      .append('path')
+      .attr('d', this.path)
+      .attr('fill', 'none')
       .attr('stroke', this.polymerBond.finished ? '#333333' : '#0097A8')
       .attr('stroke-width', 1)
       .attr('class', 'selection-area')
-      .attr('x1', this.scaledPosition.startPosition.x)
-      .attr('y1', this.scaledPosition.startPosition.y)
-      .attr('x2', this.scaledPosition.endPosition.x)
-      .attr('y2', this.scaledPosition.endPosition.y)
       .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none')
       .attr('data-testid', 'bond')
       .attr('data-bondtype', 'covalent')
@@ -129,78 +257,54 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     return this.bodyElement;
   }
 
-  private appendEnvelopingBond(rootElement: any) {
-    if (!this.polymerBond.secondMonomer) {
-      return this.bodyElement;
-    }
+  private addLineFromTopToRight(): void {
+    this.path = `${this.path} c 0,4.418 3.582,${CORNER_LENGTH} ${CORNER_LENGTH},${CORNER_LENGTH}`;
+  }
 
-    const subStructureBBox = DrawingEntitiesManager.getStructureBbox([
-      this.polymerBond.firstMonomer,
-      this.polymerBond.secondMonomer,
-    ]);
-    const expandedBBox = this.getExpandedBoundingBox(subStructureBBox);
+  private addLineFromLeftToTop(): void {
+    this.path = `${this.path} c 4.418,0 ${CORNER_LENGTH},-3.582 ${CORNER_LENGTH},-${CORNER_LENGTH}`;
+  }
 
-    // const canvasLeftTop = Coordinates.modelToCanvas(new Vec2(expandedBBox.left, expandedBBox.top));
-    // const canvasRightBottom = Coordinates.modelToCanvas(new Vec2(expandedBBox.left + expandedBBox.width, expandedBBox.top + expandedBBox.height));
+  private addLineFromBottomToRight(): void {
+    this.path = `${this.path} c 0,-4.418 3.582,-${CORNER_LENGTH} ${CORNER_LENGTH},-${CORNER_LENGTH}`;
+  }
 
-    // this.bodyElement = rootElement
-    //   .append('rect')
-    //   .attr('x', canvasLeftTop.x)
-    //   .attr('y', canvasLeftTop.y)
-    //   .attr('width', canvasRightBottom.x - canvasLeftTop.x)
-    //   .attr('height', canvasRightBottom.y - canvasLeftTop.y)
-    //   .attr('stroke', 'red')
-    //   .attr('stroke-width', 1)
-    //   .attr('fill', 'none');
+  private addLineFromBottomToLeft(): void {
+    this.path = `${this.path} c 0,-4.418 -3.582,-${CORNER_LENGTH} -${CORNER_LENGTH},-${CORNER_LENGTH}`;
+  }
 
-    const startBorder = this.getBorderPoint(
-      this.polymerBond.startPosition,
-      expandedBBox,
-      true,
-    );
-    const endBorder = this.getBorderPoint(
-      this.polymerBond.endPosition,
-      expandedBBox,
-      false,
-    );
-    const intermediatePoint = new Vec2(startBorder.x, endBorder.y);
+  private addLineFromLeftToBottom(): void {
+    this.path = `${this.path} c 4.418,0 ${CORNER_LENGTH},3.582 ${CORNER_LENGTH},${CORNER_LENGTH}`;
+  }
 
-    const path = `
-      M${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y}
-      L${startBorder.x},${startBorder.y} 
-      L${intermediatePoint.x},${intermediatePoint.y}
-      L${endBorder.x},${endBorder.y}
-      L${this.scaledPosition.endPosition.x},${this.scaledPosition.endPosition.y}
-    `;
+  private addLineFromTopToLeft(): void {
+    this.path = `${this.path} c 0,4.418 -3.582,${CORNER_LENGTH} -${CORNER_LENGTH},${CORNER_LENGTH}`;
+  }
 
-    this.bodyElement = rootElement
-      .append('path')
-      .attr('d', path)
-      .attr('stroke', '#333333')
-      .attr('stroke-width', 1)
-      .attr('fill', 'none');
+  private addLineFromRightToTop(): void {
+    this.path = `${this.path} c -4.418,0 -${CORNER_LENGTH},-3.582 -${CORNER_LENGTH},-${CORNER_LENGTH}`;
+  }
 
-    return this.bodyElement;
+  private addLineFromRightToBottom(): void {
+    this.path = `${this.path} c -4.418,0 -${CORNER_LENGTH},3.582 -${CORNER_LENGTH},${CORNER_LENGTH}`;
   }
 
   private getExpandedBoundingBox(bbox) {
-    const expansionFactor = 0.75;
+    const expansionFactor = this.polymerBond.isSideChainConnection ? 0.5 : 0.75;
     let { left, top, width, height } = bbox;
 
-    if (width < 2 * expansionFactor || height < 2 * expansionFactor) {
-      if (width < height) {
-        left -= expansionFactor;
-        width += 2 * expansionFactor;
-      } else {
-        top -= expansionFactor;
-        height += 2 * expansionFactor;
-      }
+    if (width < height) {
+      left -= expansionFactor;
+      width += 2 * expansionFactor;
+    } else {
+      top -= expansionFactor;
+      height += 2 * expansionFactor;
     }
 
     return { left, top, width, height };
   }
 
-  private getBorderPoint(position: Vec2, bbox, isStart: boolean): Vec2 {
+  private getPointOnBBox(position: Vec2, bbox): Vec2 {
     const { left, top, width, height } = bbox;
     const midX = left + width / 2;
     const midY = top + height / 2;
@@ -208,9 +312,9 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     let result: Vec2;
 
     if (Math.abs(position.x - midX) < Math.abs(position.y - midY)) {
-      result = new Vec2(isStart ? left : left + width, position.y);
+      result = new Vec2(position.x > midX ? left : left + width, position.y);
     } else {
-      result = new Vec2(position.x, isStart ? top + height : top);
+      result = new Vec2(position.x, position.y > midY ? top + height : top);
     }
 
     return Coordinates.modelToCanvas(result);
@@ -249,12 +353,10 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     if (this.polymerBond.selected) {
       this.selectionElement?.remove();
       this.selectionElement = this.rootElement
-        ?.insert('line', ':first-child')
+        ?.insert('path', ':first-child')
+        .attr('d', this.path)
+        .attr('fill', 'none')
         .attr('stroke', '#57FF8F')
-        .attr('x1', this.scaledPosition.startPosition.x)
-        .attr('y1', this.scaledPosition.startPosition.y)
-        .attr('x2', this.scaledPosition.endPosition.x)
-        .attr('y2', this.scaledPosition.endPosition.y)
         .attr('stroke-width', '5')
         .attr('class', 'dynamic-element');
     } else {
@@ -269,21 +371,19 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   private moveGraphBondEnd(): void {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
-    this.bodyElement
-      .attr('x2', this.scaledPosition.endPosition.x)
-      .attr('y2', this.scaledPosition.endPosition.y);
 
-    this.hoverAreaElement
-      .attr('x2', this.scaledPosition.endPosition.x)
-      .attr('y2', this.scaledPosition.endPosition.y);
+    const path = `
+      M${this.scaledPosition.endPosition.x},${this.scaledPosition.endPosition.y}
+      L${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y}
+    `;
+
+    this.bodyElement.attr('d', path);
+    this.hoverAreaElement?.attr('d', path);
+    this.selectionElement?.attr('d', path);
 
     this.hoverCircleAreaElement
       ?.attr('cx', this.scaledPosition.endPosition.x)
       .attr('cy', this.scaledPosition.endPosition.y);
-
-    this.selectionElement
-      ?.attr('x2', this.scaledPosition.endPosition.x)
-      ?.attr('y2', this.scaledPosition.endPosition.y);
   }
 
   public moveStart(): void {
@@ -293,29 +393,25 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   private moveGraphBondStart(): void {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
-    this.bodyElement
-      .attr('x1', this.scaledPosition.startPosition.x)
-      .attr('y1', this.scaledPosition.startPosition.y);
 
-    this.hoverAreaElement
-      .attr('x1', this.scaledPosition.startPosition.x)
-      .attr('y1', this.scaledPosition.startPosition.y);
+    const path = `
+      M${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y}
+      L${this.scaledPosition.endPosition.x},${this.scaledPosition.endPosition.y}
+    `;
 
-    this.selectionElement
-      ?.attr('x1', this.scaledPosition.startPosition.x)
-      ?.attr('y1', this.scaledPosition.startPosition.y);
+    this.bodyElement.attr('d', path);
+    this.hoverAreaElement.attr('d', path);
+    this.selectionElement.attr('d', path);
   }
 
   protected appendHoverAreaElement(): void {
-    (<D3SvgElementSelection<SVGLineElement, void> | undefined>(
+    (<D3SvgElementSelection<SVGPathElement, void> | undefined>(
       this.hoverAreaElement
     )) = this.rootElement
-      ?.append('line')
+      ?.append('path')
+      .attr('d', this.path)
+      .attr('fill', 'none')
       .attr('stroke', 'transparent')
-      .attr('x1', this.scaledPosition.startPosition.x)
-      .attr('y1', this.scaledPosition.startPosition.y)
-      .attr('x2', this.scaledPosition.endPosition.x)
-      .attr('y2', this.scaledPosition.endPosition.y)
       .attr('stroke-width', '10');
 
     (<D3SvgElementSelection<SVGCircleElement, void> | undefined>(

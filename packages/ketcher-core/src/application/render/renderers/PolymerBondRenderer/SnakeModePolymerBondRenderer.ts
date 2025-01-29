@@ -21,6 +21,7 @@ import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { BaseRenderer } from '../BaseRenderer';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { SnakeMode } from 'application/editor';
+import { generateBend, SMOOTH_CORNER_SIZE } from './helpers';
 
 enum LineDirection {
   Horizontal = 'Horizontal',
@@ -37,7 +38,6 @@ const DOUBLE_CORNER_LENGTH = CORNER_LENGTH * 2;
 
 const BOND_END_LENGTH = 15;
 const CELL_HEIGHT = 40;
-const SMOOTH_CORNER_SIZE = 5;
 const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 
 // TODO: Need to split the class by three:
@@ -409,7 +409,12 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.bodyElement = rootElement
       .append('path')
       .attr('class', `${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`)
-      .attr('stroke', this.isHydrogenBond ? '#333333' : '#43B5C0')
+      .attr(
+        'stroke',
+        this.isHydrogenBond || this.polymerBond.isCyclicOverlappingBond
+          ? '#333333'
+          : '#43B5C0',
+      )
       .attr('stroke-width', 1)
       .attr('d', dAttributeForPath)
       .attr('fill', 'none')
@@ -1083,15 +1088,4 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       this.editorEvents.mouseLeaveMonomer.dispatch();
     }
   }
-}
-
-function generateBend(
-  dx1: number,
-  dy1: number,
-  dx: number,
-  dy: number,
-): string {
-  return `q ${SMOOTH_CORNER_SIZE * dx1},${SMOOTH_CORNER_SIZE * dy1} ${
-    SMOOTH_CORNER_SIZE * dx
-  },${SMOOTH_CORNER_SIZE * dy} `;
 }

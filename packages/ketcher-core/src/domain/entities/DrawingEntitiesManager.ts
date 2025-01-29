@@ -2149,7 +2149,7 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteMonomerToAtomBond(monomerToAtomBond);
     });
 
-    SequenceRenderer.removeEmptyNodes();
+    SequenceRenderer.clear();
   }
 
   public applyFlexLayoutMode(needRedrawBonds = false) {
@@ -2174,8 +2174,6 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteMonomerToAtomBond(monomerToAtomBond);
       editor.renderersContainer.addMonomerToAtomBond(monomerToAtomBond);
     });
-
-    SequenceRenderer.removeEmptyNodes();
 
     return command;
   }
@@ -2849,7 +2847,7 @@ export class DrawingEntitiesManager {
 
   public static createAntisenseNode(
     node: Nucleoside | Nucleotide,
-    handleOnlySelectedPhosphate = false,
+    needAddPhosphate = false,
   ) {
     const antisenseBaseLabel = DrawingEntitiesManager.getAntisenseBaseLabel(
       node.rnaBase,
@@ -2860,10 +2858,7 @@ export class DrawingEntitiesManager {
     }
 
     return (
-      node instanceof Nucleotide &&
-      (handleOnlySelectedPhosphate ? node.phosphate.selected : true)
-        ? Nucleotide
-        : Nucleoside
+      node instanceof Nucleotide && needAddPhosphate ? Nucleotide : Nucleoside
     ).createOnCanvas(
       antisenseBaseLabel,
       node.monomer.position.add(new Vec2(0, 3)),
@@ -2940,7 +2935,10 @@ export class DrawingEntitiesManager {
 
         if (node instanceof Nucleotide || node instanceof Nucleoside) {
           const antisenseNodeCreationResult =
-            DrawingEntitiesManager.createAntisenseNode(node, true);
+            DrawingEntitiesManager.createAntisenseNode(
+              node,
+              node instanceof Nucleotide && node.phosphate.selected,
+            );
 
           if (!antisenseNodeCreationResult) {
             return;

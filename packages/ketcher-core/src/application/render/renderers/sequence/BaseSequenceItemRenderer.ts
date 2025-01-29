@@ -9,6 +9,8 @@ import assert from 'assert';
 import { SequenceRenderer } from 'application/render';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { isNumber } from 'lodash';
+import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
+import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
@@ -26,7 +28,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public antisenseNodeRenderer?: this | undefined;
 
   constructor(
-    public node: SubChainNode,
+    public node: SubChainNode | BackBoneSequenceNode,
     private firstNodeInChainPosition: Vec2,
     private monomerIndexInChain: number,
     private isLastMonomerInChain: boolean,
@@ -35,7 +37,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     public monomerSize: { width: number; height: number },
     public scaledMonomerPosition: Vec2,
     private previousRowsWithAntisense = 0,
-    private nodeIndexInAntisenseChain?: number,
+    private twoStrandedNode?: ITwoStrandedChainItem,
   ) {
     super(node.monomer);
     this.editorEvents = editorEvents;
@@ -53,7 +55,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private get isSingleEmptyNode() {
     return (
-      SequenceRenderer.chainsCollection.length === 1 &&
+      SequenceRenderer.sequenceViewModel.length === 1 &&
       this.node instanceof EmptySequenceNode
     );
   }
@@ -170,14 +172,15 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   private appendCounterElement(
     rootElement: D3SvgElementSelection<SVGGElement, void>,
   ) {
+    const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
+
     return rootElement
       .append('text')
       .attr('x', '2')
       .attr('y', this.node.monomer.monomerItem.isAntisense ? '24' : '-24')
       .text(
-        isNumber(this.nodeIndexInAntisenseChain)
-          ? this.currentChainNodesWithoutEmptyNodes.length -
-              this.nodeIndexInAntisenseChain
+        isNumber(antisenseNodeIndex)
+          ? this.currentChainNodesWithoutEmptyNodes.length - antisenseNodeIndex
           : this.monomerIndexInChain + 1,
       )
       .attr('font-family', 'Courier New')
@@ -188,13 +191,16 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private get needDisplayCounter() {
+    const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
+
     // For simple chains or sense chains counter appears above each 10th symbol
     // For antisense same but in opposite direction, that's why we compare division remainder with 1
     return (
       !(this.node instanceof EmptySequenceNode) &&
-      (isNumber(this.nodeIndexInAntisenseChain)
+      !(this.node instanceof BackBoneSequenceNode) &&
+      (isNumber(antisenseNodeIndex)
         ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
-          this.nodeIndexInAntisenseChain === 0
+          antisenseNodeIndex === 0
         : (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0 ||
           this.isLastMonomerInChain)
     );
@@ -205,8 +211,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public showCaret() {
-    if (this.node.monomer.monomerItem.isAntisense) {
-      this.caretElement = this.spacerElement?.append('g');
+    if (
+      this.node === this.twoStrandedNode?.antisenseNode ||
+      (this.node instanceof BackBoneSequenceNode &&
+        this.node.firstConnectedNode.monomer.monomerItem.isAntisense)
+    ) {
+      this.caretElement = this.spacerElement
+        ?.append('g')
+        .attr('class', 'blinking');
       this.caretElement
         ?.append('path')
         .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')

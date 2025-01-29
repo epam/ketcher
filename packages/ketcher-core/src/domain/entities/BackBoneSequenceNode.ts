@@ -2,22 +2,26 @@ import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
+import { SubChainNode } from 'domain/entities/monomer-chains/types';
 
 export class BackBoneSequenceNode {
   public renderer?: BaseSequenceItemRenderer = undefined;
   public monomer = new EmptyMonomer();
-  constructor() {}
+  constructor(
+    public firstConnectedNode: SubChainNode,
+    public secondConnectedNode: SubChainNode,
+  ) {}
 
   public get SubChainConstructor() {
     return EmptySubChain;
   }
 
   public get firstMonomerInNode() {
-    return this.monomer;
+    return this.firstConnectedNode.firstMonomerInNode;
   }
 
   public get lastMonomerInNode() {
-    return this.monomer;
+    return this.firstConnectedNode.lastMonomerInNode;
   }
 
   public get hovered() {
@@ -44,4 +48,6 @@ export class BackBoneSequenceNode {
   public get modified() {
     return false;
   }
+
+  public getFirstConnectedNode;
 }

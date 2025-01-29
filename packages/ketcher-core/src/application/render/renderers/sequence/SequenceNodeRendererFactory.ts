@@ -28,10 +28,11 @@ import { AmbiguousSequenceItemRenderer } from 'application/render/renderers/sequ
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { BackBoneSequenceItemRenderer } from 'application/render/renderers/sequence/BackBoneSequenceItemRenderer';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
+import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 
 export class SequenceNodeRendererFactory {
   static fromNode(
-    node: SubChainNode,
+    node: SubChainNode | BackBoneSequenceNode,
     firstMonomerInChainPosition: Vec2,
     monomerIndexInChain: number,
     isLastMonomerInChain: boolean,
@@ -39,7 +40,7 @@ export class SequenceNodeRendererFactory {
     isEditingSymbol: boolean,
     previousRowsWithAntisense = 0,
     renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer,
-    nodeIndexInAntisenseChain?: number,
+    twoStrandedNode?: ITwoStrandedChainItem,
   ): BaseSequenceItemRenderer {
     let RendererClass;
 
@@ -95,7 +96,7 @@ export class SequenceNodeRendererFactory {
       renderer?.monomerSize,
       renderer?.scaledMonomerPosition,
       previousRowsWithAntisense,
-      nodeIndexInAntisenseChain,
+      twoStrandedNode,
     );
   }
 }

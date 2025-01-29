@@ -6,6 +6,7 @@ import {
   Vec2,
 } from 'domain/entities';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
+import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 
 export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
   constructor(
@@ -18,7 +19,7 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
     public monomerSize: { width: number; height: number },
     public scaledMonomerPosition: Vec2,
     _previousRowsWithAntisense = 0,
-    _nodeIndexInAntisenseChain?: number,
+    _twoStrandedNode?: ITwoStrandedChainItem,
   ) {
     super(
       node,
@@ -30,7 +31,7 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
       monomerSize,
       scaledMonomerPosition,
       _previousRowsWithAntisense,
-      _nodeIndexInAntisenseChain,
+      _twoStrandedNode,
     );
   }
 

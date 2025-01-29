@@ -6,6 +6,7 @@ import {
   IsChainCycled,
   Peptide,
   Phosphate,
+  PolymerBond,
   RNABase,
   SubChainNode,
   Sugar,
@@ -39,25 +40,13 @@ export type GrouppedChain = {
   chain: Chain;
 };
 
-interface IOnlySenseTwoStrandedChainItem {
-  node: SubChainNode;
-  antisenseNode?: SubChainNode;
+export interface ITwoStrandedChainItem {
+  senseNode?: SubChainNode | BackBoneSequenceNode;
+  antisenseNode?: SubChainNode | BackBoneSequenceNode;
+  chain: Chain;
+  antisenseChain?: Chain;
+  antisenseNodeIndex?: number;
 }
-
-interface IOnlyAntisenseTwoStrandedChainItem {
-  node?: SubChainNode;
-  antisenseNode: SubChainNode;
-}
-
-interface ISenseAndAntisenseTwoStrandedChainItem {
-  node: SubChainNode;
-  antisenseNode: SubChainNode;
-}
-
-export type ITwoStrandedChainItem =
-  | IOnlySenseTwoStrandedChainItem
-  | IOnlyAntisenseTwoStrandedChainItem
-  | ISenseAndAntisenseTwoStrandedChainItem;
 
 export class ChainsCollection {
   public chains: Chain[] = [];
@@ -547,14 +536,15 @@ export class ChainsCollection {
       this.getAntisenseChainsWithData(chain);
     const twoStrandedChainItems: ITwoStrandedChainItem[] = [];
     let currentSenseIterationIndex = 0;
-    let currentAntisenseIterationIndex = Math.min(
+    let currentAntisenseGlobalIterationIndex = Math.min(
       ...antisenseChainsStartIndexes,
     );
+    let currentAntisenseLocalIterationIndex = 0;
     let isIterationFinished = false;
 
     while (!isIterationFinished) {
       const antisenseNodeWithData = antisenseNodesToIndexesMap.get(
-        currentAntisenseIterationIndex,
+        currentAntisenseGlobalIterationIndex,
       );
       const antisenseNode = antisenseNodeWithData?.node;
       const antisenseChain = antisenseNodeWithData?.chain;
@@ -571,11 +561,13 @@ export class ChainsCollection {
 
       if (!antisenseNode) {
         twoStrandedChainItems.push({
-          node: senseNode,
+          senseNode,
+          chain,
         });
         handledNodes.add(senseNode);
         currentSenseIterationIndex++;
-        currentAntisenseIterationIndex = currentSenseIterationIndex;
+        currentAntisenseGlobalIterationIndex = currentSenseIterationIndex;
+        currentAntisenseLocalIterationIndex = 0;
       } else if (
         senseNode.monomers.some((monomer) => {
           return monomer.hydrogenBonds.some((hydrogenBond) => {
@@ -588,13 +580,17 @@ export class ChainsCollection {
         })
       ) {
         twoStrandedChainItems.push({
-          node: senseNode,
+          senseNode,
           antisenseNode,
+          chain,
+          antisenseChain,
+          antisenseNodeIndex: currentAntisenseLocalIterationIndex,
         });
         handledNodes.add(senseNode);
         handledNodes.add(antisenseNode);
         currentSenseIterationIndex++;
-        currentAntisenseIterationIndex++;
+        currentAntisenseGlobalIterationIndex++;
+        currentAntisenseLocalIterationIndex++;
       } else if (
         senseNode.monomers.some((monomer) => {
           return monomer.hydrogenBonds.some((hydrogenBond) => {
@@ -607,11 +603,15 @@ export class ChainsCollection {
         })
       ) {
         twoStrandedChainItems.push({
-          node: new BackBoneSequenceNode(),
+          senseNode: undefined,
           antisenseNode,
+          chain,
+          antisenseChain,
+          antisenseNodeIndex: currentAntisenseLocalIterationIndex,
         });
         handledNodes.add(antisenseNode);
-        currentAntisenseIterationIndex++;
+        currentAntisenseGlobalIterationIndex++;
+        currentAntisenseLocalIterationIndex++;
       } else if (
         antisenseNode.monomers.some((monomer) => {
           return monomer.hydrogenBonds.some((hydrogenBond) => {
@@ -623,25 +623,55 @@ export class ChainsCollection {
           });
         })
       ) {
+        const secondConnectedAntisenseNode = antisenseNode;
+        const r1PolymerBondBetweenNodes =
+          secondConnectedAntisenseNode.firstMonomerInNode
+            .attachmentPointsToBonds.R1;
+        const anotherMonomerConnectedToAntisenseNode =
+          r1PolymerBondBetweenNodes instanceof PolymerBond &&
+          r1PolymerBondBetweenNodes?.getAnotherMonomer(
+            secondConnectedAntisenseNode.firstMonomerInNode,
+          );
+        const firstConnectedAntisenseNode =
+          (anotherMonomerConnectedToAntisenseNode &&
+            this.monomerToNode.get(anotherMonomerConnectedToAntisenseNode)) ||
+          undefined;
+
         twoStrandedChainItems.push({
-          node: senseNode,
-          antisenseNode: new BackBoneSequenceNode(),
+          senseNode,
+          antisenseNode: firstConnectedAntisenseNode
+            ? new BackBoneSequenceNode(
+                firstConnectedAntisenseNode,
+                secondConnectedAntisenseNode,
+              )
+            : undefined,
+          chain,
+          antisenseChain,
         });
         handledNodes.add(senseNode);
         currentSenseIterationIndex++;
       } else {
         twoStrandedChainItems.push({
-          node: senseNode,
+          senseNode,
           antisenseNode,
+          chain,
+          antisenseChain,
+          antisenseNodeIndex: currentAntisenseLocalIterationIndex,
         });
         handledNodes.add(senseNode);
         handledNodes.add(antisenseNode);
         currentSenseIterationIndex++;
-        currentAntisenseIterationIndex++;
+        currentAntisenseGlobalIterationIndex++;
+        currentAntisenseLocalIterationIndex++;
       }
     }
 
-    console.log(twoStrandedChainItems);
     return twoStrandedChainItems;
+  }
+
+  public getAlignedSenseAntisenseChains() {
+    return this.chains
+      .filter((chain) => !chain.isAntisense)
+      .map((chain) => this.getAlignedSenseAntisenseChainItems(chain));
   }
 }

@@ -23,8 +23,8 @@ export class NewSequenceButton {
   public show() {
     const editor = CoreEditor.provideEditorInstance();
     const chain =
-      SequenceRenderer.chainsCollection.chains[this.indexOfRowBefore];
-    const lastNodeRendererInChain = chain.lastNode?.renderer;
+      SequenceRenderer.sequenceViewModel.chains[this.indexOfRowBefore];
+    const lastNodeRendererInChain = chain.lastNode?.senseNode?.renderer;
 
     if (!(lastNodeRendererInChain instanceof BaseSequenceItemRenderer)) {
       return;

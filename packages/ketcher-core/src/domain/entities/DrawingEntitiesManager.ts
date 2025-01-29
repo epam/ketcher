@@ -1653,20 +1653,27 @@ export class DrawingEntitiesManager {
         const currentWithComplementaryData =
           chainsCollection.getComplimentaryChainsWithData(chain);
 
+        const currentWithAntisenseConnectionComplementaryData =
+          currentWithComplementaryData.filter(
+            (currentWithComplementaryDataEach) =>
+              currentWithComplementaryDataEach.complimentaryChain.firstMonomer
+                ?.monomerItem.isAntisense,
+          );
+
         const shiftAntisenseChainsStartIndexes =
-          currentWithComplementaryData.map(
-            (currentWithComplementaryDataEvery) => {
+          currentWithAntisenseConnectionComplementaryData.map(
+            (currentWithAntisenseConnectionComplementaryDataEvery) => {
               const firstConnectedAntisenseNodeIndex =
-                currentWithComplementaryDataEvery.complimentaryChain.nodes.findIndex(
+                currentWithAntisenseConnectionComplementaryDataEvery.complimentaryChain.nodes.findIndex(
                   (node) => {
                     return (
                       node ===
-                      currentWithComplementaryDataEvery.firstConnectedComplimentaryNode
+                      currentWithAntisenseConnectionComplementaryDataEvery.firstConnectedComplimentaryNode
                     );
                   },
                 );
               const senseNodeIndex = chain.nodes.indexOf(
-                currentWithComplementaryDataEvery.firstConnectedNode,
+                currentWithAntisenseConnectionComplementaryDataEvery.firstConnectedNode,
               );
 
               if (!isNumber(senseNodeIndex)) {
@@ -1680,7 +1687,7 @@ export class DrawingEntitiesManager {
           shiftAntisenseChainsStartIndexes.map(
             (shiftAntisenseChainsStartIndex, index) => [
               shiftAntisenseChainsStartIndex,
-              currentWithComplementaryData[index],
+              currentWithAntisenseConnectionComplementaryData[index],
             ],
           ),
         );

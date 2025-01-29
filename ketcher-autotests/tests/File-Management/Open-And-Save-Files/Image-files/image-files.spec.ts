@@ -49,6 +49,7 @@ import {
   waitForSpinnerFinishedWork,
 } from '@utils';
 import {
+  clearLocalStorage,
   closeErrorAndInfoModals,
   pageReloadMicro,
 } from '@utils/common/helpers';
@@ -882,7 +883,9 @@ test.describe('Image files', () => {
      * Description: Image is selected then green selection frame is displayed and
      * image can be scaled vertically, horizontally and diagonally.
      */
+    await clearLocalStorage(page);
     await pageReloadMicro(page);
+
     await openImageAndAddToCanvas('Images/image-png.png', page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await clickInTheMiddleOfTheScreen(page);

@@ -478,7 +478,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Ket-structure pasted from the clipboard in Macro mode is visible in Micro mode
     */
-    await turnOnMacromoleculesEditor(page);
+    await pageReload(page);
     await pasteFromClipboard(
       page,
       FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
@@ -534,7 +534,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Remove abbreviation restricted for CHEMs in micro mode.
     */
-    await turnOnMacromoleculesEditor(page);
+    await pageReload(page);
     await selectMonomer(page, Chem.Test_6_Ch);
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);

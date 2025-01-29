@@ -24,6 +24,7 @@ import {
 import { closeErrorMessage, pageReload } from '@utils/common/helpers';
 import {
   turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
@@ -312,6 +313,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await pressButton(page, 'Add to Canvas');
     await selectSequenceLayoutModeTool(page);
     await clickOnSequenceSymbol(page, 'U');
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

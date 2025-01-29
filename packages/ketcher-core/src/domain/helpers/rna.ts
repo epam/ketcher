@@ -1,6 +1,9 @@
 import { CoreEditor } from 'application/editor/internal';
 import { AmbiguousMonomer, SequenceType } from 'domain/entities';
-import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
+import {
+  RNA_DNA_NON_MODIFIED_PART,
+  RnaDnaBaseNames,
+} from 'domain/constants/monomers';
 import { MONOMER_CONST } from 'application/editor';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 import { KetMonomerClass } from 'application/formatters';
@@ -25,8 +28,8 @@ export function getRnaPartLibraryItem(
 
       return libraryItem.options.every(
         (option) =>
-          option.templateId.includes('Uracil') ||
-          !option.templateId.includes('Thymine'),
+          option.templateId.includes(RnaDnaBaseNames.URACIL) ||
+          !option.templateId.includes(RnaDnaBaseNames.THYMINE),
       );
     }
 

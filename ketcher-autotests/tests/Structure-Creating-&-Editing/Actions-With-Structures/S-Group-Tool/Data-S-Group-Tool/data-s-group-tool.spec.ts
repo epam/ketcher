@@ -28,7 +28,7 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getCml, getMolfile } from '@utils/formats';
+import { getMolfile } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
@@ -385,18 +385,12 @@ test.describe('Data S-Group tool', () => {
       'Molfiles-V3000/chain-with-data-s-group-partstructure.mol',
       page,
     );
-    const expectedFile = await getCml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CML/chain-with-data-s-group-partstructure-expected.cml',
-      expectedFile,
+      FileType.CML,
     );
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/chain-with-data-s-group-partstructure-expected.cml',
-      });
-    expect(cmlFile).toEqual(cmlFileExpected);
     await takeEditorScreenshot(page);
   });
 

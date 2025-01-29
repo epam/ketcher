@@ -24,6 +24,10 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -357,17 +361,12 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     with the circle inside the cycles.
     */
     await openFileAndAddToCanvas('CML/aromatic-benzene.cml', page);
-    const expectedFile = await getCml(page);
-    await saveToFile('CML/aromatic-benzene-cml-expected.cml', expectedFile);
 
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/aromatic-benzene-cml-expected.cml',
-      });
-
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CML/aromatic-benzene-cml-expected.cml',
+      FileType.CML,
+    );
     await takeEditorScreenshot(page);
   });
 

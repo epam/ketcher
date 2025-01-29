@@ -507,6 +507,7 @@ test.describe('Sequence edit mode', () => {
     */
     await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
     await doubleClickOnSequenceSymbol(page, 'G');
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

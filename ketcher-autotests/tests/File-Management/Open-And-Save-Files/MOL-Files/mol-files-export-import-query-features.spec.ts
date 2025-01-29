@@ -4,11 +4,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  saveToFile,
-  selectTopPanelButton,
-  TopPanelButton,
-  clickOnFileFormatDropdown,
-  pressButton,
   moveMouseAway,
 } from '@utils';
 import {

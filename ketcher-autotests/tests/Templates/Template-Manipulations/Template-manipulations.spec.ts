@@ -54,7 +54,11 @@ import {
   selectZoomOutTool,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
-import { getMolfile, getRxn } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
+import { getRxn } from '@utils/formats';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -361,21 +365,12 @@ test.describe('Template Manupulations', () => {
     Open the saved *.mol file and edit it in any way.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/three-templates.mol', page);
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/three-templates-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/three-templates-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 

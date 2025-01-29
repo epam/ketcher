@@ -41,7 +41,6 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/Aromaticity-expected.mol',
       FileType.MOL,
-      'v2000',
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -266,7 +265,6 @@ test.describe('Open Ketcher', () => {
         page,
         'Molfiles-V2000/Query-Feature/Connectivity-expected.mol',
         FileType.MOL,
-        'v2000',
       );
 
       await openFileAndAddToCanvasAsNewProject(
@@ -494,7 +492,6 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/Implicit H count-expected.mol',
       FileType.MOL,
-      'v2000',
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -720,7 +717,6 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/Ring membership-expected.mol',
       FileType.MOL,
-      'v2000',
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -834,7 +830,6 @@ test.describe('Open Ketcher', () => {
       page,
       'Molfiles-V2000/Query-Feature/Ring size-expected.mol',
       FileType.MOL,
-      'v2000',
     );
 
     await openFileAndAddToCanvasAsNewProject(

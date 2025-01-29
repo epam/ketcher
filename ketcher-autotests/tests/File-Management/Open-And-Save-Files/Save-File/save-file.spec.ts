@@ -90,25 +90,12 @@ test.describe('Save files', () => {
      */
 
     await drawBenzeneRing(page);
-
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/mol-1848-to-compare-expectedV2000.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/mol-1848-to-compare-expectedV2000.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
   });
 
   test('Save file - Save *.ket file', async ({ page }) => {

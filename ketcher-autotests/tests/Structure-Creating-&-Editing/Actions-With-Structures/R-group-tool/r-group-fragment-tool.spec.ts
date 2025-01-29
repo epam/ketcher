@@ -26,6 +26,10 @@ import {
   selectClearCanvasTool,
   selectLayoutTool,
 } from '@utils';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import { getExtendedSmiles, getMolfile } from '@utils/formats';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
@@ -361,22 +365,13 @@ test.describe('R-Group Fragment Tool', () => {
       'Molfiles-V3000/r1-several-structures-V3000.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/r1-several-structures-V3000-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/r1-several-structures-V3000-expected.mol',
-        fileFormat: 'v3000',
-      });
-    expect(molFile).toEqual(molFileExpected);
   });
 
   test('Save as *.cxsmi file', async ({ page }) => {

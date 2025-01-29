@@ -516,7 +516,8 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/3712
       Description: Pressing Layout or Clean Up button not erase all macromolecules from canvas
       */
-      await turnOnMacromoleculesEditor(page);
+      await pageReload(page);
+
       await selectMonomer(page, Peptides.A);
       await clickInTheMiddleOfTheScreen(page);
       await turnOnMicromoleculesEditor(page);

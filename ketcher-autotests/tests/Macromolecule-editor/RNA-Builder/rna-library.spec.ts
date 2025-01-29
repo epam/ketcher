@@ -782,6 +782,7 @@ test.describe('RNA Library', () => {
     const bondLine = page.locator('g[pointer-events="stroke"]');
     await drawSugarPhosphate(page);
     await bondLine.hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1687,6 +1688,7 @@ test.describe('RNA Library', () => {
           page,
           AmbiguousMonomersSearchString.ResultMonomerLocationTab,
         );
+        await blurMonomerSearchInput(page);
         await takeMonomerLibraryScreenshot(page);
 
         // Test should be skipped if related bug exists

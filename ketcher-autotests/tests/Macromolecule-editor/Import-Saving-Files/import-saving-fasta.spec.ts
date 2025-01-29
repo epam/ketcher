@@ -267,6 +267,8 @@ test.describe('Import-Saving .fasta Files', () => {
     page,
   }) => {
     test.slow();
+
+    await pageReload(page);
     await selectTopPanelButton(TopPanelButton.Open, page);
 
     const filename = 'FASTA/fasta-rna-musculus-rearranged.fasta';

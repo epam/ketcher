@@ -23,6 +23,7 @@ import {
   selectZoomOutTool,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { pageReload } from '@utils/common/helpers';
 import {
   zoomWithMouseWheel,
   turnOnMacromoleculesEditor,
@@ -411,6 +412,8 @@ test.describe('Zoom Tool', () => {
      *        6. Zoom Out using button 5 times
      *        7. Take screenshot to witness the result
      */
+    await pageReload(page);
+
     await selectClearCanvasTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

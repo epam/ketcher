@@ -377,6 +377,8 @@ test.describe('Import-Saving .idt Files', () => {
     */
       markResetToDefaultState('defaultLayout');
 
+      await pageReload(page);
+
       await openFileAndAddToCanvasMacro(`IDT/${fileName}.idt`, page);
       await takeEditorScreenshot(page);
 
@@ -405,6 +407,8 @@ test.describe('Import-Saving .idt Files', () => {
     Description: Structure is opening
     */
       markResetToDefaultState('defaultLayout');
+
+      await pageReload(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         'IDT',

@@ -827,6 +827,7 @@ test(`Verify that the structure in macro mode can be saved as a .ket file, and a
    *       6. Take screenshot to witness saved state
    *        (screenshots have to be equal)
    */
+  await pageReload(page);
 
   const KETFile =
     'KET/Micro-Macro-Switcher/Complicated structures on the canvas.ket';

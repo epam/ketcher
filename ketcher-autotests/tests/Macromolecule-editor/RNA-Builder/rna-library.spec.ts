@@ -793,6 +793,7 @@ test.describe('RNA Library', () => {
     const bondLine = page.locator('g[pointer-events="stroke"]');
     await drawBasePhosphate(page);
     await bondLine.hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -804,6 +805,7 @@ test.describe('RNA Library', () => {
     const bondLine = page.locator('g[pointer-events="stroke"]').nth(1);
     await drawThreeMonomersConnectedWithBonds(page);
     await bondLine.hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

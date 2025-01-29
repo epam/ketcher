@@ -428,19 +428,6 @@ export class ChainsCollection {
     return this.monomerToChain.get(monomer);
   }
 
-  public splitToSenseAndAntisense() {
-    const senseChains: Chain[] = [];
-    const antisenseChains: Chain[] = [];
-    this.chains.forEach((chain) => {
-      if (chain.isAntisense) {
-        antisenseChains.push(chain);
-      } else {
-        senseChains.push(chain);
-      }
-    });
-    return [senseChains, antisenseChains];
-  }
-
   public getComplimentaryChainsWithData(chain: Chain) {
     const complimentaryChainsWithData: ComplimentaryChainsWithData[] = [];
     const handledChains = new Set<Chain>();

@@ -109,12 +109,13 @@ export class SequenceRenderer {
 
   private static showNodes(sequenceViewModel: SequenceViewModel) {
     const firstNode = sequenceViewModel.firstTwoStrandedNode?.senseNode;
-    let currentChainStartPosition = firstNode
-      ? BaseMonomerRenderer.getScaledMonomerPosition(
-          firstNode.monomer.position,
-          firstNode.monomer.renderer?.monomerSize,
-        )
-      : new Vec2(41.5, 41.5);
+    let currentChainStartPosition =
+      sequenceViewModel.hasOnlyOneNewChain || !firstNode
+        ? new Vec2(41.5, 41.5)
+        : BaseMonomerRenderer.getScaledMonomerPosition(
+            firstNode.monomer.position,
+            firstNode.monomer.renderer?.monomerSize,
+          );
     let currentMonomerIndexInChain = 0;
     let currentMonomerIndexOverall = 0;
     let hasAntisenseInRow = false;

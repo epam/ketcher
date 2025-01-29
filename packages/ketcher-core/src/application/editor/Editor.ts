@@ -317,7 +317,14 @@ export class CoreEditor {
       if (eventData instanceof BaseSequenceItemRenderer) {
         this.events.rightClickSequence.dispatch([
           event,
-          SequenceRenderer.selections,
+          SequenceRenderer.selections.map((selectionRange) =>
+            selectionRange.map((twoStrandedNodeSelection) => {
+              return {
+                ...twoStrandedNodeSelection,
+                node: twoStrandedNodeSelection.node.senseNode,
+              };
+            }),
+          ),
         ]);
       } else if (
         eventData instanceof FlexModePolymerBondRenderer ||

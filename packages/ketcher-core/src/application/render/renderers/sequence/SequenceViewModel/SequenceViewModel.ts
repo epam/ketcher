@@ -33,6 +33,10 @@ export class SequenceViewModel {
     return this.chains.reduce((acc, chain) => acc + chain.length, 0);
   }
 
+  public get hasOnlyOneNewChain() {
+    return this.length === 1 && this.chains[0].isNewSequenceChain;
+  }
+
   private fillViewModel() {
     const NUMBER_OF_SYMBOLS_IN_ROW = 30;
     let hasAntisenseInRow = false;
@@ -80,6 +84,10 @@ export class SequenceViewModel {
       });
       this.chains.push(viewModelChain);
     });
+
+    if (this.chains.length === 0) {
+      this.addEmptyChain(0);
+    }
   }
 
   public addEmptyChain(emptyChainIndex: number) {

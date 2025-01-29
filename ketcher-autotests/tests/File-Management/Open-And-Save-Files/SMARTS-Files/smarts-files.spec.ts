@@ -502,7 +502,7 @@ test.describe('Saving expanded monomer to SMARTS: ', () => {
        *          3.4 Take screenshot to witness result on the canvas
        */
       if (monomer.pageReloadNeeded) {
-        await pageReload(page);
+        await pageReloadMicro(page);
       }
       await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
       await expandMonomer(page, monomer.monomerLocatorText);

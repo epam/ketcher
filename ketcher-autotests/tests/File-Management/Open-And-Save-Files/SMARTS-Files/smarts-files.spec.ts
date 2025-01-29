@@ -9,7 +9,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   waitForRender,
 } from '@utils';
-import { pageReload, pageReloadMicro } from '@utils/common/helpers';
+import { pageReloadMicro } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,

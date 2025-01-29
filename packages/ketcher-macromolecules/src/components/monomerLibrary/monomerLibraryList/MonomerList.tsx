@@ -98,7 +98,6 @@ const MonomerList = ({
             key={groupTitle}
             title={groups.length === 1 ? undefined : groupTitle}
             items={groupItems}
-            isPeptideTab={true}
             libraryName={libraryName}
             onItemClick={onItemClick || selectMonomer}
             selectedMonomerUniqueKey={selectedMonomers}
@@ -126,7 +125,6 @@ const MonomerList = ({
                 libraryName={libraryName}
                 onItemClick={onItemClick || selectMonomer}
                 selectedMonomerUniqueKey={selectedMonomers}
-                isPeptideTab={libraryName === MONOMER_LIBRARY_PEPTIDES}
               />
             );
           })}

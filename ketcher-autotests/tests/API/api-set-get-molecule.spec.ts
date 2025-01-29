@@ -1,4 +1,5 @@
-import { expect, test } from '@playwright/test';
+/* eslint-disable no-magic-numbers */
+import { expect, Page, test } from '@playwright/test';
 import {
   AtomButton,
   readFileContents,
@@ -14,8 +15,14 @@ import {
   drawBenzeneRing,
   waitForLoad,
   clickOnCanvas,
+  openSettings,
+  pressButton,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import {
   addFragment,
   disableQueryElements,
@@ -23,6 +30,20 @@ import {
   getMolfile,
   setMolecule,
 } from '@utils/formats';
+import { scrollSettingBar } from '@utils/scrollSettingBar';
+
+async function applyIgnoreChiralFlag(page: Page) {
+  await openSettings(page);
+  await page.getByText('Stereochemistry', { exact: true }).click();
+  await scrollSettingBar(page, 80);
+  await page
+    .locator('label')
+    .filter({ hasText: 'Ignore the chiral flag' })
+    .locator('div >> span, span')
+    .first()
+    .click();
+  await pressButton(page, 'Apply');
+}
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -176,7 +197,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10095
     Description:  Molecule set and get using V3000 format
     */
-    const ignoredLineIndigo = 1;
     const orEnantiomer = await readFileContents(
       'tests/test-data/Molfiles-V3000/or-enantiomer.mol',
     );
@@ -185,21 +205,14 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       async () => await setMolecule(page, orEnantiomer),
     );
 
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/test-data-for-enatiomer.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/test-data-for-enatiomer.mol',
-        metaDataIndexes: [ignoredLineIndigo],
-        fileFormat: 'v3000',
-      });
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -791,6 +804,52 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     });
 
     expect(containsReaction).not.toBe(true);
+    await takeEditorScreenshot(page);
+  });
+
+  test('1. Verify absence "Enhanced Stereochemistry" flag and stereocenters when load structure by API', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/6161
+    Description: Absence "Enhanced Stereochemistry" flag and stereocenters
+    Case:
+      1. Apply "Ignore the chiral flag" setting
+      2. Load structure from API
+      3. Take a screenshot
+    */
+    const MolV2000File = await readFileContents(
+      'tests/test-data/Molfiles-V2000/non-proprietary-structure.mol',
+    );
+    await applyIgnoreChiralFlag(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, MolV2000File),
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('2. Verify absence "Enhanced Stereochemistry" flag and stereocenters when load structure by API', async ({
+    page,
+  }) => {
+    /*
+    Test case: https://github.com/epam/ketcher/issues/6161
+    Description: Absence "Enhanced Stereochemistry" flag and stereocenters
+    Case:
+      1. Load structure from API
+      2. Take a screenshot
+      3. Apply "Ignore the chiral flag" setting
+      4. Take a screenshot
+    */
+    const MolV2000File = await readFileContents(
+      'tests/test-data/Molfiles-V2000/non-proprietary-structure.mol',
+    );
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, MolV2000File),
+    );
+    await takeEditorScreenshot(page);
+    await applyIgnoreChiralFlag(page);
     await takeEditorScreenshot(page);
   });
 });

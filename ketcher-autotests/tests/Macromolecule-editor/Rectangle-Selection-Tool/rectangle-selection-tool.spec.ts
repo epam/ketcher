@@ -1,6 +1,5 @@
 import { Page, test } from '@playwright/test';
 import {
-  addChemOnCanvas,
   addSingleMonomerToCanvas,
   addPeptideOnCanvas,
   dragMouseTo,
@@ -16,12 +15,18 @@ import {
   selectAllStructuresOnCanvas,
   selectMacroBond,
   clickOnCanvas,
+  selectMonomer,
+  clickInTheMiddleOfTheScreen,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { moveMonomer } from '@utils/macromolecules/monomer';
-import { Peptides } from '@utils/selectors/macromoleculeEditor';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { Chem, Peptides } from '@constants/monomers';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 /* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(
@@ -173,10 +178,10 @@ test.describe('Rectangle Selection Tool', () => {
       x: center.x - shift,
       y: center.y,
     };
-    await page.getByTestId(Peptides.BetaAlanine).click();
+    await selectMonomer(page, Peptides.bAla);
     await clickOnCanvas(page, betaAlaninePosition.x, betaAlaninePosition.y);
 
-    await page.getByTestId(Peptides.Ethylthiocysteine).click();
+    await selectMonomer(page, Peptides.Edc);
     // Ethylthiocysteine was added later, so it is located above Beta Alanine
     await clickOnCanvas(page, center.x + shift, center.y);
     await page.keyboard.press('Escape');
@@ -265,7 +270,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 200;
     const y = 200;
-    await addPeptideOnCanvas(page, 'meD___N-Methyl-Aspartic acid');
+    await addPeptideOnCanvas(page, Peptides.meD);
     await selectRectangleSelectionTool(page);
     await page.getByText('meD').locator('..').first().click();
     await dragMouseTo(x, y, page);
@@ -302,7 +307,9 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 200;
     const y = 200;
-    await addChemOnCanvas(page, 'A6OH___6-amino-hexanol');
+    await selectMonomer(page, Chem.A6OH);
+    await clickInTheMiddleOfTheScreen(page);
+
     await selectRectangleSelectionTool(page);
     await page.getByText('A6OH').locator('..').first().click();
     await dragMouseTo(x, y, page);
@@ -393,9 +400,9 @@ test.describe('Rectangle Selection Tool', () => {
     await selectRectangleSelectionTool(page);
     await page.getByText('2Nal').locator('..').first().hover();
     await dragMouseTo(x, y, page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('redo').click();
+    await pressRedoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -442,7 +449,7 @@ test.describe('Rectangle Selection Tool', () => {
     await selectAllStructuresOnCanvas(page);
     await page.getByTestId('erase').click();
     await takeEditorScreenshot(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 });

@@ -33,8 +33,12 @@ import {
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
-import { getKet, getMolfile } from '@utils/formats';
+import { getMolfile } from '@utils/formats';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -485,19 +489,12 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForRender(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
-    const expectedFile = await getKet(page);
-    await saveToFile(
-      'KET/structure-with-stereo-bonds-expected.ket',
-      expectedFile,
-    );
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/structure-with-stereo-bonds-expected.ket',
-      });
 
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/structure-with-stereo-bonds-expected.ket',
+      FileType.KET,
+    );
   });
 
   // TODO: It's unstable, skip for now
@@ -548,22 +545,13 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/structure-with-stereo-bonds-expectedV3000.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { file: molFile, fileExpected: molFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/structure-with-stereo-bonds-expectedV3000.mol',
-        fileFormat: 'v3000',
-      });
-
-    expect(molFile).toEqual(molFileExpected);
   });
 
   test('Save as .smi file structure with stereo labels', async ({ page }) => {

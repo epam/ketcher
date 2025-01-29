@@ -1,17 +1,20 @@
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { test } from '@playwright/test';
 import {
+  selectMonomer,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   waitForPageInit,
 } from '@utils';
 import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
+import { Presets } from '@constants/monomers';
+import { goToRNATab } from '@utils/macromolecules/library';
 
 test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
-    await page.getByTestId('RNA-TAB').click();
+    await goToRNATab(page);
     await toggleRnaBuilderAccordion(page);
   });
 
@@ -20,7 +23,7 @@ test.describe('Macromolecules default presets', () => {
     Test case: #2934 - rna builder: add default presets
     Description: Switch to Polymer Editor
     */
-    await page.getByTestId('G_G_R_P').click();
+    await selectMonomer(page, Presets.G);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -28,8 +31,7 @@ test.describe('Macromolecules default presets', () => {
     /* 
     Test case: #2507 - Add RNA monomers to canvas (by click)
     */
-    await page.click('[data-testid="G_G_R_P"]');
-
+    await selectMonomer(page, Presets.G);
     await page.click('#polymer-editor-canvas');
 
     // Get rid of flakiness because of preview

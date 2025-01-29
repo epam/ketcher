@@ -12,6 +12,8 @@ import { valuesToReplace as ketcherReactValues } from '../packages/ketcher-react
 import ketcherReactTSConfig from '../packages/ketcher-react/tsconfig.json';
 import ketcherStandaloneTSConfig from '../packages/ketcher-standalone/tsconfig.json';
 import { envVariables as exampleEnv } from './config/webpack.config';
+import { INDIGO_WORKER_IMPORTS } from '../packages/ketcher-standalone/rollup.config';
+import commonjs from 'vite-plugin-commonjs';
 
 const dotEnv = loadEnv('development', '.', '');
 Object.assign(process.env, dotEnv, exampleEnv);
@@ -146,6 +148,7 @@ export default defineConfig({
       },
     }),
     HtmlReplaceVitePlugin(),
+    commonjs(),
   ],
   define: {
     'process.env': process.env,
@@ -202,12 +205,16 @@ export default defineConfig({
 
       /** Web worker in ketcher-standalone */
       {
-        find: 'web-worker:./indigoWorker',
-        replacement: './indigoWorker?worker',
+        find: 'web-worker:./../indigoWorker',
+        replacement: './../indigoWorker?worker',
       },
       {
         find: '_indigo-ketcher-import-alias_',
         replacement: 'indigo-ketcher',
+      },
+      {
+        find: '_indigo-worker-import-alias_',
+        replacement: INDIGO_WORKER_IMPORTS.WASM_LOADER,
       },
     ],
   },

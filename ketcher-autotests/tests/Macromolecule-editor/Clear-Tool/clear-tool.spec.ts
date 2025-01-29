@@ -1,3 +1,4 @@
+import { Peptides } from '@constants/monomers';
 import { test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -14,7 +15,10 @@ import {
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { Peptides } from '@utils/selectors/macromoleculeEditor';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Clear Canvas Tool', () => {
@@ -162,7 +166,7 @@ test.describe('Clear Canvas Tool', () => {
     await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
     await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -176,9 +180,9 @@ test.describe('Clear Canvas Tool', () => {
     await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
     await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('undo').click();
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('redo').click();
+    await pressRedoButton(page);
     await takeEditorScreenshot(page);
   });
 

@@ -3,8 +3,6 @@ import {
   BondType,
   doubleClickOnBond,
   pressButton,
-  receiveFileComparisonData,
-  saveToFile,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -16,8 +14,11 @@ import {
   setCustomQueryForBond,
   setReactingCenter,
 } from '../utils';
-import { getKet } from '@utils/formats';
 import { drawStructure } from '@utils/canvas/drawStructures';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 async function setAndCheckBondProperties(
   page: Page,
@@ -388,19 +389,10 @@ test.describe('Checking saving attributes to .ket file', () => {
     await page.getByTestId('custom-query-checkbox').check();
     await pressButton(page, 'Apply');
 
-    const expectedFile = await getKet(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'KET/three-bond-structure-with-custom-query-to-compare.ket',
-      expectedFile,
+      FileType.KET,
     );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/three-bond-structure-with-custom-query-to-compare.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
   });
 });

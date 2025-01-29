@@ -1,4 +1,5 @@
 /* eslint-disable no-magic-numbers */
+import { Chem, Peptides, Presets } from '@constants/monomers';
 import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -23,11 +24,11 @@ import {
   selectZoomInTool,
   selectZoomOutTool,
   selectZoomReset,
+  selectMonomer,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
-import { Chems, Peptides } from '@utils/selectors/macromoleculeEditor';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
@@ -280,18 +281,18 @@ test.describe('Zoom Tool', () => {
     const y = 350;
     const x1 = 650;
     const y1 = 150;
-    await page.getByTestId(Peptides.BetaAlanine).click();
+    await selectMonomer(page, Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
     for (let i = 0; i < 3; i++) {
       await ZoomInByKeyboard(page);
     }
-    await page.getByTestId('Edc___S-ethylthiocysteine').click();
+    await selectMonomer(page, Peptides.Edc);
     await clickOnCanvas(page, x, y);
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     for (let i = 0; i < 5; i++) {
       await ZoomOutByKeyboard(page);
     }
-    await page.getByTestId('meD___N-Methyl-Aspartic acid').click();
+    await selectMonomer(page, Peptides.meD);
     await clickOnCanvas(page, x1, y1);
     await connectMonomersWithBonds(page, ['Edc', 'meD']);
     await takeEditorScreenshot(page);
@@ -305,9 +306,9 @@ test.describe('Zoom Tool', () => {
     */
     const x = 800;
     const y = 350;
-    await page.getByTestId(Peptides.BetaAlanine).click();
+    await selectMonomer(page, Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
-    await page.getByTestId('Edc___S-ethylthiocysteine').click();
+    await selectMonomer(page, Peptides.Edc);
     await clickOnCanvas(page, x, y);
     await connectMonomersWithBonds(page, ['bAla', 'Edc']);
     await takeEditorScreenshot(page);
@@ -329,15 +330,13 @@ test.describe('Zoom Tool', () => {
     for (let i = 0; i < 8; i++) {
       await ZoomOutByKeyboard(page);
     }
-    await page.getByTestId(Peptides.BetaAlanine).click();
+    await selectMonomer(page, Peptides.bAla);
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('RNA-TAB').click();
-    await page.getByTestId('C_C_R_P').click();
+    await selectMonomer(page, Presets.C);
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('CHEM-TAB').click();
-    await page.getByTestId(Chems.SMPEG2).click();
+    await selectMonomer(page, Chem.SMPEG2);
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

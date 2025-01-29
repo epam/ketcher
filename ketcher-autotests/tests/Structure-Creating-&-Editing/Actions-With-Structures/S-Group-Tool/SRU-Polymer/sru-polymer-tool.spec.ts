@@ -26,8 +26,12 @@ import {
   waitForPageInit,
 } from '@utils';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import { getKet, getMolfile } from '@utils/formats';
+import { getMolfile } from '@utils/formats';
 import { SGroupRepeatPattern } from '@utils/sgroup';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -319,16 +323,11 @@ test.describe('SRU Polymer tool', () => {
       'A',
       SGroupRepeatPattern.HeadToTail,
     );
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/cyclopropane-and-h2o-sru-expected.ket', expectedFile);
-    const { file: ketFile, fileExpected: ketFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/KET/cyclopropane-and-h2o-sru-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/cyclopropane-and-h2o-sru-expected.ket',
+      FileType.KET,
+    );
     await takeEditorScreenshot(page);
   });
 });

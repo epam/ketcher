@@ -29,7 +29,7 @@
     "node": ">=14"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasm rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRender SEPARATE_INDIGO_RENDER=true rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasmWithoutRender SEPARATE_INDIGO_RENDER=true rollup -c -m true",
+    "build": "cross-env NODE_ENV=production rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64Cjs rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasm rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRender SEPARATE_INDIGO_RENDER=true rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=base64WithoutRenderCjs SEPARATE_INDIGO_RENDER=true rollup -c -m true && cross-env NODE_ENV=production INDIGO_MODULE_NAME=wasmWithoutRender SEPARATE_INDIGO_RENDER=true rollup -c -m true",
     "start": "cross-env NODE_ENV=development rollup -c -m true -w",
     "test": "run-s test:prettier test:eslint:quiet test:types test:unit",
     "test:eslint": "eslint . --ext .ts,.js",
@@ -56,6 +56,7 @@
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-replace": "^5.0.7",
     "@rollup/plugin-strip": "^2.0.0",
+    "@surma/rollup-plugin-off-main-thread": "^2.2.3",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.12",
     "cross-env": "^7.0.3",
@@ -64,7 +65,7 @@
     "jest": "26.6.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",
-    "rollup": "^2.60.2",
+    "rollup": "^2.79.2",
     "rollup-plugin-cleanup": "^3.2.1",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-delete": "^2.0.0",
@@ -79,20 +80,18 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/index.modern.js",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/cjs/index.js"
     },
     "./dist/binaryWasm": {
-      "import": "./dist/binaryWasm/index.modern.js",
-      "require": "./dist/binaryWasm/index.js"
+      "import": "./dist/binaryWasm/index.js"
     },
     "./dist/jsNoRender": {
-      "import": "./dist/jsNoRender/index.modern.js",
-      "require": "./dist/jsNoRender/index.js"
+      "import": "./dist/jsNoRender/index.js",
+      "require": "./dist/cjs/jsNoRender/index.js"
     },
     "./dist/binaryWasmNoRender": {
-      "import": "./dist/binaryWasmNoRender/index.modern.js",
-      "require": "./dist/binaryWasmNoRender/index.js"
+      "import": "./dist/binaryWasmNoRender/index.js"
     }
   }
 }

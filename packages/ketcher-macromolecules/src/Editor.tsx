@@ -80,7 +80,7 @@ import useSetRnaPresets from './hooks/useSetRnaPresets';
 import { Loader } from 'components/Loader';
 import { FullscreenButton } from 'components/FullscreenButton';
 import { LayoutModeButton } from 'components/LayoutModeButton';
-import { useContextMenu } from 'react-contexify';
+import { TriggerEvent, useContextMenu } from 'react-contexify';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu/SequenceItemContextMenu';
 import { Preview } from 'components/preview/Preview';
@@ -178,7 +178,7 @@ function Editor({
   useSetRnaPresets();
 
   useEffect(() => {
-    editor?.events.rightClickSequence.add((event, selections) => {
+    editor?.events.rightClickSequence.add(([event, selections]) => {
       setSelections(selections);
       showSequenceContextMenu({
         event,
@@ -188,10 +188,10 @@ function Editor({
       });
     });
     editor?.events.rightClickPolymerBond.add(
-      (
-        event,
-        polymerBondRenderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
-      ): void => {
+      ([event, polymerBondRenderer]: [
+        TriggerEvent,
+        DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+      ]): void => {
         showPolymerBondContextMenu({
           event,
           props: {
@@ -201,7 +201,7 @@ function Editor({
       },
     );
     editor?.events.rightClickSelectedMonomers.add(
-      (event, selectedMonomers: BaseMonomer[]) => {
+      ([event, selectedMonomers]: [TriggerEvent, BaseMonomer[]]) => {
         setSelectedMonomers(selectedMonomers);
         showSelectedMonomersContextMenu({
           event,
@@ -302,11 +302,13 @@ function Editor({
         <Layout.Right hide={isMonomerLibraryHidden}>
           <MonomerLibrary />
         </Layout.Right>
+        <Layout.InsideRoot>
+          <MonomerLibraryToggle
+            isHidden={isMonomerLibraryHidden}
+            onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
+          />
+        </Layout.InsideRoot>
       </Layout>
-      <MonomerLibraryToggle
-        isHidden={isMonomerLibraryHidden}
-        onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
-      />
       <Preview />
       <SequenceItemContextMenu selections={selections} />
       <PolymerBondContextMenu />

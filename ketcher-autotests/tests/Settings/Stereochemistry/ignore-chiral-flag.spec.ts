@@ -93,4 +93,17 @@ test.describe('Ignore Chiral Flag', () => {
     );
     await takeEditorScreenshot(page);
   });
+
+  test('Verify absence "Enhanced Stereochemistry" flag and stereocenters2', async ({
+    page,
+  }) => {
+    // Test case: https://github.com/epam/ketcher/issues/6161
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/non-proprietary-structure.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await applyIgnoreChiralFlag(page);
+    await takeEditorScreenshot(page);
+  });
 });

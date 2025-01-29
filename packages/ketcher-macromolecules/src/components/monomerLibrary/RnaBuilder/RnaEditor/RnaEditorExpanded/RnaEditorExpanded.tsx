@@ -61,7 +61,7 @@ import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect, useState } from 'react';
 import {
   generateSequenceSelectionGroupNames,
   generateSequenceSelectionName,
@@ -164,9 +164,17 @@ export const RnaEditorExpanded = ({
         const monomerType =
           monomerGroupToPresetGroup[activePresetMonomerGroup.groupName];
         const field = `${monomerType}Label`;
+
         const updatedSequenceSelection = sequenceSelection.map((node) => {
           // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
           // Do not set 'sugarLabel', 'baseLabel' for Phosphate
+          const naturalAnalog =
+            field === 'baseLabel' &&
+            activePresetMonomerGroup.groupItem.props?.MonomerNaturalAnalogCode
+              ? activePresetMonomerGroup.groupItem.props
+                  .MonomerNaturalAnalogCode
+              : activePresetMonomerGroup.groupItem.label;
+
           if (
             (node.isNucleosideConnectedAndSelectedWithPhosphate &&
               field === 'phosphateLabel') ||
@@ -177,9 +185,10 @@ export const RnaEditorExpanded = ({
 
           return {
             ...node,
-            [field]: activePresetMonomerGroup.groupItem.label,
+            [field]: naturalAnalog,
           };
         });
+
         setIsSequenceSelectionUpdated(true);
         dispatch(setSequenceSelection(updatedSequenceSelection));
       } else {
@@ -303,7 +312,25 @@ export const RnaEditorExpanded = ({
     return sequenceSelectionGroupNames[groupName];
   };
 
-  let mainButton;
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onCancel();
+        event.preventDefault();
+        event.stopPropagation();
+      } else if (event.key === 'Enter') {
+        isSequenceEditInRNABuilderMode ? onUpdateSequence() : onSave();
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+    editor?.events.keyDown.add(handleKeyDown);
+    return () => {
+      editor?.events.keyDown.remove(handleKeyDown);
+    };
+  }, [editor, sequenceSelection]);
+
+  let mainButton: JSX.Element;
 
   if (isActivePresetEmpty && !isSequenceEditInRNABuilderMode) {
     mainButton = (

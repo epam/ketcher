@@ -23,12 +23,18 @@ import {
 } from 'state/rna-builder';
 import { generateSequenceContextMenuProps } from 'components/contextMenu/SequenceItemContextMenu/helpers';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
+import { LIBRARY_TAB_INDEX } from 'src/constants';
 
 type SequenceItemContextMenuType = {
   selections?: NodesSelection;
 };
 
-const RNA_TAB_INDEX = 2;
+export enum SequenceItemContextMenuNames {
+  title = 'sequence_menu_title',
+  modifyInRnaBuilder = 'modify_in_rna_builder',
+  editSequence = 'edit_sequence',
+  startNewSequence = 'start_new_sequence',
+}
 
 export const SequenceItemContextMenu = ({
   selections,
@@ -43,7 +49,7 @@ export const SequenceItemContextMenu = ({
 
   const menuItems = [
     {
-      name: 'sequence_menu_title',
+      name: SequenceItemContextMenuNames.title,
       title: menuProps?.title,
       isMenuTitle: true,
       disabled: true,
@@ -59,7 +65,7 @@ export const SequenceItemContextMenu = ({
       },
     },
     {
-      name: 'modify_in_rna_builder',
+      name: SequenceItemContextMenuNames.modifyInRnaBuilder,
       title: 'Modify in RNA Builder...',
       disabled: !menuProps?.isSelectedOnlyNucleoelements,
       hidden: ({
@@ -74,7 +80,7 @@ export const SequenceItemContextMenu = ({
       },
     },
     {
-      name: 'edit_sequence',
+      name: SequenceItemContextMenuNames.editSequence,
       title: 'Edit sequence',
       disabled: false,
       hidden: ({
@@ -86,7 +92,7 @@ export const SequenceItemContextMenu = ({
       },
     },
     {
-      name: 'start_new_sequence',
+      name: SequenceItemContextMenuNames.startNewSequence,
       title: 'Start new sequence',
       disabled: false,
     },
@@ -94,9 +100,9 @@ export const SequenceItemContextMenu = ({
 
   const handleMenuChange = ({ id, props }: ItemParams) => {
     switch (id) {
-      case 'modify_in_rna_builder':
+      case SequenceItemContextMenuNames.modifyInRnaBuilder:
         editor.events.turnOnSequenceEditInRNABuilderMode.dispatch();
-        dispatch(setSelectedTabIndex(RNA_TAB_INDEX));
+        dispatch(setSelectedTabIndex(LIBRARY_TAB_INDEX.RNA));
         dispatch(setIsEditMode(true));
         dispatch(setActivePreset({}));
         dispatch(setActiveRnaBuilderItem(null));
@@ -115,10 +121,10 @@ export const SequenceItemContextMenu = ({
           );
         }
         break;
-      case 'start_new_sequence':
+      case SequenceItemContextMenuNames.startNewSequence:
         editor.events.startNewSequence.dispatch(props.sequenceItemRenderer);
         break;
-      case 'edit_sequence':
+      case SequenceItemContextMenuNames.editSequence:
         editor.events.editSequence.dispatch(props.sequenceItemRenderer);
         break;
       default:

@@ -1,3 +1,4 @@
+import { Peptides } from '@constants/monomers';
 import { test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -11,7 +12,6 @@ import {
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { Peptides } from '@utils/selectors/macromoleculeEditor';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Check attachment point rotation', () => {

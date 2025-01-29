@@ -9,12 +9,15 @@ import {
   saveToFile,
   layout,
   recognize,
-  receiveFileComparisonData,
   selectAtomInToolbar,
   AtomButton,
   clickInTheMiddleOfTheScreen,
   selectAllStructuresOnCanvas,
 } from '@utils';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('getKet', () => {
   test.beforeEach(async ({ page }) => {
@@ -157,14 +160,11 @@ test.describe('getKet', () => {
     await selectAtomInToolbar(AtomButton.Hydrogen, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    const expectedFile = await getKet(page);
-    await saveToFile('KET/selected-hydrogen-expected.ket', expectedFile);
 
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/KET/selected-hydrogen-expected.ket',
-      });
-    expect(ketFile).toEqual(ketFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/selected-hydrogen-expected.ket',
+      FileType.KET,
+    );
   });
 });

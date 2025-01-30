@@ -288,81 +288,72 @@ const shortMonomerList: IMonomer[] = [
 
 for (const leftMonomer of shortMonomerList) {
   for (const rightMonomer of shortMonomerList) {
-    test(
-      `1-${leftMonomer.id}-${rightMonomer.id}. Hydrogen side chain for: ${leftMonomer.monomerDescription} and ${rightMonomer.monomerDescription}`,
-      { tag: ['@IncorrectResultBecauseOfBug'] },
-      async () => {
-        /*
-         * Test task: https://github.com/epam/ketcher/issues/6184
-         * Description: Check if hydrogen bonds connect monomers inside one chain, those
-         *              hydrogen bonds should be considered as side chain connections for layout purposes
-         * Case:
-         *       1. Load two monomers on the canvas
-         *       2. Connect them with hydrogen bond
-         *       3. Switch to the flex/snake mode to refresh layout
-         *       4. Take screenshot to validate layout (connection should be considered as side chain)
-         *
-         *  WARNING: Some test tesults are wrong because of bugs:
-         *  https://github.com/epam/ketcher/issues/6194
-         *  https://github.com/epam/ketcher/issues/6195
-         *  Screenshots must be updated after fix and fixme should be removed
-         */
-        test.setTimeout(30000);
+    test(`1-${leftMonomer.id}-${rightMonomer.id}. Hydrogen side chain for: ${leftMonomer.monomerDescription} and ${rightMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/6184
+       * Description: Check if hydrogen bonds connect monomers inside one chain, those
+       *              hydrogen bonds should be considered as side chain connections for layout purposes
+       * Case:
+       *       1. Load two monomers on the canvas
+       *       2. Connect them with hydrogen bond
+       *       3. Switch to the flex/snake mode to refresh layout
+       *       4. Take screenshot to validate layout (connection should be considered as side chain)
+       */
+      test.setTimeout(30000);
 
-        await loadMonomerOnCanvas(page, leftMonomer);
-        let leftMonomerAlias;
-        if (leftMonomer.type === 'Nucleoside') {
-          leftMonomerAlias = 'R';
-        } else if (leftMonomer.type === 'Nucleotide') {
-          leftMonomerAlias = 'P';
-        } else {
-          leftMonomerAlias = leftMonomer.alias;
-        }
-        const leftMonomerLocator = (
+      await loadMonomerOnCanvas(page, leftMonomer);
+      let leftMonomerAlias;
+      if (leftMonomer.type === 'Nucleoside') {
+        leftMonomerAlias = 'R';
+      } else if (leftMonomer.type === 'Nucleotide') {
+        leftMonomerAlias = 'P';
+      } else {
+        leftMonomerAlias = leftMonomer.alias;
+      }
+      const leftMonomerLocator = (
+        await getMonomerLocator(page, {
+          monomerAlias: leftMonomerAlias,
+        })
+      ).first();
+      await loadMonomerOnCanvas(page, rightMonomer);
+      let rightMonomerAlias;
+      if (rightMonomer.type === 'Nucleoside') {
+        rightMonomerAlias = 'R';
+      } else if (rightMonomer.type === 'Nucleotide') {
+        rightMonomerAlias = 'P';
+      } else {
+        rightMonomerAlias = rightMonomer.alias;
+      }
+      const rightMonomerLocator =
+        (await (
           await getMonomerLocator(page, {
-            monomerAlias: leftMonomerAlias,
+            monomerAlias: rightMonomerAlias,
           })
-        ).first();
-        await loadMonomerOnCanvas(page, rightMonomer);
-        let rightMonomerAlias;
-        if (rightMonomer.type === 'Nucleoside') {
-          rightMonomerAlias = 'R';
-        } else if (rightMonomer.type === 'Nucleotide') {
-          rightMonomerAlias = 'P';
-        } else {
-          rightMonomerAlias = rightMonomer.alias;
-        }
-        const rightMonomerLocator =
-          (await (
-            await getMonomerLocator(page, {
-              monomerAlias: rightMonomerAlias,
-            })
-          ).count()) > 1
-            ? (
-                await getMonomerLocator(page, {
-                  monomerAlias: rightMonomerAlias,
-                })
-              ).nth(1)
-            : (
-                await getMonomerLocator(page, {
-                  monomerAlias: rightMonomerAlias,
-                })
-              ).first();
+        ).count()) > 1
+          ? (
+              await getMonomerLocator(page, {
+                monomerAlias: rightMonomerAlias,
+              })
+            ).nth(1)
+          : (
+              await getMonomerLocator(page, {
+                monomerAlias: rightMonomerAlias,
+              })
+            ).first();
 
-        await bondTwoMonomers(
-          page,
-          leftMonomerLocator,
-          rightMonomerLocator,
-          undefined,
-          undefined,
-          MacroBondTool.HYDROGEN,
-        );
+      await bondTwoMonomers(
+        page,
+        leftMonomerLocator,
+        rightMonomerLocator,
+        undefined,
+        undefined,
+        MacroBondTool.HYDROGEN,
+      );
 
-        await selectFlexLayoutModeTool(page);
-        await selectSnakeLayoutModeTool(page);
-        await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      },
-    );
+      await selectFlexLayoutModeTool(page);
+      await selectSnakeLayoutModeTool(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    });
   }
 }
 

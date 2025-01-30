@@ -1,4 +1,4 @@
-import { Locator } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 
 export async function waitForElementEnabled(
   locator: Locator,
@@ -24,4 +24,9 @@ export async function waitForElementDisabled(
       await locator.elementHandle(),
       { timeout },
     );
+}
+
+export async function waitForOpenButtonEnabled(page: Page) {
+  const copyButton = page.getByTitle('Copy (Ctrl+C)');
+  await waitForElementEnabled(copyButton);
 }

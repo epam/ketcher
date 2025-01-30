@@ -25,9 +25,9 @@ import {
   selectAllStructuresOnCanvas,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
-  waitForAllStructuresSelected,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
+import { waitForOpenButtonEnabled } from '@utils/common/loaders/waitForElementState';
 import {
   FileType,
   verifyFileExport,
@@ -321,7 +321,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await clickInTheMiddleOfTheScreen(page);
         await enableViewOnlyModeBySetOptions(page);
         await selectAllStructuresOnCanvas(page);
-        await waitForAllStructuresSelected(page);
+        // Waiting for all selected elements to lose `display: none` is insufficient
+        // because the "Copy" button becomes enabled last as an indicator of completion.
+        await waitForOpenButtonEnabled(page);
         await waitForSpinnerFinishedWork(
           page,
           async () => await page.keyboard.press(hotkey.keys),

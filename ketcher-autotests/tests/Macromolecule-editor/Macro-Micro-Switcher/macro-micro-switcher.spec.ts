@@ -75,7 +75,7 @@ import {
 } from '@utils/canvas/atoms/superatomAttachmentPoints';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
-import { waitForMonomerTooltip } from '@utils/common/loaders/previewWaiters';
+import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import {
   FileType,
@@ -359,7 +359,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await page.getByText('A6OH').click({ button: 'right' });
-    await waitForMonomerTooltip(page);
+    await waitForMonomerPreviewMicro(page);
     await takeEditorScreenshot(page);
   });
 
@@ -539,7 +539,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
     await page.getByText('Test-6-Ch').click({ button: 'right' });
-    await waitForMonomerTooltip(page);
+    await waitForMonomerPreviewMicro(page);
     await takeEditorScreenshot(page);
   });
 

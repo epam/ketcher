@@ -4,7 +4,6 @@ import { getControlModifier } from '@utils/keyboard';
 import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import { INPUT_DELAY } from '@utils/globals';
 import { moveMouseAway, waitForRender } from '..';
-import { waitForElementEnabled } from '@utils/common/loaders/waitForElementState';
 
 export enum SelectionType {
   Rectangle = 'Rectangle',
@@ -122,11 +121,4 @@ export async function selectAllStructuresOnCanvas(
     page,
     async () => await page.keyboard.press(`${modifier}+KeyA`, options),
   );
-}
-
-export async function waitForAllStructuresSelected(page: Page) {
-  // Waiting for all selected elements to lose `display: none` is insufficient
-  // because the "Copy" button becomes enabled last as an indicator of completion.
-  const copyButton = page.getByTitle('Copy (Ctrl+C)');
-  await waitForElementEnabled(copyButton);
 }

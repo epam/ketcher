@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
 
-export async function waitForMonomerTooltip(page: Page) {
-  await page.getByTestId('monomer-tooltip').waitFor({ state: 'visible' });
+export async function waitForMonomerPreviewMicro(page: Page) {
+  await page.getByTestId('monomer-preview-micro').waitFor({ state: 'visible' });
 }

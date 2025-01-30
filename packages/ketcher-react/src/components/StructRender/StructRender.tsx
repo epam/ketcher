@@ -57,7 +57,7 @@ const StructRender = ({
 
   return (
     <Container
-      data-testid="monomer-tooltip"
+      data-testid="monomer-preview-micro"
       ref={renderRef}
       className={className}
       fullsize={fullsize}

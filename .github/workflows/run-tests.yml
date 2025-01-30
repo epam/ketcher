@@ -21,11 +21,9 @@ env:
   CI_ENVIRONMENT: true
   USE_SEPARATE_INDIGO_WASM: true
 jobs:
-  build_ketcher_micro:
+  build_ketcher:
     runs-on: ubuntu-latest
     container: node:18.14-bullseye-slim
-    env:
-      ENABLE_POLYMER_EDITOR: false
     steps:
       - name: Install dependencies
         run: apt-get update -y && apt-get install -y git
@@ -45,40 +43,16 @@ jobs:
           name: ketcher-dist-micro
           path: example/dist
 
-  build_ketcher_macro:
-    runs-on: ubuntu-latest
-    container: node:18.14-bullseye-slim
-    env:
-      ENABLE_POLYMER_EDITOR: true
-    steps:
-      - name: Install dependencies
-        run: apt-get update -y && apt-get install -y git
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - name: Git safe
-        run: git config --global --add safe.directory '*'
-      - name: Install NPM dependencies
-        run: npm ci
-      - name: Build all packages
-        run: npm run build:packages && npm run build:example:standalone
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ketcher-dist-macro
-          path: example/dist
-
-  playwright_tests_micro:
+  playwright_tests:
     timeout-minutes: 120
     runs-on: self-hosted-a
-    needs: build_ketcher_micro
+    needs: build_ketcher
     container: mcr.microsoft.com/playwright:v1.44.1-jammy
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2]
-        shardTotal: [2]
+        shardIndex: [1, 2, 3, 4, 5, 6]
+        shardTotal: [6]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -94,8 +68,6 @@ jobs:
           name: ketcher-dist-micro
           path: example/dist/
       - name: Create env file
-        env:
-          ENABLE_POLYMER_EDITOR: false
         run: |
           cat > ketcher-autotests/.env << EOF
           DOCKER=true
@@ -104,7 +76,6 @@ jobs:
           IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS
           CI_ENVIRONMENT=$CI_ENVIRONMENT
           USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM
-          ENABLE_POLYMER_EDITOR=$ENABLE_POLYMER_EDITOR
           EOF
       - name: Run tests
         run: |
@@ -117,58 +88,7 @@ jobs:
         # run even if previous steps fails
         if: always()
         with:
-          name: playwright-report-micro-${{ matrix.shardIndex }}
+          name: pw-report-${{ matrix.shardIndex }}
           path: ketcher-autotests/playwright-report/
           retention-days: 5
   
-  playwright_tests_macromolecules:
-    timeout-minutes: 120
-    runs-on: self-hosted-a
-    needs: build_ketcher_macro
-    container: mcr.microsoft.com/playwright:v1.44.1-jammy
-    strategy:
-      fail-fast: false
-      matrix:
-        shardIndex: [1, 2, 3, 4]
-        shardTotal: [4]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - name: Install dependencies
-        run: npm ci
-      - name: Create folder for dist
-        run: mkdir -p example/dist
-      - name: Download compiled ketcher
-        uses: actions/download-artifact@v4
-        with:
-          name: ketcher-dist-macro
-          path: example/dist/
-      - name: Create env file
-        env:
-          ENABLE_POLYMER_EDITOR: true
-        run: |
-          cat > ketcher-autotests/.env << EOF
-          DOCKER=true
-          KETCHER_URL=$KETCHER_URL
-          MODE=$MODE
-          IGNORE_UNSTABLE_TESTS=$IGNORE_UNSTABLE_TESTS
-          CI_ENVIRONMENT=$CI_ENVIRONMENT
-          USE_SEPARATE_INDIGO_WASM=$USE_SEPARATE_INDIGO_WASM
-          ENABLE_POLYMER_EDITOR=$ENABLE_POLYMER_EDITOR
-          EOF
-      - name: Run tests
-        run: |
-          cd example/ && nohup npm run serve:standalone &
-          cd ketcher-autotests/
-          npm i
-          npx playwright install chromium
-          npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - uses: actions/upload-artifact@v4
-        # run even if previous steps fails
-        if: always()
-        with:
-          name: playwright-report-macromolecules-${{ matrix.shardIndex }}
-          path: ketcher-autotests/playwright-report/
-          retention-days: 5

@@ -21,7 +21,6 @@ import {
   dragMouseTo,
   drawBenzeneRing,
   getControlModifier,
-  getMolfile,
   getSdf,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
@@ -1577,24 +1576,12 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
-      const expectedFile = await getMolfile(page, 'v2000');
-      await saveToFile(
+      await verifyFileExport(
+        page,
         'Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
-        expectedFile,
+        FileType.MOL,
+        'v2000',
       );
-
-      const METADATA_STRINGS_INDEXES = [1];
-
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
-          metaDataIndexes: METADATA_STRINGS_INDEXES,
-          fileFormat: 'v2000',
-        });
-
-      expect(molFile).toEqual(molFileExpected);
       await openFileAndAddToCanvasAsNewProject(
         'Molfiles-V2000/one-attachment-point-added-in-micro-mode-expected.mol',
         page,
@@ -2213,24 +2200,12 @@ test.describe('Macro-Micro-Switcher', () => {
     We have a bug https://github.com/epam/ketcher/issues/4785. After the fix, you need to update the screenshot.
     */
       await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
-      const expectedFile = await getMolfile(page, 'v2000');
-      await saveToFile(
+      await verifyFileExport(
+        page,
         'Molfiles-V2000/micro-macro-structure-expected.mol',
-        expectedFile,
+        FileType.MOL,
+        'v2000',
       );
-
-      const METADATA_STRINGS_INDEXES = [1];
-
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Molfiles-V2000/micro-macro-structure-expected.mol',
-          metaDataIndexes: METADATA_STRINGS_INDEXES,
-          fileFormat: 'v2000',
-        });
-
-      expect(molFile).toEqual(molFileExpected);
       await openFileAndAddToCanvasAsNewProject(
         'Molfiles-V2000/micro-macro-structure-expected.mol',
         page,

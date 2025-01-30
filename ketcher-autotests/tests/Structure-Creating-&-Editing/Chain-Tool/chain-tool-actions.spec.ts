@@ -9,13 +9,14 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   LeftPanelButton,
   selectDropdownTool,
-  saveToFile,
-  receiveFileComparisonData,
   clickOnAtom,
   clickOnBond,
   BondType,
 } from '@utils';
-import { getMolfile } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 const DELTA = 200;
 
@@ -49,19 +50,12 @@ test.describe('Chain Tool verification', () => {
     // Test case: EPMLSOPKET-1479
     // Saving open .ket file with collection of chains in a .mol file
     await openFileAndAddToCanvas('KET/chains.ket', page);
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile('Molfiles-V2000/chains-expected-file.mol', expectedFile);
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/chains-expected-file.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
+    await verifyFileExport(
+      page,
+      'Molfiles-V2000/chains-expected-file.mol',
+      FileType.MOL,
+      'v2000',
+    );
     await takeEditorScreenshot(page);
   });
 

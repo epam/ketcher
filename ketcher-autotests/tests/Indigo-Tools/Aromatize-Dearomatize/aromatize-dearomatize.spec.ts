@@ -23,7 +23,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getCml, getRxn, getSmiles } from '@utils/formats';
+import { getRxn, getSmiles } from '@utils/formats';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -338,17 +338,12 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     with the circle inside the cycles.
     */
     await openFileAndAddToCanvas('CML/aromatic-benzene.cml', page);
-    const expectedFile = await getCml(page);
-    await saveToFile('CML/aromatic-benzene-cml-expected.cml', expectedFile);
 
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/aromatic-benzene-cml-expected.cml',
-      });
-
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CML/aromatic-benzene-cml-expected.cml',
+      FileType.CML,
+    );
     await takeEditorScreenshot(page);
   });
 

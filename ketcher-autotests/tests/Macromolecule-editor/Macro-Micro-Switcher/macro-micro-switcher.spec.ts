@@ -20,7 +20,6 @@ import {
   clickUndo,
   dragMouseTo,
   drawBenzeneRing,
-  getCml,
   getControlModifier,
   getSdf,
   moveMouseAway,
@@ -1696,20 +1695,12 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
-      const expectedFile = await getCml(page);
-      await saveToFile(
+
+      await verifyFileExport(
+        page,
         'CML/one-attachment-point-added-in-micro-mode-expected.cml',
-        expectedFile,
+        FileType.CML,
       );
-
-      const { fileExpected: cmlFileExpected, file: cmlFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CML/one-attachment-point-added-in-micro-mode-expected.cml',
-        });
-
-      expect(cmlFile).toEqual(cmlFileExpected);
       await openFileAndAddToCanvasAsNewProject(
         'CML/one-attachment-point-added-in-micro-mode-expected.cml',
         page,

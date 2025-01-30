@@ -6,11 +6,9 @@ import {
   selectAtomInToolbar,
   takeEditorScreenshot,
   FILE_TEST_DATA,
-  receiveFileComparisonData,
   waitForSpinnerFinishedWork,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
-  saveToFile,
   openFileAndAddToCanvasAsNewProject,
   drawBenzeneRing,
   waitForLoad,
@@ -27,7 +25,6 @@ import {
   addFragment,
   disableQueryElements,
   enableDearomatizeOnLoad,
-  getMolfile,
   setMolecule,
 } from '@utils/formats';
 import { scrollSettingBar } from '@utils/scrollSettingBar';
@@ -251,23 +248,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       async () =>
         await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N'),
     );
-    const molV3000File = await getMolfile(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/test-data-for-chiral-centersv3000-expected.mol',
-      molV3000File,
+      FileType.MOL,
+      'v3000',
     );
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/test-data-for-chiral-centersv3000-expected.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 

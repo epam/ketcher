@@ -871,6 +871,8 @@ export class DrawingEntitiesManager {
 
     command.merge(this.recalculateAntisenseChains());
 
+    this.detectCycles();
+
     return command;
   }
 
@@ -1069,10 +1071,10 @@ export class DrawingEntitiesManager {
 
     polymerBond.secondMonomer.turnOnHover();
 
-    if (!(polymerBond instanceof HydrogenBond)) {
-      polymerBond.firstMonomer.turnOnAttachmentPointsVisibility();
-      polymerBond.secondMonomer.turnOnAttachmentPointsVisibility();
-    }
+    // if (!(polymerBond instanceof HydrogenBond)) {
+    //   polymerBond.firstMonomer.turnOnAttachmentPointsVisibility();
+    //   polymerBond.secondMonomer.turnOnAttachmentPointsVisibility();
+    // }
 
     const operation = new PolymerBondShowInfoOperation(polymerBond);
 
@@ -3040,6 +3042,7 @@ export class DrawingEntitiesManager {
   public detectCycles() {
     const chainsCollection = ChainsCollection.fromMonomers(this.monomersArray);
     this.cycles = chainsCollection.chains.filter((chain) => chain.isCyclic);
+    console.log('Cycles:', this.cycles);
   }
 }
 

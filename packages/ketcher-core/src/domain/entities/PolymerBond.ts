@@ -94,7 +94,10 @@ export class PolymerBond extends BaseBond {
 
     return cyclesWithThisBond.some((chain) => {
       return chain.monomers.some((monomer) => {
-        if (monomer === this.firstMonomer || monomer === secondMonomer) {
+        if (
+          monomer.id === this.firstMonomer.id ||
+          monomer.id === secondMonomer.id
+        ) {
           return false;
         }
 

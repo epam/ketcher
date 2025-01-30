@@ -841,7 +841,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   private get isSideConnectionBondDrawn() {
-    return this.polymerBond.isSideChainConnection && this.path;
+    return (
+      (this.polymerBond.isCyclicOverlappingBond ||
+        this.polymerBond.isSideChainConnection) &&
+      this.path
+    );
   }
 
   public drawSelection(): void {

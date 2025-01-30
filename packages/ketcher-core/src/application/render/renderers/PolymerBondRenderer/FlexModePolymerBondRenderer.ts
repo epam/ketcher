@@ -290,7 +290,9 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   }
 
   private getExpandedBoundingBox(bbox) {
-    const expansionFactor = this.polymerBond.isSideChainConnection ? 0.5 : 0.75;
+    const expansionFactor = this.polymerBond.isSideChainConnection
+      ? 0.65
+      : 0.75;
     let { left, top, width, height } = bbox;
 
     if (width < height) {

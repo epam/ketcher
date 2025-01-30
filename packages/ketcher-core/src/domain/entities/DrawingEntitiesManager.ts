@@ -3042,7 +3042,6 @@ export class DrawingEntitiesManager {
   public detectCycles() {
     const chainsCollection = ChainsCollection.fromMonomers(this.monomersArray);
     this.cycles = chainsCollection.chains.filter((chain) => chain.isCyclic);
-    console.log('Cycles:', this.cycles);
   }
 }
 

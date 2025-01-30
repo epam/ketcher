@@ -48,7 +48,10 @@ import {
   waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
-import { closeErrorAndInfoModals, pageReload } from '@utils/common/helpers';
+import {
+  closeErrorAndInfoModals,
+  pageReloadMicro,
+} from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -808,14 +811,11 @@ test.describe('Image files', () => {
   ];
 
   for (const fileName of fileNames1) {
-    test(`Verify that image of not supported format ${fileName} cannot be added using "Add Image" button`, async ({
-      page,
-    }) => {
+    test(`Verify that image of not supported format ${fileName} cannot be added using "Add Image" button`, async () => {
       /**
        * Test case: #4897
        * Description: Error message is displayed - "Unsupported image type"
        */
-      await pageReload(page);
       await openImageAndAddToCanvas(`Images/${fileName}`, page);
       await takeEditorScreenshot(page);
     });
@@ -864,7 +864,7 @@ test.describe('Image files', () => {
      * Test case: #4897
      * Description: Images of formats (PNG, SVG) can be selected using "Fragment Selection" in "Add Image" mode
      */
-    await pageReload(page);
+    // await pageReloadMicro(page);
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     for (let i = 0; i < 2; i++) {
@@ -882,6 +882,7 @@ test.describe('Image files', () => {
      * Description: Image is selected then green selection frame is displayed and
      * image can be scaled vertically, horizontally and diagonally.
      */
+    await pageReloadMicro(page);
     await openImageAndAddToCanvas('Images/image-png.png', page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -1506,15 +1507,12 @@ test.describe('Image files', () => {
     'Verify that added to Canvas images of (PNG, SVG) are on the same positions after using of Auto-Mapping Tool';
 
   autoMapModes.forEach((mode, index) => {
-    test(`${testDescription} (${mode}), only elements are affected - ${index}`, async ({
-      page,
-    }) => {
+    test(`${testDescription} (${mode}), only elements are affected - ${index}`, async () => {
       /**
        * Test case: #2144
        * Description: Images of (PNG, SVG) are on the same positions after using of Auto-Mapping Tools, only elements are affected,
        * they can be saved together to .ket file with correct coordinates, after that loaded from .ket file with correct positions and layer levels.
        */
-      await pageReload(page);
       await openFileAndAddToCanvasAsNewProject(
         'KET/images-png-svg-with-benzene-for-distorting.ket',
         page,
@@ -2068,8 +2066,7 @@ test.describe('Image files', () => {
   ];
 
   for (const testCase of testCases) {
-    test(testCase.description, async ({ page }) => {
-      await pageReload(page);
+    test(testCase.description, async () => {
       if (testCase.action === 'open') {
         await selectTopPanelButton(TopPanelButton.Open, page);
         await openFile(testCase.file, page);
@@ -2148,9 +2145,7 @@ test.describe('Image files', () => {
   ];
 
   for (const fileName of fileNames2) {
-    test(`Verify that image of not allowed format ${fileName} cannot be added from CDX file`, async ({
-      page,
-    }) => {
+    test(`Verify that image of not allowed format ${fileName} cannot be added from CDX file`, async () => {
       /**
        * Test case: https://github.com/epam/Indigo/issues/2028
        * Description: Images of not allowed formats (e.g.: BMP, GIF, JPEG, JPG ) can't be added from CDX file to Canvas
@@ -2158,7 +2153,6 @@ test.describe('Image files', () => {
        * Test working not a proper way. Do not appear a placeholder. After fix we need update screenshots.
        * We have a bug https://github.com/epam/Indigo/issues/2325
        */
-      await pageReload(page);
       await openFileAndAddToCanvas(`CDX/${fileName}`, page);
       await takeEditorScreenshot(page);
     });
@@ -2172,9 +2166,7 @@ test.describe('Image files', () => {
   ];
 
   for (const fileName of fileNames3) {
-    test(`Verify that image of not allowed format ${fileName} cannot be added from CDXML file`, async ({
-      page,
-    }) => {
+    test(`Verify that image of not allowed format ${fileName} cannot be added from CDXML file`, async () => {
       /**
        * Test case: https://github.com/epam/Indigo/issues/2028
        * Description: Images of not allowed formats (e.g.: BMP, GIF, JPEG, JPG ) can't be added from CDXML file to Canvas
@@ -2182,7 +2174,6 @@ test.describe('Image files', () => {
        * Test working not a proper way. Do not appear a placeholder. After fix we need update screenshots.
        * We have a bug https://github.com/epam/Indigo/issues/2325
        */
-      await pageReload(page);
       await openFileAndAddToCanvas(`CDXML/${fileName}`, page);
       await takeEditorScreenshot(page);
     });

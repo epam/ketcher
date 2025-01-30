@@ -24,6 +24,7 @@ import {
   ZoomInByKeyboard,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -529,7 +530,8 @@ test.describe('Common connection rules: ', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await page.getByText('C', { exact: true }).locator('..').first().hover();
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await waitForMonomerPreviewMicro(page);
+    await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
   });
 

@@ -1,6 +1,9 @@
 import { CoreEditor } from 'application/editor/internal';
 import { AmbiguousMonomer, SequenceType } from 'domain/entities';
-import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
+import {
+  RNA_DNA_NON_MODIFIED_PART,
+  RnaDnaBaseNames,
+} from 'domain/constants/monomers';
 import { MONOMER_CONST } from 'application/editor';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 import { KetMonomerClass } from 'application/formatters';
@@ -10,15 +13,31 @@ export function getRnaPartLibraryItem(
   rnaBaseName: string,
   monomerClass?: KetMonomerClass,
 ) {
-  return editor.monomersLibrary.find((libraryItem) =>
-    isAmbiguousMonomerLibraryItem(libraryItem)
-      ? (!monomerClass ||
-          AmbiguousMonomer.getMonomerClass(libraryItem.monomers) ===
-            monomerClass) &&
-        libraryItem.label === rnaBaseName
-      : (!monomerClass || libraryItem.props.MonomerClass === monomerClass) &&
-        libraryItem.props.MonomerName === rnaBaseName,
-  );
+  return editor.monomersLibrary.find((libraryItem) => {
+    if (isAmbiguousMonomerLibraryItem(libraryItem)) {
+      if (
+        monomerClass &&
+        AmbiguousMonomer.getMonomerClass(libraryItem.monomers) !== monomerClass
+      ) {
+        return false;
+      }
+
+      if (libraryItem.label !== rnaBaseName) {
+        return false;
+      }
+
+      return libraryItem.options.every(
+        (option) =>
+          option.templateId.includes(RnaDnaBaseNames.URACIL) ||
+          !option.templateId.includes(RnaDnaBaseNames.THYMINE),
+      );
+    }
+
+    return (
+      (!monomerClass || libraryItem.props.MonomerClass === monomerClass) &&
+      libraryItem.props.MonomerName === rnaBaseName
+    );
+  });
 }
 
 export function getPeptideLibraryItem(editor: CoreEditor, peptideName: string) {

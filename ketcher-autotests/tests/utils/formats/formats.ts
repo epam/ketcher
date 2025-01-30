@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import { TopPanelButton } from '@utils/selectors';
 import { MolfileFormat, Struct, SupportedModes } from 'ketcher-core';
 import { clickOnFileFormatDropdown } from './clicks';
@@ -145,31 +145,56 @@ export async function enableDearomatizeOnLoad(page: Page): Promise<void> {
 }
 
 export async function enableViewOnlyMode(page: Page): Promise<void> {
-  return await page.evaluate(() =>
+  await page.evaluate(() =>
     window.ketcher.editor.options({ viewOnlyMode: true }),
   );
+
+  await waitForViewOnlyModeState(page, true);
 }
 
 export async function disableViewOnlyMode(page: Page): Promise<void> {
-  return await page.evaluate(() =>
+  await page.evaluate(() =>
     window.ketcher.editor.options({ viewOnlyMode: false }),
   );
+
+  await waitForViewOnlyModeState(page, false);
 }
 
 export async function enableViewOnlyModeBySetOptions(
   page: Page,
 ): Promise<void> {
-  return await page.evaluate(() =>
+  await page.evaluate(() =>
     window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: true })),
   );
+
+  await waitForViewOnlyModeState(page, true);
 }
 
 export async function disableViewOnlyModeBySetOptions(
   page: Page,
 ): Promise<void> {
-  return await page.evaluate(() =>
+  await page.evaluate(() =>
     window.ketcher.editor.setOptions(JSON.stringify({ viewOnlyMode: false })),
   );
+
+  await waitForViewOnlyModeState(page, false);
+}
+
+/*
+ * Waits until View Only Mode is in the specified state by checking the state of the "Erase" button.
+ */
+export async function waitForViewOnlyModeState(
+  page: Page,
+  isEnabled: boolean,
+  timeout = 100000,
+): Promise<void> {
+  const eraseButton = page.getByTestId('erase');
+
+  if (isEnabled) {
+    await expect(eraseButton).toBeDisabled({ timeout });
+  } else {
+    await expect(eraseButton).toBeEnabled({ timeout });
+  }
 }
 
 export async function disableQueryElements(page: Page): Promise<void> {

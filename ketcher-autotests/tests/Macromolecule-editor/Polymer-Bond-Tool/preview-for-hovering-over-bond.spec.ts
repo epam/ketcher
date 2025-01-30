@@ -8,7 +8,10 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
+} from '@utils/macromolecules';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
@@ -92,6 +95,7 @@ test(
       let bondNumber = 0;
       for (bondNumber; bondNumber < numberOfBonds; bondNumber++) {
         await hoverOverBond(page, bondNumber);
+        await waitForMonomerPreview(page);
         await takeEditorScreenshot(page);
       }
       await selectClearCanvasTool(page);
@@ -135,6 +139,7 @@ test(
     let bondNumber = 0;
     for (bondNumber; bondNumber < numberOfBonds; bondNumber++) {
       await hoverOverBond(page, bondNumber);
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     }
   },

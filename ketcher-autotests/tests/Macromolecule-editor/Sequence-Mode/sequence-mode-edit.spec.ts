@@ -33,6 +33,7 @@ import {
 import {
   enterSequence,
   turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import { expandCollapseRnaBuilder } from '@utils/macromolecules/rnaBuilder';
@@ -80,6 +81,8 @@ test.describe('Sequence edit mode', () => {
       .locator('g', { has: page.locator('text="G"') })
       .first()
       .click({ button: 'right' });
+
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -309,8 +312,10 @@ test.describe('Sequence edit mode', () => {
     */
     await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
     await hoverOnSequenceSymbol(page, 'A');
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
     await hoverOnSequenceSymbol(page, 'K');
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -324,8 +329,10 @@ test.describe('Sequence edit mode', () => {
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
     await hoverOnSequenceSymbol(page, 'A');
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
     await hoverOnSequenceSymbol(page, 'Aad');
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -343,10 +350,12 @@ test.describe('Sequence edit mode', () => {
 
     for (const symbol of sequenceSymbols) {
       await hoverOnSequenceSymbol(page, symbol);
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
       await moveMouseAway(page);
     }
     await page.getByText('5HydMe').locator('..').locator('..').first().click();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -430,6 +439,7 @@ test.describe('Sequence edit mode', () => {
 
     for (const symbol of sequenceSymbols) {
       await hoverOnSequenceSymbol(page, symbol);
+      await waitForMonomerPreview(page);
       await takePageScreenshot(page);
       await moveMouseAway(page);
     }
@@ -445,6 +455,7 @@ test.describe('Sequence edit mode', () => {
     await goToRNATab(page);
     await expandCollapseRnaBuilder(page);
     await page.getByTestId(Presets.dR_U_P).hover();
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 
@@ -469,6 +480,7 @@ test.describe('Sequence edit mode', () => {
     */
     await enterSequence(page, 'aaaaaaaaaa');
     await hoverOnSequenceSymbol(page, 'A', 0);
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 
@@ -481,6 +493,7 @@ test.describe('Sequence edit mode', () => {
     */
     await enterSequence(page, 'aaaagaaaaaa');
     await clickOnSequenceSymbol(page, 'G');
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -494,6 +507,7 @@ test.describe('Sequence edit mode', () => {
     */
     await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
     await doubleClickOnSequenceSymbol(page, 'G');
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

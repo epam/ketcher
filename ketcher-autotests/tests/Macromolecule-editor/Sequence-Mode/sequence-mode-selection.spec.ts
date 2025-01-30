@@ -19,7 +19,10 @@ import {
   selectZoomOutTool,
   moveMouseAway,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
+} from '@utils/macromolecules';
 import {
   getSequenceSymbolLocator,
   selectSequenceRangeInEditMode,
@@ -54,6 +57,7 @@ test.describe('Sequence mode selection for view mode', () => {
     await getSequenceSymbolLocator(page, 'G').click();
     await getSequenceSymbolLocator(page, 'G', 1).click();
     await page.keyboard.up('Shift');
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -61,6 +65,7 @@ test.describe('Sequence mode selection for view mode', () => {
     await page.keyboard.down('Control');
     await getSequenceSymbolLocator(page, 'G').click();
     await page.keyboard.up('Control');
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 });
@@ -167,6 +172,7 @@ test.describe('Sequence mode selection for view mode', () => {
         .locator('g', { has: page.locator('text="G"') })
         .first()
         .click();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     });
   }

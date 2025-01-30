@@ -9,7 +9,10 @@ import {
   takeMonomerLibraryScreenshot,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
+} from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   pressAddToPresetsButton,
@@ -86,8 +89,9 @@ test.describe('Macromolecules custom presets', () => {
     await takeMonomerLibraryScreenshot(page);
 
     await selectCustomPreset(page, 'MyRNA_baA_25R_.');
-
     await page.click('#polymer-editor-canvas');
+
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 });

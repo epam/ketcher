@@ -21,6 +21,7 @@ import {
   selectDearomatizeTool,
   selectAddRemoveExplicitHydrogens,
 } from '@utils';
+import { waitForElementEnabled } from '@utils/common/loaders/waitForElementState';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -85,6 +86,11 @@ test.describe('Open Ketcher', () => {
         */
 
       await page.goto('/?hiddenControls=clear');
+
+      // Wait for the page to load
+      const aromatizeButton = page.getByTitle('Aromatize (Alt+A)');
+      await waitForElementEnabled(aromatizeButton);
+
       await takeTopToolbarScreenshot(page);
     },
   );

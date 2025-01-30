@@ -59,6 +59,7 @@ import {
   Tabs,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
+  waitForMonomerPreview,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
@@ -376,6 +377,8 @@ test.describe('Import-Saving .idt Files', () => {
     */
       markResetToDefaultState('defaultLayout');
 
+      await pageReload(page);
+
       await openFileAndAddToCanvasMacro(`IDT/${fileName}.idt`, page);
       await takeEditorScreenshot(page);
 
@@ -404,6 +407,8 @@ test.describe('Import-Saving .idt Files', () => {
     Description: Structure is opening
     */
       markResetToDefaultState('defaultLayout');
+
+      await pageReload(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         'IDT',
@@ -577,6 +582,7 @@ test.describe('Import-Saving .idt Files', () => {
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await bondLine.hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -784,9 +790,11 @@ test.describe('Import-Saving .idt Files', () => {
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
     await page.getByText('iMe').locator('..').nth(1).hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
     await selectSequenceLayoutModeTool(page);
     await page.getByText('?').locator('..').nth(1).hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -801,6 +809,7 @@ test.describe('Import-Saving .idt Files', () => {
     );
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('iMe').locator('..').nth(1).hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -826,6 +835,7 @@ test.describe('Import-Saving .idt Files', () => {
     );
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('iMe').locator('..').hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -852,6 +862,7 @@ test.describe('Import-Saving .idt Files', () => {
     );
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('iMe').locator('..').hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

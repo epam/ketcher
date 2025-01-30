@@ -22,6 +22,7 @@ import {
 import {
   enterSequence,
   turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
 } from '@utils/macromolecules';
 import {
   clickOnSequenceSymbol,
@@ -61,6 +62,7 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     await page.keyboard.down('Control');
     await getSequenceSymbolLocator(page, 'G').click();
     await page.keyboard.up('Control');
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);

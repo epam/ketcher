@@ -24,6 +24,7 @@ import {
 import {
   enterSequence,
   turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
 } from '@utils/macromolecules';
 
 test.describe('Sequence Mode', () => {
@@ -293,6 +294,8 @@ test.describe('Sequence Mode', () => {
         .locator('g', { has: page.locator('text="G"') })
         .first()
         .hover();
+
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -619,6 +622,8 @@ test.describe('Sequence Mode', () => {
         .locator('g', { has: page.locator(`text="${testCase.hoverText}"`) })
         .first()
         .hover();
+
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     });
   }

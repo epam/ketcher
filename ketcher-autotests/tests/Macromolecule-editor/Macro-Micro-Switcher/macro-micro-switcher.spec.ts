@@ -74,6 +74,7 @@ import {
 } from '@utils/canvas/atoms/superatomAttachmentPoints';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
+import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import {
   FileType,
@@ -85,6 +86,7 @@ import {
   enterSequence,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
+  waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { goToRNATab, goToTab } from '@utils/macromolecules/library';
 import { moveMonomerOnMicro } from '@utils/macromolecules/monomer';
@@ -356,6 +358,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await page.getByText('A6OH').click({ button: 'right' });
+    await waitForMonomerPreviewMicro(page);
     await takeEditorScreenshot(page);
   });
 
@@ -474,7 +477,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Ket-structure pasted from the clipboard in Macro mode is visible in Micro mode
     */
-    await turnOnMacromoleculesEditor(page);
+    await pageReload(page);
     await pasteFromClipboard(
       page,
       FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
@@ -512,7 +515,8 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/3712
       Description: Pressing Layout or Clean Up button not erase all macromolecules from canvas
       */
-      await turnOnMacromoleculesEditor(page);
+      await pageReload(page);
+
       await selectMonomer(page, Peptides.A);
       await clickInTheMiddleOfTheScreen(page);
       await turnOnMicromoleculesEditor(page);
@@ -529,11 +533,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Remove abbreviation restricted for CHEMs in micro mode.
     */
-    await turnOnMacromoleculesEditor(page);
+    await pageReload(page);
     await selectMonomer(page, Chem.Test_6_Ch);
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
     await page.getByText('Test-6-Ch').click({ button: 'right' });
+    await waitForMonomerPreviewMicro(page);
     await takeEditorScreenshot(page);
   });
 
@@ -627,6 +632,7 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -647,6 +653,7 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -667,6 +674,7 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F2').locator('..').hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -687,6 +695,7 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -749,6 +758,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await waitForRender(page, async () => {
         await page.getByText('F1').locator('..').hover();
       });
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -815,6 +825,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await clickOnCanvas(page, coordsToClick.x, coordsToClick.y);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -903,6 +914,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('F1').locator('..').hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -940,6 +952,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('F1').locator('..').hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -958,6 +971,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('F1').locator('..').hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1039,6 +1053,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
+      await waitForMonomerPreview(page);
       await dragMouseTo(x1, y1, page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -1064,6 +1079,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
+      await waitForMonomerPreview(page);
       await dragMouseTo(x1, y1, page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -1089,6 +1105,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
+      await waitForMonomerPreview(page);
       await dragMouseTo(x1, y1, page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -1114,6 +1131,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
       await page.getByText('F1').locator('..').hover();
+      await waitForMonomerPreview(page);
       await dragMouseTo(x1, y1, page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -1200,6 +1218,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await bondLine.hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1912,6 +1931,7 @@ test.describe('Macro-Micro-Switcher', () => {
         await selectSnakeLayoutModeTool(page);
         await selectMacroBond(page, MacroBondTool.SINGLE);
         await page.getByText('F1').locator('..').hover();
+        await waitForMonomerPreview(page);
         await takeEditorScreenshot(page);
       },
     );

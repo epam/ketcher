@@ -51,6 +51,12 @@ export async function turnOnMicromoleculesEditor(page: Page) {
   await page.getByTestId(MOLECULES_MODE).click();
 }
 
+export async function waitForMonomerPreview(page: Page) {
+  await page
+    .getByTestId('polymer-library-preview')
+    .waitFor({ state: 'visible' });
+}
+
 export async function hideMonomerPreview(page: Page) {
   await page.mouse.move(9999, 9999);
   await page

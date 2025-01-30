@@ -76,9 +76,6 @@ test.describe('Check attachment point rotation', () => {
     await moveMouseAway(page);
     await peptide1.hover();
 
-    // Get rid of flakiness because of preview
-    await page.waitForSelector('[data-testid="polymer-library-preview"]');
-
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
@@ -86,9 +83,6 @@ test.describe('Check attachment point rotation', () => {
     // Hover 2nd peptide
     await moveMouseAway(page);
     await peptide2.hover();
-
-    // Get rid of flakiness because of preview
-    await page.waitForSelector('[data-testid="polymer-library-preview"]');
 
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -147,7 +141,6 @@ test.describe('Check attachment point rotation', () => {
     await selectMacroBond(page, MacroBondTool.SINGLE);
     // Hover 1th peptide
     await peptide1.hover();
-    await page.getByTestId('polymer-library-preview');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });

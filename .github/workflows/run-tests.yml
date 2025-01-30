@@ -92,3 +92,33 @@ jobs:
           path: ketcher-autotests/playwright-report/
           retention-days: 5
   
+  merge-reports:
+    # Merge reports after playwright-tests, even if some shards have failed
+    if: ${{ !cancelled() }}
+    needs: [playwright_tests]
+
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 18.14
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Download blob reports from GitHub Actions Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ketcher-autotests/playwright-report/
+        pattern: pw-report-*
+        merge-multiple: true
+
+    - name: Merge into HTML Report
+      run: npx playwright merge-reports --reporter html ./ketcher-autotests/playwright-report
+
+    - name: Upload HTML report
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-consolidated-report--attempt-${{ github.run_attempt }}
+        path: ketcher-autotests/playwright-report/
+        retention-days: 14

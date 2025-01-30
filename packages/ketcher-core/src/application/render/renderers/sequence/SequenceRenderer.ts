@@ -1113,5 +1113,6 @@ export class SequenceRenderer {
       twoStrandedNode.senseNode?.renderer?.remove();
       twoStrandedNode.antisenseNode?.renderer?.remove();
     });
+    this.removeNewSequenceButtons();
   }
 }

@@ -113,6 +113,9 @@ jobs:
         pattern: pw-report-*
         merge-multiple: true
 
+    - name: Debug report files
+      run: ls -R ketcher-autotests/playwright-report/
+
     - name: Merge into HTML Report
       run: npx playwright merge-reports --reporter html ketcher-autotests/playwright-report
 

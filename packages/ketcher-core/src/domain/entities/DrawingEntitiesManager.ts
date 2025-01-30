@@ -2749,6 +2749,7 @@ export class DrawingEntitiesManager {
       ...this.monomers.values(),
     ]);
     const handledChains = new Set<Chain>();
+    const monomerToChain = chainsCollection.monomerToChain;
 
     this.monomers.forEach((monomer) => {
       command.merge(

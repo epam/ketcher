@@ -51,7 +51,7 @@ export interface ITwoStrandedChainItem {
 export class ChainsCollection {
   public chains: Chain[] = [];
 
-  private get monomerToChain() {
+  public get monomerToChain() {
     const monomerToChain = new Map<BaseMonomer, Chain>();
 
     this.chains.forEach((chain) => {
@@ -365,10 +365,8 @@ export class ChainsCollection {
     });
   }
 
-  private getFirstAntisenseMonomerInNode(node: SubChainNode) {
-    for (let i = 0; i < node.monomers.length; i++) {
-      const monomer = node.monomers[i];
-      const hydrogenBond = monomer.hydrogenBonds[0];
+  private getFirstComplimentaryMonomer(monomer: BaseMonomer) {
+    const hydrogenBond = monomer.hydrogenBonds[0];
 
       if (hydrogenBond) {
         return {
@@ -376,7 +374,6 @@ export class ChainsCollection {
           complimentaryMonomer: hydrogenBond.getAnotherMonomer(monomer),
         };
       }
-    }
 
     return undefined;
   }
@@ -442,31 +439,34 @@ export class ChainsCollection {
   public getComplimentaryChainsWithData(chain: Chain) {
     const complimentaryChainsWithData: ComplimentaryChainsWithData[] = [];
     const handledChains = new Set<Chain>();
+    const monomerToNode = this.monomerToNode;
     const monomerToChain = this.monomerToChain;
 
     chain.forEachNode(({ node, nodeIndex }) => {
-      const { complimentaryMonomer } =
-        this.getFirstAntisenseMonomerInNode(node) || {};
-      const complimentaryNode =
-        complimentaryMonomer && this.monomerToNode.get(complimentaryMonomer);
-      const complimentaryChain =
-        complimentaryMonomer && monomerToChain.get(complimentaryMonomer);
+      node.monomers.forEach((monomer) => {
+        const { complimentaryMonomer } =
+        this.getFirstComplimentaryMonomer(monomer) || {};
+        const complimentaryNode =
+          complimentaryMonomer && monomerToNode.get(complimentaryMonomer);
+        const complimentaryChain =
+          complimentaryMonomer && monomerToChain.get(complimentaryMonomer);
 
-      if (
-        !complimentaryNode ||
-        !complimentaryChain ||
-        handledChains.has(complimentaryChain)
-      ) {
-        return;
-      }
+        if (
+          !complimentaryNode ||
+          !complimentaryChain ||
+          handledChains.has(complimentaryChain)
+        ) {
+          return;
+        }
 
-      handledChains.add(complimentaryChain);
-      complimentaryChainsWithData.push({
-        complimentaryChain,
-        chain,
-        firstConnectedNode: node,
-        firstConnectedComplimentaryNode: complimentaryNode,
-        chainIdxConnection: nodeIndex,
+        handledChains.add(complimentaryChain);
+        complimentaryChainsWithData.push({
+          complimentaryChain,
+          chain,
+          firstConnectedNode: node,
+          firstConnectedComplimentaryNode: complimentaryNode,
+          chainIdxConnection: nodeIndex,
+        });
       });
     });
 

@@ -109,9 +109,33 @@ jobs:
     - name: Download blob reports from GitHub Actions Artifacts
       uses: actions/download-artifact@v4
       with:
-        path: ketcher-autotests/playwright-report
-        pattern: pw-report-*
-        merge-multiple: true
+        name: pw-report-1
+        path: ketcher-autotests/playwright-report/pw-report-1
+
+    - uses: actions/download-artifact@v4
+      with:
+        name: pw-report-2
+        path: ketcher-autotests/playwright-report/pw-report-2
+ 
+    - uses: actions/download-artifact@v4
+      with:
+        name: pw-report-3
+        path: ketcher-autotests/playwright-report/pw-report-3
+   
+    - uses: actions/download-artifact@v4
+      with:
+        name: pw-report-4
+        path: ketcher-autotests/playwright-report/pw-report-4
+     
+    - uses: actions/download-artifact@v4
+      with:
+        name: pw-report-5
+        path: ketcher-autotests/playwright-report/pw-report-5
+     
+    - uses: actions/download-artifact@v4
+      with:
+        name: pw-report-6
+        path: ketcher-autotests/playwright-report/pw-report-6       
 
     - name: Debug report files
       run: ls -R ketcher-autotests/playwright-report/

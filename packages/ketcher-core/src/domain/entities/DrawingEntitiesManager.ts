@@ -1071,10 +1071,10 @@ export class DrawingEntitiesManager {
 
     polymerBond.secondMonomer.turnOnHover();
 
-    // if (!(polymerBond instanceof HydrogenBond)) {
-    //   polymerBond.firstMonomer.turnOnAttachmentPointsVisibility();
-    //   polymerBond.secondMonomer.turnOnAttachmentPointsVisibility();
-    // }
+    if (!(polymerBond instanceof HydrogenBond)) {
+      polymerBond.firstMonomer.turnOnAttachmentPointsVisibility();
+      polymerBond.secondMonomer.turnOnAttachmentPointsVisibility();
+    }
 
     const operation = new PolymerBondShowInfoOperation(polymerBond);
 

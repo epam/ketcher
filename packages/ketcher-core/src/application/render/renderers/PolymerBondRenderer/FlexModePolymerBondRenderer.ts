@@ -15,7 +15,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   // TODO: Specify the types.
   private selectionElement;
   private previousStateOfIsMonomersOnSameHorizontalLine = false;
-  private path: string = '';
+  private path = '';
   public declare bodyElement?: D3SvgElementSelection<SVGLineElement, this>;
 
   constructor(public readonly polymerBond: PolymerBond) {

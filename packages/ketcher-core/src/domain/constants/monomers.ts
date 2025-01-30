@@ -1,13 +1,3 @@
-import { KetMonomerClass } from 'application/formatters';
-import {
-  Sugar,
-  UnsplitNucleotide,
-  RNABase,
-  Phosphate,
-  Peptide,
-  Chem,
-} from 'domain/entities/internal';
-
 export enum RNA_DNA_NON_MODIFIED_PART {
   SUGAR_RNA = 'R',
   SUGAR_DNA = 'dR',
@@ -75,12 +65,3 @@ export const peptideNaturalAnalogues = [
 ];
 
 export const NO_NATURAL_ANALOGUE = 'X';
-
-export const MONOMER_CLASS_TO_CONSTRUCTOR = {
-  [KetMonomerClass.CHEM]: Chem,
-  [KetMonomerClass.AminoAcid]: Peptide,
-  [KetMonomerClass.Phosphate]: Phosphate,
-  [KetMonomerClass.Sugar]: Sugar,
-  [KetMonomerClass.Base]: RNABase,
-  [KetMonomerClass.RNA]: UnsplitNucleotide,
-};

@@ -403,7 +403,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
 
     this.bodyElement.attr('d', path);
     this.hoverAreaElement.attr('d', path);
-    this.selectionElement.attr('d', path);
+    this.selectionElement?.attr('d', path);
   }
 
   protected appendHoverAreaElement(): void {

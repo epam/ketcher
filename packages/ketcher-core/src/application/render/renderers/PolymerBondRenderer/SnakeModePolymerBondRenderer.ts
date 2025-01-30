@@ -127,13 +127,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
     const cells = matrix?.polymerBondToCells.get(this.polymerBond);
 
-    if (cells && this.polymerBond.isCyclicOverlappingBond) {
-      this.appendSideConnectionBond(rootElement, cells);
-      return this.bodyElement;
-    }
-
     if (
-      this.polymerBond.isSideChainConnection &&
+      (this.polymerBond.isSideChainConnection ||
+        this.isSideChainLikeBackbone) &&
       (!this.isHydrogenBond || editor.mode instanceof SnakeMode) &&
       cells
     ) {
@@ -411,7 +407,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('class', `${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`)
       .attr(
         'stroke',
-        this.isHydrogenBond || this.polymerBond.isCyclicOverlappingBond
+        this.isHydrogenBond || this.isSideChainLikeBackbone
           ? '#333333'
           : '#43B5C0',
       )
@@ -462,6 +458,14 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const monomer2Y = this.polymerBond.secondMonomer.position.y;
     const difference = monomer1Y - monomer2Y;
     return difference < 0.5 && difference > -0.5;
+  }
+
+  private get isSideChainLikeBackbone() {
+    return (
+      !this.polymerBond.isSideChainConnection &&
+      this.polymerBond.isCyclicOverlappingBond &&
+      this.isMonomersOnSameHorizontalLine()
+    );
   }
 
   private updateSnakeBondPath(
@@ -842,8 +846,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   private get isSideConnectionBondDrawn() {
     return (
-      (this.polymerBond.isCyclicOverlappingBond ||
-        this.polymerBond.isSideChainConnection) &&
+      (this.polymerBond.isSideChainConnection ||
+        this.isSideChainLikeBackbone) &&
       this.path
     );
   }

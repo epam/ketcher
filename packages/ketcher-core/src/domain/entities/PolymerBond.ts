@@ -69,16 +69,6 @@ export class PolymerBond extends BaseBond {
 
     const editor = CoreEditor.provideEditorInstance();
 
-    // if (this.isCyclic === undefined) {
-    //   this.isCyclic = editor.drawingEntitiesManager.cycles.some(chain => {
-    //     return chain.monomers.includes(this.firstMonomer) && chain.monomers.includes(secondMonomer);
-    //   });
-    // }
-
-    // if (!this.isCyclic) {
-    //   return false;
-    // }
-
     const cyclesWithThisBond = editor.drawingEntitiesManager.cycles.filter(
       (chain) => {
         return (

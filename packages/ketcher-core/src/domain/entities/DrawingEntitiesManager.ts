@@ -756,6 +756,8 @@ export class DrawingEntitiesManager {
     );
     command.addOperation(operation);
 
+    this.detectCycles();
+
     return command;
   }
 
@@ -3042,6 +3044,7 @@ export class DrawingEntitiesManager {
   public detectCycles() {
     const chainsCollection = ChainsCollection.fromMonomers(this.monomersArray);
     this.cycles = chainsCollection.chains.filter((chain) => chain.isCyclic);
+    console.log(this.cycles);
   }
 }
 

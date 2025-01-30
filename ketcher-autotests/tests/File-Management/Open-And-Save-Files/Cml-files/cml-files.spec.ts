@@ -1,9 +1,7 @@
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  receiveFileComparisonData,
   openFileAndAddToCanvas,
-  saveToFile,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   setReactionMarginSizeOptionUnit,
@@ -21,7 +19,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getCml } from '@utils/formats';
 
 async function openFileAddToCanvasTakeScreenshot(page: Page, fileName: string) {
   await openFileAndAddToCanvas(fileName, page);
@@ -40,13 +37,7 @@ test.describe('CML files', () => {
      * The input field contains <?xml version="1.0" ?> <cml> <molecule title="" /> </cml>.
      */
 
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/CML/cml-12492-compare.cml',
-      });
-    // comparing cml file with golden cml file
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(page, 'CML/cml-12492-compare.cml', FileType.CML);
   });
 
   test('Open and Save file - CML - CML for structure', async ({ page }) => {
@@ -57,16 +48,7 @@ test.describe('CML files', () => {
     await openFileAddToCanvasTakeScreenshot(page, 'CML/cml-molecule.cml');
     // check that structure opened from file is displayed correctly
 
-    const expectedFile = await getCml(page);
-    await saveToFile('CML/cml-molecule-expected.cml', expectedFile);
-    const { file: cmlFile, fileExpected: cmlFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/CML/cml-molecule-expected.cml',
-      });
-    // comparing cml file with golden cml file
-
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(page, 'CML/cml-molecule-expected.cml', FileType.CML);
   });
 
   test('Open and Save file - CML - CML for some structures', async ({
@@ -79,16 +61,7 @@ test.describe('CML files', () => {
     await openFileAddToCanvasTakeScreenshot(page, 'CML/cml-1946.cml');
     // check that structure opened from file is displayed correctly
 
-    const expectedFile = await getCml(page);
-    await saveToFile('CML/cml-1946-expected.cml', expectedFile);
-    const { file: cmlFile, fileExpected: cmlFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/CML/cml-1946-expected.cml',
-      });
-    // comparing cml file with golden cml file
-
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(page, 'CML/cml-1946-expected.cml', FileType.CML);
   });
 
   test('Open and Save file - CML - CML for reaction', async ({ page }) => {
@@ -102,16 +75,11 @@ test.describe('CML files', () => {
     );
     // check that structure opened from file is displayed correctly
 
-    const expectedFile = await getCml(page);
-    await saveToFile('CML/cml-1947-reaction-expected.cml', expectedFile);
-    const { file: cmlFile, fileExpected: cmlFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/CML/cml-1947-reaction-expected.cml',
-      });
-    // comparing cml file with golden cml file
-
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CML/cml-1947-reaction-expected.cml',
+      FileType.CML,
+    );
   });
 
   test('Open and Save file - CML - CML for R-group and other features', async ({
@@ -128,16 +96,11 @@ test.describe('CML files', () => {
     );
     // check that structure opened from file is displayed correctly
 
-    const expectedFile = await getCml(page);
-    await saveToFile('CML/cml-1948-r-group-expected.cml', expectedFile);
-    const { file: cmlFile, fileExpected: cmlFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/CML/cml-1948-r-group-expected.cml',
-      });
-    // comparing cml file with golden cml file
-
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CML/cml-1948-r-group-expected.cml',
+      FileType.CML,
+    );
   });
 
   test('Validate that unsplit nucleotides connected with peptides could be saved to CML file and loaded back', async ({
@@ -152,19 +115,12 @@ test.describe('CML files', () => {
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
     );
-    const expectedFile = await getCml(page);
-    await saveToFile(
-      'CML/unsplit-nucleotides-connected-with-peptides.cml',
-      expectedFile,
-    );
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/unsplit-nucleotides-connected-with-peptides.cml',
-      });
 
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CML/unsplit-nucleotides-connected-with-peptides.cml',
+      FileType.CML,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'CML/unsplit-nucleotides-connected-with-peptides.cml',
@@ -185,19 +141,12 @@ test.describe('CML files', () => {
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
     );
-    const expectedFile = await getCml(page);
-    await saveToFile(
-      'CML/unsplit-nucleotides-connected-with-nucleotides.cml',
-      expectedFile,
-    );
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/unsplit-nucleotides-connected-with-nucleotides.cml',
-      });
 
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CML/unsplit-nucleotides-connected-with-nucleotides.cml',
+      FileType.CML,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'CML/unsplit-nucleotides-connected-with-nucleotides.cml',
@@ -218,19 +167,12 @@ test.describe('CML files', () => {
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
     );
-    const expectedFile = await getCml(page);
-    await saveToFile(
-      'CML/unsplit-nucleotides-connected-with-chems.cml',
-      expectedFile,
-    );
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/unsplit-nucleotides-connected-with-chems.cml',
-      });
 
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CML/unsplit-nucleotides-connected-with-chems.cml',
+      FileType.CML,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'CML/unsplit-nucleotides-connected-with-chems.cml',
@@ -251,19 +193,12 @@ test.describe('CML files', () => {
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
     );
-    const expectedFile = await getCml(page);
-    await saveToFile(
-      'CML/unsplit-nucleotides-connected-with-bases.cml',
-      expectedFile,
-    );
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/unsplit-nucleotides-connected-with-bases.cml',
-      });
 
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CML/unsplit-nucleotides-connected-with-bases.cml',
+      FileType.CML,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'CML/unsplit-nucleotides-connected-with-bases.cml',
@@ -284,19 +219,12 @@ test.describe('CML files', () => {
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
     );
-    const expectedFile = await getCml(page);
-    await saveToFile(
-      'CML/unsplit-nucleotides-connected-with-sugars.cml',
-      expectedFile,
-    );
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/unsplit-nucleotides-connected-with-sugars.cml',
-      });
 
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CML/unsplit-nucleotides-connected-with-sugars.cml',
+      FileType.CML,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'CML/unsplit-nucleotides-connected-with-sugars.cml',
@@ -317,19 +245,12 @@ test.describe('CML files', () => {
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
     );
-    const expectedFile = await getCml(page);
-    await saveToFile(
-      'CML/unsplit-nucleotides-connected-with-phosphates.cml',
-      expectedFile,
-    );
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/unsplit-nucleotides-connected-with-phosphates.cml',
-      });
 
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CML/unsplit-nucleotides-connected-with-phosphates.cml',
+      FileType.CML,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'CML/unsplit-nucleotides-connected-with-phosphates.cml',
@@ -353,19 +274,12 @@ test.describe('CML files', () => {
         'KET/simple-schema-with-retrosynthetic-arrow.ket',
         page,
       );
-      const expectedFile = await getCml(page);
-      await saveToFile(
-        'CML/simple-schema-with-retrosynthetic-arrow.cml',
-        expectedFile,
-      );
-      const { fileExpected: cmlFileExpected, file: cmlFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CML/simple-schema-with-retrosynthetic-arrow.cml',
-        });
 
-      expect(cmlFile).toEqual(cmlFileExpected);
+      await verifyFileExport(
+        page,
+        'CML/simple-schema-with-retrosynthetic-arrow.cml',
+        FileType.CML,
+      );
 
       await openFileAndAddToCanvasAsNewProject(
         'CML/simple-schema-with-retrosynthetic-arrow.cml',
@@ -389,19 +303,12 @@ test.describe('CML files', () => {
       'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
       page,
     );
-    const expectedFile = await getCml(page);
-    await saveToFile(
-      'CML/schema-with-retrosynthetic-angel-arrows-and-plus.cml',
-      expectedFile,
-    );
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/schema-with-retrosynthetic-angel-arrows-and-plus.cml',
-      });
 
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CML/schema-with-retrosynthetic-angel-arrows-and-plus.cml',
+      FileType.CML,
+    );
 
     await openFileAndAddToCanvasAsNewProject(
       'CML/schema-with-retrosynthetic-angel-arrows-and-plus.cml',
@@ -425,19 +332,12 @@ test.describe('CML files', () => {
         'KET/schema-with-two-retrosynthetic-arrows.ket',
         page,
       );
-      const expectedFile = await getCml(page);
-      await saveToFile(
-        'CML/schema-with-two-retrosynthetic-arrows.cml',
-        expectedFile,
-      );
-      const { fileExpected: cmlFileExpected, file: cmlFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CML/schema-with-two-retrosynthetic-arrows.cml',
-        });
 
-      expect(cmlFile).toEqual(cmlFileExpected);
+      await verifyFileExport(
+        page,
+        'CML/schema-with-two-retrosynthetic-arrows.cml',
+        FileType.CML,
+      );
 
       await openFileAndAddToCanvasAsNewProject(
         'CML/schema-with-two-retrosynthetic-arrows.cml',
@@ -462,19 +362,12 @@ test.describe('CML files', () => {
         'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
         page,
       );
-      const expectedFile = await getCml(page);
-      await saveToFile(
-        'CML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cml',
-        expectedFile,
-      );
-      const { fileExpected: cmlFileExpected, file: cmlFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cml',
-        });
 
-      expect(cmlFile).toEqual(cmlFileExpected);
+      await verifyFileExport(
+        page,
+        'CML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cml',
+        FileType.CML,
+      );
 
       await openFileAndAddToCanvasAsNewProject(
         'CML/schema-with-reverse-retrosynthetic-arrow-and-pluses.cml',
@@ -499,19 +392,12 @@ test.describe('CML files', () => {
         'KET/schema-with-vertical-retrosynthetic-arrow.ket',
         page,
       );
-      const expectedFile = await getCml(page);
-      await saveToFile(
-        'CML/schema-with-vertical-retrosynthetic-arrow.cml',
-        expectedFile,
-      );
-      const { fileExpected: cmlFileExpected, file: cmlFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CML/schema-with-vertical-retrosynthetic-arrow.cml',
-        });
 
-      expect(cmlFile).toEqual(cmlFileExpected);
+      await verifyFileExport(
+        page,
+        'CML/schema-with-vertical-retrosynthetic-arrow.cml',
+        FileType.CML,
+      );
 
       await openFileAndAddToCanvasAsNewProject(
         'CML/schema-with-vertical-retrosynthetic-arrow.cml',
@@ -536,19 +422,12 @@ test.describe('CML files', () => {
         'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
         page,
       );
-      const expectedFile = await getCml(page);
-      await saveToFile(
-        'CML/schema-with-diagonal-retrosynthetic-arrow.cml',
-        expectedFile,
-      );
-      const { fileExpected: cmlFileExpected, file: cmlFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/CML/schema-with-diagonal-retrosynthetic-arrow.cml',
-        });
 
-      expect(cmlFile).toEqual(cmlFileExpected);
+      await verifyFileExport(
+        page,
+        'CML/schema-with-diagonal-retrosynthetic-arrow.cml',
+        FileType.CML,
+      );
 
       await openFileAndAddToCanvasAsNewProject(
         'CML/schema-with-diagonal-retrosynthetic-arrow.cml',
@@ -575,23 +454,18 @@ test.describe('CML files', () => {
     await pressButton(page, 'Apply');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getCml(page);
-    await saveToFile(
-      'CML/layout-with-catalyst-px-bond-lengh.cml',
-      expectedFile,
-    );
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/layout-with-catalyst-px-bond-lengh.cml',
-      });
 
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CML/layout-with-catalyst-px-bond-lengh.cml',
+      FileType.CML,
+    );
+
     await openFileAndAddToCanvasAsNewProject(
       'CML/layout-with-catalyst-px-bond-lengh.cml',
       page,
     );
+
     await takeEditorScreenshot(page);
   });
 
@@ -641,23 +515,18 @@ test.describe('CML files', () => {
     await pressButton(page, 'OK');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getCml(page);
-    await saveToFile(
-      'CML/layout-with-dif-elements-cm-margin-size.cml',
-      expectedFile,
-    );
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/layout-with-dif-elements-cm-margin-size.cml',
-      });
 
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CML/layout-with-dif-elements-cm-margin-size.cml',
+      FileType.CML,
+    );
+
     await openFileAndAddToCanvasAsNewProject(
       'CML/layout-with-dif-elements-cm-margin-size.cml',
       page,
     );
+
     await takeEditorScreenshot(page);
   });
 
@@ -676,19 +545,12 @@ test.describe('CML files', () => {
     await pressButton(page, 'OK');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const expectedFile = await getCml(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'CML/layout-with-dif-elements-acs-style.cml',
-      expectedFile,
+      FileType.CML,
     );
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/layout-with-dif-elements-acs-style.cml',
-      });
 
-    expect(cmlFile).toEqual(cmlFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'CML/layout-with-dif-elements-acs-style.cml',
       page,

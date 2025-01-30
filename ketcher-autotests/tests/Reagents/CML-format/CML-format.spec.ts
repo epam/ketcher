@@ -1,10 +1,8 @@
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
-  saveToFile,
-  receiveFileComparisonData,
   FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
   pasteFromClipboardAndAddToCanvas,
@@ -12,7 +10,11 @@ import {
   TopPanelButton,
   moveMouseAway,
 } from '@utils';
-import { clickOnFileFormatDropdown, getCml } from '@utils/formats';
+import { clickOnFileFormatDropdown } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 async function saveFileAsCmlFormat(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
@@ -36,20 +38,13 @@ test.describe('Reagents CML format', () => {
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
-    const expectedFile = await getCml(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'CML/benzene-arrow-benzene-reagent-nh3-expected.cml',
-      expectedFile,
+      FileType.CML,
     );
 
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/benzene-arrow-benzene-reagent-nh3-expected.cml',
-      });
-
-    expect(cmlFile).toEqual(cmlFileExpected);
     await takeEditorScreenshot(page);
   });
 

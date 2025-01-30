@@ -19,7 +19,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { getCml, getMolfile, getRxn, getSmiles } from '@utils/formats';
+import { getMolfile, getRxn, getSmiles } from '@utils/formats';
 import {
   pressRedoButton,
   pressUndoButton,

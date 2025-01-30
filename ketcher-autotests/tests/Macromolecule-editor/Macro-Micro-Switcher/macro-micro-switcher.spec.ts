@@ -20,7 +20,6 @@ import {
   clickUndo,
   dragMouseTo,
   drawBenzeneRing,
-  getCml,
   getControlModifier,
   getMolfile,
   getSdf,

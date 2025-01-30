@@ -236,4 +236,16 @@ export const hotkeysConfiguration = {
       editor.events.selectTool.dispatch([ToolName.hand]);
     },
   },
+  'hide-scrollbars': {
+    shortcut: 'Mod+h+i+d+e',
+    handler: () => {
+      ZoomTool.instance.drawScrollBars(true);
+    },
+  },
+  'show-scrollbars': {
+    shortcut: 'Mod+s+h+o+w',
+    handler: () => {
+      ZoomTool.instance.drawScrollBars(false);
+    },
+  },
 };

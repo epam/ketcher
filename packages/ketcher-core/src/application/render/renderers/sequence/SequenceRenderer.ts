@@ -43,14 +43,23 @@ export type SequencePointer = number;
 export type NumberOfSymbolsInRow = number;
 export type SequenceLastCaretPosition = number;
 
-export type NodeSelection = {
-  node: ITwoStrandedChainItem;
+type BaseNodeSelection = {
   nodeIndexOverall: number;
   isNucleosideConnectedAndSelectedWithPhosphate?: boolean;
   hasR1Connection?: boolean;
 };
 
+export type NodeSelection = BaseNodeSelection & {
+  node: SubChainNode;
+};
+
+export type TwoStrandedNodeSelection = BaseNodeSelection & {
+  node: ITwoStrandedChainItem;
+};
+
+export type TwoStrandedNodesSelection = TwoStrandedNodeSelection[][];
 export type NodesSelection = NodeSelection[][];
+
 const NUMBER_OF_SYMBOLS_IN_ROW: NumberOfSymbolsInRow = 30;
 
 export class SequenceRenderer {
@@ -991,13 +1000,13 @@ export class SequenceRenderer {
 
   public static get selections() {
     const editor = CoreEditor.provideEditorInstance();
-    const selections: NodesSelection = [];
+    const selections: TwoStrandedNodesSelection = [];
     let lastSelectionRangeIndex = -1;
     let previousNode;
 
     SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
       if (twoStrandedNode.senseNode?.monomer.selected) {
-        const selection: Partial<NodeSelection> = {};
+        const selection: Partial<TwoStrandedNodeSelection> = {};
 
         // Add field 'isNucleosideConnectedAndSelectedWithPhosphate' to the Nucleoside elements
         if (twoStrandedNode.senseNode instanceof Nucleoside) {

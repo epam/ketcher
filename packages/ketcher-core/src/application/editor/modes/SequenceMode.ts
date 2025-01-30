@@ -4,7 +4,7 @@ import { BaseMode } from 'application/editor/modes/BaseMode';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
-  NodesSelection,
+  TwoStrandedNodesSelection,
   SequenceRenderer,
 } from 'application/render/renderers/sequence/SequenceRenderer';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
@@ -663,7 +663,7 @@ export class SequenceMode extends BaseMode {
     );
   }
 
-  private handleNodesDeletion(selections: NodesSelection) {
+  private handleNodesDeletion(selections: TwoStrandedNodesSelection) {
     const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
 
@@ -769,7 +769,7 @@ export class SequenceMode extends BaseMode {
           : SequenceRenderer.caretPosition;
       const selections = SequenceRenderer.selections;
       const modelChanges = new Command();
-      let nodesToDelete: NodesSelection;
+      let nodesToDelete: TwoStrandedNodesSelection;
 
       if (selections.length) {
         modelChanges.merge(this.deleteSelectedDrawingEntities());
@@ -1313,7 +1313,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private replaceSelectionsWithMonomer(
-    selections: NodesSelection,
+    selections: TwoStrandedNodesSelection,
     monomerItem: MonomerItemType,
   ) {
     const editor = CoreEditor.provideEditorInstance();
@@ -1399,7 +1399,7 @@ export class SequenceMode extends BaseMode {
     });
   }
 
-  private selectionsContainLinkerNode(selections: NodesSelection) {
+  private selectionsContainLinkerNode(selections: TwoStrandedNodesSelection) {
     return selections.some((selectionRange) =>
       selectionRange.some(
         (nodeSelection) => nodeSelection.node instanceof LinkerSequenceNode,
@@ -1408,7 +1408,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private selectionsCantPreserveConnectionsWithMonomer(
-    selections: NodesSelection,
+    selections: TwoStrandedNodesSelection,
     monomerItem: MonomerItemType,
     sideChainConnections?: boolean,
   ) {
@@ -1448,7 +1448,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private selectionsCantPreserveConnectionsWithPreset(
-    selections: NodesSelection,
+    selections: TwoStrandedNodesSelection,
     preset: IRnaPreset,
     sideChainConnections?: boolean,
   ) {
@@ -1734,7 +1734,7 @@ export class SequenceMode extends BaseMode {
   }
 
   private replaceSelectionsWithPreset(
-    selections: NodesSelection,
+    selections: TwoStrandedNodesSelection,
     preset: IRnaPreset,
   ) {
     const editor = CoreEditor.provideEditorInstance();

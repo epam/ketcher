@@ -1402,7 +1402,8 @@ export class SequenceMode extends BaseMode {
   private selectionsContainLinkerNode(selections: TwoStrandedNodesSelection) {
     return selections.some((selectionRange) =>
       selectionRange.some(
-        (nodeSelection) => nodeSelection.node instanceof LinkerSequenceNode,
+        (nodeSelection) =>
+          nodeSelection.node.senseNode instanceof LinkerSequenceNode,
       ),
     );
   }

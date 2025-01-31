@@ -5,6 +5,7 @@ import {
   getCdx,
   getCdxml,
   getCml,
+  getInchi,
   getKet,
   getMolfile,
   getRdf,
@@ -25,6 +26,7 @@ export enum FileType {
   RXN = 'rxn',
   CML = 'cml',
   SDF = 'sdf',
+  InChI = 'inchi',
 }
 
 type FileTypeHandler =
@@ -40,6 +42,7 @@ const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.RXN]: getRxn,
   [FileType.CML]: getCml,
   [FileType.SDF]: getSdf,
+  [FileType.InChI]: getInchi,
 };
 
 async function getFileContent(

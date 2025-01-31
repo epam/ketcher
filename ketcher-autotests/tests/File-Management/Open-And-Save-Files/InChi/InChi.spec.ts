@@ -13,7 +13,12 @@ import {
   waitForPageInit,
   nonEmptyString,
   copyToClipboardByKeyboard,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 
 async function selectInChiOption(page: Page) {
@@ -210,13 +215,11 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1926
      * Description: Open and Save file - InChi for emty canvas
      */
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await selectInChiOption(page);
-    const inChistring = await page
-      .getByTestId('inChI-preview-area-text')
-      .inputValue();
-    expect(inChistring).toEqual('InChI=1S//');
+    await verifyFileExport(
+      page,
+      'InChI/empty-canvas-expected.inchi',
+      FileType.InChI,
+    );
   });
 
   test('Open and Save file - InChI String - Fused structure', async ({
@@ -227,15 +230,16 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChI String - Fused structure
      */
     await openFileAndAddToCanvas('KET/InChI-fused-structure.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await selectInChiOption(page);
-    const inChistring = await page
-      .getByTestId('inChI-preview-area-text')
-      .inputValue();
-    const expectedInChIstring =
-      'InChI=1S/C22H36/c1-2-6-16-10-20-14-22-12-18-8-4-3-7-17(18)11-21(22)13-19(20)9-15(16)5-1/h15-22H,1-14H2';
-    expect(inChistring).toEqual(expectedInChIstring);
+    await verifyFileExport(
+      page,
+      'InChI/InChI-fused-structure-expected.inchi',
+      FileType.InChI,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'InChI/InChI-fused-structure-expected.inchi',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Open and Save file - InChI String - Chain string with single bonds only', async ({
@@ -246,15 +250,16 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChI String - Chain string with single bonds only
      */
     await openFileAndAddToCanvas('KET/nonone-chain-structure.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await selectInChiOption(page);
-    const inChistring = await page
-      .getByTestId('inChI-preview-area-text')
-      .inputValue();
-    const expectedInChIstring =
-      'InChI=1S/C11H24/c1-3-5-7-9-11-10-8-6-4-2/h3-11H2,1-2H3';
-    expect(inChistring).toEqual(expectedInChIstring);
+    await verifyFileExport(
+      page,
+      'InChI/nonone-chain-structure-expected.inchi',
+      FileType.InChI,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'InChI/nonone-chain-structure-expected.inchi',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Open and Save file - InChI String - Chain string that contains some double bonds', async ({
@@ -268,15 +273,16 @@ test.describe('Open and Save InChI file', () => {
       'Molfiles-V2000/(2E,4E,6E)-nona-2,4,6-triene.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await selectInChiOption(page);
-    const inChistring = await page
-      .getByTestId('inChI-preview-area-text')
-      .inputValue();
-    const expectedInChIstring =
-      'InChI=1S/C9H14/c1-3-5-7-9-8-6-4-2/h3,5-9H,4H2,1-2H3/b5-3+,8-6+,9-7+';
-    expect(inChistring).toEqual(expectedInChIstring);
+    await verifyFileExport(
+      page,
+      'InChI/(2E,4E,6E)-nona-2,4,6-triene-expected.inchi',
+      FileType.InChI,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'InChI/(2E,4E,6E)-nona-2,4,6-triene-expected.inchi',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Open and Save file - InChI String - Chain string that contains some triple', async ({
@@ -287,14 +293,16 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChI String - Chain string that contains some triple
      */
     await openFileAndAddToCanvas('Molfiles-V2000/nona-2,4,6-triyne.mol', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await selectInChiOption(page);
-    const inChistring = await page
-      .getByTestId('inChI-preview-area-text')
-      .inputValue();
-    const expectedInChIstring = 'InChI=1S/C9H8/c1-3-5-7-9-8-6-4-2/h3H2,1-2H3';
-    expect(inChistring).toEqual(expectedInChIstring);
+    await verifyFileExport(
+      page,
+      'InChI/nona-2,4,6-triyne-expected.inchi',
+      FileType.InChI,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'InChI/nona-2,4,6-triyne-expected.inchi',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Open and Save file - InChI String - Cyclic structure with single bonds only', async ({
@@ -305,14 +313,16 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChI String - Cyclic structure with single bonds only
      */
     await openFileAndAddToCanvas('KET/cyclic-cyclohexane-structure.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await selectInChiOption(page);
-    const inChistring = await page
-      .getByTestId('inChI-preview-area-text')
-      .inputValue();
-    const expectedInChIstring = 'InChI=1S/C6H12/c1-2-4-6-5-3-1/h1-6H2';
-    expect(inChistring).toEqual(expectedInChIstring);
+    await verifyFileExport(
+      page,
+      'InChI/cyclic-cyclohexane-structure-expected.inchi',
+      FileType.InChI,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'InChI/cyclic-cyclohexane-structure-expected.inchi',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Open and Save file - InChI String - Sugars without stereobonds', async ({
@@ -326,15 +336,16 @@ test.describe('Open and Save InChI file', () => {
       'Molfiles-V2000/sugar_without_stereo.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await selectInChiOption(page);
-    const inChistring = await page
-      .getByTestId('inChI-preview-area-text')
-      .inputValue();
-    const expectedInChIstring =
-      'InChI=1S/C18H36/c1-13(2)14(3,4)16(7,8)18(11,12)17(9,10)15(13,5)6/h1-12H3';
-    expect(inChistring).toEqual(expectedInChIstring);
+    await verifyFileExport(
+      page,
+      'InChI/sugar_without_stereo-expected.inchi',
+      FileType.InChI,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'InChI/sugar_without_stereo-expected.inchi',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Open and Save file - InChI String - Structure with stereobonds', async ({
@@ -345,15 +356,12 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChI String - Structure with stereobonds
      */
     await openFileAndAddToCanvas('Molfiles-V2000/Chiral.mol', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await selectInChiOption(page);
-    const inChistring = await page
-      .getByTestId('inChI-preview-area-text')
-      .inputValue();
-    const expectedInChIstring =
-      'InChI=1S/C20H24O2/c1-12-10-14-15-4-5-18(22)20(15,3)9-7-16(14)19(2)8-6-13(21)11-17(12)19/h6,8,11,14-16H,1,4-5,7,9-10H2,2-3H3/t14-,15-,16-,19+,20-/m0/s1';
-    expect(inChistring).toEqual(expectedInChIstring);
+    await verifyFileExport(page, 'InChI/Chiral-expected.inchi', FileType.InChI);
+    await openFileAndAddToCanvasAsNewProject(
+      'InChI/Chiral-expected.inchi',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Open and Save file - InChI String - Spiro structure', async ({
@@ -364,15 +372,12 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChI String - Spiro structure
      */
     await openFileAndAddToCanvas('Molfiles-V2000/spiro.mol', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await selectInChiOption(page);
-    const inChistring = await page
-      .getByTestId('inChI-preview-area-text')
-      .inputValue();
-    const expectedInChIstring =
-      'InChI=1S/C26H44/c1-3-7-23(8-4-1)11-15-25(16-12-23)19-21-26(22-20-25)17-13-24(14-18-26)9-5-2-6-10-24/h1-22H2';
-    expect(inChistring).toEqual(expectedInChIstring);
+    await verifyFileExport(page, 'InChI/spiro-expected.inchi', FileType.InChI);
+    await openFileAndAddToCanvasAsNewProject(
+      'InChI/spiro-expected.inchi',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Open and Save file - InChI String - Chain Stucture', async ({
@@ -403,15 +408,16 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChi string for some structures
      */
     await openFileAndAddToCanvas('KET/propane-hexane-benzene.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await clickOnFileFormatDropdown(page);
-    await selectInChiOption(page);
-    const inChistring = await page
-      .getByTestId('inChI-preview-area-text')
-      .inputValue();
-    const expectedInChIstring =
-      'InChI=1S/C6H6.C6H14.C3H8/c1-2-4-6-5-3-1;1-3-5-6-4-2;1-3-2/h1-6H;3-6H2,1-2H3;3H2,1-2H3';
-    expect(inChistring).toEqual(expectedInChIstring);
+    await verifyFileExport(
+      page,
+      'InChI/propane-hexane-benzene-expected.inchi',
+      FileType.InChI,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'InChI/propane-hexane-benzene-expected.inchi',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Open and Save file - InChI String - For reaction', async ({ page }) => {

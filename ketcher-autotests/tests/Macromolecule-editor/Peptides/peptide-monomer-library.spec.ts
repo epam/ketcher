@@ -1,4 +1,6 @@
-import { Chem, Peptides, Presets } from '@constants/monomers';
+import { Chem } from '@constants/monomers/Chem';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Presets } from '@constants/monomers/Presets';
 import { FAVORITES_TAB } from '@constants/testIdConstants';
 import { expect, test } from '@playwright/test';
 import {
@@ -39,14 +41,14 @@ test.describe('Peptide library testing', () => {
 
   test('Structure displaying in library', async ({ page }) => {
     // structure preview, molecule hovered state check
-    await page.getByTestId(Peptides.A).hover();
+    await page.getByTestId(Peptides.A.testId).hover();
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
 
   test('Placing betaAlanine on canvas', async ({ page }) => {
     // placing molecule on canvas and molecule selected state check
-    await addPeptideOnCanvas(page, 'bAla___beta-Alanine');
+    await addPeptideOnCanvas(page, Peptides.bAla);
     await takeEditorScreenshot(page);
   });
 

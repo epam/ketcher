@@ -1,4 +1,4 @@
-import { Chem } from '@constants/monomers';
+import { Chem } from '@constants/monomers/Chem';
 import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,

@@ -1,6 +1,10 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Bases, Chem, Peptides, Phosphates, Sugars } from '@constants/monomers';
+import { Bases } from '@constants/monomers/Bases';
+import { Chem } from '@constants/monomers/Chem';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Phosphates } from '@constants/monomers/Phosphates';
+import { Sugars } from '@constants/monomers/Sugars';
 import { FAVORITES_TAB } from '@constants/testIdConstants';
 import { Page, expect, test } from '@playwright/test';
 import {

@@ -1,4 +1,7 @@
 /* eslint-disable no-magic-numbers */
+import { Chem } from '@constants/monomers/Chem';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Presets } from '@constants/monomers/Presets';
 import {
   test,
   expect,
@@ -46,7 +49,6 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
-import { Chem, Peptides, Presets } from '@constants/monomers';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -123,37 +125,30 @@ test('Create bond between two peptides', async () => {
     Description: Polymer bond tool
     */
   // Choose peptide
-  const MONOMER_NAME = Peptides.Tza;
-  const MONOMER_ALIAS = 'Tza';
-
   const peptide1 = await addSingleMonomerToCanvas(
     page,
-    MONOMER_NAME,
-    MONOMER_ALIAS,
+    Peptides.Tza,
     300,
     300,
     0,
   );
   const peptide2 = await addSingleMonomerToCanvas(
     page,
-    MONOMER_NAME,
-    MONOMER_ALIAS,
+    Peptides.Tza,
     400,
     400,
     1,
   );
   const peptide3 = await addSingleMonomerToCanvas(
     page,
-    MONOMER_NAME,
-    MONOMER_ALIAS,
+    Peptides.Tza,
     500,
     500,
     2,
   );
   const peptide4 = await addSingleMonomerToCanvas(
     page,
-    MONOMER_NAME,
-    MONOMER_ALIAS,
+    Peptides.Tza,
     500,
     200,
     3,
@@ -222,20 +217,17 @@ test('Select monomers and pass a bond', async () => {
       than 1 bond between the first and the second monomer
       */
   await pageReload(page);
-  const MONOMER_NAME = Peptides.Tza;
-  const MONOMER_ALIAS = 'Tza';
+
   const peptide1 = await addSingleMonomerToCanvas(
     page,
-    MONOMER_NAME,
-    MONOMER_ALIAS,
+    Peptides.Tza,
     300,
     300,
     0,
   );
   const peptide2 = await addSingleMonomerToCanvas(
     page,
-    MONOMER_NAME,
-    MONOMER_ALIAS,
+    Peptides.Tza,
     400,
     400,
     1,

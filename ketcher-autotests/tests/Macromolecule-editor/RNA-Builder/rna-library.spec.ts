@@ -61,18 +61,16 @@ import {
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
 import {
-  Bases,
-  Chem,
-  Nucleotides,
-  Peptides,
-  Phosphates,
-  Presets,
-  Sugars,
-} from '@constants/monomers';
-import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { Bases } from '@constants/monomers/Bases';
+import { Chem } from '@constants/monomers/Chem';
+import { Nucleotides } from '@constants/monomers/Nucleotides';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Phosphates } from '@constants/monomers/Phosphates';
+import { Presets } from '@constants/monomers/Presets';
+import { Sugars } from '@constants/monomers/Sugars';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -570,7 +568,7 @@ test.describe('RNA Library', () => {
     await reloadPageAndConfigureInitialState(page);
 
     await expandCollapseRnaBuilder(page);
-    await page.getByTestId(Presets.A).click({
+    await page.getByTestId(Presets.A.testId).click({
       button: 'right',
     });
     await page.getByTestId('duplicateandedit').locator('div').click();
@@ -896,7 +894,7 @@ test.describe('RNA Library', () => {
       const anyPointX = 300;
       const anyPointY = 500;
       await page.getByTestId(`summary-${molecule.type}`).click();
-      await page.getByTestId(molecule.description).click();
+      await page.getByTestId(molecule.description.testId).click();
       await clickInTheMiddleOfTheScreen(page);
       await selectRectangleSelectionTool(page);
       await clickInTheMiddleOfTheScreen(page);
@@ -1038,7 +1036,7 @@ test.describe('RNA Library', () => {
   ];
 
   for (const monomer of rnaNucleotides) {
-    test(`Validate that you can put unsplit nucleotide ${monomer} on the canvas from library, select it and move it, delete it`, async () => {
+    test(`Validate that you can put unsplit nucleotide ${monomer.testId} on the canvas from library, select it and move it, delete it`, async () => {
       /*
     Test case: Import/Saving files/#4382
     Description: Unsplit nucleotide on the canvas from library can be selected, moved and deleted.
@@ -1131,7 +1129,7 @@ test.describe('RNA Library', () => {
   ];
 
   for (const monomer of rnaNucleotides1) {
-    test(`Validate that preview tooltip is shown if mouse hover on unsplit nucleotide ${monomer}`, async () => {
+    test(`Validate that preview tooltip is shown if mouse hover on unsplit nucleotide ${monomer.testId}`, async () => {
       /*
     Test case: Import/Saving files/#4382
     Description: Unsplit nucleotide on the canvas from library can be selected, moved and deleted.
@@ -1158,7 +1156,7 @@ test.describe('RNA Library', () => {
   ];
 
   for (const monomer of rnaNucleotides2) {
-    test(`Validate that Undo/redo tool works correct with unsplit nucleotide ${monomer}`, async () => {
+    test(`Validate that Undo/redo tool works correct with unsplit nucleotide ${monomer.testId}`, async () => {
       /*
     Test case: Import/Saving files/#4382
     Description: Undo/redo tool works correct with unsplit nucleotide.
@@ -1356,13 +1354,13 @@ test.describe('RNA Library', () => {
      */
     await toggleSugarsAccordion(page);
     await scrollAccordionContentToTheTop(page, 'rna-accordion-details-Sugars');
-    await page.getByTestId(Sugars._12ddR).hover();
+    await page.getByTestId(Sugars._12ddR.testId).hover();
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page, { hideMonomerPreview: true });
 
     await toggleBasesAccordion(page);
     await scrollAccordionContentToTheTop(page, 'rna-accordion-details-Bases');
-    await page.getByTestId(Bases._2imen2).hover();
+    await page.getByTestId(Bases._2imen2.testId).hover();
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page, { hideMonomerPreview: true });
 
@@ -1397,14 +1395,14 @@ test.describe('RNA Library', () => {
 
     // Case 23
     await selectMonomer(page, Chem.Test_6_Ch);
-    await takeElementScreenshot(page, Chem.Test_6_Ch, {
+    await takeElementScreenshot(page, Chem.Test_6_Ch.testId, {
       maxDiffPixelRatio: 0.03,
       hideMonomerPreview: true,
     });
     await moveMouseAway(page);
 
     // Case 24
-    await page.getByTestId(Chem.SMPEG2).hover();
+    await page.getByTestId(Chem.SMPEG2.testId).hover();
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
     await moveMouseAway(page);

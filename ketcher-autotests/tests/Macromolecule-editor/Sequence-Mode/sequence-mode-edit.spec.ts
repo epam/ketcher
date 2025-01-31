@@ -1,13 +1,11 @@
 /* eslint-disable no-magic-numbers */
-import {
-  Bases,
-  Chem,
-  Nucleotides,
-  Peptides,
-  Phosphates,
-  Presets,
-  Sugars,
-} from '@constants/monomers';
+import { Bases } from '@constants/monomers/Bases';
+import { Chem } from '@constants/monomers/Chem';
+import { Nucleotides } from '@constants/monomers/Nucleotides';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Phosphates } from '@constants/monomers/Phosphates';
+import { Presets } from '@constants/monomers/Presets';
+import { Sugars } from '@constants/monomers/Sugars';
 import { test } from '@playwright/test';
 import {
   clickOnCanvas,
@@ -454,7 +452,7 @@ test.describe('Sequence edit mode', () => {
     */
     await goToRNATab(page);
     await expandCollapseRnaBuilder(page);
-    await page.getByTestId(Presets.dR_U_P).hover();
+    await page.getByTestId(Presets.dR_U_P.testId).hover();
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });

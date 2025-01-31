@@ -1,4 +1,7 @@
-import { Bases, Chem, Peptides, Presets } from '@constants/monomers';
+import { Bases } from '@constants/monomers/Bases';
+import { Chem } from '@constants/monomers/Chem';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Presets } from '@constants/monomers/Presets';
 import { Locator, test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -48,29 +51,12 @@ test.describe('Undo Redo', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
-    const MONOMER_NAME = Peptides.Tza;
-    const MONOMER_ALIAS = 'Tza';
 
-    peptide1 = await addSingleMonomerToCanvas(
-      page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
-      300,
-      300,
-      0,
-    );
-    peptide2 = await addSingleMonomerToCanvas(
-      page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
-      400,
-      300,
-      1,
-    );
+    peptide1 = await addSingleMonomerToCanvas(page, Peptides.Tza, 300, 300, 0);
+    peptide2 = await addSingleMonomerToCanvas(page, Peptides.Tza, 400, 300, 1);
     const peptide3 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       500,
       300,
       2,

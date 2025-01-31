@@ -53,7 +53,6 @@ import {
 
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
-import { Bases, Chem, Peptides, Phosphates, Sugars } from '@constants/monomers';
 import {
   FileType,
   verifyFileExport,
@@ -63,6 +62,11 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Sugars } from '@constants/monomers/Sugars';
+import { Chem } from '@constants/monomers/Chem';
+import { Bases } from '@constants/monomers/Bases';
+import { Phosphates } from '@constants/monomers/Phosphates';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [

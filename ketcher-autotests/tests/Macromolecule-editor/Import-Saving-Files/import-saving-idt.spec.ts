@@ -1,11 +1,9 @@
 /* eslint-disable no-magic-numbers */
-import {
-  Chem,
-  Nucleotides,
-  Peptides,
-  Phosphates,
-  Presets,
-} from '@constants/monomers';
+import { Chem } from '@constants/monomers/Chem';
+import { Nucleotides } from '@constants/monomers/Nucleotides';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Phosphates } from '@constants/monomers/Phosphates';
+import { Presets } from '@constants/monomers/Presets';
 import { chromium, expect, Page, test } from '@playwright/test';
 import {
   chooseFileFormat,
@@ -242,7 +240,7 @@ test.describe('Import-Saving .idt Files', () => {
     await chooseTab(page, Tabs.Rna);
     await togglePhosphatesAccordion(page);
     await waitForRender(page, async () => {
-      await page.getByTestId(Phosphates.P).hover();
+      await page.getByTestId(Phosphates.P.testId).hover();
     });
     await takePolymerEditorScreenshot(page);
   });
@@ -258,7 +256,7 @@ test.describe('Import-Saving .idt Files', () => {
   ];
 
   for (const monomer of rnaNucleotides) {
-    test(`Check IDT aliases, where defined in the preview window for RNA Nucleotides monomer ${monomer}`, async () => {
+    test(`Check IDT aliases, where defined in the preview window for RNA Nucleotides monomer ${monomer.testId}`, async () => {
       /*
       Test case: Import/Saving files/#4380
       Description: IDT aliases, where defined in the preview window for RNA monomers in library.
@@ -268,7 +266,7 @@ test.describe('Import-Saving .idt Files', () => {
       await chooseTab(page, Tabs.Rna);
       await toggleNucleotidesAccordion(page);
       await waitForRender(page, async () => {
-        await page.getByTestId(monomer).hover();
+        await page.getByTestId(monomer.testId).hover();
       });
       await takePolymerEditorScreenshot(page);
     });
@@ -283,7 +281,7 @@ test.describe('Import-Saving .idt Files', () => {
   ];
 
   for (const monomer of rnaMonomers) {
-    test(`Check IDT aliases, where defined in the preview window for RNA monomer ${monomer}`, async () => {
+    test(`Check IDT aliases, where defined in the preview window for RNA monomer ${monomer.testId}`, async () => {
       /*
       Test case: Import/Saving files/#4380
       Description: IDT aliases, where defined in the preview window for RNA monomers in library.
@@ -292,7 +290,7 @@ test.describe('Import-Saving .idt Files', () => {
 
       await chooseTab(page, Tabs.Rna);
       await waitForRender(page, async () => {
-        await page.getByTestId(monomer).hover();
+        await page.getByTestId(monomer.testId).hover();
       });
       await takePolymerEditorScreenshot(page);
     });

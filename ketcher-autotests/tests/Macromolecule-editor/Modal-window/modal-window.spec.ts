@@ -1,4 +1,4 @@
-import { Chem } from '@constants/monomers';
+import { Chem } from '@constants/monomers/Chem';
 import { Locator, test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -19,21 +19,17 @@ test.describe('Modal window', () => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
     await goToCHEMTab(page);
-    const MONOMER_NAME = Chem.Test_6_Ch;
-    const MONOMER_ALIAS = 'Test-6-Ch';
 
     peptide1 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Chem.Test_6_Ch,
       200,
       200,
       0,
     );
     peptide2 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Chem.Test_6_Ch,
       400,
       400,
       1,

@@ -1,0 +1,53 @@
+import { Monomer } from '@utils/types';
+
+export const Peptides = {
+  A: { alias: 'A', testId: 'A___Alanine' } as Monomer,
+  Ala_al: {
+    alias: 'Ala-al',
+    testId: 'Ala-al___(2S)-2-aminopropanal',
+  } as Monomer,
+  _1Nal: { alias: '1Nal', testId: '1Nal___3-(1-naphthyl)-alanine' } as Monomer,
+  _2Nal: { alias: '2Nal', testId: '2Nal___3-(2-naphthyl)-alanine' } as Monomer,
+  _NHBn: {
+    alias: '-NHBn',
+    testId: '-NHBn___C-Terminal benzylamino',
+  } as Monomer,
+  bAla: { alias: 'bAla', testId: 'bAla___beta-Alanine' } as Monomer,
+  Boc_: {
+    alias: 'Boc-',
+    testId: 'Boc-___N-Terminal tert-butyloxycarbonyl',
+  } as Monomer,
+  C: { alias: 'C', testId: 'C___Cysteine' } as Monomer,
+  Cys_Bn: { alias: 'Cys_Bn', testId: 'Cys_Bn___S-benzylcysteine' } as Monomer,
+  dA: { alias: 'dA', testId: 'dA___D-Alanine' } as Monomer,
+  dU: { alias: 'dU', testId: 'dU___D-selenocysteine' } as Monomer,
+  D_2Nal: {
+    alias: 'D-2Nal',
+    testId: 'D-2Nal___D-3-(2-naphthyl)-alanine',
+  } as Monomer,
+  D_OAla: { alias: 'D-OAla', testId: 'D-OAla___D-Lactic acid' } as Monomer,
+  Edc: { alias: 'Edc', testId: 'Edc___S-ethylthiocysteine' } as Monomer,
+  meC: { alias: 'meC', testId: 'meC___N-Methyl-Cysteine' } as Monomer,
+  meD: { alias: 'meD', testId: 'meD___N-Methyl-Aspartic acid' } as Monomer,
+  meM: { alias: 'meM', testId: 'meM___N-Methyl-Methionine' } as Monomer,
+  Test_6_P: {
+    alias: 'Test-6-P',
+    testId: 'Test-6-P___Test-6-AP-Peptide',
+  } as Monomer,
+  Tza: { alias: 'Tza', testId: 'Tza___3-(4-Thiazolyl)-alanine' } as Monomer,
+  Phe4Me: {
+    alias: 'Phe4Me',
+    testId: 'Phe4Me___p-Methylphenylalanine',
+  } as Monomer,
+  Hcy: { alias: 'Hcy', testId: 'Hcy___homocysteine' } as Monomer,
+  X: {
+    alias: 'X',
+    testId:
+      '_A___Alanine_C___Cysteine_D___Aspartic acid_E___Glutamic acid_F___Phenylalanine_G___Glycine_H___' +
+      'Histidine_I___Isoleucine_K___Lysine_L___Leucine_M___Methionine_N___Asparagine_O___Pyrrolysine_P__' +
+      '_Proline_Q___Glutamine_R___Arginine_S___Serine_T___Threonine_U___Selenocysteine_V___Valine_W___Tryptophan_Y___Tyrosine',
+  } as Monomer,
+  B: { alias: 'B', testId: '_D___Aspartic acid_N___Asparagine' } as Monomer,
+  J: { alias: 'J', testId: '_L___Leucine_I___Isoleucine' } as Monomer,
+  Z: { alias: 'Z', testId: '_E___Glutamic acid_Q___Glutamine' } as Monomer,
+};

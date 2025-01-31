@@ -1,4 +1,3 @@
-import { Bases, Chem, Peptides } from '@constants/monomers';
 import { test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -32,6 +31,9 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Chem } from '@constants/monomers/Chem';
+import { Bases } from '@constants/monomers/Bases';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {
@@ -47,37 +49,30 @@ test.describe('Erase Tool', () => {
     */
 
     // Create 4 peptides on canvas
-    const MONOMER_NAME = Peptides.Tza;
-    const MONOMER_ALIAS = 'Tza';
-
     const peptide1 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       300,
       300,
       0,
     );
     const peptide2 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       400,
       400,
       1,
     );
     const peptide3 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       500,
       500,
       2,
     );
     const peptide4 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       500,
       200,
       3,

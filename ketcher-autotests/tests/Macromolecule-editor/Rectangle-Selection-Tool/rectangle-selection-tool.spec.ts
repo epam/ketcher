@@ -22,11 +22,12 @@ import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { moveMonomer } from '@utils/macromolecules/monomer';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { Chem, Peptides } from '@constants/monomers';
 import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Chem } from '@constants/monomers/Chem';
 /* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(
@@ -56,37 +57,30 @@ test.describe('Rectangle Selection Tool', () => {
     */
 
     // Create 4 peptides on canvas
-    const MONOMER_NAME = Peptides.Tza;
-    const MONOMER_ALIAS = 'Tza';
-
     const peptide1 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       300,
       300,
       0,
     );
     const peptide2 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       400,
       400,
       1,
     );
     const peptide3 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       500,
       500,
       2,
     );
     const peptide4 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       500,
       200,
       3,
@@ -199,37 +193,30 @@ test.describe('Rectangle Selection Tool', () => {
     */
 
     // Create 4 peptides on canvas
-    const MONOMER_NAME = 'Tza___3-(4-Thiazolyl)-alanine';
-    const MONOMER_ALIAS = 'Tza';
-
     const peptide1 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       300,
       300,
       0,
     );
     const peptide2 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       400,
       400,
       1,
     );
     const peptide3 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       500,
       500,
       2,
     );
     const peptide4 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       500,
       200,
       3,
@@ -396,7 +383,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     const x = 200;
     const y = 200;
-    await addPeptideOnCanvas(page, '2Nal___3-(2-naphthyl)-alanine');
+    await addPeptideOnCanvas(page, Peptides._2Nal);
     await selectRectangleSelectionTool(page);
     await page.getByText('2Nal').locator('..').first().hover();
     await dragMouseTo(x, y, page);

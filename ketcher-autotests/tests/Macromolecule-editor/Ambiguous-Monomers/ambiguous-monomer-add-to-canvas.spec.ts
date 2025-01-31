@@ -1,4 +1,5 @@
-import { Bases, Peptides } from '@constants/monomers';
+import { Bases } from '@constants/monomers/Bases';
+import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
 import {
   clickOnTheCanvas,
@@ -7,12 +8,11 @@ import {
   waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { MonomerLocationTabs } from '@utils/macromolecules/library';
+import { Monomer } from '@utils/types';
 
 interface IAmbiguousMonomerName {
   testDescription: string;
-  AmbiguousMonomerName: Peptides | Bases;
-  MonomerLocationTab: MonomerLocationTabs;
+  AmbiguousMonomer: Monomer;
   // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
@@ -29,103 +29,83 @@ test.beforeEach(async ({ page }) => {
 const AmbiguousMonomers: IAmbiguousMonomerName[] = [
   {
     testDescription: "1. 'X' ambiguous peptide",
-    AmbiguousMonomerName: Peptides.X,
-    MonomerLocationTab: MonomerLocationTabs.PEPTIDES,
+    AmbiguousMonomer: Peptides.X,
   },
   {
     testDescription: "2. 'B' ambiguous peptide",
-    AmbiguousMonomerName: Peptides.B,
-    MonomerLocationTab: MonomerLocationTabs.PEPTIDES,
+    AmbiguousMonomer: Peptides.B,
   },
   {
     testDescription: "3. 'J' ambiguous peptide",
-    AmbiguousMonomerName: Peptides.J,
-    MonomerLocationTab: MonomerLocationTabs.PEPTIDES,
+    AmbiguousMonomer: Peptides.J,
   },
   {
     testDescription: "4. 'Z' ambiguous peptide",
-    AmbiguousMonomerName: Peptides.Z,
-    MonomerLocationTab: MonomerLocationTabs.PEPTIDES,
+    AmbiguousMonomer: Peptides.Z,
   },
   {
     testDescription: "5. 'N' ambiguous DNA base",
-    AmbiguousMonomerName: Bases.DNA_N,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.DNA_N,
   },
   {
     testDescription: "6. 'B' ambiguous DNA base",
-    AmbiguousMonomerName: Bases.DNA_B,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.DNA_B,
   },
   {
     testDescription: "7. 'H' ambiguous DNA base",
-    AmbiguousMonomerName: Bases.DNA_H,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.DNA_H,
   },
   {
     testDescription: "8. 'K' ambiguous DNA base",
-    AmbiguousMonomerName: Bases.DNA_K,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.DNA_K,
   },
   {
     testDescription: "9. 'W' ambiguous DNA base",
-    AmbiguousMonomerName: Bases.DNA_W,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.DNA_W,
   },
   {
     testDescription: "10. 'Y' ambiguous DNA base",
-    AmbiguousMonomerName: Bases.DNA_Y,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.DNA_Y,
   },
   {
     testDescription: "11. 'N' ambiguous RNA base",
-    AmbiguousMonomerName: Bases.RNA_N,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.RNA_N,
   },
   {
     testDescription: "12. 'B' ambiguous RNA base",
-    AmbiguousMonomerName: Bases.RNA_B,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.RNA_B,
   },
   {
     testDescription: "13. 'H' ambiguous RNA base",
-    AmbiguousMonomerName: Bases.RNA_H,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.RNA_H,
   },
   {
     testDescription: "14. 'K' ambiguous RNA base",
-    AmbiguousMonomerName: Bases.RNA_K,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.RNA_K,
   },
   {
     testDescription: "15. 'W' ambiguous RNA base",
-    AmbiguousMonomerName: Bases.RNA_W,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.RNA_W,
   },
   {
     testDescription: "16. 'Y' ambiguous RNA base",
-    AmbiguousMonomerName: Bases.RNA_Y,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.RNA_Y,
   },
   {
     testDescription: "17. 'M' ambiguous base",
-    AmbiguousMonomerName: Bases.M,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.M,
   },
   {
     testDescription: "18. 'R' ambiguous base",
-    AmbiguousMonomerName: Bases.R,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.R,
   },
   {
     testDescription: "19. 'S' ambiguous base",
-    AmbiguousMonomerName: Bases.S,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.S,
   },
   {
     testDescription: "20. 'V' ambiguous base",
-    AmbiguousMonomerName: Bases.V,
-    MonomerLocationTab: MonomerLocationTabs.BASES,
+    AmbiguousMonomer: Bases.V,
   },
 ];
 
@@ -140,7 +120,7 @@ test.describe('Put ambiguous monomer on the canvas from library:', () => {
           2. Click at the center of canvas
           3. Take screenshot of the canvas to make sure selected monomer appeared on the canvas
         */
-      await selectMonomer(page, AmbiguousMonomer.AmbiguousMonomerName);
+      await selectMonomer(page, AmbiguousMonomer.AmbiguousMonomer);
       await clickOnTheCanvas(page, 0, 0);
       await takeEditorScreenshot(page);
 

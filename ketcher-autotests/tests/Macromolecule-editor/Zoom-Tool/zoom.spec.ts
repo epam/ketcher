@@ -1,5 +1,7 @@
 /* eslint-disable no-magic-numbers */
-import { Chem, Peptides, Presets } from '@constants/monomers';
+import { Chem } from '@constants/monomers/Chem';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Presets } from '@constants/monomers/Presets';
 import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,

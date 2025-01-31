@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Peptides } from '@constants/monomers';
+import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -40,7 +40,6 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     const firstAlanine = await addSingleMonomerToCanvas(
       page,
       Peptides.A,
-      'A',
       100,
       200,
       0,
@@ -48,7 +47,6 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     const secondAlanine = await addSingleMonomerToCanvas(
       page,
       Peptides.A,
-      'A',
       300,
       200,
       1,
@@ -56,7 +54,6 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     const thirdAlanine = await addSingleMonomerToCanvas(
       page,
       Peptides.A,
-      'A',
       500,
       200,
       2,

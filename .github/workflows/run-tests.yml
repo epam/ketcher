@@ -83,7 +83,7 @@ jobs:
           cd ketcher-autotests/
           npm i
           npx playwright install chromium
-          npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=json,line
+          npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=json,line --output=playwright-report
       - uses: actions/upload-artifact@v4
         # run even if previous steps fails
         if: always()
@@ -91,7 +91,9 @@ jobs:
           name: pw-report-${{ matrix.shardIndex }}
           path: ketcher-autotests/playwright-report/
           retention-days: 5
-  
+      - name: Debug report before upload
+        run: ls -R ketcher-autotests/playwright-report/
+
   merge-reports:
     # Merge reports after playwright-tests, even if some shards have failed
     if: ${{ !cancelled() }}

@@ -145,17 +145,17 @@ export class ZoomTool implements BaseTool {
     });
   }
 
-  drawScrollBars() {
+  drawScrollBars(forceHide = false) {
     if (this.canvas.node() && this.canvasWrapper.node()) {
       this.initScrollBars();
-      this.renderScrollBar(this.scrollBars.horizontal);
-      this.renderScrollBar(this.scrollBars.vertical);
+      this.renderScrollBar(this.scrollBars.horizontal, forceHide);
+      this.renderScrollBar(this.scrollBars.vertical, forceHide);
     }
   }
 
-  renderScrollBar(scrollBar: ScrollBar) {
+  renderScrollBar(scrollBar: ScrollBar, forceHide = false) {
     const hasOffset = scrollBar.offsetStart < 0 || scrollBar.offsetEnd < 0;
-    if (hasOffset) {
+    if (hasOffset && !forceHide) {
       if (scrollBar.bar) {
         this.updateScrollBarAttrs(scrollBar);
       } else {

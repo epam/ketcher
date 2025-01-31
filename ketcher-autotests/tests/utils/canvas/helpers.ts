@@ -165,8 +165,14 @@ export async function takeElementScreenshot(
     masks?: Locator[];
     maxDiffPixelRatio?: number;
     hideMonomerPreview?: boolean;
+    hideMacromoleculeEditorScrollBars?: boolean;
   },
 ) {
+  if (options?.hideMacromoleculeEditorScrollBars) {
+    // That works only for Macromolecule editor
+    const modifier = getControlModifier();
+    await page.keyboard.press(`${modifier}+KeyB`);
+  }
   if (options?.hideMonomerPreview) {
     await page.keyboard.press('Shift');
   }
@@ -250,6 +256,7 @@ export async function takeEditorScreenshot(
     masks?: Locator[];
     maxDiffPixelRatio?: number;
     hideMonomerPreview?: boolean;
+    hideMacromoleculeEditorScrollBars?: boolean;
   },
 ) {
   await takeElementScreenshot(page, 'ketcher-canvas', options);

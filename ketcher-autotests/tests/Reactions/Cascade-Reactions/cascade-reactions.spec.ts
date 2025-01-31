@@ -34,7 +34,6 @@ import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
-  verifyRdfFile,
 } from '@utils/files/receiveFileComparisonData';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 import { addTextToCanvas } from '@utils/selectors/addTextBoxToCanvas';
@@ -1003,11 +1002,11 @@ test.describe('Cascade Reactions', () => {
     */
     await openFileAndAddToCanvasAsNewProject('KET/single-arrow.ket', page);
     await takeEditorScreenshot(page);
-    await verifyRdfFile(
+    await verifyFileExport(
       page,
-      'v2000',
       'RDF-V2000/single-arrow-expected.rdf',
-      'tests/test-data/RDF-V2000/single-arrow-expected.rdf',
+      FileType.RDF,
+      'v2000',
       [1, 5],
     );
     await openFileAndAddToCanvasAsNewProject(
@@ -1024,11 +1023,11 @@ test.describe('Cascade Reactions', () => {
     */
     await openFileAndAddToCanvasAsNewProject('KET/single-arrow.ket', page);
     await takeEditorScreenshot(page);
-    await verifyRdfFile(
+    await verifyFileExport(
       page,
-      'v3000',
       'RDF-V3000/single-arrow-expected.rdf',
-      'tests/test-data/RDF-V3000/single-arrow-expected.rdf',
+      FileType.RDF,
+      'v3000',
       [1, 5],
     );
     await openFileAndAddToCanvasAsNewProject(
@@ -1048,11 +1047,11 @@ test.describe('Cascade Reactions', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyRdfFile(
+    await verifyFileExport(
       page,
-      'v2000',
       'RDF-V2000/multi-tailed-arrow-default-expected.rdf',
-      'tests/test-data/RDF-V2000/multi-tailed-arrow-default-expected.rdf',
+      FileType.RDF,
+      'v2000',
       [1, 5],
     );
     await openFileAndAddToCanvasAsNewProject(
@@ -1072,11 +1071,11 @@ test.describe('Cascade Reactions', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await verifyRdfFile(
+    await verifyFileExport(
       page,
-      'v3000',
       'RDF-V3000/multi-tailed-arrow-default-expected.rdf',
-      'tests/test-data/RDF-V3000/multi-tailed-arrow-default-expected.rdf',
+      FileType.RDF,
+      'v3000',
       [1, 5],
     );
     await openFileAndAddToCanvasAsNewProject(
@@ -1152,12 +1151,7 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await verifyRdfFile(
-        page,
-        'v2000',
-        `${rdfFileExpected}`,
-        `tests/test-data/${rdfFileExpected}`,
-      );
+      await verifyFileExport(page, `${rdfFileExpected}`, FileType.RDF, 'v2000');
       await openFileAndAddToCanvasAsNewProject(`${rdfFileExpected}`, page);
       await takeEditorScreenshot(page);
     });
@@ -1229,12 +1223,7 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await verifyRdfFile(
-        page,
-        'v3000',
-        `${rdfFileExpected}`,
-        `tests/test-data/${rdfFileExpected}`,
-      );
+      await verifyFileExport(page, `${rdfFileExpected}`, FileType.RDF, 'v3000');
       await openFileAndAddToCanvasAsNewProject(`${rdfFileExpected}`, page);
       await takeEditorScreenshot(page);
     });
@@ -1273,11 +1262,11 @@ test.describe('Cascade Reactions', () => {
       const fileFormat = rdfFile.includes('V2000') ? 'v2000' : 'v3000';
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await verifyRdfFile(
+      await verifyFileExport(
         page,
-        fileFormat,
         `${rdfFileExpected}`,
-        `tests/test-data/${rdfFileExpected}`,
+        FileType.RDF,
+        fileFormat,
       );
       await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
       await takeEditorScreenshot(page);
@@ -1436,11 +1425,11 @@ test.describe('Cascade Reactions', () => {
       const fileFormat = rdfFile.includes('V2000') ? 'v2000' : 'v3000';
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await verifyRdfFile(
+      await verifyFileExport(
         page,
-        fileFormat,
         `${rdfFileExpected}`,
-        `tests/test-data/${rdfFileExpected}`,
+        FileType.RDF,
+        fileFormat,
       );
       await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
       await takeEditorScreenshot(page);
@@ -1480,11 +1469,11 @@ test.describe('Cascade Reactions', () => {
             format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
           await openFileAndAddToCanvasAsNewProject(ketFile, page);
           await takeEditorScreenshot(page);
-          await verifyRdfFile(
+          await verifyFileExport(
             page,
+            `${rdfFileExpected}`,
+            FileType.RDF,
             format,
-            rdfFileExpected,
-            `tests/test-data/${rdfFileExpected}`,
           );
           await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
           await takeEditorScreenshot(page);
@@ -1526,11 +1515,11 @@ test.describe('Cascade Reactions', () => {
             format === 'v2000' ? rdfFileExpectedV2000 : rdfFileExpectedV3000;
           await openFileAndAddToCanvasAsNewProject(ketFile, page);
           await takeEditorScreenshot(page);
-          await verifyRdfFile(
+          await verifyFileExport(
             page,
+            `${rdfFileExpected}`,
+            FileType.RDF,
             format,
-            rdfFileExpected,
-            `tests/test-data/${rdfFileExpected}`,
           );
           await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
           await takeEditorScreenshot(page);
@@ -1583,11 +1572,11 @@ test.describe('Cascade Reactions', () => {
 
           await openFileAndAddToCanvasAsNewProject(ketFile, page);
           await takeEditorScreenshot(page);
-          await verifyRdfFile(
+          await verifyFileExport(
             page,
+            `${rdfFileExpected}`,
+            FileType.RDF,
             format,
-            rdfFileExpected,
-            `tests/test-data/${rdfFileExpected}`,
           );
           await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
           await takeEditorScreenshot(page);
@@ -1691,11 +1680,11 @@ test.describe('Cascade Reactions', () => {
 
           await openFileAndAddToCanvasAsNewProject(ketFile, page);
           await takeEditorScreenshot(page);
-          await verifyRdfFile(
+          await verifyFileExport(
             page,
+            `${rdfFileExpected}`,
+            FileType.RDF,
             format,
-            rdfFileExpected,
-            `tests/test-data/${rdfFileExpected}`,
           );
           await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
           await takeEditorScreenshot(page);
@@ -1775,11 +1764,11 @@ test.describe('Cascade Reactions', () => {
           await clickOnCanvas(page, 500, 200);
           await takeEditorScreenshot(page);
           await pressUndoButton(page);
-          await verifyRdfFile(
+          await verifyFileExport(
             page,
+            `${rdfFileExpected}`,
+            FileType.RDF,
             format,
-            rdfFileExpected,
-            `tests/test-data/${rdfFileExpected}`,
           );
           await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
           await takeEditorScreenshot(page);
@@ -1871,11 +1860,11 @@ test.describe('Cascade Reactions', () => {
 
           await openFileAndAddToCanvasAsNewProject(ketFile, page);
           await takeEditorScreenshot(page);
-          await verifyRdfFile(
+          await verifyFileExport(
             page,
+            `${rdfFileExpected}`,
+            FileType.RDF,
             format,
-            rdfFileExpected,
-            `tests/test-data/${rdfFileExpected}`,
           );
           await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
           await takeEditorScreenshot(page);
@@ -2199,11 +2188,11 @@ test.describe('Cascade Reactions', () => {
         */
         await openFileAndAddToCanvasAsNewProject(ketFile, page);
         await takeEditorScreenshot(page);
-        await verifyRdfFile(
+        await verifyFileExport(
           page,
+          `${rdfFileExpectedV2000}`,
+          FileType.RDF,
           'v2000',
-          rdfFileExpectedV2000,
-          `tests/test-data/${rdfFileExpectedV2000}`,
         );
         await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV2000, page);
         await takeEditorScreenshot(page);
@@ -2255,11 +2244,11 @@ test.describe('Cascade Reactions', () => {
         */
         await openFileAndAddToCanvasAsNewProject(ketFile, page);
         await takeEditorScreenshot(page);
-        await verifyRdfFile(
+        await verifyFileExport(
           page,
+          `${rdfFileExpectedV2000}`,
+          FileType.RDF,
           'v2000',
-          rdfFileExpectedV2000,
-          `tests/test-data/${rdfFileExpectedV2000}`,
         );
         await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV2000, page);
         await takeEditorScreenshot(page);
@@ -2311,11 +2300,11 @@ test.describe('Cascade Reactions', () => {
         */
         await openFileAndAddToCanvasAsNewProject(ketFile, page);
         await takeEditorScreenshot(page);
-        await verifyRdfFile(
+        await verifyFileExport(
           page,
+          `${rdfFileExpectedV2000}`,
+          FileType.RDF,
           'v2000',
-          rdfFileExpectedV2000,
-          `tests/test-data/${rdfFileExpectedV2000}`,
         );
         await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV2000, page);
         await takeEditorScreenshot(page);
@@ -2367,11 +2356,11 @@ test.describe('Cascade Reactions', () => {
         */
         await openFileAndAddToCanvasAsNewProject(ketFile, page);
         await takeEditorScreenshot(page);
-        await verifyRdfFile(
+        await verifyFileExport(
           page,
+          `${rdfFileExpectedV2000}`,
+          FileType.RDF,
           'v2000',
-          rdfFileExpectedV2000,
-          `tests/test-data/${rdfFileExpectedV2000}`,
         );
         await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV2000, page);
         await takeEditorScreenshot(page);
@@ -2530,11 +2519,11 @@ test.describe('Cascade Reactions', () => {
         */
         await openFileAndAddToCanvasAsNewProject(ketFile, page);
         await takeEditorScreenshot(page);
-        await verifyRdfFile(
+        await verifyFileExport(
           page,
+          `${rdfFileExpectedV2000}`,
+          FileType.RDF,
           'v2000',
-          rdfFileExpectedV2000,
-          `tests/test-data/${rdfFileExpectedV2000}`,
         );
         await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV2000, page);
         await takeEditorScreenshot(page);
@@ -2576,11 +2565,11 @@ test.describe('Cascade Reactions', () => {
 
           await openFileAndAddToCanvasAsNewProject(ketFile, page);
           await takeEditorScreenshot(page);
-          await verifyRdfFile(
+          await verifyFileExport(
             page,
+            `${rdfFileExpected}`,
+            FileType.RDF,
             format,
-            rdfFileExpected,
-            `tests/test-data/${rdfFileExpected}`,
           );
           await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
           await takeEditorScreenshot(page);
@@ -2614,11 +2603,11 @@ test.describe('Cascade Reactions', () => {
         */
         await openFileAndAddToCanvasAsNewProject(rdfFile, page);
         await takeEditorScreenshot(page);
-        await verifyRdfFile(
+        await verifyFileExport(
           page,
+          `${rdfFileExpectedV3000}`,
+          FileType.RDF,
           'v3000',
-          rdfFileExpectedV3000,
-          `tests/test-data/${rdfFileExpectedV3000}`,
         );
         await openFileAndAddToCanvasAsNewProject(rdfFileExpectedV3000, page);
         await takeEditorScreenshot(page);
@@ -2667,11 +2656,11 @@ test.describe('Cascade Reactions', () => {
           await addTextToCanvas(page, 'abcde FGHIJKLMNOP!@##$%^^^&*', 700, 360);
           await pressButton(page, 'Apply');
           await takeEditorScreenshot(page);
-          await verifyRdfFile(
+          await verifyFileExport(
             page,
+            `${rdfFileExpected}`,
+            FileType.RDF,
             format,
-            rdfFileExpected,
-            `tests/test-data/${rdfFileExpected}`,
           );
           await openFileAndAddToCanvasAsNewProject(rdfFileExpected, page);
           await takeEditorScreenshot(page);

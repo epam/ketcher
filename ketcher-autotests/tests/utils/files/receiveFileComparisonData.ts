@@ -28,6 +28,7 @@ export enum FileType {
   CML = 'cml',
   SDF = 'sdf',
   InChI = 'inchi',
+  RDF = 'rdf',
   IDT = 'idt',
 }
 
@@ -42,6 +43,7 @@ const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.SMARTS]: getSmarts,
   [FileType.MOL]: getMolfile,
   [FileType.RXN]: getRxn,
+  [FileType.RDF]: getRdf,
   [FileType.CML]: getCml,
   [FileType.SDF]: getSdf,
   [FileType.InChI]: getInchi,
@@ -105,39 +107,6 @@ export async function verifyFileExport(
   const filteredFileExpected = filterLines(fileExpected, metaDataIndexes);
   // Compare the filtered files
   expect(filteredFile).toEqual(filteredFileExpected);
-}
-
-export async function verifyRdfFile(
-  page: Page,
-  format: 'v2000' | 'v3000',
-  filename: string,
-  expectedFilename: string,
-  metaDataIndexes: number[] = [],
-) {
-  const expectedFile = await getRdf(page, format);
-  await saveToFile(filename, expectedFile);
-
-  const { fileExpected: rdfFileExpected, file: rdfFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName: expectedFilename,
-      fileFormat: format,
-      metaDataIndexes,
-    });
-
-  const filterLines = (lines: string[], indexes: number[]) => {
-    if (indexes.length === 0) {
-      return lines.filter(
-        (line) => !line.includes('-INDIGO-') && !line.includes('$DATM'),
-      );
-    }
-    return filterByIndexes(lines, indexes);
-  };
-
-  const filteredRdfFile = filterLines(rdfFile, metaDataIndexes);
-  const filteredRdfFileExpected = filterLines(rdfFileExpected, metaDataIndexes);
-
-  expect(filteredRdfFile).toEqual(filteredRdfFileExpected);
 }
 
 const GetFileMethod: Record<string, keyof Ketcher> = {

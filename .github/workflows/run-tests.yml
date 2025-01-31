@@ -92,7 +92,7 @@ jobs:
           path: blob-report
           retention-days: 1
       - name: Debug report before upload
-        run: ls -R ketcher-autotests/playwright-report/
+        run: ls -R all-blob-reports
 
   merge-reports:
     # Merge reports after playwright-tests, even if some shards have failed
@@ -112,38 +112,38 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: blob-report-1
-        path: blob-report/pw-report-1
+        path: all-blob-reports/blob-report-1
 
     - uses: actions/download-artifact@v4
       with:
         name: blob-report-2
-        path: blob-report/pw-report-2
+        path: all-blob-reports/blob-report-2
  
     - uses: actions/download-artifact@v4
       with:
         name: blob-report-3
-        path: blob-report/pw-report-3
+        path: all-blob-reports/blob-report-3
    
     - uses: actions/download-artifact@v4
       with:
         name: blob-report-4
-        path: blob-report/pw-report-4
+        path: all-blob-reports/blob-report-4
      
     - uses: actions/download-artifact@v4
       with:
         name: blob-report-5
-        path: blob-report/pw-report-5
+        path: all-blob-reports/blob-report-5
      
     - uses: actions/download-artifact@v4
       with:
         name: blob-report-6
-        path: blob-report/pw-report-6       
+        path: all-blob-reports/blob-report-6       
 
     - name: Debug report files
-      run: ls -R ketcher-autotests/playwright-report/
+      run: ls -R all-blob-reports
 
     - name: Merge into HTML Report
-      run: npx playwright merge-reports --reporter html ./ketcher-autotests/playwright-report
+      run: npx playwright merge-reports --reporter html ./all-blob-reports
 
     - name: Upload HTML report
       uses: actions/upload-artifact@v4

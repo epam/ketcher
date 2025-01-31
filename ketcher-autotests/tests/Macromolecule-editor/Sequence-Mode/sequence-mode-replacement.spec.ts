@@ -4,7 +4,6 @@ import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
   getFasta,
-  getIdt,
   getKet,
   getMolfile,
   getSequence,
@@ -54,6 +53,10 @@ import {
   pressYesInConfirmYourActionDialog,
 } from '@utils/macromolecules/sequence';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -2523,24 +2526,11 @@ test(`32. Verify saving and reopening a structure with replaced monomers in IDT`
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-  const expectedFile = await getIdt(page);
-  await saveToFile(
+  await verifyFileExport(
+    page,
     'Common/Sequence-Mode-Replacement/replacement-expected.idt',
-    expectedFile,
+    FileType.IDT,
   );
-
-  const METADATA_STRING_INDEX = [1];
-
-  const { fileExpected: idtFileExpected, file: idtFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.idt',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(idtFile).toEqual(idtFileExpected);
   await checkForKnownBugs(
     replaceMonomer,
     sequence,

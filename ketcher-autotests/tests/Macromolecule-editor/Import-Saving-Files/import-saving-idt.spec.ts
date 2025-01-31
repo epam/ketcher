@@ -12,7 +12,6 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   copyToClipboardByKeyboard,
-  getIdt,
   MacromoleculesTopPanelButton,
   moveMouseAway,
   openFile,
@@ -22,10 +21,7 @@ import {
   openStructurePasteFromClipboard,
   pasteFromClipboardByKeyboard,
   pressButton,
-  readFileContents,
-  receiveFileComparisonData,
   resetZoomLevelToDefault,
-  saveToFile,
   selectAllStructuresOnCanvas,
   selectClearCanvasTool,
   selectEraseTool,
@@ -100,10 +96,6 @@ async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   } else {
     await pressButton(page, 'Add to Canvas');
   }
-}
-
-function removeNotComparableData(file: string) {
-  return file.replaceAll('\r', '');
 }
 
 test.beforeAll(async ({ browser }) => {
@@ -225,37 +217,13 @@ test.describe('Import-Saving .idt Files', () => {
 
   test('Check import of .ket file and save in .idt format', async () => {
     await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
-    const expectedFile = await getIdt(page);
-    await saveToFile('IDT/idt-rna-a.idt', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: idtFileExpected, file: idtFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/IDT/idt-rna-a.idt',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(idtFile).toEqual(idtFileExpected);
-
+    await verifyFileExport(page, 'IDT/idt-rna-a.idt', FileType.IDT);
+    await openFileAndAddToCanvasAsNewProject('IDT/idt-rna-a.idt', page);
     await takeEditorScreenshot(page);
   });
 
   test('Check that empty file can be saved in .idt format', async () => {
-    const expectedFile = await getIdt(page);
-    await saveToFile('IDT/idt-empty.idt', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: idtFileExpected, file: idtFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/IDT/idt-empty.idt',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(idtFile).toEqual(idtFileExpected);
+    await verifyFileExport(page, 'IDT/idt-empty.idt', FileType.IDT);
   });
 
   test('Check that system does not let importing empty .idt file', async () => {
@@ -345,20 +313,7 @@ test.describe('Import-Saving .idt Files', () => {
 
   test('Should open .ket file and modify to .idt format in save modal textarea', async () => {
     await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'IDT');
-    await page
-      .getByTestId('dropdown-select')
-      .getByRole('combobox')
-      .allInnerTexts();
-
-    const textArea = page.getByTestId('preview-area-text');
-    const file = await readFileContents('tests/test-data/IDT/idt-rna-a.idt');
-    const expectedData = removeNotComparableData(file);
-    const valueInTextarea = removeNotComparableData(
-      await textArea.inputValue(),
-    );
-    expect(valueInTextarea).toBe(expectedData);
+    await verifyFileExport(page, 'IDT/idt-rna-a.idt', FileType.IDT);
   });
 
   const fileNames = [
@@ -472,19 +427,8 @@ test.describe('Import-Saving .idt Files', () => {
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
     );
     await selectSequenceLayoutModeTool(page);
-    const expectedFile = await getIdt(page);
-    await saveToFile('IDT/idt-expected.idt', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: idtFileExpected, file: idtFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/IDT/idt-expected.idt',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(idtFile).toEqual(idtFileExpected);
+    await verifyFileExport(page, 'IDT/idt-expected.idt', FileType.IDT);
+    await openFileAndAddToCanvasAsNewProject('IDT/idt-expected.idt', page);
     await takeEditorScreenshot(page);
   });
 
@@ -497,8 +441,15 @@ test.describe('Import-Saving .idt Files', () => {
       'IDT',
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'IDT');
+    await verifyFileExport(
+      page,
+      'IDT/sequences-with-modifications-1.idt',
+      FileType.IDT,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'IDT/sequences-with-modifications-1.idt',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -514,8 +465,15 @@ test.describe('Import-Saving .idt Files', () => {
       `+G*+C*+G*C*G*A*C*T*A*T*A*C*G*+C*+G*+C`,
     );
     await selectSequenceLayoutModeTool(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'IDT');
+    await verifyFileExport(
+      page,
+      'IDT/sequences-with-modifications-2.idt',
+      FileType.IDT,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'IDT/sequences-with-modifications-2.idt',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -565,8 +523,15 @@ test.describe('Import-Saving .idt Files', () => {
       `,
     );
     await selectSequenceLayoutModeTool(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'IDT');
+    await verifyFileExport(
+      page,
+      'IDT/sequences-with-modifications-3.idt',
+      FileType.IDT,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'IDT/sequences-with-modifications-3.idt',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -614,30 +579,30 @@ test.describe('Import-Saving .idt Files', () => {
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
     await selectSequenceLayoutModeTool(page);
+    await verifyFileExport(
+      page,
+      'IDT/sequences-with-modifications-4.idt',
+      FileType.IDT,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'IDT/sequences-with-modifications-4.idt',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify error message when export of nucleotides split to submonomers with no IDT alias', async () => {
+    /*
+    Test case: Import/Saving files/1900/1985
+    Description: Error message appeared: "This molecule has unsupported monomer and couldn't be exported to IDT notation".
+    */
+    // Reload needed as monomer IDs increment in prior tests, affecting screenshots
+    await pageReload(page);
+    await openFileAndAddToCanvasMacro('KET/5formD-form5C-cm.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page);
   });
-
-  test(
-    'Verify error message when export of nucleotides split to submonomers with no IDT alias',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
-    Test case: Import/Saving files/1900/1985
-    Description: Error message appeared: "This molecule has unsupported monomer and couldn't be exported to IDT notation".
-    We have bug https://github.com/epam/Indigo/issues/1985 
-    When it fixed we should update snapshot.
-    */
-      // Reload needed as monomer IDs increment in prior tests, affecting screenshots
-      await pageReload(page);
-
-      await openFileAndAddToCanvasMacro('KET/5formD-form5C-cm.ket', page);
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'IDT');
-      await takeEditorScreenshot(page);
-    },
-  );
 
   test('Verify that if * is specified, Phosphorothioate (sP) is included in nucleotide if not it is (P)', async () => {
     /*
@@ -652,8 +617,15 @@ test.describe('Import-Saving .idt Files', () => {
       `,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'IDT');
+    await verifyFileExport(
+      page,
+      'IDT/sequences-with-modifications-5.idt',
+      FileType.IDT,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'IDT/sequences-with-modifications-5.idt',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -735,27 +707,26 @@ test.describe('Import-Saving .idt Files', () => {
       'KET/idt-line-longer-than-80-chars.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'IDT/idt-line-longer-than-80-chars-expected.idt',
+      FileType.IDT,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'IDT/idt-line-longer-than-80-chars-expected.idt',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 
   test('Check import of .ket file with unresolved monomers and save in .idt format ', async () => {
     await openFileAndAddToCanvasMacro('KET/unresolved-monomers.ket', page);
-    const expectedFile = await getIdt(page);
-    await saveToFile('IDT/unresolved-monomers.idt', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: idtFileExpected, file: idtFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/IDT/unresolved-monomers.idt',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(idtFile).toEqual(idtFileExpected);
-
+    await verifyFileExport(page, 'IDT/unresolved-monomers.idt', FileType.IDT);
+    await openFileAndAddToCanvasAsNewProject(
+      'IDT/unresolved-monomers.idt',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -1092,20 +1063,11 @@ test.describe('Import-Saving .idt Files', () => {
       'IDT',
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
     );
-    const expectedFile = await getIdt(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'IDT/idt-with-unresolved-monomer-expected.idt',
-      expectedFile,
+      FileType.IDT,
     );
-
-    const { fileExpected: idtFileExpected, file: idtFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/IDT/idt-with-unresolved-monomer-expected.idt',
-      });
-
-    expect(idtFile).toEqual(idtFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'IDT/idt-with-unresolved-monomer-expected.idt',
       page,
@@ -1733,11 +1695,8 @@ test.describe('Ambiguous monomers: ', () => {
     await zoomWithMouseWheel(page, 200);
   });
 
-  test(
-    'Saving ambiguous DNA bases (with mapping, alternatives) in IDT format',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('Saving ambiguous DNA bases (with mapping, alternatives) in IDT format', async () => {
+    /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 17.5 Verify saving ambiguous DNA bases (with mapping, alternatives) in IDT format (macro mode)
     Case: 1. Load ambiguous bases (that have mapping to library) from KET 
@@ -1746,29 +1705,23 @@ test.describe('Ambiguous monomers: ', () => {
              (Error should occure)
           4. Take screenshot to make sure export is correct
     */
-      await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives).ket',
-        page,
-      );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives).ket',
+      page,
+    );
 
-      await zoomWithMouseWheel(page, -100);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+    await zoomWithMouseWheel(page, -100);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'IDT');
-      await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
 
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2440 issue.`,
-      );
-
-      await closeErrorMessage(page);
-      await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 100);
-    },
-  );
+    await closeErrorMessage(page);
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 100);
+  });
 
   test('Saving ambiguous DNA bases (with mapping, mixed) in IDT format', async () => {
     /*
@@ -1784,6 +1737,37 @@ test.describe('Ambiguous monomers: ', () => {
       'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
       page,
     );
+    await zoomWithMouseWheel(page, -100);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'IDT/Ambiguous DNA Bases (mixed)-expected.idt',
+      FileType.IDT,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'IDT/Ambiguous DNA Bases (mixed)-expected.idt',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await zoomWithMouseWheel(page, 100);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Saving ambiguous RNA bases (with mapping, alternatives) in IDT format', async () => {
+    /*
+    Test task: https://github.com/epam/ketcher/issues/5558
+    Description: 17.7 Verify saving ambiguous RNA bases (with mapping, alternatives) in IDT format (macro mode)
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+          2. Take screenshot to make sure monomers on the canvas
+          3. Open Save dialog and choose IDT option
+             (Error message should occure)
+          4. Take screenshot to make sure export is correct
+    */
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives).ket',
+      page,
+    );
 
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
@@ -1793,51 +1777,10 @@ test.describe('Ambiguous monomers: ', () => {
     await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page);
 
+    await closeErrorMessage(page);
     await pressButton(page, 'Cancel');
     await zoomWithMouseWheel(page, 100);
-
-    test.fixme(
-      true,
-      `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
-    );
   });
-
-  test(
-    'Saving ambiguous RNA bases (with mapping, alternatives) in IDT format',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
-    Test task: https://github.com/epam/ketcher/issues/5558
-    Description: 17.7 Verify saving ambiguous RNA bases (with mapping, alternatives) in IDT format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
-          2. Take screenshot to make sure monomers on the canvas
-          3. Open Save dialog and choose IDT option
-             (Error message should occure)
-          4. Take screenshot to make sure export is correct
-    */
-      await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives).ket',
-        page,
-      );
-
-      await zoomWithMouseWheel(page, -100);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
-
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'IDT');
-      await takeEditorScreenshot(page);
-
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2440 issue.`,
-      );
-
-      await closeErrorMessage(page);
-      await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 100);
-    },
-  );
 
   test('Saving ambiguous RNA bases (with mapping, mixed) in IDT format', async () => {
     /*
@@ -1856,24 +1799,22 @@ test.describe('Ambiguous monomers: ', () => {
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
-
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'IDT');
-    await takeEditorScreenshot(page);
-
-    test.fixme(
-      true,
-      `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
+    await verifyFileExport(
+      page,
+      'IDT/Ambiguous RNA Bases (mixed)-expected.idt',
+      FileType.IDT,
     );
-    await pressButton(page, 'Cancel');
+    await openFileAndAddToCanvasAsNewProject(
+      'IDT/Ambiguous RNA Bases (mixed)-expected.idt',
+      page,
+    );
+    await takeEditorScreenshot(page);
     await zoomWithMouseWheel(page, 100);
+    await takeEditorScreenshot(page);
   });
 
-  test(
-    'Saving ambiguous (common) bases (with mapping, alternatives) in IDT format',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async () => {
-      /*
+  test('Saving ambiguous (common) bases (with mapping, alternatives) in IDT format', async () => {
+    /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 17.9 Verify saving ambiguous (common) bases (with mapping, alternatives) in IDT format (macro mode)
     Case: 1. Load ambiguous bases (that have mapping to library) from KET 
@@ -1882,29 +1823,20 @@ test.describe('Ambiguous monomers: ', () => {
              (Error message should occure)
           4. Take screenshot to make sure export is correct
     */
-      await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives).ket',
-        page,
-      );
-
-      await zoomWithMouseWheel(page, -200);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
-
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'IDT');
-      await takeEditorScreenshot(page);
-
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2440 issue.`,
-      );
-
-      await closeErrorMessage(page);
-      await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 200);
-    },
-  );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives).ket',
+      page,
+    );
+    await zoomWithMouseWheel(page, -200);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'IDT');
+    await takeEditorScreenshot(page);
+    await closeErrorMessage(page);
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 200);
+  });
 
   test('Saving ambiguous (common) bases (with mapping, mixed) in IDT format', async () => {
     /*
@@ -1919,22 +1851,21 @@ test.describe('Ambiguous monomers: ', () => {
       'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
       page,
     );
-
     await zoomWithMouseWheel(page, -200);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
-
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'IDT');
-    await takeEditorScreenshot(page);
-
-    await pressButton(page, 'Cancel');
-    await zoomWithMouseWheel(page, 200);
-
-    test.fixme(
-      true,
-      `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
+    await verifyFileExport(
+      page,
+      'IDT/Ambiguous (common) Bases (mixed)-expected.idt',
+      FileType.IDT,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'IDT/Ambiguous (common) Bases (mixed)-expected.idt',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await zoomWithMouseWheel(page, 200);
+    await takeEditorScreenshot(page);
   });
 
   test('Saving RNA ambigous base connected to DNA sugar to IDT', async () => {

@@ -22,7 +22,6 @@ import {
   getSequence,
   openFile,
   getFasta,
-  getIdt,
   openFileAndAddToCanvasAsNewProjectMacro,
   delay,
   moveMouseAway,
@@ -629,19 +628,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
-  const expectedFile = await getIdt(page);
-  await saveToFile('IDT/moe-idt-expected.idt', expectedFile);
-
-  const METADATA_STRING_INDEX = [1];
-
-  const { fileExpected: idtFileExpected, file: idtFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName: 'tests/test-data/IDT/moe-idt-expected.idt',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(idtFile).toEqual(idtFileExpected);
+  await verifyFileExport(page, 'IDT/moe-idt-expected.idt', FileType.IDT);
   await openFileAndAddToCanvasAsNewProject('IDT/moe-idt-expected.idt', page);
   await selectMacroBond(page, MacroBondTool.SINGLE);
   await bondLine.hover();

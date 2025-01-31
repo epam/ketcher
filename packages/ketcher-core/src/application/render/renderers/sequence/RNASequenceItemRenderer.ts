@@ -19,7 +19,7 @@ export abstract class RNASequenceItemRenderer extends BaseSequenceItemRenderer {
     public monomerSize: { width: number; height: number },
     public scaledMonomerPosition: Vec2,
     _previousRowsWithAntisense = 0,
-    _twoStrandedNode?: ITwoStrandedChainItem,
+    _twoStrandedNode: ITwoStrandedChainItem,
   ) {
     super(
       node,

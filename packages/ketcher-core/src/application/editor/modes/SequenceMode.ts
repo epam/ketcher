@@ -57,6 +57,8 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
+import { STRAND_TYPE } from 'domain/constants';
+import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -663,54 +665,96 @@ export class SequenceMode extends BaseMode {
     );
   }
 
-  private handleNodesDeletion(selections: TwoStrandedNodesSelection) {
+  private handleNodesDeletion(
+    selections: TwoStrandedNodesSelection,
+    strandType: STRAND_TYPE,
+  ) {
     const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
 
     selections.forEach((selectionRange) => {
-      const selectionStartNode = selectionRange[0].node;
-      const selectionEndNode = selectionRange[selectionRange.length - 1].node;
+      const selectionStartTwoStrandedNode = selectionRange[0].node;
+      const selectionEndTwoStrandedNode =
+        selectionRange[selectionRange.length - 1].node;
+      const selectionStartNode = getNodeFromTwoStrandedNode(
+        selectionStartTwoStrandedNode,
+        strandType,
+      );
       let isPhosphateAdditionalyDeleted = false;
 
+      const twoStrandedNodeBeforeSelection = SequenceRenderer.getPreviousNode(
+        selectionStartTwoStrandedNode,
+      );
+      const twoStrandedNodeAfterSelection = SequenceRenderer.getNextNode(
+        selectionEndTwoStrandedNode,
+      );
+      const twoStrandedNodeInSameChainBeforeSelection =
+        SequenceRenderer.getPreviousNodeInSameChain(
+          selectionStartTwoStrandedNode,
+        );
+      const twoStrandedNodeInSameChainAfterSelection =
+        SequenceRenderer.getNextNodeInSameChain(selectionEndTwoStrandedNode);
+
       const nodeBeforeSelection =
-        SequenceRenderer.getPreviousNode(selectionStartNode);
-      const nodeAfterSelection = SequenceRenderer.getNextNode(selectionEndNode);
+        (twoStrandedNodeBeforeSelection &&
+          getNodeFromTwoStrandedNode(
+            twoStrandedNodeBeforeSelection,
+            strandType,
+          )) ||
+        undefined;
+      const nodeAfterSelection =
+        (twoStrandedNodeAfterSelection &&
+          getNodeFromTwoStrandedNode(
+            twoStrandedNodeAfterSelection,
+            strandType,
+          )) ||
+        undefined;
       const nodeInSameChainBeforeSelection =
-        SequenceRenderer.getPreviousNodeInSameChain(selectionStartNode);
+        (twoStrandedNodeInSameChainBeforeSelection &&
+          getNodeFromTwoStrandedNode(
+            twoStrandedNodeInSameChainBeforeSelection,
+            strandType,
+          )) ||
+        undefined;
       const nodeInSameChainAfterSelection =
-        SequenceRenderer.getNextNodeInSameChain(selectionEndNode);
+        (twoStrandedNodeInSameChainAfterSelection &&
+          getNodeFromTwoStrandedNode(
+            twoStrandedNodeInSameChainAfterSelection,
+            strandType,
+          )) ||
+        twoStrandedNodeInSameChainAfterSelection;
 
       if (
         !nodeInSameChainBeforeSelection &&
-        nodeAfterSelection?.senseNode &&
-        selectionStartNode?.senseNode &&
-        !(nodeAfterSelection.senseNode instanceof EmptySequenceNode)
+        nodeAfterSelection &&
+        selectionStartNode &&
+        !(nodeAfterSelection instanceof EmptySequenceNode)
       ) {
         modelChanges.merge(
           editor.drawingEntitiesManager.moveMonomer(
-            nodeAfterSelection.senseNode.monomer,
-            selectionStartNode.senseNode.monomer.position,
+            nodeAfterSelection.monomer,
+            selectionStartNode.monomer.position,
           ),
         );
       }
 
       if (
         !nodeBeforeSelection ||
-        nodeBeforeSelection.senseNode instanceof EmptySequenceNode
+        nodeBeforeSelection instanceof EmptySequenceNode
       ) {
         return;
       }
 
       if (
         nodeBeforeSelection === nodeInSameChainBeforeSelection &&
-        nodeBeforeSelection.senseNode instanceof Nucleotide &&
-        !(nodeInSameChainAfterSelection?.senseNode instanceof Nucleotide) &&
-        !(nodeInSameChainAfterSelection?.senseNode instanceof Nucleoside)
+        nodeBeforeSelection instanceof Nucleotide &&
+        !(nodeInSameChainAfterSelection instanceof Nucleotide) &&
+        !(nodeInSameChainAfterSelection instanceof Nucleoside)
       ) {
         // delete phosphate from last nucleotide
         modelChanges.merge(
           editor.drawingEntitiesManager.deleteMonomer(
-            nodeBeforeSelection.senseNode.lastMonomerInNode,
+            nodeBeforeSelection.lastMonomerInNode,
           ),
         );
         // TODO get rid of this boolean
@@ -719,7 +763,7 @@ export class SequenceMode extends BaseMode {
 
       if (
         !nodeAfterSelection ||
-        nodeAfterSelection.senseNode instanceof EmptySequenceNode ||
+        nodeAfterSelection instanceof EmptySequenceNode ||
         (!this.isEditMode &&
           (nodeAfterSelection !== nodeInSameChainAfterSelection ||
             nodeBeforeSelection !== nodeInSameChainBeforeSelection))
@@ -728,26 +772,23 @@ export class SequenceMode extends BaseMode {
       }
 
       if (
-        nodeBeforeSelection.senseNode instanceof Nucleoside &&
-        nodeAfterSelection.senseNode instanceof Nucleotide
+        nodeBeforeSelection instanceof Nucleoside &&
+        nodeAfterSelection instanceof Nucleotide
       ) {
         modelChanges.merge(
           this.bondNodesThroughNewPhosphate(
-            this.getNewSequenceItemPosition(nodeBeforeSelection.senseNode),
-            nodeBeforeSelection.senseNode.lastMonomerInNode,
-            nodeAfterSelection.senseNode.firstMonomerInNode,
+            this.getNewSequenceItemPosition(nodeBeforeSelection),
+            nodeBeforeSelection.lastMonomerInNode,
+            nodeAfterSelection.firstMonomerInNode,
           ),
         );
-      } else if (
-        nodeBeforeSelection.senseNode &&
-        nodeAfterSelection.senseNode
-      ) {
+      } else if (nodeBeforeSelection && nodeAfterSelection) {
         modelChanges.merge(
           this.tryToCreatePolymerBond(
             isPhosphateAdditionalyDeleted
-              ? nodeBeforeSelection.senseNode.firstMonomerInNode
-              : nodeBeforeSelection.senseNode.lastMonomerInNode,
-            nodeAfterSelection.senseNode.firstMonomerInNode,
+              ? nodeBeforeSelection.firstMonomerInNode
+              : nodeBeforeSelection.lastMonomerInNode,
+            nodeAfterSelection.firstMonomerInNode,
           ),
         );
       }
@@ -774,12 +815,13 @@ export class SequenceMode extends BaseMode {
       if (selections.length) {
         modelChanges.merge(this.deleteSelectedDrawingEntities());
         nodesToDelete = selections;
-      } else if (nodeToDelete?.senseNode) {
-        nodeToDelete.senseNode.monomers.forEach((monomer) => {
-          modelChanges.merge(
-            editor.drawingEntitiesManager.deleteMonomer(monomer),
-          );
-        });
+        modelChanges.merge(
+          this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.SENSE),
+        );
+        modelChanges.merge(
+          this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.ANTISENSE),
+        );
+      } else if (nodeToDelete) {
         nodesToDelete = [
           [
             {
@@ -788,24 +830,39 @@ export class SequenceMode extends BaseMode {
             },
           ],
         ];
-        if (nodeToDelete.senseNode.monomer.monomerItem.isSense) {
+
+        if (
+          nodeToDelete.senseNode &&
+          !(nodeToDelete.senseNode instanceof BackBoneSequenceNode)
+        ) {
+          nodeToDelete.senseNode.monomers.forEach((monomer) => {
+            modelChanges.merge(
+              editor.drawingEntitiesManager.deleteMonomer(monomer),
+            );
+          });
+
+          modelChanges.merge(
+            this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.SENSE),
+          );
+        }
+
+        if (
+          nodeToDelete.antisenseNode &&
+          !(nodeToDelete.antisenseNode instanceof BackBoneSequenceNode)
+        ) {
           nodeToDelete.antisenseNode?.monomers.forEach((monomer) => {
             modelChanges.merge(
               editor.drawingEntitiesManager.deleteMonomer(monomer),
             );
           });
-          nodesToDelete.push([
-            {
-              node: nodeToDelete,
-              nodeIndexOverall: caretPosition,
-            },
-          ]);
+
+          modelChanges.merge(
+            this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.ANTISENSE),
+          );
         }
       } else {
         return;
       }
-
-      modelChanges.merge(this.handleNodesDeletion(nodesToDelete));
 
       this.finishNodesDeletion(
         modelChanges,
@@ -1028,7 +1085,12 @@ export class SequenceMode extends BaseMode {
     if (selections.length === 1) {
       const deletionModelChanges = this.deleteSelectedDrawingEntities();
 
-      deletionModelChanges.merge(this.handleNodesDeletion(selections));
+      deletionModelChanges.merge(
+        this.handleNodesDeletion(selections, STRAND_TYPE.SENSE),
+      );
+      deletionModelChanges.merge(
+        this.handleNodesDeletion(selections, STRAND_TYPE.ANTISENSE),
+      );
       this.finishNodesDeletion(
         deletionModelChanges,
         SequenceRenderer.caretPosition,

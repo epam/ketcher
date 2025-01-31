@@ -39,8 +39,8 @@ export class SequenceNodeRendererFactory {
     chain: Chain,
     isEditingSymbol: boolean,
     previousRowsWithAntisense = 0,
+    twoStrandedNode: ITwoStrandedChainItem,
     renderer?: BaseMonomerRenderer | BaseSequenceItemRenderer,
-    twoStrandedNode?: ITwoStrandedChainItem,
   ): BaseSequenceItemRenderer {
     let RendererClass;
 

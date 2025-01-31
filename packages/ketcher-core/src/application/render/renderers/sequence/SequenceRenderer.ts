@@ -136,10 +136,7 @@ export class SequenceRenderer {
     sequenceViewModel.chains.forEach((chain, chainIndex) => {
       currentMonomerIndexInChain = 0;
       chain.forEachRow((row) => {
-        if (hasAntisenseInRow) {
-          previousRowsWithAntisense++;
-          hasAntisenseInRow = false;
-        }
+        hasAntisenseInRow = false;
 
         row.sequenceViewModelItems.forEach((chainItem) => {
           const node = chainItem.senseNode;
@@ -150,17 +147,17 @@ export class SequenceRenderer {
 
           let antisenseNodeRenderer: BaseSequenceItemRenderer | undefined;
 
-          if (chainItem.antisenseNode && chainItem.antisenseChain) {
+          if (chainItem.antisenseNode) {
             antisenseNodeRenderer = SequenceNodeRendererFactory.fromNode(
               chainItem.antisenseNode,
               currentChainStartPosition.add(new Vec2(0, 30)),
               currentMonomerIndexInChain,
               chainItem.antisenseNode === chain.lastNode.senseNode,
-              chainItem.antisenseChain,
+              chainItem.antisenseChain || chainItem.chain,
               currentMonomerIndexOverall === SequenceRenderer.caretPosition,
               previousRowsWithAntisense,
-              chainItem.antisenseNode?.monomer?.renderer,
               chainItem,
+              chainItem.antisenseNode?.monomer?.renderer,
             );
 
             antisenseNodeRenderer.show();
@@ -195,6 +192,7 @@ export class SequenceRenderer {
             chainItem.chain,
             currentMonomerIndexOverall === SequenceRenderer.caretPosition,
             previousRowsWithAntisense,
+            chainItem,
             node.monomer.renderer,
           );
 
@@ -215,6 +213,10 @@ export class SequenceRenderer {
             node.setRenderer(renderer);
           }
         });
+
+        if (hasAntisenseInRow) {
+          previousRowsWithAntisense++;
+        }
       });
 
       currentChainStartPosition = SequenceRenderer.getNextChainPosition(
@@ -444,7 +446,10 @@ export class SequenceRenderer {
     let newCaretPosition = -1;
 
     SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
-      if (twoStrandedNode.senseNode?.monomer === monomer) {
+      if (
+        twoStrandedNode.senseNode?.monomer === monomer ||
+        twoStrandedNode.antisenseNode?.monomer === monomer
+      ) {
         newCaretPosition = nodeIndexOverall;
       }
     });
@@ -456,7 +461,10 @@ export class SequenceRenderer {
     let newCaretPosition = -1;
 
     SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
-      if (twoStrandedNode.senseNode?.monomer === monomer) {
+      if (
+        twoStrandedNode.senseNode?.monomer === monomer ||
+        twoStrandedNode.antisenseNode?.monomer === monomer
+      ) {
         newCaretPosition = nodeIndexOverall;
       }
     });
@@ -1079,8 +1087,13 @@ export class SequenceRenderer {
     let rendererToReturn;
 
     SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
-      if (twoStrandedNode.senseNode?.monomer === monomer) {
-        rendererToReturn = twoStrandedNode.senseNode.renderer;
+      if (
+        twoStrandedNode.senseNode?.monomer === monomer ||
+        twoStrandedNode.antisenseNode?.monomer === monomer
+      ) {
+        rendererToReturn =
+          twoStrandedNode.senseNode?.renderer ||
+          twoStrandedNode.antisenseNode?.renderer;
       }
     });
 

@@ -83,13 +83,13 @@ jobs:
           cd ketcher-autotests/
           npm i
           npx playwright install chromium
-          npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=json,line --output=playwright-report
+          npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - uses: actions/upload-artifact@v4
         # run even if previous steps fails
         if: always()
         with:
           name: pw-report-${{ matrix.shardIndex }}
-          path: ketcher-autotests/playwright-report/
+          path: ketcher-autotests/playwright-report
           retention-days: 5
       - name: Debug report before upload
         run: ls -R ketcher-autotests/playwright-report/
@@ -104,50 +104,23 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
       with:
-        node-version: 18.14
+        node-version: lts/*
     - name: Install dependencies
       run: npm ci
 
     - name: Download blob reports from GitHub Actions Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: pw-report-1
-        path: ketcher-autotests/playwright-report/pw-report-1
-
-    - uses: actions/download-artifact@v4
-      with:
-        name: pw-report-2
-        path: ketcher-autotests/playwright-report/pw-report-2
- 
-    - uses: actions/download-artifact@v4
-      with:
-        name: pw-report-3
-        path: ketcher-autotests/playwright-report/pw-report-3
-   
-    - uses: actions/download-artifact@v4
-      with:
-        name: pw-report-4
-        path: ketcher-autotests/playwright-report/pw-report-4
-     
-    - uses: actions/download-artifact@v4
-      with:
-        name: pw-report-5
-        path: ketcher-autotests/playwright-report/pw-report-5
-     
-    - uses: actions/download-artifact@v4
-      with:
-        name: pw-report-6
-        path: ketcher-autotests/playwright-report/pw-report-6       
-
-    - name: Debug report files
-      run: ls -R ketcher-autotests/playwright-report/
+        path: ketcher-autotests/playwright-report
+        pattern: pw-report-*
+        merge-multiple: true
 
     - name: Merge into HTML Report
-      run: npx playwright merge-reports --reporter html ketcher-autotests/playwright-report
+      run: npx playwright merge-reports --reporter html ./ketcher-autotests/playwright-report
 
     - name: Upload HTML report
       uses: actions/upload-artifact@v4
       with:
-        name: playwright-consolidated-report--attempt-${{ github.run_attempt }}
-        path: ketcher-autotests/playwright-report
+        name: html-report--attempt-${{ github.run_attempt }}
+        path: playwright-report
         retention-days: 14

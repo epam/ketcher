@@ -168,13 +168,6 @@ export const RnaEditorExpanded = ({
         const updatedSequenceSelection = sequenceSelection.map((node) => {
           // Do not set 'phosphateLabel' for Nucleoside if it is connected and selected with Phosphate
           // Do not set 'sugarLabel', 'baseLabel' for Phosphate
-          const naturalAnalog =
-            field === 'baseLabel' &&
-            activePresetMonomerGroup.groupItem.props?.MonomerNaturalAnalogCode
-              ? activePresetMonomerGroup.groupItem.props
-                  .MonomerNaturalAnalogCode
-              : activePresetMonomerGroup.groupItem.label;
-
           if (
             (node.isNucleosideConnectedAndSelectedWithPhosphate &&
               field === 'phosphateLabel') ||
@@ -185,7 +178,7 @@ export const RnaEditorExpanded = ({
 
           return {
             ...node,
-            [field]: naturalAnalog,
+            [field]: activePresetMonomerGroup.groupItem.label,
           };
         });
 

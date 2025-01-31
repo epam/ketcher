@@ -39,6 +39,7 @@
     "ketcher-macromolecules": "*",
     "ketcher-react": "*",
     "ketcher-standalone": "*",
+    "mui": "^0.0.1",
     "normalize.css": "^8.0.1",
     "react": "^18.2.0",
     "react-app-polyfill": "^2.0.0",

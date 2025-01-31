@@ -81,6 +81,8 @@ jobs:
         run: |
           cd example/ && nohup npm run serve:standalone &
           cd ketcher-autotests/
+          mkdir blob-report
+          mkdir all-blob-reports
           npm i
           npx playwright install chromium
           npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}

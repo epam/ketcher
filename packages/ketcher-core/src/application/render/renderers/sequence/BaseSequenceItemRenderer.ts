@@ -169,6 +169,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return 30;
   }
 
+  private get isAntisenseNode() {
+    return this.node === this.twoStrandedNode?.antisenseNode;
+  }
+
   private appendCounterElement(
     rootElement: D3SvgElementSelection<SVGGElement, void>,
   ) {
@@ -179,7 +183,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('x', '2')
       .attr('y', this.node.monomer.monomerItem.isAntisense ? '24' : '-24')
       .text(
-        isNumber(antisenseNodeIndex)
+        this.isAntisenseNode && isNumber(antisenseNodeIndex)
           ? this.currentChainNodesWithoutEmptyNodes.length - antisenseNodeIndex
           : this.monomerIndexInChain + 1,
       )
@@ -198,7 +202,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return (
       !(this.node instanceof EmptySequenceNode) &&
       !(this.node instanceof BackBoneSequenceNode) &&
-      (isNumber(antisenseNodeIndex)
+      (this.isAntisenseNode && isNumber(antisenseNodeIndex)
         ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
           antisenseNodeIndex === 0
         : (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0 ||
@@ -212,7 +216,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   public showCaret() {
     if (
-      this.node === this.twoStrandedNode?.antisenseNode ||
+      this.isAntisenseNode ||
       (this.node instanceof BackBoneSequenceNode &&
         this.node.firstConnectedNode.monomer.monomerItem.isAntisense)
     ) {

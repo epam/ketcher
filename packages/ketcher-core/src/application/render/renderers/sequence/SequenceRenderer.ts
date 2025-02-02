@@ -73,9 +73,9 @@ export class SequenceRenderer {
     chainsCollection: ChainsCollection,
     chainBeforeNewEmptyChainIndex?: number,
   ) {
+    this.clear();
     SequenceRenderer.chainsCollection = chainsCollection;
     this.sequenceViewModel = new SequenceViewModel(chainsCollection);
-    this.clear();
     const newEmptyChain = this.addNewEmptyChainIfNeeded(
       chainBeforeNewEmptyChainIndex,
     );

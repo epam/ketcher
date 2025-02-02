@@ -535,7 +535,11 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
     const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
-      currentNode instanceof Nucleotide || currentNode instanceof Nucleoside
+      currentNode instanceof Nucleotide ||
+      currentNode instanceof Nucleoside ||
+      (currentNode instanceof BackBoneSequenceNode &&
+        (currentNode.secondConnectedNode instanceof Nucleotide ||
+          currentNode.secondConnectedNode instanceof Nucleoside))
         ? Nucleotide.createOnCanvas(
             enteredSymbol,
             newNodePosition,
@@ -549,7 +553,17 @@ export class SequenceMode extends BaseMode {
 
     modelChanges.merge(addedNodeModelChanges);
 
-    modelChanges.merge(this.insertNewSequenceFragment(nodeToAdd));
+    modelChanges.merge(
+      this.insertNewSequenceFragment(
+        nodeToAdd,
+        currentNode instanceof BackBoneSequenceNode
+          ? currentNode.secondConnectedNode
+          : undefined,
+        currentNode instanceof BackBoneSequenceNode
+          ? currentNode.firstConnectedNode
+          : undefined,
+      ),
+    );
 
     return { modelChanges, node: nodeToAdd };
   }
@@ -702,13 +716,17 @@ export class SequenceMode extends BaseMode {
             strandType,
           )) ||
         undefined;
-      const nodeAfterSelection =
+      const potentialNodeAfterSelection =
         (twoStrandedNodeAfterSelection &&
           getNodeFromTwoStrandedNode(
             twoStrandedNodeAfterSelection,
             strandType,
           )) ||
         undefined;
+      const nodeAfterSelection =
+        potentialNodeAfterSelection instanceof BackBoneSequenceNode
+          ? potentialNodeAfterSelection.secondConnectedNode
+          : potentialNodeAfterSelection;
       const nodeInSameChainBeforeSelection =
         (twoStrandedNodeInSameChainBeforeSelection &&
           getNodeFromTwoStrandedNode(
@@ -716,13 +734,17 @@ export class SequenceMode extends BaseMode {
             strandType,
           )) ||
         undefined;
-      const nodeInSameChainAfterSelection =
+      const potentialNodeInSameChainAfterSelection =
         (twoStrandedNodeInSameChainAfterSelection &&
           getNodeFromTwoStrandedNode(
             twoStrandedNodeInSameChainAfterSelection,
             strandType,
           )) ||
         twoStrandedNodeInSameChainAfterSelection;
+      const nodeInSameChainAfterSelection =
+        potentialNodeInSameChainAfterSelection instanceof BackBoneSequenceNode
+          ? potentialNodeInSameChainAfterSelection.secondConnectedNode
+          : potentialNodeInSameChainAfterSelection;
 
       if (
         !nodeInSameChainBeforeSelection &&
@@ -1022,6 +1044,12 @@ export class SequenceMode extends BaseMode {
                     antisenseNodeCreationResult.node,
                     currentTwoStrandedNode.antisenseNode,
                     previousTwoStrandedNode?.antisenseNode,
+                    !(
+                      previousTwoStrandedNode?.antisenseNode instanceof
+                        MonomerSequenceNode &&
+                      previousTwoStrandedNode?.antisenseNode.monomer instanceof
+                        Phosphate
+                    ),
                   ),
                 );
               }

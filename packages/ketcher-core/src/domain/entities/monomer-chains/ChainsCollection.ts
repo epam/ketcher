@@ -43,10 +43,11 @@ export type GrouppedChain = {
 
 export interface ITwoStrandedChainItem {
   senseNode?: SubChainNode | BackBoneSequenceNode;
-  antisenseNode?: SubChainNode | BackBoneSequenceNode;
+  senseNodeIndex: number;
   chain: Chain;
-  antisenseChain?: Chain;
+  antisenseNode?: SubChainNode | BackBoneSequenceNode;
   antisenseNodeIndex?: number;
+  antisenseChain?: Chain;
 }
 
 export class ChainsCollection {
@@ -437,7 +438,10 @@ export class ChainsCollection {
     return this.monomerToChain.get(monomer);
   }
 
-  public getComplimentaryChainsWithData(chain: Chain) {
+  public getComplimentaryChainsWithData(
+    chain: Chain,
+    chainsToExclude: Chain[] = [],
+  ): ComplimentaryChainsWithData[] {
     const complimentaryChainsWithData: ComplimentaryChainsWithData[] = [];
     const handledChains = new Set<Chain>();
     const monomerToNode = this.monomerToNode;
@@ -471,7 +475,35 @@ export class ChainsCollection {
       });
     });
 
-    return complimentaryChainsWithData;
+    const filteredComplimentaryChainsWithData =
+      complimentaryChainsWithData.filter((complimentaryChainWithData) => {
+        return !chainsToExclude.includes(
+          complimentaryChainWithData.complimentaryChain,
+        );
+      });
+
+    return filteredComplimentaryChainsWithData.length === 1 ||
+      // If there is a cycle from complimentary chains
+      // (f.e chain1 -> chain2 -> chain3 -> chain1, connected through hydrogen bonds to rna base)
+      // then method returns 0 complimentary chains.
+      // It further allows to handle them as separate chains (not sense -> antisense)
+      !filteredComplimentaryChainsWithData.some(
+        (complimentaryChainWithData) => {
+          const complimentaryChainsForComplimentaryChain =
+            this.getComplimentaryChainsWithData(
+              complimentaryChainWithData.complimentaryChain,
+              [...chainsToExclude, chain],
+            );
+
+          return complimentaryChainsForComplimentaryChain.some(
+            (complimentaryChainForComplimentaryChain) =>
+              complimentaryChainForComplimentaryChain.complimentaryChain !==
+              chain,
+          );
+        },
+      )
+      ? filteredComplimentaryChainsWithData
+      : [];
   }
 
   public getAntisenseChainsWithData(chain: Chain) {
@@ -566,6 +598,7 @@ export class ChainsCollection {
       if (!antisenseNode) {
         twoStrandedChainItems.push({
           senseNode,
+          senseNodeIndex: currentSenseIterationIndex,
           chain,
         });
         handledNodes.add(senseNode);
@@ -591,13 +624,16 @@ export class ChainsCollection {
                 secondConnectedSenseNode,
               )) ||
             undefined,
+          senseNodeIndex: currentSenseIterationIndex,
           antisenseNode: new EmptySequenceNode(),
           chain,
           antisenseChain,
           antisenseNodeIndex: currentAntisenseLocalIterationIndex,
         });
+        currentAntisenseLocalIterationIndex = 0;
+        currentAntisenseGlobalIterationIndex = currentSenseIterationIndex;
       } else if (
-        senseNode.monomers.some((monomer) => {
+        senseNode?.monomers.some((monomer) => {
           return monomer.hydrogenBonds.some((hydrogenBond) => {
             const anotherMonomer = hydrogenBond.getAnotherMonomer(monomer);
             const anotherNode =
@@ -609,6 +645,7 @@ export class ChainsCollection {
       ) {
         twoStrandedChainItems.push({
           senseNode,
+          senseNodeIndex: currentSenseIterationIndex,
           antisenseNode,
           chain,
           antisenseChain,
@@ -620,7 +657,7 @@ export class ChainsCollection {
         currentAntisenseGlobalIterationIndex++;
         currentAntisenseLocalIterationIndex++;
       } else if (
-        senseNode.monomers.some((monomer) => {
+        senseNode?.monomers.some((monomer) => {
           return monomer.hydrogenBonds.some((hydrogenBond) => {
             const anotherMonomer = hydrogenBond.getAnotherMonomer(monomer);
             const anotherChain =
@@ -643,6 +680,7 @@ export class ChainsCollection {
                 secondConnectedSenseNode,
               )
             : undefined,
+          senseNodeIndex: currentSenseIterationIndex,
           antisenseNode,
           chain,
           antisenseChain,
@@ -676,6 +714,7 @@ export class ChainsCollection {
 
         twoStrandedChainItems.push({
           senseNode,
+          senseNodeIndex: currentSenseIterationIndex,
           antisenseNode: firstConnectedAntisenseNode
             ? new BackBoneSequenceNode(
                 firstConnectedAntisenseNode,
@@ -690,6 +729,7 @@ export class ChainsCollection {
       } else {
         twoStrandedChainItems.push({
           senseNode,
+          senseNodeIndex: currentSenseIterationIndex,
           antisenseNode,
           chain,
           antisenseChain,

@@ -254,6 +254,7 @@ export class SequenceRenderer {
       Set<AttachmentPointName>
     > = new Map();
     const handledHydrogenBonds: Set<HydrogenBond> = new Set();
+    const monomerToChain = chainsCollection.monomerToChain;
 
     chainsCollection.chains.forEach((chain) => {
       chain.subChains.forEach((subChain) => {
@@ -269,7 +270,12 @@ export class SequenceRenderer {
 
             monomer.forEachBond((polymerBond, attachmentPointName) => {
               if (polymerBond instanceof HydrogenBond) {
-                if (handledHydrogenBonds.has(polymerBond)) {
+                const isBondInOneChain =
+                  polymerBond.secondMonomer &&
+                  monomerToChain.get(polymerBond.firstMonomer) ===
+                    monomerToChain.get(polymerBond.secondMonomer);
+
+                if (handledHydrogenBonds.has(polymerBond) || isBondInOneChain) {
                   return;
                 }
 

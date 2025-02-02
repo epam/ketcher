@@ -66,6 +66,7 @@ export class SequenceViewModel {
         viewModelChain.lastRow.hasAntisenseInRow = hasAntisenseInRow;
         viewModelChain.lastRow.sequenceViewModelItems.push({
           senseNode: chainItem.senseNode || new EmptySequenceNode(),
+          senseNodeIndex: chainItem.senseNodeIndex,
           antisenseNode: hasAntisenseInChain
             ? chainItem.antisenseNode || new EmptySequenceNode()
             : undefined,
@@ -77,6 +78,7 @@ export class SequenceViewModel {
 
       viewModelChain.lastRow.sequenceViewModelItems.push({
         senseNode: new EmptySequenceNode(),
+        senseNodeIndex: -1,
         antisenseNode: hasAntisenseInChain
           ? new EmptySequenceNode()
           : undefined,
@@ -97,6 +99,7 @@ export class SequenceViewModel {
       sequenceViewModelItems: [
         {
           senseNode: emptySequenceNode,
+          senseNodeIndex: 0,
           chain: emptyChain,
         },
       ],

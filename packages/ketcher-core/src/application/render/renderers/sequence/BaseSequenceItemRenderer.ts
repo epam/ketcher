@@ -177,6 +177,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     rootElement: D3SvgElementSelection<SVGGElement, void>,
   ) {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
+    const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
 
     return rootElement
       .append('text')
@@ -185,7 +186,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .text(
         this.isAntisenseNode && isNumber(antisenseNodeIndex)
           ? this.currentChainNodesWithoutEmptyNodes.length - antisenseNodeIndex
-          : this.monomerIndexInChain + 1,
+          : senseNodeIndex + 1,
       )
       .attr('font-family', 'Courier New')
       .attr('font-size', '12px')
@@ -196,6 +197,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private get needDisplayCounter() {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
+    const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
 
     // For simple chains or sense chains counter appears above each 10th symbol
     // For antisense same but in opposite direction, that's why we compare division remainder with 1
@@ -203,9 +205,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       !(this.node instanceof EmptySequenceNode) &&
       !(this.node instanceof BackBoneSequenceNode) &&
       (this.isAntisenseNode && isNumber(antisenseNodeIndex)
-        ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
+        ? (senseNodeIndex + 1) % this.nthSeparationInRow === 1 ||
           antisenseNodeIndex === 0
-        : (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0 ||
+        : (senseNodeIndex + 1) % this.nthSeparationInRow === 0 ||
           this.isLastMonomerInChain)
     );
   }

@@ -197,7 +197,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private get needDisplayCounter() {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
-    const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
 
     // For simple chains or sense chains counter appears above each 10th symbol
     // For antisense same but in opposite direction, that's why we compare division remainder with 1
@@ -205,9 +204,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       !(this.node instanceof EmptySequenceNode) &&
       !(this.node instanceof BackBoneSequenceNode) &&
       (this.isAntisenseNode && isNumber(antisenseNodeIndex)
-        ? (senseNodeIndex + 1) % this.nthSeparationInRow === 1 ||
+        ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
           antisenseNodeIndex === 0
-        : (senseNodeIndex + 1) % this.nthSeparationInRow === 0 ||
+        : (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0 ||
           this.isLastMonomerInChain)
     );
   }

@@ -7,8 +7,17 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { BaseRenderer } from '../BaseRenderer';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-
-const CORNER_LENGTH = 4;
+import {
+  generateCornerFromLeftToTop,
+  generateCornerFromLeftToBottom,
+  generateCornerFromRightToTop,
+  generateCornerFromRightToBottom,
+  generateCornerFromBottomToLeft,
+  generateCornerFromBottomToRight,
+  generateCornerFromTopToLeft,
+  generateCornerFromTopToRight,
+  CORNER_LENGTH,
+} from './helpers';
 
 export class FlexModePolymerBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
@@ -145,13 +154,13 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       thirdPoint = new Vec2(secondPoint.x, firstPoint.y);
     }
 
-    this.path = `M${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y} `;
+    this.path = `M${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y}`;
 
     const adjustedFirstPoint = this.adjustPointForCorner(
       this.scaledPosition.startPosition,
       firstPoint,
     );
-    this.path += `L${adjustedFirstPoint.x},${adjustedFirstPoint.y} `;
+    this.path += `L${adjustedFirstPoint.x},${adjustedFirstPoint.y}`;
     this.addCornerBasedOnDirection(
       this.scaledPosition.startPosition,
       firstPoint,
@@ -162,7 +171,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       firstPoint,
       thirdPoint,
     );
-    this.path += `L${adjustedThirdPoint.x},${adjustedThirdPoint.y} `;
+    this.path += `L${adjustedThirdPoint.x},${adjustedThirdPoint.y}`;
     this.addCornerBasedOnDirection(
       firstPoint,
       thirdPoint,
@@ -180,29 +189,29 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     if (prevPoint.x !== cornerPoint.x && cornerPoint.y !== nextPoint.y) {
       if (prevPoint.x < cornerPoint.x) {
         if (cornerPoint.y < nextPoint.y) {
-          this.addLineFromLeftToBottom();
+          this.path = this.path.concat(generateCornerFromLeftToBottom());
         } else {
-          this.addLineFromLeftToTop();
+          this.path = this.path.concat(generateCornerFromLeftToTop());
         }
       } else {
         if (cornerPoint.y < nextPoint.y) {
-          this.addLineFromRightToBottom();
+          this.path = this.path.concat(generateCornerFromRightToBottom());
         } else {
-          this.addLineFromRightToTop();
+          this.path = this.path.concat(generateCornerFromRightToTop());
         }
       }
     } else if (prevPoint.y !== cornerPoint.y && cornerPoint.x !== nextPoint.x) {
       if (prevPoint.y < cornerPoint.y) {
         if (cornerPoint.x < nextPoint.x) {
-          this.addLineFromTopToRight();
+          this.path = this.path.concat(generateCornerFromTopToRight());
         } else {
-          this.addLineFromTopToLeft();
+          this.path = this.path.concat(generateCornerFromTopToLeft());
         }
       } else {
         if (cornerPoint.x < nextPoint.x) {
-          this.addLineFromBottomToRight();
+          this.path = this.path.concat(generateCornerFromBottomToRight());
         } else {
-          this.addLineFromBottomToLeft();
+          this.path = this.path.concat(generateCornerFromBottomToLeft());
         }
       }
     }
@@ -255,38 +264,6 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       );
 
     return this.bodyElement;
-  }
-
-  private addLineFromTopToRight(): void {
-    this.path = `${this.path} c 0,4.418 3.582,${CORNER_LENGTH} ${CORNER_LENGTH},${CORNER_LENGTH}`;
-  }
-
-  private addLineFromLeftToTop(): void {
-    this.path = `${this.path} c 4.418,0 ${CORNER_LENGTH},-3.582 ${CORNER_LENGTH},-${CORNER_LENGTH}`;
-  }
-
-  private addLineFromBottomToRight(): void {
-    this.path = `${this.path} c 0,-4.418 3.582,-${CORNER_LENGTH} ${CORNER_LENGTH},-${CORNER_LENGTH}`;
-  }
-
-  private addLineFromBottomToLeft(): void {
-    this.path = `${this.path} c 0,-4.418 -3.582,-${CORNER_LENGTH} -${CORNER_LENGTH},-${CORNER_LENGTH}`;
-  }
-
-  private addLineFromLeftToBottom(): void {
-    this.path = `${this.path} c 4.418,0 ${CORNER_LENGTH},3.582 ${CORNER_LENGTH},${CORNER_LENGTH}`;
-  }
-
-  private addLineFromTopToLeft(): void {
-    this.path = `${this.path} c 0,4.418 -3.582,${CORNER_LENGTH} -${CORNER_LENGTH},${CORNER_LENGTH}`;
-  }
-
-  private addLineFromRightToTop(): void {
-    this.path = `${this.path} c -4.418,0 -${CORNER_LENGTH},-3.582 -${CORNER_LENGTH},-${CORNER_LENGTH}`;
-  }
-
-  private addLineFromRightToBottom(): void {
-    this.path = `${this.path} c -4.418,0 -${CORNER_LENGTH},3.582 -${CORNER_LENGTH},${CORNER_LENGTH}`;
   }
 
   private getExpandedBoundingBox(bbox) {
@@ -380,7 +357,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     `;
 
     this.bodyElement.attr('d', path);
-    this.hoverAreaElement?.attr('d', path);
+    this.hoverAreaElement.attr('d', path);
     this.selectionElement?.attr('d', path);
 
     this.hoverCircleAreaElement

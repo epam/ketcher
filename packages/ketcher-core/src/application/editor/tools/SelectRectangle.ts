@@ -232,6 +232,7 @@ class SelectRectangle implements BaseTool {
       this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
       requestAnimationFrame(() => {
         this.editor.renderersContainer.update(modelChanges);
+        // this.editor.drawingEntitiesManager.rerenderOverlappingBonds();
       });
     }
   }
@@ -260,6 +261,8 @@ class SelectRectangle implements BaseTool {
           ),
         );
       this.history.update(modelChanges);
+
+      // this.editor.drawingEntitiesManager.rerenderOverlappingBonds(renderer?.drawingEntity);
     }
   }
 

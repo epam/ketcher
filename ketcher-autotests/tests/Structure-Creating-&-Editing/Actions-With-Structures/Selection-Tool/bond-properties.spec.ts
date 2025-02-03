@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect, Page } from '@playwright/test';
+import { test, Page } from '@playwright/test';
 import {
   BondType,
   clickOnCanvas,
@@ -9,9 +9,7 @@ import {
   LeftPanelButton,
   openFileAndAddToCanvas,
   pressButton,
-  receiveFileComparisonData,
   RingButton,
-  saveToFile,
   selectAllStructuresOnCanvas,
   selectLeftPanelButton,
   selectRingButton,
@@ -21,7 +19,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getRxn } from '@utils/formats';
 
 async function selectOption(
   page: Page,
@@ -392,21 +389,12 @@ test.describe('Bond Properties', () => {
     await selectOption(page, 'Center', 'Unmarked');
     await pressButton(page, 'Apply');
 
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('Rxn-V2000/rxn-1463-to-open-expected.rxn', expectedFile);
-
-    const METADATA_STRING_INDEX = [2, 7, 25, 38];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/rxn-1463-to-open-expected.rxn',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/rxn-1463-to-open-expected.rxn',
+      FileType.RXN,
+      'v2000',
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -536,21 +524,12 @@ test.describe('Bond Properties', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickOnCanvas(page, x + 150, y + 150);
 
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('Rxn-V2000/rxn-1465-to-open-expected.rxn', expectedFile);
-
-    const METADATA_STRING_INDEX = [2, 7, 34];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/rxn-1465-to-open-expected.rxn',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/rxn-1465-to-open-expected.rxn',
+      FileType.RXN,
+      'v2000',
+    );
     await takeEditorScreenshot(page);
   });
 

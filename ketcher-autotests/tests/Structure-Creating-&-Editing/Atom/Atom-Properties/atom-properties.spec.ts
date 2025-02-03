@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
@@ -7,8 +7,6 @@ import {
   clickInTheMiddleOfTheScreen,
   selectAtomInToolbar,
   AtomButton,
-  receiveFileComparisonData,
-  saveToFile,
   pressButton,
   resetCurrentTool,
   selectBond,
@@ -26,7 +24,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
-import { getRxn } from '@utils/formats';
+
 import {
   selectAtomLabel,
   fillAliasForAtom,
@@ -1382,39 +1380,25 @@ test.describe('Atom Properties', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'All atom properties information saved as *.rxn file',
-    async ({ page }) => {
-      /*
-    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
+  test('All atom properties information saved as *.rxn file', async ({
+    page,
+  }) => {
+    /*
       Test case: EPMLSOPKET-1656
       Description: The structure is saved as *.rxn file.
     */
-      await openFileAndAddToCanvas(
-        'Rxn-V3000/all-possible-atoms-properties.rxn',
-        page,
-      );
-      const expectedFile = await getRxn(page, 'v3000');
-      await saveToFile(
-        'Rxn-V3000/all-possible-atoms-properties-expected.rxn',
-        expectedFile,
-      );
-
-      // eslint-disable-next-line no-magic-numbers
-      const METADATA_STRING_INDEX = [2];
-      const { fileExpected: molFileExpected, file: molFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Rxn-V3000/all-possible-atoms-properties-expected.rxn',
-          fileFormat: 'v3000',
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
-
-      expect(molFile).toEqual(molFileExpected);
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvas(
+      'Rxn-V3000/all-possible-atoms-properties.rxn',
+      page,
+    );
+    await verifyFileExport(
+      page,
+      'Rxn-V3000/all-possible-atoms-properties-expected.rxn',
+      FileType.RXN,
+      'v3000',
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('Add Reaction flags - Inversion (Inverts) in modal and press Cancel', async ({
     page,

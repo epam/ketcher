@@ -118,7 +118,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   public moveSelection(): void {
     if (
       this.previousStateOfIsMonomersOnSameHorizontalLine !==
-      this.isMonomersOnSameHorizontalLine()
+      this.polymerBond.isHorizontal
     ) {
       this.remove();
       this.show();
@@ -128,7 +128,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       this.moveEnd();
     }
     this.previousStateOfIsMonomersOnSameHorizontalLine =
-      this.isMonomersOnSameHorizontalLine();
+      this.polymerBond.isHorizontal;
   }
 
   // TODO: Specify the types.
@@ -147,7 +147,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     } else if (
       this.isSnakeBond &&
       this.polymerBond.finished &&
-      !this.isMonomersOnSameHorizontalLine()
+      !this.polymerBond.isHorizontal
     ) {
       this.appendSnakeBond(rootElement);
     } else {
@@ -461,26 +461,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     return this.polymerBond.firstMonomer.renderer?.monomerSize.height ?? 0;
   }
 
-  public isMonomersOnSameHorizontalLine(): boolean {
-    if (!this.polymerBond.secondMonomer) return false;
-
-    const monomer1Y = this.polymerBond.firstMonomer.position.y;
-    const monomer2Y = this.polymerBond.secondMonomer.position.y;
-    const difference = monomer1Y - monomer2Y;
-    return difference < 0.5 && difference > -0.5;
-  }
-
   private get isSideChainLikeBackbone() {
-    console.log(
-      'isSideChainLikeBackbone',
-      !this.polymerBond.isSideChainConnection &&
-        this.polymerBond.isCyclicOverlappingBond &&
-        this.isMonomersOnSameHorizontalLine(),
-    );
     return (
       !this.polymerBond.isSideChainConnection &&
-      this.polymerBond.isCyclicOverlappingBond &&
-      this.isMonomersOnSameHorizontalLine()
+      this.polymerBond.isCyclicOverlappingBond
     );
   }
 
@@ -845,7 +829,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     if (this.polymerBond.selected) {
       this.selectionElement?.remove();
       if (
-        (this.isSnakeBond && !this.isMonomersOnSameHorizontalLine()) ||
+        (this.isSnakeBond && !this.polymerBond.isHorizontal) ||
         this.isSideConnectionBondDrawn
       ) {
         this.selectionElement = this.rootElement
@@ -874,7 +858,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   public moveEnd(): void {
     if (
       this.isSnakeBond &&
-      !this.isMonomersOnSameHorizontalLine() &&
+      !this.polymerBond.isHorizontal &&
       this.polymerBond.finished
     ) {
       this.moveSnakeBondEnd();
@@ -917,7 +901,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   public moveStart(): void {
-    if (this.isSnakeBond && !this.isMonomersOnSameHorizontalLine()) {
+    if (this.isSnakeBond && !this.polymerBond.isHorizontal) {
       this.moveSnakeBondStart();
     } else {
       this.moveGraphBondStart();
@@ -955,7 +939,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   protected appendHoverAreaElement(): void {
     if (
-      (this.isSnakeBond && !this.isMonomersOnSameHorizontalLine()) ||
+      (this.isSnakeBond && !this.polymerBond.isHorizontal) ||
       this.isSideConnectionBondDrawn
     ) {
       (<D3SvgElementSelection<SVGPathElement, void> | undefined>(

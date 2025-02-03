@@ -61,9 +61,14 @@ export class PolymerBond extends BaseBond {
     return this.secondMonomer?.getAttachmentPointByBond(this);
   }
 
+  // TODO: Consider moving to DrawingEntitiesManager/RenderersManager to track the state of the bond and avoid excessive calls
   public get isCyclicOverlappingBond() {
     const secondMonomer = this.secondMonomer;
     if (!secondMonomer) {
+      return false;
+    }
+
+    if (!this.isHorizontal && !this.isVertical) {
       return false;
     }
 
@@ -147,5 +152,27 @@ export class PolymerBond extends BaseBond {
 
   public getAnotherMonomer(monomer: BaseMonomer): BaseMonomer | undefined {
     return super.getAnotherEntity(monomer) as BaseMonomer;
+  }
+
+  public get isHorizontal() {
+    if (!this.secondMonomer) {
+      return false;
+    }
+
+    return (
+      Math.abs(this.firstMonomer.position.y - this.secondMonomer.position.y) <
+      0.375
+    );
+  }
+
+  public get isVertical() {
+    if (!this.secondMonomer) {
+      return false;
+    }
+
+    return (
+      Math.abs(this.firstMonomer.position.x - this.secondMonomer.position.x) <
+      0.375
+    );
   }
 }

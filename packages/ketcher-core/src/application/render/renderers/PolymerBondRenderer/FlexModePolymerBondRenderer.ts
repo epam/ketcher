@@ -71,7 +71,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
   public moveSelection(): void {
     if (
       this.previousStateOfIsMonomersOnSameHorizontalLine !==
-      this.isMonomersOnSameHorizontalLine()
+      this.polymerBond.isHorizontal
     ) {
       this.remove();
       this.show();
@@ -81,7 +81,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
       this.moveEnd();
     }
     this.previousStateOfIsMonomersOnSameHorizontalLine =
-      this.isMonomersOnSameHorizontalLine();
+      this.polymerBond.isHorizontal;
   }
 
   // TODO: Specify the types.
@@ -89,7 +89,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     if (this.polymerBond.isCyclicOverlappingBond) {
       this.generateEnvelopingBondPath();
     } else {
-      this.generateBondPath();
+      this.generateLinearBondPath();
     }
 
     this.appendBondGraph(rootElement);
@@ -97,20 +97,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     return this.bodyElement;
   }
 
-  public isMonomersOnSameHorizontalLine(): boolean {
-    if (!this.polymerBond.secondMonomer) {
-      return false;
-    }
-
-    return (
-      Math.abs(
-        this.polymerBond.firstMonomer.position.y -
-          this.polymerBond.secondMonomer.position.y,
-      ) < 0.5
-    );
-  }
-
-  public generateBondPath() {
+  public generateLinearBondPath() {
     const { startPosition, endPosition } = this.scaledPosition;
     this.path = `
       M${startPosition.x},${startPosition.y}
@@ -351,14 +338,11 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
 
-    const path = `
-      M${this.scaledPosition.endPosition.x},${this.scaledPosition.endPosition.y}
-      L${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y}
-    `;
+    this.generateLinearBondPath();
 
-    this.bodyElement.attr('d', path);
-    this.hoverAreaElement.attr('d', path);
-    this.selectionElement?.attr('d', path);
+    this.bodyElement.attr('d', this.path);
+    this.hoverAreaElement.attr('d', this.path);
+    this.selectionElement?.attr('d', this.path);
 
     this.hoverCircleAreaElement
       ?.attr('cx', this.scaledPosition.endPosition.x)
@@ -373,14 +357,11 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     assert(this.bodyElement);
     assert(this.hoverAreaElement);
 
-    const path = `
-      M${this.scaledPosition.startPosition.x},${this.scaledPosition.startPosition.y}
-      L${this.scaledPosition.endPosition.x},${this.scaledPosition.endPosition.y}
-    `;
+    this.generateLinearBondPath();
 
-    this.bodyElement.attr('d', path);
-    this.hoverAreaElement.attr('d', path);
-    this.selectionElement?.attr('d', path);
+    this.bodyElement.attr('d', this.path);
+    this.hoverAreaElement.attr('d', this.path);
+    this.selectionElement?.attr('d', this.path);
   }
 
   protected appendHoverAreaElement(): void {

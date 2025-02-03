@@ -32,4 +32,12 @@ export class MonomerToAtomBond extends BaseBond {
   public get isCyclicOverlappingBond() {
     return false;
   }
+
+  public get isHorizontal() {
+    return false;
+  }
+
+  public get isVertical() {
+    return false;
+  }
 }

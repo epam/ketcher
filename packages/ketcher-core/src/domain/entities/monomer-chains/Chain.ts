@@ -217,6 +217,7 @@ export class Chain {
     return this.length === 1 && this.firstNode instanceof EmptySequenceNode;
   }
 
+  // TODO: This method while being called multiple times (e.g. in isOverlappingCyclicBond) causes performance issues, consider memoization
   public get monomers() {
     return this.nodes.reduce(
       (monomers: BaseMonomer[], node) => [...monomers, ...node.monomers],
@@ -224,6 +225,7 @@ export class Chain {
     );
   }
 
+  // TODO: Currently the only place where bonds are pushed is in SequenceModeRenderer thus it doesn't provide correct data. Collect all bonds in `fromMonomers` method
   public get bonds() {
     return this.subChains.reduce((bonds: PolymerBond[], subChain) => {
       return [...bonds, ...subChain.bonds];

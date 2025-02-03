@@ -407,38 +407,6 @@ export class DrawingEntitiesManager {
     }
   }
 
-  // public rerenderOverlappingBonds(drawingEntity: DrawingEntity | undefined) {
-  public rerenderOverlappingBonds() {
-    // if (drawingEntity instanceof BaseMonomer) {
-    //   const editor = CoreEditor.provideEditorInstance();
-    //
-    //   const cyclesWithMonomer = this.cycles.filter((chain) => chain.monomers.includes(drawingEntity));
-    //   cyclesWithMonomer.forEach((chain) => {
-    //     chain.bonds.forEach((bond) => {
-    //       // if (bond.isCyclicOverlappingBond) {
-    //         editor.renderersContainer.deletePolymerBond(bond);
-    //         editor.renderersContainer.addPolymerBond(bond);
-    //       // }
-    //     });
-    //   });
-    // }
-    const editor = CoreEditor.provideEditorInstance();
-
-    this.polymerBonds.forEach((bond) => {
-      // if (bond.isCyclicOverlappingBond) {
-      editor.renderersContainer.deletePolymerBond(bond);
-      editor.renderersContainer.addPolymerBond(bond);
-      // }
-    });
-
-    // this.cycles.forEach(chain => chain.bonds.forEach(bond => {
-    //   if (bond.isCyclicOverlappingBond) {
-    //     editor.renderersContainer.deletePolymerBond(bond);
-    //     editor.renderersContainer.addPolymerBond(bond);
-    //   }
-    // }));
-  }
-
   public moveSelectedDrawingEntities(
     partOfMovementOffset: Vec2,
     fullMovementOffset?: Vec2,
@@ -899,15 +867,13 @@ export class DrawingEntitiesManager {
 
     command.addOperation(operation);
 
+    this.detectCycles();
+
     if (editor.mode instanceof SnakeMode) {
       command.merge(this.recalculateCanvasMatrix());
     }
 
     command.merge(this.recalculateAntisenseChains());
-
-    console.log('aaa');
-
-    this.detectCycles();
 
     return command;
   }
@@ -2221,8 +2187,8 @@ export class DrawingEntitiesManager {
     const editor = CoreEditor.provideEditorInstance();
 
     this.polymerBonds.forEach((polymerBond) => {
-      editor.renderersContainer.deletePolymerBond(polymerBond);
-      editor.renderersContainer.addPolymerBond(polymerBond);
+      editor.renderersContainer.deletePolymerBond(polymerBond, false, false);
+      editor.renderersContainer.addPolymerBond(polymerBond, false);
     });
   }
 
@@ -3078,7 +3044,6 @@ export class DrawingEntitiesManager {
   public detectCycles() {
     const chainsCollection = ChainsCollection.fromMonomers(this.monomersArray);
     this.cycles = chainsCollection.chains.filter((chain) => chain.isCyclic);
-    console.log(this.cycles);
   }
 }
 

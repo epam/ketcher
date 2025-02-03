@@ -6,6 +6,8 @@ export abstract class BaseBond extends DrawingEntity {
 
   abstract get firstEndEntity(): DrawingEntity;
   abstract get secondEndEntity(): DrawingEntity | undefined;
+  abstract get isHorizontal(): boolean;
+  abstract get isVertical(): boolean;
   abstract get isCyclicOverlappingBond(): boolean;
 
   public get finished() {

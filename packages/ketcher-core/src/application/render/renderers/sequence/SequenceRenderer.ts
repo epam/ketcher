@@ -725,7 +725,7 @@ export class SequenceRenderer {
   }
 
   public static get previousChain() {
-    return SequenceRenderer.chainsCollection.chains[
+    return SequenceRenderer.sequenceViewModel.chains[
       SequenceRenderer.currentChainIndex - 1
     ];
   }
@@ -919,19 +919,15 @@ export class SequenceRenderer {
     } else if (arrowKey === 'ArrowLeft') {
       const previousNodeInSameChain = this.previousNodeInSameChain;
 
-      if (!previousNodeInSameChain?.senseNode) {
-        return;
-      }
-
-      if (previousNodeInSameChain.senseNode) {
+      if (previousNodeInSameChain?.senseNode) {
         modelChanges = SequenceRenderer.getShiftArrowChanges(
           editor,
           previousNodeInSameChain.senseNode.monomer,
         );
-      } else if (SequenceRenderer.previousChain) {
-        const previousChainLastEmptyNode = SequenceRenderer.getLastNode(
-          SequenceRenderer.previousChain,
-        );
+      } else if (SequenceRenderer.previousChain.lastNode.senseNode) {
+        const previousChainLastEmptyNode =
+          SequenceRenderer.previousChain.lastNode.senseNode;
+
         ({ command: modelChanges } =
           editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
             previousChainLastEmptyNode.monomer,

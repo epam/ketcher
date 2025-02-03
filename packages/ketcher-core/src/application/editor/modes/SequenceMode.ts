@@ -579,6 +579,7 @@ export class SequenceMode extends BaseMode {
     modelChanges: Command,
     newNodePosition: Vec2,
     nextNodeInSameChain?: SubChainNode | BackBoneSequenceNode,
+    addPhosphateIfNeeded = true,
   ) {
     if (
       !firstNodeToConnect ||
@@ -604,6 +605,7 @@ export class SequenceMode extends BaseMode {
     }
 
     if (
+      addPhosphateIfNeeded &&
       nextNodeInSameChain instanceof EmptySequenceNode &&
       firstNodeToConnect instanceof Nucleoside &&
       (secondNodeToConnect instanceof Nucleotide ||
@@ -1082,7 +1084,6 @@ export class SequenceMode extends BaseMode {
         ],
         handler: (event) => {
           const arrowKey = event.key;
-
           if (
             SequenceRenderer.caretPosition === 0 &&
             arrowKey === 'ArrowLeft'
@@ -1824,6 +1825,7 @@ export class SequenceMode extends BaseMode {
         previousSelectionNode,
         Boolean(hasPreviousNodeInChain),
         Boolean(hasNextNodeInChain),
+        false,
       ),
     );
 
@@ -2065,6 +2067,7 @@ export class SequenceMode extends BaseMode {
     previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
     needConnectWithPreviousNodeInChain = true,
     needConnectWithNextNodeInChain = true,
+    addPhosphateIfNeeded = true,
   ) {
     const chainsCollection =
       chainsCollectionOrNode instanceof ChainsCollection
@@ -2092,6 +2095,7 @@ export class SequenceMode extends BaseMode {
         modelChanges,
         newNodePosition,
         currentNode,
+        addPhosphateIfNeeded,
       );
     }
 
@@ -2101,6 +2105,8 @@ export class SequenceMode extends BaseMode {
         currentNode,
         modelChanges,
         newNodePosition,
+        undefined,
+        addPhosphateIfNeeded,
       );
     }
 

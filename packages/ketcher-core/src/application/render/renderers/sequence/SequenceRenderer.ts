@@ -103,6 +103,10 @@ export class SequenceRenderer {
   }
 
   private static addNewEmptyChainIfNeeded(chainBeforeNewEmptyChainIndex) {
+    if (this.sequenceViewModel.hasOnlyOneNewChain) {
+      return;
+    }
+
     const emptyChainIndex = isNumber(chainBeforeNewEmptyChainIndex)
       ? chainBeforeNewEmptyChainIndex + 1
       : undefined;

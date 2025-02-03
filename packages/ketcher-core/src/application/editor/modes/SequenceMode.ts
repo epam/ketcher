@@ -986,16 +986,11 @@ export class SequenceMode extends BaseMode {
           const editor = CoreEditor.provideEditorInstance();
           const history = new EditorHistory(editor);
           const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
-          const currentSenseNode = currentTwoStrandedNode?.senseNode;
           const currentAntisenseNode = currentTwoStrandedNode?.antisenseNode;
           const previousTwoStrandedNode =
             (currentTwoStrandedNode &&
               SequenceRenderer.getPreviousNode(currentTwoStrandedNode)) ||
             undefined;
-          const previousNode = previousTwoStrandedNode?.senseNode;
-          const isSenseChain =
-            currentSenseNode?.monomer.monomerItem.isSense ||
-            previousNode?.monomer.monomerItem.isSense;
           const insertNewSequenceItemResult = this.insertNewSequenceItem(
             editor,
             enteredSymbol,
@@ -1011,7 +1006,8 @@ export class SequenceMode extends BaseMode {
           if (
             (addedNode instanceof Nucleotide ||
               addedNode instanceof Nucleoside) &&
-            isSenseChain
+            (currentTwoStrandedNode?.antisenseNode ||
+              previousTwoStrandedNode?.antisenseNode)
           ) {
             const antisenseNodeCreationResult =
               DrawingEntitiesManager.createAntisenseNode(

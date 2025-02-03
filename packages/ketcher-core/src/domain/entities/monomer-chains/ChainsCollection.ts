@@ -400,6 +400,15 @@ export class ChainsCollection {
     while (chains.length) {
       const { group, chain } = chains.pop() as GrouppedChain;
       chain.forEachNode(({ node }) => {
+        const complimentaryChainsWithData =
+          this.getComplimentaryChainsWithData(chain);
+
+        if (complimentaryChainsWithData.length === 0) {
+          handledChains.add(chain);
+
+          return;
+        }
+
         node.monomers.forEach((nodeMonomer) => {
           const { monomer, complimentaryMonomer } =
             this.getFirstComplimentaryMonomer(nodeMonomer) || {};
@@ -419,8 +428,7 @@ export class ChainsCollection {
           if (
             !complimentaryNode ||
             !complimentaryChain ||
-            !isRnaMonomer ||
-            !isRnaComplimentaryMonomer ||
+            !(isRnaMonomer || isRnaComplimentaryMonomer) ||
             handledChains.has(complimentaryChain)
           ) {
             return;

@@ -117,7 +117,10 @@ export class ChainsCollection {
         });
       });
     });
+
     this.chains = [...reorderedChains.values()];
+
+    this.reorderChainsPutSenseChainOrderInAccordanceAntisenseConnection();
   }
 
   public add(chain: Chain) {
@@ -420,6 +423,89 @@ export class ChainsCollection {
     }
   }
 
+  private getComplimentaryChainIfNucleotide(node: SubChainNode) {
+    const monomerToChain = this.monomerToChain;
+
+    const { monomer, complimentaryMonomer } =
+    this.getFirstAntisenseMonomerInNode(node) || {};
+    const complimentaryNode =
+      complimentaryMonomer && this.monomerToNode.get(complimentaryMonomer);
+    const complimentaryChain =
+      complimentaryMonomer && monomerToChain.get(complimentaryMonomer);
+
+    const isRnaMonomer =
+      isRnaBaseOrAmbiguousRnaBase(monomer) &&
+      Boolean(getSugarFromRnaBase(monomer));
+    const isRnaComplimentaryMonomer =
+      isRnaBaseOrAmbiguousRnaBase(complimentaryMonomer) &&
+      Boolean(getSugarFromRnaBase(complimentaryMonomer));
+
+    if (
+      !complimentaryNode ||
+      !complimentaryChain ||
+      !(isRnaMonomer || isRnaComplimentaryMonomer)
+    ) {
+      return null;
+    }
+    return { complimentaryChain, complimentaryNode };
+  }
+
+  private reorderChainsPutSenseChainOrderInAccordanceAntisenseConnection() {
+    const handledChain = new Set<Chain>();
+    const reorderedSenseForSequentialAntisenseChains: Chain[] = new Array(
+      this.chains.length,
+    );
+    this.chains.forEach((chain) => {
+      if (!handledChain.has(chain)) {
+        reorderedSenseForSequentialAntisenseChains[handledChain.size] = chain;
+        handledChain.add(chain);
+      }
+
+      if (chain.isAntisense) {
+        return;
+      }
+
+      chain.forEachNode(({ node: sNode }) => {
+        const {
+          complimentaryChain: antisenseChain,
+          complimentaryNode: antisenseNode,
+        } = this.getComplimentaryChainIfNucleotide(sNode) ?? {};
+        if (!antisenseChain) {
+          return;
+        }
+
+        let isFindCur = false;
+        antisenseChain.forEachNode(({ node: aNode }) => {
+          if (aNode === antisenseNode) {
+            isFindCur = true;
+          }
+          if (!isFindCur) {
+            const { complimentaryChain: anotherSenseChain } =
+            this.getComplimentaryChainIfNucleotide(aNode) ?? {};
+            if (anotherSenseChain && !handledChain.has(anotherSenseChain)) {
+              const curChainIdx =
+                reorderedSenseForSequentialAntisenseChains.findIndex(
+                  (v) => v === chain,
+                );
+              let last = anotherSenseChain;
+              for (
+                let i = curChainIdx;
+                i < reorderedSenseForSequentialAntisenseChains.length;
+                i++
+              ) {
+                const tmp = reorderedSenseForSequentialAntisenseChains[i];
+                reorderedSenseForSequentialAntisenseChains[i] = last;
+                last = tmp;
+              }
+              handledChain.add(anotherSenseChain);
+            }
+          }
+        });
+      });
+    });
+    this.chains = [...reorderedSenseForSequentialAntisenseChains];
+  }
+
   // for example
   // 1 x x x
   //   |
@@ -445,36 +531,17 @@ export class ChainsCollection {
       const { group, chain } = chains.pop() as GrouppedChain;
 
       chain.forEachNode(({ node }) => {
-        node.monomers.forEach((nodeMonomer) => {
-          const { monomer, complimentaryMonomer } =
-            this.getFirstComplimentaryMonomer(nodeMonomer) || {};
-          const complimentaryNode =
-            complimentaryMonomer && monomerToNode.get(complimentaryMonomer);
-          const complimentaryChain =
-            complimentaryMonomer && monomerToChain.get(complimentaryMonomer);
+        const { complimentaryChain } =
+        this.getComplimentaryChainIfNucleotide(node) ?? {};
 
-          const isRnaMonomer =
-            isRnaBaseOrAmbiguousRnaBase(monomer) &&
-            Boolean(getSugarFromRnaBase(monomer));
-          const isRnaComplimentaryMonomer =
-            isRnaBaseOrAmbiguousRnaBase(complimentaryMonomer) &&
-            Boolean(getSugarFromRnaBase(complimentaryMonomer));
+        if (!complimentaryChain || handledChains.has(complimentaryChain) || cycledComplimentaryChains.has(complimentaryChain)) {
+          return;
+        }
 
-          if (
-            !complimentaryNode ||
-            !complimentaryChain ||
-            !(isRnaMonomer || isRnaComplimentaryMonomer) ||
-            handledChains.has(complimentaryChain) ||
-            cycledComplimentaryChains.has(complimentaryChain)
-          ) {
-            return;
-          }
-
-          handledChains.add(complimentaryChain);
-          const el = { chain: complimentaryChain, group: Number(!group) };
-          chains.push(el);
-          res.push(el);
-        });
+        handledChains.add(complimentaryChain);
+        const el = { chain: complimentaryChain, group: Number(!group) };
+        chains.push(el);
+        res.push(el);
       });
     }
 

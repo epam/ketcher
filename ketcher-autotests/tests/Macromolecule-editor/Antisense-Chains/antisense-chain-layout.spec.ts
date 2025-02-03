@@ -767,38 +767,31 @@ test(`8. Check that multiple backbones/chains can be placed in on a line if they
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 
-test(
-  `9. Check if there is a circular hydrogen bond connection between three or more chains, 
-      those hydrogen bonds should be considered as side chain connection for layout purposes`,
-  { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/6184
-     * Description: Check if there is a circular hydrogen bond connection between three or more chains,
-     *              those hydrogen bonds should be considered as side chain connection for layout purposes
-     * Case:
-     *       1. Load very long chain with short antisense connected on the canvas
-     *       2. Take screenshot to validate layout
-     *
-     *  WARNING: Some test tesults are wrong because of bugs:
-     *  https://github.com/epam/ketcher/issues/6201
-     */
-    test.setTimeout(20000);
+test(`9. Check if there is a circular hydrogen bond connection between three or more chains, 
+      those hydrogen bonds should be considered as side chain connection for layout purposes`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6184
+   * Description: Check if there is a circular hydrogen bond connection between three or more chains,
+   *              those hydrogen bonds should be considered as side chain connection for layout purposes
+   * Case:
+   *       1. Load very long chain with short antisense connected on the canvas
+   *       2. Take screenshot to validate layout
+   */
+  test.setTimeout(20000);
 
-    await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      page,
-      MacroFileType.HELM,
-      'RNA1{R(C)P.R(A)P.R(A)P}|' +
-        'RNA2{R(G)P.R(T)P.R(U)P}|' +
-        'RNA3{R(C)P.R(A)P.R(A)P}$' +
-        'RNA1,RNA2,8:pair-8:pair|' +
-        'RNA2,RNA3,2:pair-2:pair|' +
-        'RNA3,RNA1,8:pair-2:pair$$$V2.0',
-    );
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(C)P.R(A)P.R(A)P}|' +
+      'RNA2{R(G)P.R(T)P.R(U)P}|' +
+      'RNA3{R(C)P.R(A)P.R(A)P}$' +
+      'RNA1,RNA2,8:pair-8:pair|' +
+      'RNA2,RNA3,2:pair-2:pair|' +
+      'RNA3,RNA1,8:pair-2:pair$$$V2.0',
+  );
 
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
-  },
-);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
 
 for (const leftMonomer of eligibleForAntisenseMonomerList) {
   for (const rightMonomer of eligibleForAntisenseMonomerList) {

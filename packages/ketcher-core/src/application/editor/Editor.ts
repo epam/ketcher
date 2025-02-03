@@ -438,6 +438,14 @@ export class CoreEditor {
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {
+    if (
+      this.mode instanceof SequenceMode &&
+      !this.isSequenceEditMode &&
+      SequenceRenderer.chainsCollection.length === 0
+    ) {
+      this.mode.turnOnEditMode();
+    }
+
     if (this.mode instanceof SequenceMode) {
       this.mode.insertMonomerFromLibrary(monomer);
     } else {
@@ -446,6 +454,14 @@ export class CoreEditor {
   }
 
   private onSelectRNAPreset(preset: IRnaPreset) {
+    if (
+      this.mode instanceof SequenceMode &&
+      !this.isSequenceEditMode &&
+      SequenceRenderer.chainsCollection.length === 0
+    ) {
+      this.mode.turnOnEditMode();
+    }
+
     if (this.mode instanceof SequenceMode) {
       this.mode.insertPresetFromLibrary(preset);
     } else {

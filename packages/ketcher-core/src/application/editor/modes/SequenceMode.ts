@@ -4,8 +4,8 @@ import { BaseMode } from 'application/editor/modes/BaseMode';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
 import {
-  TwoStrandedNodesSelection,
   SequenceRenderer,
+  TwoStrandedNodesSelection,
 } from 'application/render/renderers/sequence/SequenceRenderer';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { Command } from 'domain/entities/Command';
@@ -72,6 +72,11 @@ enum Direction {
 
 export interface StartNewSequenceEventData {
   indexOfRowBefore: number;
+}
+
+interface PreservedHydrogenBonds {
+  toMonomer: BaseMonomer;
+  fromMonomer: BaseMonomer;
 }
 
 export class SequenceMode extends BaseMode {
@@ -1335,6 +1340,19 @@ export class SequenceMode extends BaseMode {
     const position = selectedNode.monomer.position;
     const sideChainConnections =
       this.preserveSideChainConnections(selectedNode);
+    const preservedHydrodenBonds = selectedNode.monomers.reduce(
+      (acc, monomer) => {
+        return acc.concat(
+          monomer.hydrogenBonds.map((hydrodenBond) => {
+            return {
+              toMonomer: hydrodenBond.getAnotherMonomer(monomer) as BaseMonomer,
+              fromMonomer: monomer,
+            };
+          }),
+        );
+      },
+      [] as PreservedHydrogenBonds[],
+    );
     const hasPreviousNodeInChain =
       selectedNode.firstMonomerInNode.attachmentPointsToBonds.R1;
     const hasNextNodeInChain =
@@ -1391,6 +1409,18 @@ export class SequenceMode extends BaseMode {
           secondMonomer,
           firstMonomerAttachmentPointName,
           secondMonomerAttachmentPointName,
+        ),
+      );
+    });
+
+    preservedHydrodenBonds.forEach(({ toMonomer }) => {
+      modelChanges.merge(
+        editor.drawingEntitiesManager.createPolymerBond(
+          newMonomer,
+          toMonomer,
+          AttachmentPointName.HYDROGEN,
+          AttachmentPointName.HYDROGEN,
+          MACROMOLECULES_BOND_TYPES.HYDROGEN,
         ),
       );
     });
@@ -1648,7 +1678,7 @@ export class SequenceMode extends BaseMode {
       } else {
         this.replaceSelectionsWithMonomer(selections, monomerItem);
       }
-    } else {
+    } else if (editor.isSequenceEditMode) {
       const newNodePosition = this.getNewNodePosition();
 
       const newMonomer = editor.drawingEntitiesManager.createMonomer(
@@ -1680,7 +1710,9 @@ export class SequenceMode extends BaseMode {
 
       modelChanges.addOperation(new ReinitializeModeOperation());
       editor.renderersContainer.update(modelChanges);
-      SequenceRenderer.moveCaretForward();
+      SequenceRenderer.setCaretPositionNextToMonomer(
+        newMonomerSequenceNode.lastMonomerInNode,
+      );
       history.update(modelChanges);
     }
 
@@ -1754,6 +1786,19 @@ export class SequenceMode extends BaseMode {
 
     const sideChainConnections =
       this.preserveSideChainConnections(selectedNode);
+    const preservedHydrodenBonds = selectedNode.monomers.reduce(
+      (acc, monomer) => {
+        return acc.concat(
+          monomer.hydrogenBonds.map((hydrodenBond) => {
+            return {
+              toMonomer: hydrodenBond.getAnotherMonomer(monomer) as BaseMonomer,
+              fromMonomer: monomer,
+            };
+          }),
+        );
+      },
+      [] as PreservedHydrogenBonds[],
+    );
 
     selectedNode.monomers.forEach((monomer) => {
       modelChanges.merge(editor.drawingEntitiesManager.deleteMonomer(monomer));
@@ -1813,6 +1858,39 @@ export class SequenceMode extends BaseMode {
           secondMonomer,
           firstMonomerAttachmentPointName,
           secondMonomerAttachmentPointName,
+        ),
+      );
+    });
+
+    preservedHydrodenBonds.forEach(({ toMonomer, fromMonomer }) => {
+      let monomerForHydrogenBond: BaseMonomer | undefined;
+
+      if (
+        newPresetNode instanceof Nucleotide ||
+        newPresetNode instanceof Nucleoside
+      ) {
+        monomerForHydrogenBond =
+          fromMonomer instanceof RNABase
+            ? newPresetNode.rnaBase
+            : fromMonomer instanceof Sugar
+            ? newPresetNode.sugar
+            : newPresetNode instanceof Nucleotide &&
+              fromMonomer instanceof Phosphate
+            ? newPresetNode.phosphate
+            : undefined;
+      }
+
+      if (!monomerForHydrogenBond) {
+        return;
+      }
+
+      modelChanges.merge(
+        editor.drawingEntitiesManager.createPolymerBond(
+          monomerForHydrogenBond,
+          toMonomer,
+          AttachmentPointName.HYDROGEN,
+          AttachmentPointName.HYDROGEN,
+          MACROMOLECULES_BOND_TYPES.HYDROGEN,
         ),
       );
     });
@@ -1894,7 +1972,7 @@ export class SequenceMode extends BaseMode {
       } else {
         this.replaceSelectionsWithPreset(selections, preset);
       }
-    } else {
+    } else if (editor.isSequenceEditMode) {
       const newNodePosition = this.getNewNodePosition();
 
       const newPresetNode = this.createRnaPresetNode(preset, newNodePosition);
@@ -1920,7 +1998,9 @@ export class SequenceMode extends BaseMode {
 
       modelChanges.addOperation(new ReinitializeModeOperation());
       editor.renderersContainer.update(modelChanges);
-      SequenceRenderer.moveCaretForward();
+      SequenceRenderer.setCaretPositionNextToMonomer(
+        newPresetNode.lastMonomerInNode,
+      );
       history.update(modelChanges);
     }
   }

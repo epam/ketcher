@@ -26,8 +26,8 @@ export class NucleotideSequenceItemRenderer extends RNASequenceItemRenderer {
           'fill',
           this.isSequenceEditInRnaBuilderModeTurnedOn ? '#24545A' : '#585858',
         )
-        .attr('cx', '10')
-        .attr('cy', '-16');
+        .attr('cx', '12')
+        .attr('cy', '-17');
     }
   }
 }

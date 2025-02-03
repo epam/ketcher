@@ -91,7 +91,7 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
       this.monomer.attachmentPointsToBonds[attachmentPointName]?.renderer;
     if (!renderer) return false;
     if ('isSnake' in renderer) {
-      return renderer.isSnake && !renderer.isMonomersOnSameHorizontalLine();
+      return renderer.isSnake && !renderer.polymerBond.isHorizontal;
     }
     return false;
   }

@@ -41,6 +41,16 @@ export enum StandardAmbiguousRnaBase {
   S = 'S',
 }
 
+export const ambiguousMapping: Record<string, string> = {
+  rY: 'Y',
+  rW: 'W',
+  rK: 'K',
+  rB: 'B',
+  rD: 'D',
+  rH: 'H',
+  rN: 'N',
+};
+
 export const rnaDnaNaturalAnalogues = [
   RnaDnaNaturalAnaloguesEnum.ADENINE,
   RnaDnaNaturalAnaloguesEnum.THYMINE,

@@ -8,7 +8,10 @@ import {
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
 } from 'application/formatters';
-import { MONOMER_CLASS_TO_CONSTRUCTOR } from 'domain/constants/monomers';
+import {
+  ambiguousMapping,
+  MONOMER_CLASS_TO_CONSTRUCTOR,
+} from 'domain/constants/monomers';
 import { IVariantMonomer } from 'domain/entities/types';
 import { AmbiguousMonomerType, AttachmentPointName } from 'domain/types';
 import { PeptideSubChain } from 'domain/entities/monomer-chains/PeptideSubChain';
@@ -25,12 +28,18 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
     position?: Vec2,
     generateId = true,
   ) {
-    const variantMonomerLabel =
+    let variantMonomerLabel: string;
+    if (
       variantMonomerItem.subtype ===
         KetAmbiguousMonomerTemplateSubType.MIXTURE ||
-      variantMonomerItem.label?.length > 1
-        ? DEFAULT_VARIANT_MONOMER_LABEL
-        : variantMonomerItem.label;
+      (variantMonomerItem.label && variantMonomerItem.label.length > 1)
+    ) {
+      variantMonomerLabel =
+        ambiguousMapping[variantMonomerItem.id] ||
+        DEFAULT_VARIANT_MONOMER_LABEL;
+    } else {
+      variantMonomerLabel = variantMonomerItem.label;
+    }
 
     super(
       {

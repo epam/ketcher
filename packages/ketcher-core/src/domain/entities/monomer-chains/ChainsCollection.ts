@@ -380,6 +380,46 @@ export class ChainsCollection {
     return undefined;
   }
 
+  private findCycledComplimentaryChains(
+    chain: Chain,
+    startChain: Chain,
+    previousChain?: Chain,
+  ): Chain[] {
+    const complimentaryChainsWithData =
+      this.getComplimentaryChainsWithData(chain);
+
+    if (complimentaryChainsWithData.length === 0) {
+      return [];
+    }
+
+    const complimentaryChainGoesToStartChain = complimentaryChainsWithData.find(
+      (complimentaryChainsWithData) =>
+        complimentaryChainsWithData.complimentaryChain !== previousChain &&
+        complimentaryChainsWithData.complimentaryChain === startChain,
+    );
+
+    if (complimentaryChainGoesToStartChain) {
+      return [chain];
+    } else {
+      return complimentaryChainsWithData.reduce(
+        (acc, complimentaryChainWithData) => {
+          return complimentaryChainWithData.complimentaryChain === startChain ||
+            complimentaryChainWithData.complimentaryChain === previousChain
+            ? [...acc]
+            : [
+                ...acc,
+                ...this.findCycledComplimentaryChains(
+                  complimentaryChainWithData.complimentaryChain,
+                  startChain,
+                  chain,
+                ),
+              ];
+        },
+        [] as Chain[],
+      );
+    }
+  }
+
   // for example
   // 1 x x x
   //   |
@@ -392,6 +432,9 @@ export class ChainsCollection {
   // in the picture we have 5 chains, if we pass number 1 it return 1, 2 and 3, if pass 5, return 4, 5
   public getAllChainsWithConnectionInBlock(c: Chain) {
     const chains: GrouppedChain[] = [{ group: 0, chain: c }];
+    const cycledComplimentaryChains = new Set<Chain>(
+      this.findCycledComplimentaryChains(c, c),
+    );
 
     const res: GrouppedChain[] = [{ group: 0, chain: c }];
     const handledChains = new Set<Chain>([c]);
@@ -399,16 +442,8 @@ export class ChainsCollection {
 
     while (chains.length) {
       const { group, chain } = chains.pop() as GrouppedChain;
+
       chain.forEachNode(({ node }) => {
-        const complimentaryChainsWithData =
-          this.getComplimentaryChainsWithData(chain);
-
-        if (complimentaryChainsWithData.length === 0) {
-          handledChains.add(chain);
-
-          return;
-        }
-
         node.monomers.forEach((nodeMonomer) => {
           const { monomer, complimentaryMonomer } =
             this.getFirstComplimentaryMonomer(nodeMonomer) || {};
@@ -429,7 +464,8 @@ export class ChainsCollection {
             !complimentaryNode ||
             !complimentaryChain ||
             !(isRnaMonomer || isRnaComplimentaryMonomer) ||
-            handledChains.has(complimentaryChain)
+            handledChains.has(complimentaryChain) ||
+            cycledComplimentaryChains.has(complimentaryChain)
           ) {
             return;
           }
@@ -451,7 +487,6 @@ export class ChainsCollection {
 
   public getComplimentaryChainsWithData(
     chain: Chain,
-    chainsToExclude: Chain[] = [],
   ): ComplimentaryChainsWithData[] {
     const complimentaryChainsWithData: ComplimentaryChainsWithData[] = [];
     const handledChains = new Set<Chain>();
@@ -486,35 +521,7 @@ export class ChainsCollection {
       });
     });
 
-    const filteredComplimentaryChainsWithData =
-      complimentaryChainsWithData.filter((complimentaryChainWithData) => {
-        return !chainsToExclude.includes(
-          complimentaryChainWithData.complimentaryChain,
-        );
-      });
-
-    return filteredComplimentaryChainsWithData.length === 1 ||
-      // If there is a cycle from complimentary chains
-      // (f.e chain1 -> chain2 -> chain3 -> chain1, connected through hydrogen bonds to rna base)
-      // then method returns 0 complimentary chains.
-      // It further allows to handle them as separate chains (not sense -> antisense)
-      !filteredComplimentaryChainsWithData.some(
-        (complimentaryChainWithData) => {
-          const complimentaryChainsForComplimentaryChain =
-            this.getComplimentaryChainsWithData(
-              complimentaryChainWithData.complimentaryChain,
-              [...chainsToExclude, chain],
-            );
-
-          return complimentaryChainsForComplimentaryChain.some(
-            (complimentaryChainForComplimentaryChain) =>
-              complimentaryChainForComplimentaryChain.complimentaryChain !==
-              chain,
-          );
-        },
-      )
-      ? filteredComplimentaryChainsWithData
-      : [];
+    return complimentaryChainsWithData;
   }
 
   public getAntisenseChainsWithData(chain: Chain) {

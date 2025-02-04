@@ -1,4 +1,5 @@
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+
 import { peptideMonomerItem } from '../../mock-data';
 import { Vec2 } from 'domain/entities';
 import { Peptide } from 'domain/entities/Peptide';

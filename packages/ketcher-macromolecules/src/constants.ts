@@ -65,3 +65,10 @@ export const NoNaturalAnalogueGroupTitle = 'No natural analogue';
 
 export const DNA_TEMPLATE_NAME_PART = 'thymine';
 export const RNA_TEMPLATE_NAME_PART = 'uracil';
+
+export const LIBRARY_TAB_INDEX = {
+  FAVORITES: 0,
+  PEPTIDES: 1,
+  RNA: 2,
+  CHEM: 3,
+};

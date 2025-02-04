@@ -807,8 +807,6 @@ export class DrawingEntitiesManager {
       this.polymerBonds.set(_polymerBond.id, _polymerBond);
       firstMonomer.setBond(firstMonomerAttachmentPoint, _polymerBond);
       secondMonomer.setBond(secondMonomerAttachmentPoint, _polymerBond);
-      // TODO: To re-detect cycles on undo for bond removal, check if it could be done better
-      this.detectCycles();
       return _polymerBond;
     }
 
@@ -3042,8 +3040,8 @@ export class DrawingEntitiesManager {
 
   public detectCycles() {
     const chainsCollection = ChainsCollection.fromMonomers(this.monomersArray);
-    // TODO: Detect cycles properly with side-chains/hydrogen bonds and filter them here
-    this.cycles = chainsCollection.chains;
+    // TODO: Detect cycles properly with side-chains/hydrogen bonds
+    this.cycles = chainsCollection.chains.filter((chain) => chain.isCyclic);
   }
 }
 

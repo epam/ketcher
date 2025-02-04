@@ -2257,7 +2257,9 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
     const modelChanges =
       editor.drawingEntitiesManager.unselectAllDrawingEntities();
-    modelChanges.merge(SequenceRenderer.unselectEmptySequenceNodes());
+    modelChanges.merge(
+      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(),
+    );
     editor.renderersContainer.update(modelChanges);
   }
 

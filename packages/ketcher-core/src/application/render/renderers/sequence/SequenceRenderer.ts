@@ -398,6 +398,7 @@ export class SequenceRenderer {
   }
 
   public static setCaretPosition(caretPosition: SequencePointer) {
+    const editor = CoreEditor.provideEditorInstance();
     const oldActiveTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
     if (oldActiveTwoStrandedNode) {
@@ -423,10 +424,13 @@ export class SequenceRenderer {
     assert(renderer instanceof BaseSequenceItemRenderer);
 
     renderer.isEditingSymbol = true;
-    renderer?.showCaret();
     if (renderer.antisenseNodeRenderer) {
       renderer.antisenseNodeRenderer.isEditingSymbol = true;
-      renderer.antisenseNodeRenderer.showCaret();
+    }
+
+    if (editor.isSequenceEditMode) {
+      renderer?.showCaret();
+      renderer?.antisenseNodeRenderer?.showCaret();
     }
   }
 
@@ -1036,23 +1040,31 @@ export class SequenceRenderer {
     return modelChanges;
   }
 
-  public static unselectEmptySequenceNodes() {
+  public static unselectEmptyAndBackboneSequenceNodes() {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
     SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
-      if (twoStrandedNode.senseNode instanceof EmptySequenceNode) {
+      if (
+        twoStrandedNode.senseNode instanceof EmptySequenceNode ||
+        twoStrandedNode.senseNode instanceof BackBoneSequenceNode
+      ) {
         command.merge(
           editor.drawingEntitiesManager.unselectDrawingEntity(
             twoStrandedNode.senseNode.monomer,
           ),
         );
+        twoStrandedNode.senseNode.renderer?.removeSelection();
       }
-      if (twoStrandedNode.antisenseNode instanceof EmptySequenceNode) {
+      if (
+        twoStrandedNode.antisenseNode instanceof EmptySequenceNode ||
+        twoStrandedNode.antisenseNode instanceof BackBoneSequenceNode
+      ) {
         command.merge(
           editor.drawingEntitiesManager.unselectDrawingEntity(
             twoStrandedNode.antisenseNode.monomer,
           ),
         );
+        twoStrandedNode.antisenseNode.renderer?.removeSelection();
       }
     });
     return command;

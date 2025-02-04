@@ -48,6 +48,4 @@ export class BackBoneSequenceNode {
   public get modified() {
     return false;
   }
-
-  public getFirstConnectedNode;
 }

@@ -27,7 +27,6 @@ import {
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
 } from '@utils';
-import { pageReload } from '@utils/common/helpers';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -211,8 +210,6 @@ test.describe('Side chain connections', () => {
     /* All canvases (4 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected by all possible combinations horisontally. 
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await pageReload(page);
     await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
     await hideLibrary(page);
@@ -231,8 +228,6 @@ test.describe('Side chain connections', () => {
     /* All canvases (4 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected by all possible combinations horisontally. 
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await pageReload(page);
     await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
     await hideLibrary(page);
@@ -272,7 +267,6 @@ test.describe('Side chain connections', () => {
     /* All canvases (7 in total) contain all combinations of all types on mnomers (except unresolved monomer because of bug) 
     /* connected by all possible combinations. 
     */
-    await pageReload(page);
     await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
     await hideLibrary(page);
@@ -394,8 +388,6 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-      await pageReload(page);
       await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
       await hideLibrary(page);
@@ -593,8 +585,6 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-      await pageReload(page);
       await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
       await hideLibrary(page);
@@ -650,8 +640,6 @@ test.describe('Side chain connections', () => {
     /* Screenshot should be updated after fix.
     /*
     */
-      // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-      await pageReload(page);
       await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
       await hideLibrary(page);
@@ -953,8 +941,6 @@ test.describe('Side chain connections', () => {
     /*
     /* Case 8: Verify display of side-chain connections when switching from snake mode to flex mode
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await pageReload(page);
     await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
     await hideLibrary(page);
@@ -1068,8 +1054,6 @@ test.describe('Side chain connections', () => {
     /*
     /* Case 14: Verify deletion of a side-chain connection in a complex RNA structure and Undo
     */
-    // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await pageReload(page);
     await selectFlexLayoutModeTool(page);
     // Closing Library to enlarge canvas
     await hideLibrary(page);

@@ -21,7 +21,7 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   TypeDropdownOptions,
 } from '@utils';
-import { closeErrorMessage, pageReload } from '@utils/common/helpers';
+import { closeErrorMessage } from '@utils/common/helpers';
 import {
   turnOnMacromoleculesEditor,
   waitForMonomerPreview,
@@ -269,7 +269,6 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     test.slow();
 
-    await pageReload(page);
     await selectTopPanelButton(TopPanelButton.Open, page);
 
     const filename = 'FASTA/fasta-rna-musculus-rearranged.fasta';
@@ -748,8 +747,6 @@ test.describe('Import correct FASTA file: ', () => {
     shouldFail?: boolean;
     // issueNumber is mandatory if shouldFail === true
     issueNumber?: string;
-    // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-    pageReloadNeeded?: boolean;
   }
 
   const correctFASTAFiles: IFASTAFile[] = [
@@ -799,7 +796,6 @@ test.describe('Import correct FASTA file: ', () => {
       Case: 1. Load FASTA file 
             2. Take screenshot to make sure import works correct
       */
-      if (correctFASTAFile.pageReloadNeeded) await pageReload(page);
       // Test should be skipped if related bug exists
       test.fixme(
         correctFASTAFile.shouldFail === true,

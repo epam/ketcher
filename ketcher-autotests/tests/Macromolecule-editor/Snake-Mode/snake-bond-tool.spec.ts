@@ -27,7 +27,6 @@ import {
   resetZoomLevelToDefault,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { pageReload } from '@utils/common/helpers';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -477,7 +476,6 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake bond for chain with side chains', async () => {
-    await pageReload(page);
     await goToRNATab(page);
     const { phosphate } = await addRnaPresetOnCanvas(
       page,

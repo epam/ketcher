@@ -27,7 +27,6 @@ import {
   setZoomInputValue,
   resetCurrentTool,
 } from '@utils';
-import { pageReload } from '@utils/common/helpers';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -98,8 +97,6 @@ interface IMonomer {
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
   issueNumber?: string;
-  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-  pageReloadNeeded?: boolean;
 }
 
 // Unable to stabilize because of Undo/redo shift object on the canvas
@@ -114,14 +111,12 @@ interface IMonomer {
 //       KETFile:
 //         'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
 //       monomerLocatorText: 'D',
-//       pageReloadNeeded: true,
 //     },
 //     {
 //       monomerDescription: '2. Sugar UNA (from library)',
 //       KETFile:
 //         'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
 //       monomerLocatorText: 'UNA',
-//       pageReloadNeeded: true,
 //     },
 //     {
 //       monomerDescription: '3. Base hU (from library)',
@@ -134,7 +129,6 @@ interface IMonomer {
 //       KETFile:
 //         'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
 //       monomerLocatorText: 'bnn',
-//       pageReloadNeeded: true,
 //     },
 //     {
 //       monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
@@ -224,7 +218,6 @@ interface IMonomer {
 //       KETFile:
 //         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/12. Base A+C (ambiguous, mixed).ket',
 //       monomerLocatorText: '%',
-//       pageReloadNeeded: true,
 //     },
 //     {
 //       monomerDescription: '19. Phosphate bnn,cmp,nen (ambiguous, alternatives)',
@@ -237,7 +230,6 @@ interface IMonomer {
 //       KETFile:
 //         'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/14. Phosphate bnn+cmp+nen (ambiguous, mixed).ket',
 //       monomerLocatorText: '%',
-//       pageReloadNeeded: true,
 //     },
 //     {
 //       monomerDescription:
@@ -274,11 +266,6 @@ interface IMonomer {
 //        *       6. Take screenshot to witness final position
 //        *       7. Press Undo button to witness initial position
 //        */
-//       if (movableCollapsedMonomer.pageReloadNeeded) {
-//         await pageReload(page);
-//         await turnOnMicromoleculesEditor(page);
-//       }
-
 //       await openFileAndAddToCanvasAsNewProject(
 //         movableCollapsedMonomer.KETFile,
 //         page,
@@ -319,7 +306,6 @@ const movableExpandedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
     monomerLocatorText: 'D',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '2. Sugar UNA (from library)',
@@ -370,10 +356,6 @@ test.describe('Move in expanded state on Micro canvas: ', () => {
        *       3. Grab it and move it to the top left corner
        *       6. Take screenshot to witness final position
        */
-      if (movableExpandedMonomer.pageReloadNeeded) {
-        await pageReload(page);
-        await turnOnMicromoleculesEditor(page);
-      }
       await openFileAndAddToCanvasAsNewProject(
         movableExpandedMonomer.KETFile,
         page,
@@ -414,10 +396,6 @@ test.describe('Move expanded monomer on Micro and Undo: ', () => {
        *       7. Press Undo button
        *       8. Take screenshot to witness initial position
        */
-      if (movableExpandedMonomer.pageReloadNeeded) {
-        await pageReload(page);
-        await turnOnMicromoleculesEditor(page);
-      }
       await openFileAndAddToCanvasAsNewProject(
         movableExpandedMonomer.KETFile,
         page,
@@ -664,7 +642,6 @@ test(`Verify that expanding multiple monomers works in a left-to-right order wit
    *       3. Expand all monomers from  chain (from right to left)
    *       4. Take screenshot to witness final position
    */
-  await pageReload(page);
   await turnOnMicromoleculesEditor(page);
 
   await openFileAndAddToCanvasAsNewProject(
@@ -699,7 +676,6 @@ test(`Verify that expanding multiple monomers works in a top-to-bottom order wit
    *       3. Expand all monomers from chain (from top to bottom)
    *       4. Take screenshot to witness final position
    */
-  await pageReload(page);
   await turnOnMicromoleculesEditor(page);
 
   await openFileAndAddToCanvasAsNewProject(
@@ -734,7 +710,6 @@ test(`Verify that expanding monomers with big mircomolecule ring structures in t
    *       3. Expand all monomers from chain (from right to left)
    *       4. Take screenshot to witness final position
    */
-  await pageReload(page);
   await turnOnMicromoleculesEditor(page);
 
   await openFileAndAddToCanvasAsNewProject(
@@ -785,7 +760,6 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
    *           3.4 Press Cancel in appeared Abbriviation dialog
    *           3.5 Undo changes to collapse momomer back
    */
-  await pageReload(page);
   await turnOnMicromoleculesEditor(page);
 
   await openFileAndAddToCanvasAsNewProject(
@@ -918,7 +892,6 @@ test(
      *           3.8 Take screenshot to witness monomer got collapsed
      */
     test.slow();
-    await pageReload(page);
     await turnOnMicromoleculesEditor(page);
 
     await openFileAndAddToCanvasAsNewProject(

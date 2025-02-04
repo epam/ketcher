@@ -24,7 +24,7 @@ import {
   MacroFileType,
   selectSaveTool,
 } from '@utils';
-import { closeErrorMessage, pageReload } from '@utils/common/helpers';
+import { closeErrorMessage } from '@utils/common/helpers';
 import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
@@ -40,7 +40,6 @@ test.describe('Import-Saving .seq Files', () => {
 
   for (const fileType of sequenceFileTypes) {
     test(`Import .seq ${fileType} file`, async ({ page }) => {
-      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         `Sequence/sequence-${fileType.toLowerCase()}.seq`,
         page,
@@ -610,8 +609,6 @@ test.describe('Import correct Sequence file: ', () => {
     shouldFail?: boolean;
     // issueNumber is mandatory if shouldFail === true
     issueNumber?: string;
-    // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-    pageReloadNeeded?: boolean;
   }
 
   const correctSequenceFiles: ISequenceFile[] = [
@@ -667,7 +664,6 @@ test.describe('Import correct Sequence file: ', () => {
       Case: 1. Load Sequence file 
             2. Take screenshot to make sure import works correct
       */
-      if (correctSequenceFile.pageReloadNeeded) await pageReload(page);
       // Test should be skipped if related bug exists
       test.fixme(
         correctSequenceFile.shouldFail === true,
@@ -697,8 +693,6 @@ interface ISequenceString {
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
   issueNumber?: string;
-  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-  pageReloadNeeded?: boolean;
   // Some times export result is different to import string
   differentSequenceExport?: string;
 }
@@ -751,9 +745,6 @@ for (const correctSequence of correctSequences) {
      * Case: 1. Load Sequence file
      *       2. Take screenshot to make sure import works correct
      */
-    if (correctSequence.pageReloadNeeded) {
-      await pageReload(page);
-    }
     // Test should be skipped if related bug exists
     test.fixme(
       correctSequence.shouldFail === true,
@@ -830,9 +821,6 @@ for (const incorrectSequence of incorrectSequences) {
      * Case: 1. Load Sequence file
      *       2. Take screenshot to make sure error message is correct
      */
-    if (incorrectSequence.pageReloadNeeded) {
-      await pageReload(page);
-    }
     // Test should be skipped if related bug exists
     test.fixme(
       incorrectSequence.shouldFail === true,
@@ -929,7 +917,6 @@ for (const sequenceToExport of sequencesToExport) {
       sequenceToExport.shouldFail === true,
       `That test fails because of ${sequenceToExport.issueNumber} issue.`,
     );
-    if (sequenceToExport.pageReloadNeeded) await pageReload(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -1043,7 +1030,6 @@ for (const sequenceToExport of nonStandardAmbiguousPeptides) {
       sequenceToExport.shouldFail === true,
       `That test fails because of ${sequenceToExport.issueNumber} issue.`,
     );
-    if (sequenceToExport.pageReloadNeeded) await pageReload(page);
 
     if (sequenceToExport.HELMString) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1359,7 +1345,6 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
       sequenceToExport.shouldFail === true,
       `That test fails because of ${sequenceToExport.issueNumber} issue.`,
     );
-    if (sequenceToExport.pageReloadNeeded) await pageReload(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

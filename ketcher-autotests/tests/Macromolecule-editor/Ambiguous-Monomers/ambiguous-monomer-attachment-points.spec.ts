@@ -14,7 +14,6 @@ import {
   selectClearCanvasTool,
   selectMacroBond,
 } from '@utils';
-import { pageReload } from '@utils/common/helpers';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 let page: Page;
@@ -77,8 +76,6 @@ interface IHELMString {
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
   issueNumber?: string;
-  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-  pageReloadNeeded?: boolean;
 }
 
 const ambiguousMonomers: IHELMString[] = [
@@ -267,7 +264,6 @@ const ambiguousMonomers: IHELMString[] = [
       '31. Ambiguous alternatives base made of base(R1) and base(R1) should result in base(R1)',
     HELMString: 'RNA1{R([2imen2],[5meC])P}$$$$V2.0',
     monomerLocatorIndex: 2,
-    pageReloadNeeded: true,
   },
   {
     testDescription:
@@ -350,7 +346,6 @@ test.describe('Monomer APs checks: ', () => {
               4. Take screenshot of the canvas to compare it with example
           */
       test.setTimeout(25000);
-      if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
       await zoomWithMouseWheel(page, -600);
 
       await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);

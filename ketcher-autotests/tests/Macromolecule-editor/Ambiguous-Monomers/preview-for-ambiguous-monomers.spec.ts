@@ -16,7 +16,6 @@ import {
   selectClearCanvasTool,
   delay,
 } from '@utils';
-import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -87,8 +86,6 @@ interface IHELMString {
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
   issueNumber?: string;
-  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-  pageReloadNeeded?: boolean;
 }
 
 const ambiguousMonomers: IHELMString[] = [
@@ -194,7 +191,6 @@ const ambiguousMonomers: IHELMString[] = [
     HELMString: 'RNA1{R(U,G,C,A)P}$$$$V2.0',
     monomerLocatorIndex: 2,
     monomerLocatorIndexOnMicro: 1,
-    pageReloadNeeded: true,
   },
   {
     testDescription:
@@ -202,7 +198,6 @@ const ambiguousMonomers: IHELMString[] = [
     HELMString: 'RNA1{R(U,G,C)P}$$$$V2.0',
     monomerLocatorIndex: 2,
     monomerLocatorIndexOnMicro: 1,
-    pageReloadNeeded: true,
   },
   {
     testDescription:
@@ -369,7 +364,6 @@ test.describe('Preview tooltips checks: ', () => {
             2. Take screenshot of the canvas to compare it with example
         */
       test.setTimeout(30000);
-      if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
 
       await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
       await hoverMouseOverMonomer(page, ambiguousMonomer.monomerLocatorIndex);
@@ -397,7 +391,6 @@ test.describe('Preview tooltips checks: ', () => {
             4. Take screenshot of the canvas to compare it with example
         */
       test.setTimeout(20000);
-      if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
       await selectFlexLayoutModeTool(page);
       await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
       await turnOnMicromoleculesEditor(page);
@@ -436,7 +429,6 @@ test.describe('Preview tooltips checks: ', () => {
             2. Take screenshot of the canvas to compare it with example
         */
       test.setTimeout(20000);
-      if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
 
       await selectSequenceLayoutModeTool(page);
       await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);

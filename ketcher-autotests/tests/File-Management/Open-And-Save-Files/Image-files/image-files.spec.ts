@@ -48,11 +48,7 @@ import {
   waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
-import {
-  clearLocalStorage,
-  closeErrorAndInfoModals,
-  pageReloadMicro,
-} from '@utils/common/helpers';
+import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -865,7 +861,6 @@ test.describe('Image files', () => {
      * Test case: #4897
      * Description: Images of formats (PNG, SVG) can be selected using "Fragment Selection" in "Add Image" mode
      */
-    // await pageReloadMicro(page);
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     for (let i = 0; i < 2; i++) {
@@ -883,9 +878,6 @@ test.describe('Image files', () => {
      * Description: Image is selected then green selection frame is displayed and
      * image can be scaled vertically, horizontally and diagonally.
      */
-    await clearLocalStorage(page);
-    await pageReloadMicro(page);
-
     await openImageAndAddToCanvas('Images/image-png.png', page);
     await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
     await clickInTheMiddleOfTheScreen(page);

@@ -14,11 +14,7 @@ import {
   selectSaveTool,
   pressButton,
 } from '@utils';
-import {
-  closeErrorMessage,
-  closeOpenStructure,
-  pageReload,
-} from '@utils/common/helpers';
+import { closeErrorMessage, closeOpenStructure } from '@utils/common/helpers';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -81,8 +77,6 @@ interface IHELMString {
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
   issueNumber?: string;
-  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-  pageReloadNeeded?: boolean;
   // Some times export result is different to import string
   differentHELMExport?: string;
 }
@@ -248,7 +242,6 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '33. Simple RNAs - “+” as the separator within this list represents an AND relationship of the monomers.',
     HELMString: 'RNA1{R(A+C)P}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -261,7 +254,6 @@ const correctHELMStrings: IHELMString[] = [
       '35. Simple peptides - The ratio of each element can be given as a numerical value after the monomer' +
       'separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
     HELMString: 'PEPTIDE1{(A:1.5+C:0.1)}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -269,7 +261,6 @@ const correctHELMStrings: IHELMString[] = [
       'separated by the colon character. If no value is specified, it is assumed that the proportion of that element is unknown.',
     HELMString:
       'PEPTIDE1{([Aad]:1.1+[Abu]:2.2+[Aca]:3.3+[Aib]:4.4+[Apm]:5.5)}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -294,7 +285,6 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription:
       '40. Simple peptides - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
     HELMString: 'PEPTIDE1{(A,C)}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -311,14 +301,12 @@ const correctHELMStrings: IHELMString[] = [
       '43. Multi-char RNAs - “,” as the separator within this list represents an XOR (excluding OR) relationship of the monomers.',
     HELMString:
       'RNA1{[Sm5moe]([m2nprn],[nobn6p],[nC6n2G],[nC6n8A])[mepo2]}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription:
       '44. Single peptides - The probability of each element can be given as a numerical value after the monomer' +
       ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
     HELMString: 'PEPTIDE1{(A:10,C:20)}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -326,14 +314,12 @@ const correctHELMStrings: IHELMString[] = [
       ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
     HELMString:
       'PEPTIDE1{([Aad]:10,[Abu]:20,[Aca]:30,[Aib]:40,[Apm]:50)}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription:
       '46. Simple RNAs - The probability of each element can be given as a numerical value after the monomer' +
       ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
     HELMString: 'RNA1{R(A:10,C:90)P}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -341,13 +327,11 @@ const correctHELMStrings: IHELMString[] = [
       ' separated by the colon character. If no value is specified, it is assumed that it the probability of the element is unknown.',
     HELMString:
       'RNA1{[Sm5moe]([m2nprn]:10,[nobn6p]:20,[nC6n2G]:30,[nC6n8A]:40)[mepo2]}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription: '48. RNA(RA) with single inline Extended SMILES (A)',
     HELMString:
       'RNA1{R([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])}$$$$V2.0',
-    pageReloadNeeded: true,
     differentHELMExport:
       'RNA1{R([C1(N)=NC=NC2N([*:1])C=NC1=2 |$;;;;;;;_R1;;;$|])}$$$$V2.0',
   },
@@ -374,7 +358,6 @@ const correctHELMStrings: IHELMString[] = [
     helmDescription: '52. RNA(RAP) with  single inline Extended SMILES (P)',
     HELMString: 'RNA1{R(A)[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
     differentHELMExport: 'RNA1{R(A)[P([*:1])(=O)(O)O |$;_R1;;;$|]}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -383,14 +366,12 @@ const correctHELMStrings: IHELMString[] = [
       'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|](A)P}$$$$V2.0',
     differentHELMExport:
       'RNA1{[O1C(CO[*:1])C(O[*:2])C(O)C1[*:3] |$;;;;_R1;;;_R2;;;;_R3$|](A)P}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription:
       '54. Single peptide with inline SMILES (L) without attachment points',
     HELMString: 'PEPTIDE1{[C([C@@H](C(O)=O)N[H])C(C)C]}$$$$V2.0',
     differentHELMExport: 'PEPTIDE1{[C(C(C)C)C(N[H])C(=O)O]}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription: '55. Single peptide with inline Extended SMILES (L)',
@@ -398,14 +379,12 @@ const correctHELMStrings: IHELMString[] = [
       'PEPTIDE1{[C([C@@H](C%91=O)N%92)C(C)C.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
     differentHELMExport:
       'PEPTIDE1{[C(C(C)C)C(N[*:1])C([*:2])=O |$;;;;;;_R1;;_R2;$|]}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription:
       '56. Single CHEM with inline SMILES (A6OH) without attachment points',
     HELMString: 'CHEM1{[N([H])CCCCCCO[H]]}$$$$V2.0',
     differentHELMExport: 'CHEM1{[N(CCCCCCO[H])[H]]}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription: '57. Single CHEM with inline Extended SMILES (A6OH)',
@@ -413,7 +392,6 @@ const correctHELMStrings: IHELMString[] = [
       'CHEM1{[N%91CCCCCCO%92.[*:2]%91.[*:1]%92 |$;;;;;;;;_R2;_R1$|]}$$$$V2.0',
     differentHELMExport:
       'CHEM1{[N([*:2])CCCCCCO[*:1] |$;_R2;;;;;;;;_R1$|]}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription: '58. List of peptide of inline Extended Smiles (A,C,D,L)',
@@ -427,7 +405,6 @@ const correctHELMStrings: IHELMString[] = [
       '[C([*:2])(=O)C(N[*:1])CS[*:3] |$;_R2;;;;_R1;;;_R3$|].' +
       '[C([*:2])(=O)C(N[*:1])CC(=O)O[*:3] |$;_R2;;;;_R1;;;;;_R3$|].' +
       '[C(C(C)C)C(N[*:1])C([*:2])=O |$;;;;;;_R1;;_R2;$|]}$$$$V2.0',
-    pageReloadNeeded: true,
   },
   {
     helmDescription:
@@ -456,7 +433,6 @@ test.describe('Import correct HELM sequence: ', () => {
         2. Take screenshot of the canvas to compare it with example
     */
       test.setTimeout(35000);
-      if (correctHELMString.pageReloadNeeded) await pageReload(page);
 
       await loadHELMFromClipboard(page, correctHELMString.HELMString);
 
@@ -488,7 +464,6 @@ test.describe('Export to HELM: ', () => {
         correctHELMString.shouldFail === true,
         `That test fails because of ${correctHELMString.issueNumber} issue.`,
       );
-      if (correctHELMString.pageReloadNeeded) await pageReload(page);
 
       await loadHELMFromClipboard(page, correctHELMString.HELMString);
       await openSaveToHELMDialog(page);
@@ -897,7 +872,6 @@ test.describe('Import incorrect HELM sequence: ', () => {
         3. Take screenshot to compare it with example
       */
       test.setTimeout(20000);
-      if (incorrectHELMString.pageReloadNeeded) await pageReload(page);
 
       await loadHELMFromClipboard(page, incorrectHELMString.HELMString);
       await takeEditorScreenshot(page);

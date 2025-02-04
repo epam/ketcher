@@ -18,7 +18,6 @@ import {
   selectAllStructuresOnCanvas,
   selectSequenceLayoutModeTool,
 } from '@utils';
-import { pageReload } from '@utils/common/helpers';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
@@ -57,8 +56,6 @@ interface IMonomer {
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
   issueNumber?: string;
-  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-  pageReloadNeeded?: boolean;
 }
 
 interface IPolymer {
@@ -72,17 +69,9 @@ interface IPolymer {
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
   issueNumber?: string;
-  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-  pageReloadNeeded?: boolean;
 }
 
-async function loadMonomerOnCanvas(
-  page: Page,
-  polymer: IPolymer | IMonomer,
-  pageReloadNeeded = false,
-) {
-  if (pageReloadNeeded) await pageReload(page);
-
+async function loadMonomerOnCanvas(page: Page, polymer: IPolymer | IMonomer) {
   if (polymer.HELMString) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

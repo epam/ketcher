@@ -33,7 +33,6 @@ import {
   selectCleanTool,
   selectLayoutTool,
 } from '@utils';
-import { pageReloadMicro } from '@utils/common/helpers';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -422,7 +421,6 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, copy and paste it onto the canvas', async ({
       page,
     }) => {
-      await pageReloadMicro(page);
       await configureInitialState(page);
 
       await clickOnCanvas(page, point.x + OFFSET_FROM_ARROW, point.y);

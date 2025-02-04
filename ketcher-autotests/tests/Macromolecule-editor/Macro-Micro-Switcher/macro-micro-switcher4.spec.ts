@@ -39,7 +39,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { closeErrorMessage, pageReload } from '@utils/common/helpers';
+import { closeErrorMessage } from '@utils/common/helpers';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -143,7 +143,6 @@ test(`Verify that deleting a bond in macro mode removes the bond while maintaini
    *       3. Delete all bonds at the center of every molecule
    *       4. Take screenshot to witness final state
    */
-  await pageReload(page);
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All Bonds on Macro.ket',
     page,
@@ -440,7 +439,6 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
    * 2. Take screenshot to witness initial state
    * 3. Delete every bond one by one and take screenshot after each deletion
    */
-  await pageReload(page);
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
     page,
@@ -597,7 +595,6 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
    * 3. Grab every bond and move it to the new position
    * 4. Take screenshot to witness new molecule's state
    */
-  await pageReload(page);
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
     page,

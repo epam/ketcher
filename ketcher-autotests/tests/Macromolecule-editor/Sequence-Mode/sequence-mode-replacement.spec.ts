@@ -37,7 +37,6 @@ import {
   Presets,
   Sugars,
 } from '@constants/monomers';
-import { pageReload } from '@utils/common/helpers';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   pressAddToPresetsButton,
@@ -2017,8 +2016,6 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
-  await pageReload(page);
-
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectSequenceLayoutModeTool(page);
   await clickOnSequenceSymbolByIndex(
@@ -2072,8 +2069,6 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
     MonomerTestId: Peptides.Cys_Bn,
     MonomerDescription: 'peptide (Cys_Bn)',
   };
-
-  await pageReload(page);
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectSequenceLayoutModeTool(page);
@@ -2266,8 +2261,6 @@ test(`28. Verify saving and reopening a structure with replaced monomers in KET`
         6. Save to KET
         7. Compate result with the template
       */
-
-  await pageReload(page);
 
   const sequence: ISequence = {
     Id: 3,

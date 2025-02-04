@@ -34,7 +34,6 @@ import {
   selectMonomer,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { pageReload } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -221,7 +220,6 @@ test('Select monomers and pass a bond', async () => {
       Description: The system shall unable user to create more
       than 1 bond between the first and the second monomer
       */
-  await pageReload(page);
   const MONOMER_NAME = Peptides.Tza;
   const MONOMER_ALIAS = 'Tza';
   const peptide1 = await addSingleMonomerToCanvas(
@@ -490,7 +488,6 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     Test case: #4905
     Description: Changes made in the "Edit Connection Points" dialog are saved when the structure is saved to a KET file and can be loaded.
     */
-  await pageReload(page);
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
   await openEditConnectionPointsMenu(page, bondLine);
@@ -726,8 +723,6 @@ interface KETPath {
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
   issueNumber?: string;
-  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-  pageReloadNeeded?: boolean;
 }
 
 const ambiguousMonomers: KETPath[] = [
@@ -742,7 +737,6 @@ const ambiguousMonomers: KETPath[] = [
   {
     testDescription: '3. Ambiguous Sugar',
     KETFile: 'KET/Ambiguous-monomers-bonds/ketcherSugar.ket',
-    pageReloadNeeded: true,
   },
   {
     testDescription: '4. Ambiguous Sugar Weighted',
@@ -751,7 +745,6 @@ const ambiguousMonomers: KETPath[] = [
   {
     testDescription: '5. Ambiguous Base',
     KETFile: 'KET/Ambiguous-monomers-bonds/ketcherBase.ket',
-    pageReloadNeeded: true,
   },
   {
     testDescription: '6. Ambiguous Base Weighted',
@@ -760,7 +753,6 @@ const ambiguousMonomers: KETPath[] = [
   {
     testDescription: '7. Ambiguous Phosphate',
     KETFile: 'KET/Ambiguous-monomers-bonds/ketcherPhosphate.ket',
-    pageReloadNeeded: true,
   },
   {
     testDescription: '8. Ambiguous Phosphate Weighted',
@@ -779,7 +771,6 @@ const ambiguousMonomers: KETPath[] = [
   {
     testDescription: '11. Ambiguous Peptide',
     KETFile: 'KET/Ambiguous-monomers-bonds/ketcherPeptide.ket',
-    pageReloadNeeded: true,
   },
   {
     testDescription: '12. Ambiguous Peptide Weighted',
@@ -811,7 +802,6 @@ test.describe('Verify "Select/Edit Connection Points" dialogues for ambiguous mo
       5. Take screenshot 
       6. Verify all tooltips corresponds to monomer types 
       */
-      if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
       await openFileAndAddToCanvasMacro(ambiguousMonomer.KETFile, page);
       await moveMouseAway(page);
       const bondLine = await getConnectionLine(page);

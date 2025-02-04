@@ -54,7 +54,6 @@ import {
   goToMonomerLocationTab,
   MonomerLocationTabs,
 } from '@utils/macromolecules/library';
-import { clearLocalStorage, pageReload } from '@utils/common/helpers';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   pressRedoButton,
@@ -175,11 +174,6 @@ async function pressEscapeWhenPullBond(page: Page) {
   });
 }
 
-async function reloadPageAndConfigureInitialState(page: Page) {
-  await pageReload(page);
-  await configureInitialState(page);
-}
-
 async function configureInitialState(page: Page) {
   await chooseTab(page, Tabs.Rna);
 }
@@ -291,9 +285,6 @@ test.describe('RNA Library', () => {
     Description: The selected sugar monomer should be added to the canvas 
     in the form of a square with rounded edges and in the corresponding color.
     */
-    // Reload the page to reset the state, as previous tests affects the behavior when adding the sugar monomer
-    await reloadPageAndConfigureInitialState(page);
-
     await addMonomerToCenterOfCanvas(page, Sugars._12ddR);
     await takeEditorScreenshot(page);
   });
@@ -375,10 +366,6 @@ test.describe('RNA Library', () => {
     Test case: #4427 - Edit RNA mode
     Description: Custom presets added to Presets section and saved in local storage after reload.
     */
-    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
     await pressAddToPresetsButton(page);
@@ -386,7 +373,6 @@ test.describe('RNA Library', () => {
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
 
-    await reloadPageAndConfigureInitialState(page);
     await selectCustomPreset(page, '25R(A)Test-6-Ph_A_25R_Test-6-Ph');
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
@@ -397,10 +383,6 @@ test.describe('RNA Library', () => {
     Test case: #4427 - Edit RNA mode
     Description: System alert that you should rename preset.
     */
-    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
     await pressAddToPresetsButton(page);
@@ -408,7 +390,6 @@ test.describe('RNA Library', () => {
     await expandCollapseRnaBuilder(page);
     await takePresetsScreenshot(page);
 
-    await reloadPageAndConfigureInitialState(page);
     await expandCollapseRnaBuilder(page);
     await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
     await pressAddToPresetsButton(page);
@@ -420,10 +401,6 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Custom presets added to Canvas.
     */
-    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectMonomers(page, [Sugars._3A6, Bases.baA, Phosphates.bP]);
     await pressAddToPresetsButton(page);
@@ -439,10 +416,6 @@ test.describe('RNA Library', () => {
     Description: Try to add to RNA Sugar which does not contain R3 attachment point(for example 3SS6).
     Test was updated since logic for RNA Builder was changed in a scope of https://github.com/epam/ketcher/issues/3816
     */
-    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectMonomers(page, [Bases.baA, Phosphates.bP]);
     await selectSugarSlot(page);
@@ -456,10 +429,6 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
-    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectMonomers(page, [Sugars._25R, Bases.A]);
     await pressAddToPresetsButton(page);
@@ -473,10 +442,6 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
-    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectMonomers(page, [Sugars._25R, Phosphates.bP]);
     await pressAddToPresetsButton(page);
@@ -490,10 +455,6 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom preset Base+Phosphate could not be added to Presets.
     */
-    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectMonomers(page, [Bases.A, Phosphates.bP]);
     await selectBaseSlot(page);
@@ -505,10 +466,6 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section and can be edited.
     */
-    // Reload needed to reset the already added custom preset
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
     await pressAddToPresetsButton(page);
@@ -533,10 +490,6 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section then can be duplicated and edited.
     */
-    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
     await pressAddToPresetsButton(page);
@@ -565,10 +518,6 @@ test.describe('RNA Library', () => {
     Test case: #3633 - Edit RNA mode
     Description: After clicking Duplicate and Edit button and subsequently clicking Cancel, preset not saved
     */
-    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await page.getByTestId(Presets.A).click({
       button: 'right',
@@ -590,10 +539,6 @@ test.describe('RNA Library', () => {
     Description: Custom presets added to Presets section and can be deleted.
     Test working incorrect because we have bug: https://github.com/epam/ketcher/issues/3561
     */
-      // Reload needed to reset the RNA builder state, as values from previous tests are preserved
-      await clearLocalStorage(page);
-      await reloadPageAndConfigureInitialState(page);
-
       await expandCollapseRnaBuilder(page);
       await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
       await pressAddToPresetsButton(page);
@@ -632,10 +577,6 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: RNA name autofilling when selects RNA parts.
     */
-    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectSugarSlot(page);
     await selectMonomer(page, Sugars._3A6);
@@ -677,10 +618,6 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Sugar, Phosphate and Base highlighted in Library.
     */
-    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     const monomers = [
       {
         type: 'sugar',
@@ -712,10 +649,6 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar-Base Combination added to Canvas.
     */
-    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectMonomers(page, [Sugars._3A6, Bases.baA]);
     await pressAddToPresetsButton(page);
@@ -730,10 +663,6 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar-Phosphate Combination added to Canvas.
     */
-    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectMonomers(page, [Sugars._3A6, Phosphates.bP]);
     await pressAddToPresetsButton(page);
@@ -748,10 +677,6 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Base-Phosphate Combination not added to Presets.
     */
-    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectMonomers(page, [Bases.baA, Phosphates.bP]);
     await selectBaseSlot(page);
@@ -763,10 +688,6 @@ test.describe('RNA Library', () => {
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar and Base Combination added to Canvas and connect with bond.
     */
-    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     const bondLine = page.locator('g[pointer-events="stroke"]');
     await drawSugarBase(page);
     await bondLine.hover();
@@ -984,9 +905,6 @@ test.describe('RNA Library', () => {
     Test case: Open&save files
     Description: File saved with three Monomers as .ket file
     */
-    // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-    await reloadPageAndConfigureInitialState(page);
-
     await openFileAndAddToCanvasMacro(
       'KET/monomers-connected-with-bonds.ket',
       page,
@@ -1017,10 +935,6 @@ test.describe('RNA Library', () => {
     Test case: https://github.com/epam/ketcher/issues/3816
     Description: It is not possible to create preset if Sugar is without R3 connection point.
     */
-    // Reload the page to reset the state, as previous tests affects the behavior when adding the sugar monomer
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectMonomer(page, Sugars._12ddR);
     await selectBaseSlot(page);
@@ -1043,10 +957,6 @@ test.describe('RNA Library', () => {
     Test case: Import/Saving files/#4382
     Description: Unsplit nucleotide on the canvas from library can be selected, moved and deleted.
     */
-      // Reload the page to reset the state, as previous tests affects the behavior when adding the sugar monomer
-      await clearLocalStorage(page);
-      await reloadPageAndConfigureInitialState(page);
-
       const x = 200;
       const y = 200;
       await selectMonomer(page, monomer);
@@ -1210,10 +1120,6 @@ test.describe('RNA Library', () => {
      *  Case 7:
      *    It is possible to delete RNA presets from the Favourite library
      */
-    // Reload the page to reset the Favorites elements
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await addMonomerToFavorites(page, Presets.A);
     await chooseTab(page, Tabs.Favorites);
     await takeMonomerLibraryScreenshot(page);
@@ -1234,10 +1140,6 @@ test.describe('RNA Library', () => {
       Case 27:
         Check that search menu clear button erase all entered text
     */
-    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     const rnaLibrarySearch = page.getByTestId('monomer-library-input');
     await rnaLibrarySearch.fill('No monomers and presets');
     await takeMonomerLibraryScreenshot(page);
@@ -1268,10 +1170,6 @@ test.describe('RNA Library', () => {
      *  Case 14:
      *    Check that can delete preset from Presets section
      */
-    // Reload the page to reset the state, as previous tests affects the RNA-bulder state
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await expandCollapseRnaBuilder(page);
     await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
     await pressAddToPresetsButton(page);
@@ -1307,7 +1205,6 @@ test.describe('RNA Library', () => {
      *    Check that After reloading the page, monomers added to the Favorites section not disappear
      */
     await addMonomerToFavorites(page, Presets.A);
-    await pageReload(page);
     await chooseTab(page, Tabs.Favorites);
     await takeMonomerLibraryScreenshot(page);
 
@@ -1385,10 +1282,6 @@ test.describe('RNA Library', () => {
      *  Case 24 - Preview window appearing when hover over CHEM in library
      *  Case 25 - Search CHEM by entering its name in search field
      */
-    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
-    await clearLocalStorage(page);
-    await reloadPageAndConfigureInitialState(page);
-
     await toggleRnaBuilder(page, 'expand');
 
     // Case 22
@@ -1439,8 +1332,6 @@ test.describe('RNA Library', () => {
     shouldFail?: boolean;
     // issueNumber is mandatory if shouldFail === true
     issueNumber?: string;
-    // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-    pageReloadNeeded?: boolean;
   }
 
   async function searchMonomerByName(page: Page, monomerName: string) {
@@ -1568,8 +1459,6 @@ test.describe('RNA Library', () => {
       IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/5578 issue.
       Locator and assert needs to be updated after fix
    */
-      await pageReload(page);
-
       // const sectionTitle = page.getByText('Ambiguous Amino acids');
       // 1. Verify the addition of the "Ambiguous Amino Acids" subsection at the bottom in the peptides section
       // await expect(sectionTitle).toHaveText('Ambiguous Amino acids');
@@ -1607,8 +1496,6 @@ test.describe('RNA Library', () => {
       IMPORTANT: Result of execution is incorrect because of https://github.com/epam/ketcher/issues/5580 issue.
       Screenshots needs to be updated after fix
    */
-      await pageReload(page);
-
       // const sectionAmbiguousBases = page.getByText('Ambiguous Bases');
       // const sectionAmbiguousDNABases = page.getByText('Ambiguous DNA Bases');
       // const sectionAmbiguousRNABases = page.getByText('Ambiguous RNA Bases');

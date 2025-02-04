@@ -14,7 +14,6 @@ import {
   selectClearCanvasTool,
   pressButton,
 } from '@utils';
-import { pageReload } from '@utils/common/helpers';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import {
   markResetToDefaultState,
@@ -117,14 +116,12 @@ test.describe('Saving in .svg files', () => {
       filename:
         'KET/Ambiguous-monomers/Peptides (that have mapping to library, alternatives).ket',
       description: '7. Peptides (that have mapping to library, alternatives)',
-      pageReload: true,
     },
     {
       // Test task: https://github.com/epam/ketcher/issues/5558
       filename:
         'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
       description: '8. Peptides (that have mapping to library, mixed)',
-      pageReload: true,
     },
     {
       // Test task: https://github.com/epam/ketcher/issues/5558
@@ -144,7 +141,6 @@ test.describe('Saving in .svg files', () => {
       filename:
         'KET/Ambiguous-monomers/RNA ambigous bases connected to DNA sugar (mixed).ket',
       description: '11. RNA ambigous bases connected to DNA sugar (mixed)',
-      pageReloadNeeded: true,
     },
     {
       // Test task: https://github.com/epam/ketcher/issues/5558
@@ -154,7 +150,7 @@ test.describe('Saving in .svg files', () => {
     },
   ];
 
-  for (const { filename, description, pageReloadNeeded } of testData) {
+  for (const { filename, description } of testData) {
     test(`Export to SVG: Verify it is possible to export Flex mode canvas with ${description} to SVG`, async () => {
       /*
       Description: Verify import of Sequence files works correct
@@ -163,8 +159,6 @@ test.describe('Saving in .svg files', () => {
             3. Open Save dialog and choose SVG format
             2. Take screenshot to make sure export works correct
       */
-      if (pageReloadNeeded) await pageReload(page);
-
       await openFileAndAddToCanvasMacro(filename, page);
 
       await takeEditorScreenshot(page);
@@ -247,7 +241,6 @@ test.describe('Saving in .svg files', () => {
 
   for (const { filename, description } of testData2) {
     test(`Export to SVG: Verify it is possible to export Sequence-RNA mode canvas with ${description} to SVG`, async () => {
-      await pageReload(page);
       await openFileAndAddToCanvasMacro(filename, page);
       await selectSequenceLayoutModeTool(page);
       await switchSequenceEnteringButtonType(page, SequenceType.RNA);
@@ -291,8 +284,6 @@ test.describe('Saving in .svg files', () => {
 
   for (const { filename, description } of testData3) {
     test(`Export to SVG: Verify it is possible to export Sequence-DNA mode canvas with ${description} to SVG`, async () => {
-      await pageReload(page);
-
       await openFileAndAddToCanvasMacro(filename, page);
       await selectSequenceLayoutModeTool(page);
       await switchSequenceEnteringButtonType(page, SequenceType.DNA);
@@ -335,7 +326,6 @@ test.describe('Saving in .svg files', () => {
     test(`Export to SVG: Verify it is possible to export Sequence-Peptide mode canvas with ${description} to SVG`, async () => {
       markResetToDefaultState('defaultLayout');
 
-      await pageReload(page);
       await openFileAndAddToCanvasMacro(filename, page);
       await selectSequenceLayoutModeTool(page);
       await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
@@ -350,42 +340,32 @@ test.describe('Saving in .svg files', () => {
     {
       filename: 'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       description: 'unsplit-nucleotides-connected-with-nucleotides',
-      requiresPageReload: false,
     },
     {
       filename: 'KET/unsplit-nucleotides-connected-with-chems.ket',
       description: 'connection nucleotides with chems',
-      requiresPageReload: false,
     },
     {
       filename: 'KET/unsplit-nucleotides-connected-with-bases.ket',
       description: 'unsplit-nucleotides-connected-with-bases',
-      requiresPageReload: false,
     },
     {
       filename: 'KET/unsplit-nucleotides-connected-with-sugars.ket',
       description: 'unsplit-nucleotides-connected-with-sugars',
-      requiresPageReload: true,
     },
     {
       filename: 'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       description: 'unsplit-nucleotides-connected-with-phosphates',
-      requiresPageReload: true,
     },
     {
       filename: 'KET/unsplit-nucleotides-connected-with-peptides.ket',
       description: 'unsplit-nucleotides-connected-with-peptides',
-      requiresPageReload: false,
     },
   ];
 
-  for (const { filename, description, requiresPageReload } of testData5) {
+  for (const { filename, description } of testData5) {
     test(`Export to SVG: Verify it is possible to export ${description} to SVG`, async () => {
       // Reload needed for some tests as screenshots may have minor differences (up to 1 pixel)
-      if (requiresPageReload) {
-        await pageReload(page);
-      }
-
       await openFileAndAddToCanvasMacro(filename, page);
       await takeEditorScreenshot(page);
       await selectTopPanelButton(TopPanelButton.Save, page);

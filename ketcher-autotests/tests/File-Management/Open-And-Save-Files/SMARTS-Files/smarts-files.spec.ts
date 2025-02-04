@@ -9,7 +9,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   waitForRender,
 } from '@utils';
-import { pageReloadMicro } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -365,8 +364,6 @@ interface IMonomer {
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
   issueNumber?: string;
-  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-  pageReloadNeeded?: boolean;
 }
 
 const allTypesExpandableOfMonomers: IMonomer[] = [
@@ -377,7 +374,6 @@ const allTypesExpandableOfMonomers: IMonomer[] = [
     SMARTSFile_Expected:
       'SMARTS/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library)-expected.smarts',
     monomerLocatorText: 'D',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '2. Sugar UNA (from library)',
@@ -440,9 +436,6 @@ test.describe('Saving collapsed monomer to SMARTS: ', () => {
        *          3.3 Load saved file back to canvas
        *          3.4 Take screenshot to witness result on the canvas
        */
-      if (monomer.pageReloadNeeded) {
-        await pageReloadMicro(page);
-      }
       await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
       await takeEditorScreenshot(page);
 
@@ -501,9 +494,6 @@ test.describe('Saving expanded monomer to SMARTS: ', () => {
        *          3.3 Load saved file back to canvas
        *          3.4 Take screenshot to witness result on the canvas
        */
-      if (monomer.pageReloadNeeded) {
-        await pageReloadMicro(page);
-      }
       await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
       await expandMonomer(page, monomer.monomerLocatorText);
       await takeEditorScreenshot(page);

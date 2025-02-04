@@ -27,7 +27,6 @@ import {
   turnOnMicromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import {
   pressRedoButton,
@@ -144,13 +143,14 @@ async function loadTwoMonomers(
   leftMonomer: IMonomer,
   rightMonomer: IMonomer,
 ) {
-  const canvasLocator = page.getByTestId('ketcher-canvas').first();
-
   await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
 
-  const leftMonomerLocator = getMonomerLocator(page, {
-    monomerAlias: leftMonomer.alias,
-  }).first();
+  const canvasLocator = page.getByTestId('ketcher-canvas').first();
+
+  const leftMonomerLocator = canvasLocator
+    .getByText(leftMonomer.alias, { exact: true })
+    .locator('..')
+    .first();
 
   await leftMonomerLocator.hover({ force: true });
   await dragMouseTo(500, 370, page);
@@ -158,14 +158,21 @@ async function loadTwoMonomers(
 
   await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
 
-  const rightMonomerLocators = getMonomerLocator(page, {
-    monomerAlias: rightMonomer.alias,
-  });
-
   const rightMonomerLocator =
-    (await canvasLocator.getByText(leftMonomer.alias).count()) > 1
-      ? rightMonomerLocators.nth(1)
-      : rightMonomerLocators.nth(0);
+    (await canvasLocator
+      .getByText(leftMonomer.alias, {
+        exact: true,
+      })
+      .count()) > 1
+      ? canvasLocator
+          .getByText(rightMonomer.alias, { exact: true })
+          .nth(1)
+          .locator('..')
+          .first()
+      : canvasLocator
+          .getByText(rightMonomer.alias, { exact: true })
+          .locator('..')
+          .first();
 
   await rightMonomerLocator.hover({ force: true });
   // Do NOT put monomers to equel X or Y coordinates - connection line element become zero size (width or hight) and .hover() doesn't work
@@ -181,9 +188,10 @@ async function bondTwoMonomersByCenterToCenter(
 ) {
   const canvasLocator = page.getByTestId('ketcher-canvas').first();
 
-  let leftMonomerLocator = getMonomerLocator(page, {
-    monomerAlias: leftMonomer.alias,
-  }).first();
+  let leftMonomerLocator = canvasLocator
+    .getByText(leftMonomer.alias, { exact: true })
+    .locator('..')
+    .first();
 
   let monomerId = await leftMonomerLocator.getAttribute('data-monomerid');
   if (monomerId === null) {
@@ -195,14 +203,19 @@ async function bondTwoMonomersByCenterToCenter(
     `[data-testid="monomer"][data-monomerid="${monomerId}"]`,
   );
 
-  const rightMonomerLocators = getMonomerLocator(page, {
-    monomerAlias: rightMonomer.alias,
-  });
-
   let rightMonomerLocator =
-    (await canvasLocator.getByText(leftMonomer.alias).count()) > 1
-      ? rightMonomerLocators.nth(1)
-      : rightMonomerLocators.nth(0);
+    (await canvasLocator
+      .getByText(leftMonomer.alias, { exact: true })
+      .count()) > 1
+      ? canvasLocator
+          .getByText(rightMonomer.alias, { exact: true })
+          .nth(1)
+          .locator('..')
+          .first()
+      : canvasLocator
+          .getByText(rightMonomer.alias, { exact: true })
+          .locator('..')
+          .first();
 
   // atom has alias that depend on attached bond - it could be "BrH" if no bonds and "Br" if one bond attached,
   // this is why we have to false exact for atoms

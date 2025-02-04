@@ -794,7 +794,8 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
       const leftMonomerLocator = getMonomerLocator(page, {
         monomerAlias: leftMonomer.alias,
       }).first();
-      loadMonomerOnCanvas(page, rightMonomer);
+
+      await loadMonomerOnCanvas(page, rightMonomer);
 
       const rightMonomerLocators = getMonomerLocator(page, {
         monomerAlias: rightMonomer.alias,

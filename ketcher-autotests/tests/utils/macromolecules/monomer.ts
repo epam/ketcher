@@ -47,9 +47,13 @@ export async function connectMonomersWithBonds(
     const currentMonomer = monomerNames[i];
     const nextMonomer = monomerNames[i + 1];
 
-    await getMonomerLocator(page, { monomerAlias: currentMonomer }).hover();
+    await getMonomerLocator(page, { monomerAlias: currentMonomer })
+      .first()
+      .hover();
     await page.mouse.down();
-    await getMonomerLocator(page, { monomerAlias: nextMonomer }).hover();
+    await getMonomerLocator(page, { monomerAlias: nextMonomer })
+      .first()
+      .hover();
     await page.mouse.up();
   }
 }

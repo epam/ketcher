@@ -258,7 +258,7 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Peptides.Edc);
   await clickOnCanvas(page, x, y);
-  await connectMonomersWithBonds(page, ['Bal', 'Edc']);
+  await connectMonomersWithBonds(page, ['bAla', 'Edc']);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });

@@ -215,6 +215,12 @@ export class SequenceMode extends BaseMode {
     }
 
     SequenceRenderer.startNewSequence(indexOfRowBefore);
+
+    if (SequenceRenderer.caretPosition === -1) {
+      SequenceRenderer.setCaretPositionByNode(
+        SequenceRenderer.sequenceViewModel.lastTwoStrandedNode,
+      );
+    }
   }
 
   public modifySequenceInRnaBuilder(

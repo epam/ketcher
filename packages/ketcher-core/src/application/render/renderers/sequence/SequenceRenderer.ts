@@ -1113,11 +1113,7 @@ export class SequenceRenderer {
   }
 
   public static isEmptyCanvas() {
-    return (
-      SequenceRenderer.sequenceViewModel.length === 1 &&
-      SequenceRenderer.sequenceViewModel.firstTwoStrandedNode
-        ?.senseNode instanceof EmptySequenceNode
-    );
+    return SequenceRenderer.sequenceViewModel.hasOnlyOneNewChain;
   }
 
   public static get isCaretAtChainEnd() {

@@ -756,8 +756,6 @@ export class DrawingEntitiesManager {
     );
     command.addOperation(operation);
 
-    this.detectCycles();
-
     return command;
   }
 
@@ -808,6 +806,8 @@ export class DrawingEntitiesManager {
       this.polymerBonds.set(_polymerBond.id, _polymerBond);
       firstMonomer.setBond(firstMonomerAttachmentPoint, _polymerBond);
       secondMonomer.setBond(secondMonomerAttachmentPoint, _polymerBond);
+      // TODO: To re-detect cycles on undo for bond removal, check if it could be done better
+      this.detectCycles();
       return _polymerBond;
     }
 
@@ -866,8 +866,6 @@ export class DrawingEntitiesManager {
     );
 
     command.addOperation(operation);
-
-    this.detectCycles();
 
     if (editor.mode instanceof SnakeMode) {
       command.merge(this.recalculateCanvasMatrix());
@@ -3043,7 +3041,8 @@ export class DrawingEntitiesManager {
 
   public detectCycles() {
     const chainsCollection = ChainsCollection.fromMonomers(this.monomersArray);
-    this.cycles = chainsCollection.chains.filter((chain) => chain.isCyclic);
+    // TODO: Detect cycles properly with side-chains/hydrogen bonds and filter them here
+    this.cycles = chainsCollection.chains;
   }
 }
 

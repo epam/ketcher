@@ -672,7 +672,6 @@ export class MacromoleculesConverter {
     });
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);
-    drawingEntitiesManager.detectCycles();
 
     if (editor) {
       editor.viewModel.initialize([...drawingEntitiesManager.bonds.values()]);

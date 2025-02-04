@@ -317,6 +317,7 @@ export class RenderersManager {
     const editor = CoreEditor.provideEditorInstance();
     const viewModel = editor.viewModel;
 
+    editor.drawingEntitiesManager.detectCycles();
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
   }
 

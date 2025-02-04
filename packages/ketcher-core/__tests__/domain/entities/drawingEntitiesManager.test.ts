@@ -19,9 +19,8 @@ import {
 } from 'application/editor/operations/monomer';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { createPolymerEditorCanvas } from '../../helpers/dom';
-import { CoreEditor } from 'application/editor';
+import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
 import { FlexMode } from 'application/editor/modes/FlexMode';
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
 
 describe('Drawing Entities Manager', () => {
   it('should create monomer', () => {

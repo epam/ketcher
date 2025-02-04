@@ -65,3 +65,17 @@ export const peptideNaturalAnalogues = [
 ];
 
 export const NO_NATURAL_ANALOGUE = 'X';
+
+export const MONOMER_CONST = {
+  AMINO_ACID: 'AminoAcid',
+  PEPTIDE: 'PEPTIDE',
+  CHEM: 'CHEM',
+  RNA: 'RNA',
+  DNA: 'DNA',
+  MODDNA: 'MODDNA',
+  R: 'R', // states for Ribose
+  P: 'P', // states for Phosphate
+  SUGAR: 'SUGAR',
+  BASE: 'BASE',
+  PHOSPHATE: 'PHOSPHATE',
+};

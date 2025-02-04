@@ -21,28 +21,30 @@ exports[`Polymer Bond Renderer should render bond 1`] = `
     <g
       pointer-events="stroke"
     >
-      <line
+      <path
         class="selection-area"
+        d="
+      M400,400
+      L3600,4000
+    "
         data-bondid="2"
         data-bondtype="covalent"
         data-frommonomerid="0"
         data-testid="bond"
         data-tomonomerid="1"
+        fill="none"
         pointer-events="stroke"
         stroke="#333333"
         stroke-width="1"
-        x1="400"
-        x2="3600"
-        y1="400"
-        y2="4000"
       />
-      <line
+      <path
+        d="
+      M400,400
+      L3600,4000
+    "
+        fill="none"
         stroke="transparent"
         stroke-width="10"
-        x1="400"
-        x2="3600"
-        y1="400"
-        y2="4000"
       />
       <circle
         cursor="pointer"

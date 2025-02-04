@@ -8,3 +8,8 @@ export enum ToolName {
   clear = 'clear',
   hand = 'hand',
 }
+
+export enum MACROMOLECULES_BOND_TYPES {
+  SINGLE = 'single',
+  HYDROGEN = 'hydrogen',
+}

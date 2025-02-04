@@ -14,6 +14,7 @@ describe('generateSequenceSelectionName', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
+        hasAntisense: false,
       },
     ];
     expect(generateSequenceSelectionName(labeledNucleotides)).toBe('R(A)P');
@@ -34,6 +35,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
+        hasAntisense: false,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
@@ -52,6 +54,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
+        hasAntisense: false,
       },
       {
         type: Entities.Nucleotide,
@@ -60,6 +63,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 1,
         hasR1Connection: true,
+        hasAntisense: false,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
@@ -78,6 +82,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 0,
         hasR1Connection: false,
+        hasAntisense: false,
       },
       {
         type: Entities.Nucleotide,
@@ -86,6 +91,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 1,
         hasR1Connection: true,
+        hasAntisense: false,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
@@ -104,12 +110,14 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 1,
         isNucleosideConnectedAndSelectedWithPhosphate: true,
         hasR1Connection: true,
+        hasAntisense: false,
       },
       {
         type: Entities.Phosphate,
         phosphateLabel: 'P',
         nodeIndexOverall: 2,
         hasR1Connection: true,
+        hasAntisense: false,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({
@@ -126,6 +134,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         phosphateLabel: 'P',
         nodeIndexOverall: 1,
         hasR1Connection: true,
+        hasAntisense: false,
       },
       {
         type: Entities.Nucleoside,
@@ -134,6 +143,7 @@ describe('generateSequenceSelectionGroupNames', () => {
         nodeIndexOverall: 2,
         isNucleosideConnectedAndSelectedWithPhosphate: false,
         hasR1Connection: true,
+        hasAntisense: false,
       },
     ];
     expect(generateSequenceSelectionGroupNames(labeledNucleotides)).toEqual({

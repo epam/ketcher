@@ -59,3 +59,4 @@ export * from './PolymerBond';
 export * from './AmbiguousMonomer';
 export * from './MonomerToAtomBond';
 export * from './HydrogenBond';
+export * from './BackBoneSequenceNode';

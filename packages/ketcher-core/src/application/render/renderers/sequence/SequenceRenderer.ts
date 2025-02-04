@@ -51,7 +51,7 @@ type BaseNodeSelection = {
 
 export type NodeSelection = BaseNodeSelection & {
   node: SubChainNode;
-  twoStrandedNode: ITwoStrandedChainItem;
+  twoStrandedNode?: ITwoStrandedChainItem;
 };
 
 export type TwoStrandedNodeSelection = BaseNodeSelection & {

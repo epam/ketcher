@@ -221,6 +221,7 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: true,
+      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleotide,
@@ -229,6 +230,7 @@ describe('SequenceItemContextMenu helpers', () => {
           sugarLabel: 'R',
           nodeIndexOverall: 0,
           hasR1Connection: false,
+          hasAntisense: false,
         },
       ],
     };
@@ -245,6 +247,7 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
+      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleotide,
@@ -253,6 +256,7 @@ describe('SequenceItemContextMenu helpers', () => {
           sugarLabel: 'R',
           nodeIndexOverall: 1,
           hasR1Connection: true,
+          hasAntisense: false,
         },
       ],
     };
@@ -269,6 +273,7 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
+      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleoside,
@@ -277,6 +282,7 @@ describe('SequenceItemContextMenu helpers', () => {
           nodeIndexOverall: 1,
           isNucleosideConnectedAndSelectedWithPhosphate: undefined,
           hasR1Connection: true,
+          hasAntisense: false,
         },
       ],
     };
@@ -293,6 +299,7 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
+      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleotide,
@@ -301,6 +308,7 @@ describe('SequenceItemContextMenu helpers', () => {
           sugarLabel: 'R',
           nodeIndexOverall: 0,
           hasR1Connection: false,
+          hasAntisense: false,
         },
         {
           type: Entities.Nucleotide,
@@ -309,6 +317,7 @@ describe('SequenceItemContextMenu helpers', () => {
           sugarLabel: 'R',
           nodeIndexOverall: 1,
           hasR1Connection: true,
+          hasAntisense: false,
         },
       ],
     };
@@ -325,6 +334,7 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: true,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
+      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Nucleoside,
@@ -333,11 +343,13 @@ describe('SequenceItemContextMenu helpers', () => {
           nodeIndexOverall: 1,
           hasR1Connection: true,
           isNucleosideConnectedAndSelectedWithPhosphate: true,
+          hasAntisense: false,
         },
         {
           type: Entities.Phosphate,
           phosphateLabel: 'P',
           nodeIndexOverall: 2,
+          hasAntisense: false,
         },
       ],
     };
@@ -354,11 +366,13 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: false,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
+      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           type: Entities.Phosphate,
           phosphateLabel: 'P',
           nodeIndexOverall: 2,
+          hasAntisense: false,
         },
         {
           type: Entities.Nucleoside,
@@ -367,6 +381,7 @@ describe('SequenceItemContextMenu helpers', () => {
           nodeIndexOverall: 3,
           hasR1Connection: true,
           isNucleosideConnectedAndSelectedWithPhosphate: false,
+          hasAntisense: false,
         },
       ],
     };
@@ -381,6 +396,7 @@ describe('SequenceItemContextMenu helpers', () => {
       isSelectedAtLeastOneNucleoelement: true,
       isSelectedOnlyNucleoelements: false,
       isSequenceFirstsOnlyNucleoelementsSelected: false,
+      hasAntisense: false,
       selectedSequenceLabeledNodes: [
         {
           baseLabel: 'A',
@@ -389,6 +405,7 @@ describe('SequenceItemContextMenu helpers', () => {
           sugarLabel: 'R',
           type: Entities.Nucleotide,
           hasR1Connection: false,
+          hasAntisense: false,
         },
         {
           baseLabel: 'C',
@@ -397,11 +414,13 @@ describe('SequenceItemContextMenu helpers', () => {
           sugarLabel: 'R',
           type: Entities.Nucleotide,
           hasR1Connection: true,
+          hasAntisense: false,
         },
         {
           nodeIndexOverall: 2,
           phosphateLabel: 'P',
           type: Entities.Phosphate,
+          hasAntisense: false,
         },
       ],
     };

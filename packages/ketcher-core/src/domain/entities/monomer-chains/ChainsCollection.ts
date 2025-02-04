@@ -432,6 +432,7 @@ export class ChainsCollection {
   // in the picture we have 5 chains, if we pass number 1 it return 1, 2 and 3, if pass 5, return 4, 5
   public getAllChainsWithConnectionInBlock(c: Chain) {
     const chains: GrouppedChain[] = [{ group: 0, chain: c }];
+    const monomerToNode = this.monomerToNode;
     const cycledComplimentaryChains = new Set<Chain>(
       this.findCycledComplimentaryChains(c, c),
     );
@@ -448,8 +449,7 @@ export class ChainsCollection {
           const { monomer, complimentaryMonomer } =
             this.getFirstComplimentaryMonomer(nodeMonomer) || {};
           const complimentaryNode =
-            complimentaryMonomer &&
-            this.monomerToNode.get(complimentaryMonomer);
+            complimentaryMonomer && monomerToNode.get(complimentaryMonomer);
           const complimentaryChain =
             complimentaryMonomer && monomerToChain.get(complimentaryMonomer);
 
@@ -655,7 +655,7 @@ export class ChainsCollection {
           return monomer.hydrogenBonds.some((hydrogenBond) => {
             const anotherMonomer = hydrogenBond.getAnotherMonomer(monomer);
             const anotherNode =
-              anotherMonomer && this.monomerToNode.get(anotherMonomer);
+              anotherMonomer && monomerToNode.get(anotherMonomer);
 
             return anotherNode === antisenseNode;
           });

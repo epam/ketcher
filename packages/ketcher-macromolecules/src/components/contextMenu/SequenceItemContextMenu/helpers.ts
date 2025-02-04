@@ -23,7 +23,7 @@ const generateLabeledNodes = (
       hasR1Connection,
       twoStrandedNode,
     } = selection;
-    const hasAntisense = Boolean(twoStrandedNode.antisenseNode);
+    const hasAntisense = Boolean(twoStrandedNode?.antisenseNode);
 
     if (node instanceof Nucleotide) {
       labeledNodes.push({

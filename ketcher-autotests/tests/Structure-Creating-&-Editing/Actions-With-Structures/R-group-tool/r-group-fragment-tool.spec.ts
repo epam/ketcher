@@ -30,7 +30,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getExtendedSmiles, getMolfile } from '@utils/formats';
+import { getExtendedSmiles } from '@utils/formats';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 async function openRGroupModalForTopAtom(page: Page) {
@@ -336,23 +336,12 @@ test.describe('R-Group Fragment Tool', () => {
       'Molfiles-V2000/r1-several-structures.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/r1-several-structures-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRING_INDEX = [2, 7, 31, 38];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/r1-several-structures-expected.mol',
-        fileFormat: 'v2000',
-      });
-    expect(molFile).toEqual(molFileExpected);
   });
 
   test('Save as *.mol V3000 file', async ({ page }) => {

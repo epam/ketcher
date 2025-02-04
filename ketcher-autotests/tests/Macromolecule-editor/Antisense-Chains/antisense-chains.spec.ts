@@ -3074,6 +3074,9 @@ test(`18. Flipping checks`, async () => {
    */
   test.setTimeout(20000);
 
+  await pageReload(page);
+  await selectSnakeLayoutModeTool(page);
+
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,

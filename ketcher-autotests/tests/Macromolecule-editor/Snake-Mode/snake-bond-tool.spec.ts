@@ -31,6 +31,7 @@ import { pageReload } from '@utils/common/helpers';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
+  waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -771,6 +772,7 @@ test.describe('Snake Bond Tool', () => {
       filename: 'KET/rna-chain-connected-to-peptide-chain.ket',
       description:
         'Bonds connecting RNA monomers to monomers of different types (peptide monomers) remain straight.',
+      waitForMonomerPreview: true,
     },
     {
       filename: 'KET/rna-chain-connected-to-chem.ket',
@@ -788,6 +790,9 @@ test.describe('Snake Bond Tool', () => {
       await page.mouse.wheel(400, 0);
       await page.mouse.wheel(-400, 0);
 
+      if (testCase.waitForMonomerPreview) {
+        await waitForMonomerPreview(page);
+      }
       await takeEditorScreenshot(page);
       await selectSnakeLayoutModeTool(page);
       await takeEditorScreenshot(page);

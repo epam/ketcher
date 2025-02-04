@@ -26,7 +26,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
-import { getMolfile, getRxn } from '@utils/formats';
+import { getRxn } from '@utils/formats';
 import {
   selectAtomLabel,
   fillAliasForAtom,
@@ -56,6 +56,10 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -240,23 +244,12 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/benzene-with-three-atoms.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/benzene-with-three-atoms-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/benzene-with-three-atoms-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -309,23 +302,12 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/benzene-and-cyclopentadiene-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/benzene-and-cyclopentadiene-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -495,23 +477,12 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/benzene-with-charge.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/benzene-with-charge-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/benzene-with-charge-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -623,23 +594,12 @@ test.describe('Atom Properties', () => {
       Description: The structure is saved as *.mol file.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/chain-with-isotope.mol', page);
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/chain-with-isotope-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/chain-with-isotope-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -749,23 +709,12 @@ test.describe('Atom Properties', () => {
       Description: The structure is saved as *.mol file.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/chain-with-valence.mol', page);
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/chain-with-valence-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/chain-with-valence-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -837,23 +786,12 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/chain-with-radicals.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/chain-with-radicals-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/chain-with-radicals-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -979,23 +917,12 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/chain-with-ring-bond-count.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/chain-with-ring-bond-count-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/chain-with-ring-bond-count-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -1172,23 +1099,12 @@ test.describe('Atom Properties', () => {
       Description: The structure is saved as *.mol file.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/chain-with-h-count.mol', page);
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/chain-with-h-count-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/chain-with-h-count-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -1277,23 +1193,12 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/chain-with-substitution-count.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/chain-with-substitution-count-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/chain-with-substitution-count-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -1468,23 +1373,12 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/all-possible-atoms-properties.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/all-possible-atoms-properties-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/all-possible-atoms-properties-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -1581,23 +1475,12 @@ test.describe('Atom Properties', () => {
       'Molfiles-V2000/chain-with-rection-flags.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/chain-with-rection-flags-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/chain-with-rection-flags-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 

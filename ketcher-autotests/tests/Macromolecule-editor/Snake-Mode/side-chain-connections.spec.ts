@@ -31,6 +31,7 @@ import { pageReload } from '@utils/common/helpers';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
+  waitForMonomerPreview,
 } from '@utils/macromolecules';
 
 let page: Page;
@@ -1009,6 +1010,7 @@ test.describe('Side chain connections', () => {
 
     const randomSideBondToSelect = 12;
     await clickNthConnectionLine(page, randomSideBondToSelect);
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

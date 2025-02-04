@@ -1,4 +1,7 @@
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
+} from '@utils/macromolecules';
 import { test } from '@playwright/test';
 import {
   selectMonomer,
@@ -24,6 +27,7 @@ test.describe('Macromolecules default presets', () => {
     Description: Switch to Polymer Editor
     */
     await selectMonomer(page, Presets.G);
+    await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
 

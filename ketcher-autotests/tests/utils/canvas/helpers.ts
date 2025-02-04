@@ -167,12 +167,11 @@ export async function takeElementScreenshot(
     hideMonomerPreview?: boolean;
   },
 ) {
-  const maxTimeout = 1500;
-  const element = page.getByTestId(elementId).first();
-  await waitForRender(page, emptyFunction, maxTimeout);
   if (options?.hideMonomerPreview) {
     await page.keyboard.press('Shift');
   }
+
+  const element = page.getByTestId(elementId).first();
   await expect(element).toHaveScreenshot({
     mask: options?.masks,
     maxDiffPixelRatio: options?.maxDiffPixelRatio,
@@ -209,8 +208,6 @@ export async function takePageScreenshot(
   page: Page,
   options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
 ) {
-  const maxTimeout = 1500;
-  await waitForRender(page, emptyFunction, maxTimeout);
   await expect(page).toHaveScreenshot({
     mask: options?.masks,
     maxDiffPixelRatio: options?.maxDiffPixelRatio,
@@ -226,14 +223,23 @@ export async function takePresetsScreenshot(
 
 export async function takeRNABuilderScreenshot(
   page: Page,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+  options?: {
+    masks?: Locator[];
+    maxDiffPixelRatio?: number;
+    hideMonomerPreview?: boolean;
+    timeout?: number;
+  },
 ) {
   await takeElementScreenshot(page, 'rna-editor-expanded', options);
 }
 
 export async function takeMonomerLibraryScreenshot(
   page: Page,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+  options?: {
+    masks?: Locator[];
+    maxDiffPixelRatio?: number;
+    hideMonomerPreview?: boolean;
+  },
 ) {
   await takeElementScreenshot(page, 'monomer-library', options);
 }
@@ -244,8 +250,14 @@ export async function takeEditorScreenshot(
     masks?: Locator[];
     maxDiffPixelRatio?: number;
     hideMonomerPreview?: boolean;
+    hideMacromoleculeEditorScrollBars?: boolean;
   },
 ) {
+  if (options?.hideMacromoleculeEditorScrollBars) {
+    // That works only for Macromolecule editor
+    const modifier = getControlModifier();
+    await page.keyboard.press(`${modifier}+KeyB`);
+  }
   await takeElementScreenshot(page, 'ketcher-canvas', options);
 }
 
@@ -266,9 +278,7 @@ export async function takeTopToolbarScreenshot(page: Page) {
 }
 
 export async function takePolymerEditorScreenshot(page: Page) {
-  const maxTimeout = 3000;
   const editor = page.locator('.Ketcher-polymer-editor-root');
-  await waitForRender(page, emptyFunction, maxTimeout);
   await expect(editor).toHaveScreenshot();
 }
 
@@ -537,4 +547,13 @@ export async function copyStructureByCtrlMove(
   await page.keyboard.down('Control');
   await dragMouseTo(targetCoordinates.x, targetCoordinates.y, page);
   await page.keyboard.up('Control');
+}
+
+export async function waitForElementInCanvas(
+  page: Page,
+  text: string,
+): Promise<void> {
+  const canvas = page.getByTestId('ketcher-canvas');
+  const targetElement = canvas.locator(`div:has-text("${text}")`);
+  await expect(targetElement).toBeVisible();
 }

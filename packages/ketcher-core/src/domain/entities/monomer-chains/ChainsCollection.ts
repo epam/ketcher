@@ -16,6 +16,7 @@ import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
   getRnaBaseFromSugar,
+  getSugarFromRnaBase,
   isMonomerConnectedToR2RnaBase,
   isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
@@ -28,7 +29,13 @@ export interface ComplimentaryChainsWithData {
   chain: Chain;
   firstConnectedNode: SubChainNode;
   firstConnectedComplimentaryNode: SubChainNode;
+  chainIdxConnection: number;
 }
+
+export type GrouppedChain = {
+  group: number;
+  chain: Chain;
+};
 
 export class ChainsCollection {
   public chains: Chain[] = [];
@@ -353,11 +360,72 @@ export class ChainsCollection {
       const hydrogenBond = monomer.hydrogenBonds[0];
 
       if (hydrogenBond) {
-        return hydrogenBond.getAnotherMonomer(monomer);
+        return {
+          monomer,
+          complimentaryMonomer: hydrogenBond.getAnotherMonomer(monomer),
+        };
       }
     }
 
     return undefined;
+  }
+
+  // for example
+  // 1 x x x
+  //   |
+  // 2 x x
+  //     |
+  // 3 x x x
+  // 4 x x
+  //     |
+  // 5 x x
+  // in the picture we have 5 chains, if we pass number 1 it return 1, 2 and 3, if pass 5, return 4, 5
+  public getAllChainsWithConnectionInBlock(c: Chain) {
+    const chains: GrouppedChain[] = [{ group: 0, chain: c }];
+
+    const res: GrouppedChain[] = [{ group: 0, chain: c }];
+    const handledChains = new Set<Chain>([c]);
+    const monomerToChain = this.monomerToChain;
+
+    while (chains.length) {
+      const { group, chain } = chains.pop() as GrouppedChain;
+      chain.forEachNode(({ node }) => {
+        const { monomer, complimentaryMonomer } =
+          this.getFirstAntisenseMonomerInNode(node) || {};
+        const complimentaryNode =
+          complimentaryMonomer && this.monomerToNode.get(complimentaryMonomer);
+        const complimentaryChain =
+          complimentaryMonomer && monomerToChain.get(complimentaryMonomer);
+
+        const isRnaMonomer =
+          isRnaBaseOrAmbiguousRnaBase(monomer) &&
+          Boolean(getSugarFromRnaBase(monomer));
+        const isRnaComplimentaryMonomer =
+          isRnaBaseOrAmbiguousRnaBase(complimentaryMonomer) &&
+          Boolean(getSugarFromRnaBase(complimentaryMonomer));
+
+        if (
+          !complimentaryNode ||
+          !complimentaryChain ||
+          !isRnaMonomer ||
+          !isRnaComplimentaryMonomer ||
+          handledChains.has(complimentaryChain)
+        ) {
+          return;
+        }
+
+        handledChains.add(complimentaryChain);
+        const el = { chain: complimentaryChain, group: Number(!group) };
+        chains.push(el);
+        res.push(el);
+      });
+    }
+
+    return res;
+  }
+
+  public getChainByMonomer(monomer: BaseMonomer) {
+    return this.monomerToChain.get(monomer);
   }
 
   public getComplimentaryChainsWithData(chain: Chain) {
@@ -365,8 +433,9 @@ export class ChainsCollection {
     const handledChains = new Set<Chain>();
     const monomerToChain = this.monomerToChain;
 
-    chain.forEachNode(({ node }) => {
-      const complimentaryMonomer = this.getFirstAntisenseMonomerInNode(node);
+    chain.forEachNode(({ node, nodeIndex }) => {
+      const { complimentaryMonomer } =
+        this.getFirstAntisenseMonomerInNode(node) || {};
       const complimentaryNode =
         complimentaryMonomer && this.monomerToNode.get(complimentaryMonomer);
       const complimentaryChain =
@@ -386,6 +455,7 @@ export class ChainsCollection {
         chain,
         firstConnectedNode: node,
         firstConnectedComplimentaryNode: complimentaryNode,
+        chainIdxConnection: nodeIndex,
       });
     });
 

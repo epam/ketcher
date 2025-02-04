@@ -23,7 +23,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getCml, getMolfile, getRxn, getSmiles } from '@utils/formats';
+import { getRxn, getSmiles } from '@utils/formats';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -200,24 +200,12 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/aromatic-benzene-v2000.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/aromatic-benzene-v2000-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/aromatic-benzene-v2000-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -350,17 +338,12 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     with the circle inside the cycles.
     */
     await openFileAndAddToCanvas('CML/aromatic-benzene.cml', page);
-    const expectedFile = await getCml(page);
-    await saveToFile('CML/aromatic-benzene-cml-expected.cml', expectedFile);
 
-    const { fileExpected: cmlFileExpected, file: cmlFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/CML/aromatic-benzene-cml-expected.cml',
-      });
-
-    expect(cmlFile).toEqual(cmlFileExpected);
+    await verifyFileExport(
+      page,
+      'CML/aromatic-benzene-cml-expected.cml',
+      FileType.CML,
+    );
     await takeEditorScreenshot(page);
   });
 

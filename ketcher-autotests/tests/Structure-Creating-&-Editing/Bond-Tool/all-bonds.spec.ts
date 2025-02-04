@@ -45,6 +45,7 @@ import {
   clickOnCanvas,
   selectAromatizeTool,
   selectDearomatizeTool,
+  delay,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -475,7 +476,13 @@ test.describe('Bond Tool', () => {
      *Description: Bond Tool - Hot keys
      */
     const hotKeys = ['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit0'];
-    for (const hotKey of hotKeys) {
+    for (const [index, hotKey] of hotKeys.entries()) {
+      // Delay prevents the search field from opening after the hotkey press
+      // (otherwise the main window is blocked and the panel tools can't be selected)
+      if (index > 0) {
+        await delay(1);
+      }
+
       await page.keyboard.press(hotKey);
       await takeLeftToolbarScreenshot(page);
     }

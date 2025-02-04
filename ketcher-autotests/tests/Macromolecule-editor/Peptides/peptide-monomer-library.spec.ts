@@ -20,7 +20,10 @@ import {
   waitForPageInit,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
+} from '@utils/macromolecules';
 import { goToPeptidesTab, goToTab } from '@utils/macromolecules/library';
 
 test.describe('Peptide library testing', () => {
@@ -37,7 +40,7 @@ test.describe('Peptide library testing', () => {
   test('Structure displaying in library', async ({ page }) => {
     // structure preview, molecule hovered state check
     await page.getByTestId(Peptides.A).hover();
-    await page.waitForSelector('[data-testid="polymer-library-preview"]');
+    await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -51,6 +54,7 @@ test.describe('Peptide library testing', () => {
     // favourites check. there is a bug - favourite sign (star) is golden when hovered(should be dark grey)
     // https://github.com/epam/ketcher/issues/3477
     await addMonomerToFavorites(page, Peptides.A);
+    await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -89,6 +93,7 @@ test.describe('Peptide library testing', () => {
     ]);
 
     await removeMonomerFromFavorites(page, Presets.A);
+    await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
 
@@ -134,6 +139,7 @@ test.describe('Peptide library testing', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectEraseTool(page);
     await page.getByText('dA').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -148,6 +154,7 @@ test.describe('Peptide library testing', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('Edc').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -162,6 +169,7 @@ test.describe('Peptide library testing', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
     await page.getByText('Edc').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -190,6 +198,7 @@ test.describe('Peptide library testing', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectEraseTool(page);
     await page.getByText('Test-6-Ch').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -204,6 +213,7 @@ test.describe('Peptide library testing', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('MCC').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -218,6 +228,7 @@ test.describe('Peptide library testing', () => {
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
     await page.getByText('SMPEG2').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

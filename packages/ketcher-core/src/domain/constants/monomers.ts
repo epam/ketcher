@@ -22,6 +22,11 @@ export enum RnaDnaNaturalAnaloguesEnum {
   URACIL = 'U',
 }
 
+export enum RnaDnaBaseNames {
+  URACIL = 'Uracil',
+  THYMINE = 'Thymine',
+}
+
 export enum StandardAmbiguousRnaBase {
   N = 'N',
   B = 'B',

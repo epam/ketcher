@@ -27,7 +27,10 @@ import {
   selectMonomer,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  turnOnMacromoleculesEditor,
+  waitForMonomerPreview,
+} from '@utils/macromolecules';
 import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
@@ -136,6 +139,7 @@ test.describe('Zoom Tool', () => {
       page,
     );
     await page.getByText('DTrp2M').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await zoomWithMouseScrollAndTakeScreenshot(page);
   });
 
@@ -223,6 +227,7 @@ test.describe('Zoom Tool', () => {
     await page.mouse.wheel(wheelXDelta, 0);
     await page.keyboard.up('Shift');
     await page.mouse.wheel(0, wheelYDelta);
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -365,6 +370,7 @@ test.describe('Zoom Tool', () => {
     }
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await page.getByText('(R').locator('..').first().hover();
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

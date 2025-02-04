@@ -17,7 +17,11 @@ import {
   selectRingButton,
   takeEditorScreenshot,
 } from '@utils';
-import { getMolfile, getRxn } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
+import { getRxn } from '@utils/formats';
 
 async function selectOption(
   page: Page,
@@ -183,24 +187,12 @@ test.describe('Bond Properties', () => {
     await doubleClickOnBond(page, BondType.SINGLE, 2);
     await selectOption(page, 'Single', 'Double');
     await pressButton(page, 'Apply');
-
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/mol_1459_to_open-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/mol_1459_to_open-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -276,11 +268,11 @@ test.describe('Bond Properties', () => {
     await doubleClickOnBond(page, BondType.DOUBLE, 1);
     await selectOption(page, 'Either', 'Chain');
     await pressButton(page, 'Apply');
-
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/mol_1461_to_open-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
     await takeEditorScreenshot(page);
   });
@@ -506,24 +498,12 @@ test.describe('Bond Properties', () => {
     await selectOption(page, 'Either', 'Chain');
     await selectOption(page, 'Unmarked', 'Made/broken');
     await pressButton(page, 'Apply');
-
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/mol_1465_to_open-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/mol_1465_to_open-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 

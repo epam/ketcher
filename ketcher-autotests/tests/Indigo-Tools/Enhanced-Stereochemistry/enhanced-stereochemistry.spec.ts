@@ -1,10 +1,8 @@
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  receiveFileComparisonData,
-  saveToFile,
   selectLeftPanelButton,
   LeftPanelButton,
   pressButton,
@@ -22,7 +20,7 @@ import {
   waitForPageInit,
   openSettings,
 } from '@utils';
-import { getMolfile } from '@utils/formats';
+
 import {
   FileType,
   verifyFileExport,
@@ -535,23 +533,12 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/one-structure-with-abs-flag.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/one-structure-with-abs-flag-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/one-structure-with-abs-flag-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -567,23 +554,12 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/three-structure-enantiomer.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/three-structure-enantiomer-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/three-structure-enantiomer-expected.mol',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 

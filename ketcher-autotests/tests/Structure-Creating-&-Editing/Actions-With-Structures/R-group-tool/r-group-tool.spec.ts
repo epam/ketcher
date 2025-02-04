@@ -1,11 +1,9 @@
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
   openFileAndAddToCanvas,
-  receiveFileComparisonData,
-  saveToFile,
   screenshotBetweenUndoRedo,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -15,7 +13,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getMolfile } from '@utils/formats';
 
 test.describe('R-Group', () => {
   test.beforeEach(async ({ page }) => {
@@ -84,22 +81,12 @@ test.describe('R-Group', () => {
       'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
       page,
     );
-    const expectedFile = await getMolfile(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/r-group-with-allkind-attachment-points-expectedV2000.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
     );
-    const METADATA_STRING_INDEX = [1];
-    const { file: molFile, fileExpected: molFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/r-group-with-allkind-attachment-points-expectedV2000.mol',
-        fileFormat: 'v2000',
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
   });
 

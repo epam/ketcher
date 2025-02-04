@@ -5,6 +5,8 @@ import {
   getCdx,
   getCdxml,
   getCml,
+  getIdt,
+  getInchi,
   getKet,
   getMolfile,
   getRdf,
@@ -25,6 +27,9 @@ export enum FileType {
   RXN = 'rxn',
   CML = 'cml',
   SDF = 'sdf',
+  InChI = 'inchi',
+  RDF = 'rdf',
+  IDT = 'idt',
 }
 
 type FileTypeHandler =
@@ -38,8 +43,11 @@ const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.SMARTS]: getSmarts,
   [FileType.MOL]: getMolfile,
   [FileType.RXN]: getRxn,
+  [FileType.RDF]: getRdf,
   [FileType.CML]: getCml,
   [FileType.SDF]: getSdf,
+  [FileType.InChI]: getInchi,
+  [FileType.IDT]: getIdt,
 };
 
 async function getFileContent(
@@ -52,28 +60,26 @@ async function getFileContent(
   if (!handler) {
     throw new Error(`Unsupported file type: ${fileType}`);
   }
-  if (
-    (fileType === FileType.MOL || fileType === FileType.RXN) &&
-    typeof fileFormat !== 'undefined'
-  ) {
-    return (
-      handler as (page: Page, fileFormat?: MolfileFormat) => Promise<string>
-    )(page, fileFormat);
-  }
-  return (handler as (page: Page) => Promise<string>)(page);
+
+  // If fileFormat is provided ('v2000' or 'v3000'), pass it to the handler
+  return fileFormat
+    ? (handler as (page: Page, fileFormat: MolfileFormat) => Promise<string>)(
+        page,
+        fileFormat,
+      )
+    : (handler as (page: Page) => Promise<string>)(page);
 }
 
 export async function verifyFileExport(
   page: Page,
   expectedFilename: string,
   fileType: FileType,
-  format: MolfileFormat = 'v2000',
+  format?: MolfileFormat,
   metaDataIndexes: number[] = [],
 ) {
   // This two lines for creating from scratch or for updating exampled files
   const expectedFileContent = await getFileContent(page, fileType, format);
   await saveToFile(expectedFilename, expectedFileContent);
-
   // This line for filtering out example file content (named as fileExpected)
   // and file content from memory (named as file) from unnessusary data
   const { fileExpected, file } = await receiveFileComparisonData({
@@ -82,41 +88,25 @@ export async function verifyFileExport(
     fileFormat: format,
     metaDataIndexes,
   });
-
-  expect(file).toEqual(fileExpected);
-}
-
-export async function verifyRdfFile(
-  page: Page,
-  format: 'v2000' | 'v3000',
-  filename: string,
-  expectedFilename: string,
-  metaDataIndexes: number[] = [],
-) {
-  const expectedFile = await getRdf(page, format);
-  await saveToFile(filename, expectedFile);
-
-  const { fileExpected: rdfFileExpected, file: rdfFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName: expectedFilename,
-      fileFormat: format,
-      metaDataIndexes,
-    });
-
+  // Function to filter lines
   const filterLines = (lines: string[], indexes: number[]) => {
     if (indexes.length === 0) {
+      // Default behavior: ignore lines containing '-INDIGO-', 'Ketcher' and '$DATM'
       return lines.filter(
-        (line) => !line.includes('-INDIGO-') && !line.includes('$DATM'),
+        (line) =>
+          !line.includes('-INDIGO-') &&
+          !line.includes('$DATM') &&
+          !line.includes('Ketcher'),
       );
     }
+    // If indexes are specified, filter lines by indexes
     return filterByIndexes(lines, indexes);
   };
-
-  const filteredRdfFile = filterLines(rdfFile, metaDataIndexes);
-  const filteredRdfFileExpected = filterLines(rdfFileExpected, metaDataIndexes);
-
-  expect(filteredRdfFile).toEqual(filteredRdfFileExpected);
+  // Apply filtering to both files
+  const filteredFile = filterLines(file, metaDataIndexes);
+  const filteredFileExpected = filterLines(fileExpected, metaDataIndexes);
+  // Compare the filtered files
+  expect(filteredFile).toEqual(filteredFileExpected);
 }
 
 const GetFileMethod: Record<string, keyof Ketcher> = {
@@ -165,17 +155,17 @@ async function receiveFile({
       ? GetFileMethod[fileExtension as keyof typeof GetFileMethod]
       : GetFileMethod.ket;
 
-  const pageData = {
-    format: fileFormat,
-    method: methodName,
-  };
+  const pageData = fileFormat
+    ? { method: methodName, format: fileFormat }
+    : { method: methodName };
 
   await page.waitForFunction(() => window.ketcher);
-  const file = await page.evaluate(
-    ({ method, format }) =>
-      (window.ketcher[method] as KetcherApiFunction)(format),
-    pageData,
-  );
+
+  const file = await page.evaluate(({ method, format }) => {
+    return format
+      ? (window.ketcher[method] as KetcherApiFunction)(format)
+      : (window.ketcher[method] as KetcherApiFunction)();
+  }, pageData);
 
   return file.split('\n');
 }
@@ -220,6 +210,7 @@ export async function receiveFileComparisonData({
     fileExpected: filterByIndexes(fileExpected, metaDataIndexes),
   };
 }
+
 export async function verifyHELMExport(page: Page, HELMExportExpected = '') {
   await selectSaveTool(page);
   await chooseFileFormat(page, 'HELM');

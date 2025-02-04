@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import {
   ArrowTool,
   copyAndPaste,
@@ -33,6 +33,7 @@ import {
   selectCleanTool,
   selectLayoutTool,
 } from '@utils';
+import { pageReloadMicro } from '@utils/common/helpers';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -363,6 +364,10 @@ test.describe('Plus and Arrows tools ', () => {
      */
     let point: Point;
     test.beforeEach(async ({ page }) => {
+      await configureInitialState(page);
+    });
+
+    async function configureInitialState(page: Page) {
       await openFileAndAddToCanvas(
         'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
         page,
@@ -371,7 +376,7 @@ test.describe('Plus and Arrows tools ', () => {
       await clickOnTheCanvas(page, -40, 0);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
       await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    });
+    }
 
     test('Select the reaction arrow and move it', async ({ page }) => {
       await page.mouse.move(point.x + OFFSET_FROM_ARROW, point.y);
@@ -417,6 +422,9 @@ test.describe('Plus and Arrows tools ', () => {
     test('Select reaction arrow, copy and paste it onto the canvas', async ({
       page,
     }) => {
+      await pageReloadMicro(page);
+      await configureInitialState(page);
+
       await clickOnCanvas(page, point.x + OFFSET_FROM_ARROW, point.y);
 
       await copyToClipboardByKeyboard(page);

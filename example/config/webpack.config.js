@@ -67,10 +67,17 @@ module.exports = override(
         chunks: ['popup'],
         inject: true,
       }),
+      new HtmlWebpackPlugin({
+        filename: 'duo.html',
+        template: 'public/duo.html',
+        chunks: ['duo'],
+        inject: true,
+      }),
     );
     config.entry = {
       main: './src/index.tsx',
       popup: './src/popupIndex.tsx',
+      duo: './src/duoIndex.tsx',
     };
     return config;
   },

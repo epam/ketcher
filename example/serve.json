@@ -5,6 +5,10 @@
       "destination": "/popup.html"
     },
     {
+      "source": "/duo",
+      "destination": "/duo.html"
+    },
+    {
       "source": "/iframe",
       "destination": "/iframe.html"
     },

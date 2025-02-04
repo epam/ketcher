@@ -55,10 +55,10 @@ import {
 import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { STRAND_TYPE } from 'domain/constants';
 import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,

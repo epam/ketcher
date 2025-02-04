@@ -71,6 +71,7 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -88,39 +89,36 @@ async function drawThreeMonomers(page: Page) {
 }
 
 async function drawThreeMonomersConnectedWithBonds(page: Page) {
-  const sugars = page.getByText('3A6').locator('..');
-  const sugar1 = sugars.nth(0);
-  const bases = page.getByText('baA').locator('..');
-  const base1 = bases.nth(0);
-  const phosphates = page.getByText('P').locator('..');
-  const phosphate1 = phosphates.nth(0);
+  const sugar = getMonomerLocator(page, Sugars._3A6).nth(0);
+  const base = getMonomerLocator(page, Bases.baA).nth(0);
+  const phosphate = getMonomerLocator(page, Phosphates.P).nth(0);
+
   await drawThreeMonomers(page);
   await selectMacroBond(page, MacroBondTool.SINGLE);
-  await sugar1.hover();
+  await sugar.hover();
   await page.mouse.down();
-  await base1.hover();
+  await base.hover();
   await page.mouse.up();
-  await sugar1.hover();
+  await sugar.hover();
   await page.mouse.down();
-  await phosphate1.hover();
+  await phosphate.hover();
   await page.mouse.up();
 }
 
 async function drawBasePhosphate(page: Page) {
   const x = 800;
   const y = 350;
-  const bases = page.getByText('baA').locator('..');
-  const base1 = bases.nth(0);
-  const phosphates = page.getByText('P').locator('..');
-  const phosphate1 = phosphates.nth(0);
+  const base = getMonomerLocator(page, Bases.baA).nth(0);
+  const phosphate = getMonomerLocator(page, Phosphates.P).nth(0);
+
   await selectMonomer(page, Bases.baA);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Phosphates.P);
   await clickOnCanvas(page, x, y);
   await selectMacroBond(page, MacroBondTool.SINGLE);
-  await base1.hover();
+  await base.hover();
   await page.mouse.down();
-  await phosphate1.hover();
+  await phosphate.hover();
   await page.mouse.up();
   await pressButton(page, 'R2');
   await pressButton(page, 'Connect');
@@ -129,36 +127,33 @@ async function drawBasePhosphate(page: Page) {
 async function drawSugarPhosphate(page: Page) {
   const x = 800;
   const y = 350;
-  const sugars = page.getByText('3A6').locator('..');
-  const sugar1 = sugars.nth(0);
-  const phosphates = page.getByText('P').locator('..');
-  const phosphate1 = phosphates.nth(0);
+  const sugar = getMonomerLocator(page, Sugars._3A6).nth(0);
+  const phosphate = getMonomerLocator(page, Phosphates.P).nth(0);
+
   await selectMonomer(page, Sugars._3A6);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Phosphates.P);
   await clickOnCanvas(page, x, y);
   await selectMacroBond(page, MacroBondTool.SINGLE);
-  await sugar1.hover();
+  await sugar.hover();
   await page.mouse.down();
-  await phosphate1.hover();
+  await phosphate.hover();
   await page.mouse.up();
 }
 
 async function drawSugarBase(page: Page) {
   const x = 800;
   const y = 350;
-  const sugars = page.getByText('3A6').locator('..');
-  const sugar1 = sugars.nth(0);
-  const bases = page.getByText('baA').locator('..');
-  const base1 = bases.nth(0);
+  const sugar = getMonomerLocator(page, Sugars._3A6).nth(0);
+  const base = getMonomerLocator(page, Bases.baA).nth(0);
   await selectMonomer(page, Sugars._3A6);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Bases.baA);
   await clickOnCanvas(page, x, y);
   await selectMacroBond(page, MacroBondTool.SINGLE);
-  await sugar1.hover();
+  await sugar.hover();
   await page.mouse.down();
-  await base1.hover();
+  await base.hover();
   await page.mouse.up();
 }
 
@@ -324,7 +319,7 @@ test.describe('RNA Library', () => {
     When hover over monomer window with preview appears.
     */
     await addMonomerToCenterOfCanvas(page, Sugars._12ddR);
-    await page.getByText('12ddR').locator('..').first().hover();
+    await getMonomerLocator(page, Sugars._12ddR).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -337,7 +332,7 @@ test.describe('RNA Library', () => {
     When hover over monomer window with preview appears.
     */
     await addMonomerToCenterOfCanvas(page, Bases.clA);
-    await page.getByText('clA').locator('..').first().hover();
+    await getMonomerLocator(page, Bases.clA).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -350,7 +345,7 @@ test.describe('RNA Library', () => {
     When hover over monomer window with preview appears.
     */
     await addMonomerToCenterOfCanvas(page, Phosphates.Test_6_Ph);
-    await page.getByText('Test-6-Ph').locator('..').first().hover();
+    await getMonomerLocator(page, Phosphates.Test_6_Ph).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -821,22 +816,22 @@ test.describe('RNA Library', () => {
         page,
       );
       await selectEraseTool(page);
-      await page.getByText(monomer.text).locator('..').first().click();
+      await getMonomerLocator(page, { monomerAlias: monomer.text }).click();
       await takeEditorScreenshot(page);
     });
   }
 
   const monomerToDelete = [
-    { text: '3A6', description: 'Sugar monomer deleted.' },
-    { text: 'baA', description: 'Base monomer deleted.' },
-    { text: 'P', description: 'Phosphate monomer deleted.' },
+    { monomer: Sugars._3A6, description: 'Sugar monomer deleted.' },
+    { monomer: Bases.baA, description: 'Base monomer deleted.' },
+    { monomer: Phosphates.P, description: 'Phosphate monomer deleted.' },
   ];
 
   for (const monomer of monomerToDelete) {
-    test(`Draw Sugar-Base-Phosphate and Delete ${monomer.text} monomer`, async () => {
+    test(`Draw Sugar-Base-Phosphate and Delete ${monomer.monomer.alias} monomer`, async () => {
       await drawThreeMonomersConnectedWithBonds(page);
       await selectEraseTool(page);
-      await page.getByText(monomer.text).locator('..').first().click();
+      await getMonomerLocator(page, monomer.monomer).click();
       await takeEditorScreenshot(page);
     });
   }
@@ -860,21 +855,19 @@ test.describe('RNA Library', () => {
     Description: A message appears at the bottom of the canvas: 
     Monomers don't have any connection point available.
     */
-    const sugars = page.getByText('3A6').locator('..');
-    const sugar1 = sugars.nth(0);
-    const bases = page.getByText('baA').locator('..');
-    const base1 = bases.nth(0);
-    const phosphates = page.getByText('P').locator('..');
-    const phosphate1 = phosphates.nth(0);
+    const sugar = getMonomerLocator(page, Sugars._3A6).nth(0);
+    const base = getMonomerLocator(page, Bases.baA).nth(0);
+    const phosphate = getMonomerLocator(page, Phosphates.P).nth(0);
+
     await drawThreeMonomers(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
-    await sugar1.hover();
+    await sugar.hover();
     await page.mouse.down();
-    await base1.hover();
+    await base.hover();
     await page.mouse.up();
-    await phosphate1.hover();
+    await phosphate.hover();
     await page.mouse.down();
-    await base1.hover();
+    await base.hover();
     await page.mouse.up();
     await takeEditorScreenshot(page);
   });
@@ -903,10 +896,10 @@ test.describe('RNA Library', () => {
     });
   }
 
-  const monomersToMove = ['3A6', 'baA', 'P'];
+  const monomersToMove = [Sugars._3A6, Bases.baA, Phosphates.P];
 
   for (const monomer of monomersToMove) {
-    test(`Draw Sugar-Base-Phosphate and Move ${monomer} monomer`, async () => {
+    test(`Draw Sugar-Base-Phosphate and Move ${monomer.alias} monomer`, async () => {
       /* 
     Test case: #2507 - Add RNA monomers to canvas
     Description: Sugar/Base/Phosphate monomer moved to new position. 
@@ -916,7 +909,7 @@ test.describe('RNA Library', () => {
       const anyPointY = 400;
       await drawThreeMonomersConnectedWithBonds(page);
       await selectRectangleSelectionTool(page);
-      await page.getByText(monomer).locator('..').first().click();
+      await getMonomerLocator(page, monomer).click();
       await dragMouseTo(anyPointX, anyPointY, page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -934,7 +927,7 @@ test.describe('RNA Library', () => {
     */
       await addMonomerToCenterOfCanvas(page, Sugars._25R);
       await selectMacroBond(page, MacroBondTool.SINGLE);
-      await page.getByText('25R').locator('..').first().click();
+      await getMonomerLocator(page, Sugars._25R).click();
       await pressEscapeWhenPullBond(page);
       await takeEditorScreenshot(page);
 
@@ -1107,14 +1100,9 @@ test.describe('RNA Library', () => {
       page,
     );
     await selectEraseTool(page);
-    await page.getByText('AmMC6T').locator('..').locator('..').first().click();
-    await page.getByText('Super G').locator('..').locator('..').first().click();
-    await page
-      .getByText('5-Bromo dU')
-      .locator('..')
-      .locator('..')
-      .first()
-      .click();
+    await getMonomerLocator(page, Nucleotides.AmMC6T).click();
+    await getMonomerLocator(page, { monomerAlias: 'Super G' }).click();
+    await getMonomerLocator(page, { monomerAlias: '5-Bromo dU' }).click();
     await takeEditorScreenshot(page);
   });
 

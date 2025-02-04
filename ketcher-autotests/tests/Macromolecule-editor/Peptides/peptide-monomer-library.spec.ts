@@ -27,6 +27,7 @@ import {
   waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { goToPeptidesTab, goToTab } from '@utils/macromolecules/library';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 test.describe('Peptide library testing', () => {
   test.beforeEach(async ({ page }) => {
@@ -140,7 +141,7 @@ test.describe('Peptide library testing', () => {
     await selectMonomer(page, Peptides.dA);
     await clickInTheMiddleOfTheScreen(page);
     await selectEraseTool(page);
-    await page.getByText('dA').locator('..').first().hover();
+    await getMonomerLocator(page, Peptides.dA).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -155,7 +156,7 @@ test.describe('Peptide library testing', () => {
     await selectMonomer(page, Peptides.Edc);
     await clickInTheMiddleOfTheScreen(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
-    await page.getByText('Edc').locator('..').first().hover();
+    await getMonomerLocator(page, Peptides.Edc).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -170,7 +171,7 @@ test.describe('Peptide library testing', () => {
     await selectMonomer(page, Peptides.Edc);
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
-    await page.getByText('Edc').locator('..').first().hover();
+    await getMonomerLocator(page, Peptides.Edc).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -199,7 +200,7 @@ test.describe('Peptide library testing', () => {
     await selectMonomer(page, Chem.Test_6_Ch);
     await clickInTheMiddleOfTheScreen(page);
     await selectEraseTool(page);
-    await page.getByText('Test-6-Ch').locator('..').first().hover();
+    await getMonomerLocator(page, Chem.Test_6_Ch).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -214,7 +215,7 @@ test.describe('Peptide library testing', () => {
     await selectMonomer(page, Chem.MCC);
     await clickInTheMiddleOfTheScreen(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
-    await page.getByText('MCC').locator('..').first().hover();
+    await getMonomerLocator(page, Chem.MCC).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -229,7 +230,7 @@ test.describe('Peptide library testing', () => {
     await selectMonomer(page, Chem.SMPEG2);
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleSelectionTool(page);
-    await page.getByText('SMPEG2').locator('..').first().hover();
+    await getMonomerLocator(page, Chem.SMPEG2).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -259,7 +260,7 @@ test.describe('Peptide library testing', () => {
       'KET/stuck-peptides-not-connected.ket',
       page,
     );
-    await page.getByText('Nal').locator('..').first().click();
+    await getMonomerLocator(page, Peptides.Nal).click();
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await takeEditorScreenshot(page);
   });
@@ -275,11 +276,11 @@ test.describe('Peptide library testing', () => {
     const x = 200;
     const y = 200;
     await openFileAndAddToCanvasMacro('KET/stuck-peptides-connected.ket', page);
-    await page.getByText('Nal').locator('..').first().click();
+    await getMonomerLocator(page, Peptides.Nal).click();
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await takeEditorScreenshot(page);
     await selectRectangleSelectionTool(page);
-    await page.getByText('Nal').locator('..').first().hover();
+    await getMonomerLocator(page, Peptides.Nal).hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
   });

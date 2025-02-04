@@ -43,7 +43,10 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
+import {
+  connectMonomersWithBonds,
+  getMonomerLocator,
+} from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import {
   pressRedoButton,
@@ -189,7 +192,7 @@ test('Create bond between two chems', async () => {
   await clickOnCanvas(page, 400, 400);
 
   // Get 2 chems locators
-  const chems = await page.getByText('hxy').locator('..');
+  const chems = page.getByText('hxy').locator('..');
   const chem1 = chems.nth(0);
   const chem2 = chems.nth(1);
 
@@ -701,11 +704,7 @@ test('Verify behaviour when a non-bond is right-clicked', async () => {
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
-  await page
-    .getByText('Phe4Me')
-    .locator('..')
-    .first()
-    .click({ button: 'right' });
+  await getMonomerLocator(page, Peptides.Phe4Me).click({ button: 'right' });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });

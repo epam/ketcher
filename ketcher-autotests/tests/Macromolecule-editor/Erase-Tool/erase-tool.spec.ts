@@ -34,6 +34,8 @@ import {
 import { Peptides } from '@constants/monomers/Peptides';
 import { Chem } from '@constants/monomers/Chem';
 import { Bases } from '@constants/monomers/Bases';
+import { Sugars } from '@constants/monomers/Sugars';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {
@@ -126,7 +128,7 @@ test.describe('Erase Tool', () => {
       page,
     );
     await selectEraseTool(page);
-    await page.getByText('FMOE').locator('..').first().click();
+    await getMonomerLocator(page, Sugars.FMOE).click();
     await takeEditorScreenshot(page);
   });
 
@@ -140,7 +142,7 @@ test.describe('Erase Tool', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await selectEraseTool(page);
-    await page.getByText('Test-6-Ch').locator('..').first().click();
+    await getMonomerLocator(page, Chem.Test_6_Ch).click();
     await takeEditorScreenshot(page);
   });
 
@@ -151,14 +153,14 @@ test.describe('Erase Tool', () => {
     Test case: Erase Tool
     Description: Bond between two CHEMs are deleted.
     */
-    const bondLine = await page.locator('g[pointer-events="stroke"]').first();
+    const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await openFileAndAddToCanvasAsNewProject(
       `KET/two-chems-connected.ket`,
       page,
     );
     await takeEditorScreenshot(page);
     await selectEraseTool(page);
-    await bondLine.locator('..').click();
+    await bondLine.click();
     await takeEditorScreenshot(page);
   });
 
@@ -169,13 +171,13 @@ test.describe('Erase Tool', () => {
     Test case: Erase Tool
     Description: Bond between two CHEMs are deleted and restored.
     */
-    const bondLine = await page.locator('g[pointer-events="stroke"]').first();
+    const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await openFileAndAddToCanvasAsNewProject(
       `KET/two-chems-connected.ket`,
       page,
     );
     await selectEraseTool(page);
-    await bondLine.locator('..').click();
+    await bondLine.click();
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
@@ -208,7 +210,7 @@ test.describe('Erase Tool', () => {
     await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
     await takeEditorScreenshot(page);
     await selectEraseTool(page);
-    await page.getByText('A6OH').locator('..').first().click();
+    await getMonomerLocator(page, Chem.A6OH).click();
     await takeEditorScreenshot(page);
   });
 
@@ -253,7 +255,7 @@ test.describe('Erase Tool', () => {
     */
     await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
     await selectEraseTool(page);
-    await page.getByText('A6OH').locator('..').first().click();
+    await getMonomerLocator(page, Chem.A6OH).click();
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
@@ -326,11 +328,11 @@ test.describe('Erase Tool', () => {
     await selectEraseTool(page);
     await selectZoomInTool(page, 5);
     await clickInTheMiddleOfTheScreen(page);
-    await page.getByText('Bal').locator('..').first().click();
+    await getMonomerLocator(page, Peptides.Bal).click();
     await takeEditorScreenshot(page);
     await selectZoomOutTool(page, 8);
     await clickInTheMiddleOfTheScreen(page);
-    await page.getByText('D-2Nal').locator('..').first().click();
+    await getMonomerLocator(page, Peptides.D_2Nal).click();
     await takeEditorScreenshot(page);
   });
 
@@ -363,8 +365,8 @@ test.describe('Erase Tool', () => {
     */
     await openFileAndAddToCanvasMacro('KET/peptides-flex-chain.ket', page);
     await selectEraseTool(page);
-    await page.getByText('Bal').locator('..').first().click();
-    await page.getByText('D-2Nal').locator('..').first().click();
+    await getMonomerLocator(page, Peptides.Bal).click();
+    await getMonomerLocator(page, Peptides.D_2Nal).click();
 
     await verifyFileExport(
       page,
@@ -389,8 +391,8 @@ test.describe('Erase Tool', () => {
     */
     await openFileAndAddToCanvasMacro('KET/peptides-flex-chain.ket', page);
     await selectEraseTool(page);
-    await page.getByText('Bal').locator('..').first().click();
-    await page.getByText('D-2Nal').locator('..').first().click();
+    await getMonomerLocator(page, Peptides.Bal).click();
+    await getMonomerLocator(page, Peptides.D_2Nal).click();
     await verifyFileExport(
       page,
       'Molfiles-V3000/peptides-flex-chain-expected.mol',

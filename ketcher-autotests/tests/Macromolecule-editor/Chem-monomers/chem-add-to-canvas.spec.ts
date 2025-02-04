@@ -14,6 +14,7 @@ import {
   hideMonomerPreview,
   turnOnMacromoleculesEditor,
 } from '@utils/macromolecules';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 /* 
 Test case: #2497 - Add chem to canvas
@@ -60,9 +61,9 @@ test.describe('Actions with CHEM', () => {
     */
     await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
-    await page.getByText('Test-6-Ch').locator('..').hover();
+    await getMonomerLocator(page, Chem.Test_6_Ch).hover();
     await page.mouse.down();
-    await page.getByText('A6OH').locator('..').hover();
+    await getMonomerLocator(page, Chem.A6OH).hover();
     await page.mouse.up();
     await takeEditorScreenshot(page);
     await pressButton(page, 'Cancel');

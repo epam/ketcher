@@ -9,6 +9,14 @@ export const Bases = {
   _5meC: { alias: '5meC', testId: '5meC___5-methylcytosine' } as Monomer,
   baA: { alias: 'baA', testId: 'baA___N6-benzyladenine' } as Monomer,
   c7A: { alias: 'c7A', testId: 'c7A___7-Deazaadenine' } as Monomer,
+  c7io7n: {
+    alias: 'c7io7n',
+    testId: 'c7io7n___7-Deaza-7-iodo-2-aminoadenine',
+  } as Monomer,
+  cdaC: {
+    alias: 'cdaC',
+    testId: 'cdaC___5-cyclopropyl-4-dimethylamino-cytosine',
+  } as Monomer,
   clA: { alias: 'clA', testId: 'clA___T-clamp OMe' } as Monomer,
   dabA: {
     alias: 'dabA',
@@ -23,6 +31,7 @@ export const Bases = {
     testId: 'nC6n2G___6-Aminohexyl-2-aminoguanine',
   } as Monomer,
   nC6n5C: { alias: 'nC6n5C', testId: 'nC6n5C___Amino-Modier C6 dC' } as Monomer,
+  nC6n5U: { alias: 'nC6n5U', testId: 'nC6n5U___Amino-Modier C6 dT' } as Monomer,
   nC6n8A: {
     alias: 'nC6n8A',
     testId: 'nC6n8A___6-Aminohexyl-8-aminoadenine',

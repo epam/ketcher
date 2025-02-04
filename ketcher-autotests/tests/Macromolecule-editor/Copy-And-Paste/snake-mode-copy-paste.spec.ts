@@ -1,3 +1,4 @@
+import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -12,6 +13,7 @@ import {
   pasteFromClipboardByKeyboard,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 test.describe('Snake mode copy&paste', () => {
   test.beforeEach(async ({ page }) => {
@@ -49,8 +51,8 @@ test.describe('Snake mode copy&paste', () => {
     page,
   }) => {
     await page.keyboard.down('Shift');
-    await page.getByText('D').locator('..').first().click();
-    await page.getByText('F').locator('..').first().click();
+    await getMonomerLocator(page, Peptides.D).click();
+    await getMonomerLocator(page, Peptides.F).first().click();
     await page.keyboard.up('Shift');
     await copyToClipboardByKeyboard(page);
     await takeEditorScreenshot(page);

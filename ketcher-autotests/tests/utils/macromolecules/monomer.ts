@@ -2,6 +2,7 @@ import { Locator, Page } from '@playwright/test';
 import {
   dragMouseTo,
   LeftPanelButton,
+  Monomer,
   MonomerType,
   selectLeftPanelButton,
   selectMacroBond,
@@ -9,6 +10,7 @@ import {
   waitForRender,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { getMonomerType } from '@utils/mappers/monomerMapper';
 
 export async function moveMonomer(
   page: Page,
@@ -45,9 +47,9 @@ export async function connectMonomersWithBonds(
     const currentMonomer = monomerNames[i];
     const nextMonomer = monomerNames[i + 1];
 
-    await page.getByText(currentMonomer).locator('..').first().hover();
+    await getMonomerLocator(page, { monomerAlias: currentMonomer }).hover();
     await page.mouse.down();
-    await page.getByText(nextMonomer).locator('..').first().hover();
+    await getMonomerLocator(page, { monomerAlias: nextMonomer }).hover();
     await page.mouse.up();
   }
 }
@@ -72,50 +74,53 @@ export async function getMonomerIDsByAlias(
   return monomerIDs as number[];
 }
 
-export async function getMonomerLocatorByAlias(
-  page: Page,
-  monomerAlias: string,
-): Promise<Locator> {
+export function getMonomerLocatorByAlias(page: Page, monomerAlias: string) {
   return page.locator(
     `[data-testid="monomer"][data-monomeralias="${monomerAlias}"]`,
   );
 }
 
-export async function getMonomerLocatorById(
-  page: Page,
-  id: number | string,
-): Promise<Locator> {
+export function getMonomerLocatorById(page: Page, id: number | string) {
   return page
     .locator(`[data-testid="monomer"][data-monomerid="${id}"]`)
     .first();
 }
 
-export async function getMonomerLocator(
+type GetMonomerLocatorOptions = {
+  numberOfAttachmentPoints?: string;
+  rValues?: boolean[];
+} & (
+  | {
+      monomerAlias?: string;
+      monomerType?: MonomerType;
+      monomerId?: string | number;
+    }
+  | Monomer
+);
+
+export function getMonomerLocator(
   page: Page,
-  {
-    monomerAlias,
-    monomerType,
-    monomerId,
-    numberOfAttachmentPoints,
-    rValues,
-  }: {
-    monomerAlias?: string;
-    monomerType?: MonomerType;
-    monomerId?: string | number;
-    numberOfAttachmentPoints?: string;
-    rValues?: boolean[];
-  },
-): Promise<Locator> {
+  options: GetMonomerLocatorOptions,
+) {
   const attributes: { [key: string]: string } = {};
 
   attributes['data-testid'] = 'monomer';
 
-  if (monomerAlias) attributes['data-monomeralias'] = monomerAlias;
+  if ('testId' in options) {
+    attributes['data-monomeralias'] = options.alias;
+    attributes['data-monomertype'] = getMonomerType(options);
+  } else {
+    const { monomerAlias, monomerType, monomerId } = options;
+    if (monomerAlias) attributes['data-monomeralias'] = monomerAlias;
+    if (monomerType) attributes['data-monomertype'] = monomerType;
+    if (monomerId) attributes['data-monomerid'] = String(monomerId);
+  }
+
+  const { numberOfAttachmentPoints, rValues } = options;
+
   if (numberOfAttachmentPoints) {
     attributes['data-number-of-attachment-points'] = numberOfAttachmentPoints;
   }
-  if (monomerType) attributes['data-monomertype'] = monomerType;
-  if (monomerId) attributes['data-monomerid'] = String(monomerId);
 
   const attributeSelectors = Object.entries(attributes)
     .map(([key, value]) => `[${key}="${value}"]`)

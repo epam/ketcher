@@ -36,6 +36,7 @@ import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   connectMonomersWithBonds,
+  getMonomerLocator,
   moveMonomer,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -177,7 +178,7 @@ test.describe('Undo-Redo tests', () => {
     ];
 
     for (const entity of entitiesToDelete) {
-      await page.getByText(entity).locator('..').first().click();
+      await getMonomerLocator(page, { monomerAlias: entity }).click();
     }
 
     const numberOfPress = 9;
@@ -294,7 +295,7 @@ test.describe('Undo-Redo tests', () => {
     ];
 
     for (const entity of entitiesToDelete) {
-      await page.getByText(entity).locator('..').first().click();
+      await getMonomerLocator(page, { monomerAlias: entity }).click();
     }
 
     const numberOfPress = 6;

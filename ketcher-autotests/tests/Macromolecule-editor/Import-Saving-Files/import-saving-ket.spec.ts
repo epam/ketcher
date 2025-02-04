@@ -34,12 +34,34 @@ import {
   waitForMonomerPreview,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   markResetToDefaultState,
   processResetToDefaultState,
 } from '@utils/testAnnotations/resetToDefaultState';
 
 let page: Page;
+
+const fileTestData = [
+  { alias: '(R1)_-_Left_only', fileName: '01 - (R1) - Left only' },
+  { alias: '(R2)_-_Right_only', fileName: '02 - (R2) - Right only' },
+  { alias: '(R3)_-_Side_only', fileName: '03 - (R3) - Side only' },
+  { alias: '(R1,R2)_-_R3_gap', fileName: '04 - (R1,R2) - R3 gap' },
+  { alias: '(R1,R3)_-_R2_gap', fileName: '05 - (R1,R3) - R2 gap' },
+  { alias: '(R2,R3)_-_R1_gap', fileName: '06 - (R2,R3) - R1 gap' },
+  { alias: '(R3,R4)', fileName: '07 - (R3,R4)' },
+  { alias: '(R1,R2,R3)', fileName: '08 - (R1,R2,R3)' },
+  { alias: '(R1,R3,R4)', fileName: '09 - (R1,R3,R4)' },
+  { alias: '(R2,R3,R4)', fileName: '10 - (R2,R3,R4)' },
+  { alias: '(R3,R4,R5)', fileName: '11 - (R3,R4,R5)' },
+  { alias: '(R1,R2,R3,R4)', fileName: '12 - (R1,R2,R3,R4)' },
+  { alias: '(R1,R3,R4,R5)', fileName: '13 - (R1,R3,R4,R5)' },
+  { alias: '(R2,R3,R4,R5)', fileName: '14 - (R2,R3,R4,R5)' },
+  {
+    alias: '(R1,R2,R3,R4,R5)',
+    fileName: '15 - (R1,R2,R3,R4,R5)',
+  },
+];
 
 test.beforeAll(async ({ browser }) => {
   const context = await browser.newContext();
@@ -139,7 +161,7 @@ test.describe('Import-Saving .ket Files', () => {
     await verifyFileExport(page, 'KET/monomer-expected.ket', FileType.KET);
     await selectClearCanvasTool(page);
     await openFileAndAddToCanvasMacro('KET/monomer-expected.ket', page);
-    await page.getByText('Bal').locator('..').first().hover();
+    await getMonomerLocator(page, Peptides.bAla).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -161,7 +183,7 @@ test.describe('Import-Saving .ket Files', () => {
     await takeEditorScreenshot(page);
     await clickUndo(page);
     await selectAllStructuresOnCanvas(page);
-    await page.getByText('Ph').locator('..').first().hover();
+    await getMonomerLocator(page, { monomerAlias: 'Ph' }).first().hover();
     await dragMouseTo(400, 400, page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -341,34 +363,37 @@ test.describe('Base monomers on the canvas, their connection points and preview 
     (Base) from ket file, correctly show them on canvas (name, shape, color),
     shows correct number or connections and shows correct preview tooltip
   */
-  const fileNames = [
-    '01 - (R1) - Left only',
-    '04 - (R1,R2) - R3 gap',
-    '05 - (R1,R3) - R2 gap',
-    '08 - (R1,R2,R3)',
-    '09 - (R1,R3,R4)',
-    '12 - (R1,R2,R3,R4)',
-    '13 - (R1,R3,R4,R5)',
-    '15 - (R1,R2,R3,R4,R5)',
+  const testData = [
+    { alias: '(R1)_-_Left_only', fileName: '01 - (R1) - Left only' },
+    { alias: '(R1,R2)_-_R3_gap', fileName: '04 - (R1,R2) - R3 gap' },
+    { alias: '(R1,R3)_-_R2_gap', fileName: '05 - (R1,R3) - R2 gap' },
+    { alias: '(R1,R2,R3)', fileName: '08 - (R1,R2,R3)' },
+    { alias: '(R1,R3,R4)', fileName: '09 - (R1,R3,R4)' },
+    { alias: '(R1,R2,R3,R4)', fileName: '12 - (R1,R2,R3,R4)' },
+    { alias: '(R1,R3,R4,R5)', fileName: '13 - (R1,R3,R4,R5)' },
+    {
+      alias: '(R1,R2,R3,R4,R5)',
+      fileName: '15 - (R1,R2,R3,R4,R5)',
+    },
   ];
 
-  for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
+  for (const data of testData) {
+    test(`for ${data.fileName}`, async () => {
       // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
       await pageReload(page);
 
       await openFileAndAddToCanvasMacro(
-        `KET/Base-Templates/${fileName}.ket`,
+        `KET/Base-Templates/${data.fileName}.ket`,
         page,
       );
       await page.getByTestId('single-bond').click();
-      await page.getByText('R1').locator('..').hover();
+      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
         page,
-        `KET/Base-Templates/${fileName}-expected.ket`,
+        `KET/Base-Templates/${data.fileName}-expected.ket`,
         FileType.KET,
       );
     });
@@ -382,41 +407,23 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
     (CHEM) from ket file, correctly show them on canvas (name, shape, color),
     shows correct number or connections and shows correct preview tooltip
   */
-  const fileNames = [
-    '01 - (R1) - Left only',
-    '02 - (R2) - Right only',
-    '03 - (R3) - Side only',
-    '04 - (R1,R2) - R3 gap',
-    '05 - (R1,R3) - R2 gap',
-    '06 - (R2,R3) - R1 gap',
-    '07 - (R3,R4)',
-    '08 - (R1,R2,R3)',
-    '09 - (R1,R3,R4)',
-    '10 - (R2,R3,R4)',
-    '11 - (R3,R4,R5)',
-    '12 - (R1,R2,R3,R4)',
-    '13 - (R1,R3,R4,R5)',
-    '14 - (R2,R3,R4,R5)',
-    '15 - (R1,R2,R3,R4,R5)',
-  ];
-
-  for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
+  for (const data of fileTestData) {
+    test(`for ${data.fileName}`, async () => {
       // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
       await pageReload(page);
 
       await openFileAndAddToCanvasMacro(
-        `KET/CHEM-Templates/${fileName}.ket`,
+        `KET/CHEM-Templates/${data.fileName}.ket`,
         page,
       );
       await page.getByTestId('single-bond').click();
-      await page.getByText('(R').locator('..').first().hover();
+      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
         page,
-        `KET/CHEM-Templates/${fileName}-expected.ket`,
+        `KET/CHEM-Templates/${data.fileName}-expected.ket`,
         FileType.KET,
       );
     });
@@ -430,41 +437,23 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
     (Peptide) from ket file, correctly show them on canvas (name, shape, color),
     shows correct number or connections and shows correct preview tooltip
   */
-  const fileNames = [
-    '01 - (R1) - Left only',
-    '02 - (R2) - Right only',
-    '03 - (R3) - Side only',
-    '04 - (R1,R2) - R3 gap',
-    '05 - (R1,R3) - R2 gap',
-    '06 - (R2,R3) - R1 gap',
-    '07 - (R3,R4)',
-    '08 - (R1,R2,R3)',
-    '09 - (R1,R3,R4)',
-    '10 - (R2,R3,R4)',
-    '11 - (R3,R4,R5)',
-    '12 - (R1,R2,R3,R4)',
-    '13 - (R1,R3,R4,R5)',
-    '14 - (R2,R3,R4,R5)',
-    '15 - (R1,R2,R3,R4,R5)',
-  ];
-
-  for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
+  for (const data of fileTestData) {
+    test(`for ${data.fileName}`, async () => {
       // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
       await pageReload(page);
 
       await openFileAndAddToCanvasMacro(
-        `KET/Peptide-Templates/${fileName}.ket`,
+        `KET/Peptide-Templates/${data.fileName}.ket`,
         page,
       );
       await page.getByTestId('single-bond').click();
-      await page.getByText('(R').locator('..').first().hover();
+      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
         page,
-        `KET/Peptide-Templates/${fileName}-expected.ket`,
+        `KET/Peptide-Templates/${data.fileName}-expected.ket`,
         FileType.KET,
       );
     });
@@ -478,41 +467,23 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
     (Phosphate) from ket file, correctly show them on canvas (name, shape, color),
     shows correct number or connections and shows correct preview tooltip
   */
-  const fileNames = [
-    '01 - (R1) - Left only',
-    '02 - (R2) - Right only',
-    '03 - (R3) - Side only',
-    '04 - (R1,R2) - R3 gap',
-    '05 - (R1,R3) - R2 gap',
-    '06 - (R2,R3) - R1 gap',
-    '07 - (R3,R4)',
-    '08 - (R1,R2,R3)',
-    '09 - (R1,R3,R4)',
-    '10 - (R2,R3,R4)',
-    '11 - (R3,R4,R5)',
-    '12 - (R1,R2,R3,R4)',
-    '13 - (R1,R3,R4,R5)',
-    '14 - (R2,R3,R4,R5)',
-    '15 - (R1,R2,R3,R4,R5)',
-  ];
-
-  for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
+  for (const data of fileTestData) {
+    test(`for ${data.fileName}`, async () => {
       // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
       await pageReload(page);
 
       await openFileAndAddToCanvasMacro(
-        `KET/Phosphate-Templates/${fileName}.ket`,
+        `KET/Phosphate-Templates/${data.fileName}.ket`,
         page,
       );
       await page.getByTestId('single-bond').click();
-      await page.getByText('(R').locator('..').first().hover();
+      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
         page,
-        `KET/Phosphate-Templates/${fileName}-expected.ket`,
+        `KET/Phosphate-Templates/${data.fileName}-expected.ket`,
         FileType.KET,
       );
     });
@@ -526,41 +497,23 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
     (Sugar) from ket file, correctly show them on canvas (name, shape, color),
     shows correct number or connections and shows correct preview tooltip
   */
-  const fileNames = [
-    '01 - (R1) - Left only',
-    '02 - (R2) - Right only',
-    '03 - (R3) - Side only',
-    '04 - (R1,R2) - R3 gap',
-    '05 - (R1,R3) - R2 gap',
-    '06 - (R2,R3) - R1 gap',
-    '07 - (R3,R4)',
-    '08 - (R1,R2,R3)',
-    '09 - (R1,R3,R4)',
-    '10 - (R2,R3,R4)',
-    '11 - (R3,R4,R5)',
-    '12 - (R1,R2,R3,R4)',
-    '13 - (R1,R3,R4,R5)',
-    '14 - (R2,R3,R4,R5)',
-    '15 - (R1,R2,R3,R4,R5)',
-  ];
-
-  for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
+  for (const data of fileTestData) {
+    test(`for ${data.fileName}`, async () => {
       // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
       await pageReload(page);
 
       await openFileAndAddToCanvasMacro(
-        `KET/Sugar-Templates/${fileName}.ket`,
+        `KET/Sugar-Templates/${data.fileName}.ket`,
         page,
       );
       await page.getByTestId('single-bond').click();
-      await page.getByText('(R').locator('..').first().hover();
+      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       await verifyFileExport(
         page,
-        `KET/Sugar-Templates/${fileName}-expected.ket`,
+        `KET/Sugar-Templates/${data.fileName}-expected.ket`,
         FileType.KET,
       );
     });

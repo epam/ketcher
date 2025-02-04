@@ -1,3 +1,4 @@
+import { Chem } from '@constants/monomers/Chem';
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -11,6 +12,7 @@ import {
   moveMouseAway,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 const startX = 300;
 const startY = 300;
@@ -44,8 +46,10 @@ test.describe('Flex mode copy&paste', () => {
     page,
   }) => {
     await page.keyboard.down('Shift');
-    await page.getByText('SMCC').locator('..').first().click();
-    await page.getByText('Test-6-Ch').locator('..').first().click();
+
+    await getMonomerLocator(page, { monomerAlias: Chem.SMCC.alias }).click();
+    await getMonomerLocator(page, Chem.Test_6_Ch).first().click();
+
     await page.keyboard.up('Shift');
     await copyToClipboardByKeyboard(page);
 

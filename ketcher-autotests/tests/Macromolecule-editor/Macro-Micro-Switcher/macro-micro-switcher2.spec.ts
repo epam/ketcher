@@ -67,6 +67,7 @@ import { Sugars } from '@constants/monomers/Sugars';
 import { Chem } from '@constants/monomers/Chem';
 import { Bases } from '@constants/monomers/Bases';
 import { Phosphates } from '@constants/monomers/Phosphates';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [
@@ -157,8 +158,8 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
     );
     await page.keyboard.down('Shift');
-    await page.getByText('R1').locator('..').click();
-    await page.getByText('R2').locator('..').click();
+    await page.getByText('R1').click();
+    await page.getByText('R2').click();
     await page.keyboard.up('Shift');
 
     await verifyFileExport(
@@ -261,7 +262,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
-    await page.getByText('F1').locator('..').hover();
+    await getMonomerLocator(page, Chem.F1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });

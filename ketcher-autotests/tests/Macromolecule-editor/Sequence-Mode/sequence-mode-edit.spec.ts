@@ -34,6 +34,7 @@ import {
   waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { expandCollapseRnaBuilder } from '@utils/macromolecules/rnaBuilder';
 import {
   clickOnSequenceSymbol,
@@ -272,7 +273,6 @@ test.describe('Sequence edit mode', () => {
     await openFileAndAddToCanvasMacro('KET/cyclic-sequence-tcgu.ket', page);
     await page
       .getByText('U', { exact: true })
-      .locator('..')
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
@@ -352,7 +352,7 @@ test.describe('Sequence edit mode', () => {
       await takeEditorScreenshot(page);
       await moveMouseAway(page);
     }
-    await page.getByText('5HydMe').locator('..').locator('..').first().click();
+    await getMonomerLocator(page, { monomerAlias: '5HydMe-dC' }).click();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });

@@ -1,4 +1,8 @@
 /* eslint-disable no-magic-numbers */
+import { Bases } from '@constants/monomers/Bases';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Phosphates } from '@constants/monomers/Phosphates';
+import { Sugars } from '@constants/monomers/Sugars';
 import { test, expect, Page, chromium } from '@playwright/test';
 import {
   TopPanelButton,
@@ -33,6 +37,7 @@ import {
   turnOnMacromoleculesEditor,
   waitForMonomerPreview,
 } from '@utils/macromolecules';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 function removeNotComparableData(file: string) {
   return file
@@ -42,6 +47,27 @@ function removeNotComparableData(file: string) {
 }
 
 let page: Page;
+
+const fileTestData = [
+  { alias: '(R1)_-_Left_only', fileName: '01 - (R1) - Left only' },
+  { alias: '(R2)_-_Right_only', fileName: '02 - (R2) - Right only' },
+  { alias: '(R3)_-_Side_only', fileName: '03 - (R3) - Side only' },
+  { alias: '(R1,R2)_-_R3_gap', fileName: '04 - (R1,R2) - R3 gap' },
+  { alias: '(R1,R3)_-_R2_gap', fileName: '05 - (R1,R3) - R2 gap' },
+  { alias: '(R2,R3)_-_R1_gap', fileName: '06 - (R2,R3) - R1 gap' },
+  { alias: '(R3,R4)', fileName: '07 - (R3,R4)' },
+  { alias: '(R1,R2,R3)', fileName: '08 - (R1,R2,R3)' },
+  { alias: '(R1,R3,R4)', fileName: '09 - (R1,R3,R4)' },
+  { alias: '(R2,R3,R4)', fileName: '10 - (R2,R3,R4)' },
+  { alias: '(R3,R4,R5)', fileName: '11 - (R3,R4,R5)' },
+  { alias: '(R1,R2,R3,R4)', fileName: '12 - (R1,R2,R3,R4)' },
+  { alias: '(R1,R3,R4,R5)', fileName: '13 - (R1,R3,R4,R5)' },
+  { alias: '(R2,R3,R4,R5)', fileName: '14 - (R2,R3,R4,R5)' },
+  {
+    alias: '(R1,R2,R3,R4,R5)',
+    fileName: '15 - (R1,R2,R3,R4,R5)',
+  },
+];
 
 test.beforeAll(async ({ browser }) => {
   let sharedContext;
@@ -162,7 +188,7 @@ test.describe('Import-Saving .mol Files', () => {
     Description: Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
-    await page.getByText('K').locator('..').first().hover();
+    await getMonomerLocator(page, Peptides.K).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
 
@@ -185,7 +211,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
     );
     await page.getByTestId('select-rectangle').click();
-    await page.getByText('cdaC').locator('..').hover();
+    await getMonomerLocator(page, { monomerAlias: Bases.cdaC.alias }).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -272,21 +298,21 @@ test.describe('Import-Saving .mol Files', () => {
   });
 
   const monomersToDelete = [
-    { text: '25R', description: 'Sugar monomer deleted.' },
-    { text: 'baA', description: 'Base monomer deleted.' },
-    { text: 'P', description: 'Phosphate monomer deleted.' },
+    { monomer: Sugars._25R, description: 'Sugar monomer deleted.' },
+    { monomer: Bases.baA, description: 'Base monomer deleted.' },
+    { monomer: Phosphates.P, description: 'Phosphate monomer deleted.' },
   ];
   /*
    Test for deleting part of monomers structure
   */
   for (const monomer of monomersToDelete) {
-    test(`Open file from .mol V3000 and Delete ${monomer.text} monomer`, async () => {
+    test(`Open file from .mol V3000 and Delete ${monomer.monomer.alias} monomer`, async () => {
       await openFileAndAddToCanvasMacro(
         'Molfiles-V3000/monomers-connected-with-bonds.mol',
         page,
       );
       await selectEraseTool(page);
-      await page.getByText(monomer.text).locator('..').first().click();
+      await getMonomerLocator(page, monomer.monomer).click();
       await takeEditorScreenshot(page);
     });
   }
@@ -742,38 +768,41 @@ test.describe('Base monomers on the canvas, their connection points and preview 
   });
   */
 
-  const fileNames = [
-    '01 - (R1) - Left only',
-    '04 - (R1,R2) - R3 gap',
-    '05 - (R1,R3) - R2 gap',
-    '08 - (R1,R2,R3)',
-    '09 - (R1,R3,R4)',
-    '12 - (R1,R2,R3,R4)',
-    '13 - (R1,R3,R4,R5)',
-    '15 - (R1,R2,R3,R4,R5)',
+  const testData = [
+    { alias: '(R1)_-_Left_only', fileName: '01 - (R1) - Left only' },
+    { alias: '(R1,R2)_-_R3_gap', fileName: '04 - (R1,R2) - R3 gap' },
+    { alias: '(R1,R3)_-_R2_gap', fileName: '05 - (R1,R3) - R2 gap' },
+    { alias: '(R1,R2,R3)', fileName: '08 - (R1,R2,R3)' },
+    { alias: '(R1,R3,R4)', fileName: '09 - (R1,R3,R4)' },
+    { alias: '(R1,R2,R3,R4)', fileName: '12 - (R1,R2,R3,R4)' },
+    { alias: '(R1,R3,R4,R5)', fileName: '13 - (R1,R3,R4,R5)' },
+    {
+      alias: '(R1,R2,R3,R4,R5)',
+      fileName: '15 - (R1,R2,R3,R4,R5)',
+    },
   ];
 
-  for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
+  for (const data of testData) {
+    test(`for ${data.fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
-        `Molfiles-V3000/Base-Templates/${fileName}.mol`,
+        `Molfiles-V3000/Base-Templates/${data.fileName}.mol`,
         page,
       );
       await page.getByTestId('single-bond').click();
-      await page.getByText('R1').locator('..').hover();
+      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       const expectedFile = await getMolfile(page);
       await saveToFile(
-        `Molfiles-V3000/Base-Templates/${fileName}-expected.mol`,
+        `Molfiles-V3000/Base-Templates/${data.fileName}-expected.mol`,
         expectedFile,
       );
       const METADATA_STRING_INDEX = [1];
       const { file: molFile, fileExpected: molFileExpected } =
         await receiveFileComparisonData({
           page,
-          expectedFileName: `tests/test-data/Molfiles-V3000/Base-Templates/${fileName}-expected.mol`,
+          expectedFileName: `tests/test-data/Molfiles-V3000/Base-Templates/${data.fileName}-expected.mol`,
           metaDataIndexes: METADATA_STRING_INDEX,
         });
 
@@ -795,45 +824,27 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
     await turnOnMacromoleculesEditor(page);
   });
   */
-  const fileNames = [
-    '01 - (R1) - Left only',
-    '02 - (R2) - Right only',
-    '03 - (R3) - Side only',
-    '04 - (R1,R2) - R3 gap',
-    '05 - (R1,R3) - R2 gap',
-    '06 - (R2,R3) - R1 gap',
-    '07 - (R3,R4)',
-    '08 - (R1,R2,R3)',
-    '09 - (R1,R3,R4)',
-    '10 - (R2,R3,R4)',
-    '11 - (R3,R4,R5)',
-    '12 - (R1,R2,R3,R4)',
-    '13 - (R1,R3,R4,R5)',
-    '14 - (R2,R3,R4,R5)',
-    '15 - (R1,R2,R3,R4,R5)',
-  ];
-
-  for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
+  for (const data of fileTestData) {
+    test(`for ${data.fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
-        `Molfiles-V3000/CHEM-Templates/${fileName}.mol`,
+        `Molfiles-V3000/CHEM-Templates/${data.fileName}.mol`,
         page,
       );
       await page.getByTestId('single-bond').click();
-      await page.getByText('(R').locator('..').first().hover();
+      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       const expectedFile = await getMolfile(page);
       await saveToFile(
-        `Molfiles-V3000/CHEM-Templates/${fileName}-expected.mol`,
+        `Molfiles-V3000/CHEM-Templates/${data.fileName}-expected.mol`,
         expectedFile,
       );
       const METADATA_STRING_INDEX = [1];
       const { file: molFile, fileExpected: molFileExpected } =
         await receiveFileComparisonData({
           page,
-          expectedFileName: `tests/test-data/Molfiles-V3000/CHEM-Templates/${fileName}-expected.mol`,
+          expectedFileName: `tests/test-data/Molfiles-V3000/CHEM-Templates/${data.fileName}-expected.mol`,
           metaDataIndexes: METADATA_STRING_INDEX,
         });
 
@@ -855,45 +866,27 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
     await turnOnMacromoleculesEditor(page);
   });
   */
-  const fileNames = [
-    '01 - (R1) - Left only',
-    '02 - (R2) - Right only',
-    '03 - (R3) - Side only',
-    '04 - (R1,R2) - R3 gap',
-    '05 - (R1,R3) - R2 gap',
-    '06 - (R2,R3) - R1 gap',
-    '07 - (R3,R4)',
-    '08 - (R1,R2,R3)',
-    '09 - (R1,R3,R4)',
-    '10 - (R2,R3,R4)',
-    '11 - (R3,R4,R5)',
-    '12 - (R1,R2,R3,R4)',
-    '13 - (R1,R3,R4,R5)',
-    '14 - (R2,R3,R4,R5)',
-    '15 - (R1,R2,R3,R4,R5)',
-  ];
-
-  for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
+  for (const data of fileTestData) {
+    test(`for ${data.fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
-        `Molfiles-V3000/Peptide-Templates/${fileName}.mol`,
+        `Molfiles-V3000/Peptide-Templates/${data.fileName}.mol`,
         page,
       );
       await page.getByTestId('single-bond').click();
-      await page.getByText('(R').locator('..').first().hover();
+      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       const expectedFile = await getMolfile(page);
       await saveToFile(
-        `Molfiles-V3000/Peptide-Templates/${fileName}-expected.mol`,
+        `Molfiles-V3000/Peptide-Templates/${data.fileName}-expected.mol`,
         expectedFile,
       );
       const METADATA_STRING_INDEX = [1];
       const { file: molFile, fileExpected: molFileExpected } =
         await receiveFileComparisonData({
           page,
-          expectedFileName: `tests/test-data/Molfiles-V3000/Peptide-Templates/${fileName}-expected.mol`,
+          expectedFileName: `tests/test-data/Molfiles-V3000/Peptide-Templates/${data.fileName}-expected.mol`,
           metaDataIndexes: METADATA_STRING_INDEX,
         });
 
@@ -915,46 +908,27 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
     await turnOnMacromoleculesEditor(page);
   });
   */
-
-  const fileNames = [
-    '01 - (R1) - Left only',
-    '02 - (R2) - Right only',
-    '03 - (R3) - Side only',
-    '04 - (R1,R2) - R3 gap',
-    '05 - (R1,R3) - R2 gap',
-    '06 - (R2,R3) - R1 gap',
-    '07 - (R3,R4)',
-    '08 - (R1,R2,R3)',
-    '09 - (R1,R3,R4)',
-    '10 - (R2,R3,R4)',
-    '11 - (R3,R4,R5)',
-    '12 - (R1,R2,R3,R4)',
-    '13 - (R1,R3,R4,R5)',
-    '14 - (R2,R3,R4,R5)',
-    '15 - (R1,R2,R3,R4,R5)',
-  ];
-
-  for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
+  for (const data of fileTestData) {
+    test(`for ${data.fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
-        `Molfiles-V3000/Phosphate-Templates/${fileName}.mol`,
+        `Molfiles-V3000/Phosphate-Templates/${data.fileName}.mol`,
         page,
       );
       await page.getByTestId('single-bond').click();
-      await page.getByText('(R').locator('..').first().hover();
+      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       const expectedFile = await getMolfile(page);
       await saveToFile(
-        `Molfiles-V3000/Phosphate-Templates/${fileName}-expected.mol`,
+        `Molfiles-V3000/Phosphate-Templates/${data.fileName}-expected.mol`,
         expectedFile,
       );
       const METADATA_STRING_INDEX = [1];
       const { file: molFile, fileExpected: molFileExpected } =
         await receiveFileComparisonData({
           page,
-          expectedFileName: `tests/test-data/Molfiles-V3000/Phosphate-Templates/${fileName}-expected.mol`,
+          expectedFileName: `tests/test-data/Molfiles-V3000/Phosphate-Templates/${data.fileName}-expected.mol`,
           metaDataIndexes: METADATA_STRING_INDEX,
         });
 
@@ -976,45 +950,27 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
     await turnOnMacromoleculesEditor(page);
   });
   */
-  const fileNames = [
-    '01 - (R1) - Left only',
-    '02 - (R2) - Right only',
-    '03 - (R3) - Side only',
-    '04 - (R1,R2) - R3 gap',
-    '05 - (R1,R3) - R2 gap',
-    '06 - (R2,R3) - R1 gap',
-    '07 - (R3,R4)',
-    '08 - (R1,R2,R3)',
-    '09 - (R1,R3,R4)',
-    '10 - (R2,R3,R4)',
-    '11 - (R3,R4,R5)',
-    '12 - (R1,R2,R3,R4)',
-    '13 - (R1,R3,R4,R5)',
-    '14 - (R2,R3,R4,R5)',
-    '15 - (R1,R2,R3,R4,R5)',
-  ];
-
-  for (const fileName of fileNames) {
-    test(`for ${fileName}`, async () => {
+  for (const data of fileTestData) {
+    test(`for ${data.fileName}`, async () => {
       await openFileAndAddToCanvasMacro(
-        `Molfiles-V3000/Sugar-Templates/${fileName}.mol`,
+        `Molfiles-V3000/Sugar-Templates/${data.fileName}.mol`,
         page,
       );
       await page.getByTestId('single-bond').click();
-      await page.getByText('(R').locator('..').first().hover();
+      await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       const expectedFile = await getMolfile(page);
       await saveToFile(
-        `Molfiles-V3000/Sugar-Templates/${fileName}-expected.mol`,
+        `Molfiles-V3000/Sugar-Templates/${data.fileName}-expected.mol`,
         expectedFile,
       );
       const METADATA_STRING_INDEX = [1];
       const { file: molFile, fileExpected: molFileExpected } =
         await receiveFileComparisonData({
           page,
-          expectedFileName: `tests/test-data/Molfiles-V3000/Sugar-Templates/${fileName}-expected.mol`,
+          expectedFileName: `tests/test-data/Molfiles-V3000/Sugar-Templates/${data.fileName}-expected.mol`,
           metaDataIndexes: METADATA_STRING_INDEX,
         });
 

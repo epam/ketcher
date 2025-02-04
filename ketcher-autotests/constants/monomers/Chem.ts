@@ -11,8 +11,10 @@ export const Chem = {
   B7: { alias: 'B7', testId: 'B7___Biotin' } as Monomer,
   DOTA: { alias: 'DOTA', testId: 'DOTA___Tetraxetan' } as Monomer,
   EG: { alias: 'EG', testId: 'EG___Ethylene Glycol' } as Monomer,
+  F1: { alias: 'F1', testId: '' } as Monomer,
   fisL: { alias: 'fisL', testId: 'flsL___Lactone fluorescein' } as Monomer,
   fisQ: { alias: 'fisQ', testId: 'flsQ___P-quinoid fluorescein' } as Monomer,
+  iMe_dC: { alias: 'iMe-dC', testId: '' } as Monomer,
   hxy: { alias: 'hxy', testId: 'hxy___5-hexyn-1-ol' } as Monomer,
   Mal: { alias: 'Mal', testId: 'Mal___Maleimide' } as Monomer,
   MCC: {

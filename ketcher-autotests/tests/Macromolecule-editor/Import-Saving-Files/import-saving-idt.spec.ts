@@ -57,6 +57,7 @@ import {
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import {
   toggleNucleotidesAccordion,
@@ -758,7 +759,7 @@ test.describe('Import-Saving .idt Files', () => {
       'IDT',
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
-    await page.getByText('iMe').locator('..').nth(1).hover();
+    await getMonomerLocator(page, Chem.iMe_dC).nth(1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
     await selectSequenceLayoutModeTool(page);
@@ -777,7 +778,7 @@ test.describe('Import-Saving .idt Files', () => {
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
     await selectMacroBond(page, MacroBondTool.SINGLE);
-    await page.getByText('iMe').locator('..').nth(1).hover();
+    await getMonomerLocator(page, Chem.iMe_dC).nth(1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -790,8 +791,8 @@ test.describe('Import-Saving .idt Files', () => {
     await goToPeptidesTab(page);
     const x = 650;
     const y = 400;
-    const firstMonomer = page.getByText('iMe-dC').locator('..');
-    const secondMonomer = page.getByText('1Nal').locator('..').first();
+    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
+    const secondMonomer = getMonomerLocator(page, Peptides._1Nal);
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await selectMonomer(page, Peptides._1Nal);
     await clickOnCanvas(page, x, y);
@@ -803,7 +804,7 @@ test.describe('Import-Saving .idt Files', () => {
       'R1',
     );
     await selectMacroBond(page, MacroBondTool.SINGLE);
-    await page.getByText('iMe').locator('..').hover();
+    await getMonomerLocator(page, Chem.iMe_dC).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -817,8 +818,8 @@ test.describe('Import-Saving .idt Files', () => {
 
     const x = 650;
     const y = 400;
-    const firstMonomer = page.getByText('iMe-dC').locator('..');
-    const secondMonomer = page.getByText('Test-6-Ch').locator('..').first();
+    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
+    const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await selectMonomer(page, Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
@@ -830,7 +831,7 @@ test.describe('Import-Saving .idt Files', () => {
       'R4',
     );
     await selectMacroBond(page, MacroBondTool.SINGLE);
-    await page.getByText('iMe').locator('..').hover();
+    await getMonomerLocator(page, Chem.iMe_dC).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -838,8 +839,8 @@ test.describe('Import-Saving .idt Files', () => {
   test('Delete bond between unresolved and known monomers connected through R2/R1 and Undo', async () => {
     const x = 650;
     const y = 400;
-    const firstMonomer = page.getByText('iMe-dC').locator('..');
-    const secondMonomer = page.getByText('1Nal').locator('..').first();
+    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
+    const secondMonomer = getMonomerLocator(page, Peptides._1Nal);
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
@@ -875,8 +876,8 @@ test.describe('Import-Saving .idt Files', () => {
 
     const x = 650;
     const y = 400;
-    const firstMonomer = page.getByText('iMe-dC').locator('..');
-    const secondMonomer = page.getByText('Test-6-Ch').locator('..').first();
+    const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
+    const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await selectMonomer(page, Chem.Test_6_Ch);
@@ -924,9 +925,9 @@ test.describe('Import-Saving .idt Files', () => {
     await selectMonomer(page, Peptides._1Nal);
     await clickOnCanvas(page, x, y);
     await selectMacroBond(page, MacroBondTool.SINGLE);
-    await page.getByText('1Nal').locator('..').first().click();
+    await getMonomerLocator(page, Peptides._1Nal).click();
     await page.mouse.down();
-    await page.getByText('iMe-dC').locator('..').first().hover();
+    await getMonomerLocator(page, Chem.iMe_dC).hover();
     await page.mouse.up();
     await takeEditorScreenshot(page);
   });
@@ -945,9 +946,9 @@ test.describe('Import-Saving .idt Files', () => {
     await clickOnCanvas(page, x, y);
     await selectSnakeLayoutModeTool(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
-    await page.getByText('1Nal').locator('..').first().click();
+    await getMonomerLocator(page, Peptides._1Nal).click();
     await page.mouse.down();
-    await page.getByText('iMe-dC').locator('..').first().hover();
+    await getMonomerLocator(page, Chem.iMe_dC).hover();
     await page.mouse.up();
     await takeEditorScreenshot(page);
   });
@@ -965,9 +966,9 @@ test.describe('Import-Saving .idt Files', () => {
     await selectMonomer(page, Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await selectMacroBond(page, MacroBondTool.SINGLE);
-    await page.getByText('iMe-dC').locator('..').click();
+    await getMonomerLocator(page, Chem.iMe_dC).click();
     await page.mouse.down();
-    await page.getByText('Test-6-Ch').locator('..').first().hover();
+    await getMonomerLocator(page, Chem.Test_6_Ch).hover();
     await page.mouse.up();
     await takeEditorScreenshot(page);
   });
@@ -1081,7 +1082,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await takeEditorScreenshot(page);
     await selectEraseTool(page);
-    await page.getByText('iMe-dC').locator('..').click();
+    await getMonomerLocator(page, Chem.iMe_dC).click();
     await takeEditorScreenshot(page);
   });
 });

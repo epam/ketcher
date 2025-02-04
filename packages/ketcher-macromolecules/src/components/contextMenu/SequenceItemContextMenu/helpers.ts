@@ -21,7 +21,9 @@ const generateLabeledNodes = (
       nodeIndexOverall,
       isNucleosideConnectedAndSelectedWithPhosphate,
       hasR1Connection,
+      twoStrandedNode,
     } = selection;
+    const hasAntisense = Boolean(twoStrandedNode.antisenseNode);
 
     if (node instanceof Nucleotide) {
       labeledNodes.push({
@@ -31,6 +33,7 @@ const generateLabeledNodes = (
         phosphateLabel: node?.phosphate?.label,
         hasR1Connection,
         nodeIndexOverall,
+        hasAntisense,
       });
     } else if (node instanceof Nucleoside) {
       labeledNodes.push({
@@ -40,12 +43,14 @@ const generateLabeledNodes = (
         isNucleosideConnectedAndSelectedWithPhosphate,
         hasR1Connection,
         nodeIndexOverall,
+        hasAntisense,
       });
     } else if (node?.monomer instanceof Phosphate) {
       labeledNodes.push({
         type: Entities.Phosphate,
         phosphateLabel: node?.monomer?.label,
         nodeIndexOverall,
+        hasAntisense,
       });
     }
   }
@@ -96,6 +101,7 @@ export const generateSequenceContextMenuProps = (
   let title: string;
   let isSelectedAtLeastOneNucleoelement = false;
   let isSelectedOnlyNucleoelements = true;
+  let hasAntisense = false;
   let isSequenceFirstsOnlyNucleoelementsSelected = true;
 
   // Generate labeled elements for RNA Builder
@@ -119,6 +125,10 @@ export const generateSequenceContextMenuProps = (
     } else {
       isSequenceFirstsOnlyNucleoelementsSelected = false;
       isSelectedOnlyNucleoelements = false;
+    }
+
+    if (node.hasAntisense) {
+      hasAntisense = true;
     }
   }
   if (countOfSelections > countOfNucleoelements) {
@@ -145,5 +155,6 @@ export const generateSequenceContextMenuProps = (
     isSelectedOnlyNucleoelements,
     isSelectedAtLeastOneNucleoelement,
     isSequenceFirstsOnlyNucleoelementsSelected,
+    hasAntisense,
   };
 };

@@ -707,6 +707,10 @@ export class SequenceMode extends BaseMode {
         selectionStartTwoStrandedNode,
         strandType,
       );
+      const selectionEndNode = getNodeFromTwoStrandedNode(
+        selectionEndTwoStrandedNode,
+        strandType,
+      );
       let isPhosphateAdditionalyDeleted = false;
 
       const twoStrandedNodeBeforeSelection = SequenceRenderer.getPreviousNode(
@@ -758,6 +762,13 @@ export class SequenceMode extends BaseMode {
         potentialNodeInSameChainAfterSelection instanceof BackBoneSequenceNode
           ? potentialNodeInSameChainAfterSelection.secondConnectedNode
           : potentialNodeInSameChainAfterSelection;
+
+      if (
+        selectionStartNode instanceof BackBoneSequenceNode ||
+        selectionEndNode instanceof BackBoneSequenceNode
+      ) {
+        return;
+      }
 
       if (
         !nodeInSameChainBeforeSelection &&
@@ -1004,6 +1015,13 @@ export class SequenceMode extends BaseMode {
             (currentTwoStrandedNode &&
               SequenceRenderer.getPreviousNode(currentTwoStrandedNode)) ||
             undefined;
+          const previousTwoStrandedNodeInSameChain =
+            (currentTwoStrandedNode &&
+              SequenceRenderer.getPreviousNodeInSameChain(
+                currentTwoStrandedNode,
+              )) ||
+            undefined;
+
           const insertNewSequenceItemResult = this.insertNewSequenceItem(
             editor,
             enteredSymbol,
@@ -1020,7 +1038,7 @@ export class SequenceMode extends BaseMode {
             (addedNode instanceof Nucleotide ||
               addedNode instanceof Nucleoside) &&
             (currentTwoStrandedNode?.antisenseNode ||
-              previousTwoStrandedNode?.antisenseNode)
+              previousTwoStrandedNodeInSameChain?.antisenseNode)
           ) {
             const antisenseNodeCreationResult =
               DrawingEntitiesManager.createAntisenseNode(
@@ -1642,6 +1660,17 @@ export class SequenceMode extends BaseMode {
     };
   }
 
+  private isSelectionsContainAntisenseChains(
+    selections: TwoStrandedNodesSelection,
+  ) {
+    return selections.some((selectionRange) => {
+      return selectionRange.some(
+        (twoStrandedNodeSelection) =>
+          twoStrandedNodeSelection.node.antisenseNode,
+      );
+    });
+  }
+
   public insertMonomerFromLibrary(monomerItem: MonomerItemType) {
     const editor = CoreEditor.provideEditorInstance();
     const history = new EditorHistory(editor);
@@ -1650,6 +1679,10 @@ export class SequenceMode extends BaseMode {
     const wasCanvasEmptyBeforeInsertion = SequenceRenderer.isEmptyCanvas();
 
     if (selections.length > 0) {
+      if (this.isSelectionsContainAntisenseChains(selections)) {
+        return;
+      }
+
       if (
         this.selectionsCantPreserveConnectionsWithMonomer(
           selections,
@@ -1687,6 +1720,11 @@ export class SequenceMode extends BaseMode {
       }
     } else if (editor.isSequenceEditMode) {
       const newNodePosition = this.getNewNodePosition();
+      const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
+
+      if (currentTwoStrandedNode?.antisenseNode) {
+        return;
+      }
 
       const newMonomer = editor.drawingEntitiesManager.createMonomer(
         monomerItem,
@@ -1950,6 +1988,10 @@ export class SequenceMode extends BaseMode {
     const selections = SequenceRenderer.selections;
 
     if (selections.length > 0) {
+      if (this.isSelectionsContainAntisenseChains(selections)) {
+        return;
+      }
+
       if (!this.presetHasNeededAttachmentPoints(preset)) {
         this.showMergeWarningModal();
         return;
@@ -1982,6 +2024,11 @@ export class SequenceMode extends BaseMode {
       }
     } else if (editor.isSequenceEditMode) {
       const newNodePosition = this.getNewNodePosition();
+      const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
+
+      if (currentTwoStrandedNode?.antisenseNode) {
+        return;
+      }
 
       const newPresetNode = this.createRnaPresetNode(preset, newNodePosition);
 
@@ -2015,7 +2062,8 @@ export class SequenceMode extends BaseMode {
 
   private insertNewSequenceItem(editor: CoreEditor, enteredSymbol: string) {
     const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
-    const currentNode = currentTwoStrandedNode?.senseNode;
+    const currentSenseNode = currentTwoStrandedNode?.senseNode;
+    const currentAntisenseNode = currentTwoStrandedNode?.antisenseNode;
     const newNodePosition = this.getNewNodePosition();
     const previousTwoStrandedNodeInSameChain =
       SequenceRenderer.previousNodeInSameChain;
@@ -2023,13 +2071,18 @@ export class SequenceMode extends BaseMode {
       previousTwoStrandedNodeInSameChain?.senseNode;
 
     if (
-      currentNode instanceof MonomerSequenceNode &&
-      currentNode.monomer instanceof Phosphate
+      (currentSenseNode instanceof MonomerSequenceNode &&
+        currentSenseNode.monomer instanceof Phosphate) ||
+      (currentAntisenseNode instanceof MonomerSequenceNode &&
+        currentAntisenseNode.monomer instanceof Phosphate)
     ) {
       return;
     }
 
-    if (currentNode instanceof EmptySequenceNode && previousNodeInSameChain) {
+    if (
+      currentSenseNode instanceof EmptySequenceNode &&
+      previousNodeInSameChain
+    ) {
       if (!this.isR2Free(previousNodeInSameChain)) {
         this.showMergeWarningModal();
         return;
@@ -2037,10 +2090,10 @@ export class SequenceMode extends BaseMode {
     }
     if (
       !previousNodeInSameChain &&
-      !(currentNode instanceof EmptySequenceNode) &&
-      currentNode
+      !(currentSenseNode instanceof EmptySequenceNode) &&
+      currentSenseNode
     ) {
-      if (!this.isR1Free(currentNode)) {
+      if (!this.isR1Free(currentSenseNode)) {
         this.showMergeWarningModal();
         return;
       }
@@ -2050,7 +2103,7 @@ export class SequenceMode extends BaseMode {
     } else {
       return this.handleRnaDnaNodeAddition(
         enteredSymbol,
-        currentNode,
+        currentSenseNode,
         newNodePosition,
       );
     }

@@ -36,7 +36,10 @@ import { FlexModePolymerBondRenderer } from 'application/render/renderers/Polyme
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import {
+  NodesSelection,
+  SequenceRenderer,
+} from 'application/render/renderers/sequence/SequenceRenderer';
 import { ketcherProvider } from 'application/utils';
 import assert from 'assert';
 import { SequenceType, Struct, Vec2 } from 'domain/entities';
@@ -322,9 +325,10 @@ export class CoreEditor {
               return {
                 ...twoStrandedNodeSelection,
                 node: twoStrandedNodeSelection.node.senseNode,
+                twoStrandedNode: twoStrandedNodeSelection.node,
               };
             }),
-          ),
+          ) as NodesSelection,
         ]);
       } else if (
         eventData instanceof FlexModePolymerBondRenderer ||

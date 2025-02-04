@@ -51,6 +51,7 @@ type BaseNodeSelection = {
 
 export type NodeSelection = BaseNodeSelection & {
   node: SubChainNode;
+  twoStrandedNode: ITwoStrandedChainItem;
 };
 
 export type TwoStrandedNodeSelection = BaseNodeSelection & {
@@ -151,7 +152,10 @@ export class SequenceRenderer {
 
           let antisenseNodeRenderer: BaseSequenceItemRenderer | undefined;
 
-          if (chainItem.antisenseNode) {
+          if (
+            chainItem.antisenseNode &&
+            !handledNodes.has(chainItem.antisenseNode)
+          ) {
             antisenseNodeRenderer = SequenceNodeRendererFactory.fromNode(
               chainItem.antisenseNode,
               currentChainStartPosition.add(new Vec2(0, 30)),
@@ -444,7 +448,10 @@ export class SequenceRenderer {
     let newCaretPosition = -1;
 
     SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
-      if (twoStrandedNode.senseNode?.renderer === sequenceItemRenderer) {
+      if (
+        twoStrandedNode.senseNode?.renderer === sequenceItemRenderer ||
+        twoStrandedNode.antisenseNode?.renderer === sequenceItemRenderer
+      ) {
         newCaretPosition = nodeIndexOverall;
       }
     });
@@ -506,10 +513,14 @@ export class SequenceRenderer {
     SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
       if (
         startCaretPosition <= nodeIndexOverall &&
-        nodeIndexOverall < (endCaretPosition || this.caretPosition) &&
-        twoStrandedNode.senseNode?.monomer
+        nodeIndexOverall < (endCaretPosition || this.caretPosition)
       ) {
-        monomers.push(twoStrandedNode.senseNode?.monomer);
+        if (twoStrandedNode.senseNode?.monomer) {
+          monomers.push(twoStrandedNode.senseNode?.monomer);
+        }
+        if (twoStrandedNode.antisenseNode?.monomer) {
+          monomers.push(twoStrandedNode.antisenseNode?.monomer);
+        }
       }
     });
     return monomers;
@@ -913,7 +924,7 @@ export class SequenceRenderer {
 
       modelChanges = SequenceRenderer.getShiftArrowChanges(
         editor,
-        currentEdittingNode.senseNode.monomer,
+        currentEdittingNode,
       );
       modelChanges.addOperation(this.moveCaretForward());
     } else if (arrowKey === 'ArrowLeft') {
@@ -922,16 +933,27 @@ export class SequenceRenderer {
       if (previousNodeInSameChain?.senseNode) {
         modelChanges = SequenceRenderer.getShiftArrowChanges(
           editor,
-          previousNodeInSameChain.senseNode.monomer,
+          previousNodeInSameChain,
         );
-      } else if (SequenceRenderer.previousChain.lastNode.senseNode) {
+      } else if (SequenceRenderer.previousChain.lastNode) {
         const previousChainLastEmptyNode =
-          SequenceRenderer.previousChain.lastNode.senseNode;
+          SequenceRenderer.previousChain.lastNode;
 
-        ({ command: modelChanges } =
-          editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
-            previousChainLastEmptyNode.monomer,
-          ));
+        if (previousChainLastEmptyNode.senseNode) {
+          const result =
+            editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
+              previousChainLastEmptyNode.senseNode.monomer,
+            );
+          modelChanges.merge(result.command);
+        }
+
+        if (previousChainLastEmptyNode.antisenseNode) {
+          const result =
+            editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
+              previousChainLastEmptyNode.antisenseNode.monomer,
+            );
+          modelChanges.merge(result.command);
+        }
       }
       modelChanges.addOperation(this.moveCaretBack());
     } else if (arrowKey === 'ArrowUp') {
@@ -946,10 +968,7 @@ export class SequenceRenderer {
           twoStrandedNode.senseNode
         ) {
           modelChanges.merge(
-            SequenceRenderer.getShiftArrowChanges(
-              editor,
-              twoStrandedNode.senseNode?.monomer,
-            ),
+            SequenceRenderer.getShiftArrowChanges(editor, twoStrandedNode),
           );
         }
       });
@@ -965,10 +984,7 @@ export class SequenceRenderer {
           twoStrandedNode.senseNode
         ) {
           modelChanges.merge(
-            SequenceRenderer.getShiftArrowChanges(
-              editor,
-              twoStrandedNode?.senseNode?.monomer,
-            ),
+            SequenceRenderer.getShiftArrowChanges(editor, twoStrandedNode),
           );
         }
       });
@@ -978,22 +994,45 @@ export class SequenceRenderer {
 
   private static getShiftArrowChanges(
     editor: CoreEditor,
-    monomer: BaseMonomer,
+    twoStrandedNode: ITwoStrandedChainItem,
   ) {
-    let modelChanges;
-    const needTurnOffSelection = monomer.selected;
-    const result =
-      editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
-        monomer,
-      );
-    if (needTurnOffSelection) {
-      modelChanges =
-        editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
-          result.drawingEntities,
+    const modelChanges = new Command();
+    const senseNodeMonomer = twoStrandedNode.senseNode?.monomer;
+    const antiSenseNodeMonomer = twoStrandedNode.antisenseNode?.monomer;
+    const needTurnOffSelection = senseNodeMonomer?.selected;
+
+    if (senseNodeMonomer) {
+      const result =
+        editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
+          senseNodeMonomer,
         );
-    } else {
-      modelChanges = result.command;
+      if (needTurnOffSelection) {
+        modelChanges.merge(
+          editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+            result.drawingEntities,
+          ),
+        );
+      } else {
+        modelChanges.merge(result.command);
+      }
     }
+
+    if (antiSenseNodeMonomer) {
+      const result =
+        editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
+          antiSenseNodeMonomer,
+        );
+      if (needTurnOffSelection) {
+        modelChanges.merge(
+          editor.drawingEntitiesManager.addDrawingEntitiesToSelection(
+            result.drawingEntities,
+          ),
+        );
+      } else {
+        modelChanges.merge(result.command);
+      }
+    }
+
     return modelChanges;
   }
 
@@ -1008,6 +1047,13 @@ export class SequenceRenderer {
           ),
         );
       }
+      if (twoStrandedNode.antisenseNode instanceof EmptySequenceNode) {
+        command.merge(
+          editor.drawingEntitiesManager.unselectDrawingEntity(
+            twoStrandedNode.antisenseNode.monomer,
+          ),
+        );
+      }
     });
     return command;
   }
@@ -1019,31 +1065,33 @@ export class SequenceRenderer {
     let previousNode;
 
     SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
-      if (twoStrandedNode.senseNode?.monomer.selected) {
+      const nodeToCheck = twoStrandedNode.senseNode?.monomer.selected
+        ? twoStrandedNode.senseNode
+        : twoStrandedNode.antisenseNode;
+
+      if (nodeToCheck?.monomer.selected) {
         const selection: Partial<TwoStrandedNodeSelection> = {};
 
         // Add field 'isNucleosideConnectedAndSelectedWithPhosphate' to the Nucleoside elements
-        if (twoStrandedNode.senseNode instanceof Nucleoside) {
-          const nextMonomer = getNextMonomerInChain(
-            twoStrandedNode.senseNode.sugar,
-          );
+        if (nodeToCheck instanceof Nucleoside) {
+          const nextMonomer = getNextMonomerInChain(nodeToCheck.sugar);
 
           selection.isNucleosideConnectedAndSelectedWithPhosphate =
             nextMonomer instanceof Phosphate &&
             nextMonomer.selected &&
             editor.drawingEntitiesManager.isNucleosideAndPhosphateConnectedAsNucleotide(
-              twoStrandedNode.senseNode,
+              nodeToCheck,
               nextMonomer,
             );
         }
 
         // Add field 'hasR1Connection' to the Nucleotide/Nucleoside elements
         if (
-          twoStrandedNode.senseNode instanceof Nucleotide ||
-          twoStrandedNode.senseNode instanceof Nucleoside
+          nodeToCheck instanceof Nucleotide ||
+          nodeToCheck instanceof Nucleoside
         ) {
           selection.hasR1Connection =
-            !!twoStrandedNode.senseNode.sugar.attachmentPointsToBonds.R1;
+            !!nodeToCheck.sugar.attachmentPointsToBonds.R1;
         }
 
         if (!previousNode?.monomer.selected) {
@@ -1055,7 +1103,7 @@ export class SequenceRenderer {
           nodeIndexOverall,
         });
       }
-      previousNode = twoStrandedNode.senseNode;
+      previousNode = nodeToCheck;
     });
 
     return selections;

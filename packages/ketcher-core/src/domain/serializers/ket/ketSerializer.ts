@@ -94,7 +94,8 @@ import { multitailArrowToStruct } from 'domain/serializers/ket/fromKet/multitail
 import { AmbiguousMonomer } from 'domain/entities/AmbiguousMonomer';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
+
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
 
 function parseNode(node: any, struct: any) {
   const type = node.type;

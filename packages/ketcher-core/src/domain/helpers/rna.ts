@@ -1,10 +1,10 @@
 import { CoreEditor } from 'application/editor/internal';
 import { AmbiguousMonomer, SequenceType } from 'domain/entities';
 import {
+  MONOMER_CONST,
   RNA_DNA_NON_MODIFIED_PART,
   RnaDnaBaseNames,
 } from 'domain/constants/monomers';
-import { MONOMER_CONST } from 'application/editor';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 import { KetMonomerClass } from 'application/formatters';
 

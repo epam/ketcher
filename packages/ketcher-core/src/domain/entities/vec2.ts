@@ -274,20 +274,20 @@ export class Vec2 {
   }
 
   calculateDistanceToLine(line: [Vec2, Vec2]): number {
-    if (
-      (this.x <= Math.min(line[0].x, line[1].x) ||
-        this.x >= Math.max(line[0].x, line[1].x)) &&
-      (this.y <= Math.min(line[0].y, line[1].y) ||
-        this.y >= Math.max(line[0].y, line[1].y))
-    ) {
-      return Math.min(Vec2.dist(line[0], this), Vec2.dist(line[1], this));
-    } else {
-      const a = Vec2.dist(line[0], line[1]);
-      const b = Vec2.dist(line[0], this);
-      const c = Vec2.dist(line[1], this);
-      const per = (a + b + c) / 2;
-      return (2 / a) * Math.sqrt(per * (per - a) * (per - b) * (per - c));
-    }
+    const lineVec = Vec2.diff(line[1], line[0]);
+    const pointVec = Vec2.diff(this, line[0]);
+    const lineLength = Vec2.dist(line[0], line[1]);
+    const lineUnitVec = lineVec.normalized();
+    const projectionLength = Vec2.dot(lineUnitVec, pointVec);
+    const clampedProjectionLength = Math.max(
+      0,
+      Math.min(lineLength, projectionLength),
+    );
+    const closestPoint = Vec2.sum(
+      line[0],
+      lineUnitVec.scaled(clampedProjectionLength),
+    );
+    return Vec2.dist(closestPoint, this);
   }
 
   oxAngle(): number {

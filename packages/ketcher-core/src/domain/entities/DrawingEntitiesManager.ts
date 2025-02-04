@@ -44,10 +44,7 @@ import {
   PolymerBondShowInfoOperation,
   ReconnectPolymerBondOperation,
 } from 'application/editor/operations/polymerBond';
-import {
-  MONOMER_CONST,
-  monomerFactory,
-} from 'application/editor/operations/monomer/monomerFactory';
+import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { Coordinates, CoreEditor } from 'application/editor/internal';
 import {
   getNextMonomerInChain,
@@ -63,7 +60,11 @@ import {
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
-import { SequenceMode, SnakeMode } from 'application/editor';
+import {
+  MACROMOLECULES_BOND_TYPES,
+  SequenceMode,
+  SnakeMode,
+} from 'application/editor';
 import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
 import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
@@ -88,8 +89,8 @@ import {
 import { AtomLabel } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
 import {
+  MONOMER_CONST,
   RNA_DNA_NON_MODIFIED_PART,
   RnaDnaNaturalAnaloguesEnum,
   StandardAmbiguousRnaBase,
@@ -121,6 +122,7 @@ export class DrawingEntitiesManager {
   public atoms: Map<number, Atom> = new Map();
   public bonds: Map<number, Bond> = new Map();
   public monomerToAtomBonds: Map<number, MonomerToAtomBond> = new Map();
+  public cycles: Chain[] = [];
 
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
@@ -2182,8 +2184,8 @@ export class DrawingEntitiesManager {
     const editor = CoreEditor.provideEditorInstance();
 
     this.polymerBonds.forEach((polymerBond) => {
-      editor.renderersContainer.deletePolymerBond(polymerBond);
-      editor.renderersContainer.addPolymerBond(polymerBond);
+      editor.renderersContainer.deletePolymerBond(polymerBond, false, false);
+      editor.renderersContainer.addPolymerBond(polymerBond, false);
     });
   }
 
@@ -2671,11 +2673,11 @@ export class DrawingEntitiesManager {
   }
 
   // TODO create separate class for BoundingBox
-  public static geStructureBbox(monomers: BaseMonomer[]) {
-    let left;
-    let right;
-    let top;
-    let bottom;
+  public static getStructureBbox(monomers: BaseMonomer[]) {
+    let left = 0;
+    let right = 0;
+    let top = 0;
+    let bottom = 0;
 
     monomers.forEach((monomer) => {
       const monomerPosition = monomer.position;
@@ -2789,7 +2791,7 @@ export class DrawingEntitiesManager {
         const chainsToCenters = new Map<GrouppedChain, Vec2>();
 
         largestChains.forEach(([chainToCheck, monomers]) => {
-          const chainBbox = DrawingEntitiesManager.geStructureBbox(monomers);
+          const chainBbox = DrawingEntitiesManager.getStructureBbox(monomers);
 
           chainsToCenters.set(
             chainToCheck,
@@ -3035,7 +3037,14 @@ export class DrawingEntitiesManager {
       );
     });
   }
+
+  public detectCycles() {
+    const chainsCollection = ChainsCollection.fromMonomers(this.monomersArray);
+    // TODO: Detect cycles properly with side-chains/hydrogen bonds
+    this.cycles = chainsCollection.chains.filter((chain) => chain.isCyclic);
+  }
 }
+
 function getFirstPosition(
   height: number,
   lastPosition: Vec2,

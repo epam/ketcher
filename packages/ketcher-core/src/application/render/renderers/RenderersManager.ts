@@ -131,12 +131,17 @@ export class RenderersManager {
     this.markForReEnumeration();
   }
 
-  public addPolymerBond(polymerBond: PolymerBond | HydrogenBond): void {
+  public addPolymerBond(
+    polymerBond: PolymerBond | HydrogenBond,
+    redrawAttachmentPoints = true,
+  ): void {
     const polymerBondRenderer =
       PolymerBondRendererFactory.createInstance(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     polymerBondRenderer.show();
-    polymerBondRenderer.polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
+    if (redrawAttachmentPoints) {
+      polymerBondRenderer.polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();
+    }
     this.markForReEnumeration();
   }
 
@@ -161,10 +166,13 @@ export class RenderersManager {
   public deletePolymerBond(
     polymerBond: PolymerBond | HydrogenBond,
     recalculateEnumeration = true,
+    redrawAttachmentPoints = true,
   ) {
     polymerBond.renderer?.remove();
-    polymerBond?.firstMonomer?.renderer?.redrawAttachmentPoints?.();
-    polymerBond?.secondMonomer?.renderer?.redrawAttachmentPoints?.();
+    if (redrawAttachmentPoints) {
+      polymerBond?.firstMonomer?.renderer?.redrawAttachmentPoints?.();
+      polymerBond?.secondMonomer?.renderer?.redrawAttachmentPoints?.();
+    }
     this.polymerBonds.delete(polymerBond.id);
     if (recalculateEnumeration) {
       this.markForReEnumeration();
@@ -308,7 +316,6 @@ export class RenderersManager {
   public reinitializeViewModel() {
     const editor = CoreEditor.provideEditorInstance();
     const viewModel = editor.viewModel;
-
     viewModel.initialize([...editor.drawingEntitiesManager.bonds.values()]);
   }
 
@@ -392,7 +399,10 @@ export class RenderersManager {
 
   public rerenderSideConnectionPolymerBonds() {
     this.polymerBonds.forEach((polymerBondRenderer) => {
-      if (!polymerBondRenderer.polymerBond.isSideChainConnection) {
+      if (
+        !polymerBondRenderer.polymerBond.isSideChainConnection &&
+        !polymerBondRenderer.polymerBond.isCyclicOverlappingBond
+      ) {
         return;
       }
 

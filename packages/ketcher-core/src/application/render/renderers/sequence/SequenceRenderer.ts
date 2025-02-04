@@ -443,7 +443,7 @@ export class SequenceRenderer {
       twoStrandedNode: ITwoStrandedChainItem;
     }) => void,
   ) {
-    this.sequenceViewModel.forEachNode(forEachCallback);
+    this.sequenceViewModel?.forEachNode(forEachCallback);
   }
 
   public static setCaretPositionBySequenceItemRenderer(

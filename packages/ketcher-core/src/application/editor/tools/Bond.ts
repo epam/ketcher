@@ -319,6 +319,7 @@ class PolymerBond implements BaseTool {
         return;
       }
       const modelChanges = this.finishBondCreation(renderer.monomer);
+      this.editor.drawingEntitiesManager.detectCycles();
       this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
@@ -437,6 +438,7 @@ class PolymerBond implements BaseTool {
 
       // This logic so far is only for no-modal connections. Maybe then we can chain it after modal invoke
       const modelChanges = this.finishBondCreation(renderer.monomer);
+      this.editor.drawingEntitiesManager.detectCycles();
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,

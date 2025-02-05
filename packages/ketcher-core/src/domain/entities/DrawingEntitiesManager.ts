@@ -3041,7 +3041,8 @@ export class DrawingEntitiesManager {
   public detectCycles() {
     const chainsCollection = ChainsCollection.fromMonomers(this.monomersArray);
     // TODO: Detect cycles properly with side-chains/hydrogen bonds
-    this.cycles = chainsCollection.chains.filter((chain) => chain.isCyclic);
+    // this.cycles = chainsCollection.chains.filter((chain) => chain.isCyclic);
+    this.cycles = chainsCollection.chains;
   }
 }
 

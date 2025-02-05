@@ -33,6 +33,7 @@ class EraserTool implements BaseTool {
       modelChanges.merge(
         this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
       );
+      this.editor.drawingEntitiesManager.detectCycles();
       this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
     }
@@ -53,6 +54,7 @@ class EraserTool implements BaseTool {
       modelChanges.merge(
         this.editor.drawingEntitiesManager.recalculateAntisenseChains(),
       );
+      this.editor.drawingEntitiesManager.detectCycles();
       this.history.update(modelChanges);
       this.editor.renderersContainer.update(modelChanges);
     }

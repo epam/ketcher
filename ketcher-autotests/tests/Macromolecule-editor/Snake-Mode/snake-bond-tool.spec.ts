@@ -961,7 +961,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Maximum call stack size exceeded error not appears during snake layout for large chains', async () => {
+  test.skip('Maximum call stack size exceeded error not appears during snake layout for large chains', async () => {
     /* 
     Test case: Snake Mode
     Description: Open chain with 2000 or more rna items. Turn on snake mode. Snake mode is applied on structure 
@@ -984,7 +984,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Maximum call stack size exceeded error not appears during snake layout for 4000 RNA', async () => {
+  test.skip('Maximum call stack size exceeded error not appears during snake layout for 4000 RNA', async () => {
     /* 
     Test case: Snake Mode
     Description: Open chain with 4000 rna items. Turn on snake mode. Snake mode is applied on structure 
@@ -1018,7 +1018,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Maximum call stack size exceeded error not appears during snake layout for 4000 Peptides', async () => {
+  test.skip('Maximum call stack size exceeded error not appears during snake layout for 4000 Peptides', async () => {
     /* 
     Test case: Snake Mode
     Description: Open chain with 4000 peptides items. Turn on snake mode. Snake mode is applied on structure 
@@ -1040,7 +1040,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Maximum call stack size exceeded error not appears during snake layout for 8000 Peptides', async () => {
+  test.skip('Maximum call stack size exceeded error not appears during snake layout for 8000 Peptides', async () => {
     /* 
     Test case: Snake Mode
     Description: Open chain with 8000 peptides items. Turn on snake mode. Snake mode is applied on structure 

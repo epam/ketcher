@@ -301,36 +301,36 @@ for (const leftMonomer of shortMonomerList) {
        */
       test.setTimeout(30000);
 
-        await loadMonomerOnCanvas(page, leftMonomer);
-        let leftMonomerAlias;
-        if (leftMonomer.type === 'Nucleoside') {
-          leftMonomerAlias = 'R';
-        } else if (leftMonomer.type === 'Nucleotide') {
-          leftMonomerAlias = 'P';
-        } else {
-          leftMonomerAlias = leftMonomer.alias;
-        }
-        const leftMonomerLocator = getMonomerLocator(page, {
-          monomerAlias: leftMonomerAlias,
-        }).first();
-        await loadMonomerOnCanvas(page, rightMonomer);
-        let rightMonomerAlias;
-        if (rightMonomer.type === 'Nucleoside') {
-          rightMonomerAlias = 'R';
-        } else if (rightMonomer.type === 'Nucleotide') {
-          rightMonomerAlias = 'P';
-        } else {
-          rightMonomerAlias = rightMonomer.alias;
-        }
+      await loadMonomerOnCanvas(page, leftMonomer);
+      let leftMonomerAlias;
+      if (leftMonomer.type === 'Nucleoside') {
+        leftMonomerAlias = 'R';
+      } else if (leftMonomer.type === 'Nucleotide') {
+        leftMonomerAlias = 'P';
+      } else {
+        leftMonomerAlias = leftMonomer.alias;
+      }
+      const leftMonomerLocator = getMonomerLocator(page, {
+        monomerAlias: leftMonomerAlias,
+      }).first();
+      await loadMonomerOnCanvas(page, rightMonomer);
+      let rightMonomerAlias;
+      if (rightMonomer.type === 'Nucleoside') {
+        rightMonomerAlias = 'R';
+      } else if (rightMonomer.type === 'Nucleotide') {
+        rightMonomerAlias = 'P';
+      } else {
+        rightMonomerAlias = rightMonomer.alias;
+      }
 
-        const rightMonomerLocators = getMonomerLocator(page, {
-          monomerAlias: rightMonomerAlias,
-        });
+      const rightMonomerLocators = getMonomerLocator(page, {
+        monomerAlias: rightMonomerAlias,
+      });
 
-        const rightMonomerLocator =
-          (await rightMonomerLocators.count()) > 1
-            ? rightMonomerLocators.nth(1)
-            : rightMonomerLocators.nth(0);
+      const rightMonomerLocator =
+        (await rightMonomerLocators.count()) > 1
+          ? rightMonomerLocators.nth(1)
+          : rightMonomerLocators.nth(0);
 
       await bondTwoMonomers(
         page,

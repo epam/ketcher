@@ -26,7 +26,6 @@ import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
   clickOnFileFormatDropdown,
   getMolfile,
-  getRxn,
   getSdf,
   getSmiles,
 } from '@utils/formats';
@@ -63,24 +62,12 @@ test.describe('Save files', () => {
       ARROW_LENGTH,
     );
 
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/rxn-1849-to-compare-expectedV2000.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [2, 7, 25];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/rxn-1849-to-compare-expectedV2000.rxn',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
   });
 
   test('Save file - Save *.mol file', async ({ page }) => {
@@ -143,21 +130,12 @@ test.describe('Save files', () => {
     Description: Structure reaction consists of two or more reaction arrows saved as .rxn file
     */
     await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
-    const expectedFile = await getRxn(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/two-arrows-and-plus-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [2, 7, 25, 32, 54];
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/two-arrows-and-plus-expected.rxn',
-      });
-    expect(rxnFile).toEqual(rxnFileExpected);
   });
 
   test('Automatic selection of MDL Molfile v3000 encoding is work if the number of atoms (or bonds) exceeds 999', async ({

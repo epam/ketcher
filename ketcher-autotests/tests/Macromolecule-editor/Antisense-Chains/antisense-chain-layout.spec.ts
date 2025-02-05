@@ -288,81 +288,72 @@ const shortMonomerList: IMonomer[] = [
 
 for (const leftMonomer of shortMonomerList) {
   for (const rightMonomer of shortMonomerList) {
-    test(
-      `1-${leftMonomer.id}-${rightMonomer.id}. Hydrogen side chain for: ${leftMonomer.monomerDescription} and ${rightMonomer.monomerDescription}`,
-      { tag: ['@IncorrectResultBecauseOfBug'] },
-      async () => {
-        /*
-         * Test task: https://github.com/epam/ketcher/issues/6184
-         * Description: Check if hydrogen bonds connect monomers inside one chain, those
-         *              hydrogen bonds should be considered as side chain connections for layout purposes
-         * Case:
-         *       1. Load two monomers on the canvas
-         *       2. Connect them with hydrogen bond
-         *       3. Switch to the flex/snake mode to refresh layout
-         *       4. Take screenshot to validate layout (connection should be considered as side chain)
-         *
-         *  WARNING: Some test tesults are wrong because of bugs:
-         *  https://github.com/epam/ketcher/issues/6194
-         *  https://github.com/epam/ketcher/issues/6195
-         *  Screenshots must be updated after fix and fixme should be removed
-         */
-        test.setTimeout(30000);
+    test(`1-${leftMonomer.id}-${rightMonomer.id}. Hydrogen side chain for: ${leftMonomer.monomerDescription} and ${rightMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/6184
+       * Description: Check if hydrogen bonds connect monomers inside one chain, those
+       *              hydrogen bonds should be considered as side chain connections for layout purposes
+       * Case:
+       *       1. Load two monomers on the canvas
+       *       2. Connect them with hydrogen bond
+       *       3. Switch to the flex/snake mode to refresh layout
+       *       4. Take screenshot to validate layout (connection should be considered as side chain)
+       */
+      test.setTimeout(30000);
 
-        await loadMonomerOnCanvas(page, leftMonomer);
-        let leftMonomerAlias;
-        if (leftMonomer.type === 'Nucleoside') {
-          leftMonomerAlias = 'R';
-        } else if (leftMonomer.type === 'Nucleotide') {
-          leftMonomerAlias = 'P';
-        } else {
-          leftMonomerAlias = leftMonomer.alias;
-        }
-        const leftMonomerLocator = (
+      await loadMonomerOnCanvas(page, leftMonomer);
+      let leftMonomerAlias;
+      if (leftMonomer.type === 'Nucleoside') {
+        leftMonomerAlias = 'R';
+      } else if (leftMonomer.type === 'Nucleotide') {
+        leftMonomerAlias = 'P';
+      } else {
+        leftMonomerAlias = leftMonomer.alias;
+      }
+      const leftMonomerLocator = (
+        await getMonomerLocator(page, {
+          monomerAlias: leftMonomerAlias,
+        })
+      ).first();
+      await loadMonomerOnCanvas(page, rightMonomer);
+      let rightMonomerAlias;
+      if (rightMonomer.type === 'Nucleoside') {
+        rightMonomerAlias = 'R';
+      } else if (rightMonomer.type === 'Nucleotide') {
+        rightMonomerAlias = 'P';
+      } else {
+        rightMonomerAlias = rightMonomer.alias;
+      }
+      const rightMonomerLocator =
+        (await (
           await getMonomerLocator(page, {
-            monomerAlias: leftMonomerAlias,
+            monomerAlias: rightMonomerAlias,
           })
-        ).first();
-        await loadMonomerOnCanvas(page, rightMonomer);
-        let rightMonomerAlias;
-        if (rightMonomer.type === 'Nucleoside') {
-          rightMonomerAlias = 'R';
-        } else if (rightMonomer.type === 'Nucleotide') {
-          rightMonomerAlias = 'P';
-        } else {
-          rightMonomerAlias = rightMonomer.alias;
-        }
-        const rightMonomerLocator =
-          (await (
-            await getMonomerLocator(page, {
-              monomerAlias: rightMonomerAlias,
-            })
-          ).count()) > 1
-            ? (
-                await getMonomerLocator(page, {
-                  monomerAlias: rightMonomerAlias,
-                })
-              ).nth(1)
-            : (
-                await getMonomerLocator(page, {
-                  monomerAlias: rightMonomerAlias,
-                })
-              ).first();
+        ).count()) > 1
+          ? (
+              await getMonomerLocator(page, {
+                monomerAlias: rightMonomerAlias,
+              })
+            ).nth(1)
+          : (
+              await getMonomerLocator(page, {
+                monomerAlias: rightMonomerAlias,
+              })
+            ).first();
 
-        await bondTwoMonomers(
-          page,
-          leftMonomerLocator,
-          rightMonomerLocator,
-          undefined,
-          undefined,
-          MacroBondTool.HYDROGEN,
-        );
+      await bondTwoMonomers(
+        page,
+        leftMonomerLocator,
+        rightMonomerLocator,
+        undefined,
+        undefined,
+        MacroBondTool.HYDROGEN,
+      );
 
-        await selectFlexLayoutModeTool(page);
-        await selectSnakeLayoutModeTool(page);
-        await takeEditorScreenshot(page, { hideMonomerPreview: true });
-      },
-    );
+      await selectFlexLayoutModeTool(page);
+      await selectSnakeLayoutModeTool(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    });
   }
 }
 
@@ -776,38 +767,31 @@ test(`8. Check that multiple backbones/chains can be placed in on a line if they
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 
-test(
-  `9. Check if there is a circular hydrogen bond connection between three or more chains, 
-      those hydrogen bonds should be considered as side chain connection for layout purposes`,
-  { tag: ['@IncorrectResultBecauseOfBug'] },
-  async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/6184
-     * Description: Check if there is a circular hydrogen bond connection between three or more chains,
-     *              those hydrogen bonds should be considered as side chain connection for layout purposes
-     * Case:
-     *       1. Load very long chain with short antisense connected on the canvas
-     *       2. Take screenshot to validate layout
-     *
-     *  WARNING: Some test tesults are wrong because of bugs:
-     *  https://github.com/epam/ketcher/issues/6201
-     */
-    test.setTimeout(20000);
+test(`9. Check if there is a circular hydrogen bond connection between three or more chains, 
+      those hydrogen bonds should be considered as side chain connection for layout purposes`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6184
+   * Description: Check if there is a circular hydrogen bond connection between three or more chains,
+   *              those hydrogen bonds should be considered as side chain connection for layout purposes
+   * Case:
+   *       1. Load very long chain with short antisense connected on the canvas
+   *       2. Take screenshot to validate layout
+   */
+  test.setTimeout(20000);
 
-    await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      page,
-      MacroFileType.HELM,
-      'RNA1{R(C)P.R(A)P.R(A)P}|' +
-        'RNA2{R(G)P.R(T)P.R(U)P}|' +
-        'RNA3{R(C)P.R(A)P.R(A)P}$' +
-        'RNA1,RNA2,8:pair-8:pair|' +
-        'RNA2,RNA3,2:pair-2:pair|' +
-        'RNA3,RNA1,8:pair-2:pair$$$V2.0',
-    );
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(C)P.R(A)P.R(A)P}|' +
+      'RNA2{R(G)P.R(T)P.R(U)P}|' +
+      'RNA3{R(C)P.R(A)P.R(A)P}$' +
+      'RNA1,RNA2,8:pair-8:pair|' +
+      'RNA2,RNA3,2:pair-2:pair|' +
+      'RNA3,RNA1,8:pair-2:pair$$$V2.0',
+  );
 
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
-  },
-);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
 
 for (const leftMonomer of eligibleForAntisenseMonomerList) {
   for (const rightMonomer of eligibleForAntisenseMonomerList) {

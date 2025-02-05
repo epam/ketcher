@@ -23,7 +23,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getRxn, getSmiles } from '@utils/formats';
+import { getSmiles } from '@utils/formats';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -272,61 +272,36 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Rxn-V2000/aromatic-benzene-rxnv2000.rxn',
       page,
     );
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/aromatic-benzene-rxnv2000-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [2, 7, 64];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/aromatic-benzene-rxnv2000-expected.rxn',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    '(RxnV3000) Save cyclic structures with a circle inside the cycle',
-    async ({ page }) => {
-      /*
-    * IMPORTANT: Test fails because we have bug https://github.com/epam/Indigo/issues/2476
+  test('(RxnV3000) Save cyclic structures with a circle inside the cycle', async ({
+    page,
+  }) => {
+    /*
     Test case: EPMLSOPKET-1877
     Description: The structures are saved as rxn-file.
     The saved rxn-file is opened correctly. In Ketcher the saved structures appear
     with the circle inside the cycles.
     */
-      await openFileAndAddToCanvas(
-        'Molfiles-V3000/aromatic-benzene-rxnv3000.rxn',
-        page,
-      );
-      const expectedFile = await getRxn(page, 'v3000');
-      await saveToFile(
-        'Molfiles-V3000/aromatic-benzene-rxnv3000-expected.rxn',
-        expectedFile,
-      );
-
-      const METADATA_STRING_INDEX = [2];
-
-      const { fileExpected: rxnFileExpected, file: rxnFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/Molfiles-V3000/aromatic-benzene-rxnv3000-expected.rxn',
-          metaDataIndexes: METADATA_STRING_INDEX,
-          fileFormat: 'v3000',
-        });
-
-      expect(rxnFile).toEqual(rxnFileExpected);
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvas(
+      'Molfiles-V3000/aromatic-benzene-rxnv3000.rxn',
+      page,
+    );
+    await verifyFileExport(
+      page,
+      'Rxn-V3000/aromatic-benzene-rxnv3000-expected.rxn',
+      FileType.RXN,
+      'v3000',
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test('(Cml file) Save cyclic structures with a circle inside the cycle', async ({
     page,

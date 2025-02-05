@@ -27,8 +27,8 @@ import { ketcherProvider } from 'application/utils';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { AttachmentPointName } from 'domain/types';
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
 import { Atom } from 'domain/entities/CoreAtom';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
 
 export abstract class BaseMode {
   private _pasteIsInProgress = false;

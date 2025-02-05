@@ -378,6 +378,8 @@ export class DrawingEntitiesManager {
       drawingEntity instanceof HydrogenBond
     ) {
       drawingEntity.moveToLinkedEntities();
+      drawingEntity.isOverlappedByMonomer =
+        this.checkBondForOverlapsByMonomers(drawingEntity);
     } else if (drawingEntity instanceof Bond) {
       drawingEntity.moveToLinkedAtoms();
     } else if (drawingEntity instanceof MonomerToAtomBond) {
@@ -807,6 +809,8 @@ export class DrawingEntitiesManager {
       this.polymerBonds.set(_polymerBond.id, _polymerBond);
       firstMonomer.setBond(firstMonomerAttachmentPoint, _polymerBond);
       secondMonomer.setBond(secondMonomerAttachmentPoint, _polymerBond);
+      _polymerBond.isOverlappedByMonomer =
+        this.checkBondForOverlapsByMonomers(_polymerBond);
       return _polymerBond;
     }
 
@@ -822,6 +826,8 @@ export class DrawingEntitiesManager {
       secondMonomerAttachmentPoint,
       polymerBond,
     );
+    polymerBond.isOverlappedByMonomer =
+      this.checkBondForOverlapsByMonomers(polymerBond);
 
     polymerBond.firstMonomer.removePotentialBonds(true);
     polymerBond.secondMonomer.removePotentialBonds(true);
@@ -2180,12 +2186,30 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public rerenderPolymerBonds() {
+  public rerenderBondsOverlappedByMonomers() {
     const editor = CoreEditor.provideEditorInstance();
 
-    this.polymerBonds.forEach((polymerBond) => {
-      editor.renderersContainer.deletePolymerBond(polymerBond, false, false);
-      editor.renderersContainer.addPolymerBond(polymerBond, false);
+    const monomersToCheck = this.selectedEntities
+      .filter(([, entity]) => entity instanceof BaseMonomer)
+      .map(([, entity]) => entity as BaseMonomer);
+    const outstandingBonds = this.polymerBondsArray.filter((polymerBond) =>
+      monomersToCheck.some(
+        (monomer) =>
+          polymerBond.firstMonomer !== monomer &&
+          polymerBond.secondMonomer !== monomer,
+      ),
+    );
+
+    outstandingBonds.forEach((polymerBond) => {
+      const previousIsOverlappedByMonomer = polymerBond.isOverlappedByMonomer;
+      polymerBond.isOverlappedByMonomer = this.checkBondForOverlapsByMonomers(
+        polymerBond,
+        monomersToCheck,
+      );
+      if (polymerBond.isOverlappedByMonomer !== previousIsOverlappedByMonomer) {
+        editor.renderersContainer.deletePolymerBond(polymerBond, false, false);
+        editor.renderersContainer.addPolymerBond(polymerBond, false);
+      }
     });
   }
 
@@ -3029,6 +3053,10 @@ export class DrawingEntitiesManager {
     return [...this.monomers.values()];
   }
 
+  public get polymerBondsArray() {
+    return [...this.polymerBonds.values()];
+  }
+
   public get molecules() {
     return this.monomersArray.filter((monomer) => {
       return (
@@ -3038,11 +3066,45 @@ export class DrawingEntitiesManager {
     });
   }
 
-  public detectCycles() {
-    const chainsCollection = ChainsCollection.fromMonomers(this.monomersArray);
-    // TODO: Detect cycles properly with side-chains/hydrogen bonds
-    // this.cycles = chainsCollection.chains.filter((chain) => chain.isCyclic);
-    this.cycles = chainsCollection.chains;
+  private checkBondForOverlapsByMonomers(
+    polymerBond: PolymerBond,
+    monomers?: BaseMonomer[],
+  ) {
+    const secondMonomer = polymerBond.secondMonomer;
+    if (!secondMonomer) {
+      return false;
+    }
+
+    if (!polymerBond.isHorizontal && !polymerBond.isVertical) {
+      return false;
+    }
+
+    const monomersToUse = monomers ?? this.monomersArray;
+    return monomersToUse.some((monomer) => {
+      if (
+        monomer.id === polymerBond.firstMonomer.id ||
+        monomer.id === secondMonomer.id
+      ) {
+        return false;
+      }
+
+      const distanceFromMonomerToLine = monomer.center.calculateDistanceToLine([
+        polymerBond.firstMonomer.center,
+        secondMonomer.center,
+      ]);
+
+      return distanceFromMonomerToLine < 0.375;
+    });
+  }
+
+  public detectBondsOverlappedByMonomers(
+    polymerBonds?: Array<PolymerBond | HydrogenBond>,
+  ) {
+    const bondsToCheck = polymerBonds ?? this.polymerBondsArray;
+    bondsToCheck.forEach((polymerBond) => {
+      polymerBond.isOverlappedByMonomer =
+        this.checkBondForOverlapsByMonomers(polymerBond);
+    });
   }
 }
 

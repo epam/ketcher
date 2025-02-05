@@ -232,7 +232,7 @@ class SelectRectangle implements BaseTool {
       this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
       requestAnimationFrame(() => {
         this.editor.renderersContainer.update(modelChanges);
-        this.editor.drawingEntitiesManager.rerenderPolymerBonds();
+        this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
       });
     }
   }

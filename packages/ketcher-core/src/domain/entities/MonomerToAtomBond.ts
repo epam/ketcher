@@ -28,4 +28,16 @@ export class MonomerToAtomBond extends BaseBond {
   get secondEndEntity(): Atom {
     return this.atom;
   }
+
+  public get isCyclicOverlappingBond() {
+    return false;
+  }
+
+  public get isHorizontal() {
+    return false;
+  }
+
+  public get isVertical() {
+    return false;
+  }
 }

@@ -67,7 +67,8 @@ export const SequenceItemContextMenu = ({
     {
       name: SequenceItemContextMenuNames.modifyInRnaBuilder,
       title: 'Modify in RNA Builder...',
-      disabled: !menuProps?.isSelectedOnlyNucleoelements,
+      disabled:
+        !menuProps?.isSelectedOnlyNucleoelements || menuProps.hasAntisense,
       hidden: ({
         props,
       }: {

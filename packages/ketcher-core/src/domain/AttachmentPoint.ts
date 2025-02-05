@@ -247,7 +247,7 @@ export class AttachmentPoint {
     } else if (
       !(polymerBond instanceof MonomerToAtomBond) &&
       this.isSnake &&
-      !polymerBond?.renderer?.isMonomersOnSameHorizontalLine()
+      !polymerBond.isHorizontal
     ) {
       angleRadians = isAttachmentpointR1
         ? this.rotateToAngle(polymerBond, flip)

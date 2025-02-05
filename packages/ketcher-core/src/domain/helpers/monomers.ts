@@ -1,6 +1,7 @@
 import {
   AmbiguousMonomer,
   BaseMonomer,
+  MONOMER_CLASS_TO_CONSTRUCTOR,
   Peptide,
   Phosphate,
   RNABase,
@@ -16,7 +17,6 @@ import {
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { IVariantMonomer } from 'domain/entities/types';
 import { KetMonomerClass } from 'application/formatters';
-import { MONOMER_CLASS_TO_CONSTRUCTOR } from 'domain/constants/monomers';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 
 export function getMonomerUniqueKey(monomer: MonomerItemType) {

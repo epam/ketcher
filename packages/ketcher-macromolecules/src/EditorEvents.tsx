@@ -34,6 +34,7 @@ import {
   Nucleotide,
   PolymerBond,
   HydrogenBond,
+  BackBoneSequenceNode,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
 import {
@@ -199,6 +200,10 @@ export const EditorEvents = () => {
       const sequenceNode = e.target.__data__?.node;
       const monomer: BaseMonomer | AmbiguousMonomer =
         e.target.__data__?.monomer || sequenceNode?.monomer;
+
+      if (sequenceNode && sequenceNode instanceof BackBoneSequenceNode) {
+        return;
+      }
 
       if (monomer instanceof AmbiguousMonomer) {
         const ambiguousMonomerPreviewData: AmbiguousMonomerPreviewState = {

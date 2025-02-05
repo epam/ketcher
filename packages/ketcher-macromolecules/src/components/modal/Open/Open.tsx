@@ -194,6 +194,8 @@ const addToCanvas = ({
     }
   }
 
+  editor.drawingEntitiesManager.detectCycles();
+
   editor.renderersContainer.update(modelChanges);
   editorHistory.update(modelChanges);
 

@@ -103,7 +103,7 @@ class PolymerBond implements BaseTool {
 
   public mousedown(event) {
     const selectedRenderer = event.target.__data__;
-    if (selectedRenderer instanceof ChemRenderer) {
+    if (selectedRenderer instanceof ChemRenderer && !this.isHydrogenBond) {
       this.editor.events.error.dispatch(
         'Selected CHEM monomer supports only attachment points for bond creation',
       );

@@ -22,6 +22,7 @@ export const Peptides = {
   Cys_Bn: { alias: 'Cys_Bn', testId: 'Cys_Bn___S-benzylcysteine' } as Monomer,
   D: { alias: 'D', testId: 'D___Aspartic acid' } as Monomer,
   dA: { alias: 'dA', testId: 'dA___D-Alanine' } as Monomer,
+  D_aIle: { alias: 'D-aIle', testId: 'D-aIle___D-allo-Isoleucine' } as Monomer,
   DHis1B: {
     alias: 'DHis1B',
     testId: 'DHis1B___(2R)-2-amino-3-(1-benzyl-1H-imidazol-4-yl)propanoic acid',
@@ -54,11 +55,20 @@ export const Peptides = {
     alias: 'LysiPr',
     testId: 'LysiPr___(2S)-2-amino-6-[(propan-2-yl)amino]hexanoic acid',
   } as Monomer,
+  Phe_ol: { alias: 'Phe-ol', testId: 'Phe-ol___L-phenylalaninol' } as Monomer,
+  SertBu: {
+    alias: 'SertBu',
+    testId: 'SertBu___O-tert-Butyl-L-serine',
+  } as Monomer,
   Test_6_P: {
     alias: 'Test-6-P',
     testId: 'Test-6-P___Test-6-AP-Peptide',
   } as Monomer,
   Tml: { alias: 'Tml', testId: '' } as Monomer,
+  TyrabD: {
+    alias: 'TyrabD',
+    testId: 'TyrabD___(2E)-2-amino-3-(4-methoxyphenyl)prop-2-enoic acid',
+  } as Monomer,
   Tza: { alias: 'Tza', testId: 'Tza___3-(4-Thiazolyl)-alanine' } as Monomer,
   Phe4Me: {
     alias: 'Phe4Me',

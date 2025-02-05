@@ -1,7 +1,9 @@
 import { Bases } from '@constants/monomers/Bases';
 import { Chem } from '@constants/monomers/Chem';
 import { Peptides } from '@constants/monomers/Peptides';
+import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
+import { Sugars } from '@constants/monomers/Sugars';
 import { Locator, test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -166,19 +168,19 @@ test.describe('Undo-Redo tests', () => {
     await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
     await page.getByTestId('erase').click();
     const entitiesToDelete = [
-      'D-aIle',
-      'SertBu',
-      'Phe-ol',
-      'TyrabD',
-      '25R',
-      'c3A',
-      'msp',
-      'cpmA',
-      'SMPEG2',
+      Peptides.D_aIle,
+      Peptides.SertBu,
+      Peptides.Phe_ol,
+      Peptides.TyrabD,
+      Sugars._25R,
+      Bases.c3A,
+      Phosphates.msp,
+      Bases.cpmA,
+      Chem.SMPEG2,
     ];
 
     for (const entity of entitiesToDelete) {
-      await getMonomerLocator(page, { monomerAlias: entity }).click();
+      await getMonomerLocator(page, entity).click();
     }
 
     const numberOfPress = 9;
@@ -286,16 +288,16 @@ test.describe('Undo-Redo tests', () => {
     await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
     await page.getByTestId('erase').click();
     const entitiesToDelete = [
-      'SertBu',
-      'TyrabD',
-      '25R',
-      'c3A',
-      'msp',
-      'SMPEG2',
+      Peptides.SertBu,
+      Peptides.TyrabD,
+      Sugars._25R,
+      Bases.c3A,
+      Phosphates.msp,
+      Chem.SMPEG2,
     ];
 
     for (const entity of entitiesToDelete) {
-      await getMonomerLocator(page, { monomerAlias: entity }).click();
+      await getMonomerLocator(page, entity).click();
     }
 
     const numberOfPress = 6;

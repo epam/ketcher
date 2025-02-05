@@ -8,6 +8,11 @@ export const Bases = {
   } as Monomer,
   _5meC: { alias: '5meC', testId: '5meC___5-methylcytosine' } as Monomer,
   baA: { alias: 'baA', testId: 'baA___N6-benzyladenine' } as Monomer,
+  cpmA: {
+    alias: 'cpmA',
+    testId: 'cpmA___N6-cyclopropylmethyladenine',
+  } as Monomer,
+  c3A: { alias: 'c3A', testId: 'c3A___3-Deazaadenine' } as Monomer,
   c7A: { alias: 'c7A', testId: 'c7A___7-Deazaadenine' } as Monomer,
   c7io7n: {
     alias: 'c7io7n',

@@ -804,19 +804,19 @@ test.describe('RNA Library', () => {
   });
 
   const monomersToDelete = [
-    { text: 'R', description: 'Sugar monomer deleted.' },
-    { text: 'A', description: 'Base monomer deleted.' },
-    { text: 'P', description: 'Phosphate monomer deleted.' },
+    { monomer: Sugars.R, description: 'Sugar monomer deleted.' },
+    { monomer: Bases.A, description: 'Base monomer deleted.' },
+    { monomer: Phosphates.P, description: 'Phosphate monomer deleted.' },
   ];
 
   for (const monomer of monomersToDelete) {
-    test(`Open file from .ket and Delete ${monomer.text} monomer`, async () => {
+    test(`Open file from .ket and Delete ${monomer.monomer.alias} monomer`, async () => {
       await openFileAndAddToCanvasMacro(
         'KET/monomers-connected-with-bonds.ket',
         page,
       );
       await selectEraseTool(page);
-      await getMonomerLocator(page, { monomerAlias: monomer.text }).click();
+      await getMonomerLocator(page, monomer.monomer).click();
       await takeEditorScreenshot(page);
     });
   }

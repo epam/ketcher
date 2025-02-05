@@ -594,8 +594,8 @@ test(`4. For R3-R1 sugar-base side connections (when the base does not have hydr
 
   await bondTwoMonomers(
     page,
-    await getMonomerLocator(page, { monomerAlias: 'A' }),
-    await getMonomerLocator(page, { monomerAlias: 'U' }),
+    getMonomerLocator(page, { monomerAlias: 'A' }),
+    getMonomerLocator(page, { monomerAlias: 'U' }),
     undefined,
     undefined,
     MacroBondTool.HYDROGEN,

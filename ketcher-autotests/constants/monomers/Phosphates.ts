@@ -10,5 +10,6 @@ export const Phosphates = {
   bP: { alias: 'bP', testId: 'bP___Boranophosphate' } as Monomer,
   moen: { alias: 'moen', testId: 'moen___2-Methoxyethylamino' } as Monomer,
   mn: { alias: 'mn', testId: 'mn___Methylamino' } as Monomer,
+  msp: { alias: 'msp', testId: 'msp___Methylphosphonothioic acid' } as Monomer,
   ibun: { alias: 'ibun', testId: 'ibun___Isobutylamino' } as Monomer,
 };

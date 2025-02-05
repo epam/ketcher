@@ -47,7 +47,7 @@ test.describe('Flex mode copy&paste', () => {
   }) => {
     await page.keyboard.down('Shift');
 
-    await getMonomerLocator(page, { monomerAlias: Chem.SMCC.alias }).click();
+    await getMonomerLocator(page, Chem.SMCC).click();
     await getMonomerLocator(page, Chem.Test_6_Ch).first().click();
 
     await page.keyboard.up('Shift');

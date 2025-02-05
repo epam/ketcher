@@ -8351,7 +8351,7 @@
                 ]
             }
         ],
-        "class": "Linker",
+        "class": "CHEM",
         "classHELM": "CHEM",
         "id": "SMCC_15",
         "fullName": "SMCC",

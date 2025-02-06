@@ -1410,7 +1410,6 @@ export class SequenceMode extends BaseMode {
     const history = new EditorHistory(editor);
     const modelChanges = new Command();
     const selections = SequenceRenderer.selections;
-    const wasCanvasEmptyBeforeInsertion = SequenceRenderer.isEmptyCanvas();
 
     if (selections.length > 0) {
       if (
@@ -1448,7 +1447,7 @@ export class SequenceMode extends BaseMode {
       } else {
         this.replaceSelectionsWithMonomer(selections, monomerItem);
       }
-    } else {
+    } else if (editor.isSequenceEditMode) {
       const newNodePosition = this.getNewNodePosition();
 
       const newMonomer = editor.drawingEntitiesManager.createMonomer(
@@ -1480,13 +1479,10 @@ export class SequenceMode extends BaseMode {
 
       modelChanges.addOperation(new ReinitializeModeOperation());
       editor.renderersContainer.update(modelChanges);
-      SequenceRenderer.moveCaretForward();
+      SequenceRenderer.setCaretPositionNextToMonomer(
+        newMonomerSequenceNode.lastMonomerInNode,
+      );
       history.update(modelChanges);
-    }
-
-    if (wasCanvasEmptyBeforeInsertion) {
-      this.turnOnEditMode();
-      SequenceRenderer.moveCaretForward();
     }
   }
 
@@ -1687,7 +1683,7 @@ export class SequenceMode extends BaseMode {
       } else {
         this.replaceSelectionsWithPreset(selections, preset);
       }
-    } else {
+    } else if (editor.isSequenceEditMode) {
       const newNodePosition = this.getNewNodePosition();
 
       const newPresetNode = this.createRnaPresetNode(preset, newNodePosition);
@@ -1713,7 +1709,9 @@ export class SequenceMode extends BaseMode {
 
       modelChanges.addOperation(new ReinitializeModeOperation());
       editor.renderersContainer.update(modelChanges);
-      SequenceRenderer.moveCaretForward();
+      SequenceRenderer.setCaretPositionNextToMonomer(
+        newPresetNode.lastMonomerInNode,
+      );
       history.update(modelChanges);
     }
   }

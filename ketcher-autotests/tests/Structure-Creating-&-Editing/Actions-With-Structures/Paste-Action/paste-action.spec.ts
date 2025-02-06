@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
@@ -9,6 +10,9 @@ import {
   copyToClipboardByKeyboard,
   selectTopPanelButton,
   pasteFromClipboardByKeyboard,
+  selectRing,
+  RingButton,
+  clickOnCanvas,
 } from '@utils';
 import { TopPanelButton } from '@utils/selectors';
 
@@ -40,6 +44,13 @@ test.describe('Paste Tool', () => {
     After fixing the issue, the test should be updated.
     */
     await drawBenzeneRing(page);
+
+    await selectRing(RingButton.Benzene, page);
+    await clickOnCanvas(page, 200, 200);
+
+    await selectRing(RingButton.Benzene, page);
+    await clickOnCanvas(page, 400, 400);
+
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await selectTopPanelButton(TopPanelButton.Open, page);

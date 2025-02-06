@@ -363,7 +363,7 @@ export class SequenceRenderer {
     let newCaretPosition = -1;
 
     SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
-      if (node.monomer === monomer) {
+      if (node.monomers.includes(monomer)) {
         newCaretPosition = nodeIndexOverall;
       }
     });
@@ -375,7 +375,7 @@ export class SequenceRenderer {
     let newCaretPosition = -1;
 
     SequenceRenderer.forEachNode(({ node, nodeIndexOverall }) => {
-      if (node.monomer === monomer) {
+      if (node.monomers.includes(monomer)) {
         newCaretPosition = nodeIndexOverall;
       }
     });
@@ -925,7 +925,7 @@ export class SequenceRenderer {
     let rendererToReturn;
 
     SequenceRenderer.forEachNode(({ node }) => {
-      if (node.monomer === monomer) {
+      if (node.monomers.includes(monomer)) {
         rendererToReturn = node.renderer;
       }
     });

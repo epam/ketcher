@@ -1676,7 +1676,6 @@ export class SequenceMode extends BaseMode {
     const history = new EditorHistory(editor);
     const modelChanges = new Command();
     const selections = SequenceRenderer.selections;
-    const wasCanvasEmptyBeforeInsertion = SequenceRenderer.isEmptyCanvas();
 
     if (selections.length > 0) {
       if (this.isSelectionsContainAntisenseChains(selections)) {
@@ -1759,11 +1758,6 @@ export class SequenceMode extends BaseMode {
         newMonomerSequenceNode.lastMonomerInNode,
       );
       history.update(modelChanges);
-    }
-
-    if (wasCanvasEmptyBeforeInsertion) {
-      this.turnOnEditMode();
-      SequenceRenderer.moveCaretForward();
     }
   }
 

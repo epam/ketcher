@@ -468,8 +468,8 @@ export class SequenceRenderer {
 
     SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
       if (
-        twoStrandedNode.senseNode?.monomer === monomer ||
-        twoStrandedNode.antisenseNode?.monomer === monomer
+        twoStrandedNode.senseNode?.monomers.includes(monomer) ||
+        twoStrandedNode.antisenseNode?.monomers.includes(monomer)
       ) {
         newCaretPosition = nodeIndexOverall;
       }
@@ -483,8 +483,8 @@ export class SequenceRenderer {
 
     SequenceRenderer.forEachNode(({ twoStrandedNode, nodeIndexOverall }) => {
       if (
-        twoStrandedNode.senseNode?.monomer === monomer ||
-        twoStrandedNode.antisenseNode?.monomer === monomer
+        twoStrandedNode.senseNode?.monomers.includes(monomer) ||
+        twoStrandedNode.antisenseNode?.monomers.includes(monomer)
       ) {
         newCaretPosition = nodeIndexOverall;
       }
@@ -1154,8 +1154,8 @@ export class SequenceRenderer {
 
     SequenceRenderer.forEachNode(({ twoStrandedNode }) => {
       if (
-        twoStrandedNode.senseNode?.monomer === monomer ||
-        twoStrandedNode.antisenseNode?.monomer === monomer
+        twoStrandedNode.senseNode?.monomers.includes(monomer) ||
+        twoStrandedNode.antisenseNode?.monomers.includes(monomer)
       ) {
         rendererToReturn =
           twoStrandedNode.senseNode?.renderer ||

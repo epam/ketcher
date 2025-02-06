@@ -3073,7 +3073,7 @@ export class DrawingEntitiesManager {
     monomers?: BaseMonomer[],
   ) {
     const editor = CoreEditor.provideEditorInstance();
-    if (editor.mode instanceof SequenceMode) {
+    if (!editor || editor.mode instanceof SequenceMode) {
       return false;
     }
 

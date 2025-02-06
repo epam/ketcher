@@ -119,10 +119,10 @@ type RnaPresetAdditionParams = {
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond | HydrogenBond> = new Map();
+  private bondsMonomersOverlaps: Map<number, BaseMonomer> = new Map();
   public atoms: Map<number, Atom> = new Map();
   public bonds: Map<number, Bond> = new Map();
   public monomerToAtomBonds: Map<number, MonomerToAtomBond> = new Map();
-  public cycles: Chain[] = [];
 
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
@@ -809,8 +809,6 @@ export class DrawingEntitiesManager {
       this.polymerBonds.set(_polymerBond.id, _polymerBond);
       firstMonomer.setBond(firstMonomerAttachmentPoint, _polymerBond);
       secondMonomer.setBond(secondMonomerAttachmentPoint, _polymerBond);
-      _polymerBond.isOverlappedByMonomer =
-        this.checkBondForOverlapsByMonomers(_polymerBond);
       return _polymerBond;
     }
 
@@ -826,8 +824,6 @@ export class DrawingEntitiesManager {
       secondMonomerAttachmentPoint,
       polymerBond,
     );
-    polymerBond.isOverlappedByMonomer =
-      this.checkBondForOverlapsByMonomers(polymerBond);
 
     polymerBond.firstMonomer.removePotentialBonds(true);
     polymerBond.secondMonomer.removePotentialBonds(true);
@@ -2168,6 +2164,8 @@ export class DrawingEntitiesManager {
       command.merge(this.redrawBonds());
     }
 
+    this.detectBondsOverlappedByMonomers();
+
     this.monomers.forEach((monomer) => {
       editor.renderersContainer.deleteMonomer(monomer);
       editor.renderersContainer.addMonomer(monomer);
@@ -2188,6 +2186,10 @@ export class DrawingEntitiesManager {
 
   public rerenderBondsOverlappedByMonomers() {
     const editor = CoreEditor.provideEditorInstance();
+
+    if (editor.mode instanceof SequenceMode) {
+      return;
+    }
 
     const monomersToCheck = this.selectedEntities
       .filter(([, entity]) => entity instanceof BaseMonomer)
@@ -3070,6 +3072,11 @@ export class DrawingEntitiesManager {
     polymerBond: PolymerBond,
     monomers?: BaseMonomer[],
   ) {
+    const editor = CoreEditor.provideEditorInstance();
+    if (editor.mode instanceof SequenceMode) {
+      return false;
+    }
+
     const secondMonomer = polymerBond.secondMonomer;
     if (!secondMonomer) {
       return false;
@@ -3080,21 +3087,41 @@ export class DrawingEntitiesManager {
     }
 
     const monomersToUse = monomers ?? this.monomersArray;
-    return monomersToUse.some((monomer) => {
-      if (
-        monomer.id === polymerBond.firstMonomer.id ||
-        monomer.id === secondMonomer.id
-      ) {
-        return false;
-      }
+    // Skip processing for large structures for now as in worst case its has O(n^2) complexity and may freeze the app
+    // Further optimization might be needed to allow that
+    if (monomersToUse.length > 500) {
+      return false;
+    }
 
-      const distanceFromMonomerToLine = monomer.center.calculateDistanceToLine([
-        polymerBond.firstMonomer.center,
-        secondMonomer.center,
-      ]);
+    const previousOverlap = this.bondsMonomersOverlaps.get(polymerBond.id);
+    const monomersToUseWithPreviousOverlap = previousOverlap
+      ? [previousOverlap, ...monomersToUse]
+      : monomersToUse;
 
-      return distanceFromMonomerToLine < 0.375;
-    });
+    const overlappingMonomer = monomersToUseWithPreviousOverlap.find(
+      (monomer) => {
+        if (
+          monomer.id === polymerBond.firstMonomer.id ||
+          monomer.id === secondMonomer.id
+        ) {
+          return false;
+        }
+
+        const distanceFromMonomerToLine =
+          monomer.center.calculateDistanceToLine([
+            polymerBond.firstMonomer.center,
+            secondMonomer.center,
+          ]);
+
+        return distanceFromMonomerToLine < 0.375;
+      },
+    );
+
+    if (overlappingMonomer) {
+      this.bondsMonomersOverlaps.set(polymerBond.id, overlappingMonomer);
+    }
+
+    return Boolean(overlappingMonomer);
   }
 
   public detectBondsOverlappedByMonomers(

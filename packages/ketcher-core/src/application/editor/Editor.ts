@@ -73,10 +73,6 @@ interface ICoreEditorConstructorParams {
   monomersLibraryUpdate?: string | JSON;
 }
 
-function isMouseMainButtonPressed(event: MouseEvent) {
-  return event.button === 0;
-}
-
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
@@ -92,6 +88,7 @@ export class CoreEditor {
   public viewModel: ViewModel;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
+  public isMouseMainButtonPressed = false;
   private _monomersLibraryParsedJson: IKetMacromoleculesContent | null = null;
   private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
@@ -678,10 +675,11 @@ export class CoreEditor {
 
       subs.add((event) => {
         this.updateLastCursorPosition(event);
+        this.isMouseMainButtonPressed = event.button === 0;
 
         if (
           ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
-          !isMouseMainButtonPressed(event)
+          !this.isMouseMainButtonPressed
         ) {
           return true;
         }

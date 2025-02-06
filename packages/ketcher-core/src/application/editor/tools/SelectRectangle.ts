@@ -284,6 +284,10 @@ class SelectRectangle implements BaseTool {
   }
 
   public mouseOverPolymerBond(event) {
+    if (this.editor.isMouseMainButtonPressed) {
+      return;
+    }
+
     const renderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer =
       event.target.__data__;
 

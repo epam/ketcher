@@ -19,6 +19,7 @@ import {
   selectMacroBond,
   selectZoomInTool,
   selectZoomOutTool,
+  selectClearCanvasTool,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
@@ -377,6 +378,8 @@ test.describe('Erase Tool', () => {
       FileType.KET,
     );
 
+    await selectClearCanvasTool(page);
+
     await openFileAndAddToCanvasMacro(
       'KET/peptides-flex-chain-expected.ket',
       page,
@@ -396,6 +399,7 @@ test.describe('Erase Tool', () => {
     await selectEraseTool(page);
     await page.getByText('Bal').locator('..').first().click();
     await page.getByText('D-2Nal').locator('..').first().click();
+
     await verifyFileExport(
       page,
       'Molfiles-V3000/peptides-flex-chain-expected.mol',
@@ -403,6 +407,9 @@ test.describe('Erase Tool', () => {
       'v3000',
       [1],
     );
+
+    await selectClearCanvasTool(page);
+
     await openFileAndAddToCanvasMacro(
       'Molfiles-V3000/peptides-flex-chain-expected.mol',
       page,

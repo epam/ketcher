@@ -284,7 +284,7 @@ class SelectRectangle implements BaseTool {
   }
 
   public mouseOverPolymerBond(event) {
-    if (this.editor.isMouseMainButtonPressed) {
+    if (event.buttons === 1) {
       return;
     }
 

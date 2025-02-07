@@ -88,7 +88,6 @@ export class CoreEditor {
   public viewModel: ViewModel;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
-  public isMouseMainButtonPressed = false;
   private _monomersLibraryParsedJson: IKetMacromoleculesContent | null = null;
   private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
@@ -666,6 +665,10 @@ export class CoreEditor {
     return trackedDomEvents;
   }
 
+  private isMouseMainButtonPressed(event) {
+    return event?.button === 0;
+  }
+
   private domEventSetup() {
     this.trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
       this.events[eventName] = new DOMSubscription();
@@ -675,11 +678,10 @@ export class CoreEditor {
 
       subs.add((event) => {
         this.updateLastCursorPosition(event);
-        this.isMouseMainButtonPressed = event.button === 0;
 
         if (
           ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
-          !this.isMouseMainButtonPressed
+          !this.isMouseMainButtonPressed(event)
         ) {
           return true;
         }

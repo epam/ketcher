@@ -29,10 +29,6 @@ export class MonomerToAtomBond extends BaseBond {
     return this.atom;
   }
 
-  public get isCyclicOverlappingBond() {
-    return false;
-  }
-
   public get isHorizontal() {
     return false;
   }

@@ -232,7 +232,7 @@ class SelectRectangle implements BaseTool {
       this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
       requestAnimationFrame(() => {
         this.editor.renderersContainer.update(modelChanges);
-        this.editor.drawingEntitiesManager.rerenderPolymerBonds();
+        this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
       });
     }
   }
@@ -284,6 +284,10 @@ class SelectRectangle implements BaseTool {
   }
 
   public mouseOverPolymerBond(event) {
+    if (event.buttons === 1) {
+      return;
+    }
+
     const renderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer =
       event.target.__data__;
 

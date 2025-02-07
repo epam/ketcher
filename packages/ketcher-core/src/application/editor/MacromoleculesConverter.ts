@@ -677,7 +677,7 @@ export class MacromoleculesConverter {
     });
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);
-    drawingEntitiesManager.detectCycles();
+    drawingEntitiesManager.detectBondsOverlappedByMonomers();
 
     if (editor) {
       editor.viewModel.initialize([...drawingEntitiesManager.bonds.values()]);

@@ -63,7 +63,7 @@ import {
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
-import { SequenceMode, SnakeMode } from 'application/editor';
+import { FlexMode, SequenceMode, SnakeMode } from 'application/editor';
 import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
 import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
@@ -3029,8 +3029,10 @@ function getFirstPosition(
   lastPosition: Vec2,
   restOfRowsWithAntisense = 0,
 ) {
+  const editor = CoreEditor.provideEditorInstance();
+
   return new Vec2(
-    MONOMER_START_X_POSITION,
+    editor.mode instanceof FlexMode ? lastPosition.x : MONOMER_START_X_POSITION,
     lastPosition.y +
       height +
       (restOfRowsWithAntisense > 0 ? SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS : 0),

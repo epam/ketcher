@@ -1,9 +1,7 @@
 import { expect, test, Page } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  receiveFileComparisonData,
   openFileAndAddToCanvas,
-  saveToFile,
   drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
   clickOnAtom,
@@ -16,7 +14,6 @@ import {
   pressButton,
   selectLeftPanelButton,
   LeftPanelButton,
-  selectAction,
   dragMouseTo,
   setAttachmentPoints,
   moveMouseToTheMiddleOfTheScreen,
@@ -34,13 +31,12 @@ import {
   setHashSpacingValue,
   setHashSpacingOptionUnit,
 } from '@utils';
-import { getRxn } from '@utils/formats';
+
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-/* eslint-disable no-magic-numbers */
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await selectTopPanelButton(TopPanelButton.Save, page);
@@ -134,13 +130,13 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
       page,
     );
-    const expectedFile = await getRxn(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-    await selectTopPanelButton(TopPanelButton.Clear, page);
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type-saved.rxn',
       page,
     );
@@ -215,26 +211,26 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-    const expectedFileV2000 = await getRxn(page);
     await takeEditorScreenshot(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/structure-with-two-reaction-arrows-saved.rxn',
-      expectedFileV2000,
+      FileType.RXN,
+      'v2000',
     );
-    const expectedFileV3000 = await getRxn(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V3000/structure-with-two-reaction-arrows-saved.rxn',
-      expectedFileV3000,
+      FileType.RXN,
+      'v3000',
     );
-    await selectAction(TopPanelButton.Clear, page);
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasAsNewProject(
       'Rxn-V3000/structure-with-two-reaction-arrows-saved.rxn',
       page,
     );
     await takeEditorScreenshot(page);
 
-    await selectAction(TopPanelButton.Clear, page);
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/structure-with-two-reaction-arrows-saved.rxn',
       page,
     );
@@ -302,21 +298,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Description: Reaction with abbreviations is opened and saved correctly
      */
     await openFileAndAddToCanvas('Rxn-V2000/sec-butyl-abr.rxn', page);
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('Rxn-V2000/sec-butyl-abr-expectedV2000.rxn', expectedFile);
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2, 7, 23, 54];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/sec-butyl-abr-expectedV2000.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/sec-butyl-abr-expectedV2000.rxn',
+      FileType.RXN,
+      'v2000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/sec-butyl-abr-expectedV2000.rxn',
       page,
@@ -344,21 +331,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Description: Reaction with heteroatoms is opened and saved correctly
      */
     await openFileAndAddToCanvas('Rxn-V2000/heteroatoms.rxn', page);
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('Rxn-V2000/heteroatoms-expectedV2000.rxn', expectedFile);
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2, 7, 30, 39, 62];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/heteroatoms-expectedV2000.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/heteroatoms-expectedV2000.rxn',
+      FileType.RXN,
+      'v2000',
+    );
   });
 
   test('Open and Save file - V3000 rxn file contains Rgroup 1/2 - open', async ({
@@ -381,22 +359,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Description: Reaction can be saved correctly to rxn V3000 file
      */
     await openFileAndAddToCanvas('Rxn-V3000/r-group-V3000.rxn', page);
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile('Rxn-V3000/r-group-V3000-expectedV3000.rxn', expectedFile);
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/r-group-V3000-expectedV3000.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
+    await verifyFileExport(
+      page,
+      'Rxn-V3000/r-group-V3000-expectedV3000.rxn',
+      FileType.RXN,
+      'v3000',
+    );
   });
 
   test('Validate that unsplit nucleotides connected with phosphates could be saved to rxn2000 file and loaded back', async ({
@@ -422,26 +390,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
 
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-phosphates.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 157, 307, 457, 607, 757, 907, 1057, 1207,
-    ];
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-phosphates.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/unsplit-nucleotides-connected-with-phosphates.rxn',
@@ -473,27 +427,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
 
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-peptides.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 179, 351, 523, 695, 867, 1039, 1211, 1383,
-    ];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-peptides.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/unsplit-nucleotides-connected-with-peptides.rxn',
@@ -525,25 +464,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
 
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-nucleotides.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2, 7, 184, 361, 538, 715, 892];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-nucleotides.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/unsplit-nucleotides-connected-with-nucleotides.rxn',
@@ -575,27 +501,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
 
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 177, 347, 517, 687, 857, 1027, 1197, 1367,
-    ];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
@@ -627,27 +538,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
 
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-bases.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 181, 355, 529, 703, 877, 1051, 1225, 1399,
-    ];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-bases.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/unsplit-nucleotides-connected-with-bases.rxn',
@@ -679,26 +575,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
 
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 168, 329, 490, 651, 812, 973, 1134, 1295,
-    ];
-
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-sugars.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/unsplit-nucleotides-connected-with-sugars.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/unsplit-nucleotides-connected-with-sugars.rxn',
@@ -720,25 +602,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
 
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/simple-schema-with-retrosynthetic-arrow.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2, 7, 25];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/simple-schema-with-retrosynthetic-arrow.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/simple-schema-with-retrosynthetic-arrow.rxn',
@@ -760,25 +629,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
 
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v3000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V3000/simple-schema-with-retrosynthetic-arrow.rxn',
@@ -800,25 +656,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
 
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2, 7, 14, 21, 79];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
@@ -840,25 +683,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
 
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v3000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V3000/schema-with-retrosynthetic-angel-arrows-and-plus.rxn',
@@ -880,25 +710,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
 
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/schema-with-vertical-retrosynthetic-arrow.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2, 7, 23, 30, 47];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/schema-with-vertical-retrosynthetic-arrow.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/schema-with-vertical-retrosynthetic-arrow.rxn',
@@ -920,25 +737,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
 
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v3000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V3000/schema-with-vertical-retrosynthetic-arrow.rxn',
@@ -960,25 +764,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
 
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/schema-with-two-retrosynthetic-arrows.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2, 7, 26, 39, 63];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/schema-with-two-retrosynthetic-arrows.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/schema-with-two-retrosynthetic-arrows.rxn',
@@ -1000,25 +791,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
 
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v3000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V3000/schema-with-two-retrosynthetic-arrows.rxn',
@@ -1040,25 +818,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
 
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/schema-with-diagonal-retrosynthetic-arrow.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2, 7, 26, 33, 51, 58];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/schema-with-diagonal-retrosynthetic-arrow.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/schema-with-diagonal-retrosynthetic-arrow.rxn',
@@ -1080,25 +845,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
 
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v3000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V3000/schema-with-diagonal-retrosynthetic-arrow.rxn',
@@ -1120,25 +872,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
 
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2, 7, 25, 42, 54];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
@@ -1161,25 +900,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
 
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v3000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
 
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V3000/schema-with-reverse-retrosynthetic-arrow-and-pluses.rxn',
@@ -1202,23 +928,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
-    const METADATA_STRINGS_INDEXES = [2, 7, 34, 65, 100, 118];
-
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/layout-with-catalyst-px-bond-lengh.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/layout-with-catalyst-px-bond-lengh.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
   });
 
   test('The Hash spacing setting with px option is applied and it should be save to RXN2000', async ({
@@ -1240,7 +955,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Rxn-V2000/layout-with-catalyst-px-hash-spacing-expected.rxn',
       FileType.RXN,
       'v2000',
-      [2, 7, 34, 65, 100, 118],
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -1269,7 +983,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Rxn-V3000/layout-with-catalyst-px-hash-spacing-expected.rxn',
       FileType.RXN,
       'v3000',
-      [2],
     );
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V3000/layout-with-catalyst-px-hash-spacing-expected.rxn',
@@ -1292,23 +1005,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '67.8');
     await pressButton(page, 'Apply');
-    const METADATA_STRINGS_INDEXES = [2, 7, 44, 106, 128, 135];
-
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/layout-with-diagonally-arrow-pt-bond-lengh.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/layout-with-diagonally-arrow-pt-bond-lengh.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/layout-with-diagonally-arrow-pt-bond-lengh.rxn',
       page,
@@ -1335,7 +1037,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Rxn-V2000/layout-with-diagonally-arrow-pt-hash-spacing-expected.rxn',
       FileType.RXN,
       'v2000',
-      [2, 7, 44, 106, 128, 135],
     );
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/layout-with-diagonally-arrow-pt-hash-spacing-expected.rxn',
@@ -1363,7 +1064,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Rxn-V3000/layout-with-diagonally-arrow-pt-hash-spacing-expected.rxn',
       FileType.RXN,
       'v3000',
-      [2],
     );
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V3000/layout-with-diagonally-arrow-pt-hash-spacing-expected.rxn',
@@ -1386,25 +1086,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
-    const METADATA_STRINGS_INDEXES = [
-      2, 7, 14, 21, 28, 35, 53, 60, 67, 74, 81, 93, 100,
-    ];
-
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/layout-with-dif-elements-cm-bond-lengh.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/layout-with-dif-elements-cm-bond-lengh.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/layout-with-dif-elements-cm-bond-lengh.rxn',
       page,
@@ -1431,7 +1118,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Rxn-V2000/layout-with-dif-elements-cm-hash-spacing-expected.rxn',
       FileType.RXN,
       'v2000',
-      [2, 7, 14, 21, 28, 35, 53, 60, 67, 74, 81, 93, 100],
     );
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/layout-with-dif-elements-cm-hash-spacing-expected.rxn',
@@ -1459,7 +1145,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Rxn-V3000/layout-with-dif-elements-cm-hash-spacing-expected.rxn',
       FileType.RXN,
       'v3000',
-      [2],
     );
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V3000/layout-with-dif-elements-cm-hash-spacing-expected.rxn',
@@ -1482,23 +1167,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
-    const METADATA_STRINGS_INDEXES = [2, 7, 32, 54];
-
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/layout-with-long-molecule-inch-bond-lengh.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/layout-with-long-molecule-inch-bond-lengh.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
   });
 
   test('The Hash spacing setting with inch option is applied and it should be save to RXN2000', async ({
@@ -1520,7 +1194,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Rxn-V2000/layout-with-long-molecule-inch-hash-spacing-expected.rxn',
       FileType.RXN,
       'v2000',
-      [2, 7, 32, 54],
     );
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/layout-with-long-molecule-inch-hash-spacing-expected.rxn',
@@ -1548,7 +1221,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Rxn-V3000/layout-with-long-molecule-inch-hash-spacing-expected.rxn',
       FileType.RXN,
       'v3000',
-      [2],
     );
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V3000/layout-with-long-molecule-inch-hash-spacing-expected.rxn',
@@ -1574,23 +1246,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await pressButton(page, 'OK');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const METADATA_STRINGS_INDEXES = [2, 7, 34, 65, 100, 118];
-
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/layout-with-catalyst-px-margin-size.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/layout-with-catalyst-px-margin-size.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/layout-with-catalyst-px-margin-size.rxn',
       page,
@@ -1612,23 +1273,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await pressButton(page, 'OK');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const METADATA_STRINGS_INDEXES = [2, 7, 32, 54];
-
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/layout-with-long-molecule-acs-style.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/layout-with-long-molecule-acs-style.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
     openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/layout-with-long-molecule-acs-style.rxn',
       page,
@@ -1650,23 +1300,12 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await pressButton(page, 'OK');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    const METADATA_STRINGS_INDEXES = [2, 7, 32, 54];
-
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V3000/layout-with-long-molecule-acs-style.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v3000',
     );
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/layout-with-long-molecule-acs-style.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V3000/layout-with-long-molecule-acs-style.rxn',
       page,

@@ -26,7 +26,6 @@ class ClearTool implements BaseTool {
     this.history = new EditorHistory(editor);
     const mode = editor.mode;
     const isCurrentModeSequence = isSequenceMode(mode);
-    const isSequenceEditMode = isCurrentModeSequence && mode.isEditMode;
 
     const modelChanges = this.editor.drawingEntitiesManager.deleteAllEntities();
 
@@ -36,10 +35,6 @@ class ClearTool implements BaseTool {
 
     this.editor.renderersContainer.update(modelChanges);
     this.history.update(modelChanges);
-
-    if (isSequenceEditMode) {
-      mode.startNewSequence();
-    }
   }
 
   destroy() {}

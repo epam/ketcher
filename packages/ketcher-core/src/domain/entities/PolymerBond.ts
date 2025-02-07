@@ -11,6 +11,7 @@ import {
 import { AttachmentPointName } from 'domain/types';
 import { BaseMonomer } from './BaseMonomer';
 import { BaseBond } from 'domain/entities/BaseBond';
+import { CoreEditor } from 'application/editor';
 
 export type FlexOrSequenceOrSnakeModePolymerBondRenderer =
   | BackBoneBondSequenceRenderer
@@ -60,6 +61,52 @@ export class PolymerBond extends BaseBond {
     return this.secondMonomer?.getAttachmentPointByBond(this);
   }
 
+  // TODO: Consider moving to DrawingEntitiesManager/RenderersManager to track the state of the bond and avoid excessive calls
+  public get isCyclicOverlappingBond() {
+    const secondMonomer = this.secondMonomer;
+    if (!secondMonomer) {
+      return false;
+    }
+
+    if (!this.isHorizontal && !this.isVertical) {
+      return false;
+    }
+
+    const editor = CoreEditor.provideEditorInstance();
+
+    const cyclesWithThisBond = editor.drawingEntitiesManager.cycles.filter(
+      (chain) => {
+        return (
+          chain.monomers.includes(this.firstMonomer) &&
+          chain.monomers.includes(secondMonomer)
+        );
+      },
+    );
+
+    if (!cyclesWithThisBond.length) {
+      return false;
+    }
+
+    return cyclesWithThisBond.some((chain) => {
+      return chain.monomers.some((monomer) => {
+        if (
+          monomer.id === this.firstMonomer.id ||
+          monomer.id === secondMonomer.id
+        ) {
+          return false;
+        }
+
+        const distanceFromMonomerToLine =
+          monomer.center.calculateDistanceToLine([
+            this.firstMonomer.center,
+            secondMonomer.center,
+          ]);
+
+        return distanceFromMonomerToLine < 0.375;
+      });
+    });
+  }
+
   public get isSideChainConnection() {
     const firstMonomerAttachmentPoint = this.firstMonomerAttachmentPoint;
     const secondMonomerAttachmentPoint = this.secondMonomerAttachmentPoint;
@@ -105,5 +152,27 @@ export class PolymerBond extends BaseBond {
 
   public getAnotherMonomer(monomer: BaseMonomer): BaseMonomer | undefined {
     return super.getAnotherEntity(monomer) as BaseMonomer;
+  }
+
+  public get isHorizontal() {
+    if (!this.secondMonomer) {
+      return false;
+    }
+
+    return (
+      Math.abs(this.firstMonomer.position.y - this.secondMonomer.position.y) <
+      0.375
+    );
+  }
+
+  public get isVertical() {
+    if (!this.secondMonomer) {
+      return false;
+    }
+
+    return (
+      Math.abs(this.firstMonomer.position.x - this.secondMonomer.position.x) <
+      0.375
+    );
   }
 }

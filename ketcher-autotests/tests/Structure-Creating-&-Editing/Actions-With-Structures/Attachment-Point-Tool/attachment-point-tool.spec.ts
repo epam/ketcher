@@ -37,7 +37,7 @@ import {
 
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
-import { getMolfile, getRxn, getSmiles } from '@utils/formats';
+import { getMolfile, getSmiles } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
@@ -464,21 +464,12 @@ test.describe('Attachment Point Tool', () => {
     Description: Structure with attachment points saved as .rxn file
     */
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
-    const expectedFile = await getRxn(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [2, 7, 30, 37];
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
-      });
-    expect(rxnFile).toEqual(rxnFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
       page,
@@ -493,20 +484,12 @@ test.describe('Attachment Point Tool', () => {
     Open the saved *.rxn file and edit it in any way.
     */
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
-    const expectedFile = await getRxn(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-    const METADATA_STRING_INDEX = [2, 7, 30, 37];
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
-      });
-    expect(rxnFile).toEqual(rxnFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
       page,
@@ -521,21 +504,12 @@ test.describe('Attachment Point Tool', () => {
      * Description: Structure with attachment points saved as .rxn file V3000
      */
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V3000/reaction-with-arrow-and-plus-expectedV3000.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v3000',
     );
-    const METADATA_STRING_INDEX = [2];
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/reaction-with-arrow-and-plus-expectedV3000.rxn',
-        fileFormat: 'v3000',
-      });
-    expect(rxnFile).toEqual(rxnFileExpected);
     await takeEditorScreenshot(page);
   });
 

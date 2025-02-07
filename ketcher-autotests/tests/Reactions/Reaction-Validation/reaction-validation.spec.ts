@@ -1,16 +1,17 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   AtomButton,
   clickOnAtom,
   openFileAndAddToCanvas,
-  receiveFileComparisonData,
-  saveToFile,
   selectAtomInToolbar,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { getRxn } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Reaction validation', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,24 +24,12 @@ test.describe('Reaction validation', () => {
     Description: Structures are on the canvas, pluses and arrows
     */
     await openFileAndAddToCanvas('KET/plus-and-reaction-arrow.ket', page);
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/plus-and-reaction-arrow-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [2, 7, 25, 43, 61];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/plus-and-reaction-arrow-expected.rxn',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
   });
 
   test('Saving reaction with more than one pluses RXN V3000', async ({
@@ -51,24 +40,12 @@ test.describe('Reaction validation', () => {
     Description: Structures are on the canvas, pluses and arrows
     */
     await openFileAndAddToCanvas('KET/plus-and-reaction-arrow.ket', page);
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V3000/plus-and-reaction-arrow-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v3000',
     );
-
-    const METADATA_STRING_INDEX = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/plus-and-reaction-arrow-expected.rxn',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
   });
 
   test('Only one structure is on canvas and reaction arrow', async ({
@@ -79,24 +56,12 @@ test.describe('Reaction validation', () => {
     Description: Benzene structure is on the canvas and arrow
     */
     await openFileAndAddToCanvas('KET/benzene-and-one-arrow.ket', page);
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/benzene-and-one-arrow-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [2, 7];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/benzene-and-one-arrow-expected.rxn',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
   });
 
   test('Only one structure is on canvas and reaction arrow RXN V3000', async ({
@@ -107,24 +72,12 @@ test.describe('Reaction validation', () => {
     Description: Benzene structure is on the canvas and arrow
     */
     await openFileAndAddToCanvas('KET/benzene-and-one-arrow.ket', page);
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V3000/benzene-and-one-arrow-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v3000',
     );
-
-    const METADATA_STRING_INDEX = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/benzene-and-one-arrow-expected.rxn',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
   });
 
   test('Reaction can have a combination of reactants', async ({ page }) => {
@@ -133,24 +86,12 @@ test.describe('Reaction validation', () => {
     Description: Structures are saved as .rxn
     */
     await openFileAndAddToCanvas('KET/combination-of-reactants.ket', page);
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/combination-of-reactants-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-
-    const METADATA_STRING_INDEX = [2, 7, 25, 43, 50, 68, 86];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/combination-of-reactants-expected.rxn',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v2000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
   });
 
   test('Reaction can have a combination of products', async ({ page }) => {
@@ -159,24 +100,12 @@ test.describe('Reaction validation', () => {
     Description: Structures are saved as .rxn v3000
     */
     await openFileAndAddToCanvas('KET/combination-of-reactants.ket', page);
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V3000/combination-of-reactants-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v3000',
     );
-
-    const METADATA_STRING_INDEX = [2];
-
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/combination-of-reactants-expected.rxn',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v3000',
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
   });
 
   test('Editing reaction with combination of products', async ({ page }) => {

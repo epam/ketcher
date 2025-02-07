@@ -25,7 +25,11 @@ import {
   selectLayoutTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getRxn, getSmiles } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
+import { getSmiles } from '@utils/formats';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -493,19 +497,12 @@ test.describe('R-Group Label Tool', () => {
     Description: User is able to save the structure with R-group label as .rxn file
     */
     await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
-    const expectedFile = await getRxn(page);
-    await saveToFile('Rxn-V2000/chain-with-r-group-expected.rxn', expectedFile);
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRING_INDEX = [2, 7, 31, 38];
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/chain-with-r-group-expected.rxn',
-      });
-    expect(rxnFile).toEqual(rxnFileExpected);
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/chain-with-r-group-expected.rxn',
+      FileType.RXN,
+      'v2000',
+    );
   });
 
   test('Save as *.rxn V3000 file', async ({ page }) => {
@@ -517,23 +514,12 @@ test.describe('R-Group Label Tool', () => {
       'Rxn-V3000/chain-with-r-group-V3000.rxn',
       page,
     );
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V3000/chain-with-r-group-V3000-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v3000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRING_INDEX = [2];
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Rxn-V3000/chain-with-r-group-V3000-expected.rxn',
-        fileFormat: 'v3000',
-      });
-    expect(rxnFile).toEqual(rxnFileExpected);
   });
 
   test('Save as *.smi file', async ({ page }) => {

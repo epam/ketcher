@@ -317,6 +317,11 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/sec-butyl-abr-expectedV2000.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Open and Save file - Reaction from file that contains Heteroatoms 1/2 - open', async ({
@@ -1304,6 +1309,11 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/layout-with-diagonally-arrow-pt-bond-lengh.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('The Hash spacing setting with pt option is applied and it should be save to RXN2000', async ({
@@ -1395,6 +1405,11 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       });
 
     expect(rxnFile).toEqual(rxnFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/layout-with-dif-elements-cm-bond-lengh.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('The Hash spacing setting with cm option is applied and it should be save to RXN2000', async ({

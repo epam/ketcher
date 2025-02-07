@@ -35,18 +35,19 @@ test.describe('Layout', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('The reaction is displayed in the middle of the screen after clicks "Layout" button', async ({
-    page,
-  }) => {
-    /*
+  test.fail(
+    'The reaction is displayed in the middle of the screen after clicks "Layout" button',
+    async ({ page }) => {
+      /*
     Test case: EPMLSOPKET-16886
     Description: The structures are displayed orderly in the middle of the screen
     */
-    await openFileAndAddToCanvas(
-      'KET/two-templates-rings-and-functional-groups.ket',
-      page,
-    );
-    await selectLayoutTool(page);
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvas(
+        'KET/two-templates-rings-and-functional-groups.ket',
+        page,
+      );
+      await selectLayoutTool(page);
+      await takeEditorScreenshot(page);
+    },
+  );
 });

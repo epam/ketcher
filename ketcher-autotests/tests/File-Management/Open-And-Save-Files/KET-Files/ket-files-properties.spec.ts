@@ -100,6 +100,11 @@ test.describe('Ket files', () => {
       'KET/layout-with-catalyst-px-bond-lengh.ket',
       FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/layout-with-catalyst-px-bond-lengh.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('The Hash spacing setting with px option is applied, click on layout and it should be saved to KET specification', async ({
@@ -155,6 +160,11 @@ test.describe('Ket files', () => {
       'KET/layout-with-diagonally-arrow-pt-bond-lengh.ket',
       FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/layout-with-diagonally-arrow-pt-bond-lengh.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('The Hash spacing setting with pt option is applied, click on layout and it should be save to KET specification', async ({
@@ -264,6 +274,11 @@ test.describe('Ket files', () => {
       'KET/layout-with-catalyst-px-margin-size.ket',
       FileType.KET,
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/layout-with-catalyst-px-margin-size.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('The Reaction component margin size setting with pt option is applied, click on layout and it should be save to KET specification', async ({

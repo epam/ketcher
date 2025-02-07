@@ -8,6 +8,7 @@ import {
   clickInTheMiddleOfTheScreen,
   drawBenzeneRing,
   openFileAndAddToCanvas,
+  openFileAndAddToCanvasAsNewProject,
   openPasteFromClipboard,
   pasteFromClipboardAndAddToCanvas,
   pressButton,
@@ -158,6 +159,11 @@ test.describe('Save files', () => {
           'tests/test-data/Rxn-V2000/two-arrows-and-plus-expected.rxn',
       });
     expect(rxnFile).toEqual(rxnFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/two-arrows-and-plus-expected.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 
   test('Automatic selection of MDL Molfile v3000 encoding is work if the number of atoms (or bonds) exceeds 999', async ({

@@ -28,6 +28,7 @@ import {
   clickOnCanvas,
   selectCleanTool,
   selectLayoutTool,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import {
   pressRedoButton,
@@ -478,6 +479,10 @@ test.describe('Attachment Point Tool', () => {
           'tests/test-data/Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
       });
     expect(rxnFile).toEqual(rxnFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -502,6 +507,10 @@ test.describe('Attachment Point Tool', () => {
           'tests/test-data/Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
       });
     expect(rxnFile).toEqual(rxnFileExpected);
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/reaction-with-arrow-and-plus-expected.rxn',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 

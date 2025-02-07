@@ -3849,10 +3849,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Verify the cascade reaction after Hydrogens action', async ({
-    page,
-  }) => {
-    /**
+  test.fail(
+    'Verify the cascade reaction after Hydrogens action',
+    async ({ page }) => {
+      /**
      * Test case: https://github.com/epam/Indigo/issues/2236
      * Description: Add to Canvas cascade reaction from KET with Multi-Tailed and single Arrows (3-1-2-1-1),
      * Add/Remove explicit hydrogens actions, verify that only elements are affected, they can be saved to .ket file with correct coordinates,
@@ -3862,25 +3862,28 @@ test.describe('Multi-Tailed Arrow Tool', () => {
         2. Perform Add/Remove explicit hydrogens action, verify the reaction using screenshots.
         3. Verify the saved KET file matches the expected KET file.
         4. Load the expected KET file and verify its appearance using screenshots.
+        We have a bug with the Hydrogens action, so this test is failed https://github.com/epam/Indigo/issues/2755
+        After fixing the bug, this test should be updated and run again.
      */
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1.ket',
-      page,
-    );
-    await takeEditorScreenshot(page);
-    await selectAddRemoveExplicitHydrogens(page);
-    await takeEditorScreenshot(page);
-    await selectAddRemoveExplicitHydrogens(page);
-    await takeEditorScreenshot(page);
-    await verifyFileExport(
-      page,
-      'KET/ket-cascade-reaction-3-1-2-1-1-hydrogens-expected.ket',
-      FileType.KET,
-    );
-    await openFileAndAddToCanvasAsNewProject(
-      'KET/ket-cascade-reaction-3-1-2-1-1-hydrogens-expected.ket',
-      page,
-    );
-    await takeEditorScreenshot(page);
-  });
+      await openFileAndAddToCanvasAsNewProject(
+        'KET/ket-cascade-reaction-3-1-2-1-1.ket',
+        page,
+      );
+      await takeEditorScreenshot(page);
+      await selectAddRemoveExplicitHydrogens(page);
+      await takeEditorScreenshot(page);
+      await selectAddRemoveExplicitHydrogens(page);
+      await takeEditorScreenshot(page);
+      await verifyFileExport(
+        page,
+        'KET/ket-cascade-reaction-3-1-2-1-1-hydrogens-expected.ket',
+        FileType.KET,
+      );
+      await openFileAndAddToCanvasAsNewProject(
+        'KET/ket-cascade-reaction-3-1-2-1-1-hydrogens-expected.ket',
+        page,
+      );
+      await takeEditorScreenshot(page);
+    },
+  );
 });

@@ -135,19 +135,3 @@ export function replaceMonomer(
 
   return command;
 }
-
-// declare module './DrawingEntitiesManager' {
-//   interface DrawingEntitiesManager {
-//     replaceMonomer(
-//       monomer: BaseMonomer,
-//       newMonomerItem: MonomerOrAmbiguousType,
-//     ): Command;
-//   }
-// }
-//
-// DrawingEntitiesManager.prototype.replaceMonomer = function (
-//   monomer: BaseMonomer,
-//   newMonomerItem: MonomerOrAmbiguousType,
-// ): Command {
-//   return replaceMonomer(this, monomer, newMonomerItem);
-// };

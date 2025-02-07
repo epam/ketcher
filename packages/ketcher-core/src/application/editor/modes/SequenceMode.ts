@@ -44,6 +44,7 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { isNumber, uniq } from 'lodash';
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMonomer';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import {
@@ -53,6 +54,7 @@ import {
 import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { KetMonomerClass } from 'application/formatters';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -227,18 +229,21 @@ export class SequenceMode extends BaseMode {
         sugarMonomerItem = getRnaPartLibraryItem(
           editor,
           labeledNucleoelement.sugarLabel,
+          KetMonomerClass.Sugar,
         );
       }
       if (labeledNucleoelement.baseLabel) {
         baseMonomerItem = getRnaPartLibraryItem(
           editor,
           labeledNucleoelement.baseLabel,
+          KetMonomerClass.Base,
         );
       }
       if (labeledNucleoelement.phosphateLabel) {
         phosphateMonomerItem = getRnaPartLibraryItem(
           editor,
           labeledNucleoelement.phosphateLabel,
+          KetMonomerClass.Phosphate,
         );
       }
 
@@ -255,12 +260,25 @@ export class SequenceMode extends BaseMode {
       }
       // Update Base monomerItem object
       if (currentNode.rnaBase && baseMonomerItem) {
-        modelChanges.merge(
-          editor.drawingEntitiesManager.modifyMonomerItem(
-            currentNode.rnaBase,
-            baseMonomerItem,
-          ),
-        );
+        if (
+          currentNode.rnaBase.monomerItem.isAmbiguous ===
+          baseMonomerItem.isAmbiguous
+        ) {
+          modelChanges.merge(
+            editor.drawingEntitiesManager.modifyMonomerItem(
+              currentNode.rnaBase,
+              baseMonomerItem,
+            ),
+          );
+        } else {
+          modelChanges.merge(
+            replaceMonomer(
+              editor.drawingEntitiesManager,
+              currentNode.rnaBase,
+              baseMonomerItem,
+            ),
+          );
+        }
       }
 
       // Update monomerItem object or add Phosphate

@@ -69,7 +69,7 @@ export const EditorEvents = () => {
   }, [editor]);
 
   useEffect(() => {
-    const handler = (toolName: string) => {
+    const handler = ([toolName]: [string]) => {
       if (toolName !== activeTool) {
         dispatch(selectTool(toolName));
       }
@@ -86,7 +86,7 @@ export const EditorEvents = () => {
       );
 
       dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch('select-rectangle');
+      editor.events.selectTool.dispatch(['select-rectangle']);
       editor.events.openMonomerConnectionModal.add(
         (additionalProps: MonomerConnectionOnlyProps) =>
           dispatch(
@@ -125,7 +125,7 @@ export const EditorEvents = () => {
   );
 
   useEffect(() => {
-    const handler = (toolName: string) => {
+    const handler = ([toolName]: [string]) => {
       if (toolName !== activeTool) {
         dispatch(selectTool(toolName));
       }
@@ -142,7 +142,7 @@ export const EditorEvents = () => {
       );
 
       dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch('select-rectangle');
+      editor.events.selectTool.dispatch(['select-rectangle']);
       editor.events.openMonomerConnectionModal.add(
         (additionalProps: MonomerConnectionOnlyProps) =>
           dispatch(

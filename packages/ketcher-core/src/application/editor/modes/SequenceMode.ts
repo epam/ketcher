@@ -46,6 +46,7 @@ import {
   ITwoStrandedChainItem,
 } from 'domain/entities/monomer-chains/ChainsCollection';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { replaceMonomer } from 'domain/entities/DrawingEntitiesManager.replaceMonomer';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { MonomerSequenceNode } from 'domain/entities/MonomerSequenceNode';
 import {
@@ -59,6 +60,7 @@ import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { STRAND_TYPE } from 'domain/constants';
 import { getNodeFromTwoStrandedNode } from 'domain/helpers/chains';
 import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
+import { KetMonomerClass } from 'application/formatters';
 
 const naturalAnalogues = uniq([
   ...rnaDnaNaturalAnalogues,
@@ -244,18 +246,21 @@ export class SequenceMode extends BaseMode {
         sugarMonomerItem = getRnaPartLibraryItem(
           editor,
           labeledNucleoelement.sugarLabel,
+          KetMonomerClass.Sugar,
         );
       }
       if (labeledNucleoelement.baseLabel) {
         baseMonomerItem = getRnaPartLibraryItem(
           editor,
           labeledNucleoelement.baseLabel,
+          KetMonomerClass.Base,
         );
       }
       if (labeledNucleoelement.phosphateLabel) {
         phosphateMonomerItem = getRnaPartLibraryItem(
           editor,
           labeledNucleoelement.phosphateLabel,
+          KetMonomerClass.Phosphate,
         );
       }
 
@@ -275,13 +280,26 @@ export class SequenceMode extends BaseMode {
           );
         }
         // Update Base monomerItem object
-        if (nodeToModify.senseNode.rnaBase && baseMonomerItem) {
-          modelChanges.merge(
-            editor.drawingEntitiesManager.modifyMonomerItem(
-              nodeToModify.senseNode.rnaBase,
-              baseMonomerItem,
-            ),
-          );
+        if (nodeToModify?.senseNode?.rnaBase && baseMonomerItem) {
+          if (
+            nodeToModify.senseNode?.rnaBase.monomerItem.isAmbiguous ===
+            baseMonomerItem.isAmbiguous
+          ) {
+            modelChanges.merge(
+              editor.drawingEntitiesManager.modifyMonomerItem(
+                nodeToModify.senseNode.rnaBase,
+                baseMonomerItem,
+              ),
+            );
+          } else {
+            modelChanges.merge(
+              replaceMonomer(
+                editor.drawingEntitiesManager,
+                nodeToModify.senseNode.rnaBase,
+                baseMonomerItem,
+              ),
+            );
+          }
         }
       }
 

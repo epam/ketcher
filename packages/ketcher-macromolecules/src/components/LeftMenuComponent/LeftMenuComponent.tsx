@@ -33,7 +33,7 @@ export function LeftMenuComponent() {
   const activeMenuItems = [activeTool];
 
   const menuItemChanged = (name) => {
-    editor.events.selectTool.dispatch([name, { toolName: name }]);
+    editor.events.selectTool.dispatch(name, { toolName: name });
   };
 
   return (

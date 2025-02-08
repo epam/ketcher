@@ -46,9 +46,9 @@ export function TopMenuComponent() {
     } else if (name === 'undo' || name === 'redo') {
       editor.events.selectHistory.dispatch(name);
     } else if (name === 'clear') {
-      editor.events.selectTool.dispatch([name]);
+      editor.events.selectTool.dispatch(name);
       dispatch(selectTool('select-rectangle'));
-      editor.events.selectTool.dispatch(['select-rectangle']);
+      editor.events.selectTool.dispatch('select-rectangle');
       if (isSequenceEditInRNABuilderMode)
         resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
     }

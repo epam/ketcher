@@ -80,7 +80,7 @@ import useSetRnaPresets from './hooks/useSetRnaPresets';
 import { Loader } from 'components/Loader';
 import { FullscreenButton } from 'components/FullscreenButton';
 import { LayoutModeButton } from 'components/LayoutModeButton';
-import { TriggerEvent, useContextMenu } from 'react-contexify';
+import { useContextMenu } from 'react-contexify';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
 import { SequenceItemContextMenu } from 'components/contextMenu/SequenceItemContextMenu/SequenceItemContextMenu';
 import { Preview } from 'components/preview/Preview';
@@ -178,7 +178,7 @@ function Editor({
   useSetRnaPresets();
 
   useEffect(() => {
-    editor?.events.rightClickSequence.add(([event, selections]) => {
+    editor?.events.rightClickSequence.add((event, selections) => {
       setSelections(selections);
       showSequenceContextMenu({
         event,
@@ -188,10 +188,10 @@ function Editor({
       });
     });
     editor?.events.rightClickPolymerBond.add(
-      ([event, polymerBondRenderer]: [
-        TriggerEvent,
-        DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
-      ]): void => {
+      (
+        event,
+        polymerBondRenderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+      ): void => {
         showPolymerBondContextMenu({
           event,
           props: {
@@ -201,7 +201,7 @@ function Editor({
       },
     );
     editor?.events.rightClickSelectedMonomers.add(
-      ([event, selectedMonomers]: [TriggerEvent, BaseMonomer[]]) => {
+      (event, selectedMonomers: BaseMonomer[]) => {
         setSelectedMonomers(selectedMonomers);
         showSelectedMonomersContextMenu({
           event,

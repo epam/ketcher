@@ -125,7 +125,6 @@ export class DrawingEntitiesManager {
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
   public snakeLayoutMatrix?: Matrix<Cell>;
-
   public get bottomRightMonomerPosition(): Vec2 {
     let position: Vec2 | null = null;
 
@@ -216,25 +215,21 @@ export class DrawingEntitiesManager {
       return _monomer;
     }
 
-    const newMonomer = this.createMonomer(monomerItem, position);
+    const monomer = this.createMonomer(monomerItem, position);
 
-    newMonomer.moveAbsolute(position);
-    this.monomers.set(newMonomer.id, newMonomer);
+    monomer.moveAbsolute(position);
+    this.monomers.set(monomer.id, monomer);
 
-    return newMonomer;
+    return monomer;
   }
 
-  public createMonomer(
-    monomerItem: MonomerOrAmbiguousType,
-    position: Vec2,
-    generateId = true,
-  ) {
+  public createMonomer(monomerItem: MonomerOrAmbiguousType, position: Vec2) {
     if (isAmbiguousMonomerLibraryItem(monomerItem)) {
-      return new AmbiguousMonomer(monomerItem, position, generateId);
+      return new AmbiguousMonomer(monomerItem, position);
     } else {
       const [Monomer] = monomerFactory(monomerItem);
 
-      return new Monomer(monomerItem, position, { generateId });
+      return new Monomer(monomerItem, position);
     }
   }
 
@@ -2635,7 +2630,7 @@ export class DrawingEntitiesManager {
     return monomerAtomBond;
   }
 
-  public deleteMonomerToAtomBond(monomerAtomBond: MonomerToAtomBond) {
+  private deleteMonomerToAtomBond(monomerAtomBond: MonomerToAtomBond) {
     const command = new Command();
 
     command.addOperation(
@@ -3023,7 +3018,6 @@ export class DrawingEntitiesManager {
     });
   }
 }
-
 function getFirstPosition(
   height: number,
   lastPosition: Vec2,

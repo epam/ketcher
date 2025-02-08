@@ -81,7 +81,7 @@ export const RnaEditor = ({ duplicatePreset }) => {
   };
 
   return (
-    <RnaEditorContainer data-testid="rna-editor">
+    <RnaEditorContainer>
       <StyledHeader
         className={
           isSequenceEditInRNABuilderMode

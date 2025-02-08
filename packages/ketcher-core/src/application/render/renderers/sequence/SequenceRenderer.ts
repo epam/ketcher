@@ -5,7 +5,6 @@ import {
   MonomerToAtomBond,
   Nucleotide,
   Phosphate,
-  Pool,
   Sugar,
   Vec2,
 } from 'domain/entities';
@@ -57,7 +56,6 @@ export class SequenceRenderer {
   public static lastChainStartPosition: Vec2;
   private static emptySequenceItemRenderers: EmptySequenceItemRenderer[] = [];
   private static newSequenceButtons: NewSequenceButton[] = [];
-
   public static show(
     chainsCollection: ChainsCollection,
     emptyChainIndex?: number,
@@ -951,31 +949,4 @@ export class SequenceRenderer {
   public static get isCaretAtChainEnd() {
     return SequenceRenderer.currentEdittingNode instanceof EmptySequenceNode;
   }
-}
-
-export function sequenceReplacer(key: string, value: unknown): unknown {
-  if (key === 'renderer') {
-    return `<${typeof value}>`;
-  } else if (key === 'baseRenderer') {
-    return `<${typeof value}>`;
-  } else if (['R1', 'R2', 'R3'].includes(key)) {
-    return `<${typeof value}>`;
-  } else if (value instanceof Pool) {
-    return {
-      // eslint-disable-next-line dot-notation
-      nextId: value['nextId'],
-      items: Array.from(value),
-    };
-  } else if (
-    value instanceof Object &&
-    !['Object', 'Array'].includes(value.constructor.name)
-  ) {
-    const valueObj = value as object;
-    return {
-      ctor: value.constructor.name,
-      repr: valueObj.toString(),
-      ...value,
-    };
-  }
-  return value;
 }

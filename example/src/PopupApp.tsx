@@ -2,6 +2,7 @@ import 'ketcher-react/dist/index.css';
 
 import { useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
+import { Dialog } from '@mui/material';
 import { Ketcher } from 'ketcher-core';
 import { getStructServiceProvider } from './utils';
 
@@ -20,13 +21,24 @@ const getHiddenButtonsConfig = (): ButtonsConfig => {
 
 const structServiceProvider = getStructServiceProvider();
 
-const App = () => {
+const PopupApp = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig();
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
+  setTimeout(() => {
+    document
+      .querySelector('.MuiPaper-root')
+      ?.setAttribute('style', `min-width: 680px; min-height: 680px`);
+  }, 500);
+
   return (
-    <>
+    <Dialog
+      open={true}
+      fullScreen={false}
+      maxWidth="xl"
+      classes={{ paper: 'ketcher-dialog' }}
+    >
       <Editor
         errorHandler={(message: string) => {
           setHasError(true);
@@ -60,8 +72,8 @@ const App = () => {
           }}
         />
       )}
-    </>
+    </Dialog>
   );
 };
 
-export default App;
+export default PopupApp;

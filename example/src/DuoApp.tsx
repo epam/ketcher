@@ -24,12 +24,6 @@ const DuoApp = () => {
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // setTimeout(() => {
-  //   document
-  //     .querySelector('.MuiPaper-root')
-  //     ?.setAttribute('style', `min-width: 680px; min-height: 680px`);
-  // }, 500);
-
   return (
     <div className="container">
       <div className="box">

@@ -154,69 +154,69 @@
             <b id="140" B="44" E="33"/>
         </fragment>
         <fragment id="45">
-            <n id="149" NodeType="Fragment">
-                <fragment id="150">
-                    <n id="46" p="653.191162 329.079559"/>
-                    <n id="47" p="627.209229 314.079620"/>
-                    <n id="48" p="627.209229 284.079742"/>
-                    <n id="49" Element="8" NumHydrogens="0" p="601.231323 329.079559">
-                        <t p="601.231323 329.079559" LabelJustification="Left">
-                            <s font="3" size="10" face="96">O</s>
-                        </t>
-                    </n>
-                    <n id="50" p="575.249512 314.079620"/>
-                    <n id="51" p="549.267578 329.079559"/>
-                    <n id="52" p="575.249512 284.079742"/>
-                    <b id="143" B="46" E="47"/>
-                    <b id="144" B="47" E="48"/>
-                    <b id="145" B="47" E="49"/>
-                    <b id="146" B="49" E="50"/>
-                    <b id="147" B="50" E="51"/>
-                    <b id="148" B="50" E="52"/>
-                </fragment>
-                <t LabelJustification="Left" LabelAlignment="Above">
-                    <s>diisopropyl ether</s>
-                </t>
-            </n>
-        </fragment>
-        <fragment id="53">
-            <n id="161" NodeType="Fragment">
-                <fragment id="162">
-                    <n id="54" Element="16" NumHydrogens="1" p="341.941132 384.579559">
+            <n id="153" NodeType="Fragment">
+                <fragment id="154">
+                    <n id="46" Element="16" NumHydrogens="1" p="341.941132 384.579559">
                         <t p="341.941132 384.579559" LabelJustification="Left">
                             <s font="3" size="10" face="96">SH</s>
                         </t>
                     </n>
-                    <n id="55" p="341.941132 354.581635"/>
-                    <n id="56" p="315.877106 339.731415"/>
-                    <n id="57" p="315.877106 309.588348"/>
-                    <n id="58" p="341.879456 294.585785"/>
-                    <n id="59" p="367.776520 309.573853"/>
-                    <n id="60" p="367.776520 339.597168"/>
-                    <n id="61" p="341.879456 264.566071"/>
-                    <n id="62" Element="8" NumHydrogens="0" p="371.946320 384.579559">
+                    <n id="47" p="341.941132 354.581635"/>
+                    <n id="48" p="315.877106 339.731415"/>
+                    <n id="49" p="315.877106 309.588348"/>
+                    <n id="50" p="341.879456 294.585785"/>
+                    <n id="51" p="367.776520 309.573853"/>
+                    <n id="52" p="367.776520 339.597168"/>
+                    <n id="53" p="341.879456 264.566071"/>
+                    <n id="54" Element="8" NumHydrogens="0" p="371.946320 384.579559">
                         <t p="371.946320 384.579559" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <n id="63" Element="8" NumHydrogens="0" p="311.935974 384.579559">
+                    <n id="55" Element="8" NumHydrogens="0" p="311.935974 384.579559">
                         <t p="311.935974 384.579559" LabelJustification="Left">
                             <s font="3" size="10" face="96">O</s>
                         </t>
                     </n>
-                    <b id="151" B="55" E="54"/>
-                    <b id="152" B="56" E="55" Order="2"/>
-                    <b id="153" B="57" E="56"/>
-                    <b id="154" B="58" E="57" Order="2"/>
-                    <b id="155" B="59" E="58"/>
-                    <b id="156" B="60" E="59" Order="2"/>
-                    <b id="157" B="55" E="60"/>
-                    <b id="158" B="58" E="61"/>
-                    <b id="159" B="54" E="62" Order="2"/>
-                    <b id="160" B="54" E="63" Order="2"/>
+                    <b id="143" B="47" E="46"/>
+                    <b id="144" B="48" E="47" Order="2"/>
+                    <b id="145" B="49" E="48"/>
+                    <b id="146" B="50" E="49" Order="2"/>
+                    <b id="147" B="51" E="50"/>
+                    <b id="148" B="52" E="51" Order="2"/>
+                    <b id="149" B="47" E="52"/>
+                    <b id="150" B="50" E="53"/>
+                    <b id="151" B="46" E="54" Order="2"/>
+                    <b id="152" B="46" E="55" Order="2"/>
                 </fragment>
                 <t LabelJustification="Left" LabelAlignment="Above">
                     <s>Ts</s>
+                </t>
+            </n>
+        </fragment>
+        <fragment id="56">
+            <n id="161" NodeType="Fragment">
+                <fragment id="162">
+                    <n id="57" p="653.191162 329.079559"/>
+                    <n id="58" p="627.209229 314.079620"/>
+                    <n id="59" p="627.209229 284.079742"/>
+                    <n id="60" Element="8" NumHydrogens="0" p="601.231323 329.079559">
+                        <t p="601.231323 329.079559" LabelJustification="Left">
+                            <s font="3" size="10" face="96">O</s>
+                        </t>
+                    </n>
+                    <n id="61" p="575.249512 314.079620"/>
+                    <n id="62" p="549.267578 329.079559"/>
+                    <n id="63" p="575.249512 284.079742"/>
+                    <b id="155" B="57" E="58"/>
+                    <b id="156" B="58" E="59"/>
+                    <b id="157" B="58" E="60"/>
+                    <b id="158" B="60" E="61"/>
+                    <b id="159" B="61" E="62"/>
+                    <b id="160" B="61" E="63"/>
+                </fragment>
+                <t LabelJustification="Left" LabelAlignment="Above">
+                    <s>diisopropyl ether</s>
                 </t>
             </n>
         </fragment>

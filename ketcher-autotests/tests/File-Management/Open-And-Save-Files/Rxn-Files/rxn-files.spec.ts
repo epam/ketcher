@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { expect, test, Page } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -416,16 +417,10 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
     );
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const xDeltaHalf = 150;
-    const yDelta20 = 20;
-    const xCoordinatesWithShiftHalf = x + xDeltaHalf;
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
-    const yArrowStart = y + yDelta20;
-    const yArrowEnd = yArrowStart + yDelta20;
-    await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
-    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+    await page.mouse.move(200, 600);
+    await dragMouseTo(1200, 100, page);
 
     await verifyFileExport(
       page,

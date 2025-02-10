@@ -30,8 +30,8 @@ export class NucleosideSequenceItemRenderer extends RNASequenceItemRenderer {
         )
         .attr('stroke-width', '1px')
         .attr('fill', 'none')
-        .attr('cx', '10')
-        .attr('cy', '-16');
+        .attr('cx', '12')
+        .attr('cy', '-17');
     }
   }
 }

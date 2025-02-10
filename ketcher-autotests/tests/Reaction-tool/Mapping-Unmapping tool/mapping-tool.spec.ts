@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   LeftPanelButton,
@@ -12,13 +12,14 @@ import {
   waitForPageInit,
   mapTwoAtoms,
   clickOnAtom,
-  receiveFileComparisonData,
-  saveToFile,
   selectDropdownTool,
   clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getRxn } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 test.describe('Mapping Tools', () => {
@@ -129,18 +130,11 @@ test.describe('Mapping reactions', () => {
     Description: Structure with attachment points saved as .rxn file
     */
     await openFileAndAddToCanvas('Rxn-V2000/mapped-reaction.rxn', page);
-    const expectedFile = await getRxn(page);
-    await saveToFile('Rxn-V2000/mapped-reaction-expected.rxn', expectedFile);
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRING_INDEX = [2, 7, 25, 40, 66];
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/mapped-reaction-expected.rxn',
-      });
-    expect(rxnFile).toEqual(rxnFileExpected);
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/mapped-reaction-expected.rxn',
+      FileType.RXN,
+      'v2000',
+    );
   });
 });

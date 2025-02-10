@@ -38,6 +38,7 @@ describe('Save modal', () => {
             mergeInto: jest.fn(),
           },
           setMicromoleculesHiddenEntities: jest.fn(),
+          detectBondsOverlappedByMonomers: jest.fn(),
           monomers: [],
           polymerBonds: [],
           bonds: [],

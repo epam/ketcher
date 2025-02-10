@@ -1,4 +1,4 @@
-import { Presets } from '@constants/monomers';
+import { Presets } from '@constants/monomers/Presets';
 import { test, expect } from '@playwright/test';
 import {
   takeMonomerLibraryScreenshot,
@@ -15,18 +15,18 @@ test.describe('Macromolecules add RNA presets to Favorites', () => {
   });
 
   test('Should have star when hover over RNA presets', async ({ page }) => {
-    await page.getByTestId(Presets.A).hover();
+    await page.getByTestId(Presets.A.testId).hover();
     await waitForMonomerPreview(page);
     await takeMonomerLibraryScreenshot(page);
   });
 
   test('Should add RNA presets to Favorites', async ({ page }) => {
     await goToFavoritesTab(page);
-    await expect(page.getByTestId(Presets.A)).not.toBeVisible();
+    await expect(page.getByTestId(Presets.A.testId)).not.toBeVisible();
 
     await goToRNATab(page);
     await page.locator('div[class="star "]').first().click();
     await goToFavoritesTab(page);
-    await expect(page.getByTestId(Presets.A)).toBeVisible();
+    await expect(page.getByTestId(Presets.A.testId)).toBeVisible();
   });
 });

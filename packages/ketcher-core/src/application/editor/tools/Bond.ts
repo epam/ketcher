@@ -22,9 +22,9 @@ import { SnakeModePolymerBondRenderer } from 'application/render/renderers/Polym
 import assert from 'assert';
 import { AttachmentPoint } from 'domain/AttachmentPoint';
 import {
+  AmbiguousMonomer,
   UnresolvedMonomer,
   UnsplitNucleotide,
-  AmbiguousMonomer,
 } from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Chem } from 'domain/entities/Chem';
@@ -40,17 +40,12 @@ import { AttachmentPointName } from 'domain/types';
 //  because of using uncontrolled `index.ts` files.
 import { Coordinates } from '../shared/coordinates';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
-import { ToolName } from 'application/editor';
+import { MACROMOLECULES_BOND_TYPES, ToolName } from 'application/editor';
 import { KetMonomerClass } from 'application/formatters';
 
 type FlexModeOrSnakeModePolymerBondRenderer =
   | FlexModePolymerBondRenderer
   | SnakeModePolymerBondRenderer;
-
-export enum MACROMOLECULES_BOND_TYPES {
-  SINGLE = 'single',
-  HYDROGEN = 'hydrogen',
-}
 
 class PolymerBond implements BaseTool {
   private bondRenderer?: FlexModeOrSnakeModePolymerBondRenderer;
@@ -333,6 +328,11 @@ class PolymerBond implements BaseTool {
       }
       const modelChanges = this.finishBondCreation(renderer.monomer);
       this.history.update(modelChanges);
+      if (modelChanges.operations[0]?.polymerBond) {
+        this.editor.drawingEntitiesManager.detectBondsOverlappedByMonomers([
+          modelChanges.operations[0].polymerBond,
+        ]);
+      }
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,
@@ -390,6 +390,7 @@ class PolymerBond implements BaseTool {
         'You have connected monomers with attachment points of the same group',
       );
     }
+
     return this.editor.drawingEntitiesManager.finishPolymerBondCreation(
       this.bondRenderer.polymerBond,
       secondMonomer,
@@ -450,6 +451,11 @@ class PolymerBond implements BaseTool {
 
       // This logic so far is only for no-modal connections. Maybe then we can chain it after modal invoke
       const modelChanges = this.finishBondCreation(renderer.monomer);
+      if (modelChanges.operations[0]?.polymerBond) {
+        this.editor.drawingEntitiesManager.detectBondsOverlappedByMonomers([
+          modelChanges.operations[0].polymerBond,
+        ]);
+      }
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,

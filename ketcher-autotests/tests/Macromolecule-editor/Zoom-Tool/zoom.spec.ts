@@ -1,5 +1,7 @@
 /* eslint-disable no-magic-numbers */
-import { Chem, Peptides, Presets } from '@constants/monomers';
+import { Chem } from '@constants/monomers/Chem';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Presets } from '@constants/monomers/Presets';
 import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -31,7 +33,10 @@ import {
   turnOnMacromoleculesEditor,
   waitForMonomerPreview,
 } from '@utils/macromolecules';
-import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
+import {
+  connectMonomersWithBonds,
+  getMonomerLocator,
+} from '@utils/macromolecules/monomer';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
@@ -138,7 +143,8 @@ test.describe('Zoom Tool', () => {
       'KET/peptides-connected-with-bonds.ket',
       page,
     );
-    await page.getByText('DTrp2M').locator('..').first().hover();
+
+    await getMonomerLocator(page, Peptides.DTrp2M).hover();
     await waitForMonomerPreview(page);
     await zoomWithMouseScrollAndTakeScreenshot(page);
   });
@@ -369,7 +375,7 @@ test.describe('Zoom Tool', () => {
       );
     }
     await selectMacroBond(page, MacroBondTool.SINGLE);
-    await page.getByText('(R').locator('..').first().hover();
+    await getMonomerLocator(page, { monomerAlias: '(R1,R2,R3,R4,R5)' }).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });

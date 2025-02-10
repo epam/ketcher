@@ -8,7 +8,8 @@ import { drawnStructuresSelector } from 'application/editor/constants';
 const TEXT_COLOR = '#333333';
 const HOVER_COLOR = '#167782';
 const BUTTON_OFFSET_FROM_CANVAS = 20;
-const BUTTON_Y_OFFSET_FROM_ROW = 18;
+const BUTTON_Y_OFFSET_FROM_SENSE_ROW = 12;
+const BUTTON_Y_OFFSET_FROM_ANTISENSE_ROW = 30;
 
 export class NewSequenceButton {
   private buttonElement?: D3SvgElementSelection<SVGElement, void>;
@@ -23,8 +24,10 @@ export class NewSequenceButton {
   public show() {
     const editor = CoreEditor.provideEditorInstance();
     const chain =
-      SequenceRenderer.chainsCollection.chains[this.indexOfRowBefore];
-    const lastNodeRendererInChain = chain.lastNode?.renderer;
+      SequenceRenderer.sequenceViewModel.chains[this.indexOfRowBefore];
+    const lastNodeRendererInChain =
+      chain.lastNode?.antisenseNode?.renderer ||
+      chain.lastNode?.senseNode?.renderer;
 
     if (!(lastNodeRendererInChain instanceof BaseSequenceItemRenderer)) {
       return;
@@ -38,7 +41,9 @@ export class NewSequenceButton {
         'transform',
         `translate(${BUTTON_OFFSET_FROM_CANVAS}, ${
           lastNodeRendererInChain.scaledMonomerPositionForSequence.y +
-          BUTTON_Y_OFFSET_FROM_ROW
+          (chain.hasAntisense
+            ? BUTTON_Y_OFFSET_FROM_ANTISENSE_ROW
+            : BUTTON_Y_OFFSET_FROM_SENSE_ROW)
         })`,
       )
       .attr('cursor', 'pointer') as never as D3SvgElementSelection<

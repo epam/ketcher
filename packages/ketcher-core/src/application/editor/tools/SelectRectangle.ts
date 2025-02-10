@@ -26,7 +26,10 @@ import { Nucleoside } from 'domain/entities/Nucleoside';
 import { Nucleotide } from 'domain/entities/Nucleotide';
 import { isMacOs } from 'react-device-detect';
 import { EraserTool } from './Erase';
-import { DeprecatedFlexModeOrSnakeModePolymerBondRenderer } from 'application/render';
+import {
+  DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  SequenceRenderer,
+} from 'application/render';
 
 class SelectRectangle implements BaseTool {
   private brush;
@@ -141,11 +144,25 @@ class SelectRectangle implements BaseTool {
     if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
 
     const renderer = event.target.__data__;
+    const drawingEntitiesToSelect: DrawingEntity[] = [];
+    const ModKey = isMacOs ? event.metaKey : event.ctrlKey;
+    let modelChanges: Command;
+
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
     this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
-    const ModKey = isMacOs ? event.metaKey : event.ctrlKey;
 
-    let modelChanges: Command;
+    if (renderer instanceof BaseSequenceItemRenderer) {
+      const twoStrandedNode = renderer.twoStrandedNode;
+      if (twoStrandedNode.senseNode) {
+        drawingEntitiesToSelect.push(twoStrandedNode.senseNode.monomer);
+      }
+      if (twoStrandedNode.antisenseNode) {
+        drawingEntitiesToSelect.push(twoStrandedNode.antisenseNode.monomer);
+      }
+    } else {
+      drawingEntitiesToSelect.push(renderer.drawingEntity);
+    }
+
     if (renderer instanceof BaseRenderer && !event.shiftKey && !ModKey) {
       this.moveStarted = true;
       if (renderer.drawingEntity.selected) {
@@ -153,9 +170,10 @@ class SelectRectangle implements BaseTool {
       }
       modelChanges =
         this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
       const { command: selectModelChanges } =
-        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForSingleEntity(
-          renderer.drawingEntity,
+        this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
+          drawingEntitiesToSelect,
         );
       modelChanges.merge(selectModelChanges);
     } else if (renderer instanceof BaseRenderer && event.shiftKey) {
@@ -164,14 +182,14 @@ class SelectRectangle implements BaseTool {
       }
       const drawingEntities: DrawingEntity[] = [
         ...this.editor.drawingEntitiesManager.selectedEntitiesArr,
-        renderer.drawingEntity,
+        ...drawingEntitiesToSelect,
       ];
       ({ command: modelChanges } =
         this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
           drawingEntities,
         ));
     } else if (renderer instanceof BaseSequenceItemRenderer && ModKey) {
-      let drawingEntities: DrawingEntity[] = renderer.currentSubChain.nodes
+      let drawingEntities: DrawingEntity[] = renderer.currentChain.nodes
         .map((node) => {
           if (node instanceof Nucleoside || node instanceof Nucleotide) {
             return node.monomers;
@@ -181,7 +199,7 @@ class SelectRectangle implements BaseTool {
         })
         .flat();
       drawingEntities.forEach((entity) => entity.turnOnSelection());
-      const bondsInsideCurrentChain = renderer.currentSubChain.bonds.filter(
+      const bondsInsideCurrentChain = renderer.currentChain.bonds.filter(
         (bond) => bond.firstMonomer.selected && bond.secondMonomer?.selected,
       );
       drawingEntities = drawingEntities.concat(bondsInsideCurrentChain);
@@ -192,6 +210,7 @@ class SelectRectangle implements BaseTool {
     } else {
       modelChanges =
         this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
     }
     this.editor.renderersContainer.update(modelChanges);
     this.setSelectedEntities();
@@ -213,6 +232,7 @@ class SelectRectangle implements BaseTool {
       this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
       requestAnimationFrame(() => {
         this.editor.renderersContainer.update(modelChanges);
+        this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
       });
     }
   }
@@ -264,6 +284,10 @@ class SelectRectangle implements BaseTool {
   }
 
   public mouseOverPolymerBond(event) {
+    if (event.buttons === 1) {
+      return;
+    }
+
     const renderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer =
       event.target.__data__;
 
@@ -307,6 +331,7 @@ class SelectRectangle implements BaseTool {
     if (!(this.editor.selectedTool instanceof EraserTool)) {
       const modelChanges =
         this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
 
       this.editor.renderersContainer.update(modelChanges);
     }

@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
-import { Peptides } from '@constants/monomers';
+import { Chem } from '@constants/monomers/Chem';
+import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -14,6 +15,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { addSuperatomAttachmentPoint } from '@utils/canvas/atoms/superatomAttachmentPoints';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
 test.describe('Connection rules for molecules with monomers: ', () => {
@@ -40,7 +42,6 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     const firstAlanine = await addSingleMonomerToCanvas(
       page,
       Peptides.A,
-      'A',
       100,
       200,
       0,
@@ -48,7 +49,6 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     const secondAlanine = await addSingleMonomerToCanvas(
       page,
       Peptides.A,
-      'A',
       300,
       200,
       1,
@@ -56,13 +56,12 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     const thirdAlanine = await addSingleMonomerToCanvas(
       page,
       Peptides.A,
-      'A',
       500,
       200,
       2,
     );
 
-    const molecule = page.getByText('F1').locator('..').first();
+    const molecule = getMonomerLocator(page, Chem.F1);
 
     await bondTwoMonomersPointToPoint(page, molecule, firstAlanine, 'R2', 'R1');
     await bondTwoMonomersPointToPoint(

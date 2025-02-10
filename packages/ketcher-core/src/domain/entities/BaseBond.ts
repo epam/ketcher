@@ -3,9 +3,12 @@ import { Vec2 } from 'domain/entities/vec2';
 
 export abstract class BaseBond extends DrawingEntity {
   public endPosition: Vec2 = new Vec2();
+  private _isOverlappedByMonomer = false;
 
   abstract get firstEndEntity(): DrawingEntity;
   abstract get secondEndEntity(): DrawingEntity | undefined;
+  abstract get isHorizontal(): boolean;
+  abstract get isVertical(): boolean;
 
   public get finished() {
     return Boolean(this.firstEndEntity && this.secondEndEntity);
@@ -40,5 +43,13 @@ export abstract class BaseBond extends DrawingEntity {
     return this.firstEndEntity === monomer
       ? this.secondEndEntity
       : this.firstEndEntity;
+  }
+
+  public get isOverlappedByMonomer() {
+    return this._isOverlappedByMonomer;
+  }
+
+  public set isOverlappedByMonomer(value: boolean) {
+    this._isOverlappedByMonomer = value;
   }
 }

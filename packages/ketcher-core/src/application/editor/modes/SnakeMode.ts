@@ -31,7 +31,10 @@ export class SnakeMode extends BaseMode {
     command.merge(modelChanges);
     editor.renderersContainer.update(modelChanges);
     command.setUndoOperationReverse();
-    editor.scrollToTopLeftCorner();
+
+    if (editor.drawingEntitiesManager.hasMonomers) {
+      editor.scrollToTopLeftCorner();
+    }
 
     return command;
   }

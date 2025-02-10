@@ -44,10 +44,7 @@ import {
   PolymerBondShowInfoOperation,
   ReconnectPolymerBondOperation,
 } from 'application/editor/operations/polymerBond';
-import {
-  MONOMER_CONST,
-  monomerFactory,
-} from 'application/editor/operations/monomer/monomerFactory';
+import { monomerFactory } from 'application/editor/operations/monomer/monomerFactory';
 import { Coordinates, CoreEditor } from 'application/editor/internal';
 import {
   getNextMonomerInChain,
@@ -63,7 +60,11 @@ import {
 import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
-import { SequenceMode, SnakeMode } from 'application/editor';
+import {
+  MACROMOLECULES_BOND_TYPES,
+  SequenceMode,
+  SnakeMode,
+} from 'application/editor';
 import { CanvasMatrix } from 'domain/entities/canvas-matrix/CanvasMatrix';
 import { RecalculateCanvasMatrixOperation } from 'application/editor/operations/modes/snake';
 import { Matrix } from 'domain/entities/canvas-matrix/Matrix';
@@ -88,8 +89,8 @@ import {
 import { AtomLabel } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
 import {
+  MONOMER_CONST,
   RNA_DNA_NON_MODIFIED_PART,
   RnaDnaNaturalAnaloguesEnum,
   StandardAmbiguousRnaBase,
@@ -118,6 +119,7 @@ type RnaPresetAdditionParams = {
 export class DrawingEntitiesManager {
   public monomers: Map<number, BaseMonomer> = new Map();
   public polymerBonds: Map<number, PolymerBond | HydrogenBond> = new Map();
+  private bondsMonomersOverlaps: Map<number, BaseMonomer> = new Map();
   public atoms: Map<number, Atom> = new Map();
   public bonds: Map<number, Bond> = new Map();
   public monomerToAtomBonds: Map<number, MonomerToAtomBond> = new Map();
@@ -125,6 +127,7 @@ export class DrawingEntitiesManager {
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
   public snakeLayoutMatrix?: Matrix<Cell>;
+
   public get bottomRightMonomerPosition(): Vec2 {
     let position: Vec2 | null = null;
 
@@ -215,21 +218,25 @@ export class DrawingEntitiesManager {
       return _monomer;
     }
 
-    const monomer = this.createMonomer(monomerItem, position);
+    const newMonomer = this.createMonomer(monomerItem, position);
 
-    monomer.moveAbsolute(position);
-    this.monomers.set(monomer.id, monomer);
+    newMonomer.moveAbsolute(position);
+    this.monomers.set(newMonomer.id, newMonomer);
 
-    return monomer;
+    return newMonomer;
   }
 
-  public createMonomer(monomerItem: MonomerOrAmbiguousType, position: Vec2) {
+  public createMonomer(
+    monomerItem: MonomerOrAmbiguousType,
+    position: Vec2,
+    generateId = true,
+  ) {
     if (isAmbiguousMonomerLibraryItem(monomerItem)) {
-      return new AmbiguousMonomer(monomerItem, position);
+      return new AmbiguousMonomer(monomerItem, position, generateId);
     } else {
       const [Monomer] = monomerFactory(monomerItem);
 
-      return new Monomer(monomerItem, position);
+      return new Monomer(monomerItem, position, { generateId });
     }
   }
 
@@ -376,6 +383,8 @@ export class DrawingEntitiesManager {
       drawingEntity instanceof HydrogenBond
     ) {
       drawingEntity.moveToLinkedEntities();
+      drawingEntity.isOverlappedByMonomer =
+        this.checkBondForOverlapsByMonomers(drawingEntity);
     } else if (drawingEntity instanceof Bond) {
       drawingEntity.moveToLinkedAtoms();
     } else if (drawingEntity instanceof MonomerToAtomBond) {
@@ -2149,7 +2158,7 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteMonomerToAtomBond(monomerToAtomBond);
     });
 
-    SequenceRenderer.removeEmptyNodes();
+    SequenceRenderer.clear();
   }
 
   public applyFlexLayoutMode(needRedrawBonds = false) {
@@ -2159,6 +2168,8 @@ export class DrawingEntitiesManager {
     if (needRedrawBonds) {
       command.merge(this.redrawBonds());
     }
+
+    this.detectBondsOverlappedByMonomers();
 
     this.monomers.forEach((monomer) => {
       editor.renderersContainer.deleteMonomer(monomer);
@@ -2175,17 +2186,37 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.addMonomerToAtomBond(monomerToAtomBond);
     });
 
-    SequenceRenderer.removeEmptyNodes();
-
     return command;
   }
 
-  public rerenderPolymerBonds() {
+  public rerenderBondsOverlappedByMonomers() {
     const editor = CoreEditor.provideEditorInstance();
 
-    this.polymerBonds.forEach((polymerBond) => {
-      editor.renderersContainer.deletePolymerBond(polymerBond);
-      editor.renderersContainer.addPolymerBond(polymerBond);
+    if (editor.mode instanceof SequenceMode) {
+      return;
+    }
+
+    const monomersToCheck = this.selectedEntities
+      .filter(([, entity]) => entity instanceof BaseMonomer)
+      .map(([, entity]) => entity as BaseMonomer);
+    const outstandingBonds = this.polymerBondsArray.filter((polymerBond) =>
+      monomersToCheck.some(
+        (monomer) =>
+          polymerBond.firstMonomer !== monomer &&
+          polymerBond.secondMonomer !== monomer,
+      ),
+    );
+
+    outstandingBonds.forEach((polymerBond) => {
+      const previousIsOverlappedByMonomer = polymerBond.isOverlappedByMonomer;
+      polymerBond.isOverlappedByMonomer = this.checkBondForOverlapsByMonomers(
+        polymerBond,
+        monomersToCheck,
+      );
+      if (polymerBond.isOverlappedByMonomer !== previousIsOverlappedByMonomer) {
+        editor.renderersContainer.deletePolymerBond(polymerBond, false, false);
+        editor.renderersContainer.addPolymerBond(polymerBond, false);
+      }
     });
   }
 
@@ -2630,7 +2661,7 @@ export class DrawingEntitiesManager {
     return monomerAtomBond;
   }
 
-  private deleteMonomerToAtomBond(monomerAtomBond: MonomerToAtomBond) {
+  public deleteMonomerToAtomBond(monomerAtomBond: MonomerToAtomBond) {
     const command = new Command();
 
     command.addOperation(
@@ -2673,11 +2704,11 @@ export class DrawingEntitiesManager {
   }
 
   // TODO create separate class for BoundingBox
-  public static geStructureBbox(monomers: BaseMonomer[]) {
-    let left;
-    let right;
-    let top;
-    let bottom;
+  public static getStructureBbox(monomers: BaseMonomer[]) {
+    let left = 0;
+    let right = 0;
+    let top = 0;
+    let bottom = 0;
 
     monomers.forEach((monomer) => {
       const monomerPosition = monomer.position;
@@ -2698,7 +2729,7 @@ export class DrawingEntitiesManager {
     };
   }
 
-  private get antisenseChainBasesMap() {
+  private static get antisenseChainBasesMap() {
     return {
       [RnaDnaNaturalAnaloguesEnum.ADENINE]: RnaDnaNaturalAnaloguesEnum.URACIL,
       [RnaDnaNaturalAnaloguesEnum.CYTOSINE]: RnaDnaNaturalAnaloguesEnum.GUANINE,
@@ -2791,7 +2822,7 @@ export class DrawingEntitiesManager {
         const chainsToCenters = new Map<GrouppedChain, Vec2>();
 
         largestChains.forEach(([chainToCheck, monomers]) => {
-          const chainBbox = DrawingEntitiesManager.geStructureBbox(monomers);
+          const chainBbox = DrawingEntitiesManager.getStructureBbox(monomers);
 
           chainsToCenters.set(
             chainToCheck,
@@ -2839,12 +2870,33 @@ export class DrawingEntitiesManager {
     );
   }
 
-  private getAntisenseBaseLabel(rnaBase: RNABase | AmbiguousMonomer) {
-    return this.antisenseChainBasesMap[
+  private static getAntisenseBaseLabel(rnaBase: RNABase | AmbiguousMonomer) {
+    return DrawingEntitiesManager.antisenseChainBasesMap[
       rnaBase instanceof AmbiguousMonomer
         ? rnaBase.monomerItem.label
         : rnaBase.monomerItem.props.MonomerNaturalAnalogCode
     ];
+  }
+
+  public static createAntisenseNode(
+    node: Nucleoside | Nucleotide,
+    needAddPhosphate = false,
+  ) {
+    const antisenseBaseLabel = DrawingEntitiesManager.getAntisenseBaseLabel(
+      node.rnaBase,
+    );
+
+    if (!antisenseBaseLabel) {
+      return;
+    }
+
+    return (
+      node instanceof Nucleotide && needAddPhosphate ? Nucleotide : Nucleoside
+    ).createOnCanvas(
+      antisenseBaseLabel,
+      node.monomer.position.add(new Vec2(0, 3)),
+      RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
+    );
   }
 
   public createAntisenseChain() {
@@ -2860,7 +2912,9 @@ export class DrawingEntitiesManager {
           subChain.nodes.some(
             (node) =>
               (node instanceof Nucleotide || node instanceof Nucleoside) &&
-              Boolean(this.getAntisenseBaseLabel(node.rnaBase)) &&
+              Boolean(
+                DrawingEntitiesManager.getAntisenseBaseLabel(node.rnaBase),
+              ) &&
               node.monomer.selected,
           ),
         );
@@ -2913,21 +2967,18 @@ export class DrawingEntitiesManager {
         }
 
         if (node instanceof Nucleotide || node instanceof Nucleoside) {
-          const antisenseBaseLabel = this.getAntisenseBaseLabel(node.rnaBase);
+          const antisenseNodeCreationResult =
+            DrawingEntitiesManager.createAntisenseNode(
+              node,
+              node instanceof Nucleotide && node.phosphate.selected,
+            );
 
-          if (!antisenseBaseLabel) {
+          if (!antisenseNodeCreationResult) {
             return;
           }
 
-          const { modelChanges: addNucleotideCommand, node: addedNode } = (
-            node instanceof Nucleotide && node.phosphate.selected
-              ? Nucleotide
-              : Nucleoside
-          ).createOnCanvas(
-            antisenseBaseLabel,
-            node.monomer.position.add(new Vec2(0, 3)),
-            RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
-          );
+          const { modelChanges: addNucleotideCommand, node: addedNode } =
+            antisenseNodeCreationResult;
 
           command.merge(addNucleotideCommand);
 
@@ -3009,6 +3060,10 @@ export class DrawingEntitiesManager {
     return [...this.monomers.values()];
   }
 
+  public get polymerBondsArray() {
+    return [...this.polymerBonds.values()];
+  }
+
   public get molecules() {
     return this.monomersArray.filter((monomer) => {
       return (
@@ -3017,7 +3072,74 @@ export class DrawingEntitiesManager {
       );
     });
   }
+
+  private checkBondForOverlapsByMonomers(
+    polymerBond: PolymerBond,
+    monomers?: BaseMonomer[],
+  ) {
+    const editor = CoreEditor.provideEditorInstance();
+    if (!editor || editor.mode instanceof SequenceMode) {
+      return false;
+    }
+
+    const secondMonomer = polymerBond.secondMonomer;
+    if (!secondMonomer) {
+      return false;
+    }
+
+    if (!polymerBond.isHorizontal && !polymerBond.isVertical) {
+      return false;
+    }
+
+    const monomersToUse = monomers ?? this.monomersArray;
+    // Skip processing for large structures for now as in worst case its has O(n^2) complexity and may freeze the app
+    // Further optimization might be needed to allow that
+    if (monomersToUse.length > 500) {
+      return false;
+    }
+
+    const previousOverlap = this.bondsMonomersOverlaps.get(polymerBond.id);
+    const monomersToUseWithPreviousOverlap = previousOverlap
+      ? [previousOverlap, ...monomersToUse]
+      : monomersToUse;
+
+    const overlappingMonomer = monomersToUseWithPreviousOverlap.find(
+      (monomer) => {
+        if (
+          monomer.id === polymerBond.firstMonomer.id ||
+          monomer.id === secondMonomer.id
+        ) {
+          return false;
+        }
+
+        const distanceFromMonomerToLine =
+          monomer.center.calculateDistanceToLine([
+            polymerBond.firstMonomer.center,
+            secondMonomer.center,
+          ]);
+
+        return distanceFromMonomerToLine < 0.375;
+      },
+    );
+
+    if (overlappingMonomer) {
+      this.bondsMonomersOverlaps.set(polymerBond.id, overlappingMonomer);
+    }
+
+    return Boolean(overlappingMonomer);
+  }
+
+  public detectBondsOverlappedByMonomers(
+    polymerBonds?: Array<PolymerBond | HydrogenBond>,
+  ) {
+    const bondsToCheck = polymerBonds ?? this.polymerBondsArray;
+    bondsToCheck.forEach((polymerBond) => {
+      polymerBond.isOverlappedByMonomer =
+        this.checkBondForOverlapsByMonomers(polymerBond);
+    });
+  }
 }
+
 function getFirstPosition(
   height: number,
   lastPosition: Vec2,

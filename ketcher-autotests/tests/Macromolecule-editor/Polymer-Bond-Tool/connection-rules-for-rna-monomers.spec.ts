@@ -513,12 +513,10 @@ test.describe('Connection rules for RNAs: ', () => {
     rightMonomer: IMonomer,
   ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
     await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
-    const leftMonomerLocator = (
-      await getMonomerLocator(page, {
-        monomerAlias: leftMonomer.alias,
-        monomerType: leftMonomer.monomerType,
-      })
-    ).first();
+    const leftMonomerLocator = getMonomerLocator(page, {
+      monomerAlias: leftMonomer.alias,
+      monomerType: leftMonomer.monomerType,
+    }).first();
 
     await leftMonomerLocator.hover({ force: true });
 
@@ -526,7 +524,7 @@ test.describe('Connection rules for RNAs: ', () => {
     await moveMouseAway(page);
 
     await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
-    const tmpMonomerLocator = await getMonomerLocator(page, {
+    const tmpMonomerLocator = getMonomerLocator(page, {
       monomerAlias: rightMonomer.alias,
       monomerType: rightMonomer.monomerType,
     });
@@ -551,15 +549,19 @@ test.describe('Connection rules for RNAs: ', () => {
     leftMonomer: IMonomer,
     rightMonomer: IMonomer,
   ) {
-    const leftMonomerLocator = page
-      .getByText(leftMonomer.alias)
-      .locator('..')
-      .first();
+    const leftMonomerLocator = getMonomerLocator(page, {
+      monomerAlias: leftMonomer.alias,
+    }).first();
+
+    const rightMonomerLocators = getMonomerLocator(page, {
+      monomerAlias: rightMonomer.alias,
+    });
 
     const rightMonomerLocator =
       (await page.getByText(leftMonomer.alias).count()) > 1
-        ? page.getByText(rightMonomer.alias).nth(1).locator('..').first()
-        : page.getByText(rightMonomer.alias).locator('..').first();
+        ? rightMonomerLocators.nth(1)
+        : rightMonomerLocators.nth(0);
+
     await rightMonomerLocator.hover();
 
     await bondTwoMonomersPointToPoint(

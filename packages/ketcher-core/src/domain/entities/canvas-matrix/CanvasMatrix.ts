@@ -222,7 +222,8 @@ export class CanvasMatrix {
         }
 
         if (
-          polymerBond.isSideChainConnection &&
+          (polymerBond.isSideChainConnection ||
+            polymerBond.isOverlappedByMonomer) &&
           !handledConnections.has(polymerBond)
         ) {
           const anotherMonomer = polymerBond.getAnotherMonomer(

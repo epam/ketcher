@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   selectAtomInToolbar,
@@ -9,8 +9,6 @@ import {
   RingButton,
   selectTopPanelButton,
   TopPanelButton,
-  receiveFileComparisonData,
-  saveToFile,
   dragMouseTo,
   pressButton,
   drawBenzeneRing,
@@ -54,12 +52,12 @@ import {
   selectZoomOutTool,
   waitForElementInCanvas,
 } from '@utils';
+
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getRxn } from '@utils/formats';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -382,18 +380,12 @@ test.describe('Template Manupulations', () => {
     Open the saved *.rxn file and edit it in any way.
     */
     await openFileAndAddToCanvas('Rxn-V2000/templates-reaction.rxn', page);
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('Rxn-V2000/templates-reaction-expected.rxn', expectedFile);
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2, 7, 43, 63];
-    const { file: RxnFile, fileExpected: RxnFileExpected } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/templates-reaction-expected.rxn',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-      });
-    expect(RxnFile).toEqual(RxnFileExpected);
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/templates-reaction-expected.rxn',
+      FileType.RXN,
+      'v2000',
+    );
     await takeEditorScreenshot(page);
   });
 

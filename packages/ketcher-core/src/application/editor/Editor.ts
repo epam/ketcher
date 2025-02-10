@@ -36,7 +36,10 @@ import { FlexModePolymerBondRenderer } from 'application/render/renderers/Polyme
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
-import { SequenceRenderer } from 'application/render/renderers/sequence/SequenceRenderer';
+import {
+  NodesSelection,
+  SequenceRenderer,
+} from 'application/render/renderers/sequence/SequenceRenderer';
 import { ketcherProvider } from 'application/utils';
 import assert from 'assert';
 import { SequenceType, Struct, Vec2 } from 'domain/entities';
@@ -68,10 +71,6 @@ interface ICoreEditorConstructorParams {
   canvas: SVGSVGElement;
   mode?: BaseMode;
   monomersLibraryUpdate?: string | JSON;
-}
-
-function isMouseMainButtonPressed(event: MouseEvent) {
-  return event.button === 0;
 }
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
@@ -317,7 +316,15 @@ export class CoreEditor {
       if (eventData instanceof BaseSequenceItemRenderer) {
         this.events.rightClickSequence.dispatch([
           event,
-          SequenceRenderer.selections,
+          SequenceRenderer.selections.map((selectionRange) =>
+            selectionRange.map((twoStrandedNodeSelection) => {
+              return {
+                ...twoStrandedNodeSelection,
+                node: twoStrandedNodeSelection.node.senseNode,
+                twoStrandedNode: twoStrandedNodeSelection.node,
+              };
+            }),
+          ) as NodesSelection,
         ]);
       } else if (
         eventData instanceof FlexModePolymerBondRenderer ||
@@ -431,6 +438,14 @@ export class CoreEditor {
   }
 
   private onSelectMonomer(monomer: MonomerItemType) {
+    if (
+      this.mode instanceof SequenceMode &&
+      !this.isSequenceEditMode &&
+      SequenceRenderer.chainsCollection.length === 0
+    ) {
+      this.mode.turnOnEditMode();
+    }
+
     if (this.mode instanceof SequenceMode) {
       this.mode.insertMonomerFromLibrary(monomer);
     } else {
@@ -439,6 +454,14 @@ export class CoreEditor {
   }
 
   private onSelectRNAPreset(preset: IRnaPreset) {
+    if (
+      this.mode instanceof SequenceMode &&
+      !this.isSequenceEditMode &&
+      SequenceRenderer.chainsCollection.length === 0
+    ) {
+      this.mode.turnOnEditMode();
+    }
+
     if (this.mode instanceof SequenceMode) {
       this.mode.insertPresetFromLibrary(preset);
     } else {
@@ -642,6 +665,10 @@ export class CoreEditor {
     return trackedDomEvents;
   }
 
+  private isMouseMainButtonPressed(event) {
+    return event?.button === 0;
+  }
+
   private domEventSetup() {
     this.trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
       this.events[eventName] = new DOMSubscription();
@@ -654,7 +681,7 @@ export class CoreEditor {
 
         if (
           ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
-          !isMouseMainButtonPressed(event)
+          !this.isMouseMainButtonPressed(event)
         ) {
           return true;
         }

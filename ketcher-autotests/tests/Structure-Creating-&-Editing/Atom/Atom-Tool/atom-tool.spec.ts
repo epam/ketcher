@@ -1,5 +1,5 @@
 import { MAX_BOND_LENGTH } from '@constants/index';
-import { test, expect, Page } from '@playwright/test';
+import { test, Page } from '@playwright/test';
 import {
   pressButton,
   takeEditorScreenshot,
@@ -22,8 +22,6 @@ import {
   selectPartOfMolecules,
   copyAndPaste,
   cutAndPaste,
-  saveToFile,
-  receiveFileComparisonData,
   selectLeftPanelButton,
   LeftPanelButton,
   drawBenzeneRing,
@@ -32,12 +30,12 @@ import {
   clickOnCanvas,
   ZoomInByKeyboard,
 } from '@utils';
+
 import { atomsNames } from '@utils/canvas/atoms/excludedAtoms';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getRxn } from '@utils/formats';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 const X_DELTA_ONE = 100;
@@ -345,23 +343,12 @@ test.describe('Atom Tool', () => {
       'Rxn-V2000/reaction-with-colored-atoms.rxn',
       page,
     );
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/reaction-with-colored-atoms-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRING_INDEX = [2, 7, 30];
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/reaction-with-colored-atoms-expected.rxn',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -391,23 +378,12 @@ test.describe('Atom Tool', () => {
     The reaction is represented with correct List and Not List atom symbols.
     */
     await openFileAndAddToCanvas('Rxn-V2000/reaction-list-notlist.rxn', page);
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/reaction-list-notlist-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRING_INDEX = [2, 7, 32];
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/reaction-list-notlist-expected.rxn',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -421,23 +397,12 @@ test.describe('Atom Tool', () => {
       'Rxn-V2000/reaction-with-group-generics.rxn',
       page,
     );
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V2000/reaction-with-group-generics-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v2000',
     );
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRING_INDEX = [2, 7, 30];
-    const { fileExpected: rxnFileExpected, file: rxnFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Rxn-V2000/reaction-with-group-generics-expected.rxn',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(rxnFile).toEqual(rxnFileExpected);
     await takeEditorScreenshot(page);
   });
 

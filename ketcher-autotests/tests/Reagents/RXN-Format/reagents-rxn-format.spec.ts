@@ -1,4 +1,4 @@
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   selectTopPanelButton,
   TopPanelButton,
@@ -6,32 +6,16 @@ import {
   pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  readFileContents,
   FILE_TEST_DATA,
-  saveToFile,
   waitForLoad,
   waitForPageInit,
   moveMouseAway,
 } from '@utils';
-import { clickOnFileFormatDropdown, getRxn } from '@utils/formats';
-
-function getComparableDataFromRxn(
-  rxnData: string,
-  start: number,
-  end?: number,
-) {
-  return rxnData.split('\n').slice(start, end).join('\n');
-}
-
-function getRxnFileFilteredBySymbols(
-  rxnFile: string,
-  metaDataIndexes: number[],
-) {
-  return rxnFile
-    .split('\n')
-    .filter((_str, index) => !metaDataIndexes.includes(index))
-    .join('\n');
-}
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
+import { clickOnFileFormatDropdown } from '@utils/formats';
 
 async function saveAsMdlRxnV3000(page: Page) {
   await selectTopPanelButton(TopPanelButton.Save, page);
@@ -65,27 +49,12 @@ test.describe('Reagents RXN format', () => {
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('Rxn-V2000/mdl-rxnfile-v2000-expected.rxn', expectedFile);
-
-    const rxnFileExpected = await readFileContents(
-      'tests/test-data/Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
+      FileType.RXN,
+      'v2000',
     );
-    const COMPARABLE_DATA_START = 46;
-    const COMPARABLE_DATA_END = 48;
-    const rxnFile = await getRxn(page, 'v2000');
-    const actualComparableData = getComparableDataFromRxn(
-      rxnFile,
-      COMPARABLE_DATA_START,
-      COMPARABLE_DATA_END,
-    );
-    const expectedComparableData = getComparableDataFromRxn(
-      rxnFileExpected,
-      COMPARABLE_DATA_START,
-      COMPARABLE_DATA_END,
-    );
-
-    expect(actualComparableData).toEqual(expectedComparableData);
   });
 
   test('Detection molecule as reagent and write reagent information in "MDL rxnfile V3000" format', async ({
@@ -99,27 +68,12 @@ test.describe('Reagents RXN format', () => {
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile('Rxn-V3000/mdl-rxnfile-v3000-expected.rxn', expectedFile);
-
-    const rxnFileExpected = await readFileContents(
-      'tests/test-data/Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
+    await verifyFileExport(
+      page,
+      'Rxn-V3000/mdl-rxnfile-v3000-expected.rxn',
+      FileType.RXN,
+      'v3000',
     );
-    const COMPARABLE_DATA_START = 5;
-    const COMPARABLE_DATA_END = 58;
-    const rxnFile = await getRxn(page, 'v3000');
-
-    const actualComparableData = getComparableDataFromRxn(
-      rxnFile,
-      COMPARABLE_DATA_START,
-      COMPARABLE_DATA_END,
-    );
-    const expectedComparableData = getComparableDataFromRxn(
-      rxnFileExpected,
-      COMPARABLE_DATA_START,
-      COMPARABLE_DATA_END,
-    );
-    expect(actualComparableData).toEqual(expectedComparableData);
   });
 
   test('File saves in "MDL rxnfile V2000" format', async ({ page }) => {
@@ -131,27 +85,12 @@ test.describe('Reagents RXN format', () => {
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
-    const expectedFile = await getRxn(page, 'v2000');
-    await saveToFile('Rxn-V2000/mdl-rxnfile-v2000-expected.rxn', expectedFile);
-
-    const rxnFileExpected = await readFileContents(
-      'tests/test-data/Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
+    await verifyFileExport(
+      page,
+      'Rxn-V2000/mdl-rxnfile-v2000-expected.rxn',
+      FileType.RXN,
+      'v2000',
     );
-    const rxnFile = await getRxn(page, 'v2000');
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRING_INDEXES = [2, 7, 25, 43];
-
-    const filteredRxnFileExpected = getRxnFileFilteredBySymbols(
-      rxnFileExpected,
-      METADATA_STRING_INDEXES,
-    );
-
-    const filteredRxnFile = getRxnFileFilteredBySymbols(
-      rxnFile,
-      METADATA_STRING_INDEXES,
-    );
-
-    expect(filteredRxnFile).toEqual(filteredRxnFileExpected);
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -166,28 +105,12 @@ test.describe('Reagents RXN format', () => {
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
-    const expectedFile = await getRxn(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Rxn-V3000/benzene-arrow-benzene-reagent-nh3-expected.rxn',
-      expectedFile,
+      FileType.RXN,
+      'v3000',
     );
-
-    const rxnFileExpected = await readFileContents(
-      'tests/test-data/Rxn-V3000/benzene-arrow-benzene-reagent-nh3-expected.rxn',
-    );
-    const rxnFile = await getRxn(page, 'v3000');
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [2];
-
-    const filteredRxnFileExpected = getRxnFileFilteredBySymbols(
-      rxnFileExpected,
-      METADATA_STRINGS_INDEXES,
-    );
-    const filteredRxnFile = getRxnFileFilteredBySymbols(
-      rxnFile,
-      METADATA_STRINGS_INDEXES,
-    );
-    expect(filteredRxnFile).toEqual(filteredRxnFileExpected);
 
     await saveAsMdlRxnV3000(page);
   });

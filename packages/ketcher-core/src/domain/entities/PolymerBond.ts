@@ -106,4 +106,26 @@ export class PolymerBond extends BaseBond {
   public getAnotherMonomer(monomer: BaseMonomer): BaseMonomer | undefined {
     return super.getAnotherEntity(monomer) as BaseMonomer;
   }
+
+  public get isHorizontal() {
+    if (!this.secondMonomer) {
+      return false;
+    }
+
+    return (
+      Math.abs(this.firstMonomer.position.y - this.secondMonomer.position.y) <
+      0.375
+    );
+  }
+
+  public get isVertical() {
+    if (!this.secondMonomer) {
+      return false;
+    }
+
+    return (
+      Math.abs(this.firstMonomer.position.x - this.secondMonomer.position.x) <
+      0.375
+    );
+  }
 }

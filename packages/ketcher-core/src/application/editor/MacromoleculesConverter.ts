@@ -14,7 +14,6 @@ import { ReAtom, ReBond, ReSGroup, ReStruct } from 'application/render';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { Command } from 'domain/entities/Command';
-import { MONOMER_CONST } from 'application/editor/operations/monomer/monomerFactory';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import assert from 'assert';
 import { AttachmentPointName } from 'domain/types';
@@ -30,7 +29,8 @@ import { Atom } from 'domain/entities/CoreAtom';
 import { AtomLabel } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/Bond';
+import { MONOMER_CONST } from 'domain/constants/monomers';
+import { MACROMOLECULES_BOND_TYPES } from 'application/editor/tools/types';
 
 export class MacromoleculesConverter {
   private static convertMonomerToMonomerMicromolecule(
@@ -70,6 +70,9 @@ export class MacromoleculesConverter {
   public static convertAttachmentPointNameToNumber(
     attachmentPointName: AttachmentPointName,
   ) {
+    if (attachmentPointName === 'hydrogen') {
+      return 0;
+    }
     return Number(attachmentPointName?.replace('R', ''));
   }
 
@@ -92,7 +95,9 @@ export class MacromoleculesConverter {
         attachmentPointName,
       );
     const attachmentPointIndex =
-      monomer.listOfAttachmentPoints.indexOf(attachmentPointName);
+      attachmentPointName === 'hydrogen'
+        ? 0
+        : monomer.listOfAttachmentPoints.indexOf(attachmentPointName);
     const attachmentPoint =
       monomer.monomerItem.attachmentPoints?.[attachmentPointIndex];
     const atomIdMap = monomerToAtomIdMap.get(monomer);
@@ -672,6 +677,7 @@ export class MacromoleculesConverter {
     });
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);
+    drawingEntitiesManager.detectBondsOverlappedByMonomers();
 
     if (editor) {
       editor.viewModel.initialize([...drawingEntitiesManager.bonds.values()]);

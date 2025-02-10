@@ -23,24 +23,12 @@ import {
 import { KetMonomerClass } from 'application/formatters/types/ket';
 import { isAmbiguousMonomerLibraryItem } from 'domain/helpers/monomers';
 import {
+  MONOMER_CONST,
   rnaDnaNaturalAnalogues,
   unknownNaturalAnalogues,
 } from 'domain/constants/monomers';
 
 type DerivedClass<T> = new (...args: unknown[]) => T;
-export const MONOMER_CONST = {
-  AMINO_ACID: 'AminoAcid',
-  PEPTIDE: 'PEPTIDE',
-  CHEM: 'CHEM',
-  RNA: 'RNA',
-  DNA: 'DNA',
-  MODDNA: 'MODDNA',
-  R: 'R', // states for Ribose
-  P: 'P', // states for Phosphate
-  SUGAR: 'SUGAR',
-  BASE: 'BASE',
-  PHOSPHATE: 'PHOSPHATE',
-};
 
 type Monomer =
   | typeof Chem

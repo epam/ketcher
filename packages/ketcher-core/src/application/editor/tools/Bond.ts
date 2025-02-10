@@ -461,7 +461,6 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseUpAtom(event) {
-    debugger;
     if (!this.bondRenderer || this.isHydrogenBond) {
       return;
     }

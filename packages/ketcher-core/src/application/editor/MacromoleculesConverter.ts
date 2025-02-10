@@ -70,6 +70,9 @@ export class MacromoleculesConverter {
   public static convertAttachmentPointNameToNumber(
     attachmentPointName: AttachmentPointName,
   ) {
+    if (attachmentPointName === 'hydrogen') {
+      return 0;
+    }
     return Number(attachmentPointName?.replace('R', ''));
   }
 
@@ -92,7 +95,9 @@ export class MacromoleculesConverter {
         attachmentPointName,
       );
     const attachmentPointIndex =
-      monomer.listOfAttachmentPoints.indexOf(attachmentPointName);
+      attachmentPointName === 'hydrogen'
+        ? 0
+        : monomer.listOfAttachmentPoints.indexOf(attachmentPointName);
     const attachmentPoint =
       monomer.monomerItem.attachmentPoints?.[attachmentPointIndex];
     const atomIdMap = monomerToAtomIdMap.get(monomer);
@@ -672,7 +677,7 @@ export class MacromoleculesConverter {
     });
 
     drawingEntitiesManager.setMicromoleculesHiddenEntities(struct);
-    drawingEntitiesManager.detectCycles();
+    drawingEntitiesManager.detectBondsOverlappedByMonomers();
 
     if (editor) {
       editor.viewModel.initialize([...drawingEntitiesManager.bonds.values()]);

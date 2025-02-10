@@ -320,6 +320,11 @@ class PolymerBond implements BaseTool {
       }
       const modelChanges = this.finishBondCreation(renderer.monomer);
       this.history.update(modelChanges);
+      if (modelChanges.operations[0]?.polymerBond) {
+        this.editor.drawingEntitiesManager.detectBondsOverlappedByMonomers([
+          modelChanges.operations[0].polymerBond,
+        ]);
+      }
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,
@@ -377,6 +382,7 @@ class PolymerBond implements BaseTool {
         'You have connected monomers with attachment points of the same group',
       );
     }
+
     return this.editor.drawingEntitiesManager.finishPolymerBondCreation(
       this.bondRenderer.polymerBond,
       secondMonomer,
@@ -437,6 +443,11 @@ class PolymerBond implements BaseTool {
 
       // This logic so far is only for no-modal connections. Maybe then we can chain it after modal invoke
       const modelChanges = this.finishBondCreation(renderer.monomer);
+      if (modelChanges.operations[0]?.polymerBond) {
+        this.editor.drawingEntitiesManager.detectBondsOverlappedByMonomers([
+          modelChanges.operations[0].polymerBond,
+        ]);
+      }
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,

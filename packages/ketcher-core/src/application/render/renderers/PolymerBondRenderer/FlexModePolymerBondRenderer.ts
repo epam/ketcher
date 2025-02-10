@@ -86,7 +86,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
 
   // TODO: Specify the types.
   public appendBond(rootElement) {
-    if (this.polymerBond.isCyclicOverlappingBond) {
+    if (this.polymerBond.isOverlappedByMonomer) {
       this.generateEnvelopingBondPath();
     } else {
       this.generateLinearBondPath();

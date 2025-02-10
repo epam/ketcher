@@ -401,7 +401,7 @@ export class RenderersManager {
     this.polymerBonds.forEach((polymerBondRenderer) => {
       if (
         !polymerBondRenderer.polymerBond.isSideChainConnection &&
-        !polymerBondRenderer.polymerBond.isCyclicOverlappingBond
+        !polymerBondRenderer.polymerBond.isOverlappedByMonomer
       ) {
         return;
       }

@@ -73,10 +73,6 @@ interface ICoreEditorConstructorParams {
   monomersLibraryUpdate?: string | JSON;
 }
 
-function isMouseMainButtonPressed(event: MouseEvent) {
-  return event.button === 0;
-}
-
 let persistentMonomersLibrary: MonomerItemType[] = [];
 let persistentMonomersLibraryParsedJson: IKetMacromoleculesContent | null =
   null;
@@ -669,6 +665,10 @@ export class CoreEditor {
     return trackedDomEvents;
   }
 
+  private isMouseMainButtonPressed(event) {
+    return event?.button === 0;
+  }
+
   private domEventSetup() {
     this.trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
       this.events[eventName] = new DOMSubscription();
@@ -681,7 +681,7 @@ export class CoreEditor {
 
         if (
           ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
-          !isMouseMainButtonPressed(event)
+          !this.isMouseMainButtonPressed(event)
         ) {
           return true;
         }

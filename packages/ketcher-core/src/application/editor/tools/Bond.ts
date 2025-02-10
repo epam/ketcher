@@ -98,12 +98,6 @@ class PolymerBond implements BaseTool {
 
   public mousedown(event) {
     const selectedRenderer = event.target.__data__;
-    if (selectedRenderer instanceof ChemRenderer && !this.isHydrogenBond) {
-      this.editor.events.error.dispatch(
-        'Selected CHEM monomer supports only attachment points for bond creation',
-      );
-      return;
-    }
     if (
       selectedRenderer instanceof BaseMonomerRenderer ||
       selectedRenderer instanceof AttachmentPoint
@@ -467,12 +461,21 @@ class PolymerBond implements BaseTool {
   }
 
   public mouseUpAtom(event) {
+    debugger;
     if (!this.bondRenderer || this.isHydrogenBond) {
       return;
     }
 
     const atomRenderer = event.target.__data__ as AtomRenderer;
     const monomer = this.bondRenderer?.polymerBond.firstMonomer;
+
+    if (monomer.baseRenderer instanceof ChemRenderer && !this.isHydrogenBond) {
+      this.editor.events.error.dispatch(
+        'CHEM monomer to Atom supports only attachment points for bond creation',
+      );
+      return;
+    }
+
     const attachmentPoint =
       monomer.getPotentialAttachmentPointByBond(
         this.bondRenderer?.polymerBond,

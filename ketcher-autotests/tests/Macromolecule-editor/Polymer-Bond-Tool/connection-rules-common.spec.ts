@@ -1,4 +1,7 @@
 /* eslint-disable no-magic-numbers */
+import { Chem } from '@constants/monomers/Chem';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Sugars } from '@constants/monomers/Sugars';
 import { Page, chromium, expect, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -16,25 +19,29 @@ import {
   getKet,
   receiveFileComparisonData,
   getMolfile,
-  delay,
   clickOnCanvas,
   selectMacroBond,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
+  Monomer,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
+  waitForMonomerPreview,
 } from '@utils/macromolecules';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomersPointToPoint,
   pressCancelAtSelectConnectionPointDialog,
   selectLeftConnectionPointAtSelectConnectionPointDialog,
   selectRightConnectionPointAtSelectConnectionPointDialog,
 } from '@utils/macromolecules/polymerBond';
+import { Phosphates } from '@constants/monomers/Phosphates';
+import { Bases } from '@constants/monomers/Bases';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -80,18 +87,12 @@ test.describe('Common connection rules: ', () => {
 
   async function dragBondFromMonomerCenterAwayTo(
     page: Page,
-    monomerName: string,
+    monomer: Monomer,
     x: number,
     y: number,
   ) {
     await selectMacroBond(page, MacroBondTool.SINGLE);
-
-    const monomerLocator = page
-      .getByText(monomerName, { exact: true })
-      .locator('..')
-      .first();
-
-    await monomerLocator.hover();
+    await getMonomerLocator(page, monomer).first().hover();
     await page.mouse.down();
     await waitForRender(page, async () => {
       await page.mouse.move(x, y);
@@ -100,20 +101,13 @@ test.describe('Common connection rules: ', () => {
 
   async function dragBondFromMonomerCenterTo(
     page: Page,
-    leftMonomerName: string,
-    rightMonomerName: string,
+    leftMonomer: Monomer,
+    rightMonomer: Monomer,
   ) {
     await selectMacroBond(page, MacroBondTool.SINGLE);
 
-    const leftMmonomerLocator = page
-      .getByText(leftMonomerName, { exact: true })
-      .locator('..')
-      .first();
-
-    const rightMonomerLocator = page
-      .getByText(rightMonomerName, { exact: true })
-      .locator('..')
-      .first();
+    const leftMmonomerLocator = getMonomerLocator(page, leftMonomer).first();
+    const rightMonomerLocator = getMonomerLocator(page, rightMonomer).first();
 
     await leftMmonomerLocator.hover();
     await page.mouse.down();
@@ -124,15 +118,12 @@ test.describe('Common connection rules: ', () => {
 
   async function hoverMouseOverMonomerNTymes(
     page: Page,
-    monomerName: string,
+    monomer: Monomer,
     n: number,
   ) {
     await selectMacroBond(page, MacroBondTool.SINGLE);
 
-    const monomerLocator = page
-      .getByText(monomerName, { exact: true })
-      .locator('..')
-      .first();
+    const monomerLocator = getMonomerLocator(page, monomer).first();
 
     for (let i = 1; i < n; i = i + 1) {
       await monomerLocator.hover();
@@ -140,40 +131,26 @@ test.describe('Common connection rules: ', () => {
     }
   }
 
-  async function hoverMouseOverMonomer(page: Page, monomerName: string) {
+  async function hoverMouseOverMonomer(page: Page, monomer: Monomer) {
     await selectMacroBond(page, MacroBondTool.SINGLE);
-
-    const monomerLocator = page
-      .getByText(monomerName, { exact: true })
-      .locator('..')
-      .first();
-
-    await monomerLocator.hover();
+    await getMonomerLocator(page, monomer).first().hover();
   }
 
   async function grabSelectionAndMoveTo(
     page: Page,
-    monomerName: string,
+    monomer: Monomer,
     x: number,
     y: number,
   ) {
-    const monomerLocator = page
-      .getByText(monomerName, { exact: true })
-      .locator('..')
-      .first();
-
-    await monomerLocator.hover();
+    await getMonomerLocator(page, monomer).first().hover();
     await page.mouse.down();
     await page.mouse.move(x, y);
     await page.mouse.up();
     await moveMouseAway(page);
   }
 
-  async function eraseMonomer(page: Page, monomerName: string) {
-    const monomerLocator = page
-      .getByText(monomerName, { exact: true })
-      .locator('..')
-      .first();
+  async function eraseMonomer(page: Page, monomer: Monomer) {
+    const monomerLocator = getMonomerLocator(page, monomer).first();
 
     // removing selections
     await clickOnCanvas(page, 100, 100);
@@ -225,35 +202,35 @@ test.describe('Common connection rules: ', () => {
       page,
     );
     // Peptide
-    await dragBondFromMonomerCenterAwayTo(page, 'SMPEG2', 500, 400);
+    await dragBondFromMonomerCenterAwayTo(page, Chem.SMPEG2, 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // CHEM
-    await dragBondFromMonomerCenterAwayTo(page, 'LysiPr', 500, 400);
+    await dragBondFromMonomerCenterAwayTo(page, Peptides.LysiPr, 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Sugar
-    await dragBondFromMonomerCenterAwayTo(page, '12ddR', 500, 400);
+    await dragBondFromMonomerCenterAwayTo(page, Sugars._12ddR, 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Phosphate
-    await dragBondFromMonomerCenterAwayTo(page, 'P', 500, 400);
+    await dragBondFromMonomerCenterAwayTo(page, Phosphates.P, 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Base
-    await dragBondFromMonomerCenterAwayTo(page, 'c7io7n', 500, 400);
+    await dragBondFromMonomerCenterAwayTo(page, Bases.c7io7n, 500, 400);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -275,35 +252,35 @@ test.describe('Common connection rules: ', () => {
       page,
     );
     // Peptide
-    await dragBondFromMonomerCenterTo(page, 'SMPEG2', 'sDBL');
+    await dragBondFromMonomerCenterTo(page, Chem.SMPEG2, Chem.sDBL);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // CHEM
-    await dragBondFromMonomerCenterTo(page, 'LysiPr', 'Hcy');
+    await dragBondFromMonomerCenterTo(page, Peptides.LysiPr, Peptides.Hcy);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Sugar
-    await dragBondFromMonomerCenterTo(page, '12ddR', 'nC62r');
+    await dragBondFromMonomerCenterTo(page, Sugars._12ddR, Sugars.nC62r);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Phosphate
-    await dragBondFromMonomerCenterTo(page, 'P', 'mn');
+    await dragBondFromMonomerCenterTo(page, Phosphates.P, Phosphates.mn);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     await page.mouse.up();
     // Base
-    await dragBondFromMonomerCenterTo(page, 'c7io7n', 'nC6n5U');
+    await dragBondFromMonomerCenterTo(page, Bases.c7io7n, Bases.nC6n5U);
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -327,27 +304,27 @@ test.describe('Common connection rules: ', () => {
     await selectSnakeLayoutModeTool(page);
 
     // Peptide
-    await hoverMouseOverMonomerNTymes(page, 'sDBL', 10);
+    await hoverMouseOverMonomerNTymes(page, Chem.sDBL, 10);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     // CHEM
-    await hoverMouseOverMonomerNTymes(page, 'Hcy', 10);
+    await hoverMouseOverMonomerNTymes(page, Peptides.Hcy, 10);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     // Sugar
-    await hoverMouseOverMonomerNTymes(page, 'nC62r', 10);
+    await hoverMouseOverMonomerNTymes(page, Sugars.nC62r, 10);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     // Phosphate
-    await hoverMouseOverMonomerNTymes(page, 'mn', 10);
+    await hoverMouseOverMonomerNTymes(page, Phosphates.mn, 10);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
     // Base
-    await hoverMouseOverMonomerNTymes(page, 'nC6n5U', 10);
+    await hoverMouseOverMonomerNTymes(page, Bases.nC6n5U, 10);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
@@ -373,7 +350,7 @@ test.describe('Common connection rules: ', () => {
 
     // Check that 4 connected by Bond A6OH monomers can moving after using Rectangle Selection
     await selectRectangleArea(page, 100, 100, 800, 800);
-    await grabSelectionAndMoveTo(page, 'A6OH', 200, 200);
+    await grabSelectionAndMoveTo(page, Chem.A6OH, 200, 200);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
@@ -389,7 +366,7 @@ test.describe('Common connection rules: ', () => {
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Erase
-    await eraseMonomer(page, 'A6OH');
+    await eraseMonomer(page, Chem.A6OH);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
     });
@@ -403,18 +380,11 @@ test.describe('Common connection rules: ', () => {
 
   async function bondTwoMonomersByCenterToCenterByNames(
     page: Page,
-    leftMonomerName: string,
-    rightMonomerName: string,
+    leftMonomer: Monomer,
+    rightMonomer: Monomer,
   ) {
-    const leftMonomerLocator = page
-      .getByText(leftMonomerName)
-      .locator('..')
-      .first();
-
-    const rightMonomerLocator =
-      (await page.getByText(leftMonomerName).count()) > 1
-        ? page.getByText(rightMonomerName).nth(1).locator('..').first()
-        : page.getByText(rightMonomerName).locator('..').first();
+    const leftMonomerLocator = getMonomerLocator(page, leftMonomer).first();
+    const rightMonomerLocator = getMonomerLocator(page, rightMonomer).first();
 
     await bondTwoMonomersPointToPoint(
       page,
@@ -442,8 +412,8 @@ test.describe('Common connection rules: ', () => {
 
     await bondTwoMonomersByCenterToCenterByNames(
       page,
-      'Test-6-Ch',
-      'Test-6-Ph',
+      Chem.Test_6_Ch,
+      Phosphates.Test_6_Ph,
     );
     // Case 8-9
     await page.getByTitle('expand window').click();
@@ -476,7 +446,7 @@ test.describe('Common connection rules: ', () => {
   //     .getByText('Test-6-Ch')
   //     .locator('..')
   //     .first();
-  //   const rightMonomerLocator = page.getByText('F1').locator('..').first();
+  //   const rightMonomerLocator = getMonomerLocator(page, Chem.F1).first();
   //   await bondTwoMonomersPointToPoint(
   //     page,
   //     leftMonomerLocator,
@@ -511,8 +481,8 @@ test.describe('Common connection rules: ', () => {
       page,
     );
 
-    await hoverMouseOverMonomer(page, 'C');
-    await delay(1);
+    await hoverMouseOverMonomer(page, Peptides.C);
+    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
@@ -529,7 +499,7 @@ test.describe('Common connection rules: ', () => {
       page,
     );
     await turnOnMicromoleculesEditor(page);
-    await page.getByText('C', { exact: true }).locator('..').first().hover();
+    await page.getByText('C', { exact: true }).first().hover();
     await waitForMonomerPreviewMicro(page);
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
@@ -549,8 +519,8 @@ test.describe('Common connection rules: ', () => {
     );
     await bondTwoMonomersByCenterToCenterByNames(
       page,
-      'Test-6-Ch',
-      'Test-6-Ph',
+      Chem.Test_6_Ch,
+      Phosphates.Test_6_Ph,
     );
 
     const connectionPoints = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6'];

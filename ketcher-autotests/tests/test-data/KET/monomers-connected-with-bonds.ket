@@ -577,6 +577,7 @@
                 ]
             }
         ],
+        "class": "Phosphate",
         "classHELM": "RNA",
         "id": "P___Phosphate",
         "fullName": "Phosphate",

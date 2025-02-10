@@ -201,12 +201,10 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     rightMonomer: IMonomer,
   ): Promise<{ leftMonomer: Locator; rightMonomer: Locator }> {
     await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
-    const leftMonomerLocator = (
-      await getMonomerLocator(page, {
-        monomerAlias: leftMonomer.alias,
-        monomerType: leftMonomer.monomerType,
-      })
-    ).first();
+    const leftMonomerLocator = getMonomerLocator(page, {
+      monomerAlias: leftMonomer.alias,
+      monomerType: leftMonomer.monomerType,
+    }).first();
 
     await leftMonomerLocator.hover({ force: true });
 
@@ -214,7 +212,7 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     await moveMouseAway(page);
 
     await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
-    const tmpMonomerLocator = await getMonomerLocator(page, {
+    const tmpMonomerLocator = getMonomerLocator(page, {
       monomerAlias: rightMonomer.alias,
       monomerType: rightMonomer.monomerType,
     });
@@ -1049,11 +1047,11 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
 
   async function loadMonomer(page: Page, leftMonomer: IMonomer) {
     await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
-    const canvasLocator = page.getByTestId('ketcher-canvas').first();
-    const leftMonomerLocator = canvasLocator
-      .locator(`text=${leftMonomer.alias}`)
-      .locator('..')
-      .first();
+
+    const leftMonomerLocator = getMonomerLocator(page, {
+      monomerAlias: leftMonomer.alias,
+    }).first();
+
     await leftMonomerLocator.hover({ force: true });
     await dragMouseTo(300, 380, page);
     await moveMouseAway(page);
@@ -1070,10 +1068,9 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     rightMolecule: IMolecule,
     atomIndex: number,
   ) {
-    const leftPeptideLocator = page
-      .getByText(leftPeptide.alias, { exact: true })
-      .locator('..')
-      .first();
+    const leftPeptideLocator = getMonomerLocator(page, {
+      monomerAlias: leftPeptide.alias,
+    }).first();
 
     const rightMoleculeLocator = page
       .getByTestId('ketcher-canvas')
@@ -1096,10 +1093,9 @@ test.describe('Connection rules for Phosphate monomers: ', () => {
     attachmentPoint: string,
     atomIndex: number,
   ) {
-    const leftPeptideLocator = page
-      .getByText(leftPeptide.alias, { exact: true })
-      .locator('..')
-      .first();
+    const leftPeptideLocator = getMonomerLocator(page, {
+      monomerAlias: leftPeptide.alias,
+    }).first();
 
     const rightMoleculeLocator = page
       .getByTestId('ketcher-canvas')

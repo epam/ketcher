@@ -464,7 +464,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private get isSideChainLikeBackbone() {
     return (
       !this.polymerBond.isSideChainConnection &&
-      this.polymerBond.isCyclicOverlappingBond
+      this.polymerBond.isOverlappedByMonomer
     );
   }
 

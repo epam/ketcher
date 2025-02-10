@@ -36,10 +36,14 @@ export enum AttachmentPointName {
   HYDROGEN = 'hydrogen',
 }
 
-export type MonomerItemType = {
+export type MonomerItemBase = {
   label: string;
-  colorScheme?: MonomerColorScheme;
+  isAmbiguous?: boolean;
   favorite?: boolean;
+};
+
+export type MonomerItemType = MonomerItemBase & {
+  colorScheme?: MonomerColorScheme;
   struct: Struct;
   props: {
     id?: string;
@@ -59,20 +63,17 @@ export type MonomerItemType = {
   };
   attachmentPoints?: IKetAttachmentPoint[];
   seqId?: number;
-  isAmbiguous?: boolean;
   isAntisense?: boolean;
   isSense?: boolean;
 };
 
-export type AmbiguousMonomerType = {
+export type AmbiguousMonomerType = MonomerItemBase & {
   id: string;
   monomers: BaseMonomer[];
   subtype: KetAmbiguousMonomerTemplateSubType;
-  label: string;
   options: KetAmbiguousMonomerTemplateOption[];
   idtAliases?: IKetIdtAliases;
   isAmbiguous: true;
-  favorite?: boolean;
 };
 
 export type MonomerOrAmbiguousType = MonomerItemType | AmbiguousMonomerType;

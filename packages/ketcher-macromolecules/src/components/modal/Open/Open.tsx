@@ -194,7 +194,7 @@ const addToCanvas = ({
     }
   }
 
-  editor.drawingEntitiesManager.detectCycles();
+  editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
 
   editor.renderersContainer.update(modelChanges);
   editorHistory.update(modelChanges);

@@ -26,6 +26,14 @@ export class Nucleotide {
     public phosphate: Phosphate,
   ) {}
 
+  toString() {
+    return (
+      `sugar: ${this.sugar.constructor.name}, ` +
+      `rnaBase: ${this.rnaBase.constructor.name}, ` +
+      `phosphate: ${this.phosphate.constructor.name}`
+    );
+  }
+
   static fromSugar(sugar: Sugar, needValidation = true) {
     if (needValidation) {
       assert(

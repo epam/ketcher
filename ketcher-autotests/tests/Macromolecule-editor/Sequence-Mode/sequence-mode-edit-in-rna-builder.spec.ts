@@ -24,7 +24,9 @@ import {
 import { SUGAR } from '@constants/testIdConstants';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import { pressSaveButton } from '@utils/macromolecules/rnaBuilder';
-import { Bases, Phosphates, Sugars } from '@constants/monomers';
+import { Sugars } from '@constants/monomers/Sugars';
+import { Phosphates } from '@constants/monomers/Phosphates';
+import { Bases } from '@constants/monomers/Bases';
 
 test.describe('Sequence mode edit in RNA Builder', () => {
   test.beforeEach(async ({ page }) => {

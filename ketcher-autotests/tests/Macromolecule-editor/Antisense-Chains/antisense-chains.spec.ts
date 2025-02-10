@@ -31,16 +31,14 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
-import {
-  getMonomerLocator,
-  getMonomerLocatorByAlias,
-} from '@utils/macromolecules/monomer';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   verifyFileExport,
   FileType,
   verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { Sugars } from '@constants/monomers/Sugars';
 
 let page: Page;
 
@@ -2839,7 +2837,7 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
   await createAntisenseStrandOption.click();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  const sugarRs = await getMonomerLocatorByAlias(page, 'R');
+  const sugarRs = getMonomerLocator(page, Sugars.R);
 
   await selectRectangleSelectionTool(page);
   await sugarRs.nth(2).click();
@@ -3089,8 +3087,8 @@ test(`18. Flipping checks`, async () => {
 
   await bondTwoMonomers(
     page,
-    await getMonomerLocator(page, { monomerAlias: 'Ssp' }),
-    await getMonomerLocator(page, { monomerAlias: 'RSpabC' }),
+    getMonomerLocator(page, { monomerAlias: 'Ssp' }),
+    getMonomerLocator(page, { monomerAlias: 'RSpabC' }),
   );
 
   await selectFlexLayoutModeTool(page);

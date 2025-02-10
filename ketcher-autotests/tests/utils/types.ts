@@ -21,3 +21,8 @@ export enum MacroBondType {
   Single = 'covalent',
   Hydrogen = 'hydrogen',
 }
+
+export interface Monomer {
+  alias: string;
+  testId: string;
+}

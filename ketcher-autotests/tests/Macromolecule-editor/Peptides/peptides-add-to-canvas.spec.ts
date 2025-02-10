@@ -13,7 +13,7 @@ import {
   waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { Peptides } from '@constants/monomers';
+import { Peptides } from '@constants/monomers/Peptides';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor

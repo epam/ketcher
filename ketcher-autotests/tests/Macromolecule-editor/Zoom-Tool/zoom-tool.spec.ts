@@ -1,3 +1,4 @@
+import { Peptides } from '@constants/monomers/Peptides';
 import { Locator, test, Page, chromium } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -65,8 +66,6 @@ test.afterAll(async ({ browser }) => {
   // await browser.close();
 });
 
-const MONOMER_NAME_TZA = 'C___Cysteine';
-const MONOMER_ALIAS_TZA = 'C';
 const ZOOM_STEP = 200;
 test.describe('Zoom Tool', () => {
   const deltas = { x: 0, y: 200 };
@@ -77,8 +76,7 @@ test.describe('Zoom Tool', () => {
     // await turnOnMacromoleculesEditor(page);
     peptide = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME_TZA,
-      MONOMER_ALIAS_TZA,
+      Peptides.C,
       peptideCoordinates.x,
       peptideCoordinates.y,
       0,

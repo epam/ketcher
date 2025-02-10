@@ -310,11 +310,9 @@ for (const leftMonomer of shortMonomerList) {
       } else {
         leftMonomerAlias = leftMonomer.alias;
       }
-      const leftMonomerLocator = (
-        await getMonomerLocator(page, {
-          monomerAlias: leftMonomerAlias,
-        })
-      ).first();
+      const leftMonomerLocator = getMonomerLocator(page, {
+        monomerAlias: leftMonomerAlias,
+      }).first();
       await loadMonomerOnCanvas(page, rightMonomer);
       let rightMonomerAlias;
       if (rightMonomer.type === 'Nucleoside') {
@@ -324,22 +322,15 @@ for (const leftMonomer of shortMonomerList) {
       } else {
         rightMonomerAlias = rightMonomer.alias;
       }
+
+      const rightMonomerLocators = getMonomerLocator(page, {
+        monomerAlias: rightMonomerAlias,
+      });
+
       const rightMonomerLocator =
-        (await (
-          await getMonomerLocator(page, {
-            monomerAlias: rightMonomerAlias,
-          })
-        ).count()) > 1
-          ? (
-              await getMonomerLocator(page, {
-                monomerAlias: rightMonomerAlias,
-              })
-            ).nth(1)
-          : (
-              await getMonomerLocator(page, {
-                monomerAlias: rightMonomerAlias,
-              })
-            ).first();
+        (await rightMonomerLocators.count()) > 1
+          ? rightMonomerLocators.nth(1)
+          : rightMonomerLocators.nth(0);
 
       await bondTwoMonomers(
         page,
@@ -494,29 +485,19 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
 
       await loadMonomerOnCanvas(page, leftMonomer);
 
-      const leftMonomerLocator = (
-        await getMonomerLocator(page, {
-          monomerAlias: leftMonomer.alias,
-        })
-      ).first();
+      const leftMonomerLocator = getMonomerLocator(page, {
+        monomerAlias: leftMonomer.alias,
+      }).first();
       await loadMonomerOnCanvas(page, rightMonomer);
 
+      const rightMonomerLocators = getMonomerLocator(page, {
+        monomerAlias: rightMonomer.alias,
+      });
+
       const rightMonomerLocator =
-        (await (
-          await getMonomerLocator(page, {
-            monomerAlias: rightMonomer.alias,
-          })
-        ).count()) > 1
-          ? (
-              await getMonomerLocator(page, {
-                monomerAlias: rightMonomer.alias,
-              })
-            ).nth(1)
-          : (
-              await getMonomerLocator(page, {
-                monomerAlias: rightMonomer.alias,
-              })
-            ).first();
+        (await rightMonomerLocators.count()) > 1
+          ? rightMonomerLocators.nth(1)
+          : rightMonomerLocators.nth(0);
 
       await bondTwoMonomers(
         page,
@@ -564,8 +545,8 @@ test(`3. Check that shorter chain (fewer monomers) should get "flipped", and if 
 
   await bondTwoMonomers(
     page,
-    await getMonomerLocator(page, { monomerAlias: 'A' }),
-    await getMonomerLocator(page, { monomerAlias: 'U' }),
+    getMonomerLocator(page, { monomerAlias: 'A' }),
+    getMonomerLocator(page, { monomerAlias: 'U' }),
     undefined,
     undefined,
     MacroBondTool.HYDROGEN,
@@ -613,8 +594,8 @@ test(`4. For R3-R1 sugar-base side connections (when the base does not have hydr
 
   await bondTwoMonomers(
     page,
-    await getMonomerLocator(page, { monomerAlias: 'A' }),
-    await getMonomerLocator(page, { monomerAlias: 'U' }),
+    getMonomerLocator(page, { monomerAlias: 'A' }),
+    getMonomerLocator(page, { monomerAlias: 'U' }),
     undefined,
     undefined,
     MacroBondTool.HYDROGEN,
@@ -810,29 +791,20 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
 
       await loadMonomerOnCanvas(page, leftMonomer);
 
-      const leftMonomerLocator = (
-        await getMonomerLocator(page, {
-          monomerAlias: leftMonomer.alias,
-        })
-      ).first();
+      const leftMonomerLocator = getMonomerLocator(page, {
+        monomerAlias: leftMonomer.alias,
+      }).first();
+
       await loadMonomerOnCanvas(page, rightMonomer);
 
+      const rightMonomerLocators = getMonomerLocator(page, {
+        monomerAlias: rightMonomer.alias,
+      });
+
       const rightMonomerLocator =
-        (await (
-          await getMonomerLocator(page, {
-            monomerAlias: rightMonomer.alias,
-          })
-        ).count()) > 1
-          ? (
-              await getMonomerLocator(page, {
-                monomerAlias: rightMonomer.alias,
-              })
-            ).nth(1)
-          : (
-              await getMonomerLocator(page, {
-                monomerAlias: rightMonomer.alias,
-              })
-            ).first();
+        (await rightMonomerLocators.count()) > 1
+          ? rightMonomerLocators.nth(1)
+          : rightMonomerLocators.nth(0);
 
       await bondTwoMonomers(
         page,
@@ -880,11 +852,9 @@ for (const leftMonomer of shortMonomerList) {
         } else {
           leftMonomerAlias = leftMonomer.alias;
         }
-        const leftMonomerLocator = (
-          await getMonomerLocator(page, {
-            monomerAlias: leftMonomerAlias,
-          })
-        ).first();
+        const leftMonomerLocator = getMonomerLocator(page, {
+          monomerAlias: leftMonomerAlias,
+        }).first();
         await loadMonomerOnCanvas(page, rightMonomer);
         let rightMonomerAlias;
         if (rightMonomer.type === 'Nucleoside') {
@@ -894,22 +864,15 @@ for (const leftMonomer of shortMonomerList) {
         } else {
           rightMonomerAlias = rightMonomer.alias;
         }
+
+        const rightMonomerLocators = getMonomerLocator(page, {
+          monomerAlias: rightMonomerAlias,
+        });
+
         const rightMonomerLocator =
-          (await (
-            await getMonomerLocator(page, {
-              monomerAlias: rightMonomerAlias,
-            })
-          ).count()) > 1
-            ? (
-                await getMonomerLocator(page, {
-                  monomerAlias: rightMonomerAlias,
-                })
-              ).nth(1)
-            : (
-                await getMonomerLocator(page, {
-                  monomerAlias: rightMonomerAlias,
-                })
-              ).first();
+          (await rightMonomerLocators.count()) > 1
+            ? rightMonomerLocators.nth(1)
+            : rightMonomerLocators.nth(0);
 
         await bondTwoMonomers(
           page,

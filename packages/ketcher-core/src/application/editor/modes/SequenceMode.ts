@@ -881,8 +881,8 @@ export class SequenceMode extends BaseMode {
       if (
         nodeBeforeSelection === nodeInSameChainBeforeSelection &&
         nodeBeforeSelection instanceof Nucleotide &&
-        !(nodeInSameChainAfterSelection instanceof Nucleotide) &&
-        !(nodeInSameChainAfterSelection instanceof Nucleoside)
+        selectionStartNode instanceof Nucleoside &&
+        (!nodeAfterSelection || nodeAfterSelection instanceof EmptySequenceNode)
       ) {
         // delete phosphate from last nucleotide
         modelChanges.merge(

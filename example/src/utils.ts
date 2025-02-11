@@ -3,7 +3,7 @@ import {
   StructServiceProvider,
 } from 'ketcher-core';
 
-export function getStructServiceProvider() {
+export async function getStructServiceProvider() {
   let structServiceProvider: StructServiceProvider =
     new RemoteStructServiceProvider(
       process.env.API_PATH || process.env.REACT_APP_API_PATH,

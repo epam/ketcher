@@ -1,9 +1,9 @@
 import 'ketcher-react/dist/index.css';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import { Dialog } from '@mui/material';
-import { Ketcher } from 'ketcher-core';
+import { Ketcher, StructServiceProvider } from 'ketcher-core';
 import { getStructServiceProvider } from './utils';
 
 const getHiddenButtonsConfig = (): ButtonsConfig => {
@@ -19,12 +19,19 @@ const getHiddenButtonsConfig = (): ButtonsConfig => {
   }, {});
 };
 
-const structServiceProvider = getStructServiceProvider();
-
 const PopupApp = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig();
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const [structServiceProvider, setStructServiceProvider] =
+    useState<StructServiceProvider | null>(null);
+  useEffect(() => {
+    getStructServiceProvider().then(setStructServiceProvider);
+  }, []);
+  if (!structServiceProvider) {
+    return <div>Loading...</div>;
+  }
 
   setTimeout(() => {
     document

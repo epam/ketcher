@@ -1,54 +1,27 @@
 @import 'normalize.css';
 
 body {
-    margin: 0;
-    padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
 
 #root {
-    height: 100%;
-    width: 100%;
+  height: 100%;
+  width: 100%;
 }
 
 html,
 body {
-    height: 100%;
-    width: 100%;
-}
-
-.MuiPaper-root.ketcher-dialog {
-    align-self: center;
-    width: 57rem;
-    height: 40rem;
-    z-index: 1002;
-    max-height: calc(100vh - 4.28571rem);
-    max-width: calc(100vw - 4.28571rem);
-    min-height: 19rem;
-    min-width: 19rem;
-}
-
-.container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.box {
-    min-width: 450px;
-    min-height: 350px;
-    flex-grow: 1;
-    margin: 20px;
-    box-shadow: 1px 4px 12px rgba(103, 104, 132, 0.18);
+  height: 100%;
+  width: 100%;
 }

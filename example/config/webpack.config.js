@@ -6,7 +6,6 @@ const {
   addWebpackResolve,
 } = require('customize-cra');
 const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlReplaceWebpackPlugin = require('html-replace-webpack-plugin');
 const GitRevisionPlugin = require('git-revision-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
@@ -40,51 +39,6 @@ module.exports = override(
       },
     ]),
   ),
-  addWebpackPlugin(
-    new CopyPlugin({
-      patterns: [
-        // {
-        //   from: '../node_modules/ketcher-standalone/**/*.wasm',
-        //   to: '[name][ext]',
-        // },
-        {
-          from: 'serve.json',
-          to: '.',
-        },
-      ],
-    }),
-  ),
-  (config) => {
-    config.plugins = config.plugins.filter(
-      (plugin) => !(plugin instanceof HtmlWebpackPlugin),
-    );
-    config.plugins.push(
-      new HtmlWebpackPlugin({
-        filename: 'index.html',
-        template: 'public/index.html',
-        chunks: ['main'],
-        inject: true,
-      }),
-      new HtmlWebpackPlugin({
-        filename: 'popup.html',
-        template: 'public/popup.html',
-        chunks: ['popup'],
-        inject: true,
-      }),
-      new HtmlWebpackPlugin({
-        filename: 'duo.html',
-        template: 'public/duo.html',
-        chunks: ['duo'],
-        inject: true,
-      }),
-    );
-    config.entry = {
-      main: './src/index.tsx',
-      popup: './src/popupIndex.tsx',
-      duo: './src/duoIndex.tsx',
-    };
-    return config;
-  },
 );
 
 module.exports.envVariables = envVariables;

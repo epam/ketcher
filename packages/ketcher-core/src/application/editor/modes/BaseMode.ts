@@ -250,6 +250,8 @@ export abstract class BaseMode {
     if (!modelChanges || modelChanges.operations.length === 0) {
       return;
     }
+
+    editor.drawingEntitiesManager.detectBondsOverlappedByMonomers();
     editor.renderersContainer.update(modelChanges);
     new EditorHistory(editor).update(modelChanges);
     this.scrollForView();

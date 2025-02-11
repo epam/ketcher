@@ -781,6 +781,60 @@ export class SequenceMode extends BaseMode {
           ? potentialNodeInSameChainAfterSelection.secondConnectedNode
           : potentialNodeInSameChainAfterSelection;
 
+      // Сase delete A (for sense) and empty node (for antisense) in sync mode:
+      // G | A | G
+      // C |   | C
+      // Antisense should not create bond between C and C
+      if (
+        strandType === STRAND_TYPE.ANTISENSE &&
+        ((selectionStartNode instanceof EmptySequenceNode &&
+          !(
+            selectionStartTwoStrandedNode.senseNode instanceof
+            BackBoneSequenceNode
+          )) ||
+          (selectionEndNode instanceof EmptySequenceNode &&
+            !(
+              selectionEndTwoStrandedNode.senseNode instanceof
+              BackBoneSequenceNode
+            )))
+      ) {
+        return;
+      }
+
+      // Сase delete - (for sense) and empty node (for antisense) in sync mode:
+      // G | - | G
+      // C |   | C
+      // Sense should not create bond between G and G. Chain should be broken into two parts.
+      if (
+        (selectionStartTwoStrandedNode.senseNode instanceof
+          BackBoneSequenceNode &&
+          selectionStartTwoStrandedNode.antisenseNode instanceof
+            EmptySequenceNode) ||
+        (selectionEndTwoStrandedNode.senseNode instanceof
+          BackBoneSequenceNode &&
+          selectionEndTwoStrandedNode.antisenseNode instanceof
+            EmptySequenceNode)
+      ) {
+        const backBoneSequenceNode =
+          selectionStartTwoStrandedNode.senseNode instanceof
+          BackBoneSequenceNode
+            ? selectionStartTwoStrandedNode.senseNode
+            : (selectionEndTwoStrandedNode.senseNode as BackBoneSequenceNode);
+        const polymerBondToDelete =
+          backBoneSequenceNode.firstConnectedNode.lastMonomerInNode
+            .attachmentPointsToBonds.R2;
+
+        if (polymerBondToDelete instanceof PolymerBond) {
+          modelChanges.merge(
+            editor.drawingEntitiesManager.deletePolymerBond(
+              polymerBondToDelete,
+            ),
+          );
+        }
+
+        return;
+      }
+
       if (
         selectionStartNode instanceof BackBoneSequenceNode ||
         selectionEndNode instanceof BackBoneSequenceNode
@@ -895,15 +949,14 @@ export class SequenceMode extends BaseMode {
           ],
         ];
 
-        if (
-          nodeToDelete.senseNode &&
-          !(nodeToDelete.senseNode instanceof BackBoneSequenceNode)
-        ) {
-          nodeToDelete.senseNode.monomers.forEach((monomer) => {
-            modelChanges.merge(
-              editor.drawingEntitiesManager.deleteMonomer(monomer),
-            );
-          });
+        if (nodeToDelete.senseNode) {
+          if (!(nodeToDelete.senseNode instanceof BackBoneSequenceNode)) {
+            nodeToDelete.senseNode.monomers.forEach((monomer) => {
+              modelChanges.merge(
+                editor.drawingEntitiesManager.deleteMonomer(monomer),
+              );
+            });
+          }
 
           modelChanges.merge(
             this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.SENSE),

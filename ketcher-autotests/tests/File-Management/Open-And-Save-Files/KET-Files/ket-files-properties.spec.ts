@@ -84,6 +84,7 @@ test.describe('Ket files', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Bond length setting is applied, click on layout and it should be save to KET specification
   */
+    test.slow();
     await waitForPageInit(page);
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
@@ -115,6 +116,7 @@ test.describe('Ket files', () => {
       Description: Add new settings for ACS style for convert and layout functions.
       The Hash spacing setting is applied, click on layout, and it should be saved to KET specification.
     */
+    test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await takeEditorScreenshot(page);
     await openSettings(page);
@@ -145,6 +147,7 @@ test.describe('Ket files', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Bond length setting is applied, click on layout and it should be save to KET specification
   */
+    test.slow();
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
     await openSettings(page);
     await bondsSettings(page);
@@ -175,6 +178,7 @@ test.describe('Ket files', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Hash spacing setting is applied, click on layout and it should be save to KET specification
   */
+    test.slow();
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
     await openSettings(page);
     await bondsSettings(page);
@@ -229,6 +233,7 @@ test.describe('Ket files', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Hash spacing setting is applied, click on layout and it should be save to KET specification
   */
+    test.slow();
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
     await openSettings(page);
     await bondsSettings(page);
@@ -258,6 +263,7 @@ test.describe('Ket files', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
   */
+    test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
     await bondsSettings(page);

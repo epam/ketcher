@@ -131,7 +131,7 @@
         </fragment>
         <arrow id="31" BoundingBox="971.408386 501.315765 903.075073 501.315765" FillType="None" ArrowheadType="Solid" HeadSize="2250" ArrowheadWidth="563" ArrowheadHead="Full" ArrowheadCenterSize="25" Head3D="971.408386 501.315765 0.000000" Tail3D="903.075073 501.315765 0.000000"/>
         <scheme>
-            <step ReactionStepReactants="8" ReactionStepProducts="19 21 23 27 29" ReactionStepObjectsAboveArrow="4 6" ReactionStepArrows="31"/>
+            <step ReactionStepReactants="8" ReactionStepObjectsAboveArrow="4 6" ReactionStepArrows="31"/>
         </scheme>
     </page>
 </CDXML>

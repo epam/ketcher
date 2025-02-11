@@ -122,8 +122,6 @@ test.describe('Saving in .svg files', () => {
     /*
   Test case: https://github.com/epam/ketcher/issues/5156
   Description: add new option ACS style and check saving to different format
-  Need to update screenshots after implementing https://github.com/epam/ketcher/issues/5650 and 
-  https://github.com/epam/Indigo/issues/2458
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
     await openSettings(page);

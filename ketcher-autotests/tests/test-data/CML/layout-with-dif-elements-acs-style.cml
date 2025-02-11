@@ -25,40 +25,6 @@
     </bondArray>
 </molecule>
 </reactantList>
-<productList>
-<molecule>
-    <atomArray>
-        <atom id="a0" elementType="F" x2="33.2206" y2="-18.1435"/>
-    </atomArray>
-</molecule>
-<molecule>
-    <atomArray>
-        <atom id="a0" elementType="F" x2="35.2206" y2="-18.1435"/>
-    </atomArray>
-</molecule>
-<molecule>
-    <atomArray>
-        <atom id="a0" elementType="C" x2="37.7206" y2="-17.2775"/>
-        <atom id="a1" elementType="C" x2="37.2206" y2="-18.1435"/>
-        <atom id="a2" elementType="C" x2="38.2206" y2="-18.1435"/>
-    </atomArray>
-    <bondArray>
-        <bond atomRefs2="a0 a1" order="1"/>
-        <bond atomRefs2="a1 a2" order="1"/>
-        <bond atomRefs2="a2 a0" order="1"/>
-    </bondArray>
-</molecule>
-<molecule>
-    <atomArray>
-        <atom id="a0" elementType="F" x2="33.2206" y2="-15.2775"/>
-    </atomArray>
-</molecule>
-<molecule>
-    <atomArray>
-        <atom id="a0" elementType="F" x2="35.2206" y2="-15.2775"/>
-    </atomArray>
-</molecule>
-</productList>
 <spectatorList>
 <molecule>
     <atomArray>

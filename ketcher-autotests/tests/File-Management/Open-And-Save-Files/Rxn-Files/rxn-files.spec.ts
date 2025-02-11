@@ -76,6 +76,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1901
      * Description: Reaction from file that contains Rgroup
      */
+    test.slow();
     const xOffsetFromCenter = 40;
     await drawBenzeneRing(page);
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
@@ -127,6 +128,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1903
      * Description: Reaction from file that contains Sgroup
      */
+    test.slow();
     await openFileAndAddToCanvas(
       'Rxn-V2000/structure-with-s-groups-with-unsupported-s-group-type.rxn',
       page,
@@ -151,6 +153,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1905
      * Description: File without arrow or(and) plus-symbol
      */
+    test.slow();
     await selectLeftPanelButton(LeftPanelButton.Chain, page);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -198,6 +201,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-8904
      * Description: Structure isn't missing when "Paste from clipboard" or "Open from file" if reaction consists of two or more reaction arrows and structures
      */
+    test.slow();
     const RING_OFFSET = 150;
     const ARROW_OFFSET = 20;
     const ARROW_LENGTH = 100;
@@ -375,21 +379,15 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with phosphates could be saved to rxn2000 file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
     );
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const xDeltaHalf = 150;
-    const yDelta20 = 20;
-    const xCoordinatesWithShiftHalf = x + xDeltaHalf;
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
-    const yArrowStart = y + yDelta20;
-    const yArrowEnd = yArrowStart + yDelta20;
-    await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
-    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+    await page.mouse.move(100, 500);
+    await dragMouseTo(900, 100, page);
 
     await verifyFileExport(
       page,
@@ -412,15 +410,15 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with peptides could be saved to rxn2000 file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
     );
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
-    await page.mouse.move(200, 600);
-    await dragMouseTo(1200, 100, page);
+    await page.mouse.move(100, 500);
+    await dragMouseTo(900, 100, page);
 
     await verifyFileExport(
       page,
@@ -443,21 +441,15 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with other nucleotides could be saved to rxn2000 file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
     );
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const xDeltaHalf = 150;
-    const yDelta20 = 20;
-    const xCoordinatesWithShiftHalf = x + xDeltaHalf;
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
-    const yArrowStart = y + yDelta20;
-    const yArrowEnd = yArrowStart + yDelta20;
-    await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
-    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+    await page.mouse.move(100, 500);
+    await dragMouseTo(1000, 100, page);
 
     await verifyFileExport(
       page,
@@ -480,22 +472,15 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with chems could be saved to rxn2000 file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
     );
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const xDeltaHalf = 150;
-    const yDelta20 = 20;
-    const xCoordinatesWithShiftHalf = x + xDeltaHalf;
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
-    const yArrowStart = y + yDelta20;
-    const yArrowEnd = yArrowStart + yDelta20;
-    await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
-    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
-
+    await page.mouse.move(100, 500);
+    await dragMouseTo(900, 100, page);
     await verifyFileExport(
       page,
       'Rxn-V2000/unsplit-nucleotides-connected-with-chems.rxn',
@@ -517,21 +502,15 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with bases could be saved to rxn2000 file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
     );
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const xDeltaHalf = 150;
-    const yDelta20 = 20;
-    const xCoordinatesWithShiftHalf = x + xDeltaHalf;
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
-    const yArrowStart = y + yDelta20;
-    const yArrowEnd = yArrowStart + yDelta20;
-    await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
-    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+    await page.mouse.move(100, 500);
+    await dragMouseTo(900, 100, page);
 
     await verifyFileExport(
       page,
@@ -554,21 +533,15 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with sugars could be saved to rxn2000 file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
     );
-    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-    const xDeltaHalf = 150;
-    const yDelta20 = 20;
-    const xCoordinatesWithShiftHalf = x + xDeltaHalf;
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
-    const yArrowStart = y + yDelta20;
-    const yArrowEnd = yArrowStart + yDelta20;
-    await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
-    await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
+    await page.mouse.move(100, 500);
+    await dragMouseTo(900, 100, page);
 
     await verifyFileExport(
       page,

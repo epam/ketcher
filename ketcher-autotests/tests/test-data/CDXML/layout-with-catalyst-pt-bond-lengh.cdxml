@@ -18,102 +18,102 @@
     </colortable>
     <page HeightPages="1" WidthPages="1">
         <fragment id="4">
-            <n id="5" Element="7" NumHydrogens="0" p="119.074059 72.234489">
-                <t p="119.074059 72.234489" LabelJustification="Left">
-                    <s font="3" size="10" face="96">N</s>
-                </t>
-            </n>
-            <n id="6" Element="7" NumHydrogens="0" p="93.093277 117.234489">
-                <t p="93.093277 117.234489" LabelJustification="Left">
-                    <s font="3" size="10" face="96">N</s>
-                </t>
-            </n>
-            <n id="7" Element="7" NumHydrogens="0" p="93.093277 87.234489">
-                <t p="93.093277 87.234489" LabelJustification="Left">
-                    <s font="3" size="10" face="96">N</s>
-                </t>
-            </n>
-            <n id="8" Element="7" NumHydrogens="0" p="119.074059 132.234497">
-                <t p="119.074059 132.234497" LabelJustification="Left">
-                    <s font="3" size="10" face="96">N</s>
-                </t>
-            </n>
-            <n id="9" Element="7" NumHydrogens="0" p="145.054810 87.234489">
-                <t p="145.054810 87.234489" LabelJustification="Left">
-                    <s font="3" size="10" face="96">N</s>
-                </t>
-            </n>
-            <n id="10" Element="7" NumHydrogens="0" p="145.054810 117.234482">
-                <t p="145.054810 117.234482" LabelJustification="Left">
-                    <s font="3" size="10" face="96">N</s>
-                </t>
-            </n>
-            <b id="63" B="7" E="5" Order="2"/>
-            <b id="64" B="5" E="9"/>
-            <b id="65" B="9" E="10" Order="2"/>
-            <b id="66" B="10" E="8"/>
-            <b id="67" B="8" E="6" Order="2"/>
-            <b id="68" B="6" E="7"/>
-        </fragment>
-        <fragment id="11">
-            <n id="12" p="182.765121 79.151863"/>
-            <n id="13" p="167.765121 125.317108"/>
-            <n id="14" p="158.494598 96.785416"/>
-            <n id="15" p="197.765121 125.317123"/>
-            <n id="16" p="207.035629 96.785423"/>
-            <b id="69" B="12" E="16"/>
-            <b id="70" B="16" E="15" Order="2"/>
-            <b id="71" B="15" E="13"/>
-            <b id="72" B="13" E="14" Order="2"/>
-            <b id="73" B="14" E="12"/>
-        </fragment>
-        <fragment id="17">
-            <n id="18" Element="8" NumHydrogens="1" p="-115.651627 140.665161">
+            <n id="5" Element="8" NumHydrogens="1" p="-115.651627 140.665161">
                 <t p="-115.651627 140.665161" LabelJustification="Left">
                     <s font="3" size="10" face="96">OH</s>
                 </t>
             </n>
-            <n id="19" p="-89.670868 155.665161"/>
-            <n id="20" p="-63.690113 140.665146" Geometry="Tetrahedral" BondOrdering="19 28 21 18" EnhancedStereoType="Absolute"/>
-            <n id="21" p="-37.709347 155.665146" Geometry="Tetrahedral" BondOrdering="20 27 22 18" EnhancedStereoType="Absolute"/>
-            <n id="22" p="-11.728579 140.665146" Geometry="Tetrahedral" BondOrdering="21 26 23 18" EnhancedStereoType="Absolute"/>
-            <n id="23" p="14.252176 155.665146"/>
-            <n id="24" p="40.232925 140.665146"/>
-            <n id="25" Element="8" NumHydrogens="0" p="66.213715 155.665146">
+            <n id="6" p="-89.670868 155.665161"/>
+            <n id="7" p="-63.690113 140.665146" Geometry="Tetrahedral" BondOrdering="6 15 8 5" EnhancedStereoType="Absolute"/>
+            <n id="8" p="-37.709347 155.665146" Geometry="Tetrahedral" BondOrdering="7 14 9 5" EnhancedStereoType="Absolute"/>
+            <n id="9" p="-11.728579 140.665146" Geometry="Tetrahedral" BondOrdering="8 13 10 5" EnhancedStereoType="Absolute"/>
+            <n id="10" p="14.252176 155.665146"/>
+            <n id="11" p="40.232925 140.665146"/>
+            <n id="12" Element="8" NumHydrogens="0" p="66.213715 155.665146">
                 <t p="66.213715 155.665146" LabelJustification="Left">
                     <s font="3" size="10" face="96">O</s>
                 </t>
             </n>
-            <n id="26" Element="8" NumHydrogens="1" p="-11.728585 110.665146">
+            <n id="13" Element="8" NumHydrogens="1" p="-11.728585 110.665146">
                 <t p="-11.728585 110.665146" LabelJustification="Left">
                     <s font="3" size="10" face="96">OH</s>
                 </t>
             </n>
-            <n id="27" Element="8" NumHydrogens="1" p="-37.709343 185.665146">
+            <n id="14" Element="8" NumHydrogens="1" p="-37.709343 185.665146">
                 <t p="-37.709343 185.665146" LabelJustification="Left">
                     <s font="3" size="10" face="96">OH</s>
                 </t>
             </n>
-            <n id="28" Element="8" NumHydrogens="1" p="-63.690117 110.665154">
+            <n id="15" Element="8" NumHydrogens="1" p="-63.690117 110.665154">
                 <t p="-63.690117 110.665154" LabelJustification="Left">
                     <s font="3" size="10" face="96">OH</s>
                 </t>
             </n>
-            <b id="74" B="18" E="19"/>
-            <b id="75" B="19" E="20"/>
-            <b id="76" B="20" E="21"/>
-            <b id="77" B="21" E="22"/>
-            <b id="78" B="22" E="23"/>
-            <b id="79" B="24" E="25" Order="2"/>
-            <b id="80" B="23" E="24"/>
-            <b id="81" B="22" E="26" Display="WedgeBegin"/>
-            <b id="82" B="21" E="27" Display="WedgedHashBegin"/>
-            <b id="83" B="20" E="28" Display="WedgeBegin"/>
+            <b id="63" B="5" E="6"/>
+            <b id="64" B="6" E="7"/>
+            <b id="65" B="7" E="8"/>
+            <b id="66" B="8" E="9"/>
+            <b id="67" B="9" E="10"/>
+            <b id="68" B="11" E="12" Order="2"/>
+            <b id="69" B="10" E="11"/>
+            <b id="70" B="9" E="13" Display="WedgeBegin"/>
+            <b id="71" B="8" E="14" Display="WedgedHashBegin"/>
+            <b id="72" B="7" E="15" Display="WedgeBegin"/>
             <graphic BoundingBox="66.213715 110.665146 66.213715 110.665146" GraphicType="Symbol" SymbolType="Absolute" FrameType="None">
                 <t p="66.213715 110.665146" Justification="Center" InterpretChemically="no">
                     <s font="3" size="10" face="96">Chiral</s>
                 </t>
             </graphic>
+        </fragment>
+        <fragment id="16">
+            <n id="17" Element="7" NumHydrogens="0" p="119.074059 72.234489">
+                <t p="119.074059 72.234489" LabelJustification="Left">
+                    <s font="3" size="10" face="96">N</s>
+                </t>
+            </n>
+            <n id="18" Element="7" NumHydrogens="0" p="93.093277 117.234489">
+                <t p="93.093277 117.234489" LabelJustification="Left">
+                    <s font="3" size="10" face="96">N</s>
+                </t>
+            </n>
+            <n id="19" Element="7" NumHydrogens="0" p="93.093277 87.234489">
+                <t p="93.093277 87.234489" LabelJustification="Left">
+                    <s font="3" size="10" face="96">N</s>
+                </t>
+            </n>
+            <n id="20" Element="7" NumHydrogens="0" p="119.074059 132.234497">
+                <t p="119.074059 132.234497" LabelJustification="Left">
+                    <s font="3" size="10" face="96">N</s>
+                </t>
+            </n>
+            <n id="21" Element="7" NumHydrogens="0" p="145.054810 87.234489">
+                <t p="145.054810 87.234489" LabelJustification="Left">
+                    <s font="3" size="10" face="96">N</s>
+                </t>
+            </n>
+            <n id="22" Element="7" NumHydrogens="0" p="145.054810 117.234482">
+                <t p="145.054810 117.234482" LabelJustification="Left">
+                    <s font="3" size="10" face="96">N</s>
+                </t>
+            </n>
+            <b id="73" B="19" E="17" Order="2"/>
+            <b id="74" B="17" E="21"/>
+            <b id="75" B="21" E="22" Order="2"/>
+            <b id="76" B="22" E="20"/>
+            <b id="77" B="20" E="18" Order="2"/>
+            <b id="78" B="18" E="19"/>
+        </fragment>
+        <fragment id="23">
+            <n id="24" p="182.765121 79.151863"/>
+            <n id="25" p="167.765121 125.317108"/>
+            <n id="26" p="158.494598 96.785416"/>
+            <n id="27" p="197.765121 125.317123"/>
+            <n id="28" p="207.035629 96.785423"/>
+            <b id="79" B="24" E="28"/>
+            <b id="80" B="28" E="27" Order="2"/>
+            <b id="81" B="27" E="25"/>
+            <b id="82" B="25" E="26" Order="2"/>
+            <b id="83" B="26" E="24"/>
         </fragment>
         <fragment id="29">
             <n id="30" p="328.219696 177.755188" Geometry="Tetrahedral" BondOrdering="31 39 34 30" EnhancedStereoType="Absolute"/>
@@ -206,7 +206,7 @@
         <arrow id="57" BoundingBox="217.984528 148.165161 79.653496 148.165146" FillType="None" ArrowheadType="Solid" HeadSize="2250" ArrowheadWidth="563" ArrowheadHead="Full" ArrowheadCenterSize="25" Head3D="217.984528 148.165161 0.000000" Tail3D="79.653496 148.165146 0.000000"/>
         <graphic id="60" BoundingBox="436.438934 151.915161 436.438934 144.415161" GraphicType="Symbol" SymbolType="Plus"/>
         <scheme>
-            <step ReactionStepReactants="17" ReactionStepProducts="29 42" ReactionStepObjectsAboveArrow="4 11" ReactionStepArrows="57"/>
+            <step ReactionStepReactants="4" ReactionStepProducts="29 42" ReactionStepObjectsAboveArrow="16 23" ReactionStepArrows="57"/>
         </scheme>
     </page>
 </CDXML>

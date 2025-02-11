@@ -88,6 +88,7 @@
     "@types/node": "^16.11.12",
     "@types/react": "^18.0.25",
     "@types/react-dom": "^18.0.8",
+    "@types/testing-library__jest-dom": "^5.14.2",
     "autoprefixer": "^10.2.5",
     "babel-jest": "^27.4.5",
     "cross-env": "^7.0.3",
@@ -101,6 +102,7 @@
     "jest": "^27.4.5",
     "less": "^3.12.2",
     "npm-run-all": "^4.1.5",
+    "postcss": "^8.2.10",
     "prettier": "^2.5.1",
     "rollup": "^2.79.2",
     "rollup-plugin-cleanup": "^3.2.1",
@@ -109,6 +111,7 @@
     "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-typescript2": "^0.31.1",
     "rollup-plugin-visualizer": "^5.5.2",
+    "stylelint": "13.13.1",
     "ts-jest": "^27.1.2",
     "typescript": "^4.5.2"
   },

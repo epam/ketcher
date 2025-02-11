@@ -1109,6 +1109,21 @@ export class DrawingEntitiesManager {
     return command;
   }
 
+  public hideAllMonomersHoverAndAttachmentPoints() {
+    const command = new Command();
+
+    this.monomers.forEach((monomer) => {
+      monomer.turnOffHover();
+      monomer.turnOffAttachmentPointsVisibility();
+
+      const operation = new MonomerHoverOperation(monomer, true);
+
+      command.addOperation(operation);
+    });
+
+    return command;
+  }
+
   public addRnaPresetFromNode = (
     node: Nucleotide | Nucleoside | LinkerSequenceNode,
   ) => {

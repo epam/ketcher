@@ -146,7 +146,7 @@ class SelectRectangle implements BaseTool {
     const renderer = event.target.__data__;
     const drawingEntitiesToSelect: DrawingEntity[] = [];
     const ModKey = isMacOs ? event.metaKey : event.ctrlKey;
-    let modelChanges: Command;
+    const modelChanges = new Command();
 
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
     this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
@@ -168,8 +168,9 @@ class SelectRectangle implements BaseTool {
       if (renderer.drawingEntity.selected) {
         return;
       }
-      modelChanges =
-        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.unselectAllDrawingEntities(),
+      );
       SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
       const { command: selectModelChanges } =
         this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
@@ -184,10 +185,11 @@ class SelectRectangle implements BaseTool {
         ...this.editor.drawingEntitiesManager.selectedEntitiesArr,
         ...drawingEntitiesToSelect,
       ];
-      ({ command: modelChanges } =
+      const { command: selectModelChanges } =
         this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
           drawingEntities,
-        ));
+        );
+      modelChanges.merge(selectModelChanges);
     } else if (renderer instanceof BaseSequenceItemRenderer && ModKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentChain.nodes
         .map((node) => {
@@ -203,15 +205,21 @@ class SelectRectangle implements BaseTool {
         (bond) => bond.firstMonomer.selected && bond.secondMonomer?.selected,
       );
       drawingEntities = drawingEntities.concat(bondsInsideCurrentChain);
-      modelChanges =
+      modelChanges.merge(
         this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,
-        );
+        ),
+      );
     } else {
-      modelChanges =
-        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.unselectAllDrawingEntities(),
+      );
       SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
     }
+
+    modelChanges.merge(
+      this.editor.drawingEntitiesManager.hideAllMonomersHoverAndAttachmentPoints(),
+    );
     this.editor.renderersContainer.update(modelChanges);
     this.setSelectedEntities();
   }

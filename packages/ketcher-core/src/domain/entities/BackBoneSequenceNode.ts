@@ -37,7 +37,7 @@ export class BackBoneSequenceNode {
   }
 
   public get monomers(): BaseMonomer[] {
-    return [];
+    return [this.monomer];
   }
 
   public setRenderer(renderer) {

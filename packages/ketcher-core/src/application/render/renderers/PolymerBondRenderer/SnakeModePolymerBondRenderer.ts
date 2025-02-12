@@ -34,6 +34,7 @@ import {
   generateCornerFromTopToRight,
   SMOOTH_CORNER_SIZE,
 } from './helpers';
+import { isNumber } from 'lodash';
 
 enum LineDirection {
   Horizontal = 'Horizontal',
@@ -113,6 +114,40 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       startPosition: startPositionInPixels,
       endPosition: endPositionInPixels,
     };
+  }
+
+  public getSideConnectionEndpointAngle(monomer: BaseMonomer): number {
+    const editor = CoreEditor.provideEditorInstance();
+    const matrix = editor.drawingEntitiesManager.canvasMatrix;
+    const cells = matrix?.polymerBondToCells.get(this.polymerBond);
+    const startCellDirection = cells?.[0].connections?.find(
+      (connection) => connection.polymerBond === this.polymerBond,
+    )?.direction;
+    const endCellDirection = cells?.[cells.length - 1].connections?.find(
+      (connection) => connection.polymerBond === this.polymerBond,
+    )?.direction;
+    const startCellMonomer = cells?.[0].monomer;
+    const endpointDirection =
+      monomer === startCellMonomer ? startCellDirection : endCellDirection;
+    const startCellNormalizedDirection = isNumber(startCellDirection)
+      ? startCellDirection
+      : startCellDirection?.y;
+    const endCellNormalizedDirection = isNumber(endCellDirection)
+      ? endCellDirection
+      : endCellDirection?.y;
+    const normalizedDirection = isNumber(endpointDirection)
+      ? endpointDirection
+      : endpointDirection?.y;
+    const endpointAngle =
+      normalizedDirection === 0 ? -Math.PI / 2 : Math.PI / 2;
+
+    return startCellDirection === 90 && endCellDirection === 90 // vertical bond. need to check is it right that angles 90 and 90
+      ? monomer === startCellMonomer
+        ? -Math.PI / 2
+        : Math.PI / 2
+      : startCellNormalizedDirection === 0 && endCellNormalizedDirection === 270 // horizontal bond.
+      ? Math.PI / 2
+      : endpointAngle;
   }
 
   public moveSelection(): void {

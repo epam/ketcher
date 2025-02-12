@@ -165,13 +165,14 @@ export class SequenceMode extends BaseMode {
   ) {
     const editor = CoreEditor.provideEditorInstance();
 
-    this.isEditMode = true;
-    this.initialize(false, needToRemoveSelection, false);
     if (sequenceItemRenderer) {
       SequenceRenderer.setCaretPositionNextToMonomer(
         sequenceItemRenderer.node.monomer,
       );
     }
+
+    this.isEditMode = true;
+    this.initialize(false, needToRemoveSelection, false);
     editor.events.toggleSequenceEditMode.dispatch(true);
   }
 
@@ -385,7 +386,6 @@ export class SequenceMode extends BaseMode {
     const eventData = event.target?.__data__ as BaseSequenceItemRenderer;
 
     this.turnOnEditMode(eventData);
-    SequenceRenderer.moveCaretForward();
   }
 
   public mousedown(event: MouseEvent) {
@@ -412,6 +412,10 @@ export class SequenceMode extends BaseMode {
         sequenceItemBoundingBox = SequenceRenderer.getRendererByMonomer(
           eventData.node.monomer,
         )?.rootBoundingClientRect;
+      }
+
+      if (!sequenceItemBoundingBox) {
+        return;
       }
 
       const isRightSideOfSequenceItemClicked = sequenceItemBoundingBox
@@ -525,6 +529,7 @@ export class SequenceMode extends BaseMode {
 
   private handlePeptideNodeAddition(
     enteredSymbol: string,
+    currentNode: SubChainNode | BackBoneSequenceNode | undefined,
     newNodePosition: Vec2,
   ) {
     if (!peptideNaturalAnalogues.includes(enteredSymbol)) {
@@ -547,7 +552,17 @@ export class SequenceMode extends BaseMode {
 
     modelChanges.merge(peptideAddCommand);
 
-    modelChanges.merge(this.insertNewSequenceFragment(newPeptideNode));
+    modelChanges.merge(
+      this.insertNewSequenceFragment(
+        newPeptideNode,
+        currentNode instanceof BackBoneSequenceNode
+          ? currentNode.secondConnectedNode
+          : undefined,
+        currentNode instanceof BackBoneSequenceNode
+          ? currentNode.firstConnectedNode
+          : undefined,
+      ),
+    );
 
     return { modelChanges, node: newPeptideNode };
   }
@@ -2203,7 +2218,11 @@ export class SequenceMode extends BaseMode {
     }
 
     if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
-      return this.handlePeptideNodeAddition(enteredSymbol, newNodePosition);
+      return this.handlePeptideNodeAddition(
+        enteredSymbol,
+        currentSenseNode,
+        newNodePosition,
+      );
     } else {
       return this.handleRnaDnaNodeAddition(
         enteredSymbol,

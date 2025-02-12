@@ -2153,16 +2153,55 @@ export class SequenceMode extends BaseMode {
         return;
       }
     }
+
     if (
       !previousNodeInSameChain &&
-      !(currentSenseNode instanceof EmptySequenceNode) &&
-      currentSenseNode
+      currentSenseNode &&
+      !(currentSenseNode instanceof EmptySequenceNode)
     ) {
       if (!this.isR1Free(currentSenseNode)) {
         this.showMergeWarningModal();
         return;
       }
     }
+
+    if (
+      editor.sequenceTypeEnterMode !== SequenceType.PEPTIDE &&
+      enteredSymbol.toUpperCase() === 'P'
+    ) {
+      const phosphateLibraryItem = getRnaPartLibraryItem(
+        editor,
+        RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
+        KetMonomerClass.Phosphate,
+      );
+      const phosphateAddCommand =
+        phosphateLibraryItem &&
+        editor.drawingEntitiesManager.addMonomer(
+          phosphateLibraryItem,
+          newNodePosition,
+        );
+      const newPhosphate = phosphateAddCommand?.operations[0].monomer;
+      if (!phosphateLibraryItem || !newPhosphate) {
+        this.showMergeWarningModal('Phosphate library item not found.');
+        return;
+      }
+      const newPhosphateNode = new MonomerSequenceNode(newPhosphate);
+      const modelChanges = new Command();
+      modelChanges.merge(phosphateAddCommand);
+      modelChanges.merge(
+        this.insertNewSequenceFragment(
+          newPhosphateNode,
+          currentTwoStrandedNode instanceof BackBoneSequenceNode
+            ? currentTwoStrandedNode.secondConnectedNode
+            : undefined,
+          currentTwoStrandedNode instanceof BackBoneSequenceNode
+            ? currentTwoStrandedNode.firstConnectedNode
+            : undefined,
+        ),
+      );
+      return { modelChanges, node: newPhosphateNode };
+    }
+
     if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
       return this.handlePeptideNodeAddition(enteredSymbol, newNodePosition);
     } else {

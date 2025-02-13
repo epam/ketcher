@@ -16,6 +16,7 @@
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
+import { ChemRenderer } from 'application/render/renderers/ChemRenderer';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
@@ -110,6 +111,7 @@ class PolymerBond implements BaseTool {
         );
         return;
       }
+
       const { polymerBond, command: modelChanges } =
         this.editor.drawingEntitiesManager.startPolymerBondCreation(
           selectedRenderer.monomer,
@@ -465,21 +467,36 @@ class PolymerBond implements BaseTool {
 
     const atomRenderer = event.target.__data__ as AtomRenderer;
     const monomer = this.bondRenderer?.polymerBond.firstMonomer;
+
+    if (
+      monomer.baseRenderer instanceof ChemRenderer &&
+      !this.isHydrogenBond &&
+      !monomer.chosenFirstAttachmentPointForBond
+    ) {
+      this.editor.events.error.dispatch(
+        'CHEM monomer to Atom supports only attachment points for bond creation',
+      );
+      return;
+    }
+
     const attachmentPoint =
       monomer.getPotentialAttachmentPointByBond(
         this.bondRenderer?.polymerBond,
       ) || monomer?.getValidSourcePoint();
 
+    // Remove temporary Polymer Bond
     this.editor.drawingEntitiesManager.deletePolymerBond(
       this.bondRenderer?.polymerBond,
     );
     this.bondRenderer?.remove();
     this.bondRenderer = undefined;
+    monomer.setChosenFirstAttachmentPoint(null);
 
     if (!attachmentPoint) {
       return;
     }
 
+    // Establish new Monomer to Atom Bond
     const modelChanges =
       this.editor.drawingEntitiesManager.addMonomerToAtomBond(
         monomer,

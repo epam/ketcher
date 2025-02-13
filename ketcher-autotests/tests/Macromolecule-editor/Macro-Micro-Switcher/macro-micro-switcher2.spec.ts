@@ -49,6 +49,8 @@ import {
   takePageScreenshot,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
+  takeTopToolbarScreenshot,
+  selectSequenceTypeMode,
 } from '@utils';
 
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
@@ -758,6 +760,164 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Verify that Sequence mode is opened
     */
     await turnOnMacromoleculesEditor(page, false, false);
+    await takePageScreenshot(page);
+  });
+
+  test('Verify the default tab in the library is set to RNA when the macromolecules mode is opened', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/5995
+      Description: Default tab in the library is set to RNA when the macromolecules mode is opened
+      Case:
+      1. Open macromolecules mode
+      2. Check the default tab in the library
+      3. Default tab should be RNA
+      */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await takeTopToolbarScreenshot(page);
+  });
+
+  test('Verify that changing the typing type to PEP switches the library tab to Peptide', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/5995
+      Description: Changing the typing type to PEP switches the library tab to Peptide
+      Case:
+      1. Open macromolecules mode
+      2. Change typing type to PEP
+      3. Changing typing type to PEP switches the library tab to Peptide
+      */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await selectSequenceTypeMode(page, 'PEPTIDE');
+    await takePageScreenshot(page);
+  });
+
+  test('Verify that changing the typing type to RNA switches the library tab to RNA', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/5995
+      Description: Changing the typing type to RNA switches the library tab to RNA
+      Case:
+      1. Open macromolecules mode
+      2. Change typing type to PEP
+      3. Change typing type to RNA
+      4. Changing typing type to RNA switches the library tab to RNA
+      */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await selectSequenceTypeMode(page, 'PEPTIDE');
+    await selectSequenceTypeMode(page, 'RNA');
+    await takePageScreenshot(page);
+  });
+
+  test('Verify that changing the typing type to DNA switches the library tab to RNA', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/5995
+      Description: Changing the typing type to DNA switches the library tab to RNA
+      Case:
+      1. Open macromolecules mode
+      2. Change typing type to DNA
+      3. Changing typing type to DNA switches the library tab to RNA
+      */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await selectSequenceTypeMode(page, 'DNA');
+    await takePageScreenshot(page);
+  });
+
+  test('Verify that changing the typing type from RNA to DNA and viceversa does not affect the library tab', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/5995
+      Description: Changing the typing type from RNA to DNA and viceversa does not affect the library tab
+      Case:
+      1. Open macromolecules mode
+      2. Change typing type to DNA
+      3. Change typing type to RNA
+      4. Changing typing type from RNA to DNA and viceversa does not affect the library tab
+      */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await selectSequenceTypeMode(page, 'DNA');
+    await takePageScreenshot(page);
+    await selectSequenceTypeMode(page, 'RNA');
+    await takePageScreenshot(page);
+  });
+
+  test('Verify that switching the typing type using hotkeys updates the library tab accordingly', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/5995
+      Description: Switching the typing type using hotkeys updates the library tab accordingly
+      We have a bug https://github.com/epam/ketcher/issues/6505
+      When fixing it, we need to update the test
+      Case:
+      1. Open macromolecules mode
+      2. Press Ctrl+Alt+D for DNA
+      3. Press Ctrl+Alt+P for Peptides
+      4. Press Ctrl+Alt+R for RNA
+      */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await page.keyboard.press('Control+Alt+D');
+    await takePageScreenshot(page);
+    await page.keyboard.press('Control+Alt+P');
+    await takePageScreenshot(page);
+    await page.keyboard.press('Control+Alt+R');
+    await takePageScreenshot(page);
+  });
+
+  test('Verify that switching the typing type consecutively (e.g., RNA → DNA → PEP) updates the library tab correctly at each step', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/5995
+      Description: Switching the typing type consecutively (e.g., RNA → DNA → PEP) updates the library tab correctly at each step
+      Case:
+      1. Open macromolecules mode
+      2. Start typing type RNA
+      3. Change typing type to DNA
+      4. Start typing type DNA
+      5. Change typing type to PEP
+      6. Start typing type PEP
+      */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await page.keyboard.type('CCC');
+    await selectSequenceTypeMode(page, 'DNA');
+    await page.keyboard.type('CCC');
+    await selectSequenceTypeMode(page, 'PEPTIDE');
+    await page.keyboard.type('CCC');
+    await takePageScreenshot(page);
+  });
+
+  test('Verify that the library tab remains consistent with the typing type after switching to another mode and returning to sequence mode', async ({
+    page,
+  }) => {
+    /* 
+      Test case: https://github.com/epam/ketcher/issues/5995
+      Description: Library tab remains consistent with the typing type after switching to another mode and returning to sequence mode
+      Case:
+      1. Open macromolecules mode
+      2. Start typing type RNA
+      3. Change typing type to DNA
+      4. Start typing type DNA
+      5. Change typing type to PEP
+      6. Start typing type PEP
+      7. Switch to Flex mode and back to Sequence mode
+      */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await page.keyboard.type('CCC');
+    await selectSequenceTypeMode(page, 'DNA');
+    await page.keyboard.type('CCC');
+    await selectSequenceTypeMode(page, 'PEPTIDE');
+    await page.keyboard.type('CCC');
+    await takePageScreenshot(page);
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+    await selectSequenceLayoutModeTool(page);
     await takePageScreenshot(page);
   });
 

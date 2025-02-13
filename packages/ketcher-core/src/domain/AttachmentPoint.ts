@@ -1,18 +1,22 @@
 import { Vec2 } from 'domain/entities/vec2';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { D3SvgElementSelection } from 'application/render/types';
-import { Selection, line } from 'd3';
+import { line, Selection } from 'd3';
 import { BaseMonomer } from './entities/BaseMonomer';
 import assert from 'assert';
 import {
   canvasToMonomerCoordinates,
-  findLabelPoint,
   Coordinates,
+  findLabelPoint,
   getSearchFunction,
 } from './helpers/attachmentPointCalculations';
 import { editorEvents } from 'application/editor/editorEvents';
 import { AttachmentPointConstructorParams, AttachmentPointName } from './types';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
+import { isNumber } from 'lodash';
+import { CoreEditor, SnakeMode } from 'application/editor';
+import { isBondBetweenSugarAndBaseOfRna } from 'domain/helpers/monomers';
 
 export class AttachmentPoint {
   static attachmentPointVector = 6;
@@ -235,23 +239,38 @@ export class AttachmentPoint {
     let angleRadians: number;
     const polymerBond =
       this.monomer.attachmentPointsToBonds[this.attachmentPointName];
+    const editor = CoreEditor.provideEditorInstance();
 
     const firstMonomer =
       polymerBond instanceof MonomerToAtomBond
         ? polymerBond.monomer
         : polymerBond?.firstMonomer;
     const flip = this.monomer.id === firstMonomer?.id;
-    const isAttachmentpointR1 = this.attachmentPointName === 'R1';
+    const isAttachmentpointR1 =
+      this.attachmentPointName === AttachmentPointName.R1;
+    const isAttachmentpointR2 =
+      this.attachmentPointName === AttachmentPointName.R2;
+
     if (!polymerBond) {
       angleDegrees = this.initialAngle;
     } else if (
       !(polymerBond instanceof MonomerToAtomBond) &&
-      this.isSnake &&
-      !polymerBond.isHorizontal
+      !isBondBetweenSugarAndBaseOfRna(polymerBond) &&
+      ((this.isSnake && !polymerBond.isHorizontal) ||
+        (editor.mode instanceof SnakeMode && polymerBond.isSideChainConnection))
     ) {
+      const bondRenderer =
+        polymerBond?.renderer as SnakeModePolymerBondRenderer;
+      const sideConnectionEndpointDirection =
+        bondRenderer.getSideConnectionEndpointAngle(this.monomer);
+
       angleRadians = isAttachmentpointR1
-        ? this.rotateToAngle(polymerBond, flip)
-        : Math.PI;
+        ? Math.PI * 2
+        : isAttachmentpointR2
+        ? Math.PI
+        : isNumber(sideConnectionEndpointDirection)
+        ? sideConnectionEndpointDirection
+        : this.rotateToAngle(polymerBond, flip);
       angleDegrees = Vec2.radiansToDegrees(angleRadians);
     } else {
       angleRadians = this.rotateToAngle(polymerBond, flip);

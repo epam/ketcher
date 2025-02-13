@@ -6,6 +6,8 @@ import {
   STANDALONE_URL,
   DEFAULT_KETCHER_STANDALONE_URL,
   MODES,
+  STANDALONE_REACT_MUI_MATERIAL_DIALOG_857X648_URL,
+  REMOTE_REACT_MUI_MATERIAL_DIALOG_857X648_URL,
 } from './constants';
 import path from 'path';
 
@@ -31,7 +33,7 @@ const ignoredTests = [
 
 const testDir = './tests';
 
-function baseURL(): string {
+function baseURLFullScale(): string {
   if (!process.env.MODE || !process.env.KETCHER_URL) {
     return DEFAULT_KETCHER_STANDALONE_URL;
   }
@@ -41,6 +43,17 @@ function baseURL(): string {
   }
 
   return `${process.env.KETCHER_URL}${REMOTE_URL}`;
+}
+
+function baseURLReactMUI857x648(): string {
+  if (!process.env.MODE || !process.env.KETCHER_URL) {
+    return DEFAULT_KETCHER_STANDALONE_URL;
+  }
+
+  if (process.env.MODE === MODES.STANDALONE) {
+    return `${process.env.KETCHER_URL}${STANDALONE_REACT_MUI_MATERIAL_DIALOG_857X648_URL}`;
+  }
+  return `${process.env.KETCHER_URL}${REMOTE_REACT_MUI_MATERIAL_DIALOG_857X648_URL}`;
 }
 
 const MAX_NUMBER_OF_RETRIES = 2;
@@ -61,6 +74,7 @@ function getIgnoredFiles(): string[] {
 }
 
 const config: PlaywrightTestConfig = {
+  globalSetup: require.resolve('./setup.ts'),
   testDir,
   /* Maximum time one test can run for. */
   timeout: 60_000,
@@ -109,8 +123,6 @@ const config: PlaywrightTestConfig = {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 0,
     viewport: { width: 1920, height: 1080 },
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: baseURL(),
     screenshot: 'only-on-failure',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
@@ -120,9 +132,11 @@ const config: PlaywrightTestConfig = {
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
+      name: 'chromium-fullscale',
       use: {
         ...devices['Desktop Chrome'],
+        /* Base URL to use in actions like `await page.goto('/')`. */
+        baseURL: baseURLFullScale(),
         launchOptions: {
           headless: true,
         },
@@ -130,45 +144,25 @@ const config: PlaywrightTestConfig = {
           // chromium-specific permissions
           permissions: ['clipboard-read', 'clipboard-write'],
         },
+        // Screenshots will be stored in default dir - `.spec.ts-snapshots/`
       },
     },
-
-    // {
-    //   name: 'firefox',
-    //   use: {
-    //     ...devices['Desktop Firefox'],
-    //     launchOptions: {
-    //       headless: true,
-    //     },
-    //   },
-    // },
-    /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: {
-    //     ...devices['Pixel 5'],
-    //   },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: {
-    //     ...devices['iPhone 12'],
-    //   },
-    // },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: {
-    //     channel: 'msedge',
-    //   },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: {
-    //     channel: 'chrome',
-    //   },
-    // },
+    {
+      name: 'chromium-ReactMUI857x648',
+      use: {
+        ...devices['Desktop Chrome'],
+        /* Base URL to use in actions like `await page.goto('/')`. */
+        baseURL: baseURLReactMUI857x648(),
+        launchOptions: {
+          headless: true,
+        },
+        contextOptions: {
+          // chromium-specific permissions
+          permissions: ['clipboard-read', 'clipboard-write'],
+        },
+        // Screenshots will be stored in the directory defined at setup.ts
+      },
+    },
   ],
 
   /* Folder for test artifacts such as screenshots, videos, traces, etc. */

@@ -3,8 +3,8 @@ import { FlexModePolymerBondRenderer } from 'application/render/renderers/Polyme
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
-import { Sugar } from 'domain/entities/Sugar';
 import {
+  isBondBetweenSugarAndBaseOfRna,
   isMonomerConnectedToR2RnaBase,
   isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
@@ -82,16 +82,7 @@ export class PolymerBond extends BaseBond {
         (isMonomerConnectedToR2RnaBase(this.secondMonomer) &&
           isRnaBaseOrAmbiguousRnaBase(this.firstMonomer)) ||
         firstMonomerAttachmentPoint === secondMonomerAttachmentPoint) &&
-      !(
-        (firstMonomerAttachmentPoint === AttachmentPointName.R1 &&
-          isRnaBaseOrAmbiguousRnaBase(this.firstMonomer) &&
-          secondMonomerAttachmentPoint === AttachmentPointName.R3 &&
-          this.secondMonomer instanceof Sugar) ||
-        (firstMonomerAttachmentPoint === AttachmentPointName.R3 &&
-          this.firstMonomer instanceof Sugar &&
-          secondMonomerAttachmentPoint === AttachmentPointName.R1 &&
-          isRnaBaseOrAmbiguousRnaBase(this.secondMonomer))
-      )
+      !isBondBetweenSugarAndBaseOfRna(this)
     );
   }
 

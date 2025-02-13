@@ -530,7 +530,7 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with chems could be saved to mol 3000 file and loaded back
     */
-
+    await pageReload(page);
     await openFileAndAddToCanvasMacro(
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
@@ -565,7 +565,7 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with sugars could be saved to mol 3000 file and loaded back
     */
-
+    await pageReload(page);
     await openFileAndAddToCanvasMacro(
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
@@ -784,6 +784,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
 
   for (const data of testData) {
     test(`for ${data.fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/Base-Templates/${data.fileName}.mol`,
         page,
@@ -826,6 +827,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
   */
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/CHEM-Templates/${data.fileName}.mol`,
         page,
@@ -868,6 +870,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
   */
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/Peptide-Templates/${data.fileName}.mol`,
         page,
@@ -910,6 +913,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
   */
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/Phosphate-Templates/${data.fileName}.mol`,
         page,
@@ -952,6 +956,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
   */
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/Sugar-Templates/${data.fileName}.mol`,
         page,

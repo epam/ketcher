@@ -10,6 +10,25 @@ import {
 } from 'ketcher-core';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 
+const validBases: string[] = [
+  'A',
+  'T',
+  'U',
+  'C',
+  'G',
+  'N',
+  'B',
+  'D',
+  'H',
+  'K',
+  'W',
+  'Y',
+  'M',
+  'R',
+  'S',
+  'V',
+];
+
 const generateLabeledNodes = (
   selectionsFlatten: NodeSelection[],
 ): LabeledNodesWithPositionInSequence[] => {
@@ -66,6 +85,32 @@ function isNucleotideNucleosideOrPhosphate(selection: NodeSelection): boolean {
     node?.monomer instanceof Phosphate
   );
 }
+
+// Check if the selection forms a valid backbone chain.
+// A valid backbone consists of nucleotides with `hasR1Connection: true`,
+// meaning they are connected via R1-R2.
+const isValidBackboneChain = (selection: NodeSelection[]) => {
+  if (selection.length < 2) return false; // Backbone must have at least two elements
+
+  return selection.every((node) => node.hasR1Connection);
+};
+
+// Check if at least one sugar is connected to a base via R3-R1.
+// This ensures the selection contains a valid sense base connection.
+const hasSugarBaseConnection = (
+  selection: LabeledNodesWithPositionInSequence[],
+) => {
+  return selection.some((node) => node.sugarLabel && node.baseLabel);
+};
+
+// Check if all selected bases can form valid complementary pairs.
+const isValidBaseSelection = (
+  selection: LabeledNodesWithPositionInSequence[],
+) => {
+  return !selection.some(
+    (node) => node.baseLabel && !validBases.includes(node.baseLabel),
+  );
+};
 
 // Generate menu title if selected:
 // one nucleotide
@@ -156,5 +201,10 @@ export const generateSequenceContextMenuProps = (
     isSelectedAtLeastOneNucleoelement,
     isSequenceFirstsOnlyNucleoelementsSelected,
     hasAntisense,
+    isValidBackboneChain: isValidBackboneChain(selectionsFlatten),
+    hasSugarBaseConnection: hasSugarBaseConnection(
+      selectedSequenceLabeledNodes,
+    ),
+    isValidBaseSelection: isValidBaseSelection(selectedSequenceLabeledNodes),
   };
 };

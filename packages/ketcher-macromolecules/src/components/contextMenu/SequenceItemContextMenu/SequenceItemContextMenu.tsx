@@ -31,6 +31,8 @@ type SequenceItemContextMenuType = {
 
 export enum SequenceItemContextMenuNames {
   title = 'sequence_menu_title',
+  createRnaAntisenseStrand = 'create_rna_antisense_strand',
+  createDnaAntisenseStrand = 'create_dna_antisense_strand',
   modifyInRnaBuilder = 'modify_in_rna_builder',
   editSequence = 'edit_sequence',
   startNewSequence = 'start_new_sequence',
@@ -62,6 +64,38 @@ export const SequenceItemContextMenu = ({
           !props?.sequenceItemRenderer ||
           !menuProps?.isSelectedAtLeastOneNucleoelement
         );
+      },
+    },
+    {
+      name: SequenceItemContextMenuNames.createRnaAntisenseStrand,
+      title: 'Create RNA antisense strand',
+      disabled:
+        !menuProps?.isValidBackboneChain ||
+        !menuProps?.hasSugarBaseConnection ||
+        !menuProps?.isValidBaseSelection ||
+        !menuProps?.isSelectedOnlyNucleoelements,
+      hidden: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => {
+        return !props?.sequenceItemRenderer || !menuProps?.isValidBackboneChain;
+      },
+    },
+    {
+      name: SequenceItemContextMenuNames.createDnaAntisenseStrand,
+      title: 'Create DNA antisense strand',
+      disabled:
+        !menuProps?.isValidBackboneChain ||
+        !menuProps?.hasSugarBaseConnection ||
+        !menuProps?.isValidBaseSelection ||
+        !menuProps?.isSelectedOnlyNucleoelements,
+      hidden: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => {
+        return !props?.sequenceItemRenderer || !menuProps?.isValidBackboneChain;
       },
     },
     {
@@ -127,6 +161,12 @@ export const SequenceItemContextMenu = ({
         break;
       case SequenceItemContextMenuNames.editSequence:
         editor.events.editSequence.dispatch(props.sequenceItemRenderer);
+        break;
+      case SequenceItemContextMenuNames.createRnaAntisenseStrand:
+        // TO DO: Create RNA antisense strand dispatch
+        break;
+      case SequenceItemContextMenuNames.createDnaAntisenseStrand:
+        // TO DO: Create DNA antisense strand dispatch
         break;
       default:
         break;

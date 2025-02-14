@@ -166,6 +166,19 @@ export function getSugarFromRnaBase(monomer?: BaseMonomer) {
     : undefined;
 }
 
+export function isBondBetweenSugarAndBaseOfRna(polymerBond: PolymerBond) {
+  return (
+    (polymerBond.firstMonomerAttachmentPoint === AttachmentPointName.R1 &&
+      isRnaBaseOrAmbiguousRnaBase(polymerBond.firstMonomer) &&
+      polymerBond.secondMonomerAttachmentPoint === AttachmentPointName.R3 &&
+      polymerBond.secondMonomer instanceof Sugar) ||
+    (polymerBond.firstMonomerAttachmentPoint === AttachmentPointName.R3 &&
+      polymerBond.firstMonomer instanceof Sugar &&
+      polymerBond.secondMonomerAttachmentPoint === AttachmentPointName.R1 &&
+      isRnaBaseOrAmbiguousRnaBase(polymerBond.secondMonomer))
+  );
+}
+
 export function getPhosphateFromSugar(monomer?: BaseMonomer) {
   if (!monomer) return undefined;
   const nextMonomerInChain = getNextMonomerInChain(monomer);

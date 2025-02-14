@@ -26,7 +26,7 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 import { isNumber } from 'lodash';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
-import { getPreviousConnectedNode } from 'domain/helpers/chains';
+import { getPreviousConnectedAntisenseNode } from 'domain/helpers/chains';
 
 export interface ComplimentaryChainsWithData {
   complimentaryChain: Chain;
@@ -634,12 +634,6 @@ export class ChainsCollection {
     );
     const antisenseChainsStartIndexes = antisenseChainsWithData.map(
       (antisenseChainWithData) => {
-        const firstConnectedAntisenseNodeIndex =
-          antisenseChainWithData.complimentaryChain.nodes.findIndex((node) => {
-            return (
-              node === antisenseChainWithData.firstConnectedComplimentaryNode
-            );
-          });
         const senseNodeIndex = chain.nodes.indexOf(
           antisenseChainWithData.firstConnectedNode,
         );
@@ -648,7 +642,7 @@ export class ChainsCollection {
           return -1;
         }
 
-        return senseNodeIndex - firstConnectedAntisenseNodeIndex;
+        return senseNodeIndex;
       },
     );
     const antisenseChainsStartIndexesMap = new Map(
@@ -663,13 +657,16 @@ export class ChainsCollection {
       { node: SubChainNode; chain: Chain; nodeIndex: number }
     >();
 
-    antisenseChainsStartIndexesMap.forEach((chainWithData, firstNodeIndex) => {
+    antisenseChainsStartIndexesMap.forEach((chainWithData) => {
       chainWithData.complimentaryChain.nodes.forEach((node, index) => {
-        antisenseNodesToIndexesMap.set(firstNodeIndex + index, {
-          node,
-          chain: chainWithData.complimentaryChain,
-          nodeIndex: index,
-        });
+        antisenseNodesToIndexesMap.set(
+          chainWithData.complimentaryChain.nodes.length - index,
+          {
+            node,
+            chain: chainWithData.complimentaryChain,
+            nodeIndex: chainWithData.complimentaryChain.nodes.length - index,
+          },
+        );
       });
     });
 
@@ -691,6 +688,7 @@ export class ChainsCollection {
     let currentSenseIterationIndex = 0;
     let currentAntisenseGlobalIterationIndex = Math.min(
       ...antisenseChainsStartIndexes,
+      0,
     );
     let currentAntisenseLocalIterationIndex = 0;
     let previousHandledAntisenseNode: SubChainNode | undefined;
@@ -724,12 +722,12 @@ export class ChainsCollection {
         currentAntisenseGlobalIterationIndex = currentSenseIterationIndex;
         currentAntisenseLocalIterationIndex = 0;
       } else if (
-        !getPreviousConnectedNode(antisenseNode, monomerToNode) &&
+        !getPreviousConnectedAntisenseNode(antisenseNode, monomerToNode) &&
         previousHandledAntisenseNode &&
         previousHandledAntisenseNode !== antisenseNode
       ) {
         const secondConnectedSenseNode = senseNode;
-        const firstConnectedSenseNode = getPreviousConnectedNode(
+        const firstConnectedSenseNode = getPreviousConnectedAntisenseNode(
           senseNode,
           monomerToNode,
         );
@@ -786,7 +784,7 @@ export class ChainsCollection {
         })
       ) {
         const secondConnectedSenseNode = senseNode;
-        const firstConnectedSenseNode = getPreviousConnectedNode(
+        const firstConnectedSenseNode = getPreviousConnectedAntisenseNode(
           senseNode,
           monomerToNode,
         );
@@ -825,7 +823,7 @@ export class ChainsCollection {
         })
       ) {
         const secondConnectedAntisenseNode = antisenseNode;
-        const firstConnectedAntisenseNode = getPreviousConnectedNode(
+        const firstConnectedAntisenseNode = getPreviousConnectedAntisenseNode(
           secondConnectedAntisenseNode,
           monomerToNode,
         );

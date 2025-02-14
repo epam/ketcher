@@ -185,7 +185,7 @@ export class RenderersManager {
     subChain.nodes.forEach((node) => {
       const monomerRenderer = node.monomer.renderer;
       const monomerEnumeration = node.monomer.monomerItem.isAntisense
-        ? subChain.length - currentEnumeration + 1
+        ? currentEnumeration
         : currentEnumeration;
       const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
         ? monomerEnumeration === subChain.length
@@ -215,7 +215,7 @@ export class RenderersManager {
 
     subChain.nodes.forEach((node) => {
       const monomerEnumeration = node.monomer.monomerItem.isAntisense
-        ? nucleotidesAmount - currentEnumeration + 1
+        ? currentEnumeration
         : currentEnumeration;
       const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
         ? monomerEnumeration === nucleotidesAmount

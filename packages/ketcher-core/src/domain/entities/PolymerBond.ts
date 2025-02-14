@@ -21,7 +21,10 @@ export type FlexOrSequenceOrSnakeModePolymerBondRenderer =
 export class PolymerBond extends BaseBond {
   public secondMonomer?: BaseMonomer;
   public renderer?: FlexOrSequenceOrSnakeModePolymerBondRenderer = undefined;
-  public restOfRowsWithAntisense?: number = undefined;
+  // Move to renderer
+  public hasAntisenseInRow?: boolean = false;
+  // Move to renderer
+  public nextRowPositionX?: number | undefined = undefined;
 
   constructor(public firstMonomer: BaseMonomer, secondMonomer?: BaseMonomer) {
     super();

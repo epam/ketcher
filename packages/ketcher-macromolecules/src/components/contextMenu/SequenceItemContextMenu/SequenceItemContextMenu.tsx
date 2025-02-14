@@ -11,6 +11,11 @@ import {
   BaseSequenceItemRenderer,
   ModeTypes,
   NodesSelection,
+  getRnaBaseFromSugar,
+  getSugarFromRnaBase,
+  BaseMonomer,
+  RNABase,
+  Sugar,
 } from 'ketcher-core';
 import { setSelectedTabIndex } from 'state/library';
 import {
@@ -23,6 +28,7 @@ import {
 } from 'state/rna-builder';
 import { generateSequenceContextMenuProps } from 'components/contextMenu/SequenceItemContextMenu/helpers';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
+import { isAntisenseCreationDisabled } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { LIBRARY_TAB_INDEX } from 'src/constants';
 
 type SequenceItemContextMenuType = {
@@ -44,10 +50,45 @@ export const SequenceItemContextMenu = ({
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
   const menuProps = generateSequenceContextMenuProps(selections);
+  const extractedBaseMonomers: BaseMonomer[] =
+    selections?.[0]
+      ?.flatMap((item) => {
+        const node = item.node as {
+          sugar?: BaseMonomer;
+          rnaBase?: BaseMonomer;
+          phosphate?: BaseMonomer;
+          monomer?: BaseMonomer;
+        };
+        return node
+          ? [node.sugar, node.rnaBase, node.phosphate, node.monomer]
+          : [];
+      })
+      .filter(
+        (baseMonomer): baseMonomer is BaseMonomer => baseMonomer !== undefined,
+      ) || [];
+
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
   const isSequenceMode = useLayoutMode() === ModeTypes.sequence;
+
+  const isAntisenseOptionHidden = ({
+    props,
+  }: {
+    props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+  }) => {
+    return (
+      !props?.sequenceItemRenderer ||
+      !extractedBaseMonomers?.some((selectedMonomer) => {
+        return (
+          (selectedMonomer instanceof RNABase &&
+            getSugarFromRnaBase(selectedMonomer)) ||
+          (selectedMonomer instanceof Sugar &&
+            getRnaBaseFromSugar(selectedMonomer))
+        );
+      })
+    );
+  };
 
   const menuItems = [
     {
@@ -69,34 +110,14 @@ export const SequenceItemContextMenu = ({
     {
       name: SequenceItemContextMenuNames.createRnaAntisenseStrand,
       title: 'Create RNA antisense strand',
-      disabled:
-        !menuProps?.isValidBackboneChain ||
-        !menuProps?.hasSugarBaseConnection ||
-        !menuProps?.isValidBaseSelection ||
-        !menuProps?.isSelectedOnlyNucleoelements,
-      hidden: ({
-        props,
-      }: {
-        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return !props?.sequenceItemRenderer || !menuProps?.isValidBackboneChain;
-      },
+      disabled: isAntisenseCreationDisabled(extractedBaseMonomers),
+      hidden: isAntisenseOptionHidden,
     },
     {
       name: SequenceItemContextMenuNames.createDnaAntisenseStrand,
       title: 'Create DNA antisense strand',
-      disabled:
-        !menuProps?.isValidBackboneChain ||
-        !menuProps?.hasSugarBaseConnection ||
-        !menuProps?.isValidBaseSelection ||
-        !menuProps?.isSelectedOnlyNucleoelements,
-      hidden: ({
-        props,
-      }: {
-        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-      }) => {
-        return !props?.sequenceItemRenderer || !menuProps?.isValidBackboneChain;
-      },
+      disabled: isAntisenseCreationDisabled(extractedBaseMonomers),
+      hidden: isAntisenseOptionHidden,
     },
     {
       name: SequenceItemContextMenuNames.modifyInRnaBuilder,
@@ -163,10 +184,10 @@ export const SequenceItemContextMenu = ({
         editor.events.editSequence.dispatch(props.sequenceItemRenderer);
         break;
       case SequenceItemContextMenuNames.createRnaAntisenseStrand:
-        // TO DO: Create RNA antisense strand dispatch
+        // editor.events.createAntisenseChain.dispatch();
         break;
       case SequenceItemContextMenuNames.createDnaAntisenseStrand:
-        // TO DO: Create DNA antisense strand dispatch
+        // editor.events.createAntisenseChain.dispatch();
         break;
       default:
         break;

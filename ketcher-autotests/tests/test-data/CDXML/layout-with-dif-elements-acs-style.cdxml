@@ -18,120 +18,112 @@
     </colortable>
     <page HeightPages="1" WidthPages="1">
         <fragment id="4">
-            <n id="5" Element="1" p="913.700073 483.399109">
-                <t p="913.700073 483.399109" LabelJustification="Left">
-                    <s font="3" size="10" face="96">H</s>
-                </t>
-            </n>
-        </fragment>
-        <fragment id="6">
-            <n id="7" Element="1" p="946.200073 483.399109">
-                <t p="946.200073 483.399109" LabelJustification="Left">
-                    <s font="3" size="10" face="96">H</s>
-                </t>
-            </n>
-        </fragment>
-        <fragment id="8">
-            <n id="9" Element="35" NumHydrogens="0" p="746.469299 501.315765">
-                <t p="746.469299 501.315765" LabelJustification="Left">
-                    <s font="3" size="10" face="96">Br</s>
-                </t>
-            </n>
-            <n id="10" Element="35" NumHydrogens="0" p="720.488525 546.315796">
-                <t p="720.488525 546.315796" LabelJustification="Left">
-                    <s font="3" size="10" face="96">Br</s>
-                </t>
-            </n>
-            <n id="11" Element="35" NumHydrogens="0" p="720.488525 516.315796">
-                <t p="720.488525 516.315796" LabelJustification="Left">
-                    <s font="3" size="10" face="96">Br</s>
-                </t>
-            </n>
-            <n id="12" Element="35" NumHydrogens="0" p="746.469299 561.315796">
-                <t p="746.469299 561.315796" LabelJustification="Left">
-                    <s font="3" size="10" face="96">Br</s>
-                </t>
-            </n>
-            <n id="13" Element="35" NumHydrogens="0" p="772.450073 516.315796">
-                <t p="772.450073 516.315796" LabelJustification="Left">
-                    <s font="3" size="10" face="96">Br</s>
-                </t>
-            </n>
-            <n id="14" Element="35" NumHydrogens="0" p="772.450073 546.315796">
-                <t p="772.450073 546.315796" LabelJustification="Left">
-                    <s font="3" size="10" face="96">Br</s>
-                </t>
-            </n>
-            <n id="15" Element="8" NumHydrogens="2" p="832.450073 561.315796">
-                <t p="832.450073 561.315796" LabelJustification="Left">
+            <n id="5" Element="8" NumHydrogens="2" p="916.272400 546.315796">
+                <t p="916.272400 546.315796" LabelJustification="Left">
                     <s font="3" size="10" face="96">OH</s>
                     <s font="3" size="10" face="32">2</s>
                 </t>
             </n>
-            <n id="16" Element="8" NumHydrogens="2" p="892.450073 561.315796">
-                <t p="892.450073 561.315796" LabelJustification="Left">
+            <n id="6" Element="35" NumHydrogens="0" p="860.291626 486.315765">
+                <t p="860.291626 486.315765" LabelJustification="Left">
+                    <s font="3" size="10" face="96">Br</s>
+                </t>
+            </n>
+            <n id="7" Element="35" NumHydrogens="0" p="834.310913 531.315796">
+                <t p="834.310913 531.315796" LabelJustification="Left">
+                    <s font="3" size="10" face="96">Br</s>
+                </t>
+            </n>
+            <n id="8" Element="35" NumHydrogens="0" p="834.310913 501.315765">
+                <t p="834.310913 501.315765" LabelJustification="Left">
+                    <s font="3" size="10" face="96">Br</s>
+                </t>
+            </n>
+            <n id="9" Element="35" NumHydrogens="0" p="860.291626 546.315796">
+                <t p="860.291626 546.315796" LabelJustification="Left">
+                    <s font="3" size="10" face="96">Br</s>
+                </t>
+            </n>
+            <n id="10" Element="35" NumHydrogens="0" p="886.272400 501.315765">
+                <t p="886.272400 501.315765" LabelJustification="Left">
+                    <s font="3" size="10" face="96">Br</s>
+                </t>
+            </n>
+            <n id="11" Element="35" NumHydrogens="0" p="886.272400 531.315796">
+                <t p="886.272400 531.315796" LabelJustification="Left">
+                    <s font="3" size="10" face="96">Br</s>
+                </t>
+            </n>
+            <n id="12" Element="7" NumHydrogens="3" p="804.310913 546.315796">
+                <t p="804.310913 546.315796" LabelJustification="Left">
+                    <s font="3" size="10" face="96">NH</s>
+                    <s font="3" size="10" face="32">3</s>
+                </t>
+            </n>
+            <n id="13" Element="7" NumHydrogens="3" p="834.310913 456.315796">
+                <t p="834.310913 456.315796" LabelJustification="Left">
+                    <s font="3" size="10" face="96">NH</s>
+                    <s font="3" size="10" face="32">3</s>
+                </t>
+            </n>
+            <n id="14" Element="8" NumHydrogens="2" p="804.310913 456.315796">
+                <t p="804.310913 456.315796" LabelJustification="Left">
                     <s font="3" size="10" face="96">OH</s>
                     <s font="3" size="10" face="32">2</s>
                 </t>
             </n>
-            <n id="17" Element="7" NumHydrogens="3" p="720.488525 441.315796">
-                <t p="720.488525 441.315796" LabelJustification="Left">
-                    <s font="3" size="10" face="96">NH</s>
-                    <s font="3" size="10" face="32">3</s>
+            <b id="30" B="8" E="6" Order="2"/>
+            <b id="31" B="6" E="10"/>
+            <b id="32" B="10" E="11" Order="2"/>
+            <b id="33" B="11" E="9"/>
+            <b id="34" B="9" E="7" Order="2"/>
+            <b id="35" B="7" E="8"/>
+        </fragment>
+        <fragment id="15">
+            <n id="16" Element="1" p="937.522461 483.399109">
+                <t p="937.522461 483.399109" LabelJustification="Left">
+                    <s font="3" size="10" face="96">H</s>
                 </t>
             </n>
-            <n id="18" Element="7" NumHydrogens="3" p="780.488525 441.315796">
-                <t p="780.488525 441.315796" LabelJustification="Left">
-                    <s font="3" size="10" face="96">NH</s>
-                    <s font="3" size="10" face="32">3</s>
+        </fragment>
+        <fragment id="17">
+            <n id="18" Element="1" p="970.022400 483.399109">
+                <t p="970.022400 483.399109" LabelJustification="Left">
+                    <s font="3" size="10" face="96">H</s>
                 </t>
             </n>
-            <b id="34" B="11" E="9" Order="2"/>
-            <b id="35" B="9" E="13"/>
-            <b id="36" B="13" E="14" Order="2"/>
-            <b id="37" B="14" E="12"/>
-            <b id="38" B="12" E="10" Order="2"/>
-            <b id="39" B="10" E="11"/>
         </fragment>
         <fragment id="19">
-            <n id="20" Element="9" NumHydrogens="1" p="996.616760 544.306152">
-                <t p="996.616760 544.306152" LabelJustification="Left">
+            <n id="20" p="1035.439087 466.033752"/>
+            <n id="21" p="1020.439087 492.014526"/>
+            <n id="22" p="1050.439087 492.014526"/>
+            <n id="23" Element="9" NumHydrogens="1" p="1020.439087 522.014526">
+                <t p="1020.439087 522.014526" LabelJustification="Left">
                     <s font="3" size="10" face="96">FH</s>
                 </t>
             </n>
-        </fragment>
-        <fragment id="21">
-            <n id="22" Element="9" NumHydrogens="1" p="1056.616699 544.306152">
-                <t p="1056.616699 544.306152" LabelJustification="Left">
+            <n id="24" Element="9" NumHydrogens="1" p="1050.439087 522.014526">
+                <t p="1050.439087 522.014526" LabelJustification="Left">
                     <s font="3" size="10" face="96">FH</s>
                 </t>
             </n>
-        </fragment>
-        <fragment id="23">
-            <n id="24" p="1131.616699 518.325378"/>
-            <n id="25" p="1116.616699 544.306152"/>
-            <n id="26" p="1146.616699 544.306152"/>
-            <b id="40" B="24" E="25"/>
-            <b id="41" B="25" E="26"/>
-            <b id="42" B="26" E="24"/>
-        </fragment>
-        <fragment id="27">
-            <n id="28" Element="9" NumHydrogens="1" p="996.616760 458.325409">
-                <t p="996.616760 458.325409" LabelJustification="Left">
+            <n id="25" Element="9" NumHydrogens="1" p="1080.439087 522.014526">
+                <t p="1080.439087 522.014526" LabelJustification="Left">
                     <s font="3" size="10" face="96">FH</s>
                 </t>
             </n>
-        </fragment>
-        <fragment id="29">
-            <n id="30" Element="9" NumHydrogens="1" p="1056.616699 458.325409">
-                <t p="1056.616699 458.325409" LabelJustification="Left">
+            <n id="26" Element="9" NumHydrogens="1" p="1080.439087 492.014526">
+                <t p="1080.439087 492.014526" LabelJustification="Left">
                     <s font="3" size="10" face="96">FH</s>
                 </t>
             </n>
+            <b id="36" B="20" E="21"/>
+            <b id="37" B="21" E="22"/>
+            <b id="38" B="22" E="20"/>
         </fragment>
-        <arrow id="31" BoundingBox="971.408386 501.315765 903.075073 501.315765" FillType="None" ArrowheadType="Solid" HeadSize="2250" ArrowheadWidth="563" ArrowheadHead="Full" ArrowheadCenterSize="25" Head3D="971.408386 501.315765 0.000000" Tail3D="903.075073 501.315765 0.000000"/>
+        <arrow id="27" BoundingBox="995.230774 501.315765 926.897400 501.315765" FillType="None" ArrowheadType="Solid" HeadSize="2250" ArrowheadWidth="563" ArrowheadHead="Full" ArrowheadCenterSize="25" Head3D="995.230774 501.315765 0.000000" Tail3D="926.897400 501.315765 0.000000"/>
         <scheme>
-            <step ReactionStepReactants="8" ReactionStepObjectsAboveArrow="4 6" ReactionStepArrows="31"/>
+            <step ReactionStepReactants="4" ReactionStepProducts="19" ReactionStepObjectsAboveArrow="15 17" ReactionStepArrows="27"/>
         </scheme>
     </page>
 </CDXML>

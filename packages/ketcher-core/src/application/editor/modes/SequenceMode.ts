@@ -980,7 +980,8 @@ export class SequenceMode extends BaseMode {
 
         if (
           nodeToDelete.antisenseNode &&
-          !(nodeToDelete.antisenseNode instanceof BackBoneSequenceNode)
+          !(nodeToDelete.antisenseNode instanceof BackBoneSequenceNode) &&
+          !(nodeToDelete.antisenseNode instanceof EmptySequenceNode)
         ) {
           nodeToDelete.antisenseNode?.monomers.forEach((monomer) => {
             modelChanges.merge(

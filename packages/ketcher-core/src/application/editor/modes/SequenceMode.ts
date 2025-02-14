@@ -1156,8 +1156,8 @@ export class SequenceMode extends BaseMode {
                 modelChanges.merge(
                   this.insertNewSequenceFragment(
                     antisenseNodeCreationResult.node,
-                    currentTwoStrandedNode.antisenseNode,
                     previousTwoStrandedNode?.antisenseNode,
+                    currentTwoStrandedNode.antisenseNode,
                     !(
                       previousTwoStrandedNode?.antisenseNode instanceof
                         MonomerSequenceNode &&

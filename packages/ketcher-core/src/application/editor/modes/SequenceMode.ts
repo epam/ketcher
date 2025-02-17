@@ -165,13 +165,14 @@ export class SequenceMode extends BaseMode {
   ) {
     const editor = CoreEditor.provideEditorInstance();
 
-    this.isEditMode = true;
-    this.initialize(false, needToRemoveSelection, false);
     if (sequenceItemRenderer) {
       SequenceRenderer.setCaretPositionNextToMonomer(
         sequenceItemRenderer.node.monomer,
       );
     }
+
+    this.isEditMode = true;
+    this.initialize(false, needToRemoveSelection, false);
     editor.events.toggleSequenceEditMode.dispatch(true);
   }
 
@@ -385,7 +386,6 @@ export class SequenceMode extends BaseMode {
     const eventData = event.target?.__data__ as BaseSequenceItemRenderer;
 
     this.turnOnEditMode(eventData);
-    SequenceRenderer.moveCaretForward();
   }
 
   public mousedown(event: MouseEvent) {
@@ -412,6 +412,10 @@ export class SequenceMode extends BaseMode {
         sequenceItemBoundingBox = SequenceRenderer.getRendererByMonomer(
           eventData.node.monomer,
         )?.rootBoundingClientRect;
+      }
+
+      if (!sequenceItemBoundingBox) {
+        return;
       }
 
       const isRightSideOfSequenceItemClicked = sequenceItemBoundingBox
@@ -525,6 +529,7 @@ export class SequenceMode extends BaseMode {
 
   private handlePeptideNodeAddition(
     enteredSymbol: string,
+    currentNode: SubChainNode | BackBoneSequenceNode | undefined,
     newNodePosition: Vec2,
   ) {
     if (!peptideNaturalAnalogues.includes(enteredSymbol)) {
@@ -547,7 +552,17 @@ export class SequenceMode extends BaseMode {
 
     modelChanges.merge(peptideAddCommand);
 
-    modelChanges.merge(this.insertNewSequenceFragment(newPeptideNode));
+    modelChanges.merge(
+      this.insertNewSequenceFragment(
+        newPeptideNode,
+        currentNode instanceof BackBoneSequenceNode
+          ? currentNode.secondConnectedNode
+          : undefined,
+        currentNode instanceof BackBoneSequenceNode
+          ? currentNode.firstConnectedNode
+          : undefined,
+      ),
+    );
 
     return { modelChanges, node: newPeptideNode };
   }
@@ -781,6 +796,60 @@ export class SequenceMode extends BaseMode {
           ? potentialNodeInSameChainAfterSelection.secondConnectedNode
           : potentialNodeInSameChainAfterSelection;
 
+      // Сase delete A (for sense) and empty node (for antisense) in sync mode:
+      // G | A | G
+      // C |   | C
+      // Antisense should not create bond between C and C
+      if (
+        strandType === STRAND_TYPE.ANTISENSE &&
+        ((selectionStartNode instanceof EmptySequenceNode &&
+          !(
+            selectionStartTwoStrandedNode.senseNode instanceof
+            BackBoneSequenceNode
+          )) ||
+          (selectionEndNode instanceof EmptySequenceNode &&
+            !(
+              selectionEndTwoStrandedNode.senseNode instanceof
+              BackBoneSequenceNode
+            )))
+      ) {
+        return;
+      }
+
+      // Сase delete - (for sense) and empty node (for antisense) in sync mode:
+      // G | - | G
+      // C |   | C
+      // Sense should not create bond between G and G. Chain should be broken into two parts.
+      if (
+        (selectionStartTwoStrandedNode.senseNode instanceof
+          BackBoneSequenceNode &&
+          selectionStartTwoStrandedNode.antisenseNode instanceof
+            EmptySequenceNode) ||
+        (selectionEndTwoStrandedNode.senseNode instanceof
+          BackBoneSequenceNode &&
+          selectionEndTwoStrandedNode.antisenseNode instanceof
+            EmptySequenceNode)
+      ) {
+        const backBoneSequenceNode =
+          selectionStartTwoStrandedNode.senseNode instanceof
+          BackBoneSequenceNode
+            ? selectionStartTwoStrandedNode.senseNode
+            : (selectionEndTwoStrandedNode.senseNode as BackBoneSequenceNode);
+        const polymerBondToDelete =
+          backBoneSequenceNode.firstConnectedNode.lastMonomerInNode
+            .attachmentPointsToBonds.R2;
+
+        if (polymerBondToDelete instanceof PolymerBond) {
+          modelChanges.merge(
+            editor.drawingEntitiesManager.deletePolymerBond(
+              polymerBondToDelete,
+            ),
+          );
+        }
+
+        return;
+      }
+
       if (
         selectionStartNode instanceof BackBoneSequenceNode ||
         selectionEndNode instanceof BackBoneSequenceNode
@@ -812,8 +881,8 @@ export class SequenceMode extends BaseMode {
       if (
         nodeBeforeSelection === nodeInSameChainBeforeSelection &&
         nodeBeforeSelection instanceof Nucleotide &&
-        !(nodeInSameChainAfterSelection instanceof Nucleotide) &&
-        !(nodeInSameChainAfterSelection instanceof Nucleoside)
+        selectionStartNode instanceof Nucleoside &&
+        (!nodeAfterSelection || nodeAfterSelection instanceof EmptySequenceNode)
       ) {
         // delete phosphate from last nucleotide
         modelChanges.merge(
@@ -895,15 +964,14 @@ export class SequenceMode extends BaseMode {
           ],
         ];
 
-        if (
-          nodeToDelete.senseNode &&
-          !(nodeToDelete.senseNode instanceof BackBoneSequenceNode)
-        ) {
-          nodeToDelete.senseNode.monomers.forEach((monomer) => {
-            modelChanges.merge(
-              editor.drawingEntitiesManager.deleteMonomer(monomer),
-            );
-          });
+        if (nodeToDelete.senseNode) {
+          if (!(nodeToDelete.senseNode instanceof BackBoneSequenceNode)) {
+            nodeToDelete.senseNode.monomers.forEach((monomer) => {
+              modelChanges.merge(
+                editor.drawingEntitiesManager.deleteMonomer(monomer),
+              );
+            });
+          }
 
           modelChanges.merge(
             this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.SENSE),
@@ -912,7 +980,8 @@ export class SequenceMode extends BaseMode {
 
         if (
           nodeToDelete.antisenseNode &&
-          !(nodeToDelete.antisenseNode instanceof BackBoneSequenceNode)
+          !(nodeToDelete.antisenseNode instanceof BackBoneSequenceNode) &&
+          !(nodeToDelete.antisenseNode instanceof EmptySequenceNode)
         ) {
           nodeToDelete.antisenseNode?.monomers.forEach((monomer) => {
             modelChanges.merge(
@@ -2100,18 +2169,61 @@ export class SequenceMode extends BaseMode {
         return;
       }
     }
+
     if (
       !previousNodeInSameChain &&
-      !(currentSenseNode instanceof EmptySequenceNode) &&
-      currentSenseNode
+      currentSenseNode &&
+      !(currentSenseNode instanceof EmptySequenceNode)
     ) {
       if (!this.isR1Free(currentSenseNode)) {
         this.showMergeWarningModal();
         return;
       }
     }
+
+    if (
+      editor.sequenceTypeEnterMode !== SequenceType.PEPTIDE &&
+      enteredSymbol.toUpperCase() === 'P'
+    ) {
+      const phosphateLibraryItem = getRnaPartLibraryItem(
+        editor,
+        RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
+        KetMonomerClass.Phosphate,
+      );
+      const phosphateAddCommand =
+        phosphateLibraryItem &&
+        editor.drawingEntitiesManager.addMonomer(
+          phosphateLibraryItem,
+          newNodePosition,
+        );
+      const newPhosphate = phosphateAddCommand?.operations[0].monomer;
+      if (!phosphateLibraryItem || !newPhosphate) {
+        this.showMergeWarningModal('Phosphate library item not found.');
+        return;
+      }
+      const newPhosphateNode = new MonomerSequenceNode(newPhosphate);
+      const modelChanges = new Command();
+      modelChanges.merge(phosphateAddCommand);
+      modelChanges.merge(
+        this.insertNewSequenceFragment(
+          newPhosphateNode,
+          currentTwoStrandedNode instanceof BackBoneSequenceNode
+            ? currentTwoStrandedNode.secondConnectedNode
+            : undefined,
+          currentTwoStrandedNode instanceof BackBoneSequenceNode
+            ? currentTwoStrandedNode.firstConnectedNode
+            : undefined,
+        ),
+      );
+      return { modelChanges, node: newPhosphateNode };
+    }
+
     if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
-      return this.handlePeptideNodeAddition(enteredSymbol, newNodePosition);
+      return this.handlePeptideNodeAddition(
+        enteredSymbol,
+        currentSenseNode,
+        newNodePosition,
+      );
     } else {
       return this.handleRnaDnaNodeAddition(
         enteredSymbol,

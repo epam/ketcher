@@ -62,6 +62,7 @@ import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
 import {
   MACROMOLECULES_BOND_TYPES,
+  FlexMode,
   SequenceMode,
   SnakeMode,
 } from 'application/editor';
@@ -1104,6 +1105,21 @@ export class DrawingEntitiesManager {
     const operation = new PolymerBondShowInfoOperation(polymerBond);
 
     command.addOperation(operation);
+
+    return command;
+  }
+
+  public hideAllMonomersHoverAndAttachmentPoints() {
+    const command = new Command();
+
+    this.monomers.forEach((monomer) => {
+      monomer.turnOffHover();
+      monomer.turnOffAttachmentPointsVisibility();
+
+      const operation = new MonomerHoverOperation(monomer, true);
+
+      command.addOperation(operation);
+    });
 
     return command;
   }
@@ -3145,8 +3161,10 @@ function getFirstPosition(
   lastPosition: Vec2,
   restOfRowsWithAntisense = 0,
 ) {
+  const editor = CoreEditor.provideEditorInstance();
+
   return new Vec2(
-    MONOMER_START_X_POSITION,
+    editor.mode instanceof FlexMode ? lastPosition.x : MONOMER_START_X_POSITION,
     lastPosition.y +
       height +
       (restOfRowsWithAntisense > 0 ? SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS : 0),

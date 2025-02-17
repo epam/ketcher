@@ -103,10 +103,10 @@ import {
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 
-const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = 30;
+export const CELL_WIDTH = 60;
+const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = CELL_WIDTH;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
 const DISTANCE_FROM_RIGHT = 55;
-export const CELL_WIDTH = 60;
 export const SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS = CELL_WIDTH * 2 + 30;
 export const MONOMER_START_X_POSITION = 20 + CELL_WIDTH / 2;
 export const MONOMER_START_Y_POSITION = 20 + CELL_WIDTH / 2;
@@ -2729,7 +2729,7 @@ export class DrawingEntitiesManager {
     let lastAddedMonomer;
 
     selectedPiecesInChains.forEach((selectedPiece) => {
-      selectedPiece.forEach((node) => {
+      selectedPiece.reverse().forEach((node) => {
         if (!node.monomer.selected) {
           lastAddedMonomer = undefined;
           lastAddedNode = undefined;
@@ -2739,10 +2739,7 @@ export class DrawingEntitiesManager {
 
         if (node instanceof Nucleotide || node instanceof Nucleoside) {
           const antisenseNodeCreationResult =
-            DrawingEntitiesManager.createAntisenseNode(
-              node,
-              node instanceof Nucleotide && node.phosphate.selected,
-            );
+            DrawingEntitiesManager.createAntisenseNode(node, false);
 
           if (!antisenseNodeCreationResult) {
             return;
@@ -2753,11 +2750,32 @@ export class DrawingEntitiesManager {
 
           command.merge(addNucleotideCommand);
 
+          let addedPhosphate: BaseMonomer | undefined;
+
+          if (node instanceof Nucleotide && node.phosphate.selected) {
+            const monomerAddCommand = this.addMonomer(
+              node.phosphate.monomerItem,
+              node.phosphate.position.add(new Vec2(0, 3)),
+            );
+            addedPhosphate = monomerAddCommand.operations[0]
+              .monomer as BaseMonomer;
+
+            command.merge(monomerAddCommand);
+            command.merge(
+              this.createPolymerBond(
+                addedPhosphate,
+                addedNode.firstMonomerInNode,
+                AttachmentPointName.R2,
+                AttachmentPointName.R1,
+              ),
+            );
+          }
+
           if (lastAddedNode) {
             command.merge(
               this.createPolymerBond(
                 lastAddedMonomer || lastAddedNode.lastMonomerInNode,
-                addedNode.firstMonomerInNode,
+                addedPhosphate || addedNode.firstMonomerInNode,
                 AttachmentPointName.R2,
                 AttachmentPointName.R1,
               ),

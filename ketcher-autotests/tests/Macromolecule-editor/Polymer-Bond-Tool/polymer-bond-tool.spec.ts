@@ -35,6 +35,7 @@ import {
   clickOnCanvas,
   selectMacroBond,
   selectMonomer,
+  selectOpenFileTool,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
@@ -600,7 +601,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     });
 
   expect(fastaFile).toEqual(fastaFileExpected);
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await openFile('FASTA/two-peptides-connected-expected.fasta', page);
   await selectOptionInTypeDropdown2('Peptide', page);
   await pressButton(page, 'Open as New');

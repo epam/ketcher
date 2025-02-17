@@ -15,6 +15,7 @@ import {
   waitForRender,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectOpenFileTool,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import {
@@ -153,7 +154,7 @@ test.describe('Text tools test cases', () => {
 
   test('Open saved .ket file', async ({ page }) => {
     // Test case: EPMLSOPKET-2235
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFromFileViaClipboard('tests/test-data/KET/ketfile01.ket', page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -228,7 +229,7 @@ test.describe('Text tools test cases', () => {
   test('UTF-8 compatible ("Paste from Clipboard")', async ({ page }) => {
     // Test case: EPMLSOPKET-5253
     // Verify if possible is add UTF-8 data format  to canvas
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFromFileViaClipboard(
       'tests/test-data/KET/utf-8-svg-png.ket',
       page,

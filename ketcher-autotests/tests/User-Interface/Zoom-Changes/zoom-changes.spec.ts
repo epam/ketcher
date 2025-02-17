@@ -16,6 +16,7 @@ import {
   drawBenzeneRing,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
+  selectOpenFileTool,
 } from '@utils';
 import {
   pressUndoButton,
@@ -244,7 +245,7 @@ test.describe('Zoom changes', () => {
       Description: The correct structure fits on the canvas, and the zoom percentage 
       has decreased on the "Zoom panel"
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFromFileViaClipboard(
       'tests/test-data/Molfiles-V2000/long-chain.mol',
       page,

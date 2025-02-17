@@ -23,6 +23,7 @@ import {
   PeptideType,
   MacroFileType,
   selectSaveTool,
+  selectOpenFileTool,
 } from '@utils';
 import { closeErrorMessage, pageReload } from '@utils/common/helpers';
 import {
@@ -72,7 +73,7 @@ test.describe('Import-Saving .seq Files', () => {
     const fileContent = await readFileContents(
       'tests/test-data/Sequence/sequence-fasta-single-chain.seq',
     );
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await page.getByTestId('paste-from-clipboard-button').click();
     await page.getByTestId('open-structure-textarea').fill(fileContent);
     await chooseFileFormat(page, 'Sequence');
@@ -123,7 +124,7 @@ test.describe('Import-Saving .seq Files', () => {
   test('Check that system does not let importing empty .seq file', async ({
     page,
   }) => {
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('Sequence/sequence-empty.seq', page);
     // await page.getByText('Add to Canvas').isDisabled();
     await expect(page.getByText('Add to Canvas')).toBeDisabled();
@@ -132,7 +133,7 @@ test.describe('Import-Saving .seq Files', () => {
   test('Check that system does not let uploading corrupted .seq file', async ({
     page,
   }) => {
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
 
     const filename = 'Sequence/sequence-corrupted.seq';
     await openFile(filename, page);
@@ -237,12 +238,12 @@ test.describe('Import-Saving .seq Files', () => {
     */
       const Rna = 'acgtu';
       const Dna = 'acgtu';
-      await selectTopPanelButton(TopPanelButton.Open, page);
+      await selectOpenFileTool(page);
       await page.getByTestId('paste-from-clipboard-button').click();
       await page.getByTestId('open-structure-textarea').fill(Rna);
       await chooseFileFormat(page, 'Sequence');
       await page.getByTestId('add-to-canvas-button').click();
-      await selectTopPanelButton(TopPanelButton.Open, page);
+      await selectOpenFileTool(page);
       await page.getByTestId('paste-from-clipboard-button').click();
       await page.getByTestId('open-structure-textarea').fill(Dna);
       await chooseFileFormat(page, 'Sequence');

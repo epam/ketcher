@@ -51,6 +51,7 @@ import {
   selectUndoByKeyboard,
   selectZoomOutTool,
   waitForElementInCanvas,
+  selectOpenFileTool,
 } from '@utils';
 
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -224,7 +225,7 @@ test.describe('Template Manupulations', () => {
     await selectAtomInToolbar(AtomButton.Iodine, page);
     await clickOnAtom(page, 'C', anyAtom);
 
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await page.getByText('Paste from clipboard').click();
     await pasteFromClipboard(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
     await waitForLoad(page, async () => {

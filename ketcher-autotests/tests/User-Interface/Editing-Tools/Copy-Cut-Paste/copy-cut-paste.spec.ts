@@ -31,6 +31,7 @@ import {
   moveMouseAway,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectOpenFileTool,
 } from '@utils';
 import {
   pressRedoButton,
@@ -1055,7 +1056,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const smartsString =
       '[#6]-[#6]-[#6]-[#6]-[!#40!#79!#30]-[#6]-[#6]-[#6]-[#6]';
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await page.getByText('Paste from clipboard').click();
     await page.getByRole('dialog').getByRole('textbox').fill(smartsString);
     await selectAllStructuresOnCanvas(page);

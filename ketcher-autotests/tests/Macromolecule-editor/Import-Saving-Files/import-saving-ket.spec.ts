@@ -23,6 +23,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   selectZoomOutTool,
   selectMonomer,
+  selectOpenFileTool,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -221,7 +222,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: System does not let importing empty .ket file
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('KET/empty-file.ket', page);
     await expect(page.getByText('Add to Canvas')).toBeDisabled();
   });
@@ -231,7 +232,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: System does not let uploading corrupted .ket file
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('KET/corrupted-file.ket', page);
     await pressButton(page, 'Add to Canvas');
     await takeEditorScreenshot(page);

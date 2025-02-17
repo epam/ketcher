@@ -16,6 +16,7 @@ import {
   receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
+  selectOpenFileTool,
 } from '@utils';
 import {
   clickOnFileFormatDropdown,
@@ -41,7 +42,7 @@ async function getAndCompareSmiles(page: Page, smilesFilePath: string) {
 async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
   await pressButton(page, 'Cancel');
   await selectTopPanelButton(TopPanelButton.Clear, page);
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await page.getByText('Paste from clipboard').click();
   await pasteFromClipboard(page, smiles);
   await waitForLoad(page, async () => {

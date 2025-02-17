@@ -11,6 +11,7 @@ import {
   TopPanelButton,
   selectTopPanelButton,
   waitForPageInit,
+  selectOpenFileTool,
 } from '@utils';
 
 const X_OFFSET = 200;
@@ -55,7 +56,7 @@ test.describe('open files with different formats', () => {
      * Description: Two structures are added to canvas - one opened from clipboard, another from file
      */
     // add first stucture from clipboard to canvas
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFromFileViaClipboard(
       'tests/test-data/Txt/1840225-mol-1.txt',
       page,
@@ -63,7 +64,7 @@ test.describe('open files with different formats', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     // add second structure from file to canvas
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('Molfiles-V2000/glutamine.mol', page);
     await waitForLoad(page, async () => {
       await pressButton(page, 'Add to Canvas');
@@ -78,13 +79,13 @@ test.describe('open files with different formats', () => {
      * Description: Two structures are added to canvas - one opened from clipboard, another from file
      */
     // add first stucture from clipboard to canvas
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFromFileViaClipboard(
       'tests/test-data/Txt/1879938-rxn-1[1].txt',
       page,
     );
     // add second structure from file to canvas
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('Rxn-V2000/rxn-reaction.rxn', page);
     await waitForLoad(page, async () => {
       await pressButton(page, 'Add to Canvas');
@@ -99,7 +100,7 @@ test.describe('open files with different formats', () => {
      * Description: Open structures from InChi string
      */
     // add first stucture from clipboard to canvas
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFromFileViaClipboard(
       'tests/test-data/Txt/1837-inchi-1.txt',
       page,
@@ -114,7 +115,7 @@ test.describe('open files with different formats', () => {
      * Description: Open structures from InChi string
      */
     // add first stucture from clipboard to canvas
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFromFileViaClipboard(
       'tests/test-data/Txt/1837-inchi-2.txt',
       page,
@@ -129,7 +130,7 @@ test.describe('open files with different formats', () => {
      * Description: Open structures from InChi string
      */
     // add first structure from clipboard to canvas
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFromFileViaClipboard(
       'tests/test-data/Txt/1837-inchi-3.txt',
       page,
@@ -144,7 +145,7 @@ test.describe('open files with different formats', () => {
      * Description: Open structures from mol file
      */
     // add first structure from clipboard to canvas
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('Molfiles-V3000/a-query-notList.mol', page);
     await waitForLoad(page, async () => {
       await pressButton(page, 'Open as New Project');
@@ -158,7 +159,7 @@ test.describe('open files with different formats', () => {
      * Description: Open structures from mol file
      */
     // add first stucture from clipboard to canvas
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('Molfiles-V3000/dhis-prohibit-atoms.mol', page);
     await waitForLoad(page, async () => {
       await pressButton(page, 'Open as New Project');

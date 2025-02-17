@@ -18,6 +18,7 @@ import {
   SequenceType,
   MacroFileType,
   PeptideType,
+  selectOpenFileTool,
 } from '@utils';
 
 import { MolfileFormat } from 'ketcher-core';
@@ -110,7 +111,7 @@ export async function openFileAndAddToCanvas(
   xOffsetFromCenter?: number,
   yOffsetFromCenter?: number,
 ) {
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await openFile(filename, page);
 
   // to stabilize the test
@@ -136,7 +137,7 @@ export async function openFileAndAddToCanvasMacro(
   page: Page,
   typeDropdownOption?: TypeDropdownOptions,
 ) {
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await openFile(filename, page);
 
   // to stabilize the test
@@ -156,7 +157,7 @@ export async function openFileAndAddToCanvasAsNewProjectMacro(
   page: Page,
   typeDropdownOption?: TypeDropdownOptions,
 ) {
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await openFile(filename, page);
 
   // to stabilize the test
@@ -175,7 +176,7 @@ export async function openFileAndAddToCanvasAsNewProject(
   filename: string,
   page: Page,
 ) {
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await openFile(filename, page);
 
   await selectOptionInDropdown(filename, page);
@@ -230,7 +231,7 @@ export async function pasteFromClipboardAndAddToCanvas(
   fillStructure: string,
   needToWait = true,
 ) {
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
   if (needToWait) {
@@ -246,7 +247,7 @@ export async function pasteFromClipboardAndOpenAsNewProject(
   fillStructure: string,
   needToWait = true,
 ) {
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
   if (needToWait) {
@@ -499,7 +500,7 @@ export async function openPasteFromClipboard(
   page: Page,
   fillStructure: string,
 ) {
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
   // The 'Add to Canvas' button step is removed.
@@ -512,7 +513,7 @@ export async function placeFileInTheMiddle(
   page: Page,
   delayInSeconds: number,
 ) {
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await openFile(filename, page);
   await pressButton(page, 'AddToCanvas');
   await clickInTheMiddleOfTheScreen(page);

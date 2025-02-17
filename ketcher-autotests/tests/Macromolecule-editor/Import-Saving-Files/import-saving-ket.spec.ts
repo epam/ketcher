@@ -3,13 +3,11 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';
 import { test, expect, Page } from '@playwright/test';
 import {
-  TopPanelButton,
   moveMouseAway,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
   waitForPageInit,
-  selectTopPanelButton,
   openFile,
   pressButton,
   selectSnakeLayoutModeTool,

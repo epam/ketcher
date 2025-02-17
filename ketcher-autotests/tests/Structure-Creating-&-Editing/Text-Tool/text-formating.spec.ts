@@ -1,10 +1,8 @@
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectTopPanelButton,
   waitForPageInit,
   pressButton,
-  TopPanelButton,
   clickInTheMiddleOfTheScreen,
   openFromFileViaClipboard,
   waitForLoad,

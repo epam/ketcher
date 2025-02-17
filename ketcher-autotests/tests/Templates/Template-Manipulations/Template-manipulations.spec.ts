@@ -7,7 +7,6 @@ import {
   clickInTheMiddleOfTheScreen,
   selectRing,
   RingButton,
-  selectTopPanelButton,
   TopPanelButton,
   dragMouseTo,
   pressButton,

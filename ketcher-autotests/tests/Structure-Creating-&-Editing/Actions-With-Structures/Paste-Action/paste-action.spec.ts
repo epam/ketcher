@@ -8,7 +8,6 @@ import {
   selectAllStructuresOnCanvas,
   drawBenzeneRing,
   copyToClipboardByKeyboard,
-  selectTopPanelButton,
   pasteFromClipboardByKeyboard,
   selectRing,
   RingButton,

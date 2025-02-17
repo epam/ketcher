@@ -1,8 +1,6 @@
 import { test } from '@playwright/test';
 import {
   waitForPageInit,
-  selectTopPanelButton,
-  TopPanelButton,
   openFile,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,

@@ -16,8 +16,6 @@ import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pressButton,
-  selectTopPanelButton,
-  TopPanelButton,
   saveToFile,
   receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,

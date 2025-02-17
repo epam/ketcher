@@ -4,9 +4,7 @@ import * as path from 'path';
 import { Page, expect } from '@playwright/test';
 import {
   MacromoleculesTopPanelButton,
-  selectTopPanelButton,
   pressButton,
-  TopPanelButton,
   clickInTheMiddleOfTheScreen,
   waitForLoad,
   delay,

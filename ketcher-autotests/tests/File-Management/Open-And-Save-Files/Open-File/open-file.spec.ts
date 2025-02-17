@@ -8,8 +8,6 @@ import {
   clickOnTheCanvas,
   waitForLoad,
   openFileAndAddToCanvas,
-  TopPanelButton,
-  selectTopPanelButton,
   waitForPageInit,
   selectOpenFileTool,
 } from '@utils';

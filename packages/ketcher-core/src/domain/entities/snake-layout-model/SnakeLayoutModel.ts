@@ -1,5 +1,4 @@
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
-import { isNumber } from 'lodash';
 import {
   BaseMonomer,
   LinkerSequenceNode,
@@ -9,6 +8,7 @@ import {
 } from 'domain/entities';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
+import { isNumber } from 'lodash';
 
 export interface SnakeLayoutNode {
   monomers: BaseMonomer[];
@@ -93,14 +93,22 @@ export class SnakeLayoutModel {
   }
 
   private fillAntisenseNodes(chainsCollection: ChainsCollection) {
+    const handledChainNodes = new Set<SubChainNode>();
+
     chainsCollection.chains.forEach((chain) => {
       if (!chain.isAntisense) {
         return;
       }
       let nodesBeforeHydrogenConnectionToBase: SnakeLayoutNode[] = [];
-      let lastTwoStrandedNodeWithHydrogenBondIndex: number | undefined;
+      let lastTwoStrandedNodeWithHydrogenBond:
+        | TwoStrandedSnakeLayoutNode
+        | undefined;
 
       chain.forEachNodeReversed(({ node }) => {
+        if (handledChainNodes.has(node)) {
+          return;
+        }
+
         const snakeLayoutNodes = this.getSnakeLayoutNodesFromChainNode(
           node,
           true,
@@ -139,11 +147,21 @@ export class SnakeLayoutModel {
               return node === twoStrandedSnakeLayoutNode;
             },
           );
+          const lastTwoStrandedNodeWithHydrogenBondIndex = this.nodes.findIndex(
+            (node) => {
+              return node === lastTwoStrandedNodeWithHydrogenBond;
+            },
+          );
 
-          if (firstSenseMonomerConnectedByHydrogenBond) {
+          if (
+            firstSenseMonomerConnectedByHydrogenBond &&
+            (!isNumber(lastTwoStrandedNodeWithHydrogenBondIndex) ||
+              twoStrandedSnakeLayoutNodeIndex >
+                lastTwoStrandedNodeWithHydrogenBondIndex)
+          ) {
             nodesBeforeHydrogenConnectionToBase.push(snakeLayoutNode);
-            lastTwoStrandedNodeWithHydrogenBondIndex =
-              twoStrandedSnakeLayoutNodeIndex;
+            lastTwoStrandedNodeWithHydrogenBond =
+              this.nodes[twoStrandedSnakeLayoutNodeIndex];
             for (
               let i = 0;
               i < nodesBeforeHydrogenConnectionToBase.length;
@@ -182,12 +200,19 @@ export class SnakeLayoutModel {
             nodesBeforeHydrogenConnectionToBase.push(snakeLayoutNode);
           }
         });
+
+        handledChainNodes.add(node);
       });
 
       if (
         nodesBeforeHydrogenConnectionToBase.length &&
-        isNumber(lastTwoStrandedNodeWithHydrogenBondIndex)
+        lastTwoStrandedNodeWithHydrogenBond
       ) {
+        const lastTwoStrandedNodeWithHydrogenBondIndex = this.nodes.findIndex(
+          (node) => {
+            return node === lastTwoStrandedNodeWithHydrogenBond;
+          },
+        );
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
           const currentTwoStrandedSnakeLayoutNode =
             this.nodes[lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i];
@@ -204,7 +229,7 @@ export class SnakeLayoutModel {
           }
         }
 
-        lastTwoStrandedNodeWithHydrogenBondIndex = undefined;
+        lastTwoStrandedNodeWithHydrogenBond = undefined;
       }
     });
   }

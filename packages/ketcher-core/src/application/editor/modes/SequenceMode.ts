@@ -871,59 +871,118 @@ export class SequenceMode extends BaseMode {
         );
       }
 
-      if (
-        !nodeBeforeSelection ||
-        nodeBeforeSelection instanceof EmptySequenceNode
-      ) {
-        return;
-      }
+      if (strandType === STRAND_TYPE.SENSE) {
+        if (
+          !nodeBeforeSelection ||
+          nodeBeforeSelection instanceof EmptySequenceNode
+        ) {
+          return;
+        }
 
-      if (
-        nodeBeforeSelection === nodeInSameChainBeforeSelection &&
-        nodeBeforeSelection instanceof Nucleotide &&
-        selectionStartNode instanceof Nucleoside &&
-        (!nodeAfterSelection || nodeAfterSelection instanceof EmptySequenceNode)
-      ) {
-        // delete phosphate from last nucleotide
-        modelChanges.merge(
-          editor.drawingEntitiesManager.deleteMonomer(
-            nodeBeforeSelection.lastMonomerInNode,
-          ),
-        );
-        // TODO get rid of this boolean
-        isPhosphateAdditionalyDeleted = true;
-      }
+        if (
+          nodeBeforeSelection === nodeInSameChainBeforeSelection &&
+          nodeBeforeSelection instanceof Nucleotide &&
+          selectionStartNode instanceof Nucleoside &&
+          (!nodeAfterSelection ||
+            nodeAfterSelection instanceof EmptySequenceNode)
+        ) {
+          // delete phosphate from last nucleotide
+          modelChanges.merge(
+            editor.drawingEntitiesManager.deleteMonomer(
+              nodeBeforeSelection.lastMonomerInNode,
+            ),
+          );
+          // TODO get rid of this boolean
+          isPhosphateAdditionalyDeleted = true;
+        }
 
-      if (
-        !nodeAfterSelection ||
-        nodeAfterSelection instanceof EmptySequenceNode ||
-        (!this.isEditMode &&
-          (nodeAfterSelection !== nodeInSameChainAfterSelection ||
-            nodeBeforeSelection !== nodeInSameChainBeforeSelection))
-      ) {
-        return;
-      }
+        if (
+          !nodeAfterSelection ||
+          nodeAfterSelection instanceof EmptySequenceNode ||
+          (!this.isEditMode &&
+            (nodeAfterSelection !== nodeInSameChainAfterSelection ||
+              nodeBeforeSelection !== nodeInSameChainBeforeSelection))
+        ) {
+          return;
+        }
 
-      if (
-        nodeBeforeSelection instanceof Nucleoside &&
-        nodeAfterSelection instanceof Nucleotide
-      ) {
-        modelChanges.merge(
-          this.bondNodesThroughNewPhosphate(
-            this.getNewSequenceItemPosition(nodeBeforeSelection),
-            nodeBeforeSelection.lastMonomerInNode,
-            nodeAfterSelection.firstMonomerInNode,
-          ),
-        );
-      } else if (nodeBeforeSelection && nodeAfterSelection) {
-        modelChanges.merge(
-          this.tryToCreatePolymerBond(
-            isPhosphateAdditionalyDeleted
-              ? nodeBeforeSelection.firstMonomerInNode
-              : nodeBeforeSelection.lastMonomerInNode,
-            nodeAfterSelection.firstMonomerInNode,
-          ),
-        );
+        if (
+          nodeBeforeSelection instanceof Nucleoside &&
+          nodeAfterSelection instanceof Nucleotide
+        ) {
+          modelChanges.merge(
+            this.bondNodesThroughNewPhosphate(
+              this.getNewSequenceItemPosition(nodeBeforeSelection),
+              nodeBeforeSelection.lastMonomerInNode,
+              nodeAfterSelection.firstMonomerInNode,
+            ),
+          );
+        } else if (nodeBeforeSelection && nodeAfterSelection) {
+          modelChanges.merge(
+            this.tryToCreatePolymerBond(
+              isPhosphateAdditionalyDeleted
+                ? nodeBeforeSelection.firstMonomerInNode
+                : nodeBeforeSelection.lastMonomerInNode,
+              nodeAfterSelection.firstMonomerInNode,
+            ),
+          );
+        }
+      } else {
+        if (
+          !nodeAfterSelection ||
+          nodeAfterSelection instanceof EmptySequenceNode
+        ) {
+          return;
+        }
+
+        if (
+          nodeAfterSelection === nodeInSameChainAfterSelection &&
+          nodeAfterSelection instanceof Nucleotide &&
+          selectionEndNode instanceof Nucleoside &&
+          (!nodeBeforeSelection ||
+            nodeBeforeSelection instanceof EmptySequenceNode)
+        ) {
+          // delete phosphate from last nucleotide
+          modelChanges.merge(
+            editor.drawingEntitiesManager.deleteMonomer(
+              nodeAfterSelection.lastMonomerInNode,
+            ),
+          );
+          // TODO get rid of this boolean
+          isPhosphateAdditionalyDeleted = true;
+        }
+
+        if (
+          !nodeBeforeSelection ||
+          nodeBeforeSelection instanceof EmptySequenceNode ||
+          (!this.isEditMode &&
+            (nodeBeforeSelection !== nodeInSameChainBeforeSelection ||
+              nodeAfterSelection !== nodeInSameChainAfterSelection))
+        ) {
+          return;
+        }
+
+        if (
+          nodeAfterSelection instanceof Nucleoside &&
+          nodeBeforeSelection instanceof Nucleotide
+        ) {
+          modelChanges.merge(
+            this.bondNodesThroughNewPhosphate(
+              this.getNewSequenceItemPosition(nodeBeforeSelection),
+              nodeAfterSelection.lastMonomerInNode,
+              nodeBeforeSelection.firstMonomerInNode,
+            ),
+          );
+        } else if (nodeBeforeSelection && nodeAfterSelection) {
+          modelChanges.merge(
+            this.tryToCreatePolymerBond(
+              isPhosphateAdditionalyDeleted
+                ? nodeAfterSelection.firstMonomerInNode
+                : nodeAfterSelection.lastMonomerInNode,
+              nodeBeforeSelection.firstMonomerInNode,
+            ),
+          );
+        }
       }
     });
 

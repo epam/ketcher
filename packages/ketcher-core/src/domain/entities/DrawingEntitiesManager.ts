@@ -1601,8 +1601,11 @@ export class DrawingEntitiesManager {
             }
           }
 
-          hasAntisenseInPreviousRow = false;
-          hasRnaInPreviousRow = false;
+          if (nodeIndexInChain !== 0) {
+            hasAntisenseInPreviousRow = false;
+            hasRnaInPreviousRow = false;
+          }
+
           snakeLayoutNodesInRow = [];
         }
 

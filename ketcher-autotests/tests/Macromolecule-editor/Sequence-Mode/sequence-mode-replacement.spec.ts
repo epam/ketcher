@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { BrowserContext, chromium, expect, Page, test } from '@playwright/test';
 import {
-  clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   copyToClipboardByKeyboard,
   getFasta,
@@ -9,6 +8,7 @@ import {
   getMolfile,
   getSequence,
   Monomer,
+  moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pasteFromClipboardByKeyboard,
@@ -1722,7 +1722,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence.ReplacementPositions.LeftEnd,
       );
 
-      await clickInTheMiddleOfTheScreen(page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
 

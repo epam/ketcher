@@ -1485,11 +1485,26 @@ export class DrawingEntitiesManager {
       let snakeLayoutNodesInRow: SnakeLayoutNode[] = [];
       let previousSenseNode: SnakeLayoutNode | undefined;
       let previousAntisenseNode: SnakeLayoutNode | undefined;
+      let nodeIndexInChain = -1;
 
-      snakeLayoutModel.forEachNode((twoStrandedSnakeLayoutNode, nodeIndex) => {
+      snakeLayoutModel.forEachNode((twoStrandedSnakeLayoutNode) => {
         const senseNode = twoStrandedSnakeLayoutNode.senseNode;
         const antisenseNode = twoStrandedSnakeLayoutNode.antisenseNode;
-        const isNewRow = nodeIndex % numberOfCellsInRow === 0;
+        const firstMonomerInSenseNode = senseNode?.monomers[0];
+        const firstMonomerInPreviousSenseNode = previousSenseNode?.monomers[0];
+        const senseNodeChain = firstMonomerInSenseNode
+          ? chainsCollection.monomerToChain.get(firstMonomerInSenseNode)
+          : undefined;
+        const previousSenseNodeChain = firstMonomerInPreviousSenseNode
+          ? chainsCollection.monomerToChain.get(firstMonomerInPreviousSenseNode)
+          : undefined;
+        const isNewSenseChain =
+          senseNodeChain &&
+          previousSenseNodeChain &&
+          senseNodeChain !== previousSenseNodeChain;
+        nodeIndexInChain = isNewSenseChain ? 0 : ++nodeIndexInChain;
+        const isNewRow =
+          nodeIndexInChain % numberOfCellsInRow === 0 || isNewSenseChain;
         const newSenseNodePosition = isNewRow
           ? new Vec2(
               MONOMER_START_X_POSITION,
@@ -1536,6 +1551,7 @@ export class DrawingEntitiesManager {
               needRepositionMonomers,
               true,
             );
+            hasRnaInPreviousRow = true;
           } else if (antisenseNode instanceof SingleMonomerSnakeLayoutNode) {
             this.rearrangeSingleMonomerSnakeLayoutNode(
               antisenseNode,

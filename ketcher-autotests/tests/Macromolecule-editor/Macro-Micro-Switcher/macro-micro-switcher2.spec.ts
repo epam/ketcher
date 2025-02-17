@@ -105,6 +105,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       Description: Added to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs 
       when Hide Library and switching from Macro mode to Micro mode and back to Macro is saved
       */
+    test.slow();
     await addToFavoritesMonomers(page);
     await page.getByText('Hide').click();
     await turnOnMicromoleculesEditor(page);

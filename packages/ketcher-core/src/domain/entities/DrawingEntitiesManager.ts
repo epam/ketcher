@@ -102,6 +102,8 @@ import {
 } from 'domain/entities/snake-layout-model/SnakeLayoutModel';
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
+import { getRnaPartLibraryItem } from 'domain/helpers/rna';
+import { KetcherLogger } from 'utilities';
 
 export const CELL_WIDTH = 60;
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = CELL_WIDTH;
@@ -2764,8 +2766,21 @@ export class DrawingEntitiesManager {
           let addedPhosphate: BaseMonomer | undefined;
 
           if (node instanceof Nucleotide && node.phosphate.selected) {
+            const phosphateLibraryItem = getRnaPartLibraryItem(
+              editor,
+              RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
+            );
+
+            if (!phosphateLibraryItem) {
+              KetcherLogger.warn(
+                'Phosphate is not found in monomers library. Skipping phosphate addition.',
+              );
+
+              return;
+            }
+
             const monomerAddCommand = this.addMonomer(
-              node.phosphate.monomerItem,
+              phosphateLibraryItem,
               node.phosphate.position.add(new Vec2(0, 3)),
             );
             addedPhosphate = monomerAddCommand.operations[0]

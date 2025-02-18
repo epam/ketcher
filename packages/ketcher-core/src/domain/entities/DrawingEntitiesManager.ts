@@ -60,8 +60,8 @@ import { SequenceRenderer } from 'application/render/renderers/sequence/Sequence
 import { Nucleoside } from './Nucleoside';
 import { Nucleotide } from './Nucleotide';
 import {
-  MACROMOLECULES_BOND_TYPES,
   FlexMode,
+  MACROMOLECULES_BOND_TYPES,
   SequenceMode,
   SnakeMode,
 } from 'application/editor';
@@ -1521,7 +1521,7 @@ export class DrawingEntitiesManager {
             ? new Vec2(
                 MONOMER_START_X_POSITION,
                 lastPosition.y +
-                  (hasRnaInPreviousRow
+                  (hasRnaInPreviousRow || hasAntisenseInPreviousRow // hasAntisenseInPreviousRow used here because currently antisense y reserves space for RNA
                     ? VERTICAL_OFFSET_FROM_ROW_WITH_RNA
                     : VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA) +
                   (hasAntisenseInPreviousRow
@@ -2749,7 +2749,7 @@ export class DrawingEntitiesManager {
     });
 
     let lastAddedNode;
-    let lastAddedMonomer;
+    let lastAddedMonomer: BaseMonomer | undefined;
 
     selectedPiecesInChains.forEach((selectedPiece) => {
       selectedPiece.reverse().forEach((node) => {
@@ -2828,16 +2828,35 @@ export class DrawingEntitiesManager {
             ),
           );
 
-          lastAddedMonomer = null;
+          lastAddedMonomer = undefined;
           lastAddedNode = addedNode;
         } else {
           lastAddedMonomer =
             lastAddedMonomer || lastAddedNode?.lastMonomerInNode;
 
-          node.monomers.forEach((monomer) => {
+          node.monomers.reverse().forEach((monomer) => {
             if (!monomer.selected) {
               lastAddedMonomer = undefined;
               lastAddedNode = undefined;
+
+              return;
+            }
+
+            if (!monomer.hasAttachmentPoint(AttachmentPointName.R2)) {
+              editor.events.error.dispatch(
+                `Monomer ${monomer.label} does not have attachment point R2. Antisense was not created for this monomer.`,
+              );
+
+              return;
+            }
+
+            if (
+              lastAddedMonomer &&
+              !lastAddedMonomer.hasAttachmentPoint(AttachmentPointName.R1)
+            ) {
+              editor.events.error.dispatch(
+                `Monomer ${lastAddedMonomer.label} does not have attachment point R1. Antisense was not created for this monomer.`,
+              );
 
               return;
             }

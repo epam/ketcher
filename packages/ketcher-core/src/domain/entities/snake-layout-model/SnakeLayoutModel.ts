@@ -142,11 +142,9 @@ export class SnakeLayoutModel {
                   firstSenseMonomerConnectedByHydrogenBond,
                 )
               : undefined;
-          const twoStrandedSnakeLayoutNodeIndex = this.nodes.findIndex(
-            (node) => {
-              return node === twoStrandedSnakeLayoutNode;
-            },
-          );
+          let twoStrandedSnakeLayoutNodeIndex = this.nodes.findIndex((node) => {
+            return node === twoStrandedSnakeLayoutNode;
+          });
           const lastTwoStrandedNodeWithHydrogenBondIndex = this.nodes.findIndex(
             (node) => {
               return node === lastTwoStrandedNodeWithHydrogenBond;
@@ -167,6 +165,11 @@ export class SnakeLayoutModel {
               i < nodesBeforeHydrogenConnectionToBase.length;
               i++
             ) {
+              // need to get rid of this findIndex to reduce complexity
+              twoStrandedSnakeLayoutNodeIndex = this.nodes.findIndex((node) => {
+                return node === twoStrandedSnakeLayoutNode;
+              });
+
               const currentTwoStrandedSnakeLayoutNodeIndex =
                 twoStrandedSnakeLayoutNodeIndex - i;
               const currentTwoStrandedSnakeLayoutNode =
@@ -188,9 +191,13 @@ export class SnakeLayoutModel {
                     antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
                   });
                 } else {
-                  this.nodes.splice(currentTwoStrandedSnakeLayoutNodeIndex, 0, {
-                    antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
-                  });
+                  this.nodes.splice(
+                    currentTwoStrandedSnakeLayoutNodeIndex + 1,
+                    0,
+                    {
+                      antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
+                    },
+                  );
                 }
               }
             }

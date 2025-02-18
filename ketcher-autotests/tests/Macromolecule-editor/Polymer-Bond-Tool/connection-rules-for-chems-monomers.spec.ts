@@ -1203,30 +1203,6 @@ test.describe('Connection rules for chems: ', () => {
     await moveMouseAway(page);
   }
 
-  async function bondMonomerCenterToAtom(
-    page: Page,
-    leftPeptide: IMonomer,
-    rightMolecule: IMolecule,
-    atomIndex: number,
-  ) {
-    const leftPeptideLocator = getMonomerLocator(page, {
-      monomerAlias: leftPeptide.alias,
-    }).first();
-
-    const rightMoleculeLocator = page
-      .getByTestId('ketcher-canvas')
-      .locator(rightMolecule.atomLocatorSelectors[atomIndex])
-      .first();
-
-    await bondMonomerPointToMoleculeAtom(
-      page,
-      leftPeptideLocator,
-      rightMoleculeLocator,
-      undefined,
-      rightMolecule.connectionPointShifts[atomIndex],
-    );
-  }
-
   async function bondMonomerPointToAtom(
     page: Page,
     leftPeptide: IMonomer,

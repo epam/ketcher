@@ -16,7 +16,6 @@
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { BaseTool } from 'application/editor/tools/Tool';
 import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRenderer';
-import { ChemRenderer } from 'application/render/renderers/ChemRenderer';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import assert from 'assert';
@@ -469,7 +468,7 @@ class PolymerBond implements BaseTool {
     const monomer = this.bondRenderer?.polymerBond.firstMonomer;
 
     if (
-      monomer.baseRenderer instanceof ChemRenderer &&
+      monomer instanceof Chem &&
       !this.isHydrogenBond &&
       !monomer.chosenFirstAttachmentPointForBond
     ) {

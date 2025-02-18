@@ -200,11 +200,11 @@
                 "connectionType": "single",
                 "endpoint1": {
                     "monomerId": "monomer12",
-                    "attachmentPointId": "R1"
+                    "attachmentPointId": "R2"
                 },
                 "endpoint2": {
                     "monomerId": "monomer13",
-                    "attachmentPointId": "R3"
+                    "attachmentPointId": "R1"
                 }
             },
             {
@@ -216,36 +216,27 @@
                 "endpoint2": {
                     "monomerId": "monomer14",
                     "attachmentPointId": "R1"
-                }
-            },
-            {
-                "connectionType": "hydrogen",
-                "endpoint1": {
-                    "monomerId": "monomer1"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer12"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
                     "monomerId": "monomer15",
-                    "attachmentPointId": "R1"
+                    "attachmentPointId": "R3"
                 },
                 "endpoint2": {
                     "monomerId": "monomer16",
-                    "attachmentPointId": "R3"
+                    "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer16",
+                    "monomerId": "monomer17",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer17",
+                    "monomerId": "monomer15",
                     "attachmentPointId": "R1"
                 }
             },
@@ -256,49 +247,7 @@
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer16",
-                    "attachmentPointId": "R1"
-                }
-            },
-            {
-                "connectionType": "hydrogen",
-                "endpoint1": {
-                    "monomerId": "monomer4"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer15"
-                }
-            },
-            {
-                "connectionType": "single",
-                "endpoint1": {
-                    "monomerId": "monomer18",
-                    "attachmentPointId": "R1"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer19",
-                    "attachmentPointId": "R3"
-                }
-            },
-            {
-                "connectionType": "single",
-                "endpoint1": {
-                    "monomerId": "monomer19",
-                    "attachmentPointId": "R2"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer20",
-                    "attachmentPointId": "R1"
-                }
-            },
-            {
-                "connectionType": "single",
-                "endpoint1": {
                     "monomerId": "monomer17",
-                    "attachmentPointId": "R2"
-                },
-                "endpoint2": {
-                    "monomerId": "monomer19",
                     "attachmentPointId": "R1"
                 }
             },
@@ -308,7 +257,18 @@
                     "monomerId": "monomer7"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer18"
+                    "monomerId": "monomer16"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer18",
+                    "attachmentPointId": "R3"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer19",
+                    "attachmentPointId": "R1"
                 }
             },
             {
@@ -318,15 +278,35 @@
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
-                    "monomerId": "monomer21",
+                    "monomerId": "monomer18",
                     "attachmentPointId": "R1"
                 }
             },
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer21",
+                    "monomerId": "monomer15",
                     "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer20",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer4"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer19"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer21",
+                    "attachmentPointId": "R3"
                 },
                 "endpoint2": {
                     "monomerId": "monomer22",
@@ -336,12 +316,32 @@
             {
                 "connectionType": "single",
                 "endpoint1": {
-                    "monomerId": "monomer22",
+                    "monomerId": "monomer23",
+                    "attachmentPointId": "R2"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer21",
+                    "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "single",
+                "endpoint1": {
+                    "monomerId": "monomer18",
                     "attachmentPointId": "R2"
                 },
                 "endpoint2": {
                     "monomerId": "monomer23",
                     "attachmentPointId": "R1"
+                }
+            },
+            {
+                "connectionType": "hydrogen",
+                "endpoint1": {
+                    "monomerId": "monomer1"
+                },
+                "endpoint2": {
+                    "monomerId": "monomer22"
                 }
             }
         ],
@@ -2121,6 +2121,109 @@
         "type": "monomer",
         "id": "12",
         "position": {
+            "x": 13.25,
+            "y": -5.75
+        },
+        "alias": "AspOMe",
+        "templateId": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
+        "seqid": 12
+    },
+    "monomer13": {
+        "type": "monomer",
+        "id": "13",
+        "position": {
+            "x": 11.75,
+            "y": -5.75
+        },
+        "alias": "Cys_Bn",
+        "templateId": "Cys_Bn___S-benzylcysteine",
+        "seqid": 11
+    },
+    "monomer14": {
+        "type": "monomer",
+        "id": "14",
+        "position": {
+            "x": 10.25,
+            "y": -5.75
+        },
+        "alias": "1Nal",
+        "templateId": "1Nal___3-(1-naphthyl)-alanine",
+        "seqid": 10
+    },
+    "monomer15": {
+        "type": "monomer",
+        "id": "15",
+        "position": {
+            "x": 7.25,
+            "y": -5.75
+        },
+        "alias": "R",
+        "templateId": "R___Ribose"
+    },
+    "monomer16": {
+        "type": "monomer",
+        "id": "16",
+        "position": {
+            "x": 7.25,
+            "y": -4.25
+        },
+        "alias": "G",
+        "templateId": "G___Guanine"
+    },
+    "monomer17": {
+        "type": "monomer",
+        "id": "17",
+        "position": {
+            "x": 8.75,
+            "y": -5.75
+        },
+        "alias": "P",
+        "templateId": "P___Phosphate"
+    },
+    "monomer18": {
+        "type": "monomer",
+        "id": "18",
+        "position": {
+            "x": 4.25,
+            "y": -5.75
+        },
+        "alias": "R",
+        "templateId": "R___Ribose"
+    },
+    "monomer19": {
+        "type": "monomer",
+        "id": "19",
+        "position": {
+            "x": 4.25,
+            "y": -4.25
+        },
+        "alias": "C",
+        "templateId": "C___Cytosine"
+    },
+    "monomer20": {
+        "type": "monomer",
+        "id": "20",
+        "position": {
+            "x": 5.75,
+            "y": -5.75
+        },
+        "alias": "P",
+        "templateId": "P___Phosphate"
+    },
+    "monomer21": {
+        "type": "monomer",
+        "id": "21",
+        "position": {
+            "x": 1.25,
+            "y": -5.75
+        },
+        "alias": "R",
+        "templateId": "R___Ribose"
+    },
+    "monomer22": {
+        "type": "monomer",
+        "id": "22",
+        "position": {
             "x": 1.25,
             "y": -4.25
         },
@@ -2323,117 +2426,14 @@
         ],
         "naturalAnalogShort": "A"
     },
-    "monomer13": {
+    "monomer23": {
         "type": "monomer",
-        "id": "13",
-        "position": {
-            "x": 1.25,
-            "y": -5.75
-        },
-        "alias": "R",
-        "templateId": "R___Ribose"
-    },
-    "monomer14": {
-        "type": "monomer",
-        "id": "14",
+        "id": "23",
         "position": {
             "x": 2.75,
             "y": -5.75
         },
         "alias": "P",
         "templateId": "P___Phosphate"
-    },
-    "monomer15": {
-        "type": "monomer",
-        "id": "15",
-        "position": {
-            "x": 4.25,
-            "y": -4.25
-        },
-        "alias": "C",
-        "templateId": "C___Cytosine"
-    },
-    "monomer16": {
-        "type": "monomer",
-        "id": "16",
-        "position": {
-            "x": 4.25,
-            "y": -5.75
-        },
-        "alias": "R",
-        "templateId": "R___Ribose"
-    },
-    "monomer17": {
-        "type": "monomer",
-        "id": "17",
-        "position": {
-            "x": 5.75,
-            "y": -5.75
-        },
-        "alias": "P",
-        "templateId": "P___Phosphate"
-    },
-    "monomer18": {
-        "type": "monomer",
-        "id": "18",
-        "position": {
-            "x": 7.25,
-            "y": -4.25
-        },
-        "alias": "G",
-        "templateId": "G___Guanine"
-    },
-    "monomer19": {
-        "type": "monomer",
-        "id": "19",
-        "position": {
-            "x": 7.25,
-            "y": -5.75
-        },
-        "alias": "R",
-        "templateId": "R___Ribose"
-    },
-    "monomer20": {
-        "type": "monomer",
-        "id": "20",
-        "position": {
-            "x": 8.75,
-            "y": -5.75
-        },
-        "alias": "P",
-        "templateId": "P___Phosphate"
-    },
-    "monomer21": {
-        "type": "monomer",
-        "id": "21",
-        "position": {
-            "x": 10.25,
-            "y": -5.75
-        },
-        "alias": "1Nal",
-        "templateId": "1Nal___3-(1-naphthyl)-alanine",
-        "seqid": 10
-    },
-    "monomer22": {
-        "type": "monomer",
-        "id": "22",
-        "position": {
-            "x": 11.75,
-            "y": -5.75
-        },
-        "alias": "Cys_Bn",
-        "templateId": "Cys_Bn___S-benzylcysteine",
-        "seqid": 11
-    },
-    "monomer23": {
-        "type": "monomer",
-        "id": "23",
-        "position": {
-            "x": 13.25,
-            "y": -5.75
-        },
-        "alias": "AspOMe",
-        "templateId": "AspOMe___(2S)-2-amino-4-methoxy-4-oxobutanoic acid",
-        "seqid": 12
     }
 }

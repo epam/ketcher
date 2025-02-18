@@ -1518,6 +1518,42 @@ export class DrawingEntitiesManager {
             )
           : new Vec2(lastPosition.x + CELL_WIDTH, lastPosition.y);
 
+        if (isNewRow) {
+          if (hasRnaInPreviousRow) {
+            snakeLayoutNodesInRow.forEach((snakeLayoutNode) => {
+              snakeLayoutNode.monomers.forEach((monomer) => {
+                monomer.isMonomerInRnaChainRow = true;
+              });
+            });
+          }
+
+          if (hasAntisenseInPreviousRow) {
+            const r1BondToPreviousMonomer =
+              senseNode?.monomers[0].attachmentPointsToBonds.R1;
+
+            if (r1BondToPreviousMonomer instanceof PolymerBond) {
+              r1BondToPreviousMonomer.hasAntisenseInRow = true;
+            }
+
+            const r2BondFromPreviousSenseNode =
+              previousSenseNode?.monomers[0].attachmentPointsToBonds.R2;
+            const r1BondFromPreviousAntisenseNode =
+              previousAntisenseNode?.monomers[0].attachmentPointsToBonds.R1;
+            if (r2BondFromPreviousSenseNode instanceof PolymerBond) {
+              r2BondFromPreviousSenseNode.nextRowPositionX =
+                newSenseNodePosition.x;
+            }
+            if (r1BondFromPreviousAntisenseNode instanceof PolymerBond) {
+              r1BondFromPreviousAntisenseNode.nextRowPositionX =
+                newSenseNodePosition.x;
+            }
+          }
+
+          hasAntisenseInPreviousRow = false;
+          hasRnaInPreviousRow = false;
+          snakeLayoutNodesInRow = [];
+        }
+
         if (senseNode) {
           if (senseNode instanceof SugarWithBaseSnakeLayoutNode) {
             this.rearrangeSugarWithBaseSnakeLayoutNode(
@@ -1569,46 +1605,6 @@ export class DrawingEntitiesManager {
         }
 
         lastPosition = newSenseNodePosition;
-
-        if (isNewRow) {
-          if (hasRnaInPreviousRow) {
-            snakeLayoutNodesInRow.forEach((snakeLayoutNode) => {
-              snakeLayoutNode.monomers.forEach((monomer) => {
-                monomer.isMonomerInRnaChainRow = true;
-              });
-            });
-          }
-
-          if (hasAntisenseInPreviousRow) {
-            const r1BondToPreviousMonomer =
-              senseNode?.monomers[0].attachmentPointsToBonds.R1;
-
-            if (r1BondToPreviousMonomer instanceof PolymerBond) {
-              r1BondToPreviousMonomer.hasAntisenseInRow = true;
-            }
-
-            const r2BondFromPreviousSenseNode =
-              previousSenseNode?.monomers[0].attachmentPointsToBonds.R2;
-            const r1BondFromPreviousAntisenseNode =
-              previousAntisenseNode?.monomers[0].attachmentPointsToBonds.R1;
-            if (r2BondFromPreviousSenseNode instanceof PolymerBond) {
-              r2BondFromPreviousSenseNode.nextRowPositionX =
-                newSenseNodePosition.x;
-            }
-            if (r1BondFromPreviousAntisenseNode instanceof PolymerBond) {
-              r1BondFromPreviousAntisenseNode.nextRowPositionX =
-                newSenseNodePosition.x;
-            }
-          }
-
-          if (nodeIndexInChain !== 0) {
-            hasAntisenseInPreviousRow = false;
-            hasRnaInPreviousRow = false;
-          }
-
-          snakeLayoutNodesInRow = [];
-        }
-
         previousSenseNode = senseNode || previousSenseNode;
         previousAntisenseNode = antisenseNode || previousAntisenseNode;
       });

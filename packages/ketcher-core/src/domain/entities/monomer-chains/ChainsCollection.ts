@@ -660,11 +660,12 @@ export class ChainsCollection {
     antisenseChainsStartIndexesMap.forEach((chainWithData) => {
       chainWithData.complimentaryChain.nodes.forEach((node, index) => {
         antisenseNodesToIndexesMap.set(
-          chainWithData.complimentaryChain.nodes.length - index,
+          chainWithData.complimentaryChain.nodes.length - 1 - index,
           {
             node,
             chain: chainWithData.complimentaryChain,
-            nodeIndex: chainWithData.complimentaryChain.nodes.length - index,
+            nodeIndex:
+              chainWithData.complimentaryChain.nodes.length - 1 - index,
           },
         );
       });

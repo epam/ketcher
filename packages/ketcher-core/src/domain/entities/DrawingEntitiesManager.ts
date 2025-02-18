@@ -1416,6 +1416,8 @@ export class DrawingEntitiesManager {
     }
 
     rearrangedMonomersSet.add(snakeLayoutNode.monomer?.id);
+
+    return command;
   }
 
   private rearrangeSugarWithBaseSnakeLayoutNode(
@@ -1447,6 +1449,8 @@ export class DrawingEntitiesManager {
 
     rearrangedMonomersSet.add(snakeLayoutNode.sugar.id);
     rearrangedMonomersSet.add(snakeLayoutNode.base?.id);
+
+    return command;
   }
 
   public applySnakeLayout(
@@ -1556,19 +1560,23 @@ export class DrawingEntitiesManager {
 
         if (senseNode) {
           if (senseNode instanceof SugarWithBaseSnakeLayoutNode) {
-            this.rearrangeSugarWithBaseSnakeLayoutNode(
-              senseNode,
-              newSenseNodePosition,
-              rearrangedMonomersSet,
-              needRepositionMonomers,
+            command.merge(
+              this.rearrangeSugarWithBaseSnakeLayoutNode(
+                senseNode,
+                newSenseNodePosition,
+                rearrangedMonomersSet,
+                needRepositionMonomers,
+              ),
             );
             hasRnaInPreviousRow = true;
           } else if (senseNode instanceof SingleMonomerSnakeLayoutNode) {
-            this.rearrangeSingleMonomerSnakeLayoutNode(
-              senseNode,
-              newSenseNodePosition,
-              rearrangedMonomersSet,
-              needRepositionMonomers,
+            command.merge(
+              this.rearrangeSingleMonomerSnakeLayoutNode(
+                senseNode,
+                newSenseNodePosition,
+                rearrangedMonomersSet,
+                needRepositionMonomers,
+              ),
             );
           }
 
@@ -1577,26 +1585,30 @@ export class DrawingEntitiesManager {
 
         if (antisenseNode) {
           if (antisenseNode instanceof SugarWithBaseSnakeLayoutNode) {
-            this.rearrangeSugarWithBaseSnakeLayoutNode(
-              antisenseNode,
-              new Vec2(
-                newSenseNodePosition.x,
-                newSenseNodePosition.y + CELL_WIDTH * 3,
+            command.merge(
+              this.rearrangeSugarWithBaseSnakeLayoutNode(
+                antisenseNode,
+                new Vec2(
+                  newSenseNodePosition.x,
+                  newSenseNodePosition.y + CELL_WIDTH * 3,
+                ),
+                rearrangedMonomersSet,
+                needRepositionMonomers,
+                true,
               ),
-              rearrangedMonomersSet,
-              needRepositionMonomers,
-              true,
             );
             hasRnaInPreviousRow = true;
           } else if (antisenseNode instanceof SingleMonomerSnakeLayoutNode) {
-            this.rearrangeSingleMonomerSnakeLayoutNode(
-              antisenseNode,
-              new Vec2(
-                newSenseNodePosition.x,
-                newSenseNodePosition.y + CELL_WIDTH * 3,
+            command.merge(
+              this.rearrangeSingleMonomerSnakeLayoutNode(
+                antisenseNode,
+                new Vec2(
+                  newSenseNodePosition.x,
+                  newSenseNodePosition.y + CELL_WIDTH * 3,
+                ),
+                rearrangedMonomersSet,
+                needRepositionMonomers,
               ),
-              rearrangedMonomersSet,
-              needRepositionMonomers,
             );
           }
 

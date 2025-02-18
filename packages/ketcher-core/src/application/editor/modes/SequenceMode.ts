@@ -1207,8 +1207,8 @@ export class SequenceMode extends BaseMode {
                 modelChanges.merge(
                   this.insertNewSequenceFragment(
                     antisenseNodeCreationResult.node,
-                    currentTwoStrandedNode.antisenseNode.secondConnectedNode,
                     currentTwoStrandedNode.antisenseNode.firstConnectedNode,
+                    currentTwoStrandedNode.antisenseNode.secondConnectedNode,
                   ),
                 );
               } else {

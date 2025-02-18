@@ -26,7 +26,10 @@ import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
 import { isNumber } from 'lodash';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
-import { getPreviousConnectedAntisenseNode } from 'domain/helpers/chains';
+import {
+  getPreviousConnectedAntisenseNode,
+  getPreviousConnectedSenseNode,
+} from 'domain/helpers/chains';
 
 export interface ComplimentaryChainsWithData {
   complimentaryChain: Chain;
@@ -728,7 +731,7 @@ export class ChainsCollection {
         previousHandledAntisenseNode !== antisenseNode
       ) {
         const secondConnectedSenseNode = senseNode;
-        const firstConnectedSenseNode = getPreviousConnectedAntisenseNode(
+        const firstConnectedSenseNode = getPreviousConnectedSenseNode(
           senseNode,
           monomerToNode,
         );
@@ -785,7 +788,7 @@ export class ChainsCollection {
         })
       ) {
         const secondConnectedSenseNode = senseNode;
-        const firstConnectedSenseNode = getPreviousConnectedAntisenseNode(
+        const firstConnectedSenseNode = getPreviousConnectedSenseNode(
           senseNode,
           monomerToNode,
         );

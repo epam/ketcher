@@ -13,6 +13,7 @@ import {
   pasteFromClipboard,
   pasteFromClipboardAndAddToCanvas,
   waitForLoad,
+  selectOpenFileTool,
 } from '@utils';
 
 async function openFileViaClipboard(filename: string, page: Page) {
@@ -35,7 +36,7 @@ test.describe('Floating windows', () => {
   test('Open structure: Opening the text file', async ({ page }) => {
     // Test case: EPMLSOPKET-4004
     // Verify adding text file and ability of editing it
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFileViaClipboard('tests/test-data/Txt/kecther-text.txt', page);
     await editText(page, '  NEW TEXT   ');
     await takeEditorScreenshot(page);
@@ -44,7 +45,7 @@ test.describe('Floating windows', () => {
   test('Open structure: Errors of input (text file)', async ({ page }) => {
     // Test case: EPMLSOPKET-4007
     // Verify if adding incorrect text file triggers Error message
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('Txt/incorect-text.txt', page);
     await pressButton(page, 'Add to Canvas');
     await takeEditorScreenshot(page);
@@ -103,7 +104,7 @@ test.describe('Floating windows', () => {
       Description: verify floating window for 
       open/drag file or paste from clipboard 
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -137,7 +138,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4005, EPMLSOPKET-4009
       Description: open text file via "open file" 
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('CML/cml-molecule.cml', page);
     await takeEditorScreenshot(page);
   });
@@ -159,7 +160,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4008
       Description: Bad data via paste from clipboard 
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await page.getByText('Paste from clipboard').click();
     await pasteFromClipboard(page, 'VAAA==');
     await pressButton(page, 'Add to Canvas');
@@ -171,7 +172,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4011
       Description: place structure via paste from clipboard 
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await page.getByText('Paste from clipboard').click();
     await pasteFromClipboard(
       page,

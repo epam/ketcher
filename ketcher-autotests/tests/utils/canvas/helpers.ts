@@ -536,6 +536,13 @@ export async function selectLayoutTool(page: Page) {
   );
 }
 
+export async function selectOpenFileTool(page: Page) {
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await selectTopPanelButton(TopPanelButton.Open, page),
+  );
+}
+
 export async function copyStructureByCtrlMove(
   page: Page,
   atom: string,

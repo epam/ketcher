@@ -20,6 +20,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
   TypeDropdownOptions,
+  selectOpenFileTool,
 } from '@utils';
 import { closeErrorMessage, pageReload } from '@utils/common/helpers';
 import {
@@ -95,7 +96,7 @@ test.describe('Import-Saving .fasta Files', () => {
   test('Check that system does not let importing empty .fasta file', async ({
     page,
   }) => {
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('FASTA/fasta-empty.fasta', page);
     await expect(page.getByText('Add to Canvas')).toBeDisabled();
   });
@@ -270,7 +271,7 @@ test.describe('Import-Saving .fasta Files', () => {
     test.slow();
 
     await pageReload(page);
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
 
     const filename = 'FASTA/fasta-rna-musculus-rearranged.fasta';
     await openFile(filename, page);
@@ -303,7 +304,7 @@ test.describe('Import-Saving .fasta Files', () => {
   test('Import FASTA: Verify recognition of "U" symbol as Selenocysteine for peptide sequences', async ({
     page,
   }) => {
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
 
     const filename = 'FASTA/fasta-with-selenocystein.fasta';
     await openFile(filename, page);

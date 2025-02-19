@@ -4,7 +4,6 @@ import {
   BondTypeName,
   LeftPanelButton,
   RingButton,
-  TopPanelButton,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   dragMouseTo,
@@ -22,11 +21,11 @@ import {
   selectDropdownTool,
   selectLeftPanelButton,
   selectRingButton,
-  selectTopPanelButton,
   takeEditorScreenshot,
   waitForLoad,
   waitForPageInit,
   clickOnCanvas,
+  selectOpenFileTool,
 } from '@utils';
 import { checkSmartsValue } from '../utils';
 
@@ -184,7 +183,7 @@ test.describe('Checking pasting S-Group as SMARTS', () => {
 
   testCases.forEach(({ smarts, description }) => {
     test(description, async ({ page }) => {
-      await selectTopPanelButton(TopPanelButton.Open, page);
+      await selectOpenFileTool(page);
       await page.getByText('Paste from clipboard').click();
       await pasteFromClipboard(page, smarts);
       await waitForLoad(page, async () => {

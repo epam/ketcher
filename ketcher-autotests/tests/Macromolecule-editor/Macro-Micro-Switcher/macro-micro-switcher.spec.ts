@@ -50,6 +50,7 @@ import {
   selectLeftPanelButton,
   selectMacroBond,
   selectMonomer,
+  selectOpenFileTool,
   selectOpenTool,
   selectOptionInDropdown,
   selectRing,
@@ -124,7 +125,7 @@ async function pasteFromClipboard(
   fileFormats: string,
   filename = '.ket',
 ) {
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileFormats);
   await selectOptionInDropdown(filename, page);
@@ -168,7 +169,7 @@ async function setAtomAndBondSettings(page: Page) {
 }
 
 async function openCdxFile(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await openFile(
     'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
     page,
@@ -182,7 +183,7 @@ async function openCdxFile(page: Page) {
 }
 
 async function openCdxmlFile(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await openFile(
     'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
     page,
@@ -609,7 +610,7 @@ test.describe('Macro-Micro-Switcher', () => {
       }
     });
     await page.locator('.css-1kbfai8').click();
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await takeEditorScreenshot(page);
     await page.getByTitle('Close window').click();
     await selectTopPanelButton(TopPanelButton.Save, page);

@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import {
   TopPanelButton,
+  selectOpenFileTool,
   selectTopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
@@ -20,7 +21,7 @@ test.describe('Open Ketcher', () => {
 
   test('Open button UI', async ({ page }) => {
     // Test case: EPMLSOPKET-1834
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await takeEditorScreenshot(page);
   });
 

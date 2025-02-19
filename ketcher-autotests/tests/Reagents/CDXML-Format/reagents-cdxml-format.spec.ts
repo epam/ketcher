@@ -9,6 +9,7 @@ import {
   FILE_TEST_DATA,
   waitForLoad,
   waitForPageInit,
+  selectOpenFileTool,
 } from '@utils';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 
@@ -19,7 +20,7 @@ async function previewCDXML(page: Page) {
 }
 
 async function pasteCDXML(page: Page, fileFormat: string) {
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileFormat);
   await waitForLoad(page, async () => {

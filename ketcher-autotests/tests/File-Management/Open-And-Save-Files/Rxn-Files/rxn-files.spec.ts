@@ -1247,7 +1247,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       FileType.RXN,
       'v2000',
     );
-    openFileAndAddToCanvasAsNewProject(
+    await openFileAndAddToCanvasAsNewProject(
       'Rxn-V2000/layout-with-long-molecule-acs-style.rxn',
       page,
     );

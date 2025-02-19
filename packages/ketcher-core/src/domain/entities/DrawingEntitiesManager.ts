@@ -98,6 +98,7 @@ import {
 } from 'domain/constants/monomers';
 import { isNumber } from 'lodash';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
+import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = 30;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
@@ -3066,6 +3067,10 @@ export class DrawingEntitiesManager {
     command.merge(
       this.applySnakeLayout(editor.canvas.width.baseVal.value, true, true),
     );
+
+    if (editor.mode instanceof SequenceMode) {
+      command.addOperation(new ReinitializeModeOperation());
+    }
 
     command.setUndoOperationsByPriority();
 

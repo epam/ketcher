@@ -202,6 +202,30 @@ export class Chain {
     });
   }
 
+  public forEachNodeReversed(
+    callback: ({
+      node,
+      subChain,
+    }: {
+      node: SubChainNode;
+      subChain: BaseSubChain;
+      nodeIndex: number;
+    }) => void,
+  ) {
+    let nodeIndex = this.length - 1;
+
+    for (let i = this.subChains.length - 1; i >= 0; i--) {
+      for (let j = this.subChains[i].nodes.length - 1; j >= 0; j--) {
+        callback({
+          node: this.subChains[i].nodes[j],
+          subChain: this.subChains[i],
+          nodeIndex,
+        });
+        nodeIndex--;
+      }
+    }
+  }
+
   public static createChainWithEmptyNode() {
     const emptyChain = new Chain();
     const emptySequenceNode = new EmptySequenceNode();

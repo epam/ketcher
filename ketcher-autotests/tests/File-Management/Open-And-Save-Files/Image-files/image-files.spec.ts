@@ -47,6 +47,7 @@ import {
   waitForPageInit,
   waitForRender,
   waitForSpinnerFinishedWork,
+  selectOpenFileTool,
 } from '@utils';
 import {
   clearLocalStorage,
@@ -348,7 +349,7 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Images together (PNG, SVG) are correctly displayed in .ket format in Open Structure Preview
      */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('KET/images-png-svg.ket', page);
     await takeEditorScreenshot(page);
   });
@@ -379,7 +380,7 @@ test.describe('Image files', () => {
        * Test case: #4911
        * Description: Error message is displayed - "Cannot deserialize input JSON."
        */
-      await selectTopPanelButton(TopPanelButton.Open, page);
+      await selectOpenFileTool(page);
       await openFile(`KET/${fileName}.ket`, page);
       await pressButton(page, 'Add to Canvas');
       await takeEditorScreenshot(page);
@@ -407,7 +408,7 @@ test.describe('Image files', () => {
        * Test case: #4911
        * Description: Error message is displayed - "Cannot deserialize input JSON."
        */
-      await selectTopPanelButton(TopPanelButton.Open, page);
+      await selectOpenFileTool(page);
       await openFile(`KET/${file}`, page);
       await pressButton(page, 'Add to Canvas');
       await takeEditorScreenshot(page);
@@ -419,7 +420,7 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Error message is displayed - "Cannot deserialize input JSON."
      */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile(`KET/image-png-159-symbols.ket`, page);
     await pressButton(page, 'Add to Canvas');
     await takeEditorScreenshot(page);
@@ -2071,7 +2072,7 @@ test.describe('Image files', () => {
   for (const testCase of testCases) {
     test(testCase.description, async () => {
       if (testCase.action === 'open') {
-        await selectTopPanelButton(TopPanelButton.Open, page);
+        await selectOpenFileTool(page);
         await openFile(testCase.file, page);
       } else if (testCase.action === 'save') {
         await openFileAndAddToCanvas(testCase.file, page);
@@ -2188,7 +2189,7 @@ test.describe('Image files', () => {
      * Description: Image can't be loaded from CDX/CDXML/Base 64 CDX file if the length of bitmap is less than 160 symbols and error message
      *  is displayed - "Cannot deserialize input JSON.".
      */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile(`CDXML/image-png-169-symbols.cdxml`, page);
     await pressButton(page, 'Add to Canvas');
     await takeEditorScreenshot(page);

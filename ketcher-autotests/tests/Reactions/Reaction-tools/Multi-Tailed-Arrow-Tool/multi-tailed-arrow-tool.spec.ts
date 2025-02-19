@@ -46,6 +46,7 @@ import {
   selectZoomOutTool,
   selectZoomReset,
   selectZoomInTool,
+  selectOpenFileTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -237,7 +238,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/three-different-multi-tail-arrows-with-elements.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('KET/three-different-multi-tail-arrows.ket', page);
     await waitForRender(page, async () => {
       await pressButton(page, 'Add to Canvas');
@@ -405,7 +406,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
        * Test case: https://github.com/epam/ketcher/issues/5104
        * Description: ${detailedDescription}
        */
-      await selectTopPanelButton(TopPanelButton.Open, page);
+      await selectOpenFileTool(page);
       await openFile(file, page);
       await pressButton(page, 'Add to Canvas');
       await takeEditorScreenshot(page);
@@ -472,7 +473,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5104
      * Description: Multi-Tailed Arrow is correctly displayed in .ket format in Open Structure Preview.
      */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('KET/multi-tailed-arrow-to-compare.ket', page);
     await takeEditorScreenshot(page);
   });

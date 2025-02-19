@@ -1,7 +1,5 @@
 import { Page, test } from '@playwright/test';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
   takeEditorScreenshot,
   openFile,
   pressButton,
@@ -19,10 +17,11 @@ import {
   selectPartOfChain,
   clickOnCanvas,
   selectLayoutTool,
+  selectOpenFileTool,
 } from '@utils';
 
 async function openFileWithShift(filename: string, page: Page) {
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await openFile(filename, page);
   await waitForLoad(page, async () => {
     await pressButton(page, 'Add to Canvas');

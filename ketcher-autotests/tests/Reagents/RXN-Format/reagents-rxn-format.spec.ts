@@ -10,6 +10,7 @@ import {
   waitForLoad,
   waitForPageInit,
   moveMouseAway,
+  selectOpenFileTool,
 } from '@utils';
 import {
   FileType,
@@ -25,7 +26,7 @@ async function saveAsMdlRxnV3000(page: Page) {
 }
 
 async function pasteFromClipboard(page: Page, fileFormats: string) {
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await page.getByText('Paste from clipboard').click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileFormats);
   await waitForLoad(page, async () => {

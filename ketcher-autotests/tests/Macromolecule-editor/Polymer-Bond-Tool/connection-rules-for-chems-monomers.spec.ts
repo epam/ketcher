@@ -1203,30 +1203,6 @@ test.describe('Connection rules for chems: ', () => {
     await moveMouseAway(page);
   }
 
-  async function bondMonomerCenterToAtom(
-    page: Page,
-    leftPeptide: IMonomer,
-    rightMolecule: IMolecule,
-    atomIndex: number,
-  ) {
-    const leftPeptideLocator = getMonomerLocator(page, {
-      monomerAlias: leftPeptide.alias,
-    }).first();
-
-    const rightMoleculeLocator = page
-      .getByTestId('ketcher-canvas')
-      .locator(rightMolecule.atomLocatorSelectors[atomIndex])
-      .first();
-
-    await bondMonomerPointToMoleculeAtom(
-      page,
-      leftPeptideLocator,
-      rightMoleculeLocator,
-      undefined,
-      rightMolecule.connectionPointShifts[atomIndex],
-    );
-  }
-
   async function bondMonomerPointToAtom(
     page: Page,
     leftPeptide: IMonomer,
@@ -1251,39 +1227,6 @@ test.describe('Connection rules for chems: ', () => {
       rightMolecule.connectionPointShifts[atomIndex],
     );
   }
-
-  Object.values(chemMonomers).forEach((leftMonomer) => {
-    Object.values(molecules).forEach((rightMolecule) => {
-      /*
-       *  Test task: https://github.com/epam/ketcher/issues/5960
-       *  Description: Verify that connection points between monomers and molecules can be created by drawing bonds in macro mode
-       *  Case: Monomer center to molecule atom connection
-       *  Step: 1. Load monomer (chem) and shift it to the left
-       *        2. Load molecule (system loads it at the center)
-       *        3. Drag center of monomer to first (0th) atom of molecule
-       *        Expected result: No connection should be establiched
-       *  WARNING: That test tesults are wrong because of bug: https://github.com/epam/ketcher/issues/5976
-       *  Screenshots must be updated after fix and fixme should be removed
-       */
-      test(`Case 11: Connect Center of Chem(${leftMonomer.alias}) to atom of MicroMolecule(${rightMolecule.alias})`, async () => {
-        test.setTimeout(30000);
-
-        await loadMonomer(page, leftMonomer);
-        await loadMolecule(page, rightMolecule);
-
-        await bondMonomerCenterToAtom(page, leftMonomer, rightMolecule, 0);
-
-        await takeEditorScreenshot(page, {
-          hideMonomerPreview: true,
-        });
-        test.fixme(
-          // eslint-disable-next-line no-self-compare
-          true === true,
-          `That test results are wrong because of https://github.com/epam/ketcher/issues/5976 issue(s).`,
-        );
-      });
-    });
-  });
 
   Object.values(chemMonomers).forEach((leftMonomer) => {
     Object.values(molecules).forEach((rightMolecule) => {

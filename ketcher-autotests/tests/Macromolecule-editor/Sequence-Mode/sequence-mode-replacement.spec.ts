@@ -8,6 +8,7 @@ import {
   getMolfile,
   getSequence,
   Monomer,
+  moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pasteFromClipboardByKeyboard,
@@ -1721,6 +1722,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence.ReplacementPositions.LeftEnd,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
 
@@ -1763,6 +1765,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence.ReplacementPositions.Center,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
 

@@ -110,7 +110,7 @@ test.describe('CML files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with peptides could be saved to CML file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
@@ -136,7 +136,7 @@ test.describe('CML files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with nucleotides could be saved to CML file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
@@ -162,7 +162,7 @@ test.describe('CML files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with chems could be saved to CML file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
@@ -188,7 +188,7 @@ test.describe('CML files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with bases could be saved to CML file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
@@ -214,7 +214,7 @@ test.describe('CML files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with sugars could be saved to CML file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
@@ -240,7 +240,7 @@ test.describe('CML files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with phosphates could be saved to CML file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,

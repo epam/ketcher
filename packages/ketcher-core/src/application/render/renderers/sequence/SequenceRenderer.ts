@@ -31,7 +31,6 @@ import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { CoreEditor } from 'application/editor/internal';
 import { RestoreSequenceCaretPositionOperation } from 'application/editor/operations/modes';
 import assert from 'assert';
-import { BaseMonomerRenderer } from 'application/render';
 import { Command } from 'domain/entities/Command';
 import { NewSequenceButton } from 'application/render/renderers/sequence/ui-controls/NewSequenceButton';
 import { isNumber } from 'lodash';
@@ -124,14 +123,7 @@ export class SequenceRenderer {
   }
 
   private static showNodes(sequenceViewModel: SequenceViewModel) {
-    const firstNode = sequenceViewModel.firstTwoStrandedNode?.senseNode;
-    let currentChainStartPosition =
-      sequenceViewModel.hasOnlyOneNewChain || !firstNode
-        ? new Vec2(41.5, 41.5)
-        : BaseMonomerRenderer.getScaledMonomerPosition(
-            firstNode.monomer.position,
-            firstNode.monomer.renderer?.monomerSize,
-          );
+    let currentChainStartPosition = new Vec2(41.5, 41.5);
     let currentMonomerIndexInChain = 0;
     let currentMonomerIndexOverall = 0;
     let hasAntisenseInRow = false;

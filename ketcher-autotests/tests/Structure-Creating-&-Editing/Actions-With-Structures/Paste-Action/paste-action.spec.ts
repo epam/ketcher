@@ -8,11 +8,11 @@ import {
   selectAllStructuresOnCanvas,
   drawBenzeneRing,
   copyToClipboardByKeyboard,
-  selectTopPanelButton,
   pasteFromClipboardByKeyboard,
   selectRing,
   RingButton,
   clickOnCanvas,
+  selectOpenFileTool,
 } from '@utils';
 import { TopPanelButton } from '@utils/selectors';
 
@@ -53,7 +53,7 @@ test.describe('Paste Tool', () => {
 
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await page.getByText('Paste from clipboard').click();
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);

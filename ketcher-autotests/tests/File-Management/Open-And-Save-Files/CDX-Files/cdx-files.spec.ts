@@ -297,53 +297,45 @@ test.describe('CDX files without screenshots', () => {
     );
   });
 
-  test(
-    'Validate that the schema with vertical retrosynthetic arrow and pluses could be saved to Cdx file and loaded back',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
+  test('Validate that the schema with vertical retrosynthetic arrow and pluses could be saved to Cdx file and loaded back', async ({
+    page,
+  }) => {
+    /*
     Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
-    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2219
-    After fix we need update file.
     */
 
-      await openFileAndAddToCanvas(
-        'KET/schema-with-vertical-retrosynthetic-arrow.ket',
-        page,
-      );
+    await openFileAndAddToCanvas(
+      'KET/schema-with-vertical-retrosynthetic-arrow.ket',
+      page,
+    );
 
-      await verifyFileExport(
-        page,
-        'CDX/schema-with-vertical-retrosynthetic-arrow.cdx',
-        FileType.CDX,
-      );
-    },
-  );
+    await verifyFileExport(
+      page,
+      'CDX/schema-with-vertical-retrosynthetic-arrow.cdx',
+      FileType.CDX,
+    );
+  });
 
-  test(
-    'Validate that the schema with diagonal retrosynthetic arrow could be saved to Cdx file and loaded back',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
+  test('Validate that the schema with diagonal retrosynthetic arrow could be saved to Cdx file and loaded back', async ({
+    page,
+  }) => {
+    /*
     Test case: #2097
     Description: Validate that schema with retrosynthetic arrow could be saved to Cdx file and loaded back
-    Test working not in proper way because we have bug https://github.com/epam/Indigo/issues/2221
-    After fix we need update file.
     */
 
-      await openFileAndAddToCanvas(
-        'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
-        page,
-      );
+    await openFileAndAddToCanvas(
+      'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
+      page,
+    );
 
-      await verifyFileExport(
-        page,
-        'CDX/schema-with-diagonal-retrosynthetic-arrow.cdx',
-        FileType.CDX,
-      );
-    },
-  );
+    await verifyFileExport(
+      page,
+      'CDX/schema-with-diagonal-retrosynthetic-arrow.cdx',
+      FileType.CDX,
+    );
+  });
 
   test('Verify that a single reaction containing only reactants can be saved/loaded from CDX with appropriate positions', async ({
     page,

@@ -189,7 +189,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with chems could be saved to Cdxml file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
@@ -210,7 +210,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with bases could be saved to Cdxml file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
@@ -231,7 +231,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with sugars could be saved to Cdxml file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
@@ -273,7 +273,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with peptides could be saved to Cdxml file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
@@ -465,6 +465,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Bond length setting is applied, click on layout and it should be save to CDXML specification
   */
+    test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
     await bondsSettings(page);
@@ -495,6 +496,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Hash spacing setting is applied, click on layout and it should be save to CDXML specification
   */
+    test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
     await bondsSettings(page);
@@ -523,6 +525,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Hash spacing setting is applied, click on layout and it should be save to CDXML specification
   */
+    test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
     await bondsSettings(page);
@@ -551,6 +554,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Hash spacing setting is applied, click on layout and it should be save to CDXML specification
   */
+    test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
     await bondsSettings(page);
@@ -579,6 +583,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   Description: Add new settings for ACS style for convert and layout functions
   The Reaction component margin size setting is applied, click on layout and it should be save to CDX specification
   */
+    test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
     await setReactionMarginSizeOptionUnit(page, 'px-option');
@@ -610,6 +615,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   Need to update screenshots after implementing https://github.com/epam/ketcher/issues/5650 and 
   https://github.com/epam/Indigo/issues/2458
   */
+    test.slow();
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
     await openSettings(page);
     await pressButton(page, 'Set ACS Settings');

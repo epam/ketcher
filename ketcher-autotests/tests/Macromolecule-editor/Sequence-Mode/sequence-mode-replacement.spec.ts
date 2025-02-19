@@ -1765,6 +1765,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence.ReplacementPositions.Center,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
 

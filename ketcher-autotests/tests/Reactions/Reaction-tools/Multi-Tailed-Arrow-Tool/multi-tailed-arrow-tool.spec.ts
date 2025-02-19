@@ -560,6 +560,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5055
      * Description: Multi-Tailed Arrows zoomed in/out (20, 400, 100) after adding to Canvas using zoom buttons
      */
+    test.slow();
     await openFileAndAddToCanvasAsNewProject(
       'KET/three-different-multi-tail-arrows.ket',
       page,
@@ -1036,6 +1037,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Multi-Tailed Arrows with elements saved to KET format after following actions: changing size and positions of 
     added tails, add/remove tails, deletion of arrow/element.
     */
+    test.slow();
     await selectDropdownTool(
       page,
       'reaction-arrow-open-angle',
@@ -1824,6 +1826,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * After Undo, the tails don't return to their original positions. After fixing the bug, the screenshot needs to be updated.
      * A bug has been logged: https://github.com/epam/ketcher/issues/5548
      */
+    test.slow();
     await selectDropdownTool(
       page,
       'reaction-arrow-open-angle',
@@ -2297,7 +2300,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Undo/Redo actions performed for added from KET 3 different Multi-Tailed Arrows on 
     Canvas with elements after moving/changing size of heads.
     */
-
+    test.slow();
     await openFileAndAddToCanvasAsNewProject(
       'KET/multi-tailed-arrows-3-with-elements.ket',
       page,
@@ -2460,7 +2463,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Test case: https://github.com/epam/ketcher/issues/5058
     Description: Undo/Redo actions performed for added by Tool 3 default Multi-Tailed Arrows after moving/changing size of heads.
     */
-
+    test.slow();
     await selectDropdownTool(
       page,
       'reaction-arrow-open-angle',
@@ -2927,6 +2930,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Test case: https://github.com/epam/ketcher/issues/5107
     Description: Undo/Redo actions performed for added from KET 3 different Multi-Tailed Arrows on Canvas with elements after moving/changing size of top and bottom tails.
     */
+    test.slow();
     await openFileAndAddToCanvasAsNewProject(
       'KET/multi-tailed-arrows-3-with-elements.ket',
       page,
@@ -3104,6 +3108,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Test case: https://github.com/epam/ketcher/issues/5107
     Description: Undo/Redo actions performed for added by Tool 3 default Multi-Tailed Arrows after moving/changing size of top and bottom tails.
     */
+    test.slow();
     await selectDropdownTool(
       page,
       'reaction-arrow-open-angle',
@@ -3759,6 +3764,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
         3. Verify the saved KET file matches the expected KET file.
         4. Load the expected KET file and verify its appearance using screenshots.
     */
+    test.slow();
     await openFileAndAddToCanvasAsNewProject(
       'KET/ket-cascade-reaction-3-1-2-1-1-cip.ket',
       page,

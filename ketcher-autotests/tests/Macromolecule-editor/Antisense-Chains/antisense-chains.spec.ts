@@ -2912,7 +2912,6 @@ test(`14. Validate that both sense and antisense strands can be exported correct
     'KET/Antisense-Chains/Antisense-expected.mol',
     FileType.MOL,
     'v3000',
-    [1],
   );
 
   await verifyHELMExport(

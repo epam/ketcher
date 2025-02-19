@@ -227,7 +227,6 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V3000/aromatic-benzene-v3000-expected.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
     await takeEditorScreenshot(page);
   });

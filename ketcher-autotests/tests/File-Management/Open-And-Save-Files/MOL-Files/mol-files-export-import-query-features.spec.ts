@@ -77,7 +77,6 @@ test.describe('Open Ketcher', () => {
       'SDF/Query-Feature/Aromaticity-expected.sdf',
       FileType.SDF,
       'v2000',
-      [1, 25],
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -114,7 +113,6 @@ test.describe('Open Ketcher', () => {
       'Rxn-V2000/Query-Feature/Aromaticity2-expected.rxn',
       FileType.RXN,
       'v2000',
-      [2, 7, 31, 49, 67],
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -151,7 +149,6 @@ test.describe('Open Ketcher', () => {
       'Molfiles-V2000/Query-Feature/Chirality-expected.mol',
       FileType.MOL,
       'v2000',
-      [1],
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -189,7 +186,6 @@ test.describe('Open Ketcher', () => {
       'SDF/Query-Feature/Chirality-expected.sdf',
       FileType.SDF,
       'v2000',
-      [1, 19],
     );
 
     await openFileAndAddToCanvasAsNewProject(

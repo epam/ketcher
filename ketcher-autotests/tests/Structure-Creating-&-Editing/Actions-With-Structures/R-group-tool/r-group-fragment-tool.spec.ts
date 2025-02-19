@@ -359,7 +359,6 @@ test.describe('R-Group Fragment Tool', () => {
       'Molfiles-V3000/r1-several-structures-V3000-expected.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
   });
 

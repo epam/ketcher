@@ -96,6 +96,7 @@ import {
   StandardAmbiguousRnaBase,
 } from 'domain/constants/monomers';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
+import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import {
   SnakeLayoutModel,
   SnakeLayoutNode,
@@ -2896,6 +2897,10 @@ export class DrawingEntitiesManager {
     command.merge(
       this.applySnakeLayout(editor.canvas.width.baseVal.value, true, true),
     );
+
+    if (editor.mode instanceof SequenceMode) {
+      command.addOperation(new ReinitializeModeOperation());
+    }
 
     command.setUndoOperationsByPriority();
 

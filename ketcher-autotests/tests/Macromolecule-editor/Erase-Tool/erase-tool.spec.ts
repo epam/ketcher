@@ -401,7 +401,6 @@ test.describe('Erase Tool', () => {
       'Molfiles-V3000/peptides-flex-chain-expected.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
 
     await selectClearCanvasTool(page);

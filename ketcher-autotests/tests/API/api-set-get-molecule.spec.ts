@@ -207,7 +207,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'Molfiles-V3000/test-data-for-enatiomer.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
 
     await takeEditorScreenshot(page);

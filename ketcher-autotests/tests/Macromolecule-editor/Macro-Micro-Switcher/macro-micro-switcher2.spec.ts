@@ -219,7 +219,6 @@ test.describe('Macro-Micro-Switcher2', () => {
       'Molfiles-V3000/chem-connected-to-micro-structure-expected.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
   });
 
@@ -239,7 +238,6 @@ test.describe('Macro-Micro-Switcher2', () => {
       'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V3000/one-attachment-point-added-in-micro-mode-expected.mol',
@@ -283,7 +281,6 @@ test.describe('Macro-Micro-Switcher2', () => {
       'Molfiles-V3000/micro-macro-structure-expected.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V3000/micro-macro-structure-expected.mol',
@@ -501,7 +498,6 @@ test.describe('Macro-Micro-Switcher2', () => {
       'Molfiles-V3000/single-atom-properties-expected.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V3000/single-atom-properties-expected.mol',
@@ -699,7 +695,6 @@ test.describe('Macro-Micro-Switcher2', () => {
       'Molfiles-V3000/single-atom-properties-saved-in-macro-expected.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
     await turnOnMicromoleculesEditor(page);
     await openFileAndAddToCanvasAsNewProject(

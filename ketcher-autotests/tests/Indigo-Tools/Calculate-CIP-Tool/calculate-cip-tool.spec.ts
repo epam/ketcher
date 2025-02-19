@@ -550,7 +550,6 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V3000/structure-with-stereo-bonds-expectedV3000.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
   });
 

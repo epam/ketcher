@@ -452,7 +452,6 @@ test.describe('Attachment Point Tool', () => {
       'Molfiles-V3000/chain-with-attachment-points-expectedV3000.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
     await takeEditorScreenshot(page);
   });

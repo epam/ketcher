@@ -740,7 +740,6 @@ test('The Hash spacing setting with px option is applied and it should be save t
     'SDF/adenosine-triphosphate-px-hash-spacing-v2000-expected.sdf',
     FileType.SDF,
     'v2000',
-    [1],
   );
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-px-hash-spacing-v2000-expected.sdf',
@@ -770,7 +769,6 @@ test('The Hash spacing setting with px option is applied and it should be save t
     'SDF/adenosine-triphosphate-px-hash-spacing-v3000-expected.sdf',
     FileType.SDF,
     'v3000',
-    [1],
   );
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-px-hash-spacing-v3000-expected.sdf',
@@ -800,7 +798,6 @@ test('The Hash spacing setting with cm option is applied and it should be save t
     'SDF/adenosine-triphosphate-cm-hash-spacing-v2000-expected.sdf',
     FileType.SDF,
     'v2000',
-    [1],
   );
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-cm-hash-spacing-v2000-expected.sdf',
@@ -830,7 +827,6 @@ test('The Hash spacing setting with cm option is applied and it should be save t
     'SDF/adenosine-triphosphate-cm-hash-spacing-v3000-expected.sdf',
     FileType.SDF,
     'v3000',
-    [1],
   );
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-cm-hash-spacing-v3000-expected.sdf',
@@ -860,7 +856,6 @@ test('The Hash spacing setting with inch option is applied and it should be save
     'SDF/adenosine-triphosphate-inch-hash-spacing-v2000-expected.sdf',
     FileType.SDF,
     'v2000',
-    [1],
   );
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-inch-hash-spacing-v2000-expected.sdf',
@@ -890,7 +885,6 @@ test('The Hash spacing setting with inch option is applied and it should be save
     'SDF/adenosine-triphosphate-inch-hash-spacing-v3000-expected.sdf',
     FileType.SDF,
     'v3000',
-    [1],
   );
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-inch-hash-spacing-v3000-expected.sdf',

@@ -467,11 +467,7 @@ class PolymerBond implements BaseTool {
     const atomRenderer = event.target.__data__ as AtomRenderer;
     const monomer = this.bondRenderer?.polymerBond.firstMonomer;
 
-    if (
-      monomer instanceof Chem &&
-      !this.isHydrogenBond &&
-      !monomer.chosenFirstAttachmentPointForBond
-    ) {
+    if (!this.isHydrogenBond && !monomer.chosenFirstAttachmentPointForBond) {
       this.editor.events.error.dispatch(
         'CHEM monomer to Atom supports only attachment points for bond creation',
       );

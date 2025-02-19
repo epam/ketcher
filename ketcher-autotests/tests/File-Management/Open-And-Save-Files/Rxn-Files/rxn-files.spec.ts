@@ -449,7 +449,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await selectLeftPanelButton(LeftPanelButton.Erase, page);
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
     await page.mouse.move(100, 500);
-    await dragMouseTo(1000, 100, page);
+    await dragMouseTo(700, 100, page);
 
     await verifyFileExport(
       page,

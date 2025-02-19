@@ -1473,7 +1473,9 @@ export class DrawingEntitiesManager {
 
     // not only snake mode???
     if (isSnakeMode) {
-      const numberOfCellsInRow = Math.floor(canvasWidth / CELL_WIDTH);
+      const numberOfCellsInRow = Math.floor(
+        (canvasWidth - CELL_WIDTH) / CELL_WIDTH,
+      );
       const rearrangedMonomersSet: Set<number> = new Set();
       let lastPosition = new Vec2({
         x: MONOMER_START_X_POSITION,

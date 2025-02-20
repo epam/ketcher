@@ -1008,7 +1008,6 @@ test.describe('Cascade Reactions', () => {
       'RDF-V2000/single-arrow-expected.rdf',
       FileType.RDF,
       'v2000',
-      [1, 5],
     );
     await openFileAndAddToCanvasAsNewProject(
       'RDF-V2000/single-arrow-expected.rdf',
@@ -1029,7 +1028,6 @@ test.describe('Cascade Reactions', () => {
       'RDF-V3000/single-arrow-expected.rdf',
       FileType.RDF,
       'v3000',
-      [1, 5],
     );
     await openFileAndAddToCanvasAsNewProject(
       'RDF-V3000/single-arrow-expected.rdf',
@@ -1053,7 +1051,6 @@ test.describe('Cascade Reactions', () => {
       'RDF-V2000/multi-tailed-arrow-default-expected.rdf',
       FileType.RDF,
       'v2000',
-      [1, 5],
     );
     await openFileAndAddToCanvasAsNewProject(
       'RDF-V2000/multi-tailed-arrow-default-expected.rdf',
@@ -1077,7 +1074,6 @@ test.describe('Cascade Reactions', () => {
       'RDF-V3000/multi-tailed-arrow-default-expected.rdf',
       FileType.RDF,
       'v3000',
-      [1, 5],
     );
     await openFileAndAddToCanvasAsNewProject(
       'RDF-V3000/multi-tailed-arrow-default-expected.rdf',

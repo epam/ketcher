@@ -517,7 +517,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
       FileType.MOL,
       'v2000',
-      [1],
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -542,7 +541,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
 
     await openFileAndAddToCanvasAsNewProject(

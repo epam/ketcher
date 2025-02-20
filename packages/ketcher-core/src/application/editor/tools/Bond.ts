@@ -469,7 +469,7 @@ class PolymerBond implements BaseTool {
 
     if (!this.isHydrogenBond && !monomer.chosenFirstAttachmentPointForBond) {
       this.editor.events.error.dispatch(
-        'CHEM monomer to Atom supports only attachment points for bond creation',
+        'Monomer to Atom supports only attachment points for bond creation',
       );
       return;
     }

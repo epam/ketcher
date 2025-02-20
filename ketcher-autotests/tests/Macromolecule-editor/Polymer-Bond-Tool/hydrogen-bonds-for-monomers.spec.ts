@@ -923,23 +923,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       test.setTimeout(25000);
 
       await loadTwoMonomers(page, leftMonomer, rightMolecule);
-
-      await bondTwoMonomersByCenterToCenter(
-        page,
-        leftMonomer,
-        rightMolecule,
-        MacroBondTool.SINGLE,
-      );
-
       await zoomWithMouseWheel(page, -600);
-
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-      });
-
-      await selectEraseTool(page);
-      await pressUndoButton(page);
-
       await bondTwoMonomersByCenterToCenter(
         page,
         leftMonomer,

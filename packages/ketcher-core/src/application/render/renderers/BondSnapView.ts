@@ -1,51 +1,51 @@
-import { PolymerBond } from 'domain/entities';
 import { TransientView } from 'application/render/renderers/TransientView';
 import { Coordinates } from 'application/editor';
+import { D3SvgElementSelection } from 'application/render/types';
+import { PolymerBond } from 'domain/entities';
 
 export class BondSnapView extends TransientView {
-  constructor(private bond: PolymerBond) {
-    super();
-  }
+  public static viewName = 'BondSnapView';
 
-  private get scaledPosition() {
-    const startPositionInPixels = Coordinates.modelToCanvas(
-      this.bond.startPosition,
-    );
-    const endPositionInPixels = Coordinates.modelToCanvas(
-      this.bond.endPosition,
-    );
-    return {
-      startPositionInPixels,
-      endPositionInPixels,
-    };
-  }
+  public static show<P extends PolymerBond>(
+    transientLayer: D3SvgElementSelection<SVGGElement, void>,
+    bond: P,
+  ) {
+    const startPositionInPixels = Coordinates.modelToCanvas(bond.startPosition);
+    const endPositionInPixels = Coordinates.modelToCanvas(bond.endPosition);
 
-  show() {
-    this.remove();
-
-    this.rootElement = this.canvas.append('g');
-
-    this.rootElement
+    transientLayer
       .append('circle')
-      .attr('cx', this.scaledPosition.startPositionInPixels.x)
-      .attr('cy', this.scaledPosition.startPositionInPixels.y)
-      .attr('r', 5)
-      .attr('fill', 'red');
-
-    this.rootElement
+      .attr('cx', startPositionInPixels.x)
+      .attr('cy', startPositionInPixels.y)
+      .attr('r', 4)
+      .attr('fill', 'white');
+    transientLayer
       .append('circle')
-      .attr('cx', this.scaledPosition.endPositionInPixels.x)
-      .attr('cy', this.scaledPosition.endPositionInPixels.y)
-      .attr('r', 5)
-      .attr('fill', 'red');
+      .attr('cx', startPositionInPixels.x)
+      .attr('cy', startPositionInPixels.y)
+      .attr('r', 3)
+      .attr('fill', '#365CFF');
 
-    this.rootElement
+    transientLayer
+      .append('circle')
+      .attr('cx', endPositionInPixels.x)
+      .attr('cy', endPositionInPixels.y)
+      .attr('r', 4)
+      .attr('fill', 'white');
+    transientLayer
+      .append('circle')
+      .attr('cx', endPositionInPixels.x)
+      .attr('cy', endPositionInPixels.y)
+      .attr('r', 3)
+      .attr('fill', '#365CFF');
+
+    transientLayer
       .append('line')
-      .attr('x1', this.scaledPosition.startPositionInPixels.x)
-      .attr('y1', this.scaledPosition.startPositionInPixels.y)
-      .attr('x2', this.scaledPosition.endPositionInPixels.x)
-      .attr('y2', this.scaledPosition.endPositionInPixels.y)
-      .attr('stroke', 'red')
+      .attr('x1', startPositionInPixels.x)
+      .attr('y1', startPositionInPixels.y)
+      .attr('x2', endPositionInPixels.x)
+      .attr('y2', endPositionInPixels.y)
+      .attr('stroke', '#365CFF')
       .attr('stroke-width', 1);
   }
 }

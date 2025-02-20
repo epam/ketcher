@@ -230,6 +230,8 @@ class SelectRectangle implements BaseTool {
       return;
     }
 
+    const ModKey = isMacOs ? event.metaKey : event.ctrlKey;
+
     const modelChanges = new Command();
 
     const SNAPPING_ANGLE = 30;
@@ -238,9 +240,9 @@ class SelectRectangle implements BaseTool {
     let isAppliedSnap = false;
 
     if (
+      !ModKey &&
       selectedEntities.length === 1 &&
-      selectedEntities[0] instanceof BaseMonomer &&
-      !(event.ctrlKey || event.metaKey)
+      selectedEntities[0] instanceof BaseMonomer
     ) {
       const selectedMonomer = selectedEntities[0] as BaseMonomer;
       const connectedMonomer = selectedMonomer.covalentBonds
@@ -307,7 +309,7 @@ class SelectRectangle implements BaseTool {
                 ),
               );
 
-              this.editor.transientDrawingView.showBondSnapping(
+              this.editor.transientDrawingView.showBondSnap(
                 selectedMonomer.covalentBonds.filter(
                   (bond) => bond instanceof PolymerBond,
                 )[0],
@@ -345,6 +347,7 @@ class SelectRectangle implements BaseTool {
       requestAnimationFrame(() => {
         this.editor.renderersContainer.update(modelChanges);
         this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
+        this.editor.transientDrawingView.update();
       });
     }
   }
@@ -374,6 +377,8 @@ class SelectRectangle implements BaseTool {
         );
       this.history.update(modelChanges);
     }
+
+    this.editor.transientDrawingView.clear();
   }
 
   mouseOverDrawingEntity(event) {

@@ -38,10 +38,13 @@ export function getStructure(
 ): Promise<string> {
   const serverSettings = ketcherProvider.getKetcher().editor.serverSettings;
   const formatter = formatterFactory.create(structureFormat, serverSettings);
+  const drawingEntitiesManagerCloningResult = drawingEntitiesManager?.mergeInto(
+    new DrawingEntitiesManager(),
+  );
 
   return formatter.getStructureFromStructAsync(
     struct,
-    drawingEntitiesManager,
+    drawingEntitiesManagerCloningResult?.mergedDrawingEntities,
     selection,
   );
 }

@@ -65,6 +65,7 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
 import { initializeMode, parseMonomersLibrary } from './helpers';
+import { TransientDrawingView } from 'application/render/renderers/TransientDrawingView';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -84,6 +85,7 @@ export class CoreEditor {
 
   public _type: EditorType;
   public renderersContainer: RenderersManager;
+  public transientDrawingView: TransientDrawingView;
   public drawingEntitiesManager: DrawingEntitiesManager;
   public viewModel: ViewModel;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
@@ -132,6 +134,7 @@ export class CoreEditor {
     }
     this.subscribeEvents();
     this.renderersContainer = new RenderersManager({ theme });
+    this.transientDrawingView = new TransientDrawingView();
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.viewModel = new ViewModel();
     this.domEventSetup();

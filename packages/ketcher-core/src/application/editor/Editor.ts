@@ -759,6 +759,7 @@ export class CoreEditor {
     }
     this._monomersLibraryParsedJson = null;
     this._type = EditorType.Micromolecules;
+    this.drawingEntitiesManager = new DrawingEntitiesManager();
   }
 
   private switchToMacromolecules() {

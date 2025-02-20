@@ -1189,14 +1189,19 @@ export class SequenceMode extends BaseMode {
             const antisenseNodeCreationResult =
               DrawingEntitiesManager.createAntisenseNode(
                 addedNode,
-                addedNode instanceof Nucleotide &&
+                (addedNode instanceof Nucleotide &&
                   (currentAntisenseNode instanceof Nucleotide ||
                     currentAntisenseNode instanceof Nucleoside ||
                     (currentAntisenseNode instanceof BackBoneSequenceNode &&
                       (currentAntisenseNode.secondConnectedNode instanceof
                         Nucleotide ||
                         currentAntisenseNode.secondConnectedNode instanceof
-                          Nucleoside))),
+                          Nucleoside)))) ||
+                  (addedNode instanceof Nucleoside &&
+                    !(
+                      previousTwoStrandedNode?.antisenseNode instanceof
+                      EmptySequenceNode
+                    )),
               );
 
             if (antisenseNodeCreationResult && currentTwoStrandedNode) {

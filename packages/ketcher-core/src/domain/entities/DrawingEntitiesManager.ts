@@ -2686,9 +2686,7 @@ export class DrawingEntitiesManager {
       return;
     }
 
-    return (
-      node instanceof Nucleotide && needAddPhosphate ? Nucleotide : Nucleoside
-    ).createOnCanvas(
+    return (needAddPhosphate ? Nucleotide : Nucleoside).createOnCanvas(
       antisenseBaseLabel,
       node.monomer.position.add(new Vec2(0, 3)),
       RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,

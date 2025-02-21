@@ -1,9 +1,10 @@
-import { BondSnapView } from 'application/render/renderers/BondSnapView';
-import { PolymerBond } from 'domain/entities';
+import { select } from 'd3';
 import { D3SvgElementSelection } from 'application/render/types';
 import { ZoomTool } from 'application/editor';
-import { select } from 'd3';
 import { drawnStructuresSelector } from 'application/editor/constants';
+import { PolymerBond, Vec2 } from 'domain/entities';
+import { BondSnapView } from './BondSnapView';
+import { AngleSnapView } from 'application/render/renderers/TransientView/AngleSnapView';
 
 type ViewData<P> = {
   show: (layer: D3SvgElementSelection<SVGGElement, void>, params: P) => void;
@@ -38,6 +39,17 @@ export class TransientDrawingView {
 
   public hideBondSnap() {
     this.removeView(BondSnapView.viewName);
+  }
+
+  public showAngleSnap(connectedPosition: Vec2, movingPosition: Vec2) {
+    this.addView(AngleSnapView.viewName, {
+      show: AngleSnapView.show,
+      params: { connectedPosition, movingPosition },
+    });
+  }
+
+  public hideAngleSnap() {
+    this.removeView(AngleSnapView.viewName);
   }
 
   public clear() {

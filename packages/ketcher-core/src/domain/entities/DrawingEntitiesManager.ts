@@ -2617,6 +2617,20 @@ export class DrawingEntitiesManager {
         senseChain = largestChains[0][0];
       } else {
         const chainsToCenters = new Map<GrouppedChain, Vec2>();
+        const chainsToComplimentaryChainsAmount = new Map<
+          GrouppedChain,
+          number
+        >();
+
+        largestChains.forEach(([chainToCheck]) => {
+          const complimentayChains =
+            chainsCollection.getComplimentaryChainsWithData(chainToCheck.chain);
+
+          chainsToComplimentaryChainsAmount.set(
+            chainToCheck,
+            complimentayChains.length,
+          );
+        });
 
         largestChains.forEach(([chainToCheck, monomers]) => {
           const chainBbox = DrawingEntitiesManager.getStructureBbox(monomers);
@@ -2639,8 +2653,27 @@ export class DrawingEntitiesManager {
           },
           chainsToCenterArray[0],
         );
+        const chainsToComplimentaryChainsAmountArray = [
+          ...chainsToComplimentaryChainsAmount.entries(),
+        ];
+        const chainWithMoreComplimentaryChains =
+          chainsToComplimentaryChainsAmountArray.reduce(
+            (
+              [previousChain, previousChainComplimentaryChainsAmount],
+              [chainToCheck, complimentaryChainsAmount],
+            ) => {
+              return complimentaryChainsAmount >
+                previousChainComplimentaryChainsAmount
+                ? [chainToCheck, complimentaryChainsAmount]
+                : [previousChain, previousChainComplimentaryChainsAmount];
+            },
+            chainsToComplimentaryChainsAmountArray[0],
+          );
 
-        senseChain = chainWithLowestCenter[0];
+        senseChain =
+          chainsToComplimentaryChainsAmount.size > 0
+            ? chainWithMoreComplimentaryChains[0]
+            : chainWithLowestCenter[0];
       }
 
       const { group: senseGroup } = senseChain;

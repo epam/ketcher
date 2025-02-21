@@ -1,7 +1,7 @@
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { EmptySequenceNode } from 'domain/entities';
 
-interface ISequenceViewModelRow {
+export interface ISequenceViewModelRow {
   sequenceViewModelItems: ITwoStrandedChainItem[];
   hasAntisenseInRow: boolean;
 }

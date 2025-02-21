@@ -11,7 +11,7 @@ export const getNodeFromTwoStrandedNode = (
     : twoStrandedNode.antisenseNode;
 };
 
-export const getPreviousConnectedAntisenseNode = (
+export const getNextConnectedNode = (
   node: SubChainNode,
   monomerToNode: Map<BaseMonomer, SubChainNode>,
 ) => {
@@ -20,15 +20,15 @@ export const getPreviousConnectedAntisenseNode = (
   const anotherMonomerConnectedToAntisenseNode =
     r2PolymerBondBetweenNodes instanceof PolymerBond &&
     r2PolymerBondBetweenNodes?.getAnotherMonomer(node.lastMonomerInNode);
-  const previousConnectedNode =
+  const nextConnectedNode =
     (anotherMonomerConnectedToAntisenseNode &&
       monomerToNode.get(anotherMonomerConnectedToAntisenseNode)) ||
     undefined;
 
-  return previousConnectedNode;
+  return nextConnectedNode;
 };
 
-export const getPreviousConnectedSenseNode = (
+export const getPreviousConnectedNode = (
   node: SubChainNode,
   monomerToNode: Map<BaseMonomer, SubChainNode>,
 ) => {

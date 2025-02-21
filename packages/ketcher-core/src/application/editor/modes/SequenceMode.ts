@@ -1156,7 +1156,6 @@ export class SequenceMode extends BaseMode {
           const editor = CoreEditor.provideEditorInstance();
           const history = new EditorHistory(editor);
           const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
-          const currentAntisenseNode = currentTwoStrandedNode?.antisenseNode;
           const previousTwoStrandedNode =
             (currentTwoStrandedNode &&
               SequenceRenderer.getPreviousNode(currentTwoStrandedNode)) ||
@@ -1167,6 +1166,8 @@ export class SequenceMode extends BaseMode {
                 currentTwoStrandedNode,
               )) ||
             undefined;
+          const previousAntisenseNodeInSameChain =
+            previousTwoStrandedNodeInSameChain?.antisenseNode;
 
           const insertNewSequenceItemResult = this.insertNewSequenceItem(
             editor,
@@ -1190,12 +1191,13 @@ export class SequenceMode extends BaseMode {
               DrawingEntitiesManager.createAntisenseNode(
                 addedNode,
                 (addedNode instanceof Nucleotide &&
-                  (currentAntisenseNode instanceof Nucleotide ||
-                    currentAntisenseNode instanceof Nucleoside ||
-                    (currentAntisenseNode instanceof BackBoneSequenceNode &&
-                      (currentAntisenseNode.secondConnectedNode instanceof
+                  (previousAntisenseNodeInSameChain instanceof Nucleotide ||
+                    previousAntisenseNodeInSameChain instanceof Nucleoside ||
+                    (previousAntisenseNodeInSameChain instanceof
+                      BackBoneSequenceNode &&
+                      (previousAntisenseNodeInSameChain.secondConnectedNode instanceof
                         Nucleotide ||
-                        currentAntisenseNode.secondConnectedNode instanceof
+                        previousAntisenseNodeInSameChain.secondConnectedNode instanceof
                           Nucleoside)))) ||
                   (addedNode instanceof Nucleoside &&
                     !(
@@ -2228,7 +2230,10 @@ export class SequenceMode extends BaseMode {
       currentSenseNode instanceof EmptySequenceNode &&
       previousNodeInSameChain
     ) {
-      if (!this.isR2Free(previousNodeInSameChain)) {
+      if (
+        !previousTwoStrandedNodeInSameChain?.antisenseNode &&
+        !this.isR2Free(previousNodeInSameChain)
+      ) {
         this.showMergeWarningModal();
         return;
       }
@@ -2239,7 +2244,7 @@ export class SequenceMode extends BaseMode {
       currentSenseNode &&
       !(currentSenseNode instanceof EmptySequenceNode)
     ) {
-      if (!this.isR1Free(currentSenseNode)) {
+      if (!currentAntisenseNode && !this.isR1Free(currentSenseNode)) {
         this.showMergeWarningModal();
         return;
       }

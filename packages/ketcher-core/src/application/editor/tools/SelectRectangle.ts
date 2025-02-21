@@ -225,111 +225,141 @@ class SelectRectangle implements BaseTool {
     this.setSelectedEntities();
   }
 
+  static calculateAngleSnap(
+    cursorPosition: Vec2,
+    connectedPosition: Vec2,
+    snapAngle: number,
+  ) {
+    const angle = vectorUtils.calcAngle(cursorPosition, connectedPosition);
+    const angleInDegrees = ((angle * 180) / Math.PI + 360) % 360;
+    const snapRest = angleInDegrees % snapAngle;
+    const leftBorder = snapAngle / 3;
+    const rightBorder = (snapAngle * 2) / 3;
+    let snappedAngle = angleInDegrees;
+
+    if (snapRest < leftBorder) {
+      snappedAngle = angleInDegrees - snapRest;
+    } else if (snapRest > rightBorder) {
+      snappedAngle = angleInDegrees + snapAngle - snapRest;
+    }
+
+    const isAngleSnapped = snappedAngle !== angleInDegrees;
+
+    if (!isAngleSnapped) {
+      return {
+        isAngleSnapped,
+      };
+    }
+
+    const snappedAngleRad = (snappedAngle * Math.PI) / 180;
+    const distance = Vec2.diff(cursorPosition, connectedPosition).length();
+    const angleSnapPosition = new Vec2(
+      connectedPosition.x + distance * -Math.cos(snappedAngleRad),
+      connectedPosition.y + distance * -Math.sin(snappedAngleRad),
+    );
+
+    return {
+      isAngleSnapped,
+      angleSnapPosition,
+      snappedAngle,
+    };
+  }
+
+  static calculateDistanceSnap(
+    cursorPosition: Vec2,
+    connectedPosition: Vec2,
+    snappedAngle?: number,
+  ) {
+    const vectorDiff = Vec2.diff(cursorPosition, connectedPosition);
+    const currentDistance = vectorDiff.length();
+    const standardBondLength = 1.5;
+    const isDistanceSnapped =
+      Math.abs(currentDistance - standardBondLength) < 0.375;
+    const angle =
+      snappedAngle ?? vectorUtils.calcAngle(cursorPosition, connectedPosition);
+    const distanceSnapPosition = new Vec2(
+      connectedPosition.x + standardBondLength * -Math.cos(angle),
+      connectedPosition.y + standardBondLength * -Math.sin(angle),
+    );
+    return { isDistanceSnapped, distanceSnapPosition };
+  }
+
   mousemove(event: MouseEvent) {
     if (!this.moveStarted) {
       return;
     }
 
-    const ModKey = isMacOs ? event.metaKey : event.ctrlKey;
-
     const modelChanges = new Command();
 
-    const SNAPPING_ANGLE = 30;
+    const modKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
     const selectedEntities =
       this.editor.drawingEntitiesManager.selectedEntitiesArr;
-    let isAppliedSnap = false;
+
+    let isSnapped = false;
 
     if (
-      !ModKey &&
+      !modKeyPressed &&
       selectedEntities.length === 1 &&
       selectedEntities[0] instanceof BaseMonomer
     ) {
       const selectedMonomer = selectedEntities[0] as BaseMonomer;
-      const connectedMonomer = selectedMonomer.covalentBonds
-        .filter((bond) => bond instanceof PolymerBond)[0]
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        ?.getAnotherMonomer(selectedMonomer);
+      const monomerBond = selectedMonomer.covalentBonds.filter(
+        (bond) => bond instanceof PolymerBond,
+      )[0] as PolymerBond;
+      const connectedMonomer = monomerBond.getAnotherMonomer(selectedMonomer);
       const cursorPositionInAngstroms = Coordinates.canvasToModel(
         this.editor.lastCursorPositionOfCanvas,
       );
 
       if (connectedMonomer) {
-        const angle = vectorUtils.calcAngle(
-          cursorPositionInAngstroms,
-          connectedMonomer.position,
-        );
-        const angleInDegrees = ((angle * 180) / Math.PI + 360) % 360;
-        const snapRest = Math.abs(angleInDegrees % SNAPPING_ANGLE);
-        const leftSnappingBorder = SNAPPING_ANGLE / 3;
-        const rightSnappingBorder = (SNAPPING_ANGLE * 2) / 3;
-        const angleToSnap =
-          snapRest < leftSnappingBorder
-            ? angleInDegrees - snapRest
-            : snapRest > rightSnappingBorder
-            ? angleInDegrees + SNAPPING_ANGLE - snapRest
-            : angleInDegrees;
-
-        if (angleToSnap !== angleInDegrees) {
-          const angleToSnapInRadians = (angleToSnap * Math.PI) / 180;
-          const distanceToConnectedMonomer = Vec2.diff(
+        const { isAngleSnapped, angleSnapPosition, snappedAngle } =
+          SelectRectangle.calculateAngleSnap(
             cursorPositionInAngstroms,
             connectedMonomer.position,
-          ).length();
-          let snappedMonomerPosition = new Vec2(
-            connectedMonomer.position.x +
-              distanceToConnectedMonomer * -Math.cos(angleToSnapInRadians),
-            connectedMonomer.position.y +
-              distanceToConnectedMonomer * -Math.sin(angleToSnapInRadians),
+            this.editor.mode.modeName === 'flex-layout-mode' ? 30 : 90,
           );
-          const distanceToSnappingBorder = Vec2.diff(
+
+        const { isDistanceSnapped, distanceSnapPosition } =
+          SelectRectangle.calculateDistanceSnap(
             cursorPositionInAngstroms,
-            snappedMonomerPosition,
-          ).length();
+            connectedMonomer.position,
+            snappedAngle,
+          );
 
-          if (distanceToSnappingBorder < 0.375) {
-            if (
-              distanceToConnectedMonomer > 1.5 - 0.375 &&
-              distanceToConnectedMonomer < 1.5 + 0.375
-            ) {
-              snappedMonomerPosition = new Vec2(
-                connectedMonomer.position.x +
-                  1.5 * -Math.cos(angleToSnapInRadians),
-                connectedMonomer.position.y +
-                  1.5 * -Math.sin(angleToSnapInRadians),
-              );
-            }
-
-            isAppliedSnap = true;
-
-            if (isAppliedSnap) {
-              modelChanges.merge(
-                this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-                  snappedMonomerPosition.sub(selectedMonomer.position),
-                ),
-              );
-
-              this.editor.transientDrawingView.showBondSnap(
-                selectedMonomer.covalentBonds.filter(
-                  (bond) => bond instanceof PolymerBond,
-                )[0],
-              );
-            }
-          }
-
-          // console.log(connectedMonomer.position, snappedMonomerPosition, distanceToConnectedMonomer)
-          // const snappedMonomerPosition = new Vec2(
-          //   selectedMonomer.position.x,
-          //   selectedMonomer.position.y,
-          // ).rotateAroundOrigin(angleToSnap, connectedMonomer.position);
-
-          // console.log(snappedMonomerPosition, selectedMonomer.position)
+        let snapPosition: Vec2 | undefined;
+        if (isAngleSnapped && isDistanceSnapped) {
+          snapPosition = angleSnapPosition;
+        } else if (isAngleSnapped) {
+          snapPosition = angleSnapPosition;
+        } else if (isDistanceSnapped) {
+          snapPosition = distanceSnapPosition;
         }
+
+        if (snapPosition) {
+          modelChanges.merge(
+            this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+              snapPosition.sub(selectedMonomer.position),
+            ),
+          );
+
+          isAngleSnapped
+            ? this.editor.transientDrawingView.showAngleSnap(
+                connectedMonomer.position,
+                selectedMonomer.position,
+              )
+            : this.editor.transientDrawingView.hideAngleSnap();
+
+          isDistanceSnapped
+            ? this.editor.transientDrawingView.showBondSnap(monomerBond)
+            : this.editor.transientDrawingView.hideBondSnap();
+        }
+
+        isSnapped = isAngleSnapped || isDistanceSnapped;
       }
     }
 
     if (this.moveStarted) {
-      if (!isAppliedSnap) {
+      if (!isSnapped) {
         modelChanges.merge(
           this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
             Coordinates.canvasToModel(
@@ -342,8 +372,13 @@ class SelectRectangle implements BaseTool {
             ),
           ),
         );
+
+        this.editor.transientDrawingView.hideBondSnap();
+        this.editor.transientDrawingView.hideAngleSnap();
       }
+
       this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
+
       requestAnimationFrame(() => {
         this.editor.renderersContainer.update(modelChanges);
         this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();

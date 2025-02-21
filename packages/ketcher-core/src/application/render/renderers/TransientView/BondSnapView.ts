@@ -1,7 +1,7 @@
-import { TransientView } from 'application/render/renderers/TransientView';
 import { Coordinates } from 'application/editor';
 import { D3SvgElementSelection } from 'application/render/types';
 import { PolymerBond } from 'domain/entities';
+import { TransientView } from './TransientView';
 
 export class BondSnapView extends TransientView {
   public static viewName = 'BondSnapView';

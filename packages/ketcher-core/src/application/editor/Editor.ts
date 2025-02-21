@@ -65,7 +65,7 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
 import { initializeMode, parseMonomersLibrary } from './helpers';
-import { TransientDrawingView } from 'application/render/renderers/TransientDrawingView';
+import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 
 interface ICoreEditorConstructorParams {
   theme;

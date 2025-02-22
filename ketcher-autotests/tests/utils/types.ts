@@ -26,3 +26,9 @@ export interface Monomer {
   alias: string;
   testId: string;
 }
+
+export enum SequenceModeType {
+  RNA = 'RNA',
+  DNA = 'DNA',
+  Peptide = 'Peptide',
+}

@@ -3,7 +3,6 @@ import { EmptySequenceNode } from 'domain/entities';
 
 export interface ISequenceViewModelRow {
   sequenceViewModelItems: ITwoStrandedChainItem[];
-  hasAntisenseInRow: boolean;
 }
 
 export class SequenceViewModelChain {
@@ -39,7 +38,13 @@ export class SequenceViewModelChain {
   }
 
   public get hasAntisense() {
-    return this.rows.some((row) => row.hasAntisenseInRow);
+    return this.rows.some((row) =>
+      row.sequenceViewModelItems.some(
+        (node) =>
+          node.antisenseNode &&
+          !(node.antisenseNode instanceof EmptySequenceNode),
+      ),
+    );
   }
 
   public get isNewSequenceChain() {

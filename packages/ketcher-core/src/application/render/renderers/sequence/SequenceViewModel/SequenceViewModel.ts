@@ -35,9 +35,12 @@ export class SequenceViewModel {
     ITwoStrandedChainItem
   > = new Map();
 
+  private chainToHasAntisense: Map<Chain, boolean> = new Map();
+
   constructor(chainsCollection: ChainsCollection) {
     this.fillNodes(chainsCollection);
     this.fillChains();
+    this.postProcessNodes(chainsCollection);
 
     if (this.chains.length === 0) {
       this.addEmptyChain(0);
@@ -265,7 +268,7 @@ export class SequenceViewModel {
         }
       }
 
-      if (!antisenseNode) {
+      if (!antisenseNode && this.chainToHasAntisense.get(node.chain)) {
         const nextConnectedAntisenseNode = lastHandledAntisenseNode
           ? getNextConnectedNode(lastHandledAntisenseNode, monomerToNode)
           : undefined;
@@ -280,9 +283,9 @@ export class SequenceViewModel {
         }
       } else {
         if (
-          lastHandledAntisenseChain &&
-          node.antisenseChain &&
-          node.antisenseChain !== lastHandledAntisenseChain
+          !lastHandledAntisenseChain ||
+          (node.antisenseChain &&
+            node.antisenseChain !== lastHandledAntisenseChain)
         ) {
           antisenseNodeIndex = 0;
         }
@@ -303,17 +306,14 @@ export class SequenceViewModel {
   private fillNodes(chainsCollection: ChainsCollection) {
     this.fillSenseNodes(chainsCollection);
     this.fillAntisenseNodes(chainsCollection);
-    this.postProcessNodes(chainsCollection);
   }
 
   private fillChains() {
     const NUMBER_OF_SYMBOLS_IN_ROW = 30;
-    const hasAntisenseInRow = false;
     let currentIndexInSequenceModelChain = 0;
     let currentSequenceModelChain = new SequenceViewModelChain();
     let currentSequenceModelRow: ISequenceViewModelRow = {
       sequenceViewModelItems: [],
-      hasAntisenseInRow,
     };
     let previousSenseNodeChain: Chain;
 
@@ -329,13 +329,8 @@ export class SequenceViewModel {
       if (currentIndexInSequenceModelChain % NUMBER_OF_SYMBOLS_IN_ROW === 0) {
         currentSequenceModelRow = {
           sequenceViewModelItems: [],
-          hasAntisenseInRow,
         };
         currentSequenceModelChain.addRow(currentSequenceModelRow);
-      }
-
-      if (sequenceModelItem.antisenseNode) {
-        currentSequenceModelRow.hasAntisenseInRow = true;
       }
 
       currentSequenceModelRow.sequenceViewModelItems.push(sequenceModelItem);
@@ -345,9 +340,20 @@ export class SequenceViewModel {
     });
 
     this.chains.forEach((sequenceViewModelChain) => {
+      const hasAntisense = sequenceViewModelChain.hasAntisense;
+
+      if (hasAntisense) {
+        this.chainToHasAntisense.set(
+          sequenceViewModelChain.lastNode.chain,
+          true,
+        );
+      }
+
       sequenceViewModelChain.lastRow.sequenceViewModelItems.push({
         senseNode: new EmptySequenceNode(),
-        antisenseNode: new EmptySequenceNode(),
+        antisenseNode: sequenceViewModelChain.hasAntisense
+          ? new EmptySequenceNode()
+          : undefined,
         senseNodeIndex: sequenceViewModelChain.length,
         chain: sequenceViewModelChain.lastNode?.chain,
       });
@@ -383,7 +389,6 @@ export class SequenceViewModel {
           chain: emptyChain,
         },
       ],
-      hasAntisenseInRow: false,
     });
 
     this.chains.splice(emptyChainIndex, 0, chainWithEmptyNode);

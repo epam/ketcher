@@ -645,7 +645,8 @@ export class SequenceMode extends BaseMode {
 
     if (
       addPhosphateIfNeeded &&
-      nextNodeInSameChain instanceof EmptySequenceNode &&
+      (!nextNodeInSameChain ||
+        nextNodeInSameChain instanceof EmptySequenceNode) &&
       firstNodeToConnect instanceof Nucleoside &&
       (secondNodeToConnect instanceof Nucleotide ||
         secondNodeToConnect instanceof Nucleoside)
@@ -1222,7 +1223,7 @@ export class SequenceMode extends BaseMode {
                 modelChanges.merge(
                   this.insertNewSequenceFragment(
                     antisenseNodeCreationResult.node,
-                    previousTwoStrandedNode?.antisenseNode,
+                    previousTwoStrandedNode?.antisenseNode || null,
                     currentTwoStrandedNode.antisenseNode,
                     !(
                       previousTwoStrandedNode?.antisenseNode instanceof

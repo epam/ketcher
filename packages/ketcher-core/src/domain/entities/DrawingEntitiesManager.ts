@@ -2671,7 +2671,7 @@ export class DrawingEntitiesManager {
           );
 
         senseChain =
-          chainsToComplimentaryChainsAmount.size > 0
+          chainsToComplimentaryChainsAmount.size === 1
             ? chainWithMoreComplimentaryChains[0]
             : chainWithLowestCenter[0];
       }

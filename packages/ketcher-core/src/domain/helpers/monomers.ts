@@ -257,10 +257,7 @@ export function isValidNucleoside(
 
   const nextMonomerAfterPhosphate = getNextMonomerInChain(phosphate);
 
-  return (
-    !nextMonomerAfterPhosphate ||
-    !getRnaBaseFromSugar(nextMonomerAfterPhosphate)
-  );
+  return !nextMonomerAfterPhosphate;
 }
 
 export const isRnaBaseVariantMonomer = (

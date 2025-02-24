@@ -49,7 +49,11 @@ export class Chain {
   private createSubChainIfNeed(monomer) {
     const needCreateNewSubchain =
       !this.lastNode?.monomer ||
-      monomer.isMonomerTypeDifferentForChaining(this.lastNode.monomer);
+      (this.lastNode instanceof LinkerSequenceNode
+        ? this.lastNode?.monomers.some((lastNodeMonomer) =>
+            lastNodeMonomer.isMonomerTypeDifferentForChaining(monomer),
+          )
+        : monomer.isMonomerTypeDifferentForChaining(this.lastNode.monomer));
 
     if (needCreateNewSubchain) {
       this.subChains.push(new monomer.SubChainConstructor());

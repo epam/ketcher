@@ -617,7 +617,6 @@ export class SequenceMode extends BaseMode {
     secondNodeToConnect: SubChainNode | BackBoneSequenceNode | undefined,
     modelChanges: Command,
     newNodePosition: Vec2,
-    nextNodeInSameChain?: SubChainNode | BackBoneSequenceNode,
     addPhosphateIfNeeded = true,
   ) {
     if (
@@ -645,8 +644,6 @@ export class SequenceMode extends BaseMode {
 
     if (
       addPhosphateIfNeeded &&
-      (!nextNodeInSameChain ||
-        nextNodeInSameChain instanceof EmptySequenceNode) &&
       firstNodeToConnect instanceof Nucleoside &&
       (secondNodeToConnect instanceof Nucleotide ||
         secondNodeToConnect instanceof Nucleoside)
@@ -2347,7 +2344,6 @@ export class SequenceMode extends BaseMode {
         firstNodeOfNewFragment,
         modelChanges,
         newNodePosition,
-        currentNode,
         addPhosphateIfNeeded,
       );
     }
@@ -2358,7 +2354,6 @@ export class SequenceMode extends BaseMode {
         currentNode,
         modelChanges,
         newNodePosition,
-        undefined,
         addPhosphateIfNeeded,
       );
     }

@@ -79,6 +79,7 @@ export class SequenceViewModel {
 
   private fillAntisenseNodes(chainsCollection: ChainsCollection) {
     const handledChainNodes = new Set<SubChainNode>();
+    const monomerToChain = chainsCollection.monomerToChain;
 
     chainsCollection.chains.forEach((chain) => {
       if (!chain.isAntisense) {
@@ -207,23 +208,44 @@ export class SequenceViewModel {
         nodesBeforeHydrogenConnectionToBase.length &&
         lastTwoStrandedNodeWithHydrogenBond
       ) {
-        const lastTwoStrandedNodeWithHydrogenBondIndex = this.nodes.findIndex(
-          (node) => {
-            return node === lastTwoStrandedNodeWithHydrogenBond;
-          },
-        );
         for (let i = 0; i < nodesBeforeHydrogenConnectionToBase.length; i++) {
+          const lastTwoStrandedNodeWithHydrogenBondIndex = this.nodes.findIndex(
+            (node) => {
+              return node === lastTwoStrandedNodeWithHydrogenBond;
+            },
+          );
           const currentTwoStrandedSnakeLayoutNodeIndex =
             lastTwoStrandedNodeWithHydrogenBondIndex + 1 + i;
-          const currentTwoStrandedSnakeLayoutNode =
-            this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
+          const currentTwoStrandedSnakeLayoutNode:
+            | ITwoStrandedChainItem
+            | undefined = this.nodes[currentTwoStrandedSnakeLayoutNodeIndex];
           const currentAntisenseSnakeLayoutNode =
             nodesBeforeHydrogenConnectionToBase[i];
+          const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
+            lastTwoStrandedNodeWithHydrogenBond?.senseNode?.monomers[0];
+          const firstMonomerInCurrentTwoStrandedSnakeLayoutNode =
+            currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers[0];
+          const isNodeInSameChain =
+            firstMonomerInLastTwoStrandedNodeWithHydrogenBond &&
+            firstMonomerInCurrentTwoStrandedSnakeLayoutNode &&
+            monomerToChain.get(
+              firstMonomerInLastTwoStrandedNodeWithHydrogenBond,
+            ) ===
+              monomerToChain.get(
+                firstMonomerInCurrentTwoStrandedSnakeLayoutNode,
+              );
 
-          if (currentTwoStrandedSnakeLayoutNode) {
+          if (currentTwoStrandedSnakeLayoutNode && isNodeInSameChain) {
             currentTwoStrandedSnakeLayoutNode.antisenseNode =
               currentAntisenseSnakeLayoutNode;
             currentTwoStrandedSnakeLayoutNode.antisenseChain = chain;
+          } else if (currentTwoStrandedSnakeLayoutNode && !isNodeInSameChain) {
+            this.nodes.splice(currentTwoStrandedSnakeLayoutNodeIndex, 0, {
+              antisenseNode: currentAntisenseSnakeLayoutNode,
+              antisenseChain: chain,
+              senseNodeIndex: lastSenseNodeIndex,
+              chain: lastSenseChain,
+            });
           } else {
             this.nodes.push({
               antisenseNode: currentAntisenseSnakeLayoutNode,

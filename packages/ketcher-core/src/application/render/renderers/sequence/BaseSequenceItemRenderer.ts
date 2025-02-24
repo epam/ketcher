@@ -217,7 +217,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('y', this.node.monomer.monomerItem.isAntisense ? '24' : '-24')
       .text(
         this.isAntisenseNode && isNumber(antisenseNodeIndex)
-          ? this.currentChainNodesWithoutEmptyNodes.length - antisenseNodeIndex
+          ? antisenseNodeIndex + 1
           : senseNodeIndex + 1,
       )
       .attr('font-family', 'Courier New')
@@ -237,7 +237,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       !(this.node instanceof BackBoneSequenceNode) &&
       (this.isAntisenseNode && isNumber(antisenseNodeIndex)
         ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
-          antisenseNodeIndex === 0
+          antisenseNodeIndex === this.chain.length - 1
         : (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0 ||
           this.isLastMonomerInChain)
     );

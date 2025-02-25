@@ -232,9 +232,9 @@ class SelectRectangle implements BaseTool {
   ) {
     const angle = vectorUtils.calcAngle(cursorPosition, connectedPosition);
     const angleInDegrees = ((angle * 180) / Math.PI + 360) % 360;
-    const snapRest = angleInDegrees % snapAngle;
+    const snapRest = Math.abs(angleInDegrees % snapAngle);
     const leftBorder = snapAngle / 3;
-    const rightBorder = (snapAngle * 2) / 3;
+    const rightBorder = (2 * snapAngle) / 3;
     let snappedAngle = angleInDegrees;
 
     if (snapRest < leftBorder) {
@@ -261,7 +261,7 @@ class SelectRectangle implements BaseTool {
     return {
       isAngleSnapped,
       angleSnapPosition,
-      snappedAngle,
+      snappedAngleRad,
     };
   }
 
@@ -270,8 +270,10 @@ class SelectRectangle implements BaseTool {
     connectedPosition: Vec2,
     snappedAngle?: number,
   ) {
-    const vectorDiff = Vec2.diff(cursorPosition, connectedPosition);
-    const currentDistance = vectorDiff.length();
+    const currentDistance = Vec2.diff(
+      cursorPosition,
+      connectedPosition,
+    ).length();
     const standardBondLength = 1.5;
     const isDistanceSnapped =
       Math.abs(currentDistance - standardBondLength) < 0.375;
@@ -312,7 +314,7 @@ class SelectRectangle implements BaseTool {
       );
 
       if (connectedMonomer) {
-        const { isAngleSnapped, angleSnapPosition, snappedAngle } =
+        const { isAngleSnapped, angleSnapPosition, snappedAngleRad } =
           SelectRectangle.calculateAngleSnap(
             cursorPositionInAngstroms,
             connectedMonomer.position,
@@ -323,12 +325,12 @@ class SelectRectangle implements BaseTool {
           SelectRectangle.calculateDistanceSnap(
             cursorPositionInAngstroms,
             connectedMonomer.position,
-            snappedAngle,
+            snappedAngleRad,
           );
 
         let snapPosition: Vec2 | undefined;
         if (isAngleSnapped && isDistanceSnapped) {
-          snapPosition = angleSnapPosition;
+          snapPosition = distanceSnapPosition;
         } else if (isAngleSnapped) {
           snapPosition = angleSnapPosition;
         } else if (isDistanceSnapped) {
@@ -336,25 +338,32 @@ class SelectRectangle implements BaseTool {
         }
 
         if (snapPosition) {
-          modelChanges.merge(
-            this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-              snapPosition.sub(selectedMonomer.position),
-            ),
-          );
+          const distanceToSnapPosition = Vec2.diff(
+            cursorPositionInAngstroms,
+            snapPosition,
+          ).length();
 
-          isAngleSnapped
-            ? this.editor.transientDrawingView.showAngleSnap(
-                connectedMonomer.position,
-                selectedMonomer.position,
-              )
-            : this.editor.transientDrawingView.hideAngleSnap();
+          if (distanceToSnapPosition < 0.375) {
+            modelChanges.merge(
+              this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+                snapPosition.sub(selectedMonomer.position),
+              ),
+            );
 
-          isDistanceSnapped
-            ? this.editor.transientDrawingView.showBondSnap(monomerBond)
-            : this.editor.transientDrawingView.hideBondSnap();
+            isAngleSnapped
+              ? this.editor.transientDrawingView.showAngleSnap(
+                  connectedMonomer.position,
+                  selectedMonomer.position,
+                )
+              : this.editor.transientDrawingView.hideAngleSnap();
+
+            isDistanceSnapped
+              ? this.editor.transientDrawingView.showBondSnap(monomerBond)
+              : this.editor.transientDrawingView.hideBondSnap();
+
+            isSnapped = isAngleSnapped || isDistanceSnapped;
+          }
         }
-
-        isSnapped = isAngleSnapped || isDistanceSnapped;
       }
     }
 

@@ -22,6 +22,8 @@ export class TransientDrawingView {
   }
 
   private addView<P>(viewName, viewData: ViewData<P>) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     this.views.set(viewName, viewData);
   }
 

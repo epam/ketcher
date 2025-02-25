@@ -339,6 +339,7 @@ const ambiguousMonomers: IHELMString[] = [
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
+    pageReloadNeeded: true,
   },
   {
     testDescription: '29. Base R (mixture, no quantities, from library)',
@@ -348,6 +349,7 @@ const ambiguousMonomers: IHELMString[] = [
     shouldFail: true,
     issueNumber:
       'https://github.com/epam/ketcher/issues/5534, https://github.com/epam/ketcher/issues/5566',
+    pageReloadNeeded: true,
   },
   {
     testDescription: '30. Base R (mixture, with quantities, from library)',
@@ -356,6 +358,7 @@ const ambiguousMonomers: IHELMString[] = [
     issueNumber: 'https://github.com/epam/ketcher/issues/5566',
     monomerLocatorIndex: 2,
     monomerLocatorIndexOnMicro: 1,
+    pageReloadNeeded: true,
   },
   {
     testDescription: '31. Mixture of 10 bases (multi-char, no quantities)',
@@ -365,6 +368,7 @@ const ambiguousMonomers: IHELMString[] = [
     monomerLocatorIndexOnMicro: 1,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/5534',
+    pageReloadNeeded: true,
   },
   {
     testDescription: '32. Mixture of 10 bases (multi-char, with quantities)',
@@ -372,6 +376,7 @@ const ambiguousMonomers: IHELMString[] = [
       'RNA1{R([2imen2]:1+[5meC]:3+[4imen2]:5+[cnes4T]:7+[5eU]:9+[dfB]:55+[4ime6A]:8+[ac4C]:6+[allyl9]:4+[cneT]:2)P}$$$$V2.0',
     monomerLocatorIndex: 2,
     monomerLocatorIndexOnMicro: 1,
+    pageReloadNeeded: true,
   },
 ];
 

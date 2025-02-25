@@ -2706,14 +2706,16 @@ export class DrawingEntitiesManager {
     );
   }
 
-  private static getAntisenseBaseLabel(
-    rnaBase: RNABase | AmbiguousMonomer,
+  public static getAntisenseBaseLabel(
+    rnaBaseMonomerOrLabel: RNABase | AmbiguousMonomer | string,
     isDnaAntisense: boolean,
   ) {
     return DrawingEntitiesManager.antisenseChainBasesMap(isDnaAntisense)[
-      rnaBase instanceof AmbiguousMonomer
-        ? rnaBase.monomerItem.label
-        : rnaBase.monomerItem.props.MonomerNaturalAnalogCode
+      typeof rnaBaseMonomerOrLabel === 'string'
+        ? rnaBaseMonomerOrLabel
+        : rnaBaseMonomerOrLabel instanceof AmbiguousMonomer
+        ? rnaBaseMonomerOrLabel.monomerItem.label
+        : rnaBaseMonomerOrLabel.monomerItem.props.MonomerNaturalAnalogCode
     ];
   }
 

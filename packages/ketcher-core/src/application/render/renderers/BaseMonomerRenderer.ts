@@ -384,6 +384,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
   }
 
+  public removeLabel() {
+    this.rootElement?.select('text').remove();
+  }
+
   public appendHover(
     hoverAreaElement: D3SvgElementSelection<SVGGElement, void>,
   ) {

@@ -3,6 +3,8 @@ import { D3SvgElementSelection } from 'application/render/types';
 import { PolymerBond } from 'domain/entities';
 import { TransientView } from './TransientView';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export class BondSnapView extends TransientView {
   public static viewName = 'BondSnapView';
 

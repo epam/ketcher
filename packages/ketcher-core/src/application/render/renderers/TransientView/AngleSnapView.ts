@@ -10,6 +10,19 @@ export type AngleSnapViewParams = {
   isDistanceSnapped: boolean;
 };
 
+const minimalAngleDifference = (a: number, b: number) => {
+  let diff = b - a;
+
+  while (diff <= -Math.PI) {
+    diff += 2 * Math.PI;
+  }
+  while (diff > Math.PI) {
+    diff -= 2 * Math.PI;
+  }
+
+  return diff;
+};
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export class AngleSnapView extends TransientView {
@@ -63,41 +76,35 @@ export class AngleSnapView extends TransientView {
       movingPositionInPixels.y - connectedPositionInPixels.y,
       movingPositionInPixels.x - connectedPositionInPixels.x,
     );
-
     const alignerAngle = -Math.PI / 2;
 
-    let startAngle = bondAngle;
-    let endAngle = alignerAngle;
-
-    endAngle += Math.PI / 2;
-    startAngle += Math.PI / 2;
-
-    if (startAngle >= Math.PI) {
-      startAngle -= 2 * Math.PI;
+    if (Math.abs(bondAngle - alignerAngle) < 1e-8) {
+      return;
     }
 
-    console.log('start', startAngle);
-    console.log('end', endAngle);
+    const startAngle = bondAngle + Math.PI / 2;
+    const endAngle = alignerAngle + Math.PI / 2;
 
-    if (startAngle !== endAngle) {
-      const arcGenerator = arc()
-        .innerRadius(30)
-        .outerRadius(30)
-        .startAngle(Math.min(startAngle, endAngle))
-        .endAngle(Math.max(startAngle, endAngle));
+    const diff = minimalAngleDifference(startAngle, endAngle);
 
-      transientLayer
-        .append('path')
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        .attr('d', arcGenerator({}))
-        .attr(
-          'transform',
-          `translate(${connectedPositionInPixels.x}, ${connectedPositionInPixels.y})`,
-        )
-        .attr('fill', 'none')
-        .attr('stroke', '#365CFF')
-        .attr('marker-end', 'url(#arrow-marker)');
-    }
+    const arcPath =
+      arc()({
+        innerRadius: 30,
+        outerRadius: 30,
+        // It is done deliberately so the arrowhead will be attached at the right arc end
+        startAngle: startAngle + diff,
+        endAngle: startAngle,
+      })?.slice(0, -1) ?? null;
+
+    transientLayer
+      .append('path')
+      .attr('d', arcPath)
+      .attr(
+        'transform',
+        `translate(${connectedPositionInPixels.x}, ${connectedPositionInPixels.y})`,
+      )
+      .attr('fill', 'none')
+      .attr('stroke', '#365CFF')
+      .attr('marker-end', 'url(#arrow-marker-arc)');
   }
 }

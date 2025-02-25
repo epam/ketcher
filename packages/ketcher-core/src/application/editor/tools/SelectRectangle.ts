@@ -351,10 +351,11 @@ class SelectRectangle implements BaseTool {
             );
 
             isAngleSnapped
-              ? this.editor.transientDrawingView.showAngleSnap(
-                  connectedMonomer.position,
-                  selectedMonomer.position,
-                )
+              ? this.editor.transientDrawingView.showAngleSnap({
+                  connectedMonomer,
+                  polymerBond: monomerBond,
+                  isDistanceSnapped,
+                })
               : this.editor.transientDrawingView.hideAngleSnap();
 
             isDistanceSnapped
@@ -367,33 +368,31 @@ class SelectRectangle implements BaseTool {
       }
     }
 
-    if (this.moveStarted) {
-      if (!isSnapped) {
-        modelChanges.merge(
-          this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-            Coordinates.canvasToModel(
-              new Vec2(
-                this.editor.lastCursorPositionOfCanvas.x -
-                  this.mousePositionAfterMove.x,
-                this.editor.lastCursorPositionOfCanvas.y -
-                  this.mousePositionAfterMove.y,
-              ),
+    if (!isSnapped) {
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+          Coordinates.canvasToModel(
+            new Vec2(
+              this.editor.lastCursorPositionOfCanvas.x -
+                this.mousePositionAfterMove.x,
+              this.editor.lastCursorPositionOfCanvas.y -
+                this.mousePositionAfterMove.y,
             ),
           ),
-        );
+        ),
+      );
 
-        this.editor.transientDrawingView.hideBondSnap();
-        this.editor.transientDrawingView.hideAngleSnap();
-      }
-
-      this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
-
-      requestAnimationFrame(() => {
-        this.editor.renderersContainer.update(modelChanges);
-        this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
-        this.editor.transientDrawingView.update();
-      });
+      this.editor.transientDrawingView.hideBondSnap();
+      this.editor.transientDrawingView.hideAngleSnap();
     }
+
+    this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
+
+    requestAnimationFrame(() => {
+      this.editor.renderersContainer.update(modelChanges);
+      this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
+      this.editor.transientDrawingView.update();
+    });
   }
 
   mouseup(event) {
@@ -409,6 +408,7 @@ class SelectRectangle implements BaseTool {
       ) {
         return;
       }
+
       const modelChanges =
         this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
           new Vec2(0, 0),

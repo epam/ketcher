@@ -384,8 +384,8 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
   }
 
-  public removeLabel() {
-    this.rootElement?.select('text').remove();
+  public setLabelVisibility(isVisible: boolean) {
+    this.rootElement?.select('text').style('opacity', isVisible ? 1 : 0);
   }
 
   public appendHover(

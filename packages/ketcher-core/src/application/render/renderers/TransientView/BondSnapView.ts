@@ -48,6 +48,7 @@ export class BondSnapView extends TransientView {
       .attr('x2', endPositionInPixels.x)
       .attr('y2', endPositionInPixels.y)
       .attr('stroke', '#365CFF')
-      .attr('stroke-width', 1);
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '4 4');
   }
 }

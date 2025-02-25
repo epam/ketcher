@@ -1,5 +1,8 @@
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
-import { LayoutMode } from 'application/editor/modes';
+import {
+  isTwoStrandedNodeRestrictedForHydrogenBondCreation,
+  LayoutMode,
+} from 'application/editor/modes';
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
@@ -2451,6 +2454,116 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(),
     );
     editor.renderersContainer.update(modelChanges);
+  }
+
+  private createHydrogenBondForTwoStrandedNode(
+    twoStrandedNode: ITwoStrandedChainItem,
+  ) {
+    const command = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+    const senseNode = twoStrandedNode.senseNode;
+    const antisenseNode = twoStrandedNode.antisenseNode;
+
+    if (
+      !senseNode ||
+      !antisenseNode ||
+      isTwoStrandedNodeRestrictedForHydrogenBondCreation(twoStrandedNode)
+    ) {
+      return command;
+    }
+
+    command.merge(
+      editor.drawingEntitiesManager.createPolymerBond(
+        senseNode instanceof Nucleoside || senseNode instanceof Nucleotide
+          ? senseNode.rnaBase
+          : senseNode.monomer,
+        antisenseNode instanceof Nucleoside ||
+          antisenseNode instanceof Nucleotide
+          ? antisenseNode.rnaBase
+          : antisenseNode.monomer,
+        AttachmentPointName.HYDROGEN,
+        AttachmentPointName.HYDROGEN,
+        MACROMOLECULES_BOND_TYPES.HYDROGEN,
+      ),
+    );
+
+    return command;
+  }
+
+  private deleteHydrogenBondsForNode(
+    node: SubChainNode | BackBoneSequenceNode | undefined,
+  ) {
+    const command = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+
+    node?.monomers.forEach((monomer) => {
+      monomer.hydrogenBonds.forEach((hydrogenBond) => {
+        command.merge(
+          editor.drawingEntitiesManager.deletePolymerBond(hydrogenBond),
+        );
+      });
+    });
+
+    return command;
+  }
+
+  public establishHydrogenBond(sequenceItemRenderer: BaseSequenceItemRenderer) {
+    const modelChanges = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
+    const selections = SequenceRenderer.selections;
+
+    if (selections.length) {
+      selections.forEach((selectionRange) => {
+        selectionRange.forEach((nodeSelection) => {
+          modelChanges.merge(
+            this.createHydrogenBondForTwoStrandedNode(nodeSelection.node),
+          );
+        });
+      });
+    } else {
+      const twoStrandedNode = sequenceItemRenderer.twoStrandedNode;
+
+      if (!twoStrandedNode) {
+        return;
+      }
+
+      modelChanges.merge(
+        this.createHydrogenBondForTwoStrandedNode(twoStrandedNode),
+      );
+    }
+
+    modelChanges.addOperation(new ReinitializeModeOperation());
+    editor.renderersContainer.update(modelChanges);
+    history.update(modelChanges);
+  }
+
+  public deleteHydrogenBond(sequenceItemRenderer: BaseSequenceItemRenderer) {
+    const modelChanges = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
+    const selections = SequenceRenderer.selections;
+
+    if (selections.length) {
+      selections.forEach((selectionRange) => {
+        selectionRange.forEach((nodeSelection) => {
+          modelChanges.merge(
+            this.deleteHydrogenBondsForNode(nodeSelection.node.senseNode),
+          );
+          modelChanges.merge(
+            this.deleteHydrogenBondsForNode(nodeSelection.node.antisenseNode),
+          );
+        });
+      });
+    } else {
+      const node = sequenceItemRenderer.node;
+
+      modelChanges.merge(this.deleteHydrogenBondsForNode(node));
+    }
+
+    modelChanges.addOperation(new ReinitializeModeOperation());
+    editor.renderersContainer.update(modelChanges);
+    history.update(modelChanges);
   }
 
   public destroy() {

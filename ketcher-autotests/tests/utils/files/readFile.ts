@@ -280,6 +280,12 @@ export async function pasteFromClipboardAndOpenAsNewProject(
  *    [MacroFileType.Sequence, [SequenceType.PEPTIDE, PeptideType.threeLetterCode]],
  *    'Some Sequence content of Peptide type of 3-letter code',
  *  );
+ *  5. pasteFromClipboardAndAddToMacromoleculesCanvas(
+ *   page,
+ *   MacroFileType.HELM,
+ *   'Some HELM content of RNA type',
+ *  );
+ *
  * @param {Page} page - The Playwright page instance where the button is located.
  * @param {structureFormat} structureFormat - Content type from enum MacroFileType, if Sequence or FASTA - require array of [MacroFileType, SequenceType], if SequenceType === Peptide - requre [MacroFileType, [SequenceType, PeptideType]]
  * @param {fillStructure}  fillStructure - content to load on the canvas via "Paste from clipboard" way
@@ -353,59 +359,6 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
     await pressButton(page, 'Add to Canvas');
   }
 }
-// export async function pasteFromClipboardAndAddToMacromoleculesCanvas2(
-//   page: Page,
-//   structureFormat: MacroFileType,
-//   sequenceFormat: SequenceType | [SequenceType, PeptideType?],
-//   fillStructure: string,
-//   needToWait = true,
-// ) {
-//   await selectMacromoleculesPanelButton(
-//     MacromoleculesTopPanelButton.Open,
-//     page,
-//   );
-//   await page.getByText('Paste from clipboard').click();
-//   if (structureFormat !== MacroFileType.Ket) {
-//     await page.getByRole('combobox').click();
-//     await page.getByText(structureFormat).click();
-//   }
-
-//   let sequenceType: SequenceType = SequenceType.RNA;
-//   let peptideType: PeptideType = PeptideType.oneLetterCode;
-
-//   if (Array.isArray(sequenceFormat) && sequenceFormat[1]) {
-//     [sequenceType, peptideType] = sequenceFormat;
-//   }
-//   if (!Array.isArray(sequenceFormat)) {
-//     sequenceType = sequenceFormat;
-//   }
-
-//   if (sequenceType !== SequenceType.RNA) {
-//     await page.getByTestId('dropdown-select-type').click();
-//     const lowCaseSequenceFormat = sequenceType.toLowerCase();
-//     await page.locator(`[data-value=${lowCaseSequenceFormat}]`).click();
-
-//     if (
-//       sequenceType === SequenceType.PEPTIDE &&
-//       peptideType !== PeptideType.oneLetterCode
-//     ) {
-//       await page
-//         .getByTestId('dropdown-select-peptide-letters-format')
-//         .getByRole('combobox')
-//         .click();
-//       await page.getByText(PeptideType.threeLetterCode).click();
-//     }
-//   }
-
-//   await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
-//   if (needToWait) {
-//     await waitForLoad(page, async () => {
-//       await pressButton(page, 'Add to Canvas');
-//     });
-//   } else {
-//     await pressButton(page, 'Add to Canvas');
-//   }
-// }
 
 export async function receiveMolFileComparisonData(
   page: Page,

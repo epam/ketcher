@@ -23,6 +23,7 @@ import {
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 
+let id = 0;
 export class Chain {
   public subChains: BaseSubChain[] = [];
 
@@ -30,7 +31,10 @@ export class Chain {
 
   public isCyclic = false;
 
+  public id: number;
+
   constructor(firstMonomer?: BaseMonomer, isCyclic?: boolean) {
+    this.id = id++;
     if (firstMonomer) {
       this.firstMonomer = firstMonomer;
 

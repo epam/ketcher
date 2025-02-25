@@ -256,6 +256,7 @@ export function isValidNucleoside(
   }
 
   const nextMonomerAfterPhosphate = getNextMonomerInChain(phosphate);
+
   return !nextMonomerAfterPhosphate;
 }
 

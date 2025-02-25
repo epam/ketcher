@@ -11,6 +11,7 @@ import { Chain } from 'domain/entities/monomer-chains/Chain';
 import { isNumber } from 'lodash';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
+import { PolymerBond } from 'domain/entities/PolymerBond';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
@@ -105,11 +106,42 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
   }
 
-  private appendRootElement() {
+  protected appendRootElement() {
     const rootElement = this.canvas
       .append('g')
       .data([this])
       .attr('data-testid', 'sequence-item')
+      .attr('data-symbol-id', this.node.monomer.id)
+      .attr('data-chain-id', this.chain.id)
+      // .attr('data-symbol-count', this.chain.id)
+      .attr(
+        'data-side-connection-number',
+        this.node.monomers.reduce(
+          (acc, monomer) =>
+            acc +
+            monomer.covalentBonds.filter(
+              (bond) =>
+                bond instanceof PolymerBond &&
+                (bond as PolymerBond).isSideChainConnection,
+            ).length,
+          0,
+        ),
+      )
+      .attr(
+        'data-has-left-connection',
+        Boolean(this.node.firstMonomerInNode.attachmentPointsToBonds.R1),
+      )
+      .attr(
+        'data-has-right-connection',
+        Boolean(this.node.lastMonomerInNode.attachmentPointsToBonds.R2),
+      )
+      .attr(
+        'data-hydrogen-connection-number',
+        this.node.monomers.reduce(
+          (acc, monomer) => acc + monomer.hydrogenBonds.length,
+          0,
+        ),
+      )
       .attr('transition', 'transform 0.2s')
       .attr(
         'transform',
@@ -185,7 +217,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('y', this.node.monomer.monomerItem.isAntisense ? '24' : '-24')
       .text(
         this.isAntisenseNode && isNumber(antisenseNodeIndex)
-          ? this.currentChainNodesWithoutEmptyNodes.length - antisenseNodeIndex
+          ? antisenseNodeIndex + 1
           : senseNodeIndex + 1,
       )
       .attr('font-family', 'Courier New')
@@ -205,7 +237,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       !(this.node instanceof BackBoneSequenceNode) &&
       (this.isAntisenseNode && isNumber(antisenseNodeIndex)
         ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
-          antisenseNodeIndex === 0
+          antisenseNodeIndex === this.chain.length - 1
         : (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0 ||
           this.isLastMonomerInChain)
     );

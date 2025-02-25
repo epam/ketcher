@@ -241,20 +241,12 @@ test.describe('Save files', () => {
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
 
-    const expectedFile = await getSdf(page, 'v2000');
-    await saveToFile('SDF/chain-expected.sdf', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/SDF/chain-expected.sdf',
-        fileFormat: 'v2000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
+    await verifyFileExport(
+          page,
+          'SDF/chain-expected.sdf',
+          FileType.SDF,
+          'v2000',
+        );
   });
 
   test('Support for exporting to "SDF V3000" file format', async ({ page }) => {
@@ -264,20 +256,12 @@ test.describe('Save files', () => {
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
 
-    const expectedFile = await getSdf(page, 'v3000');
-    await saveToFile('SDF/chain-expectedV3000.sdf', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/SDF/chain-expectedV3000.sdf',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
+    await verifyFileExport(
+              page,
+              'SDF/chain-expectedV3000.sdf',
+              FileType.SDF,
+              'v3000',
+            );
   });
 });
 

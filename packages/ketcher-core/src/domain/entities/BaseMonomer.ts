@@ -278,7 +278,15 @@ export abstract class BaseMonomer extends DrawingEntity {
     return [...this.covalentBonds, ...this.hydrogenBonds];
   }
 
-  public get shortestBond(): PolymerBond | HydrogenBond | MonomerToAtomBond {
+  public get shortestBond():
+    | PolymerBond
+    | HydrogenBond
+    | MonomerToAtomBond
+    | undefined {
+    if (this.bonds.length === 0) {
+      return;
+    }
+
     return this.bonds.reduce((shortestBond, bond) => {
       if (!shortestBond.secondEndEntity) {
         return shortestBond;

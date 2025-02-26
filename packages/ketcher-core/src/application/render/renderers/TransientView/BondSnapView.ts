@@ -20,26 +20,30 @@ export class BondSnapView extends TransientView {
       .attr('cx', startPositionInPixels.x)
       .attr('cy', startPositionInPixels.y)
       .attr('r', 4)
-      .attr('fill', 'white');
+      .attr('fill', 'white')
+      .attr('style', 'pointer-events: none');
     transientLayer
       .append('circle')
       .attr('cx', startPositionInPixels.x)
       .attr('cy', startPositionInPixels.y)
       .attr('r', 3)
-      .attr('fill', '#365CFF');
+      .attr('fill', '#365CFF')
+      .attr('style', 'pointer-events: none');
 
     transientLayer
       .append('circle')
       .attr('cx', endPositionInPixels.x)
       .attr('cy', endPositionInPixels.y)
       .attr('r', 4)
-      .attr('fill', 'white');
+      .attr('fill', 'white')
+      .attr('style', 'pointer-events: none');
     transientLayer
       .append('circle')
       .attr('cx', endPositionInPixels.x)
       .attr('cy', endPositionInPixels.y)
       .attr('r', 3)
-      .attr('fill', '#365CFF');
+      .attr('fill', '#365CFF')
+      .attr('style', 'pointer-events: none');
 
     transientLayer
       .append('line')
@@ -49,6 +53,7 @@ export class BondSnapView extends TransientView {
       .attr('y2', endPositionInPixels.y)
       .attr('stroke', '#365CFF')
       .attr('stroke-width', 1)
-      .attr('stroke-dasharray', '4 4');
+      .attr('stroke-dasharray', '4 4')
+      .attr('style', 'pointer-events: none');
   }
 }

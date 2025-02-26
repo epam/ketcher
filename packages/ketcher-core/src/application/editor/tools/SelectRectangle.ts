@@ -324,7 +324,10 @@ class SelectRectangle implements BaseTool {
     const selectedMonomer = selectedEntities[0] as BaseMonomer;
     const shortestMonomerBond = selectedMonomer.shortestBond;
 
-    if (shortestMonomerBond instanceof MonomerToAtomBond) {
+    if (
+      !shortestMonomerBond ||
+      shortestMonomerBond instanceof MonomerToAtomBond
+    ) {
       return {
         snapPosition: undefined,
         isAngleSnapped: false,

@@ -402,9 +402,9 @@ export class SequenceRenderer {
 
       assert(renderer instanceof BaseSequenceItemRenderer);
 
-      renderer?.removeCaret();
+      renderer?.redrawCaret(caretPosition);
       if (renderer.antisenseNodeRenderer) {
-        renderer.antisenseNodeRenderer?.removeCaret();
+        renderer.antisenseNodeRenderer?.redrawCaret(caretPosition);
       }
     }
     SequenceRenderer.caretPosition = caretPosition;
@@ -418,8 +418,8 @@ export class SequenceRenderer {
     assert(renderer instanceof BaseSequenceItemRenderer);
 
     if (editor.isSequenceEditMode) {
-      renderer?.showCaret();
-      renderer?.antisenseNodeRenderer?.showCaret();
+      renderer?.redrawCaret(caretPosition);
+      renderer?.antisenseNodeRenderer?.redrawCaret(caretPosition);
     }
 
     this.sequenceViewModel.forEachNode(({ twoStrandedNode }) => {

@@ -12,6 +12,7 @@ import { isNumber } from 'lodash';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { SequenceMode } from 'application/editor';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
@@ -47,8 +48,13 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   abstract get symbolToDisplay(): string;
 
-  public get isEditingSymbol() {
-    return this.nodeIndexOverall === this.editingNodeIndexOverall;
+  public isEditingSymbol(editingNodeIndexOverall?: number) {
+    return (
+      this.nodeIndexOverall ===
+      (isNumber(editingNodeIndexOverall)
+        ? editingNodeIndexOverall
+        : this.editingNodeIndexOverall)
+    );
   }
 
   public isNextSymbolEditing(editingNodeIndexOverall?: number) {
@@ -110,6 +116,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
     return CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+  }
+
+  private get isAntisenseSyncEditMode() {
+    const editorMode = CoreEditor.provideEditorInstance().mode;
+
+    return (
+      editorMode instanceof SequenceMode && editorMode.isAntisenseSyncEditMode
+    );
   }
 
   protected appendRootElement() {
@@ -240,10 +254,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       return;
     }
 
-    if (this.counterElement) {
-      this.counterElement?.remove();
-      this.counterElement = undefined;
-    }
+    this.counterElement?.remove();
+    this.counterElement = undefined;
 
     if (this.needDisplayCounter(editingNodeIndexOverall)) {
       this.counterElement = this.appendCounterElement(this.rootElement);
@@ -275,12 +287,13 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public showCaret() {
+    this.caretElement = this.spacerElement?.append('g');
+
     if (
       this.isAntisenseNode ||
       (this.node instanceof BackBoneSequenceNode &&
         this.node.firstConnectedNode.monomer.monomerItem.isAntisense)
     ) {
-      this.caretElement = this.spacerElement?.append('g');
       this.caretElement
         ?.append('path')
         .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')
@@ -299,26 +312,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         .attr('fill', '#fff')
         .attr('transform', 'translate(-12 -34) rotate(180)')
         .attr('stroke', '#7C7C7F');
-      // this.caretElement
-      //   ?.append('path')
-      //   .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')
-      //   .attr('fill', '#fff')
-      //   .attr(
-      //     'transform',
-      //     `translate(
-      //     ${-21},
-      //     ${18}
-      //     )`,
-      //   )
-      //   .attr('stroke', '#7C7C7F');
-      // this.caretElement
-      //   ?.append('path')
-      //   .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')
-      //   .attr('fill', '#fff')
-      //   .attr('transform', 'translate(-12 4) rotate(180)')
-      //   .attr('stroke', '#7C7C7F');
-    } else {
-      this.caretElement = this.spacerElement
+    }
+
+    if (
+      this.isAntisenseSyncEditMode
+        ? this.isAntisenseNode
+        : !this.isAntisenseNode
+    ) {
+      this.caretElement
         ?.append('line')
         .attr('x1', -17)
         .attr('y1', -1)
@@ -332,6 +333,18 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public removeCaret() {
     this.caretElement?.remove();
     this.caretElement = undefined;
+  }
+
+  public redrawCaret(editingNodeIndexOverall?: number) {
+    this.removeCaret();
+
+    if (
+      (this.isSequenceEditModeTurnedOn &&
+        this.isEditingSymbol(editingNodeIndexOverall)) ||
+      this.isSingleEmptyNode
+    ) {
+      this.showCaret();
+    }
   }
 
   protected redrawBackgroundElementColor() {
@@ -366,12 +379,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.spacerElement = this.appendSpacerElement();
     this.backgroundElement = this.appendBackgroundElement();
 
-    if (
-      (this.isSequenceEditModeTurnedOn && this.isEditingSymbol) ||
-      this.isSingleEmptyNode
-    ) {
-      this.showCaret();
-    }
+    this.redrawCaret();
 
     this.textElement = this.rootElement
       .append('text')

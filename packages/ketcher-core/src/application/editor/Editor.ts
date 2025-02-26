@@ -384,8 +384,8 @@ export class CoreEditor {
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
     );
-    this.events.createAntisenseChain.add(() => {
-      this.onCreateAntisenseChain();
+    this.events.createAntisenseChain.add((isDnaAntisense: boolean) => {
+      this.onCreateAntisenseChain(isDnaAntisense);
     });
     this.events.copySelectedStructure.add(() => {
       this.mode.onCopy();
@@ -428,8 +428,9 @@ export class CoreEditor {
     this.sequenceTypeEnterMode = mode;
   }
 
-  private onCreateAntisenseChain() {
-    const modelChanges = this.drawingEntitiesManager.createAntisenseChain();
+  private onCreateAntisenseChain(isDnaAntisense: boolean) {
+    const modelChanges =
+      this.drawingEntitiesManager.createAntisenseChain(isDnaAntisense);
     const history = new EditorHistory(this);
 
     this.renderersContainer.update(modelChanges);

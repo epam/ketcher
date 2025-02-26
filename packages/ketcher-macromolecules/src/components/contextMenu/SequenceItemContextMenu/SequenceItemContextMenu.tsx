@@ -116,7 +116,7 @@ export const SequenceItemContextMenu = ({
     {
       name: SequenceItemContextMenuNames.createDnaAntisenseStrand,
       title: 'Create DNA antisense strand',
-      disabled: true,
+      disabled: isAntisenseCreationDisabled(extractedBaseMonomers),
       hidden: isAntisenseOptionHidden,
     },
     {
@@ -184,10 +184,10 @@ export const SequenceItemContextMenu = ({
         editor.events.editSequence.dispatch(props.sequenceItemRenderer);
         break;
       case SequenceItemContextMenuNames.createRnaAntisenseStrand:
-        editor.events.createAntisenseChain.dispatch();
+        editor.events.createAntisenseChain.dispatch(false);
         break;
       case SequenceItemContextMenuNames.createDnaAntisenseStrand:
-        // TODO: implement createDnaAntisenseStrand
+        editor.events.createAntisenseChain.dispatch(true);
         break;
       default:
         break;

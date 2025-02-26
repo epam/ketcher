@@ -1202,6 +1202,7 @@ export class SequenceMode extends BaseMode {
                       previousTwoStrandedNode?.antisenseNode instanceof
                       EmptySequenceNode
                     )),
+                false,
               );
 
             if (antisenseNodeCreationResult && currentTwoStrandedNode) {

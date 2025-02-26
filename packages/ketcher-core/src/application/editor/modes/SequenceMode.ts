@@ -1150,6 +1150,7 @@ export class SequenceMode extends BaseMode {
           const enteredSymbol = event.code.replace('Key', '');
           const editor = CoreEditor.provideEditorInstance();
           const history = new EditorHistory(editor);
+          const modelChanges = new Command();
           const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
           const previousTwoStrandedNodeInSameChain =
             (currentTwoStrandedNode &&
@@ -1157,22 +1158,32 @@ export class SequenceMode extends BaseMode {
                 currentTwoStrandedNode,
               )) ||
             undefined;
+          let senseNodeToConnect = currentTwoStrandedNode?.senseNode;
+          const needToEditSense = true;
+          const needToEditAntisense = true;
+          const isSyncAntisenseMode = true;
 
-          const insertNewSequenceItemResult = this.insertNewSequenceItem(
-            editor,
-            enteredSymbol,
-            currentTwoStrandedNode?.senseNode,
-            previousTwoStrandedNodeInSameChain?.senseNode,
-          );
+          if (needToEditSense) {
+            const insertNewSequenceItemResult = this.insertNewSequenceItem(
+              editor,
+              isSyncAntisenseMode
+                ? enteredSymbol
+                : DrawingEntitiesManager.getAntisenseBaseLabel(enteredSymbol),
+              currentTwoStrandedNode?.senseNode,
+              previousTwoStrandedNodeInSameChain?.senseNode,
+            );
 
-          // Case when user type symbol that does not exist in current sequence type mode
-          if (!insertNewSequenceItemResult) {
-            return;
+            // Case when user type symbol that does not exist in current sequence type mode
+            if (!insertNewSequenceItemResult) {
+              return;
+            }
+
+            modelChanges.merge(insertNewSequenceItemResult.modelChanges);
+            senseNodeToConnect = insertNewSequenceItemResult.node;
           }
 
-          const { modelChanges, node: addedNode } = insertNewSequenceItemResult;
-
           if (
+            needToEditAntisense &&
             (previousTwoStrandedNodeInSameChain?.antisenseNode ||
               currentTwoStrandedNode?.antisenseNode) &&
             (editor.sequenceTypeEnterMode === SequenceType.DNA ||
@@ -1180,20 +1191,22 @@ export class SequenceMode extends BaseMode {
           ) {
             const antisenseNodeCreationResult = this.insertNewSequenceItem(
               editor,
-              DrawingEntitiesManager.getAntisenseBaseLabel(enteredSymbol),
+              isSyncAntisenseMode
+                ? DrawingEntitiesManager.getAntisenseBaseLabel(enteredSymbol)
+                : enteredSymbol,
               previousTwoStrandedNodeInSameChain?.antisenseNode,
               currentTwoStrandedNode?.antisenseNode,
             false,
               );
 
-            if (antisenseNodeCreationResult) {
+            if (antisenseNodeCreationResult && senseNodeToConnect) {
               modelChanges.merge(antisenseNodeCreationResult.modelChanges);
               modelChanges.merge(
                 editor.drawingEntitiesManager.createPolymerBond(
-                  addedNode instanceof Nucleoside ||
-                    addedNode instanceof Nucleoside
-                    ? addedNode?.rnaBase
-                    : addedNode.monomer,
+                  senseNodeToConnect instanceof Nucleoside ||
+                    senseNodeToConnect instanceof Nucleoside
+                    ? senseNodeToConnect?.rnaBase
+                    : senseNodeToConnect.monomer,
                   antisenseNodeCreationResult.node instanceof Nucleoside ||
                     antisenseNodeCreationResult.node instanceof Nucleoside
                     ? antisenseNodeCreationResult.node?.rnaBase

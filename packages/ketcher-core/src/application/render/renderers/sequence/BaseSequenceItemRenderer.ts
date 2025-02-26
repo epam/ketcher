@@ -34,7 +34,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     private monomerIndexInChain: number,
     private isLastMonomerInChain: boolean,
     private chain: Chain,
-    private _isEditingSymbol: boolean,
+    private nodeIndexOverall: number,
+    private editingNodeIndexOverall: number,
     public monomerSize: { width: number; height: number },
     public scaledMonomerPosition: Vec2,
     private previousRowsWithAntisense = 0,
@@ -47,11 +48,16 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   abstract get symbolToDisplay(): string;
 
   public get isEditingSymbol() {
-    return this._isEditingSymbol;
+    return this.nodeIndexOverall === this.editingNodeIndexOverall;
   }
 
-  public set isEditingSymbol(isEditingSymbol: boolean) {
-    this._isEditingSymbol = isEditingSymbol;
+  public isNextSymbolEditing(editingNodeIndexOverall?: number) {
+    return (
+      this.nodeIndexOverall + 1 ===
+      (isNumber(editingNodeIndexOverall)
+        ? editingNodeIndexOverall
+        : this.editingNodeIndexOverall)
+    );
   }
 
   private get isSingleEmptyNode() {
@@ -205,21 +211,23 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return this.node === this.twoStrandedNode?.antisenseNode;
   }
 
-  private appendCounterElement(
-    rootElement: D3SvgElementSelection<SVGGElement, void>,
-  ) {
+  private get counterNumber() {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
     const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
 
+    return this.isAntisenseNode && isNumber(antisenseNodeIndex)
+      ? antisenseNodeIndex + 1
+      : senseNodeIndex + 1;
+  }
+
+  private appendCounterElement(
+    rootElement: D3SvgElementSelection<SVGGElement, void>,
+  ) {
     return rootElement
       .append('text')
       .attr('x', '2')
       .attr('y', this.node.monomer.monomerItem.isAntisense ? '24' : '-24')
-      .text(
-        this.isAntisenseNode && isNumber(antisenseNodeIndex)
-          ? antisenseNodeIndex + 1
-          : senseNodeIndex + 1,
-      )
+      .text(this.counterNumber)
       .attr('font-family', 'Courier New')
       .attr('font-size', '12px')
       .attr('font-weight', '700')
@@ -227,7 +235,22 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('fill', '#7C7C7F');
   }
 
-  private get needDisplayCounter() {
+  public redrawCounter(editingNodeIndexOverall?: number) {
+    if (!this.rootElement) {
+      return;
+    }
+
+    if (this.counterElement) {
+      this.counterElement?.remove();
+      this.counterElement = undefined;
+    }
+
+    if (this.needDisplayCounter(editingNodeIndexOverall)) {
+      this.counterElement = this.appendCounterElement(this.rootElement);
+    }
+  }
+
+  private needDisplayCounter(editingNodeIndexOverall?: number) {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
 
     // For simple chains or sense chains counter appears above each 10th symbol
@@ -235,6 +258,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return (
       !(this.node instanceof EmptySequenceNode) &&
       !(this.node instanceof BackBoneSequenceNode) &&
+      !(
+        this.counterNumber > 9 &&
+        this.isNextSymbolEditing(editingNodeIndexOverall)
+      ) &&
       (this.isAntisenseNode && isNumber(antisenseNodeIndex)
         ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
           antisenseNodeIndex === this.chain.length - 1
@@ -262,7 +289,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           'transform',
           `translate(
           ${-21},
-          ${18}
+          ${20}
           )`,
         )
         .attr('stroke', '#7C7C7F');
@@ -270,8 +297,26 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         ?.append('path')
         .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')
         .attr('fill', '#fff')
-        .attr('transform', 'translate(-12 4) rotate(180)')
+        .attr('transform', 'translate(-12 -34) rotate(180)')
         .attr('stroke', '#7C7C7F');
+      // this.caretElement
+      //   ?.append('path')
+      //   .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')
+      //   .attr('fill', '#fff')
+      //   .attr(
+      //     'transform',
+      //     `translate(
+      //     ${-21},
+      //     ${18}
+      //     )`,
+      //   )
+      //   .attr('stroke', '#7C7C7F');
+      // this.caretElement
+      //   ?.append('path')
+      //   .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')
+      //   .attr('fill', '#fff')
+      //   .attr('transform', 'translate(-12 4) rotate(180)')
+      //   .attr('stroke', '#7C7C7F');
     } else {
       this.caretElement = this.spacerElement
         ?.append('line')
@@ -347,10 +392,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       );
 
     this.appendEvents();
-    if (this.needDisplayCounter) {
-      this.counterElement = this.appendCounterElement(this.rootElement);
-    }
-
+    this.redrawCounter();
     this.drawSelection();
 
     if (

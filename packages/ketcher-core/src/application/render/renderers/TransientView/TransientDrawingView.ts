@@ -65,7 +65,7 @@ export class TransientDrawingView {
         }
       },
       onHide: () => {
-        bond.renderer?.setVisibility(false);
+        bond.renderer?.setVisibility(true);
         if (bond.firstMonomer.renderer) {
           (
             bond.firstMonomer.renderer as BaseMonomerRenderer

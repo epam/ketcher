@@ -87,6 +87,7 @@ interface PreservedHydrogenBonds {
 export class SequenceMode extends BaseMode {
   private _isEditMode = false;
   private _isEditInRNABuilderMode = false;
+  private _isAntisenseSyncEditMode = false;
   private selectionStarted = false;
   private selectionStartCaretPosition = -1;
   private mousemoveCounter = 0;
@@ -109,6 +110,18 @@ export class SequenceMode extends BaseMode {
 
   public set isEditInRNABuilderMode(isEditInRNABuilderMode) {
     this._isEditInRNABuilderMode = isEditInRNABuilderMode;
+  }
+
+  public get isAntisenseSyncEditMode() {
+    return this._isAntisenseSyncEditMode;
+  }
+
+  private turnOnAntisenseSyncEditMode() {
+    this._isAntisenseSyncEditMode = true;
+  }
+
+  private turnOffAntisenseSyncEditMode() {
+    this._isAntisenseSyncEditMode = false;
   }
 
   public initialize(
@@ -1090,6 +1103,18 @@ export class SequenceMode extends BaseMode {
       'move-caret-up': {
         shortcut: ['ArrowUp'],
         handler: () => {
+          const currentEdittingNode = SequenceRenderer.currentEdittingNode;
+
+          if (
+            this.isAntisenseSyncEditMode &&
+            Boolean(currentEdittingNode?.antisenseNode)
+          ) {
+            this.turnOffAntisenseSyncEditMode();
+            SequenceRenderer.setCaretPosition(SequenceRenderer.caretPosition);
+
+            return;
+          }
+
           SequenceRenderer.moveCaretUp();
           this.unselectAllEntities();
         },
@@ -1097,6 +1122,18 @@ export class SequenceMode extends BaseMode {
       'move-caret-down': {
         shortcut: ['ArrowDown'],
         handler: () => {
+          const currentEdittingNode = SequenceRenderer.currentEdittingNode;
+
+          if (
+            !this.isAntisenseSyncEditMode &&
+            Boolean(currentEdittingNode?.antisenseNode)
+          ) {
+            this.turnOnAntisenseSyncEditMode();
+            SequenceRenderer.setCaretPosition(SequenceRenderer.caretPosition);
+
+            return;
+          }
+
           SequenceRenderer.moveCaretDown();
           this.unselectAllEntities();
         },
@@ -1161,14 +1198,13 @@ export class SequenceMode extends BaseMode {
           let senseNodeToConnect = currentTwoStrandedNode?.senseNode;
           const needToEditSense = true;
           const needToEditAntisense = true;
-          const isSyncAntisenseMode = true;
 
           if (needToEditSense) {
             const insertNewSequenceItemResult = this.insertNewSequenceItem(
               editor,
-              isSyncAntisenseMode
-                ? enteredSymbol
-                : DrawingEntitiesManager.getAntisenseBaseLabel(enteredSymbol),
+              this.isAntisenseSyncEditMode
+                ? DrawingEntitiesManager.getAntisenseBaseLabel(enteredSymbol)
+                : enteredSymbol,
               currentTwoStrandedNode?.senseNode,
               previousTwoStrandedNodeInSameChain?.senseNode,
             );
@@ -1191,9 +1227,9 @@ export class SequenceMode extends BaseMode {
           ) {
             const antisenseNodeCreationResult = this.insertNewSequenceItem(
               editor,
-              isSyncAntisenseMode
-                ? DrawingEntitiesManager.getAntisenseBaseLabel(enteredSymbol)
-                : enteredSymbol,
+              this.isAntisenseSyncEditMode
+                ? enteredSymbol
+                : DrawingEntitiesManager.getAntisenseBaseLabel(enteredSymbol),
               previousTwoStrandedNodeInSameChain?.antisenseNode,
               currentTwoStrandedNode?.antisenseNode,
             false,

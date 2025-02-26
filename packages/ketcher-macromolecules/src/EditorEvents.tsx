@@ -35,6 +35,7 @@ import {
   PolymerBond,
   HydrogenBond,
   BackBoneSequenceNode,
+  ToolName,
 } from 'ketcher-core';
 import { selectAllPresets } from 'state/rna-builder';
 import {
@@ -49,7 +50,7 @@ import {
 import { calculateBondPreviewPosition } from 'ketcher-react';
 import { loadMonomerLibrary } from 'state/library';
 
-const noPreviewTools = ['bond-single'];
+const noPreviewTools = [ToolName.bondSingle, ToolName.selectRectangle];
 
 export const EditorEvents = () => {
   const editor = useAppSelector(selectEditor);

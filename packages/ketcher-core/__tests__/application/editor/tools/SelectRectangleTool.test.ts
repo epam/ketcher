@@ -177,7 +177,9 @@ describe('Select Rectangle Tool', () => {
     editor.lastCursorPositionOfCanvas.x = initialPosition.x + 100;
     editor.lastCursorPositionOfCanvas.y = initialPosition.y + 100;
 
-    selectRectangleTool.mousemove();
+    const moveEvent = new MouseEvent('mousemove');
+
+    selectRectangleTool.mousemove(moveEvent);
     selectRectangleTool.mouseup(event);
 
     expect(onMove).toHaveBeenCalled();

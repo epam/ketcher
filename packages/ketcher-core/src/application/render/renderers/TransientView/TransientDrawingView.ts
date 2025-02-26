@@ -2,7 +2,7 @@ import { select } from 'd3';
 import { D3SvgElementSelection } from 'application/render/types';
 import { ZoomTool } from 'application/editor';
 import { drawnStructuresSelector } from 'application/editor/constants';
-import { PolymerBond } from 'domain/entities';
+import { HydrogenBond, PolymerBond } from 'domain/entities';
 import { BondSnapView } from './BondSnapView';
 import { AngleSnapView, AngleSnapViewParams } from './AngleSnapView';
 import { BaseMonomerRenderer } from 'application/render';
@@ -46,7 +46,7 @@ export class TransientDrawingView {
     this.views.delete(viewName);
   }
 
-  public showBondSnap(bond: PolymerBond) {
+  public showBondSnap(bond: PolymerBond | HydrogenBond) {
     this.addView(BondSnapView.viewName, {
       show: BondSnapView.show,
       params: bond,

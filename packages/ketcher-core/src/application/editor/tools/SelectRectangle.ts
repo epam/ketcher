@@ -13,7 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { BaseMonomer, MonomerToAtomBond, Vec2 } from 'domain/entities';
+import {
+  BaseMonomer,
+  HydrogenBond,
+  MonomerToAtomBond,
+  PolymerBond,
+  Vec2,
+} from 'domain/entities';
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
@@ -31,6 +37,18 @@ import {
   SequenceRenderer,
 } from 'application/render';
 import { vectorUtils } from 'application/editor';
+
+type EmptySnapResult = {
+  snapPosition: null;
+};
+
+type SnapResult = {
+  snapPosition: Vec2;
+  isAngleSnapped: boolean;
+  isDistanceSnapped: boolean;
+  connectedMonomer: BaseMonomer;
+  bond: PolymerBond | HydrogenBond;
+};
 
 class SelectRectangle implements BaseTool {
   private brush;
@@ -302,7 +320,11 @@ class SelectRectangle implements BaseTool {
     return { isDistanceSnapped, distanceSnapPosition };
   }
 
-  private tryToSnap(event: MouseEvent) {
+  private tryToSnap(event: MouseEvent): EmptySnapResult | SnapResult {
+    const emptyResult: EmptySnapResult = {
+      snapPosition: null,
+    };
+
     const selectedEntities =
       this.editor.drawingEntitiesManager.selectedEntitiesArr;
     const modKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
@@ -312,13 +334,7 @@ class SelectRectangle implements BaseTool {
       selectedEntities.length > 1 ||
       !(selectedEntities[0] instanceof BaseMonomer)
     ) {
-      return {
-        snapPosition: undefined,
-        isAngleSnapped: false,
-        isDistanceSnapped: false,
-        connectedMonomer: undefined,
-        bond: undefined,
-      };
+      return emptyResult;
     }
 
     const selectedMonomer = selectedEntities[0] as BaseMonomer;
@@ -328,13 +344,7 @@ class SelectRectangle implements BaseTool {
       !shortestMonomerBond ||
       shortestMonomerBond instanceof MonomerToAtomBond
     ) {
-      return {
-        snapPosition: undefined,
-        isAngleSnapped: false,
-        isDistanceSnapped: false,
-        connectedMonomer: undefined,
-        bond: undefined,
-      };
+      return emptyResult;
     }
 
     const connectedMonomer =
@@ -384,22 +394,10 @@ class SelectRectangle implements BaseTool {
         }
       }
 
-      return {
-        snapPosition: undefined,
-        isAngleSnapped: false,
-        isDistanceSnapped: false,
-        connectedMonomer,
-        bond: shortestMonomerBond,
-      };
+      return emptyResult;
     }
 
-    return {
-      snapPosition: undefined,
-      isAngleSnapped: false,
-      isDistanceSnapped: false,
-      connectedMonomer: undefined,
-      bond: undefined,
-    };
+    return emptyResult;
   }
 
   mousemove(event: MouseEvent) {
@@ -409,13 +407,8 @@ class SelectRectangle implements BaseTool {
 
     const modelChanges = new Command();
 
-    const {
-      snapPosition,
-      isAngleSnapped,
-      isDistanceSnapped,
-      connectedMonomer,
-      bond,
-    } = this.tryToSnap(event);
+    const snapResult = this.tryToSnap(event);
+    const { snapPosition } = snapResult;
 
     if (snapPosition) {
       modelChanges.merge(
@@ -423,6 +416,9 @@ class SelectRectangle implements BaseTool {
           snapPosition,
         ),
       );
+
+      const { isAngleSnapped, isDistanceSnapped, connectedMonomer, bond } =
+        snapResult;
 
       isAngleSnapped
         ? this.editor.transientDrawingView.showAngleSnap({

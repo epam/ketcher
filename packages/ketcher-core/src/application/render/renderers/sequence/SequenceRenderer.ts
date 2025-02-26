@@ -156,7 +156,8 @@ export class SequenceRenderer {
               currentMonomerIndexInChain,
               chainItem.antisenseNode === chain.lastNode.senseNode,
               chainItem.antisenseChain || chainItem.chain,
-              currentMonomerIndexOverall === SequenceRenderer.caretPosition,
+              currentMonomerIndexOverall,
+              SequenceRenderer.caretPosition,
               previousRowsWithAntisense,
               chainItem,
               chainItem.antisenseNode?.monomer?.renderer,
@@ -192,7 +193,8 @@ export class SequenceRenderer {
             currentMonomerIndexInChain,
             node === chainItem.chain.lastNode,
             chainItem.chain,
-            currentMonomerIndexOverall === SequenceRenderer.caretPosition,
+            currentMonomerIndexOverall,
+            SequenceRenderer.caretPosition,
             previousRowsWithAntisense,
             chainItem,
             node.monomer.renderer,
@@ -400,10 +402,8 @@ export class SequenceRenderer {
 
       assert(renderer instanceof BaseSequenceItemRenderer);
 
-      renderer.isEditingSymbol = false;
       renderer?.removeCaret();
       if (renderer.antisenseNodeRenderer) {
-        renderer.antisenseNodeRenderer.isEditingSymbol = false;
         renderer.antisenseNodeRenderer?.removeCaret();
       }
     }
@@ -417,15 +417,23 @@ export class SequenceRenderer {
 
     assert(renderer instanceof BaseSequenceItemRenderer);
 
-    renderer.isEditingSymbol = true;
-    if (renderer.antisenseNodeRenderer) {
-      renderer.antisenseNodeRenderer.isEditingSymbol = true;
-    }
-
     if (editor.isSequenceEditMode) {
       renderer?.showCaret();
       renderer?.antisenseNodeRenderer?.showCaret();
     }
+
+    this.sequenceViewModel.forEachNode(({ twoStrandedNode }) => {
+      const senseRenderer = twoStrandedNode.senseNode?.renderer;
+      const antisenseRenderer = twoStrandedNode.antisenseNode?.renderer;
+
+      if (senseRenderer instanceof BaseSequenceItemRenderer) {
+        senseRenderer.redrawCounter(caretPosition);
+      }
+
+      if (antisenseRenderer instanceof BaseSequenceItemRenderer) {
+        antisenseRenderer.redrawCounter(caretPosition);
+      }
+    });
   }
 
   public static forEachNode(

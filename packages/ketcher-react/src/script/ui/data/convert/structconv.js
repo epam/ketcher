@@ -410,7 +410,7 @@ export function fromSgroup(ssgroup) {
     sdataSchema[context][fieldName].properties.fieldValue.items
   )
     ssgroup.attrs.fieldValue = fieldValue.split('\n');
-
+  console.log(ssgroup);
   const sDataInitValue =
     type === 'DAT'
       ? {
@@ -420,13 +420,15 @@ export function fromSgroup(ssgroup) {
           fieldValue:
             fieldValue || getSdataDefault(sdataCustomSchema, 'fieldValue'),
         }
-      : type === 'SRU'
+      : type === 'SRU' &&
+        ssgroup.attrs.subscript == null &&
+        ssgroup.attrs.connectivity == null
       ? {
           subscript: 'n',
           connectivity: 'ht',
         }
       : {};
-
+  console.log(sDataInitValue);
   return Object.assign({ type }, ssgroup.attrs, sDataInitValue);
 }
 

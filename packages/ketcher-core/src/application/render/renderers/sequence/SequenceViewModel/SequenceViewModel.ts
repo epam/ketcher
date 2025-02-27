@@ -325,9 +325,39 @@ export class SequenceViewModel {
     }
   }
 
+  private fillAdditionalSpacesInAntisense() {
+    let index = 0;
+    let previousTwoStrandedNode: ITwoStrandedChainItem | undefined;
+
+    this.nodes.forEach((node) => {
+      if (
+        previousTwoStrandedNode &&
+        previousTwoStrandedNode.antisenseNode &&
+        node.antisenseNode &&
+        previousTwoStrandedNode.chain === node.chain &&
+        previousTwoStrandedNode.antisenseChain !== node.antisenseChain
+      ) {
+        this.nodes.splice(index, 0, {
+          senseNode: new BackBoneSequenceNode(
+            previousTwoStrandedNode.senseNode as SubChainNode,
+            node.senseNode as SubChainNode,
+          ),
+          senseNodeIndex: previousTwoStrandedNode.senseNodeIndex,
+          antisenseNode: new EmptySequenceNode(),
+          chain: node.chain,
+        });
+        index++;
+      }
+
+      previousTwoStrandedNode = node;
+      index++;
+    });
+  }
+
   private fillNodes(chainsCollection: ChainsCollection) {
     this.fillSenseNodes(chainsCollection);
     this.fillAntisenseNodes(chainsCollection);
+    this.fillAdditionalSpacesInAntisense();
   }
 
   private fillChains() {
@@ -371,13 +401,25 @@ export class SequenceViewModel {
         );
       }
 
-      sequenceViewModelChain.lastRow.sequenceViewModelItems.push({
+      const lastNode = sequenceViewModelChain.lastNode;
+      const length = sequenceViewModelChain.length;
+      let rowToAddEmptyNode: ISequenceViewModelRow =
+        sequenceViewModelChain.lastRow;
+
+      if (rowToAddEmptyNode.sequenceViewModelItems.length === 30) {
+        rowToAddEmptyNode = {
+          sequenceViewModelItems: [],
+        };
+        sequenceViewModelChain.addRow(rowToAddEmptyNode);
+      }
+
+      rowToAddEmptyNode.sequenceViewModelItems.push({
         senseNode: new EmptySequenceNode(),
         antisenseNode: sequenceViewModelChain.hasAntisense
           ? new EmptySequenceNode()
           : undefined,
-        senseNodeIndex: sequenceViewModelChain.length,
-        chain: sequenceViewModelChain.lastNode?.chain,
+        senseNodeIndex: length,
+        chain: lastNode?.chain,
       });
     });
   }

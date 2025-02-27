@@ -1,5 +1,8 @@
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
-import { LayoutMode } from 'application/editor/modes';
+import {
+  isTwoStrandedNodeRestrictedForHydrogenBondCreation,
+  LayoutMode,
+} from 'application/editor/modes';
 import { BaseMode } from 'application/editor/modes/BaseMode';
 import ZoomTool from 'application/editor/tools/Zoom';
 import { BaseSequenceItemRenderer } from 'application/render/renderers/sequence/BaseSequenceItemRenderer';
@@ -84,6 +87,8 @@ interface PreservedHydrogenBonds {
 export class SequenceMode extends BaseMode {
   private _isEditMode = false;
   private _isEditInRNABuilderMode = false;
+  private _isAntisenseEditMode = false;
+  private _isSyncEditMode = true;
   private selectionStarted = false;
   private selectionStartCaretPosition = -1;
   private mousemoveCounter = 0;
@@ -106,6 +111,30 @@ export class SequenceMode extends BaseMode {
 
   public set isEditInRNABuilderMode(isEditInRNABuilderMode) {
     this._isEditInRNABuilderMode = isEditInRNABuilderMode;
+  }
+
+  public get isAntisenseEditMode() {
+    return this._isAntisenseEditMode;
+  }
+
+  public get isSyncEditMode() {
+    return this._isSyncEditMode;
+  }
+
+  private turnOnAntisenseEditMode() {
+    this._isAntisenseEditMode = true;
+  }
+
+  private turnOffAntisenseEditMode() {
+    this._isAntisenseEditMode = false;
+  }
+
+  public turnOnIsSyncEditMode() {
+    this._isSyncEditMode = true;
+  }
+
+  public turnOffIsSyncEditMode() {
+    this._isSyncEditMode = false;
   }
 
   public initialize(
@@ -529,8 +558,9 @@ export class SequenceMode extends BaseMode {
 
   private handlePeptideNodeAddition(
     enteredSymbol: string,
-    currentNode: SubChainNode | BackBoneSequenceNode | undefined,
     newNodePosition: Vec2,
+    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
   ) {
     if (!peptideNaturalAnalogues.includes(enteredSymbol)) {
       return undefined;
@@ -555,12 +585,8 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         newPeptideNode,
-        currentNode instanceof BackBoneSequenceNode
-          ? currentNode.secondConnectedNode
-          : undefined,
-        currentNode instanceof BackBoneSequenceNode
-          ? currentNode.firstConnectedNode
-          : undefined,
+        nextNodeToConnect,
+        previousNodeToConnect,
       ),
     );
 
@@ -569,8 +595,9 @@ export class SequenceMode extends BaseMode {
 
   private handleRnaDnaNodeAddition(
     enteredSymbol: RnaDnaNaturalAnaloguesEnum | string,
-    currentNode: SubChainNode | BackBoneSequenceNode | undefined,
     newNodePosition: Vec2,
+    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
   ) {
     if (!rnaDnaNaturalAnalogues.includes(enteredSymbol)) {
       return undefined;
@@ -579,11 +606,11 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
     const modelChanges = new Command();
     const { modelChanges: addedNodeModelChanges, node: nodeToAdd } =
-      currentNode instanceof Nucleotide ||
-      currentNode instanceof Nucleoside ||
-      (currentNode instanceof BackBoneSequenceNode &&
-        (currentNode.secondConnectedNode instanceof Nucleotide ||
-          currentNode.secondConnectedNode instanceof Nucleoside))
+      nextNodeToConnect instanceof Nucleotide ||
+      nextNodeToConnect instanceof Nucleoside ||
+      (nextNodeToConnect instanceof BackBoneSequenceNode &&
+        (nextNodeToConnect.secondConnectedNode instanceof Nucleotide ||
+          nextNodeToConnect.secondConnectedNode instanceof Nucleoside))
         ? Nucleotide.createOnCanvas(
             enteredSymbol,
             newNodePosition,
@@ -600,12 +627,8 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         nodeToAdd,
-        currentNode instanceof BackBoneSequenceNode
-          ? currentNode.secondConnectedNode
-          : undefined,
-        currentNode instanceof BackBoneSequenceNode
-          ? currentNode.firstConnectedNode
-          : undefined,
+        nextNodeToConnect,
+        previousNodeToConnect,
       ),
     );
 
@@ -1093,6 +1116,18 @@ export class SequenceMode extends BaseMode {
       'move-caret-up': {
         shortcut: ['ArrowUp'],
         handler: () => {
+          const currentEdittingNode = SequenceRenderer.currentEdittingNode;
+
+          if (
+            this.isAntisenseEditMode &&
+            Boolean(currentEdittingNode?.antisenseNode)
+          ) {
+            this.turnOffAntisenseEditMode();
+            SequenceRenderer.setCaretPosition(SequenceRenderer.caretPosition);
+
+            return;
+          }
+
           SequenceRenderer.moveCaretUp();
           this.unselectAllEntities();
         },
@@ -1100,6 +1135,18 @@ export class SequenceMode extends BaseMode {
       'move-caret-down': {
         shortcut: ['ArrowDown'],
         handler: () => {
+          const currentEdittingNode = SequenceRenderer.currentEdittingNode;
+
+          if (
+            !this.isAntisenseEditMode &&
+            Boolean(currentEdittingNode?.antisenseNode)
+          ) {
+            this.turnOnAntisenseEditMode();
+            SequenceRenderer.setCaretPosition(SequenceRenderer.caretPosition);
+
+            return;
+          }
+
           SequenceRenderer.moveCaretDown();
           this.unselectAllEntities();
         },
@@ -1153,89 +1200,67 @@ export class SequenceMode extends BaseMode {
           const enteredSymbol = event.code.replace('Key', '');
           const editor = CoreEditor.provideEditorInstance();
           const history = new EditorHistory(editor);
+          const modelChanges = new Command();
           const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
-          const previousTwoStrandedNode =
-            (currentTwoStrandedNode &&
-              SequenceRenderer.getPreviousNode(currentTwoStrandedNode)) ||
-            undefined;
           const previousTwoStrandedNodeInSameChain =
             (currentTwoStrandedNode &&
               SequenceRenderer.getPreviousNodeInSameChain(
                 currentTwoStrandedNode,
               )) ||
             undefined;
-          const previousAntisenseNodeInSameChain =
-            previousTwoStrandedNodeInSameChain?.antisenseNode;
+          let senseNodeToConnect = currentTwoStrandedNode?.senseNode;
+          const needToEditSense =
+            this.isSyncEditMode || !this.isAntisenseEditMode;
+          const needToEditAntisense =
+            this.isSyncEditMode || this.isAntisenseEditMode;
 
-          const insertNewSequenceItemResult = this.insertNewSequenceItem(
-            editor,
-            enteredSymbol,
-          );
+          if (needToEditSense) {
+            const insertNewSequenceItemResult = this.insertNewSequenceItem(
+              editor,
+              this.isAntisenseEditMode
+                ? DrawingEntitiesManager.getAntisenseBaseLabel(enteredSymbol)
+                : enteredSymbol,
+              currentTwoStrandedNode?.senseNode,
+              previousTwoStrandedNodeInSameChain?.senseNode,
+            );
 
-          // Case when user type symbol that does not exist in current sequence type mode
-          if (!insertNewSequenceItemResult) {
-            return;
+            // Case when user type symbol that does not exist in current sequence type mode
+            if (!insertNewSequenceItemResult) {
+              return;
+            }
+
+            modelChanges.merge(insertNewSequenceItemResult.modelChanges);
+            senseNodeToConnect = insertNewSequenceItemResult.node;
           }
 
-          const { modelChanges, node: addedNode } = insertNewSequenceItemResult;
-
           if (
-            (addedNode instanceof Nucleotide ||
-              addedNode instanceof Nucleoside) &&
-            (currentTwoStrandedNode?.antisenseNode ||
-              previousTwoStrandedNodeInSameChain?.antisenseNode)
+            needToEditAntisense &&
+            (previousTwoStrandedNodeInSameChain?.antisenseNode ||
+              currentTwoStrandedNode?.antisenseNode) &&
+            (editor.sequenceTypeEnterMode === SequenceType.DNA ||
+              editor.sequenceTypeEnterMode === SequenceType.RNA)
           ) {
-            const antisenseNodeCreationResult =
-              DrawingEntitiesManager.createAntisenseNode(
-                addedNode,
-                (addedNode instanceof Nucleotide &&
-                  (previousAntisenseNodeInSameChain instanceof Nucleotide ||
-                    previousAntisenseNodeInSameChain instanceof Nucleoside ||
-                    (previousAntisenseNodeInSameChain instanceof
-                      BackBoneSequenceNode &&
-                      (previousAntisenseNodeInSameChain.secondConnectedNode instanceof
-                        Nucleotide ||
-                        previousAntisenseNodeInSameChain.secondConnectedNode instanceof
-                          Nucleoside)))) ||
-                  (addedNode instanceof Nucleoside &&
-                    !(
-                      previousTwoStrandedNode?.antisenseNode instanceof
-                      EmptySequenceNode
-                    )),
-              );
+            const antisenseNodeCreationResult = this.insertNewSequenceItem(
+              editor,
+              this.isAntisenseEditMode
+                ? enteredSymbol
+                : DrawingEntitiesManager.getAntisenseBaseLabel(enteredSymbol),
+              previousTwoStrandedNodeInSameChain?.antisenseNode,
+              currentTwoStrandedNode?.antisenseNode,
+            );
 
-            if (antisenseNodeCreationResult && currentTwoStrandedNode) {
-              if (
-                currentTwoStrandedNode.antisenseNode instanceof
-                BackBoneSequenceNode
-              ) {
-                modelChanges.merge(
-                  this.insertNewSequenceFragment(
-                    antisenseNodeCreationResult.node,
-                    currentTwoStrandedNode.antisenseNode.firstConnectedNode,
-                    currentTwoStrandedNode.antisenseNode.secondConnectedNode,
-                  ),
-                );
-              } else {
-                modelChanges.merge(
-                  this.insertNewSequenceFragment(
-                    antisenseNodeCreationResult.node,
-                    previousTwoStrandedNode?.antisenseNode || null,
-                    currentTwoStrandedNode.antisenseNode,
-                    !(
-                      previousTwoStrandedNode?.antisenseNode instanceof
-                        MonomerSequenceNode &&
-                      previousTwoStrandedNode?.antisenseNode.monomer instanceof
-                        Phosphate
-                    ),
-                  ),
-                );
-              }
+            if (antisenseNodeCreationResult && senseNodeToConnect) {
               modelChanges.merge(antisenseNodeCreationResult.modelChanges);
               modelChanges.merge(
                 editor.drawingEntitiesManager.createPolymerBond(
-                  addedNode?.rnaBase,
-                  antisenseNodeCreationResult.node.rnaBase,
+                  senseNodeToConnect instanceof Nucleotide ||
+                    senseNodeToConnect instanceof Nucleoside
+                    ? senseNodeToConnect?.rnaBase
+                    : senseNodeToConnect.monomer,
+                  antisenseNodeCreationResult.node instanceof Nucleotide ||
+                    antisenseNodeCreationResult.node instanceof Nucleoside
+                    ? antisenseNodeCreationResult.node?.rnaBase
+                    : antisenseNodeCreationResult.node.monomer,
                   AttachmentPointName.HYDROGEN,
                   AttachmentPointName.HYDROGEN,
                   MACROMOLECULES_BOND_TYPES.HYDROGEN,
@@ -1243,6 +1268,71 @@ export class SequenceMode extends BaseMode {
               );
             }
           }
+
+          // if (
+          //   (addedNode instanceof Nucleotide ||
+          //     addedNode instanceof Nucleoside) &&
+          //   (currentTwoStrandedNode?.antisenseNode ||
+          //     previousTwoStrandedNodeInSameChain?.antisenseNode)
+          // ) {
+          //   const antisenseNodeCreationResult =
+          //     DrawingEntitiesManager.createAntisenseNode(
+          //       addedNode,
+          //       (addedNode instanceof Nucleotide &&
+          //         (previousAntisenseNodeInSameChain instanceof Nucleotide ||
+          //           previousAntisenseNodeInSameChain instanceof Nucleoside ||
+          //           (previousAntisenseNodeInSameChain instanceof
+          //             BackBoneSequenceNode &&
+          //             (previousAntisenseNodeInSameChain.secondConnectedNode instanceof
+          //               Nucleotide ||
+          //               previousAntisenseNodeInSameChain.secondConnectedNode instanceof
+          //                 Nucleoside)))) ||
+          //         (addedNode instanceof Nucleoside &&
+          //           !(
+          //             previousTwoStrandedNode?.antisenseNode instanceof
+          //             EmptySequenceNode
+          //           )),
+          //     );
+          //
+          //   if (antisenseNodeCreationResult && currentTwoStrandedNode) {
+          //     if (
+          //       currentTwoStrandedNode.antisenseNode instanceof
+          //       BackBoneSequenceNode
+          //     ) {
+          //       modelChanges.merge(
+          //         this.insertNewSequenceFragment(
+          //           antisenseNodeCreationResult.node,
+          //           currentTwoStrandedNode.antisenseNode.firstConnectedNode,
+          //           currentTwoStrandedNode.antisenseNode.secondConnectedNode,
+          //         ),
+          //       );
+          //     } else {
+          //       modelChanges.merge(
+          //         this.insertNewSequenceFragment(
+          //           antisenseNodeCreationResult.node,
+          //           previousTwoStrandedNode?.antisenseNode || null,
+          //           currentTwoStrandedNode.antisenseNode,
+          //           !(
+          //             previousTwoStrandedNode?.antisenseNode instanceof
+          //               MonomerSequenceNode &&
+          //             previousTwoStrandedNode?.antisenseNode.monomer instanceof
+          //               Phosphate
+          //           ),
+          //         ),
+          //       );
+          //     }
+          //     modelChanges.merge(antisenseNodeCreationResult.modelChanges);
+          //     modelChanges.merge(
+          //       editor.drawingEntitiesManager.createPolymerBond(
+          //         addedNode?.rnaBase,
+          //         antisenseNodeCreationResult.node.rnaBase,
+          //         AttachmentPointName.HYDROGEN,
+          //         AttachmentPointName.HYDROGEN,
+          //         MACROMOLECULES_BOND_TYPES.HYDROGEN,
+          //       ),
+          //     );
+          //   }
+          // }
 
           modelChanges.addOperation(new ReinitializeModeOperation());
           editor.renderersContainer.update(modelChanges);
@@ -2205,32 +2295,31 @@ export class SequenceMode extends BaseMode {
     }
   }
 
-  private insertNewSequenceItem(editor: CoreEditor, enteredSymbol: string) {
+  private insertNewSequenceItem(
+    editor: CoreEditor,
+    enteredSymbol: string,
+    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+  ) {
     const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
-    const currentSenseNode = currentTwoStrandedNode?.senseNode;
-    const currentAntisenseNode = currentTwoStrandedNode?.antisenseNode;
     const newNodePosition = this.getNewNodePosition();
     const previousTwoStrandedNodeInSameChain =
       SequenceRenderer.previousNodeInSameChain;
-    const previousNodeInSameChain =
-      previousTwoStrandedNodeInSameChain?.senseNode;
 
     if (
-      (currentSenseNode instanceof MonomerSequenceNode &&
-        currentSenseNode.monomer instanceof Phosphate) ||
-      (currentAntisenseNode instanceof MonomerSequenceNode &&
-        currentAntisenseNode.monomer instanceof Phosphate)
+      nextNodeToConnect instanceof MonomerSequenceNode &&
+      nextNodeToConnect.monomer instanceof Phosphate
     ) {
       return;
     }
 
     if (
-      currentSenseNode instanceof EmptySequenceNode &&
-      previousNodeInSameChain
+      nextNodeToConnect instanceof EmptySequenceNode &&
+      previousNodeToConnect
     ) {
       if (
         !previousTwoStrandedNodeInSameChain?.antisenseNode &&
-        !this.isR2Free(previousNodeInSameChain)
+        !this.isR2Free(previousNodeToConnect)
       ) {
         this.showMergeWarningModal();
         return;
@@ -2238,11 +2327,11 @@ export class SequenceMode extends BaseMode {
     }
 
     if (
-      !previousNodeInSameChain &&
-      currentSenseNode &&
-      !(currentSenseNode instanceof EmptySequenceNode)
+      !previousNodeToConnect &&
+      nextNodeToConnect &&
+      !(nextNodeToConnect instanceof EmptySequenceNode)
     ) {
-      if (!currentAntisenseNode && !this.isR1Free(currentSenseNode)) {
+      if (!this.isR1Free(nextNodeToConnect)) {
         this.showMergeWarningModal();
         return;
       }
@@ -2288,14 +2377,16 @@ export class SequenceMode extends BaseMode {
     if (editor.sequenceTypeEnterMode === SequenceType.PEPTIDE) {
       return this.handlePeptideNodeAddition(
         enteredSymbol,
-        currentSenseNode,
         newNodePosition,
+        nextNodeToConnect,
+        previousNodeToConnect,
       );
     } else {
       return this.handleRnaDnaNodeAddition(
         enteredSymbol,
-        currentSenseNode,
         newNodePosition,
+        nextNodeToConnect,
+        previousNodeToConnect,
       );
     }
   }
@@ -2450,6 +2541,116 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.unselectEmptyAndBackboneSequenceNodes(),
     );
     editor.renderersContainer.update(modelChanges);
+  }
+
+  private createHydrogenBondForTwoStrandedNode(
+    twoStrandedNode: ITwoStrandedChainItem,
+  ) {
+    const command = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+    const senseNode = twoStrandedNode.senseNode;
+    const antisenseNode = twoStrandedNode.antisenseNode;
+
+    if (
+      !senseNode ||
+      !antisenseNode ||
+      isTwoStrandedNodeRestrictedForHydrogenBondCreation(twoStrandedNode)
+    ) {
+      return command;
+    }
+
+    command.merge(
+      editor.drawingEntitiesManager.createPolymerBond(
+        senseNode instanceof Nucleoside || senseNode instanceof Nucleotide
+          ? senseNode.rnaBase
+          : senseNode.monomer,
+        antisenseNode instanceof Nucleoside ||
+          antisenseNode instanceof Nucleotide
+          ? antisenseNode.rnaBase
+          : antisenseNode.monomer,
+        AttachmentPointName.HYDROGEN,
+        AttachmentPointName.HYDROGEN,
+        MACROMOLECULES_BOND_TYPES.HYDROGEN,
+      ),
+    );
+
+    return command;
+  }
+
+  private deleteHydrogenBondsForNode(
+    node: SubChainNode | BackBoneSequenceNode | undefined,
+  ) {
+    const command = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+
+    node?.monomers.forEach((monomer) => {
+      monomer.hydrogenBonds.forEach((hydrogenBond) => {
+        command.merge(
+          editor.drawingEntitiesManager.deletePolymerBond(hydrogenBond),
+        );
+      });
+    });
+
+    return command;
+  }
+
+  public establishHydrogenBond(sequenceItemRenderer: BaseSequenceItemRenderer) {
+    const modelChanges = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
+    const selections = SequenceRenderer.selections;
+
+    if (selections.length) {
+      selections.forEach((selectionRange) => {
+        selectionRange.forEach((nodeSelection) => {
+          modelChanges.merge(
+            this.createHydrogenBondForTwoStrandedNode(nodeSelection.node),
+          );
+        });
+      });
+    } else {
+      const twoStrandedNode = sequenceItemRenderer.twoStrandedNode;
+
+      if (!twoStrandedNode) {
+        return;
+      }
+
+      modelChanges.merge(
+        this.createHydrogenBondForTwoStrandedNode(twoStrandedNode),
+      );
+    }
+
+    modelChanges.addOperation(new ReinitializeModeOperation());
+    editor.renderersContainer.update(modelChanges);
+    history.update(modelChanges);
+  }
+
+  public deleteHydrogenBond(sequenceItemRenderer: BaseSequenceItemRenderer) {
+    const modelChanges = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+    const history = new EditorHistory(editor);
+    const selections = SequenceRenderer.selections;
+
+    if (selections.length) {
+      selections.forEach((selectionRange) => {
+        selectionRange.forEach((nodeSelection) => {
+          modelChanges.merge(
+            this.deleteHydrogenBondsForNode(nodeSelection.node.senseNode),
+          );
+          modelChanges.merge(
+            this.deleteHydrogenBondsForNode(nodeSelection.node.antisenseNode),
+          );
+        });
+      });
+    } else {
+      const node = sequenceItemRenderer.node;
+
+      modelChanges.merge(this.deleteHydrogenBondsForNode(node));
+    }
+
+    modelChanges.addOperation(new ReinitializeModeOperation());
+    editor.renderersContainer.update(modelChanges);
+    history.update(modelChanges);
   }
 
   public destroy() {

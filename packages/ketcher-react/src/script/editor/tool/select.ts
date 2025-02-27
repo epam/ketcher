@@ -102,17 +102,19 @@ class SelectTool implements Tool {
     if (isBondingWithMacroMolecule(this.editor, event)) {
       return;
     }
-
-    const selected = {
-      ...(ci?.map === 'atoms' && { atoms: [ci.id] }),
-      ...(ci?.map === 'bonds' && { bonds: [ci.id] }),
-    };
-    const selectedSgroups = ci
-      ? getGroupIdsFromItemArrays(molecule, selected)
-      : [];
-    const newSelected = getNewSelectedItems(this.editor, selectedSgroups);
-    if (newSelected.atoms?.length || newSelected.bonds?.length) {
-      this.editor.selection(newSelected);
+    let selection = this.editor.selection();
+    if (ci != null && !isSelected(selection, ci)) {
+      const selected = {
+        ...(ci?.map === 'atoms' && { atoms: [ci.id] }),
+        ...(ci?.map === 'bonds' && { bonds: [ci.id] }),
+      };
+      const selectedSgroups = ci
+        ? getGroupIdsFromItemArrays(molecule, selected)
+        : [];
+      const newSelected = getNewSelectedItems(this.editor, selectedSgroups);
+      if (newSelected.atoms?.length || newSelected.bonds?.length) {
+        this.editor.selection(newSelected);
+      }
     }
 
     this.dragCtx = {
@@ -134,7 +136,7 @@ class SelectTool implements Tool {
 
     let sel = closestToSel(ci);
     const sgroups = ctab.sgroups.get(ci.id);
-    const selection = this.editor.selection();
+    selection = this.editor.selection();
     if (ci.map === 'frags') {
       const frag = ctab.frags.get(ci.id);
       sel = {

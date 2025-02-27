@@ -153,6 +153,8 @@ describe('Select Rectangle Tool', () => {
         func(0);
         return 0;
       });
+    // TODO: Probably mock Editor/TransientDrawingView better
+    editor.transientDrawingView.update = jest.fn();
 
     const modelChanges = editor.drawingEntitiesManager.addMonomer(
       peptideMonomerItem,

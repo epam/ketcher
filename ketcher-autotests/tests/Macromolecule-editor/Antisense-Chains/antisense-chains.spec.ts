@@ -2637,7 +2637,7 @@ test(`8. Check that all other monomers in the backbone that are not a part of th
   await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_rna_chain')
+    .getByTestId('create_antisense_chain')
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled

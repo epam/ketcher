@@ -110,8 +110,8 @@ export class RenderStruct {
       };
 
       if (window.isPolymerEditorTurnedOn) {
-        extendedOptions.fontsz = 40;
-        extendedOptions.fontszsub = 30;
+        extendedOptions.fontsz = 30;
+        extendedOptions.fontszsub = 20;
         extendedOptions.width = svgSize;
         extendedOptions.height = svgSize;
       }

@@ -48,6 +48,7 @@ export interface IEditorEvents {
   changeSequenceTypeEnterMode: Subscription;
   toggleSequenceEditMode: Subscription;
   toggleSequenceEditInRNABuilderMode: Subscription;
+  toggleIsSequenceSyncEditMode: Subscription;
   clickOnSequenceItem: Subscription;
   mousedownBetweenSequenceItems: Subscription;
   mouseDownOnSequenceItem: Subscription;
@@ -106,6 +107,7 @@ export function resetEditorEvents() {
     changeSequenceTypeEnterMode: new Subscription(),
     toggleSequenceEditMode: new Subscription(),
     toggleSequenceEditInRNABuilderMode: new Subscription(),
+    toggleIsSequenceSyncEditMode: new Subscription(),
     clickOnSequenceItem: new Subscription(),
     mousedownBetweenSequenceItems: new Subscription(),
     mouseDownOnSequenceItem: new Subscription(),

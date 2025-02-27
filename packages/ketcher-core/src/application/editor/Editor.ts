@@ -391,6 +391,10 @@ export class CoreEditor {
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
     );
+    this.events.toggleIsSequenceSyncEditMode.add(
+      (isSequenceSyncEditMode: boolean) =>
+        this.onChangeToggleIsSequenceSyncEditMode(isSequenceSyncEditMode),
+    );
     this.events.createAntisenseChain.add((isDnaAntisense: boolean) => {
       this.onCreateAntisenseChain(isDnaAntisense);
     });
@@ -453,6 +457,20 @@ export class CoreEditor {
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {
     this.sequenceTypeEnterMode = mode;
+  }
+
+  private onChangeToggleIsSequenceSyncEditMode(
+    isSequenceSyncEditMode: boolean,
+  ) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    if (isSequenceSyncEditMode) {
+      this.mode.turnOnIsSyncEditMode();
+    } else {
+      this.mode.turnOffIsSyncEditMode();
+    }
   }
 
   private onCreateAntisenseChain(isDnaAntisense: boolean) {

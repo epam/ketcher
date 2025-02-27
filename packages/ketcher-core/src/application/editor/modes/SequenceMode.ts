@@ -87,7 +87,8 @@ interface PreservedHydrogenBonds {
 export class SequenceMode extends BaseMode {
   private _isEditMode = false;
   private _isEditInRNABuilderMode = false;
-  private _isAntisenseSyncEditMode = false;
+  private _isAntisenseEditMode = false;
+  private _isSyncEditMode = true;
   private selectionStarted = false;
   private selectionStartCaretPosition = -1;
   private mousemoveCounter = 0;
@@ -112,16 +113,28 @@ export class SequenceMode extends BaseMode {
     this._isEditInRNABuilderMode = isEditInRNABuilderMode;
   }
 
-  public get isAntisenseSyncEditMode() {
-    return this._isAntisenseSyncEditMode;
+  public get isAntisenseEditMode() {
+    return this._isAntisenseEditMode;
   }
 
-  private turnOnAntisenseSyncEditMode() {
-    this._isAntisenseSyncEditMode = true;
+  public get isSyncEditMode() {
+    return this._isSyncEditMode;
   }
 
-  private turnOffAntisenseSyncEditMode() {
-    this._isAntisenseSyncEditMode = false;
+  private turnOnAntisenseEditMode() {
+    this._isAntisenseEditMode = true;
+  }
+
+  private turnOffAntisenseEditMode() {
+    this._isAntisenseEditMode = false;
+  }
+
+  public turnOnIsSyncEditMode() {
+    this._isSyncEditMode = true;
+  }
+
+  public turnOffIsSyncEditMode() {
+    this._isSyncEditMode = false;
   }
 
   public initialize(
@@ -1106,10 +1119,10 @@ export class SequenceMode extends BaseMode {
           const currentEdittingNode = SequenceRenderer.currentEdittingNode;
 
           if (
-            this.isAntisenseSyncEditMode &&
+            this.isAntisenseEditMode &&
             Boolean(currentEdittingNode?.antisenseNode)
           ) {
-            this.turnOffAntisenseSyncEditMode();
+            this.turnOffAntisenseEditMode();
             SequenceRenderer.setCaretPosition(SequenceRenderer.caretPosition);
 
             return;
@@ -1125,10 +1138,10 @@ export class SequenceMode extends BaseMode {
           const currentEdittingNode = SequenceRenderer.currentEdittingNode;
 
           if (
-            !this.isAntisenseSyncEditMode &&
+            !this.isAntisenseEditMode &&
             Boolean(currentEdittingNode?.antisenseNode)
           ) {
-            this.turnOnAntisenseSyncEditMode();
+            this.turnOnAntisenseEditMode();
             SequenceRenderer.setCaretPosition(SequenceRenderer.caretPosition);
 
             return;
@@ -1196,13 +1209,15 @@ export class SequenceMode extends BaseMode {
               )) ||
             undefined;
           let senseNodeToConnect = currentTwoStrandedNode?.senseNode;
-          const needToEditSense = true;
-          const needToEditAntisense = true;
+          const needToEditSense =
+            this.isSyncEditMode || !this.isAntisenseEditMode;
+          const needToEditAntisense =
+            this.isSyncEditMode || this.isAntisenseEditMode;
 
           if (needToEditSense) {
             const insertNewSequenceItemResult = this.insertNewSequenceItem(
               editor,
-              this.isAntisenseSyncEditMode
+              this.isAntisenseEditMode
                 ? DrawingEntitiesManager.getAntisenseBaseLabel(enteredSymbol)
                 : enteredSymbol,
               currentTwoStrandedNode?.senseNode,
@@ -1227,7 +1242,7 @@ export class SequenceMode extends BaseMode {
           ) {
             const antisenseNodeCreationResult = this.insertNewSequenceItem(
               editor,
-              this.isAntisenseSyncEditMode
+              this.isAntisenseEditMode
                 ? enteredSymbol
                 : DrawingEntitiesManager.getAntisenseBaseLabel(enteredSymbol),
               previousTwoStrandedNodeInSameChain?.antisenseNode,
@@ -1239,11 +1254,11 @@ export class SequenceMode extends BaseMode {
               modelChanges.merge(antisenseNodeCreationResult.modelChanges);
               modelChanges.merge(
                 editor.drawingEntitiesManager.createPolymerBond(
-                  senseNodeToConnect instanceof Nucleoside ||
+                  senseNodeToConnect instanceof Nucleotide ||
                     senseNodeToConnect instanceof Nucleoside
                     ? senseNodeToConnect?.rnaBase
                     : senseNodeToConnect.monomer,
-                  antisenseNodeCreationResult.node instanceof Nucleoside ||
+                  antisenseNodeCreationResult.node instanceof Nucleotide ||
                     antisenseNodeCreationResult.node instanceof Nucleoside
                     ? antisenseNodeCreationResult.node?.rnaBase
                     : antisenseNodeCreationResult.node.monomer,

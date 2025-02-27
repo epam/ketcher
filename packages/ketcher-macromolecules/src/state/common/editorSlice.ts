@@ -132,6 +132,9 @@ export const selectIsSequenceEditInRNABuilderMode = (
 export const selectIsSequenceMode = (state: RootState): boolean =>
   state.editor.editor?.isSequenceMode;
 
+export const selectIsSequenceSyncEditMode = (state: RootState): boolean =>
+  state.editor.editor?.isSequenceSyncEditMode;
+
 export const selectEditorLayoutMode = (state: RootState): LayoutMode => {
   return state.editor.editorLayoutMode;
 };

@@ -54,7 +54,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, 'C1C=CC=CC=1'),
+      async () => await setMolecule(page, 'C1C=CC=CC=1', false),
     );
     await takeEditorScreenshot(page);
   });
@@ -68,7 +68,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, 'c1ccccc1'),
+      async () => await setMolecule(page, 'c1ccccc1', false),
     );
     await takeEditorScreenshot(page);
   });
@@ -82,7 +82,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await enableDearomatizeOnLoad(page);
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, 'c1ccccc1'),
+      async () => await setMolecule(page, 'c1ccccc1', false),
     );
     await takeEditorScreenshot(page);
   });
@@ -104,7 +104,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       await enableDearomatizeOnLoad(page);
       await waitForSpinnerFinishedWork(
         page,
-        async () => await setMolecule(page, MolV2000File),
+        async () => await setMolecule(page, MolV2000File, false),
       );
       await takeEditorScreenshot(page);
     },
@@ -119,7 +119,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, 'CCCC |Sg:gen:0,1,2:|'),
+      async () => await setMolecule(page, 'CCCC |Sg:gen:0,1,2:|', false),
     );
     await takeEditorScreenshot(page);
   });
@@ -131,7 +131,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, 'CCCC |Sg:n:0,1,2:3-6:eu|'),
+      async () => await setMolecule(page, 'CCCC |Sg:n:0,1,2:3-6:eu|', false),
     );
     await takeEditorScreenshot(page);
   });
@@ -159,7 +159,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, '[#6]~[#6]~[#6]'),
+      async () => await setMolecule(page, '[#6]~[#6]~[#6]', false),
     );
     await takeEditorScreenshot(page);
   });
@@ -171,7 +171,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, '[#6]=,:[#6]'),
+      async () => await setMolecule(page, '[#6]=,:[#6]', false),
     );
     await takeEditorScreenshot(page);
   });
@@ -184,7 +184,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, 'Brc1ccc(COC(Cn2ccnc2)c2ccc(Cl)cc2Cl)c(Cl)c1'),
+        await setMolecule(
+          page,
+          'Brc1ccc(COC(Cn2ccnc2)c2ccc(Cl)cc2Cl)c(Cl)c1',
+          false,
+        ),
     );
     await takeEditorScreenshot(page);
   });
@@ -199,7 +203,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, orEnantiomer),
+      async () => await setMolecule(page, orEnantiomer, false),
     );
 
     await verifyFileExport(
@@ -223,7 +227,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N'),
+        await setMolecule(
+          page,
+          'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N',
+          false,
+        ),
     );
     await verifyFileExport(
       page,
@@ -245,7 +253,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, 'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N'),
+        await setMolecule(
+          page,
+          'CC(=O)O[C@@H](C)[C@H](O)Cn1cnc2c1ncnc2N',
+          false,
+        ),
     );
     await verifyFileExport(
       page,
@@ -281,6 +293,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.functionalGroupsExpandedContractedV2000,
+          false,
         ),
     );
     await takeEditorScreenshot(page);
@@ -299,6 +312,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.unknownSuperatomExpandedContractedV2000,
+          false,
         ),
     );
     await takeEditorScreenshot(page);
@@ -318,6 +332,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.oneUnknownSuperatomContractedV2000,
+          false,
         ),
     );
 
@@ -342,6 +357,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.oneUnknownSuperatomExpandedV2000,
+          false,
         ),
     );
 
@@ -368,6 +384,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.oneFunctionalGroupContractedV2000,
+          false,
         ),
     );
 
@@ -389,7 +406,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedV2000),
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.oneFunctionalGroupExpandedV2000,
+          false,
+        ),
     );
 
     await takeEditorScreenshot(page);
@@ -414,6 +435,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
+          false,
         ),
     );
     await takeEditorScreenshot(page);
@@ -432,6 +454,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.unknownSuperatomExpandedContractedV3000,
+          false,
         ),
     );
     await takeEditorScreenshot(page);
@@ -451,6 +474,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.oneUnknownSuperatomContractedV3000,
+          false,
         ),
     );
 
@@ -475,6 +499,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.oneUnknownSuperatomExpandedV3000,
+          false,
         ),
     );
 
@@ -501,6 +526,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.oneFunctionalGroupContractedV3000,
+          false,
         ),
     );
 
@@ -522,7 +548,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedV3000),
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.oneFunctionalGroupExpandedV3000,
+          false,
+        ),
     );
 
     await takeEditorScreenshot(page);
@@ -547,6 +577,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.functionalGroupsExpandedContractedKet,
+          false,
         ),
     );
     await takeEditorScreenshot(page);
@@ -565,6 +596,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.unknownSuperatomExpandedContractedKet,
+          false,
         ),
     );
     await takeEditorScreenshot(page);
@@ -584,6 +616,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.oneUnknownSuperatomContractedKet,
+          false,
         ),
     );
 
@@ -605,7 +638,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, FILE_TEST_DATA.oneUnknownSuperatomExpandedKet),
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.oneUnknownSuperatomExpandedKet,
+          false,
+        ),
     );
 
     await takeEditorScreenshot(page);
@@ -628,7 +665,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedKet),
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.oneFunctionalGroupContractedKet,
+          false,
+        ),
     );
 
     await takeEditorScreenshot(page);
@@ -649,7 +690,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupExpandedKet),
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
+          false,
+        ),
     );
 
     await takeEditorScreenshot(page);
@@ -674,6 +719,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.functionalGroupsExpandedContractedCml,
+          false,
         ),
     );
     await takeEditorScreenshot(page);
@@ -690,7 +736,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await waitForSpinnerFinishedWork(
       page,
       async () =>
-        await setMolecule(page, FILE_TEST_DATA.oneFunctionalGroupContractedCml),
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.oneFunctionalGroupContractedCml,
+          false,
+        ),
     );
 
     await takeEditorScreenshot(page);
@@ -713,6 +763,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.unknownSuperatomExpandedContractedCml,
+          false,
         ),
     );
     await takeEditorScreenshot(page);
@@ -732,6 +783,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await setMolecule(
           page,
           FILE_TEST_DATA.oneUnknownSuperatomContractedCml,
+          false,
         ),
     );
 
@@ -795,7 +847,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await applyIgnoreChiralFlag(page);
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, MolV2000File),
+      async () => await setMolecule(page, MolV2000File, false),
     );
     await takeEditorScreenshot(page);
   });
@@ -817,7 +869,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     );
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, MolV2000File),
+      async () => await setMolecule(page, MolV2000File, false),
     );
     await takeEditorScreenshot(page);
     await applyIgnoreChiralFlag(page);

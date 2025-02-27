@@ -118,12 +118,16 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
   }
 
-  private get isAntisenseSyncEditMode() {
+  private get isAntisenseEditMode() {
     const editorMode = CoreEditor.provideEditorInstance().mode;
 
-    return (
-      editorMode instanceof SequenceMode && editorMode.isAntisenseSyncEditMode
-    );
+    return editorMode instanceof SequenceMode && editorMode.isAntisenseEditMode;
+  }
+
+  private get isSyncEditMode() {
+    const editorMode = CoreEditor.provideEditorInstance().mode;
+
+    return editorMode instanceof SequenceMode && editorMode.isSyncEditMode;
   }
 
   protected appendRootElement() {
@@ -290,9 +294,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.caretElement = this.spacerElement?.append('g');
 
     if (
-      this.isAntisenseNode ||
-      (this.node instanceof BackBoneSequenceNode &&
-        this.node.firstConnectedNode.monomer.monomerItem.isAntisense)
+      this.isSyncEditMode &&
+      (this.isAntisenseNode ||
+        (this.node instanceof BackBoneSequenceNode &&
+          this.node.firstConnectedNode.monomer.monomerItem.isAntisense))
     ) {
       this.caretElement
         ?.append('path')
@@ -315,9 +320,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     }
 
     if (
-      this.isAntisenseSyncEditMode
-        ? this.isAntisenseNode
-        : !this.isAntisenseNode
+      this.isAntisenseEditMode ? this.isAntisenseNode : !this.isAntisenseNode
     ) {
       this.caretElement
         ?.append('line')

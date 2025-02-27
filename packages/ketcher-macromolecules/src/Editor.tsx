@@ -92,6 +92,7 @@ import { VerticalDivider } from 'components/menu/styles';
 import { PolymerBondContextMenu } from 'components/contextMenu/PolymerBondContextMenu/PolymerBondContextMenu';
 import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
+import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -237,8 +238,8 @@ function Editor({
         >
           <TopMenuComponent />
           <TopMenuRightWrapper>
+            <SequenceSyncEditModeButton />
             <LayoutModeButton />
-
             <SequenceTypeGroupButton />
             <TogglerComponentWrapper
               className={

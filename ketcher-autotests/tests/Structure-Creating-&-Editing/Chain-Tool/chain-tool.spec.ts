@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import { selectTool, takeEditorScreenshot } from '@utils/canvas';
 import {
@@ -90,6 +91,34 @@ test.describe('Chain Tool drawing', () => {
     await clickOnCanvas(page, point.x, point.y);
     const tripleBond = await getBondByIndex(page, { type: BondType.TRIPLE }, 0);
     expect(tripleBond.type).toEqual(BondType.TRIPLE);
+    await takeEditorScreenshot(page);
+  });
+});
+
+test.describe('Chain Tool drawing', () => {
+  test.beforeEach(async ({ page }) => {
+    await waitForPageInit(page);
+  });
+
+  test('While the chain tool is being drawn, the users should still see the methyl group (-CH3)', async ({
+    page,
+  }) => {
+    /*
+  Test case: https://github.com/epam/ketcher/issues/6222
+  Description: While the chain tool is being drawn, the users still see the methyl group (-CH3) at 
+  the moving end of the chain and the methyl group label there a number that indicates 
+  the number of carbons in a chain that is being created.
+  Case:
+  1. Select the chain tool.
+  2. Move the mouse to the center of the canvas.
+  3. Drag the mouse to the right.
+  4. Check the number of carbons in the chain.
+  5. Take a screenshot.
+  */
+    await selectTool(LeftPanelButton.Chain, page);
+    await moveMouseToTheMiddleOfTheScreen(page);
+    await page.mouse.down();
+    await page.mouse.move(900, 350);
     await takeEditorScreenshot(page);
   });
 });

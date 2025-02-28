@@ -29,8 +29,24 @@ export const SelectedMonomersContextMenu = ({
       title: 'Copy',
     },
     {
-      name: 'create_antisense_chain',
-      title: 'Create Antisense Strand',
+      name: 'create_antisense_rna_chain',
+      title: 'Create Antisense RNA Strand',
+      separator: false,
+      disabled: isAntisenseCreationDisabled(selectedMonomers),
+      hidden: ({ props }: { props?: { selectedMonomers?: BaseMonomer[] } }) => {
+        return !props?.selectedMonomers?.some((selectedMonomer) => {
+          return (
+            (selectedMonomer instanceof RNABase &&
+              getSugarFromRnaBase(selectedMonomer)) ||
+            (selectedMonomer instanceof Sugar &&
+              getRnaBaseFromSugar(selectedMonomer))
+          );
+        });
+      },
+    },
+    {
+      name: 'create_antisense_dna_chain',
+      title: 'Create Antisense DNA Strand',
       separator: true,
       disabled: isAntisenseCreationDisabled(selectedMonomers),
       hidden: ({ props }: { props?: { selectedMonomers?: BaseMonomer[] } }) => {
@@ -55,8 +71,11 @@ export const SelectedMonomersContextMenu = ({
       case 'copy':
         editor.events.copySelectedStructure.dispatch();
         break;
-      case 'create_antisense_chain':
-        editor.events.createAntisenseChain.dispatch();
+      case 'create_antisense_rna_chain':
+        editor.events.createAntisenseChain.dispatch(false);
+        break;
+      case 'create_antisense_dna_chain':
+        editor.events.createAntisenseChain.dispatch(true);
         break;
       case 'delete':
         editor.events.deleteSelectedStructure.dispatch();

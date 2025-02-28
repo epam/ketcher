@@ -922,7 +922,7 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
     await callContextMenuForMonomer(page, monomer.monomerLocatorIndex);
 
     const createAntisenseStrandOption = page
-      .getByTestId('create_antisense_chain')
+      .getByTestId('create_antisense_rna_chain')
       .first();
 
     // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -963,7 +963,7 @@ for (const monomer of monomers.filter(
     await callContextMenuForMonomer(page, monomer.monomerLocatorIndex);
 
     const createAntisenseStrandOption = page
-      .getByTestId('create_antisense_chain')
+      .getByTestId('create_antisense_rna_chain')
       .first();
     const createAntisenseStrandOptionPresent =
       (await createAntisenseStrandOption.count()) > 0;
@@ -2184,7 +2184,7 @@ for (const chain of chainWithExtraBondToBase) {
     await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
 
     const createAntisenseStrandOption = page
-      .getByTestId('create_antisense_chain')
+      .getByTestId('create_antisense_rna_chain')
       .first();
     const createAntisenseStrandOptionPresent =
       (await createAntisenseStrandOption.count()) > 0;
@@ -2372,7 +2372,7 @@ for (const monomer1 of shortMonomerList) {
       await callContextMenuForMonomer(page, monomer1.monomerLocatorIndex);
 
       const createAntisenseStrandOption = page
-        .getByTestId('create_antisense_chain')
+        .getByTestId('create_antisense_rna_chain')
         .first();
 
       if (
@@ -2449,7 +2449,7 @@ test(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1
   await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_chain')
+    .getByTestId('create_antisense_rna_chain')
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -2500,7 +2500,7 @@ test(`6. Check that every nucleotide (sugar and phosphate are part of the backbo
   await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_chain')
+    .getByTestId('create_antisense_rna_chain')
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -2589,7 +2589,7 @@ test(`7. Check that every nucleoside (not a nucleotide, sugar is connected throu
   await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_chain')
+    .getByTestId('create_antisense_rna_chain')
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -2637,7 +2637,7 @@ test(`8. Check that all other monomers in the backbone that are not a part of th
   await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_chain')
+    .getByTestId('create_antisense_rna_chain')
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -2688,7 +2688,7 @@ test(`9. Check that the antisense chain should be "flipped" in relation to the s
   await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_chain')
+    .getByTestId('create_antisense_rna_chain')
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -2824,7 +2824,7 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
   await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_chain')
+    .getByTestId('create_antisense_rna_chain')
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -2889,7 +2889,7 @@ test(`14. Validate that both sense and antisense strands can be exported correct
   await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_chain')
+    .getByTestId('create_antisense_rna_chain')
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -2944,7 +2944,7 @@ test(`15. Ensure that switching between (Flex, Snake, Sequence) modes does not b
   await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_chain')
+    .getByTestId('create_antisense_rna_chain')
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -2988,7 +2988,7 @@ test(`16. Ensure that switching between macro and micro modes does not break the
   await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_chain')
+    .getByTestId('create_antisense_rna_chain')
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled
@@ -3031,7 +3031,7 @@ test(`17. Verify that copying the sense and antisense strand and pasting it with
   await callContextMenuForMonomer(page, chain.monomerLocatorIndex);
 
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_chain')
+    .getByTestId('create_antisense_rna_chain')
     .first();
 
   // Checking presence of Create Antisense Strand option on the context menu and enabled

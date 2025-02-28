@@ -663,7 +663,7 @@ test(`5. Check that backbones should be placed parallel to each other`, async ()
   await selectAllStructuresOnCanvas(page);
   await callContextMenuForMonomer(page, 0);
   const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_chain')
+    .getByTestId('create_antisense_rna_chain')
     .first();
   await createAntisenseStrandOption.click();
 

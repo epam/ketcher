@@ -153,6 +153,8 @@ describe('Select Rectangle Tool', () => {
         func(0);
         return 0;
       });
+    // TODO: Probably mock Editor/TransientDrawingView better
+    editor.transientDrawingView.update = jest.fn();
 
     const modelChanges = editor.drawingEntitiesManager.addMonomer(
       peptideMonomerItem,
@@ -177,7 +179,9 @@ describe('Select Rectangle Tool', () => {
     editor.lastCursorPositionOfCanvas.x = initialPosition.x + 100;
     editor.lastCursorPositionOfCanvas.y = initialPosition.y + 100;
 
-    selectRectangleTool.mousemove();
+    const moveEvent = new MouseEvent('mousemove');
+
+    selectRectangleTool.mousemove(moveEvent);
     selectRectangleTool.mouseup(event);
 
     expect(onMove).toHaveBeenCalled();

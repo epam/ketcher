@@ -32,7 +32,6 @@ export class AmbiguousMonomerRenderer extends BaseMonomerRenderer {
 
     super(
       monomer,
-      monomerSymbolElementsIds.selected,
       monomerSymbolElementsIds.hover,
       monomerSymbolElementsIds.body,
       scale,

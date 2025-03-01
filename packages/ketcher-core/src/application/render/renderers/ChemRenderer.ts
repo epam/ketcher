@@ -11,13 +11,7 @@ const CHEM_SYMBOL_ELEMENT_ID = MONOMER_SYMBOLS_IDS[KetMonomerClass.CHEM].body;
 
 export class ChemRenderer extends BaseMonomerRenderer {
   constructor(public monomer: Chem, scale?: number) {
-    super(
-      monomer,
-      CHEM_SELECTED_ELEMENT_ID,
-      CHEM_SELECTED_ELEMENT_ID,
-      CHEM_SYMBOL_ELEMENT_ID,
-      scale,
-    );
+    super(monomer, CHEM_SELECTED_ELEMENT_ID, CHEM_SYMBOL_ELEMENT_ID, scale);
   }
 
   protected appendBody(

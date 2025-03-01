@@ -14,7 +14,6 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
     super(
       monomer,
       RNABASE_SELECTED_ELEMENT_ID,
-      RNABASE_SELECTED_ELEMENT_ID,
       RNABASE_SYMBOL_ELEMENT_ID,
       scale,
     );

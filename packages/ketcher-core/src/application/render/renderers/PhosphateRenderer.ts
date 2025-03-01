@@ -15,7 +15,6 @@ export class PhosphateRenderer extends BaseMonomerRenderer {
     super(
       monomer,
       PHOSPHATE_SELECTED_ELEMENT_ID,
-      PHOSPHATE_SELECTED_ELEMENT_ID,
       PHOSPHATE_SYMBOL_ELEMENT_ID,
       scale,
     );

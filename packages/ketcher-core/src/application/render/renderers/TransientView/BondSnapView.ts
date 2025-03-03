@@ -1,6 +1,6 @@
 import { Coordinates } from 'application/editor';
 import { D3SvgElementSelection } from 'application/render/types';
-import { PolymerBond } from 'domain/entities';
+import { HydrogenBond, PolymerBond } from 'domain/entities';
 import { TransientView } from './TransientView';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -53,7 +53,7 @@ export class BondSnapView extends TransientView {
       .attr('y2', endPositionInPixels.y)
       .attr('stroke', '#365CFF')
       .attr('stroke-width', 1)
-      .attr('stroke-dasharray', '4 4')
+      .attr('stroke-dasharray', bond instanceof HydrogenBond ? '2' : '0')
       .attr('style', 'pointer-events: none');
   }
 }

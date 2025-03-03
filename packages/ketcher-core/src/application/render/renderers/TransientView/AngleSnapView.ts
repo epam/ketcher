@@ -1,12 +1,12 @@
 import { TransientView } from './TransientView';
 import { D3SvgElementSelection } from 'application/render/types';
-import { BaseMonomer, PolymerBond } from 'domain/entities';
+import { BaseMonomer, HydrogenBond, PolymerBond } from 'domain/entities';
 import { Coordinates } from 'application/editor';
 import { arc } from 'd3';
 
 export type AngleSnapViewParams = {
   connectedMonomer: BaseMonomer;
-  polymerBond: PolymerBond;
+  polymerBond: PolymerBond | HydrogenBond;
   isDistanceSnapped: boolean;
 };
 
@@ -57,7 +57,7 @@ export class AngleSnapView extends TransientView {
       .attr('x2', connectedPositionInPixels.x)
       .attr('y2', connectedPositionInPixels.y - 40)
       .attr('stroke', '#365CFF')
-      .attr('stroke-dasharray', '4 4')
+      .attr('stroke-dasharray', '4')
       .style('opacity', 0.5);
 
     if (!isDistanceSnapped) {
@@ -69,7 +69,10 @@ export class AngleSnapView extends TransientView {
         .attr('y2', movingPositionInPixels.y)
         .attr('stroke', '#365CFF')
         .attr('stroke-width', 1)
-        .attr('stroke-dasharray', '4 4');
+        .attr(
+          'stroke-dasharray',
+          polymerBond instanceof HydrogenBond ? '2' : '0',
+        );
     }
 
     const bondAngle = Math.atan2(
@@ -104,6 +107,7 @@ export class AngleSnapView extends TransientView {
         `translate(${connectedPositionInPixels.x}, ${connectedPositionInPixels.y})`,
       )
       .attr('fill', 'none')
+      .attr('opacity', 0.5)
       .attr('stroke', '#365CFF')
       .attr('marker-end', 'url(#arrow-marker-arc)');
   }

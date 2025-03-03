@@ -1361,12 +1361,17 @@ export class SequenceMode extends BaseMode {
             this.isSyncEditMode || !this.isAntisenseEditMode;
           const needToEditAntisense =
             this.isSyncEditMode || this.isAntisenseEditMode;
+          const isDnaEnteringMode =
+            editor.sequenceTypeEnterMode === SequenceType.DNA;
 
           if (needToEditSense) {
             const insertNewSequenceItemResult = this.insertNewSequenceItem(
               editor,
               this.isAntisenseEditMode
-                ? DrawingEntitiesManager.getAntisenseBaseLabel(enteredSymbol)
+                ? DrawingEntitiesManager.getAntisenseBaseLabel(
+                    enteredSymbol,
+                    isDnaEnteringMode,
+                  )
                 : enteredSymbol,
               currentTwoStrandedNode?.senseNode,
               previousTwoStrandedNodeInSameChain?.senseNode,
@@ -1401,11 +1406,13 @@ export class SequenceMode extends BaseMode {
                 (editor.sequenceTypeEnterMode !== SequenceType.DNA &&
                   editor.sequenceTypeEnterMode !== SequenceType.RNA)
                 ? enteredSymbol
-                : DrawingEntitiesManager.getAntisenseBaseLabel(enteredSymbol),
+                : DrawingEntitiesManager.getAntisenseBaseLabel(
+                    enteredSymbol,
+                    isDnaEnteringMode,
+                  ),
               previousTwoStrandedNodeInSameChain?.antisenseNode,
               currentTwoStrandedNode?.antisenseNode,
-            false,
-              );
+            );
 
             if (antisenseNodeCreationResult) {
               modelChanges.merge(antisenseNodeCreationResult.modelChanges);

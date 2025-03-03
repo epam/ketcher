@@ -229,6 +229,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return this.node === this.twoStrandedNode?.antisenseNode;
   }
 
+  private get hasAntisenseInChain() {
+    return Boolean(this.twoStrandedNode.antisenseNode);
+  }
+
   private get counterNumber() {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
     const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
@@ -274,10 +278,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return (
       !(this.node instanceof EmptySequenceNode) &&
       !(this.node instanceof BackBoneSequenceNode) &&
-      !(
-        this.counterNumber > 9 &&
-        this.isNextSymbolEditing(editingNodeIndexOverall)
-      ) &&
+      (!this.isSyncEditMode ||
+        !this.hasAntisenseInChain ||
+        !(
+          this.counterNumber > 9 &&
+          this.isNextSymbolEditing(editingNodeIndexOverall)
+        )) &&
       (this.isAntisenseNode && isNumber(antisenseNodeIndex)
         ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
           antisenseNodeIndex === this.chain.length - 1
@@ -293,12 +299,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public showCaret() {
     this.caretElement = this.spacerElement?.append('g');
 
-    if (
-      this.isSyncEditMode &&
-      (this.isAntisenseNode ||
-        (this.node instanceof BackBoneSequenceNode &&
-          this.node.firstConnectedNode.monomer.monomerItem.isAntisense))
-    ) {
+    if (this.isSyncEditMode && this.isAntisenseNode) {
       this.caretElement
         ?.append('path')
         .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')

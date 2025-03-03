@@ -4,6 +4,7 @@ import {
   LinkerSequenceNode,
   Nucleoside,
   Nucleotide,
+  RNABase,
   SubChainNode,
 } from 'domain/entities';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
@@ -179,10 +180,24 @@ export class SnakeLayoutModel {
                 nodesBeforeHydrogenConnectionToBase[
                   nodesBeforeHydrogenConnectionToBase.length - 1 - i
                 ];
+              const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
+                lastTwoStrandedNodeWithHydrogenBond?.senseNode?.monomers[0];
+              const firstMonomerInCurrentTwoStrandedSnakeLayoutNode =
+                currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers[0];
+              const isNodeInSameChain =
+                firstMonomerInLastTwoStrandedNodeWithHydrogenBond &&
+                firstMonomerInCurrentTwoStrandedSnakeLayoutNode &&
+                monomerToChain.get(
+                  firstMonomerInLastTwoStrandedNodeWithHydrogenBond,
+                ) ===
+                  monomerToChain.get(
+                    firstMonomerInCurrentTwoStrandedSnakeLayoutNode,
+                  );
 
               if (
                 currentTwoStrandedSnakeLayoutNode &&
-                !currentTwoStrandedSnakeLayoutNode.antisenseNode
+                !currentTwoStrandedSnakeLayoutNode.antisenseNode &&
+                isNodeInSameChain
               ) {
                 currentTwoStrandedSnakeLayoutNode.antisenseNode =
                   currentNodeBeforeHydrogenConnectionToBase;
@@ -242,11 +257,27 @@ export class SnakeLayoutModel {
               monomerToChain.get(
                 firstMonomerInCurrentTwoStrandedSnakeLayoutNode,
               );
+          const hasAnotherAntisenseConnection =
+            currentTwoStrandedSnakeLayoutNode.senseNode?.monomers.some(
+              (monomer) => {
+                return (
+                  monomer instanceof RNABase &&
+                  monomer.hydrogenBonds.length !== 0
+                );
+              },
+            );
 
-          if (currentTwoStrandedSnakeLayoutNode && isNodeInSameChain) {
+          if (
+            currentTwoStrandedSnakeLayoutNode &&
+            isNodeInSameChain &&
+            !hasAnotherAntisenseConnection
+          ) {
             currentTwoStrandedSnakeLayoutNode.antisenseNode =
               currentAntisenseSnakeLayoutNode;
-          } else if (currentTwoStrandedSnakeLayoutNode && !isNodeInSameChain) {
+          } else if (
+            currentTwoStrandedSnakeLayoutNode &&
+            (!isNodeInSameChain || hasAnotherAntisenseConnection)
+          ) {
             this.nodes.splice(currentTwoStrandedSnakeLayoutNodeIndex, 0, {
               antisenseNode: currentAntisenseSnakeLayoutNode,
             });

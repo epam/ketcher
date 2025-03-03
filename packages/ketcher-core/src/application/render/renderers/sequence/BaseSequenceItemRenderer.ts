@@ -225,7 +225,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return 30;
   }
 
-  private get isAntisenseNode() {
+  public get isAntisenseNode() {
     return this.node === this.twoStrandedNode?.antisenseNode;
   }
 

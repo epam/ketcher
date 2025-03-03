@@ -436,6 +436,10 @@ export class SequenceRenderer {
     });
   }
 
+  public static rerenderCaret() {
+    this.setCaretPosition(this.caretPosition);
+  }
+
   public static forEachNode(
     forEachCallback: (params: {
       chainIndex: number;

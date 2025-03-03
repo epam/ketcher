@@ -467,9 +467,9 @@ export class CoreEditor {
     }
 
     if (isSequenceSyncEditMode) {
-      this.mode.turnOnIsSyncEditMode();
+      this.mode.turnOnSyncEditMode();
     } else {
-      this.mode.turnOffIsSyncEditMode();
+      this.mode.turnOffSyncEditMode();
     }
   }
 

@@ -123,18 +123,27 @@ export class SequenceMode extends BaseMode {
 
   private turnOnAntisenseEditMode() {
     this._isAntisenseEditMode = true;
+    SequenceRenderer.rerenderCaret();
   }
 
   private turnOffAntisenseEditMode() {
     this._isAntisenseEditMode = false;
+    SequenceRenderer.rerenderCaret();
   }
 
-  public turnOnIsSyncEditMode() {
+  private setAntisenseEditMode(isAntisenseEditMode) {
+    this._isAntisenseEditMode = isAntisenseEditMode;
+    SequenceRenderer.rerenderCaret();
+  }
+
+  public turnOnSyncEditMode() {
     this._isSyncEditMode = true;
+    SequenceRenderer.rerenderCaret();
   }
 
-  public turnOffIsSyncEditMode() {
+  public turnOffSyncEditMode() {
     this._isSyncEditMode = false;
+    SequenceRenderer.rerenderCaret();
   }
 
   public initialize(
@@ -415,6 +424,7 @@ export class SequenceMode extends BaseMode {
     const eventData = event.target?.__data__ as BaseSequenceItemRenderer;
 
     this.turnOnEditMode(eventData);
+    this.setAntisenseEditMode(Boolean(eventData.isAntisenseNode));
   }
 
   public mousedown(event: MouseEvent) {
@@ -463,6 +473,7 @@ export class SequenceMode extends BaseMode {
       this.unselectAllEntities();
       this.selectionStarted = true;
       this.selectionStartCaretPosition = SequenceRenderer.caretPosition;
+      this.setAntisenseEditMode(Boolean(eventData.isAntisenseNode));
     }
   }
 
@@ -627,8 +638,12 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         nodeToAdd,
-        nextNodeToConnect,
-        previousNodeToConnect,
+        nextNodeToConnect instanceof BackBoneSequenceNode
+          ? nextNodeToConnect.secondConnectedNode
+          : nextNodeToConnect,
+        previousNodeToConnect instanceof BackBoneSequenceNode
+          ? previousNodeToConnect.firstConnectedNode
+          : previousNodeToConnect,
       ),
     );
 
@@ -744,6 +759,38 @@ export class SequenceMode extends BaseMode {
       AttachmentPointName.R2,
       AttachmentPointName.R1,
     );
+  }
+
+  private splitCurrentChain() {
+    const modelChanges = new Command();
+    const editor = CoreEditor.provideEditorInstance();
+    const editorHistory = new EditorHistory(editor);
+    const previousTwoStrandedNodeInSameChain =
+      SequenceRenderer.previousNodeInSameChain;
+    const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
+
+    if (previousTwoStrandedNodeInSameChain?.senseNode) {
+      this.deleteBondToNextNodeInChain(
+        previousTwoStrandedNodeInSameChain.senseNode instanceof
+          BackBoneSequenceNode
+          ? previousTwoStrandedNodeInSameChain?.senseNode.firstConnectedNode
+          : previousTwoStrandedNodeInSameChain?.senseNode,
+        modelChanges,
+      );
+    }
+
+    if (currentTwoStrandedNode?.antisenseNode) {
+      this.deleteBondToNextNodeInChain(
+        currentTwoStrandedNode.antisenseNode instanceof BackBoneSequenceNode
+          ? currentTwoStrandedNode.antisenseNode.secondConnectedNode
+          : currentTwoStrandedNode.antisenseNode,
+        modelChanges,
+      );
+    }
+
+    modelChanges.addOperation(new ReinitializeModeOperation());
+    editor.renderersContainer.update(modelChanges);
+    editorHistory.update(modelChanges);
   }
 
   private handleNodesDeletion(
@@ -1023,17 +1070,24 @@ export class SequenceMode extends BaseMode {
           : SequenceRenderer.caretPosition;
       const selections = SequenceRenderer.selections;
       const modelChanges = new Command();
+      const needToEditSense = this.isSyncEditMode || !this.isAntisenseEditMode;
+      const needToEditAntisense =
+        this.isSyncEditMode || this.isAntisenseEditMode;
       let nodesToDelete: TwoStrandedNodesSelection;
 
       if (selections.length) {
         modelChanges.merge(this.deleteSelectedDrawingEntities());
         nodesToDelete = selections;
-        modelChanges.merge(
-          this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.SENSE),
-        );
-        modelChanges.merge(
-          this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.ANTISENSE),
-        );
+        if (needToEditSense) {
+          modelChanges.merge(
+            this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.SENSE),
+          );
+        }
+        if (needToEditAntisense) {
+          modelChanges.merge(
+            this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.ANTISENSE),
+          );
+        }
       } else if (nodeToDelete) {
         nodesToDelete = [
           [
@@ -1044,7 +1098,7 @@ export class SequenceMode extends BaseMode {
           ],
         ];
 
-        if (nodeToDelete.senseNode) {
+        if (needToEditSense && nodeToDelete.senseNode) {
           if (!(nodeToDelete.senseNode instanceof BackBoneSequenceNode)) {
             nodeToDelete.senseNode.monomers.forEach((monomer) => {
               modelChanges.merge(
@@ -1059,6 +1113,7 @@ export class SequenceMode extends BaseMode {
         }
 
         if (
+          needToEditAntisense &&
           nodeToDelete.antisenseNode &&
           !(nodeToDelete.antisenseNode instanceof BackBoneSequenceNode) &&
           !(nodeToDelete.antisenseNode instanceof EmptySequenceNode)
@@ -1110,7 +1165,64 @@ export class SequenceMode extends BaseMode {
         shortcut: ['Enter'],
         handler: () => {
           this.unselectAllEntities();
-          this.startNewSequence();
+
+          if (
+            SequenceRenderer.nextNodeInSameChain &&
+            SequenceRenderer.previousNodeInSameChain
+          ) {
+            this.splitCurrentChain();
+          } else {
+            this.startNewSequence();
+          }
+        },
+      },
+      'break-complimentary-chain': {
+        shortcut: ['-', '—'],
+        handler: () => {
+          const modelChanges = new Command();
+          const editor = CoreEditor.provideEditorInstance();
+          const history = new EditorHistory(editor);
+          const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
+          const previousTwoStrandedNodeInSameChain =
+            SequenceRenderer.previousNodeInSameChain;
+
+          if (
+            !currentTwoStrandedNode?.senseNode ||
+            !currentTwoStrandedNode?.antisenseNode ||
+            !previousTwoStrandedNodeInSameChain?.senseNode ||
+            !previousTwoStrandedNodeInSameChain?.antisenseNode ||
+            currentTwoStrandedNode?.senseNode instanceof EmptySequenceNode ||
+            currentTwoStrandedNode?.antisenseNode instanceof
+              EmptySequenceNode ||
+            previousTwoStrandedNodeInSameChain?.senseNode instanceof
+              EmptySequenceNode ||
+            previousTwoStrandedNodeInSameChain?.antisenseNode instanceof
+              EmptySequenceNode
+          ) {
+            return;
+          }
+
+          if (
+            this.isAntisenseEditMode &&
+            previousTwoStrandedNodeInSameChain?.senseNode
+          ) {
+            this.deleteBondToNextNodeInChain(
+              previousTwoStrandedNodeInSameChain.senseNode,
+              modelChanges,
+            );
+          } else if (
+            !this.isAntisenseEditMode &&
+            currentTwoStrandedNode?.antisenseNode
+          ) {
+            this.deleteBondToNextNodeInChain(
+              currentTwoStrandedNode.antisenseNode,
+              modelChanges,
+            );
+          }
+
+          modelChanges.addOperation(new ReinitializeModeOperation());
+          editor.renderersContainer.update(modelChanges);
+          history.update(modelChanges);
         },
       },
       'move-caret-up': {
@@ -1123,7 +1235,6 @@ export class SequenceMode extends BaseMode {
             Boolean(currentEdittingNode?.antisenseNode)
           ) {
             this.turnOffAntisenseEditMode();
-            SequenceRenderer.setCaretPosition(SequenceRenderer.caretPosition);
 
             return;
           }
@@ -1142,7 +1253,6 @@ export class SequenceMode extends BaseMode {
             Boolean(currentEdittingNode?.antisenseNode)
           ) {
             this.turnOnAntisenseEditMode();
-            SequenceRenderer.setCaretPosition(SequenceRenderer.caretPosition);
 
             return;
           }
@@ -1250,8 +1360,15 @@ export class SequenceMode extends BaseMode {
             false,
               );
 
-            if (antisenseNodeCreationResult && senseNodeToConnect) {
+            if (antisenseNodeCreationResult) {
               modelChanges.merge(antisenseNodeCreationResult.modelChanges);
+            }
+
+            if (
+              this.isSyncEditMode &&
+              antisenseNodeCreationResult &&
+              senseNodeToConnect
+            ) {
               modelChanges.merge(
                 editor.drawingEntitiesManager.createPolymerBond(
                   senseNodeToConnect instanceof Nucleotide ||
@@ -1269,71 +1386,6 @@ export class SequenceMode extends BaseMode {
               );
             }
           }
-
-          // if (
-          //   (addedNode instanceof Nucleotide ||
-          //     addedNode instanceof Nucleoside) &&
-          //   (currentTwoStrandedNode?.antisenseNode ||
-          //     previousTwoStrandedNodeInSameChain?.antisenseNode)
-          // ) {
-          //   const antisenseNodeCreationResult =
-          //     DrawingEntitiesManager.createAntisenseNode(
-          //       addedNode,
-          //       (addedNode instanceof Nucleotide &&
-          //         (previousAntisenseNodeInSameChain instanceof Nucleotide ||
-          //           previousAntisenseNodeInSameChain instanceof Nucleoside ||
-          //           (previousAntisenseNodeInSameChain instanceof
-          //             BackBoneSequenceNode &&
-          //             (previousAntisenseNodeInSameChain.secondConnectedNode instanceof
-          //               Nucleotide ||
-          //               previousAntisenseNodeInSameChain.secondConnectedNode instanceof
-          //                 Nucleoside)))) ||
-          //         (addedNode instanceof Nucleoside &&
-          //           !(
-          //             previousTwoStrandedNode?.antisenseNode instanceof
-          //             EmptySequenceNode
-          //           )),
-          //     );
-          //
-          //   if (antisenseNodeCreationResult && currentTwoStrandedNode) {
-          //     if (
-          //       currentTwoStrandedNode.antisenseNode instanceof
-          //       BackBoneSequenceNode
-          //     ) {
-          //       modelChanges.merge(
-          //         this.insertNewSequenceFragment(
-          //           antisenseNodeCreationResult.node,
-          //           currentTwoStrandedNode.antisenseNode.firstConnectedNode,
-          //           currentTwoStrandedNode.antisenseNode.secondConnectedNode,
-          //         ),
-          //       );
-          //     } else {
-          //       modelChanges.merge(
-          //         this.insertNewSequenceFragment(
-          //           antisenseNodeCreationResult.node,
-          //           previousTwoStrandedNode?.antisenseNode || null,
-          //           currentTwoStrandedNode.antisenseNode,
-          //           !(
-          //             previousTwoStrandedNode?.antisenseNode instanceof
-          //               MonomerSequenceNode &&
-          //             previousTwoStrandedNode?.antisenseNode.monomer instanceof
-          //               Phosphate
-          //           ),
-          //         ),
-          //       );
-          //     }
-          //     modelChanges.merge(antisenseNodeCreationResult.modelChanges);
-          //     modelChanges.merge(
-          //       editor.drawingEntitiesManager.createPolymerBond(
-          //         addedNode?.rnaBase,
-          //         antisenseNodeCreationResult.node.rnaBase,
-          //         AttachmentPointName.HYDROGEN,
-          //         AttachmentPointName.HYDROGEN,
-          //         MACROMOLECULES_BOND_TYPES.HYDROGEN,
-          //       ),
-          //     );
-          //   }
-          // }
 
           modelChanges.addOperation(new ReinitializeModeOperation());
           editor.renderersContainer.update(modelChanges);

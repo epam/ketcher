@@ -250,7 +250,7 @@ export class SequenceViewModel {
                 firstMonomerInCurrentTwoStrandedSnakeLayoutNode,
               );
           const hasAnotherAntisenseConnection =
-            currentTwoStrandedSnakeLayoutNode.senseNode?.monomers.some(
+            currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers.some(
               (monomer) => {
                 return (
                   monomer instanceof RNABase &&
@@ -358,11 +358,10 @@ export class SequenceViewModel {
 
   private fillAdditionalSpacesInAntisense(chainsCollection: ChainsCollection) {
     const monomerToNode = chainsCollection.monomerToNode;
-    let index = 0;
     let previousTwoStrandedNode: ITwoStrandedChainItem | undefined;
     let previousHandledSenseNode: SubChainNode | undefined;
 
-    this.nodes.forEach((node) => {
+    this.nodes.forEach((node, nodeIndex) => {
       if (
         previousTwoStrandedNode &&
         previousTwoStrandedNode.antisenseNode &&
@@ -376,7 +375,7 @@ export class SequenceViewModel {
         );
 
         if (nextConnectedSenseNode) {
-          this.nodes.splice(index, 0, {
+          this.nodes.splice(nodeIndex, 0, {
             senseNode: new BackBoneSequenceNode(
               previousHandledSenseNode as SubChainNode,
               nextConnectedSenseNode as SubChainNode,
@@ -385,14 +384,12 @@ export class SequenceViewModel {
             antisenseNode: new EmptySequenceNode(),
             chain: node.chain,
           });
-          index++;
         }
       }
 
       previousTwoStrandedNode = node;
       previousHandledSenseNode =
         (node.senseNode as SubChainNode) || previousHandledSenseNode;
-      index++;
     });
   }
 

@@ -786,9 +786,14 @@ export class SequenceRenderer {
       return;
     }
 
-    return SequenceRenderer.getNodeByPointer(
+    const currentNode = this.currentEdittingNode;
+    const nextNodeInSameChain = SequenceRenderer.getNodeByPointer(
       SequenceRenderer.nextCaretPosition,
     );
+
+    return nextNodeInSameChain?.chain === currentNode?.chain
+      ? nextNodeInSameChain
+      : undefined;
   }
 
   public static get previousNodeInSameChain() {

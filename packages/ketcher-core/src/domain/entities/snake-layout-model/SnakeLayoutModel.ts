@@ -258,7 +258,7 @@ export class SnakeLayoutModel {
                 firstMonomerInCurrentTwoStrandedSnakeLayoutNode,
               );
           const hasAnotherAntisenseConnection =
-            currentTwoStrandedSnakeLayoutNode.senseNode?.monomers.some(
+            currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers.some(
               (monomer) => {
                 return (
                   monomer instanceof RNABase &&

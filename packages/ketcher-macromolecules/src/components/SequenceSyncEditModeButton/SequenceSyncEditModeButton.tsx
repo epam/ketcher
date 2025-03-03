@@ -14,12 +14,13 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppSelector, useLayoutMode } from 'hooks';
-import { selectEditor } from 'state/common';
+import { hasAntisenseChains, selectEditor } from 'state/common';
 import { ModeTypes } from 'ketcher-core';
 import styled from '@emotion/styled';
 import { Button } from 'ketcher-react';
+import { blurActiveElement } from 'helpers/canvas';
 
 const StyledButton = styled(Button)<{ isActive?: boolean }>(
   ({ theme, isActive }) => ({
@@ -52,6 +53,7 @@ export const SequenceSyncEditModeButton = () => {
   const [isSequenceSyncEditMode, setIsSequenceSyncEditMode] = useState(true);
   const layoutMode = useLayoutMode();
   const isSequenceMode = layoutMode === ModeTypes.sequence;
+  const hasAtLeastOneAntisense = useAppSelector(hasAntisenseChains);
 
   const handleClick = () => {
     const isSequenceSyncEditModeNewState = !isSequenceSyncEditMode;
@@ -60,9 +62,18 @@ export const SequenceSyncEditModeButton = () => {
     editor.events.toggleIsSequenceSyncEditMode.dispatch(
       isSequenceSyncEditModeNewState,
     );
+    blurActiveElement();
   };
 
-  return isSequenceMode ? (
+  useEffect(() => {
+    if (isSequenceMode && hasAtLeastOneAntisense) {
+      editor.events.toggleIsSequenceSyncEditMode.dispatch(
+        isSequenceSyncEditMode,
+      );
+    }
+  }, [isSequenceMode, hasAtLeastOneAntisense]);
+
+  return isSequenceMode && hasAtLeastOneAntisense ? (
     <>
       <StyledButton isActive={isSequenceSyncEditMode} onClick={handleClick}>
         <svg

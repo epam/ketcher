@@ -407,8 +407,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.drawSelection();
 
     if (
-      this.isSequenceEditInRnaBuilderModeTurnedOn &&
-      !this.node.monomer.selected
+      (this.isSequenceEditInRnaBuilderModeTurnedOn &&
+        !this.node.monomer.selected) ||
+      (!this.isSyncEditMode &&
+        ((this.isAntisenseNode && !this.isAntisenseEditMode) ||
+          (!this.isAntisenseNode && this.isAntisenseEditMode)))
     ) {
       this.drawGreyOverlay();
     }

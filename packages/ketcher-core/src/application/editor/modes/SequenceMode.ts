@@ -123,27 +123,27 @@ export class SequenceMode extends BaseMode {
 
   private turnOnAntisenseEditMode() {
     this._isAntisenseEditMode = true;
-    SequenceRenderer.rerenderCaret();
+    this.initialize(false, false, false);
   }
 
   private turnOffAntisenseEditMode() {
     this._isAntisenseEditMode = false;
-    SequenceRenderer.rerenderCaret();
+    this.initialize(false, false, false);
   }
 
   private setAntisenseEditMode(isAntisenseEditMode) {
     this._isAntisenseEditMode = isAntisenseEditMode;
-    SequenceRenderer.rerenderCaret();
+    this.initialize(false, false, false);
   }
 
   public turnOnSyncEditMode() {
     this._isSyncEditMode = true;
-    SequenceRenderer.rerenderCaret();
+    this.initialize(false, false, false);
   }
 
   public turnOffSyncEditMode() {
     this._isSyncEditMode = false;
-    SequenceRenderer.rerenderCaret();
+    this.initialize(false, false, false);
   }
 
   public initialize(
@@ -788,6 +788,10 @@ export class SequenceMode extends BaseMode {
       );
     }
 
+    if (previousTwoStrandedNodeInSameChain?.senseNode instanceof Nucleotide) {
+      modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+    }
+
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
     editorHistory.update(modelChanges);
@@ -843,7 +847,9 @@ export class SequenceMode extends BaseMode {
         undefined;
       const nodeAfterSelection =
         potentialNodeAfterSelection instanceof BackBoneSequenceNode
-          ? potentialNodeAfterSelection.secondConnectedNode
+          ? strandType === STRAND_TYPE.SENSE
+            ? potentialNodeAfterSelection.secondConnectedNode
+            : potentialNodeAfterSelection.firstConnectedNode
           : potentialNodeAfterSelection;
       const nodeInSameChainBeforeSelection =
         (twoStrandedNodeInSameChainBeforeSelection &&
@@ -884,25 +890,18 @@ export class SequenceMode extends BaseMode {
         return;
       }
 
-      // Сase delete - (for sense) and empty node (for antisense) in sync mode:
+      // Сase delete "-":
       // G | - | G
       // C |   | C
-      // Sense should not create bond between G and G. Chain should be broken into two parts.
+      // Sense should break bond between G and G. Chain should be broken into two parts.
       if (
-        (selectionStartTwoStrandedNode.senseNode instanceof
-          BackBoneSequenceNode &&
-          selectionStartTwoStrandedNode.antisenseNode instanceof
-            EmptySequenceNode) ||
-        (selectionEndTwoStrandedNode.senseNode instanceof
-          BackBoneSequenceNode &&
-          selectionEndTwoStrandedNode.antisenseNode instanceof
-            EmptySequenceNode)
+        selectionStartNode instanceof BackBoneSequenceNode ||
+        selectionEndNode instanceof BackBoneSequenceNode
       ) {
         const backBoneSequenceNode =
-          selectionStartTwoStrandedNode.senseNode instanceof
-          BackBoneSequenceNode
-            ? selectionStartTwoStrandedNode.senseNode
-            : (selectionEndTwoStrandedNode.senseNode as BackBoneSequenceNode);
+          selectionStartNode instanceof BackBoneSequenceNode
+            ? selectionStartNode
+            : (selectionEndNode as BackBoneSequenceNode);
         const polymerBondToDelete =
           backBoneSequenceNode.firstConnectedNode.lastMonomerInNode
             .attachmentPointsToBonds.R2;
@@ -915,13 +914,6 @@ export class SequenceMode extends BaseMode {
           );
         }
 
-        return;
-      }
-
-      if (
-        selectionStartNode instanceof BackBoneSequenceNode ||
-        selectionEndNode instanceof BackBoneSequenceNode
-      ) {
         return;
       }
 
@@ -1057,6 +1049,18 @@ export class SequenceMode extends BaseMode {
     return modelChanges;
   }
 
+  private isNodeExistAndNonEmpty(
+    twoStrandedNode: ITwoStrandedChainItem | undefined,
+  ) {
+    return (
+      twoStrandedNode &&
+      !(
+        twoStrandedNode.senseNode instanceof EmptySequenceNode &&
+        twoStrandedNode.antisenseNode instanceof EmptySequenceNode
+      )
+    );
+  }
+
   get keyboardEventHandlers() {
     const deleteNode = (direction: Direction) => {
       const editor = CoreEditor.provideEditorInstance();
@@ -1115,7 +1119,6 @@ export class SequenceMode extends BaseMode {
         if (
           needToEditAntisense &&
           nodeToDelete.antisenseNode &&
-          !(nodeToDelete.antisenseNode instanceof BackBoneSequenceNode) &&
           !(nodeToDelete.antisenseNode instanceof EmptySequenceNode)
         ) {
           nodeToDelete.antisenseNode?.monomers.forEach((monomer) => {
@@ -1167,13 +1170,46 @@ export class SequenceMode extends BaseMode {
           this.unselectAllEntities();
 
           if (
-            SequenceRenderer.nextNodeInSameChain &&
-            SequenceRenderer.previousNodeInSameChain
+            this.isNodeExistAndNonEmpty(SequenceRenderer.nextNodeInSameChain) &&
+            this.isNodeExistAndNonEmpty(
+              SequenceRenderer.previousNodeInSameChain,
+            )
           ) {
             this.splitCurrentChain();
           } else {
             this.startNewSequence();
           }
+        },
+      },
+      'break-editting-chain': {
+        shortcut: ['Space'],
+        handler: () => {
+          if (this.isSyncEditMode) {
+            return;
+          }
+
+          const modelChanges = new Command();
+          const editor = CoreEditor.provideEditorInstance();
+          const history = new EditorHistory(editor);
+          const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
+          const previousTwoStrandedNodeInSameChain =
+            SequenceRenderer.previousNodeInSameChain;
+
+          if (this.isAntisenseEditMode) {
+            this.deleteBondToNextNodeInChain(
+              currentTwoStrandedNode?.antisenseNode,
+              modelChanges,
+            );
+          } else {
+            this.deleteBondToNextNodeInChain(
+              previousTwoStrandedNodeInSameChain?.senseNode,
+              modelChanges,
+            );
+          }
+
+          modelChanges.addOperation(new ReinitializeModeOperation());
+          editor.renderersContainer.update(modelChanges);
+          history.update(modelChanges);
         },
       },
       'break-complimentary-chain': {
@@ -1240,6 +1276,7 @@ export class SequenceMode extends BaseMode {
           }
 
           SequenceRenderer.moveCaretUp();
+          this.turnOnAntisenseEditMode();
           this.unselectAllEntities();
         },
       },
@@ -1258,6 +1295,7 @@ export class SequenceMode extends BaseMode {
           }
 
           SequenceRenderer.moveCaretDown();
+          this.turnOffAntisenseEditMode();
           this.unselectAllEntities();
         },
       },
@@ -1345,14 +1383,23 @@ export class SequenceMode extends BaseMode {
 
           if (
             needToEditAntisense &&
-            (previousTwoStrandedNodeInSameChain?.antisenseNode ||
-              currentTwoStrandedNode?.antisenseNode) &&
-            (editor.sequenceTypeEnterMode === SequenceType.DNA ||
-              editor.sequenceTypeEnterMode === SequenceType.RNA)
+            (this.isSyncEditMode
+              ? previousTwoStrandedNodeInSameChain?.antisenseNode ||
+                currentTwoStrandedNode?.antisenseNode
+              : !(
+                  previousTwoStrandedNodeInSameChain?.antisenseNode instanceof
+                  EmptySequenceNode
+                ) ||
+                !(
+                  currentTwoStrandedNode?.antisenseNode instanceof
+                  EmptySequenceNode
+                ))
           ) {
             const antisenseNodeCreationResult = this.insertNewSequenceItem(
               editor,
-              this.isAntisenseEditMode
+              this.isAntisenseEditMode ||
+                (editor.sequenceTypeEnterMode !== SequenceType.DNA &&
+                  editor.sequenceTypeEnterMode !== SequenceType.RNA)
                 ? enteredSymbol
                 : DrawingEntitiesManager.getAntisenseBaseLabel(enteredSymbol),
               previousTwoStrandedNodeInSameChain?.antisenseNode,

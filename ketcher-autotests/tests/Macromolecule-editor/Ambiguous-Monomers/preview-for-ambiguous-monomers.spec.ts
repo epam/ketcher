@@ -244,7 +244,7 @@ const ambiguousMonomers: IHELMString[] = [
     testDescription:
       '18. Base M (alternative, no probabilities, from the library)',
     HELMString: 'RNA1{R(C,A)P}$$$$V2.0',
-    monomerLocatorIndex: 4,
+    monomerLocatorIndex: 3,
     monomerLocatorIndexOnMicro: 1,
   },
   {

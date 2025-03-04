@@ -34,8 +34,6 @@ import {
   openPasteFromClipboard,
   pressButton,
   readFileContents,
-  receiveFileComparisonData,
-  saveToFile,
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
   selectAtomInToolbar,

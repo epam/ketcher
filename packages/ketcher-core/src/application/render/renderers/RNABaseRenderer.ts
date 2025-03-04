@@ -4,8 +4,8 @@ import { BaseMonomerRenderer } from 'application/render/renderers/BaseMonomerRen
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters';
 
-const RNABASE_SELECTED_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.Base].selected;
+const RNABASE_HOVERED_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.Base].hover;
 const RNABASE_SYMBOL_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.Base].body;
 
@@ -13,7 +13,7 @@ export class RNABaseRenderer extends BaseMonomerRenderer {
   constructor(public monomer: RNABase, scale?: number) {
     super(
       monomer,
-      RNABASE_SELECTED_ELEMENT_ID,
+      RNABASE_HOVERED_ELEMENT_ID,
       RNABASE_SYMBOL_ELEMENT_ID,
       scale,
     );

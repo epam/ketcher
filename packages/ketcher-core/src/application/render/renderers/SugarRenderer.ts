@@ -5,8 +5,8 @@ import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters';
 import { RNA_DNA_NON_MODIFIED_PART } from 'domain/constants/monomers';
 
-const SUGAR_SELECTED_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.Sugar].selected;
+const SUGAR_HOVERED_ELEMENT_ID =
+  MONOMER_SYMBOLS_IDS[KetMonomerClass.Sugar].hover;
 const SUGAR_SYMBOL_ELEMENT_ID = MONOMER_SYMBOLS_IDS[KetMonomerClass.Sugar].body;
 
 export class SugarRenderer extends BaseMonomerRenderer {
@@ -14,7 +14,7 @@ export class SugarRenderer extends BaseMonomerRenderer {
   public CHAIN_END_TERMINAL_INDICATOR_TEXT = '’3';
 
   constructor(public monomer: Sugar, scale?: number) {
-    super(monomer, SUGAR_SELECTED_ELEMENT_ID, SUGAR_SYMBOL_ELEMENT_ID, scale);
+    super(monomer, SUGAR_HOVERED_ELEMENT_ID, SUGAR_SYMBOL_ELEMENT_ID, scale);
   }
 
   public get textColor() {

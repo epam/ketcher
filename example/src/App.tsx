@@ -1,6 +1,6 @@
 import 'ketcher-react/dist/index.css';
 
-import { useState, StrictMode } from 'react';
+import { useState, StrictMode, useCallback, useRef, useEffect } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import {
   Ketcher,
@@ -72,6 +72,35 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
 
+  const [ketcher, setKetcher] = useState<Ketcher | null>(null);
+
+  const localOnChange = useCallback(() => {
+    console.log('ketcher', ketcher);
+    if (ketcher) {
+      const ket = ketcher.getKet();
+      console.log('ket', ket);
+    }
+  }, [ketcher]);
+
+  const onChangeRef = useRef(localOnChange);
+  onChangeRef.current = localOnChange;
+  const subscribeOnChange = useCallback(
+    (data) => {
+      console.log('data', data);
+      onChangeRef.current();
+    },
+    [onChangeRef],
+  );
+
+  useEffect(() => {
+    if (ketcher) {
+      ketcher.editor.subscribe('change', subscribeOnChange);
+    }
+    return () => {
+      ketcher?.editor.unsubscribe('change', subscribeOnChange);
+    };
+  }, [ketcher, subscribeOnChange]);
+
   const togglePolymerEditor = (toggleValue: boolean) => {
     setShowPolymerEditor(toggleValue);
     window.isPolymerEditorTurnedOn = toggleValue;
@@ -114,6 +143,7 @@ const App = () => {
               },
               '*',
             );
+            setKetcher(ketcher);
           }}
           togglerComponent={togglerComponent}
         />

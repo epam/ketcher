@@ -132,11 +132,17 @@ export const selectIsSequenceEditInRNABuilderMode = (
 export const selectIsSequenceMode = (state: RootState): boolean =>
   state.editor.editor?.isSequenceMode;
 
+export const selectIsSequenceSyncEditMode = (state: RootState): boolean =>
+  state.editor.editor?.isSequenceSyncEditMode;
+
 export const selectEditorLayoutMode = (state: RootState): LayoutMode => {
   return state.editor.editorLayoutMode;
 };
 
 export const selectIsHandToolSelected = (state: RootState) =>
   state.editor.editor?.isHandToolSelected;
+
+export const hasAntisenseChains = (state: RootState): CoreEditor =>
+  state.editor.editor?.drawingEntitiesManager?.hasAntisenseChains;
 
 export const editorReducer = editorSlice.reducer;

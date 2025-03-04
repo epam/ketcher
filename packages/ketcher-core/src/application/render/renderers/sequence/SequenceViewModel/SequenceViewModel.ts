@@ -7,6 +7,7 @@ import {
   BaseMonomer,
   SubChainNode,
   BackBoneSequenceNode,
+  RNABase,
 } from 'domain/entities';
 import { Chain } from 'domain/entities/monomer-chains/Chain';
 import {
@@ -158,6 +159,19 @@ export class SequenceViewModel {
               nodesBeforeHydrogenConnectionToBase[
                 nodesBeforeHydrogenConnectionToBase.length - 1 - i
               ];
+            const firstMonomerInLastTwoStrandedNodeWithHydrogenBond =
+              lastTwoStrandedNodeWithHydrogenBond?.senseNode?.monomers[0];
+            const firstMonomerInCurrentTwoStrandedSnakeLayoutNode =
+              currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers[0];
+            const isNodeInSameChain =
+              firstMonomerInLastTwoStrandedNodeWithHydrogenBond &&
+              firstMonomerInCurrentTwoStrandedSnakeLayoutNode &&
+              monomerToChain.get(
+                firstMonomerInLastTwoStrandedNodeWithHydrogenBond,
+              ) ===
+                monomerToChain.get(
+                  firstMonomerInCurrentTwoStrandedSnakeLayoutNode,
+                );
 
             lastSenseNodeIndex =
               currentTwoStrandedSnakeLayoutNodeIndex > 0
@@ -168,7 +182,8 @@ export class SequenceViewModel {
 
             if (
               currentTwoStrandedSnakeLayoutNode &&
-              !currentTwoStrandedSnakeLayoutNode.antisenseNode
+              !currentTwoStrandedSnakeLayoutNode.antisenseNode &&
+              isNodeInSameChain
             ) {
               currentTwoStrandedSnakeLayoutNode.antisenseNode =
                 currentNodeBeforeHydrogenConnectionToBase;
@@ -179,7 +194,7 @@ export class SequenceViewModel {
                   antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
                   antisenseChain: chain,
                   senseNodeIndex: lastSenseNodeIndex,
-                  chain: lastSenseChain,
+                  chain: lastTwoStrandedNodeWithHydrogenBond.chain,
                 });
               } else {
                 this.nodes.splice(
@@ -189,7 +204,7 @@ export class SequenceViewModel {
                     antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
                     antisenseChain: chain,
                     senseNodeIndex: lastSenseNodeIndex,
-                    chain: lastSenseChain,
+                    chain: lastTwoStrandedNodeWithHydrogenBond.chain,
                   },
                 );
               }
@@ -234,24 +249,40 @@ export class SequenceViewModel {
               monomerToChain.get(
                 firstMonomerInCurrentTwoStrandedSnakeLayoutNode,
               );
+          const hasAnotherAntisenseConnection =
+            currentTwoStrandedSnakeLayoutNode?.senseNode?.monomers.some(
+              (monomer) => {
+                return (
+                  monomer instanceof RNABase &&
+                  monomer.hydrogenBonds.length !== 0
+                );
+              },
+            );
 
-          if (currentTwoStrandedSnakeLayoutNode && isNodeInSameChain) {
+          if (
+            currentTwoStrandedSnakeLayoutNode &&
+            isNodeInSameChain &&
+            !hasAnotherAntisenseConnection
+          ) {
             currentTwoStrandedSnakeLayoutNode.antisenseNode =
               currentAntisenseSnakeLayoutNode;
             currentTwoStrandedSnakeLayoutNode.antisenseChain = chain;
-          } else if (currentTwoStrandedSnakeLayoutNode && !isNodeInSameChain) {
+          } else if (
+            currentTwoStrandedSnakeLayoutNode &&
+            (!isNodeInSameChain || hasAnotherAntisenseConnection)
+          ) {
             this.nodes.splice(currentTwoStrandedSnakeLayoutNodeIndex, 0, {
               antisenseNode: currentAntisenseSnakeLayoutNode,
               antisenseChain: chain,
               senseNodeIndex: lastSenseNodeIndex,
-              chain: lastSenseChain,
+              chain: lastTwoStrandedNodeWithHydrogenBond.chain,
             });
           } else {
             this.nodes.push({
               antisenseNode: currentAntisenseSnakeLayoutNode,
               antisenseChain: chain,
               senseNodeIndex: lastSenseNodeIndex,
-              chain: lastSenseChain,
+              chain: lastTwoStrandedNodeWithHydrogenBond.chain,
             });
           }
         }
@@ -299,8 +330,8 @@ export class SequenceViewModel {
           node.antisenseNode = new EmptySequenceNode();
         } else {
           node.antisenseNode = new BackBoneSequenceNode(
-            nextConnectedAntisenseNode,
             lastHandledAntisenseNode,
+            nextConnectedAntisenseNode,
           );
         }
       } else {
@@ -325,9 +356,47 @@ export class SequenceViewModel {
     }
   }
 
+  private fillAdditionalSpacesInAntisense(chainsCollection: ChainsCollection) {
+    const monomerToNode = chainsCollection.monomerToNode;
+    let previousTwoStrandedNode: ITwoStrandedChainItem | undefined;
+    let previousHandledSenseNode: SubChainNode | undefined;
+
+    this.nodes.forEach((node, nodeIndex) => {
+      if (
+        previousTwoStrandedNode &&
+        previousTwoStrandedNode.antisenseNode &&
+        node.antisenseNode &&
+        previousTwoStrandedNode.chain === node.chain &&
+        previousTwoStrandedNode.antisenseChain !== node.antisenseChain
+      ) {
+        const nextConnectedSenseNode = getNextConnectedNode(
+          previousHandledSenseNode as SubChainNode,
+          monomerToNode,
+        );
+
+        if (nextConnectedSenseNode) {
+          this.nodes.splice(nodeIndex, 0, {
+            senseNode: new BackBoneSequenceNode(
+              previousHandledSenseNode as SubChainNode,
+              nextConnectedSenseNode as SubChainNode,
+            ),
+            senseNodeIndex: previousTwoStrandedNode.senseNodeIndex,
+            antisenseNode: new EmptySequenceNode(),
+            chain: node.chain,
+          });
+        }
+      }
+
+      previousTwoStrandedNode = node;
+      previousHandledSenseNode =
+        (node.senseNode as SubChainNode) || previousHandledSenseNode;
+    });
+  }
+
   private fillNodes(chainsCollection: ChainsCollection) {
     this.fillSenseNodes(chainsCollection);
     this.fillAntisenseNodes(chainsCollection);
+    this.fillAdditionalSpacesInAntisense(chainsCollection);
   }
 
   private fillChains() {
@@ -371,13 +440,25 @@ export class SequenceViewModel {
         );
       }
 
-      sequenceViewModelChain.lastRow.sequenceViewModelItems.push({
+      const lastNode = sequenceViewModelChain.lastNode;
+      const length = sequenceViewModelChain.length;
+      let rowToAddEmptyNode: ISequenceViewModelRow =
+        sequenceViewModelChain.lastRow;
+
+      if (rowToAddEmptyNode.sequenceViewModelItems.length === 30) {
+        rowToAddEmptyNode = {
+          sequenceViewModelItems: [],
+        };
+        sequenceViewModelChain.addRow(rowToAddEmptyNode);
+      }
+
+      rowToAddEmptyNode.sequenceViewModelItems.push({
         senseNode: new EmptySequenceNode(),
         antisenseNode: sequenceViewModelChain.hasAntisense
           ? new EmptySequenceNode()
           : undefined,
-        senseNodeIndex: sequenceViewModelChain.length,
-        chain: sequenceViewModelChain.lastNode?.chain,
+        senseNodeIndex: length,
+        chain: lastNode?.chain,
       });
     });
   }

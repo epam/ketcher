@@ -16,6 +16,7 @@ import {
   BaseMonomer,
   RNABase,
   Sugar,
+  isTwoStrandedNodeRestrictedForHydrogenBondCreation,
 } from 'ketcher-core';
 import { setSelectedTabIndex } from 'state/library';
 import {
@@ -26,7 +27,11 @@ import {
   setActiveRnaBuilderItem,
   setIsSequenceFirstsOnlyNucleoelementsSelected,
 } from 'state/rna-builder';
-import { generateSequenceContextMenuProps } from 'components/contextMenu/SequenceItemContextMenu/helpers';
+import {
+  generateSequenceContextMenuProps,
+  isEstablishHydrogenBondDisabled,
+  isNodeContainHydrogenBonds,
+} from 'components/contextMenu/SequenceItemContextMenu/helpers';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
 import { isAntisenseCreationDisabled } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { LIBRARY_TAB_INDEX } from 'src/constants';
@@ -40,6 +45,8 @@ export enum SequenceItemContextMenuNames {
   createRnaAntisenseStrand = 'create_rna_antisense_strand',
   createDnaAntisenseStrand = 'create_dna_antisense_strand',
   modifyInRnaBuilder = 'modify_in_rna_builder',
+  establishHydrogenBond = 'establish_hydrogen_bond',
+  deleteHydrogenBond = 'delete_hydrogen_bond',
   editSequence = 'edit_sequence',
   startNewSequence = 'start_new_sequence',
 }
@@ -152,6 +159,52 @@ export const SequenceItemContextMenu = ({
       title: 'Start new sequence',
       disabled: false,
     },
+    {
+      name: SequenceItemContextMenuNames.establishHydrogenBond,
+      title: 'Establish Hydrogen Bonds',
+      disabled: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => {
+        return selections?.length === 0
+          ? isTwoStrandedNodeRestrictedForHydrogenBondCreation(
+              props?.sequenceItemRenderer?.twoStrandedNode,
+            )
+          : isEstablishHydrogenBondDisabled(selections);
+      },
+      hidden: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => {
+        return !props?.sequenceItemRenderer;
+      },
+    },
+    {
+      name: SequenceItemContextMenuNames.deleteHydrogenBond,
+      title: 'Delete Hydrogen Bonds',
+      disabled: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => {
+        return selections?.length === 0
+          ? !isNodeContainHydrogenBonds(props?.sequenceItemRenderer?.node)
+          : !selections?.some((selectionRange) => {
+              return selectionRange.some((selection) => {
+                return isNodeContainHydrogenBonds(selection.node);
+              });
+            });
+      },
+      hidden: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => {
+        return !props?.sequenceItemRenderer;
+      },
+    },
   ];
 
   const handleMenuChange = ({ id, props }: ItemParams) => {
@@ -188,6 +241,14 @@ export const SequenceItemContextMenu = ({
         break;
       case SequenceItemContextMenuNames.createDnaAntisenseStrand:
         editor.events.createAntisenseChain.dispatch(true);
+        break;
+      case SequenceItemContextMenuNames.establishHydrogenBond:
+        editor.events.establishHydrogenBond.dispatch(
+          props.sequenceItemRenderer,
+        );
+        break;
+      case SequenceItemContextMenuNames.deleteHydrogenBond:
+        editor.events.deleteHydrogenBond.dispatch(props.sequenceItemRenderer);
         break;
       default:
         break;

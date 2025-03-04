@@ -377,7 +377,14 @@ export class CoreEditor {
       (sequenceItemRenderer: BaseSequenceItemRenderer) =>
         this.onEditSequence(sequenceItemRenderer),
     );
-
+    this.events.establishHydrogenBond.add(
+      (sequenceItemRenderer: BaseSequenceItemRenderer) =>
+        this.onEstablishHydrogenBondSequenceMode(sequenceItemRenderer),
+    );
+    this.events.deleteHydrogenBond.add(
+      (sequenceItemRenderer: BaseSequenceItemRenderer) =>
+        this.onDeleteHydrogenBondSequenceMode(sequenceItemRenderer),
+    );
     this.events.turnOnSequenceEditInRNABuilderMode.add(() =>
       this.onTurnOnSequenceEditInRNABuilderMode(),
     );
@@ -386,6 +393,10 @@ export class CoreEditor {
     );
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
+    );
+    this.events.toggleIsSequenceSyncEditMode.add(
+      (isSequenceSyncEditMode: boolean) =>
+        this.onChangeToggleIsSequenceSyncEditMode(isSequenceSyncEditMode),
     );
     this.events.createAntisenseChain.add((isDnaAntisense: boolean) => {
       this.onCreateAntisenseChain(isDnaAntisense);
@@ -411,6 +422,26 @@ export class CoreEditor {
     this.mode.turnOnEditMode(sequenceItemRenderer);
   }
 
+  private onEstablishHydrogenBondSequenceMode(
+    sequenceItemRenderer: BaseSequenceItemRenderer,
+  ) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.establishHydrogenBond(sequenceItemRenderer);
+  }
+
+  private onDeleteHydrogenBondSequenceMode(
+    sequenceItemRenderer: BaseSequenceItemRenderer,
+  ) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.deleteHydrogenBond(sequenceItemRenderer);
+  }
+
   private onTurnOnSequenceEditInRNABuilderMode() {
     if (!(this.mode instanceof SequenceMode)) {
       return;
@@ -429,6 +460,20 @@ export class CoreEditor {
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {
     this.sequenceTypeEnterMode = mode;
+  }
+
+  private onChangeToggleIsSequenceSyncEditMode(
+    isSequenceSyncEditMode: boolean,
+  ) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    if (isSequenceSyncEditMode) {
+      this.mode.turnOnSyncEditMode();
+    } else {
+      this.mode.turnOffSyncEditMode();
+    }
   }
 
   private onCreateAntisenseChain(isDnaAntisense: boolean) {

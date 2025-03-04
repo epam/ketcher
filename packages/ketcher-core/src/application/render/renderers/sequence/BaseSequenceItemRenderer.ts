@@ -12,6 +12,7 @@ import { isNumber } from 'lodash';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { SequenceMode } from 'application/editor';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
@@ -34,7 +35,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     private monomerIndexInChain: number,
     private isLastMonomerInChain: boolean,
     private chain: Chain,
-    private _isEditingSymbol: boolean,
+    private nodeIndexOverall: number,
+    private editingNodeIndexOverall: number,
     public monomerSize: { width: number; height: number },
     public scaledMonomerPosition: Vec2,
     private previousRowsWithAntisense = 0,
@@ -46,12 +48,22 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   abstract get symbolToDisplay(): string;
 
-  public get isEditingSymbol() {
-    return this._isEditingSymbol;
+  public isEditingSymbol(editingNodeIndexOverall?: number) {
+    return (
+      this.nodeIndexOverall ===
+      (isNumber(editingNodeIndexOverall)
+        ? editingNodeIndexOverall
+        : this.editingNodeIndexOverall)
+    );
   }
 
-  public set isEditingSymbol(isEditingSymbol: boolean) {
-    this._isEditingSymbol = isEditingSymbol;
+  public isNextSymbolEditing(editingNodeIndexOverall?: number) {
+    return (
+      this.nodeIndexOverall + 1 ===
+      (isNumber(editingNodeIndexOverall)
+        ? editingNodeIndexOverall
+        : this.editingNodeIndexOverall)
+    );
   }
 
   private get isSingleEmptyNode() {
@@ -104,6 +116,18 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   protected get isSequenceEditInRnaBuilderModeTurnedOn() {
     return CoreEditor.provideEditorInstance().isSequenceEditInRNABuilderMode;
+  }
+
+  private get isAntisenseEditMode() {
+    const editorMode = CoreEditor.provideEditorInstance().mode;
+
+    return editorMode instanceof SequenceMode && editorMode.isAntisenseEditMode;
+  }
+
+  private get isSyncEditMode() {
+    const editorMode = CoreEditor.provideEditorInstance().mode;
+
+    return editorMode instanceof SequenceMode && editorMode.isSyncEditMode;
   }
 
   protected appendRootElement() {
@@ -201,25 +225,31 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return 30;
   }
 
-  private get isAntisenseNode() {
+  public get isAntisenseNode() {
     return this.node === this.twoStrandedNode?.antisenseNode;
+  }
+
+  private get hasAntisenseInChain() {
+    return Boolean(this.twoStrandedNode.antisenseNode);
+  }
+
+  private get counterNumber() {
+    const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
+    const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
+
+    return this.isAntisenseNode && isNumber(antisenseNodeIndex)
+      ? antisenseNodeIndex + 1
+      : senseNodeIndex + 1;
   }
 
   private appendCounterElement(
     rootElement: D3SvgElementSelection<SVGGElement, void>,
   ) {
-    const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
-    const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
-
     return rootElement
       .append('text')
       .attr('x', '2')
       .attr('y', this.node.monomer.monomerItem.isAntisense ? '24' : '-24')
-      .text(
-        this.isAntisenseNode && isNumber(antisenseNodeIndex)
-          ? antisenseNodeIndex + 1
-          : senseNodeIndex + 1,
-      )
+      .text(this.counterNumber)
       .attr('font-family', 'Courier New')
       .attr('font-size', '12px')
       .attr('font-weight', '700')
@@ -227,7 +257,20 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       .attr('fill', '#7C7C7F');
   }
 
-  private get needDisplayCounter() {
+  public redrawCounter(editingNodeIndexOverall?: number) {
+    if (!this.rootElement) {
+      return;
+    }
+
+    this.counterElement?.remove();
+    this.counterElement = undefined;
+
+    if (this.needDisplayCounter(editingNodeIndexOverall)) {
+      this.counterElement = this.appendCounterElement(this.rootElement);
+    }
+  }
+
+  private needDisplayCounter(editingNodeIndexOverall?: number) {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
 
     // For simple chains or sense chains counter appears above each 10th symbol
@@ -235,6 +278,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return (
       !(this.node instanceof EmptySequenceNode) &&
       !(this.node instanceof BackBoneSequenceNode) &&
+      (!this.isSyncEditMode ||
+        !this.hasAntisenseInChain ||
+        !(
+          this.counterNumber > 9 &&
+          this.isNextSymbolEditing(editingNodeIndexOverall)
+        )) &&
       (this.isAntisenseNode && isNumber(antisenseNodeIndex)
         ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
           antisenseNodeIndex === this.chain.length - 1
@@ -248,12 +297,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   public showCaret() {
-    if (
-      this.isAntisenseNode ||
-      (this.node instanceof BackBoneSequenceNode &&
-        this.node.firstConnectedNode.monomer.monomerItem.isAntisense)
-    ) {
-      this.caretElement = this.spacerElement?.append('g');
+    this.caretElement = this.spacerElement?.append('g');
+
+    if (this.isSyncEditMode && this.isAntisenseNode) {
       this.caretElement
         ?.append('path')
         .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')
@@ -262,7 +308,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           'transform',
           `translate(
           ${-21},
-          ${18}
+          ${20}
           )`,
         )
         .attr('stroke', '#7C7C7F');
@@ -270,10 +316,14 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         ?.append('path')
         .attr('d', 'M4.80005 1L8.43402 7.29423L1.16607 7.29423L4.80005 1Z')
         .attr('fill', '#fff')
-        .attr('transform', 'translate(-12 4) rotate(180)')
+        .attr('transform', 'translate(-12 -34) rotate(180)')
         .attr('stroke', '#7C7C7F');
-    } else {
-      this.caretElement = this.spacerElement
+    }
+
+    if (
+      this.isAntisenseEditMode ? this.isAntisenseNode : !this.isAntisenseNode
+    ) {
+      this.caretElement
         ?.append('line')
         .attr('x1', -17)
         .attr('y1', -1)
@@ -287,6 +337,18 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   public removeCaret() {
     this.caretElement?.remove();
     this.caretElement = undefined;
+  }
+
+  public redrawCaret(editingNodeIndexOverall?: number) {
+    this.removeCaret();
+
+    if (
+      (this.isSequenceEditModeTurnedOn &&
+        this.isEditingSymbol(editingNodeIndexOverall)) ||
+      this.isSingleEmptyNode
+    ) {
+      this.showCaret();
+    }
   }
 
   protected redrawBackgroundElementColor() {
@@ -321,12 +383,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.spacerElement = this.appendSpacerElement();
     this.backgroundElement = this.appendBackgroundElement();
 
-    if (
-      (this.isSequenceEditModeTurnedOn && this.isEditingSymbol) ||
-      this.isSingleEmptyNode
-    ) {
-      this.showCaret();
-    }
+    this.redrawCaret();
 
     this.textElement = this.rootElement
       .append('text')
@@ -347,15 +404,15 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       );
 
     this.appendEvents();
-    if (this.needDisplayCounter) {
-      this.counterElement = this.appendCounterElement(this.rootElement);
-    }
-
+    this.redrawCounter();
     this.drawSelection();
 
     if (
-      this.isSequenceEditInRnaBuilderModeTurnedOn &&
-      !this.node.monomer.selected
+      (this.isSequenceEditInRnaBuilderModeTurnedOn &&
+        !this.node.monomer.selected) ||
+      (!this.isSyncEditMode &&
+        ((this.isAntisenseNode && !this.isAntisenseEditMode) ||
+          (!this.isAntisenseNode && this.isAntisenseEditMode)))
     ) {
       this.drawGreyOverlay();
     }

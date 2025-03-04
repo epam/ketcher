@@ -370,7 +370,11 @@ export class Ketcher {
     return hasQueryAtoms || hasQueryBonds;
   }
 
-  async setMolecule(structStr: string): Promise<void | undefined> {
+  async setMolecule(
+    structStr: string,
+    x?: number,
+    y?: number,
+  ): Promise<void | undefined> {
     const macromoleculesEditor = CoreEditor.provideEditorInstance();
 
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
@@ -390,9 +394,11 @@ export class Ketcher {
         );
 
         struct.rescale();
-        this.#editor.struct(struct);
+        this.#editor.struct(struct, false, x, y);
         this.#editor.zoomAccordingContent(struct);
-        this.#editor.centerStruct();
+        if (x == null && y == null) {
+          this.#editor.centerStruct();
+        }
       }
     }, this.eventBus);
   }
@@ -412,7 +418,11 @@ export class Ketcher {
     }, this.eventBus);
   }
 
-  async addFragment(structStr: string): Promise<void | undefined> {
+  async addFragment(
+    structStr: string,
+    x?: number,
+    y?: number,
+  ): Promise<void | undefined> {
     const macromoleculesEditor = CoreEditor.provideEditorInstance();
 
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
@@ -437,7 +447,7 @@ export class Ketcher {
         );
 
         struct.rescale();
-        this.#editor.structToAddFragment(struct);
+        this.#editor.structToAddFragment(struct, x, y);
       }
     }, this.eventBus);
   }

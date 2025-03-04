@@ -115,5 +115,9 @@ export abstract class BaseRenderer implements IBaseRenderer {
     }
   }
 
+  public setVisibility(isVisible: boolean) {
+    this.rootElement?.style('opacity', isVisible ? 1 : 0);
+  }
+
   move() {}
 }

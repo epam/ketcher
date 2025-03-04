@@ -121,7 +121,7 @@ Parameters: `withAuxInfo: boolean`. Optional, by default, `false`.
 `setMolecule(structure: string, options?: Object): Promise<void>` – draws passed structure on the canvas. Before drawing passed structure, current structure is removed.
 Parameters: `structure: string`. Structure is a string in any supported format. `options?: { position?: { x: number, y: number } }`. – (Optional) "position" specifies the X and Y coordinates on the canvas where the structure should be placed.
 
-`addFragment(structure: string, x?: number, y?: number): Promise<void>` – adds passed structure on the canvas. Current structure is not changed.
+`addFragment(structure: string, options?: Object): Promise<void>` – adds passed structure on the canvas. Current structure is not changed.
 Parameters: `structure: string`. Structure is a string in any supported format. `options?: { position?: { x: number, y: number } }`. – (Optional) "position" specifies the X and Y coordinates on the canvas where the structure should be placed.
 
 `layout(): Promise<void>` – performs layout algorithm for drawn structure.

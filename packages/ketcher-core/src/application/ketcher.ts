@@ -53,6 +53,10 @@ import {
   SupportedModes,
 } from 'application/ketcher.types';
 
+type SetMoleculeOptions = {
+  position?: { x: number; y: number };
+};
+
 const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
   ignoreChiralFlag: 'ignoreChiralFlag',
@@ -372,8 +376,7 @@ export class Ketcher {
 
   async setMolecule(
     structStr: string,
-    x?: number,
-    y?: number,
+    options?: SetMoleculeOptions,
   ): Promise<void | undefined> {
     const macromoleculesEditor = CoreEditor.provideEditorInstance();
 
@@ -394,6 +397,7 @@ export class Ketcher {
         );
 
         struct.rescale();
+        const { x, y } = options?.position ?? {};
         this.#editor.struct(struct, false, x, y);
         this.#editor.zoomAccordingContent(struct);
         if (x == null && y == null) {
@@ -420,8 +424,7 @@ export class Ketcher {
 
   async addFragment(
     structStr: string,
-    x?: number,
-    y?: number,
+    options?: SetMoleculeOptions,
   ): Promise<void | undefined> {
     const macromoleculesEditor = CoreEditor.provideEditorInstance();
 
@@ -447,6 +450,7 @@ export class Ketcher {
         );
 
         struct.rescale();
+        const { x, y } = options?.position ?? {};
         this.#editor.structToAddFragment(struct, x, y);
       }
     }, this.eventBus);

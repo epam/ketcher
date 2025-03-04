@@ -32,6 +32,7 @@ import {
   Vec2,
   ketcherProvider,
   KetcherLogger,
+  fromPaste,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -281,17 +282,29 @@ class Editor implements KetcherEditor {
     this.struct(undefined);
   }
 
-  renderAndRecoordinateStruct(struct: Struct, needToCenterStruct = true) {
+  renderAndRecoordinateStruct(
+    struct: Struct,
+    needToCenterStruct = true,
+    x?: number,
+    y?: number,
+  ): Struct {
     const action = fromNewCanvas(this.render.ctab, struct);
     this.update(action);
     if (needToCenterStruct) {
       this.centerStruct();
+    } else if (x != null && y != null) {
+      this.positionStruct(x, y);
     }
     return this.render.ctab.molecule;
   }
 
   /** Apply {@link value}: {@link Struct} if provided to {@link render} and  */
-  struct(value?: Struct, needToCenterStruct = true): Struct {
+  struct(
+    value?: Struct,
+    needToCenterStruct = true,
+    x?: number,
+    y?: number,
+  ): Struct {
     if (arguments.length === 0) {
       return this.render.ctab.molecule;
     }
@@ -304,6 +317,8 @@ class Editor implements KetcherEditor {
     const molecule = this.renderAndRecoordinateStruct(
       struct,
       needToCenterStruct,
+      x,
+      y,
     );
 
     this.hoverIcon.create();
@@ -312,10 +327,16 @@ class Editor implements KetcherEditor {
   }
 
   // this is used by API addFragment method
-  structToAddFragment(value: Struct): Struct {
-    const superStruct = value.mergeInto(this.render.ctab.molecule.clone());
-
-    return this.renderAndRecoordinateStruct(superStruct);
+  structToAddFragment(value: Struct, x?: number, y?: number): Struct {
+    if (x != null && y != null) {
+      const position = new Vec2(x, y);
+      const [action] = fromPaste(this.render.ctab, value, position, 0);
+      this.update(action, true);
+      return this.render.ctab.molecule;
+    } else {
+      const superStruct = value.mergeInto(this.render.ctab.molecule.clone());
+      return this.renderAndRecoordinateStruct(superStruct);
+    }
   }
 
   setOptions(opts: string) {
@@ -394,6 +415,19 @@ class Editor implements KetcherEditor {
 
     const structureToMove = getSelectionMap(structure);
 
+    const action = fromMultipleMove(structure, structureToMove, shiftVector);
+    this.update(action, true);
+  }
+
+  positionStruct(x: number, y: number) {
+    const structure = this.render.ctab;
+    const structCenter = getStructCenter(structure);
+    const viewBoxCenter = new Vec2(
+      this.render.viewBox.minX + x,
+      this.render.viewBox.minY + y,
+    );
+    const shiftVector = viewBoxCenter.sub(structCenter);
+    const structureToMove = getSelectionMap(structure);
     const action = fromMultipleMove(structure, structureToMove, shiftVector);
     this.update(action, true);
   }

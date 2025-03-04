@@ -329,7 +329,7 @@ class Editor implements KetcherEditor {
   // this is used by API addFragment method
   structToAddFragment(value: Struct, x?: number, y?: number): Struct {
     if (x != null && y != null) {
-      const position = Scale.canvasToModel(new Vec2(x, y), this.render.options);
+      const position = new Vec2(x, y);
       const [action] = fromPaste(this.render.ctab, value, position, 0);
       this.update(action, true);
       return this.render.ctab.molecule;
@@ -421,9 +421,14 @@ class Editor implements KetcherEditor {
 
   positionStruct(x: number, y: number) {
     const structure = this.render.ctab;
+    const structCenter = getStructCenter(structure);
+    const viewBoxCenter = new Vec2(
+      this.render.viewBox.minX + x,
+      this.render.viewBox.minY + y,
+    );
+    const shiftVector = viewBoxCenter.sub(structCenter);
     const structureToMove = getSelectionMap(structure);
-    const position = Scale.canvasToModel(new Vec2(x, y), this.render.options);
-    const action = fromMultipleMove(structure, structureToMove, position);
+    const action = fromMultipleMove(structure, structureToMove, shiftVector);
     this.update(action, true);
   }
 

@@ -152,13 +152,13 @@ test(`Verify that deleting a bond in macro mode removes the bond while maintaini
 
   await selectEraseTool(page);
   // removing single bond
-  await clickOnMicroBondByIndex(page, 39);
+  await clickOnMicroBondByIndex(page, 41);
   // removing double bond
-  await clickOnMicroBondByIndex(page, 45);
+  await clickOnMicroBondByIndex(page, 47);
   // removing single up bond
-  await clickOnMicroBondByIndex(page, 51);
+  await clickOnMicroBondByIndex(page, 53);
   // removing single down bond
-  await clickOnMicroBondByIndex(page, 51);
+  await clickOnMicroBondByIndex(page, 53);
 
   await takeEditorScreenshot(page);
 });

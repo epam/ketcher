@@ -383,6 +383,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
   }
 
+  public setLabelVisibility(isVisible: boolean) {
+    this.rootElement?.select('text').style('opacity', isVisible ? 1 : 0);
+  }
+
   public appendHover(
     hoverAreaElement: D3SvgElementSelection<SVGGElement, void>,
   ) {

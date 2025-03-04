@@ -22,6 +22,22 @@ export const ArrowMarker = () => {
           stroke="none"
         />
       </marker>
+      <marker
+        id="arrow-marker-arc"
+        markerWidth="5"
+        markerHeight="5"
+        viewBox="0 0 5 5"
+        refX="5"
+        refY="2.5"
+        orient="auto"
+      >
+        <use
+          href="#arrow-marker-content"
+          transform="rotate(180, 2.5, 2.5)"
+          fill="#365CFF"
+          stroke="none"
+        />
+      </marker>
     </>
   );
 };

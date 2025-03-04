@@ -22,6 +22,7 @@ export const Peptides = {
   Cys_Bn: { alias: 'Cys_Bn', testId: 'Cys_Bn___S-benzylcysteine' } as Monomer,
   D: { alias: 'D', testId: 'D___Aspartic acid' } as Monomer,
   dA: { alias: 'dA', testId: 'dA___D-Alanine' } as Monomer,
+  dC: { alias: 'dC', testId: 'dC___D-Cysteine' } as Monomer,
   D_aIle: { alias: 'D-aIle', testId: 'D-aIle___D-allo-Isoleucine' } as Monomer,
   DHis1B: {
     alias: 'DHis1B',

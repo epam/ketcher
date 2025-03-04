@@ -274,6 +274,42 @@ export abstract class BaseMonomer extends DrawingEntity {
     return compact(values(this.attachmentPointsToBonds));
   }
 
+  public get bonds(): Array<PolymerBond | HydrogenBond | MonomerToAtomBond> {
+    return [...this.covalentBonds, ...this.hydrogenBonds];
+  }
+
+  public get shortestBond():
+    | PolymerBond
+    | HydrogenBond
+    | MonomerToAtomBond
+    | undefined {
+    if (this.bonds.length === 0) {
+      return;
+    }
+
+    return this.bonds.reduce((shortestBond, bond) => {
+      if (!shortestBond.secondEndEntity) {
+        return shortestBond;
+      }
+
+      const shortestBondLength = Vec2.diff(
+        shortestBond.firstEndEntity.position,
+        shortestBond.secondEndEntity?.position,
+      ).length();
+
+      if (!bond.secondEndEntity) {
+        return shortestBond;
+      }
+
+      const bondLength = Vec2.diff(
+        bond.firstEndEntity.position,
+        bond.secondEndEntity?.position,
+      ).length();
+
+      return bondLength < shortestBondLength ? bond : shortestBond;
+    }, this.bonds[0]);
+  }
+
   public get hasBonds() {
     let hasBonds = false;
     for (const bondName in this.attachmentPointsToBonds) {

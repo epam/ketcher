@@ -188,7 +188,7 @@ test.describe('Reagents SMILES format', () => {
     Description: Aromatic Benzene ring transforms into non aromatic Benzene ring
     */
     await enableDearomatizeOnLoad(page);
-    await setMolecule(page, 'c1ccccc1');
+    await setMolecule(page, 'c1ccccc1', false);
     await takeEditorScreenshot(page);
   });
 });

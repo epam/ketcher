@@ -52,7 +52,7 @@ You can find the instruction for service installation
 ## Packages
 
 | Project                                                                                               | Status                                                                                                                      | Description                                                                       |
-|-------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------|
+| ----------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | [ketcher-core](https://github.com/epam/ketcher/tree/master/packages/ketcher-core)                     | [![npm version](https://badge.fury.io/js/ketcher-core.svg)](https://www.npmjs.com/package/ketcher-core)                     | Core functionality: domain, shared services, functions and interface declarations |
 | [ketcher-standalone](https://github.com/epam/ketcher/tree/master/packages/ketcher-standalone)         | [![npm version](https://badge.fury.io/js/ketcher-standalone.svg)](https://www.npmjs.com/package/ketcher-standalone)         | Contains only the functionality necessary to start Ketcher in standalone mode     |
 | [ketcher-react](https://github.com/epam/ketcher/tree/master/packages/ketcher-react)                   | [![npm version](https://badge.fury.io/js/ketcher-react.svg)](https://www.npmjs.com/package/ketcher-react)                   | Package contains only the functionality necessary to define components.           |
@@ -66,6 +66,7 @@ You can find the latest version of Miew-React [here](https://github.com/epam/mie
 The last checked version - [1.0.0](https://www.npmjs.com/package/miew-react).
 
 ## Macromolecules mode
+
 Starting with version 3.0, Ketcher supports a new control in the top toolbar that allows switching to macromolecules editing mode. If you prefer having only small molecules editing mode available, you can remove the mode switcher from the toolbar by passing `disableMacromoleculesEditor` property to the `Editor` component.
 
 ```js
@@ -83,8 +84,8 @@ const App = () => {
 
 Please refer to the `example/src/App.tsx` file for a complete example of how to integrate Ketcher editor into your application.
 
-
 ## Ketcher API
+
 Ketcher can return drawn structures using the following methods:
 
 `getSmiles(isExtended = false): Promise<string>` – returns `string` representation of drawn structure in SMILES format.  
@@ -120,6 +121,7 @@ Parameters: `withAuxInfo: boolean`. Optional, by default, `false`.
 
 `setMolecule(structure: string): Promise<void>` – draws passed structure on the canvas. Before drawing passed structure, current structure is removed.  
 Parameters: `structure: string`. Structure is a string in any supported format.
+Parameters: `rescale: boolean`. rescale is a boolean, default will be true. false means struct will not rescale on canvas
 
 `addFragment(structure: string): Promise<void>` – adds passed structure on the canvas. Current structure is not changed.  
 Parameters: `structure: string`. Structure is a string in any supported format.
@@ -130,19 +132,20 @@ Parameters: `structure: string`. Structure is a string in any supported format.
 Parameters: `image: Blob` – image to recognize. Returns `Struct` – object, which represents recognized structure.
 
 ```
-generateImage(data: string, options: {  
+generateImage(data: string, options: {
     outputFormat: 'png' | 'svg';
     backgroundColor: string;
     bondThickness: number;
 }): Promise<Blob>
-``` 
+```
+
 Generates image from passed structure.  
 Parameters:  
-    `data` – `string` representation of structure in any supported format.   
-    `options` – object with the following properties:   
-        * `outputFormat` – can be 'png' or 'svg'  
-        * `backgroundColor` – image background color  
-        * `bondThickness` – thickness of bonds in output structure
+ `data` – `string` representation of structure in any supported format.  
+ `options` – object with the following properties:  
+ _ `outputFormat` – can be 'png' or 'svg'  
+ _ `backgroundColor` – image background color  
+ \* `bondThickness` – thickness of bonds in output structure
 
 `updateMonomersLibrary(monomersData: string | JSON): void` – given the monomers data, perform upsert operation for the built-in monomers library in the macromolecules editor. Might be invoked only when macromolecules editor is turned on. Update (replace) operation is performed for the particular monomer if its alias and class are matching with the existing one. Otherwise, insert operation is performed.  
 Parameters: `monomersData: string | JSON` – monomers description in KET format being formatted as either JSON notation or this JSON being stringified to be more concise.
@@ -152,19 +155,23 @@ Parameters: `monomersData: string | JSON` – monomers description in KET format
 You can add extra configuration in editor.setSettings
 
 **Allowed parameters:**
+
 - disableQueryElements: Disable the elements from the Extended Table
+
 ```js
-ketcher.setSettings({ "disableQueryElements": ["Pol", "CYH", "CXH"] })
+ketcher.setSettings({ disableQueryElements: ['Pol', 'CYH', 'CXH'] });
 ```
 
 - general.dearomatize-on-load: Dearomatize the molecule when ketcher application starts
+
 ```js
-ketcher.setSettings({ "general.dearomatize-on-load": true })
+ketcher.setSettings({ 'general.dearomatize-on-load': true });
 ```
 
 - ignoreChiralFlag: Ignore the chiral flag from .mol files
+
 ```js
-ketcher.setSettings({ "ignoreChiralFlag": true })
+ketcher.setSettings({ ignoreChiralFlag: true });
 ```
 
 ## Contribution

@@ -22,7 +22,7 @@ test.describe('setMolecule', () => {
     );
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, fileContents),
+      async () => await setMolecule(page, fileContents, false),
     );
     const numberOfPressZoomOut = 6;
     await selectZoomOutTool(page, numberOfPressZoomOut);
@@ -36,7 +36,7 @@ test.describe('setMolecule', () => {
     );
     await waitForSpinnerFinishedWork(
       page,
-      async () => await setMolecule(page, fileContents),
+      async () => await setMolecule(page, fileContents, false),
     );
     const numberOfPressZoomOut = 6;
     await selectZoomOutTool(page, numberOfPressZoomOut);

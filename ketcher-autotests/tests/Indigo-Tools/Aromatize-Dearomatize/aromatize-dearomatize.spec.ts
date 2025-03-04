@@ -324,7 +324,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
   test(
     'User can aromatize molecules with query parameters (not custom query, but only ordinary).',
     {
-      tag: ['@SlowTest', '@IncorrectResultBecauseOfBug'],
+      tag: ['@SlowTest'],
     },
     async ({ page }) => {
       /*
@@ -351,7 +351,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
   test(
     'User can DEaromatize molecules with query parameters (not custom query, but only ordinary).',
     {
-      tag: ['@SlowTest', '@IncorrectResultBecauseOfBug'],
+      tag: ['@SlowTest'],
     },
     async ({ page }) => {
       /*

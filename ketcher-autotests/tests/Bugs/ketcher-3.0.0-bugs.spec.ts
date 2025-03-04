@@ -1,5 +1,4 @@
 /* eslint-disable no-magic-numbers */
-
 import { Peptides } from '@constants/monomers/Peptides';
 import { Page, test } from '@playwright/test';
 import {
@@ -21,18 +20,14 @@ let page: Page;
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
-
   await page
     .getByTestId('monomer')
     .locator('g')
     .filter({ hasText: 'R2' })
     .locator('path')
     .hover();
-
   await page.mouse.down();
-
   await page.locator('g').filter({ hasText: /^H2N$/ }).locator('rect').hover();
-
   await page.mouse.up();
 }
 
@@ -64,12 +59,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'UUU',
       'CCC',
     ];
-
     for (const sequence of sequences) {
       await page.keyboard.type(sequence);
       await page.keyboard.press('Enter');
     }
-
     await takeEditorScreenshot(page);
   });
 

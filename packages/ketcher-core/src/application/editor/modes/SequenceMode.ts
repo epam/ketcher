@@ -596,8 +596,12 @@ export class SequenceMode extends BaseMode {
     modelChanges.merge(
       this.insertNewSequenceFragment(
         newPeptideNode,
-        nextNodeToConnect,
-        previousNodeToConnect,
+        nextNodeToConnect instanceof BackBoneSequenceNode
+          ? nextNodeToConnect.secondConnectedNode
+          : nextNodeToConnect,
+        previousNodeToConnect instanceof BackBoneSequenceNode
+          ? previousNodeToConnect.firstConnectedNode
+          : previousNodeToConnect,
       ),
     );
 

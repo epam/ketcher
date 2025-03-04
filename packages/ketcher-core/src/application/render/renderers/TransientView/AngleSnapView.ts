@@ -57,8 +57,9 @@ export class AngleSnapView extends TransientView {
       .attr('x2', connectedPositionInPixels.x)
       .attr('y2', connectedPositionInPixels.y - 40)
       .attr('stroke', '#365CFF')
+      .attr('stroke-width', 0.5)
       .attr('stroke-dasharray', '4')
-      .style('opacity', 0.5);
+      .style('opacity', 0.75);
 
     if (!isDistanceSnapped) {
       transientLayer
@@ -107,8 +108,9 @@ export class AngleSnapView extends TransientView {
         `translate(${connectedPositionInPixels.x}, ${connectedPositionInPixels.y})`,
       )
       .attr('fill', 'none')
-      .attr('opacity', 0.5)
+      .attr('opacity', 0.75)
       .attr('stroke', '#365CFF')
+      .attr('stroke-width', 0.5)
       .attr('marker-end', 'url(#arrow-marker-arc)');
   }
 }

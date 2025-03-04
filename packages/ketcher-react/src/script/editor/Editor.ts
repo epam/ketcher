@@ -328,7 +328,7 @@ class Editor implements KetcherEditor {
 
   // this is used by API addFragment method
   structToAddFragment(value: Struct, x?: number, y?: number): Struct {
-    if (x && y) {
+    if (x != null && y != null) {
       const position = Scale.canvasToModel(new Vec2(x, y), this.render.options);
       const [action] = fromPaste(this.render.ctab, value, position, 0);
       this.update(action, true);

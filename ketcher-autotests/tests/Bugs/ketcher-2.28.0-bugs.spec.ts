@@ -18,6 +18,7 @@ import {
   selectFlexLayoutModeTool,
   selectFunctionalGroups,
   selectRingButton,
+  selectSequenceLayoutModeTool,
   selectSingleBondTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
@@ -32,6 +33,7 @@ import {
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { bondMonomerPointToMoleculeAtom } from '@utils/macromolecules/polymerBond';
+import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 
 let page: Page;
 
@@ -183,6 +185,41 @@ test(`Case 4: Side chain attachment point shown in wrong place in Snake mode`, a
   }).first();
 
   await baseLocator.hover({ force: true });
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 5: When pressing Enter, a user can create new sequences in the “Modify RNA Builder” mode`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 5
+   * Bug: https://github.com/epam/ketcher/issues/4723
+   * Description: When pressing Enter, a user can create new sequences in the “Modify RNA Builder” mode
+   * Scenario:
+   * 1. Switch to the Macro mode – the Sequence mode
+   * 2. Add a sequence of letters and select any
+   * 3. Right-click on selected letters and choose the “Modify in RNA Builder” option
+   * 4. Press the “Enter” key
+   * 5. Enter letters
+   * 6. Take a screenshot to validate user can not create new sequences in the “Modify RNA Builder” mode
+   */
+  await turnOnMacromoleculesEditor(page);
+  await selectSequenceLayoutModeTool(page);
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(U)P.R(U)P.R(U)}$$$$V2.0',
+  );
+
+  await selectAllStructuresOnCanvas(page);
+  await clickOnSequenceSymbol(page, 'U');
+  await clickOnSequenceSymbol(page, 'U', { button: 'right' });
+  await page.getByTestId('modify_in_rna_builder').click();
+
+  await page.keyboard.press('Enter');
+  await page.keyboard.type('AAA');
+
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

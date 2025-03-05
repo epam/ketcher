@@ -14,12 +14,8 @@ import {
   legacyCopy,
   legacyPaste,
 } from 'utilities';
-import { BaseMonomer, Struct, Vec2 } from 'domain/entities';
-import {
-  identifyStructFormat,
-  macromoleculesFilesInputFormats,
-  SupportedFormat,
-} from 'application/formatters';
+import { BaseMonomer, SequenceType, Struct, Vec2 } from 'domain/entities';
+import { identifyStructFormat, SupportedFormat } from 'application/formatters';
 import { KetSerializer } from 'domain/serializers';
 import { ChemicalMimeType } from 'domain/services';
 import { PolymerBond } from 'domain/entities/PolymerBond';
@@ -216,34 +212,9 @@ export abstract class BaseMode {
     if (format === SupportedFormat.ket) {
       modelChanges = this.pasteKetFormatFragment(pastedStr);
     } else {
-      let inputFormat;
-      let isSequenceOrFasta = false;
-      switch (format) {
-        case SupportedFormat.sequence:
-          inputFormat =
-            macromoleculesFilesInputFormats.seq[
-              editor.sequenceTypeEnterMode.toLowerCase()
-            ];
-          isSequenceOrFasta = true;
-          break;
-        case SupportedFormat.fasta:
-          inputFormat =
-            macromoleculesFilesInputFormats.fasta[
-              editor.sequenceTypeEnterMode.toLowerCase()
-            ];
-          isSequenceOrFasta = true;
-          break;
-        case SupportedFormat.molV3000:
-          inputFormat = macromoleculesFilesInputFormats.mol;
-          break;
-        default:
-          break;
-      }
-
       modelChanges = await this.pasteWithIndigoConversion(
         pastedStr,
-        inputFormat,
-        isSequenceOrFasta,
+        editor.sequenceTypeEnterMode,
       );
     }
 
@@ -295,18 +266,14 @@ export abstract class BaseMode {
 
   async pasteWithIndigoConversion(
     pastedStr: string,
-    inputFormat: ChemicalMimeType,
-    isSequenceOrFasta = false,
+    sequenceType: SequenceType,
   ) {
     const indigo = ketcherProvider.getKetcher().indigo;
     try {
-      const ketStruct = await indigo.convert(
-        isSequenceOrFasta ? pastedStr.toUpperCase() : pastedStr,
-        {
-          outputFormat: ChemicalMimeType.KET,
-          inputFormat,
-        },
-      );
+      const ketStruct = await indigo.convert(pastedStr, {
+        outputFormat: ChemicalMimeType.KET,
+        sequenceType,
+      });
 
       return this.pasteKetFormatFragment(ketStruct.struct);
     } catch (error) {
@@ -314,7 +281,7 @@ export abstract class BaseMode {
         typeof error === 'string' ? error : JSON.stringify(error);
       const errorMessage = 'Convert error! ' + stringError;
 
-      this.unsupportedSymbolsError(errorMessage, isSequenceOrFasta);
+      this.unsupportedSymbolsError(errorMessage);
 
       return new Command();
     }
@@ -336,10 +303,10 @@ export abstract class BaseMode {
     });
   }
 
-  unsupportedSymbolsError(errorMessage: string, isSequenceOrFasta = false) {
+  unsupportedSymbolsError(errorMessage: string) {
     const editor = CoreEditor.provideEditorInstance();
     editor.events.openErrorModal.dispatch({
-      errorTitle: isSequenceOrFasta ? 'Unsupported symbols' : 'Error',
+      errorTitle: 'Error',
       errorMessage,
     });
   }

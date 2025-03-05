@@ -70,7 +70,7 @@ export async function selectSingleBondTool(page: Page) {
     .nth(1);
   await bondToolDropdown.click();
 
-  const bondToolButton = page.getByTestId(MacroBondTool.SINGLE);
+  const bondToolButton = page.getByTestId(MacroBondTool.SINGLE).first();
   await bondToolButton.click();
 }
 

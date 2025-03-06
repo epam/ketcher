@@ -89,18 +89,18 @@ test.describe('Zoom Tool', () => {
     await selectZoomInTool(page, zoomInCount);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectZoomReset(page);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     const zoomOutCount = 2;
     await selectZoomOutTool(page, zoomOutCount);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Zoom In & Out monomer with mouse wheel and CTRL', async () => {

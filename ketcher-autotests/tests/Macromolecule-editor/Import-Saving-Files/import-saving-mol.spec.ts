@@ -370,7 +370,7 @@ test.describe('Import-Saving .mol Files', () => {
     );
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     // Closing page since test expects it to have closed at the end
     const context = page.context();

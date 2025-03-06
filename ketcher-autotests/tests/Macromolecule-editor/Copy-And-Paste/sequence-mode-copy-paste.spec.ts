@@ -205,11 +205,9 @@ test.describe('Sequence-edit mode', () => {
     await copyToClipboardByKeyboard(page);
     await page.keyboard.press('Enter');
     await pasteFromClipboardByKeyboard(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSnakeLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   // Fail while performance issue on Indigo side
@@ -270,10 +268,10 @@ test.describe('Sequence-edit mode', () => {
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Pasting several separate monomers are prohibited in text-editing mode', async ({
@@ -297,8 +295,7 @@ test.describe('Sequence-edit mode', () => {
     await page.getByTestId('edit_sequence').click();
     await page.keyboard.press('ArrowLeft');
     await pasteFromClipboardByKeyboard(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('After pasting between two nucleotides in text-editing mode,bond R2-R1 between them is broken,and pasted fragment is merged with existing chain', async ({
@@ -326,6 +323,6 @@ test.describe('Sequence-edit mode', () => {
     });
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 });

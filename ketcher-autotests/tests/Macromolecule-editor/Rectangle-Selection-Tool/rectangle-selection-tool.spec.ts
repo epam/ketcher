@@ -182,8 +182,7 @@ test.describe('Rectangle Selection Tool', () => {
 
     // Now Beta Alanine must be above Ethylthiocysteine
     await clickOnCanvas(page, betaAlaninePosition.x, betaAlaninePosition.y);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Group selection using `Shift+LClick`', async ({ page }) => {
@@ -245,7 +244,7 @@ test.describe('Rectangle Selection Tool', () => {
     await page.keyboard.up('Shift');
 
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Move selected by selection tool peptide to new position on canvas', async ({
@@ -370,8 +369,7 @@ test.describe('Rectangle Selection Tool', () => {
     const y = 100;
     await openFileAndAddToCanvasMacro('KET/all-kind-of-monomers.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });

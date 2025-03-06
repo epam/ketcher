@@ -56,10 +56,10 @@ test.describe('Flex mode copy&paste', () => {
     await page.mouse.move(startX, startY);
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await clickUndo(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 });

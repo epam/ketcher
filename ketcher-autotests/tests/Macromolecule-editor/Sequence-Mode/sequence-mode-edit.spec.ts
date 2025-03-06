@@ -97,7 +97,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Exiting text-editing mode occurs with a click outside the sequence', async ({
@@ -201,7 +201,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Users can add new nucleotides in the middle of a sequence fragment as text', async ({
@@ -223,7 +223,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check that when adding new nucleotides to beginning of a row, order of chains not changes in Sequence mode', async ({

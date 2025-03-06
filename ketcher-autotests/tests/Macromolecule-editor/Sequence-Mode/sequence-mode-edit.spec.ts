@@ -376,6 +376,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Sugar type of monomer in the library appears.
     */
     await selectMonomer(page, Sugars._25d3r);
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 
@@ -387,6 +388,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Base type of monomer in the library appears.
     */
     await selectMonomer(page, Bases.c7A);
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 
@@ -398,6 +400,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Phosphate type of monomer in the library appears.
     */
     await selectMonomer(page, Phosphates.ibun);
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 
@@ -409,6 +412,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Nucleotide type of monomer in the library appears.
     */
     await selectMonomer(page, Nucleotides.Super_T);
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 
@@ -420,6 +424,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for CHEM type of monomer in the library appears.
     */
     await selectMonomer(page, Chem.DOTA);
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 

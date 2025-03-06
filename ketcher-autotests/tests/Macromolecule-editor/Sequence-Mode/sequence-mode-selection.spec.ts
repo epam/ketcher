@@ -17,7 +17,6 @@ import {
   clickOnCanvas,
   selectZoomInTool,
   selectZoomOutTool,
-  moveMouseAway,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,

@@ -486,6 +486,7 @@ test.describe('Import-Saving .fasta Files', () => {
     );
 
     await zoomWithMouseWheel(page, -200);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectTopPanelButton(TopPanelButton.Save, page);

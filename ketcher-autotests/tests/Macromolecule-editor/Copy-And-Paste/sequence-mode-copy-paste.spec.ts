@@ -205,8 +205,10 @@ test.describe('Sequence-edit mode', () => {
     await copyToClipboardByKeyboard(page);
     await page.keyboard.press('Enter');
     await pasteFromClipboardByKeyboard(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSnakeLayoutModeTool(page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 

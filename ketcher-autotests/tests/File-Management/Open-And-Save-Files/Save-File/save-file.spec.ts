@@ -27,7 +27,6 @@ import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
   clickOnFileFormatDropdown,
   getMolfile,
-  getSdf,
   getSmiles,
 } from '@utils/formats';
 import {
@@ -242,11 +241,11 @@ test.describe('Save files', () => {
     await openFileAndAddToCanvas('KET/chain.ket', page);
 
     await verifyFileExport(
-          page,
-          'SDF/chain-expected.sdf',
-          FileType.SDF,
-          'v2000',
-        );
+      page,
+      'SDF/chain-expected.sdf',
+      FileType.SDF,
+      'v2000',
+    );
   });
 
   test('Support for exporting to "SDF V3000" file format', async ({ page }) => {
@@ -257,11 +256,11 @@ test.describe('Save files', () => {
     await openFileAndAddToCanvas('KET/chain.ket', page);
 
     await verifyFileExport(
-              page,
-              'SDF/chain-expectedV3000.sdf',
-              FileType.SDF,
-              'v3000',
-            );
+      page,
+      'SDF/chain-expectedV3000.sdf',
+      FileType.SDF,
+      'v3000',
+    );
   });
 });
 

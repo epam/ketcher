@@ -25,7 +25,6 @@ import {
   dragMouseTo,
   drawBenzeneRing,
   getControlModifier,
-  getSdf,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   openFile,
@@ -35,8 +34,6 @@ import {
   openPasteFromClipboard,
   pressButton,
   readFileContents,
-  receiveFileComparisonData,
-  saveToFile,
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
   selectAtomInToolbar,
@@ -1593,11 +1590,11 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await verifyFileExport(
-              page,
-              'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
-              FileType.SDF,
-              'v2000',
-            );
+      page,
+      'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
+      FileType.SDF,
+      'v2000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
       page,
@@ -1615,11 +1612,11 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await verifyFileExport(
-              page,
-              'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
-              FileType.SDF,
-              'v3000',
-            );
+      page,
+      'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
+      FileType.SDF,
+      'v3000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
       page,
@@ -2195,11 +2192,11 @@ test.describe('Macro-Micro-Switcher', () => {
     */
       await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
       await verifyFileExport(
-                page,
-                'SDF/micro-macro-structure-v2000-expected.sdf',
-                FileType.SDF,
-                'v2000',
-              );
+        page,
+        'SDF/micro-macro-structure-v2000-expected.sdf',
+        FileType.SDF,
+        'v2000',
+      );
       await openFileAndAddToCanvasAsNewProject(
         'SDF/micro-macro-structure-v2000-expected.sdf',
         page,
@@ -2215,11 +2212,11 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
     await verifyFileExport(
-              page,
-              'SDF/micro-macro-structure-v3000-expected.sdf',
-              FileType.SDF,
-              'v3000',
-            );
+      page,
+      'SDF/micro-macro-structure-v3000-expected.sdf',
+      FileType.SDF,
+      'v3000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/micro-macro-structure-v3000-expected.sdf',
       page,

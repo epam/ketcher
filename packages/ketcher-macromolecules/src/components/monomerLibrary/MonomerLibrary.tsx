@@ -18,7 +18,6 @@ import { Tabs } from 'components/shared/Tabs';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { setSearchFilter } from 'state/library';
-import { Icon } from 'ketcher-react';
 import { IRnaPreset } from './RnaBuilder/types';
 import {
   selectAllPresets,
@@ -31,8 +30,9 @@ import {
   MonomerLibraryContainer,
   MonomerLibraryHeader,
   MonomerLibraryInput,
-  MonomerLibrarySearch,
-  MonomerLibraryTitle,
+  MonomerLibraryInputContainer,
+  MonomerLibrarySearchContainer,
+  MonomerLibrarySearchIcon,
 } from './styles';
 
 const COPY = '_Copy';
@@ -90,20 +90,15 @@ const MonomerLibrary = () => {
   return (
     <MonomerLibraryContainer data-testid="monomer-library">
       <MonomerLibraryHeader>
-        <MonomerLibraryTitle>Library</MonomerLibraryTitle>
-        <MonomerLibrarySearch>
-          <div>
-            <span>
-              <Icon name="search" />
-            </span>
-            <MonomerLibraryInput
-              type="search"
-              data-testid="monomer-library-input"
-              onChange={filterResults}
-              placeholder="Search by name..."
-            />
-          </div>
-        </MonomerLibrarySearch>
+        <MonomerLibraryInputContainer>
+          <MonomerLibrarySearchIcon name="search" />
+          <MonomerLibraryInput
+            type="search"
+            data-testid="monomer-library-input"
+            onChange={filterResults}
+            placeholder="Search by name..."
+          />
+        </MonomerLibraryInputContainer>
       </MonomerLibraryHeader>
       <Tabs tabs={tabsContent(duplicatePreset, editPreset)} />
     </MonomerLibraryContainer>

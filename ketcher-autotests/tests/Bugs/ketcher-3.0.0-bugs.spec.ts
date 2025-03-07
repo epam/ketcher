@@ -63,7 +63,16 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await Promise.all(browser.contexts().map((context) => context.close()));
   });
 
-  test('Case 1:In the Text-editing mode, the canvas is moved to make the newly added sequence visible', async () => {
+  test('Case 1: In the Text-editing mode, the canvas is moved to make the newly added sequence visible', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/4526
+     * Description: In the Text-editing mode, the canvas is moved to make the newly added sequence visible.
+     * Case:
+     * 1. Switch to the Macro mode - the Text-editing mode
+     * 2. Add sequences to the canvas until they vertically fill the viewport (without using the scroll bar)
+     * 3. Press the “Enter” key, and enter one more sequence by typing it manually
+     */
     const sequences = [
       'AAAA',
       'CCC',
@@ -82,7 +91,17 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Case 2:Switching from Sequence mode to Flex mode and back not shifts visible area of canvas beyond visible frame', async () => {
+  test('Case 2: Switching from Sequence mode to Flex mode and back not shifts visible area of canvas beyond visible frame', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/5115
+     * Description: Switching from Sequence mode to Flex mode and back not shifts visible area of canvas beyond visible frame.
+     * Case:
+     * 1. Go to Macromolecules - Snake mode
+     * 2. Load from file
+     * 3. Switch view to Sequence mode
+     * 4. Switch back to Flex mode
+     */
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/switching-from-sequence-mode-to-snake-mode-and-back.ket',
@@ -96,6 +115,14 @@ test.describe('Ketcher bugs in 3.0.0', () => {
   });
 
   test('Case 3: Connection between molecule and monomer affect an amount of implicit hydrogens', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6021
+     * Description: Connection between molecule and monomer affect an amount of implicit hydrogens.
+     * Case:
+     * 1. Open prepared file in Macro mode -> Flex mode
+     * 2. Connect monomer to molecule's atom with implicit hydrogen in label
+     */
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/monomer-and-micro-structure.ket',
@@ -109,7 +136,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
 
   test(`Case 5: Side chain attachment point shown in wrong place in Snake mode`, async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 4
+     * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6022
      * Description: Side chain attachment point shown in wrong place in Snake mode
      * Scenario:
@@ -142,7 +169,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
 
   test(`Case 6: When pressing Enter, a user can create new sequences in the “Modify RNA Builder” mode`, async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 5
+     * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/4723
      * Description: When pressing Enter, a user can create new sequences in the “Modify RNA Builder” mode
      * Scenario:
@@ -178,7 +205,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
 
   test(`Case 7: Bond length is different for monomers loaded from HELM and from the library`, async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 6
+     * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/4723
      * Description: Bond length is different for monomers loaded from HELM and from the library
      * Scenario:
@@ -204,7 +231,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
 
   test(`Case 8: After inserting a nucleotide in the Text-editing mode, the cursor blinks in the wrong place`, async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 6
+     * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/4533
      * Description: After inserting a nucleotide in the Text-editing mode, the cursor blinks in the wrong place
      * Scenario:
@@ -236,7 +263,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
 
   test(`Case 9: Movement of microstructures on Sequence mode doesn't work`, async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 6
+     * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/5663
      * Description: Movement of microstructures on Sequence mode doesn't work
      * Scenario:

@@ -7,9 +7,12 @@ import {
   AtomButton,
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
+  dragMouseTo,
   FunctionalGroups,
   MacroFileType,
   MonomerType,
+  moveMouseToTheMiddleOfTheScreen,
+  openFileAndAddToCanvasMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
@@ -232,7 +235,7 @@ test(`Case 5: When pressing Enter, a user can create new sequences in the “Mod
 test(`Case 6: Bond length is different for monomers loaded from HELM and from the library`, async () => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 6
-   * Bug: https://github.com/epam/ketcher/issues/6026
+   * Bug: https://github.com/epam/ketcher/issues/4723
    * Description: Bond length is different for monomers loaded from HELM and from the library
    * Scenario:
    * 1. Switch to the Macro mode – Flex mode
@@ -248,6 +251,68 @@ test(`Case 6: Bond length is different for monomers loaded from HELM and from th
   );
 
   await addMonomerToCenterOfCanvas(page, Presets.A);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 7: After inserting a nucleotide in the Text-editing mode, the cursor blinks in the wrong place`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 6
+   * Bug: https://github.com/epam/ketcher/issues/4533
+   * Description: After inserting a nucleotide in the Text-editing mode, the cursor blinks in the wrong place
+   * Scenario:
+   * 1. Switch to the Macro mode – Flex mode
+   * 2. Put T preset from the library select all and copy it to clipboard
+   * 3. Switch to the Sequence mode - the Text-editing mode
+   * 4. Enter any sequence (for example, UUU)
+   * 5. Paste the copied preset to the beginning of the sequence
+   * 6. Take a screenshot to validate the cursor blinks in the right place
+   */
+  await selectFlexLayoutModeTool(page);
+  await addMonomerToCenterOfCanvas(page, Presets.T);
+  await selectAllStructuresOnCanvas(page);
+  await copyToClipboardByKeyboard(page);
+  await selectClearCanvasTool(page);
+
+  await selectSequenceLayoutModeTool(page);
+  await page.keyboard.press('U');
+  await page.keyboard.press('U');
+  await page.keyboard.press('U');
+  await page.keyboard.press('ArrowUp');
+  await pasteFromClipboardByKeyboard(page);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 8: Movement of microstructures on Sequence mode doesn't work`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 6
+   * Bug: https://github.com/epam/ketcher/issues/5663
+   * Description: Movement of microstructures on Sequence mode doesn't work
+   * Scenario:
+   * 1. Go to Macro mode - Sequence mode
+   * 2. Load from file: Movement of microstructures on Sequence mode doesn't work.ket
+   * 3. Select all (press CTRL+A)
+   * 4. Drag any atom and try to move it
+   * 5. Take a screenshot to validate movement of microstructures on Sequence mode works as expected
+   */
+  await selectSequenceLayoutModeTool(page);
+  await openFileAndAddToCanvasMacro(
+    "KET/Bugs/Movement of microstructures on Sequence mode doesn't work.ket",
+    page,
+  );
+  await selectAllStructuresOnCanvas(page);
+  const molecule = getAtomLocator(page, {
+    atomAlias: 'C',
+  }).first();
+  await molecule.hover({ force: true });
+  await dragMouseTo(200, 200, page);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

@@ -32,6 +32,10 @@ export class TransientDrawingView {
   }
 
   private addView<P>(viewName, viewData: ViewData<P>) {
+    if (this.views.has(viewName)) {
+      this.removeView(viewName);
+    }
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     this.views.set(viewName, viewData);
@@ -52,6 +56,7 @@ export class TransientDrawingView {
       params: bond,
       topLayer: true,
       onShow: () => {
+        console.log('onShow', bond.id);
         bond.renderer?.setVisibility(false);
         if (bond.firstMonomer.renderer) {
           (
@@ -65,6 +70,7 @@ export class TransientDrawingView {
         }
       },
       onHide: () => {
+        console.log('onHide', bond.id);
         bond.renderer?.setVisibility(true);
         if (bond.firstMonomer.renderer) {
           (

@@ -7,6 +7,9 @@ import {
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
   FunctionalGroups,
+  MacroFileType,
+  pasteFromClipboardAndAddToCanvas,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   resetZoomLevelToDefault,
   RingButton,
@@ -17,10 +20,14 @@ import {
   selectFunctionalGroups,
   selectRingButton,
   selectSequenceLayoutModeTool,
+  selectSnakeLayoutModeTool,
+  selectTopPanelButton,
   takeEditorScreenshot,
+  TopPanelButton,
   waitForPageInit,
 } from '@utils';
 import {
+  chooseFileFormat,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
@@ -124,7 +131,7 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
    * Scenario:
    * 1. Go to Macro mode -> Sequence mode
    * 2. Execute ketcher.editor.subscribe("change", () => console.log("in change event")); in the console
-   * 3. Type any text щn the canvas (Sequence mode)
+   * 3. Type any text on the canvas (Sequence mode)
    * 4. Check the console to see if the change event is triggered
    */
   await selectSequenceLayoutModeTool(page);
@@ -151,5 +158,88 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
       window.unsubscribeChangeEvent();
       window.unsubscribeChangeEvent = () => {};
     }
+  });
+});
+
+test(`Case 5: In Snake mode, structure in HELM format does not open via Paste from clipboard`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 5
+   * Bug: https://github.com/epam/ketcher/issues/5609
+   * Description: In Snake mode, structure in HELM format does not open via Paste from clipboard
+   * Scenario:
+   * 1. Go to Macro mode -> the Snake mode
+   * 2. Execute ketcher.editor.subscribe("change", () => console.log("in change event")); in the console
+   * 3. Type any text щn the canvas (Sequence mode)
+   * 4. Check the console to see if the change event is triggered
+   */
+  await selectSnakeLayoutModeTool(page);
+
+  const errorMessages: string[] = [];
+
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') {
+      errorMessages.push(msg.text());
+    }
+  });
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{C.[Apm].D.[dC].E}|PEPTIDE2{F.[D-gGlu].G.[D-Orn].I}$PEPTIDE1,PEPTIDE2,2:R3-2:R3|PEPTIDE2,PEPTIDE1,4:R3-4:R3$$$V2.0',
+  );
+
+  expect(errorMessages).toEqual([]);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consist of several rows, are left without part of the name`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 6
+   * Bug: https://github.com/epam/ketcher/issues/5552
+   * Description: When saving in SVG format, unsplit nucleotides, whose names consist of several rows, are left without part of the name
+   * Scenario:
+   * 1. Switch to the Macro mode – the Flex mode
+   * 2. In the RNA tab in the “Nucleotides” section, select 5HydMe-dC, 2-Amino-dA, 5-Bromo dU and add them to the canvas
+   * 3. Save them in the SVG file format
+   * 4. Take a screenshot to validate the names are displayed correctly
+   */
+  await selectFlexLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{[2-damdA].[5Br-dU].[5hMedC]}$$$$V2.0',
+  );
+
+  await selectTopPanelButton(TopPanelButton.Save, page);
+  await chooseFileFormat(page, 'SVG Document');
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for atom in bonds too)`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 7
+   * Bug: https://github.com/epam/ketcher/issues/5675
+   * Description: Hydrogens are not shown for single atoms in Macro mode (and for atom in bonds too)
+   * Scenario:
+   * 1. Put on Micro molecules canvas simple atoms (Li and C in my case)
+   * 2. Switch to Macro mode
+   * 3. Take a screenshot to validate hydrogens should be shown
+   */
+  await turnOnMicromoleculesEditor(page);
+  await pasteFromClipboardAndAddToCanvas(page, '[LiH].C');
+  await clickInTheMiddleOfTheScreen(page);
+  await turnOnMacromoleculesEditor(page);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
   });
 });

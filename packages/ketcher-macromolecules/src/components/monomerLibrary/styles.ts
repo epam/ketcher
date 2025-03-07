@@ -14,16 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled';
-import { Input } from 'ketcher-react';
+import { Input, Icon } from 'ketcher-react';
 
 export const MONOMER_LIBRARY_WIDTH = '254px';
-
-export const MonomerLibraryInput = styled(Input)({
-  outline: 0,
-  ':hover': {
-    outline: 'none',
-  },
-});
 
 export const MonomerLibraryContainer = styled.div(({ theme }) => ({
   width: MONOMER_LIBRARY_WIDTH,
@@ -35,20 +28,13 @@ export const MonomerLibraryContainer = styled.div(({ theme }) => ({
   borderRadius: '4px',
 }));
 
-export const MonomerLibraryTitle = styled.h3(({ theme }) => ({
-  margin: 0,
-  padding: 0,
-  fontSize: theme.ketcher.font.size.regular,
-  fontWeight: theme.ketcher.font.weight.regular,
-}));
-
 export const MonomerLibraryHeader = styled.div(() => ({
-  padding: '12px',
+  padding: '10px',
   position: 'relative',
 }));
 
-export const MonomerLibrarySearch = styled.div(({ theme }) => ({
-  padding: '12px 0',
+export const MonomerLibrarySearchContainer = styled.div(({ theme }) => ({
+  padding: '10px 0',
 
   '& > div': {
     background: theme.ketcher.color.input.background.default,
@@ -82,3 +68,24 @@ export const MonomerLibrarySearch = styled.div(({ theme }) => ({
     },
   },
 }));
+
+export const MonomerLibraryInputContainer = styled.div(({ theme }) => ({
+  height: '24px',
+  display: 'flex',
+  gap: '4px',
+  alignItems: 'center',
+  padding: '4px',
+  backgroundColor: theme.ketcher.color.input.background.default,
+  borderRadius: '4px',
+}));
+
+export const MonomerLibrarySearchIcon = styled(Icon)(({ theme }) => ({
+  color: theme.ketcher.color.text.secondary,
+}));
+
+export const MonomerLibraryInput = styled(Input)({
+  outline: 0,
+  ':hover': {
+    outline: 'none',
+  },
+});

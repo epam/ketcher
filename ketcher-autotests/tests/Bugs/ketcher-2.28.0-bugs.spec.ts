@@ -1,7 +1,9 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
+import { Presets } from '@constants/monomers/Presets';
 import { Page, test, expect } from '@playwright/test';
 import {
+  addMonomerToCenterOfCanvas,
   AtomButton,
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
@@ -219,6 +221,33 @@ test(`Case 5: When pressing Enter, a user can create new sequences in the “Mod
 
   await page.keyboard.press('Enter');
   await page.keyboard.type('AAA');
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await selectClearCanvasTool(page);
+});
+
+test(`Case 6: Bond length is different for monomers loaded from HELM and from the library`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 6
+   * Bug: https://github.com/epam/ketcher/issues/6026
+   * Description: Bond length is different for monomers loaded from HELM and from the library
+   * Scenario:
+   * 1. Switch to the Macro mode – Flex mode
+   * 2. Load HELM paste from clipboard way: RNA1{R(A)P}$$$$V2.0
+   * 3. Put the same preset from the library and put it above first one
+   * 4. Take a screenshot to validate bonds length should be the same (1.5 angstroms)
+   */
+  await selectFlexLayoutModeTool(page);
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P}$$$$V2.0',
+  );
+
+  await addMonomerToCenterOfCanvas(page, Presets.A);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

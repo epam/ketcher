@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Peptides } from '@constants/monomers/Peptides';
+import { Presets } from '@constants/monomers/Presets';
 import { Page, test } from '@playwright/test';
 import {
   selectClearCanvasTool,
@@ -10,11 +11,22 @@ import {
   takePageScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
   selectMacroBond,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  MacroFileType,
+  selectSingleBondTool,
+  MonomerType,
+  selectAllStructuresOnCanvas,
+  addMonomerToCenterOfCanvas,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  openFileAndAddToCanvasMacro,
+  dragMouseTo,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { waitForPageInit } from '@utils/common';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 
 let page: Page;
 
@@ -29,6 +41,10 @@ async function connectMonomerToAtom(page: Page) {
   await page.mouse.down();
   await page.locator('g').filter({ hasText: /^H2N$/ }).locator('rect').hover();
   await page.mouse.up();
+}
+
+function getAtomLocator(page: Page, arg1: { atomAlias: string }) {
+  throw new Error('Function not implemented.');
 }
 
 test.describe('Ketcher bugs in 3.0.0', () => {
@@ -47,7 +63,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await Promise.all(browser.contexts().map((context) => context.close()));
   });
 
-  test('In the Text-editing mode, the canvas is moved to make the newly added sequence visible', async () => {
+  test('Case 1:In the Text-editing mode, the canvas is moved to make the newly added sequence visible', async () => {
     const sequences = [
       'AAAA',
       'CCC',
@@ -66,7 +82,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Switching from Sequence mode to Flex mode and back not shifts visible area of canvas beyond visible frame', async () => {
+  test('Case 2:Switching from Sequence mode to Flex mode and back not shifts visible area of canvas beyond visible frame', async () => {
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/switching-from-sequence-mode-to-snake-mode-and-back.ket',
@@ -79,7 +95,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takePageScreenshot(page);
   });
 
-  test('Connection between molecule and monomer affect an amount of implicit hydrogens', async () => {
+  test('Case 3: Connection between molecule and monomer affect an amount of implicit hydrogens', async () => {
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/monomer-and-micro-structure.ket',
@@ -89,5 +105,160 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await connectMonomerToAtom(page);
     await takeEditorScreenshot(page);
+  });
+
+  test(`Case 5: Side chain attachment point shown in wrong place in Snake mode`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 4
+     * Bug: https://github.com/epam/ketcher/issues/6022
+     * Description: Side chain attachment point shown in wrong place in Snake mode
+     * Scenario:
+     * 1. Go to Macro - Snake mode
+     * 2. Put on the canvas A preset
+     * 3. Turn on Bond tool
+     * 4. Hover mouse cursor over base
+     * 5. Take a screenshot to validate the side chain attachment point is shown in the right place
+     */
+    await turnOnMacromoleculesEditor(page);
+    await selectSnakeLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P}$$$$V2.0',
+    );
+
+    await selectSingleBondTool(page);
+    const baseLocator = getMonomerLocator(page, {
+      monomerAlias: 'A',
+      monomerType: MonomerType.Base,
+    }).first();
+
+    await baseLocator.hover({ force: true });
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test(`Case 6: When pressing Enter, a user can create new sequences in the “Modify RNA Builder” mode`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 5
+     * Bug: https://github.com/epam/ketcher/issues/4723
+     * Description: When pressing Enter, a user can create new sequences in the “Modify RNA Builder” mode
+     * Scenario:
+     * 1. Switch to the Macro mode – the Sequence mode
+     * 2. Add a sequence of letters and select any
+     * 3. Right-click on selected letters and choose the “Modify in RNA Builder” option
+     * 4. Press the “Enter” key
+     * 5. Enter letters
+     * 6. Take a screenshot to validate user can not create new sequences in the “Modify RNA Builder” mode
+     */
+    await turnOnMacromoleculesEditor(page);
+    await selectSequenceLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(U)P.R(U)P.R(U)}$$$$V2.0',
+    );
+
+    await selectAllStructuresOnCanvas(page);
+    await clickOnSequenceSymbol(page, 'U');
+    await clickOnSequenceSymbol(page, 'U', { button: 'right' });
+    await page.getByTestId('modify_in_rna_builder').click();
+
+    await page.keyboard.press('Enter');
+    await page.keyboard.type('AAA');
+
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectClearCanvasTool(page);
+  });
+
+  test(`Case 7: Bond length is different for monomers loaded from HELM and from the library`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 6
+     * Bug: https://github.com/epam/ketcher/issues/4723
+     * Description: Bond length is different for monomers loaded from HELM and from the library
+     * Scenario:
+     * 1. Switch to the Macro mode – Flex mode
+     * 2. Load HELM paste from clipboard way: RNA1{R(A)P}$$$$V2.0
+     * 3. Put the same preset from the library and put it above first one
+     * 4. Take a screenshot to validate bonds length should be the same (1.5 angstroms)
+     */
+    await selectFlexLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P}$$$$V2.0',
+    );
+
+    await addMonomerToCenterOfCanvas(page, Presets.A);
+
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test(`Case 8: After inserting a nucleotide in the Text-editing mode, the cursor blinks in the wrong place`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 6
+     * Bug: https://github.com/epam/ketcher/issues/4533
+     * Description: After inserting a nucleotide in the Text-editing mode, the cursor blinks in the wrong place
+     * Scenario:
+     * 1. Switch to the Macro mode – Flex mode
+     * 2. Put T preset from the library select all and copy it to clipboard
+     * 3. Switch to the Sequence mode - the Text-editing mode
+     * 4. Enter any sequence (for example, UUU)
+     * 5. Paste the copied preset to the beginning of the sequence
+     * 6. Take a screenshot to validate the cursor blinks in the right place
+     */
+    await selectFlexLayoutModeTool(page);
+    await addMonomerToCenterOfCanvas(page, Presets.T);
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await selectClearCanvasTool(page);
+
+    await selectSequenceLayoutModeTool(page);
+    await page.keyboard.press('U');
+    await page.keyboard.press('U');
+    await page.keyboard.press('U');
+    await page.keyboard.press('ArrowUp');
+    await pasteFromClipboardByKeyboard(page);
+
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test(`Case 9: Movement of microstructures on Sequence mode doesn't work`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 6
+     * Bug: https://github.com/epam/ketcher/issues/5663
+     * Description: Movement of microstructures on Sequence mode doesn't work
+     * Scenario:
+     * 1. Go to Macro mode - Sequence mode
+     * 2. Load from file: Movement of microstructures on Sequence mode doesn't work.ket
+     * 3. Select all (press CTRL+A)
+     * 4. Drag any atom and try to move it
+     * 5. Take a screenshot to validate movement of microstructures on Sequence mode works as expected
+     */
+    await selectSequenceLayoutModeTool(page);
+    await openFileAndAddToCanvasMacro(
+      "KET/Bugs/Movement of microstructures on Sequence mode doesn't work.ket",
+      page,
+    );
+    await selectAllStructuresOnCanvas(page);
+    const molecule = getAtomLocator(page, { atomAlias: 'C' }).first();
+    await molecule.hover({ force: true });
+    await dragMouseTo(200, 200, page);
+
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 });

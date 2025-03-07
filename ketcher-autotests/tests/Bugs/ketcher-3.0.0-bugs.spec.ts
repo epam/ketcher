@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
 import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
@@ -13,7 +14,6 @@ import {
   selectMacroBond,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  selectSingleBondTool,
   MonomerType,
   selectAllStructuresOnCanvas,
   addMonomerToCenterOfCanvas,
@@ -21,6 +21,8 @@ import {
   pasteFromClipboardByKeyboard,
   openFileAndAddToCanvasMacro,
   dragMouseTo,
+  selectMonomer,
+  pressButton,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { waitForPageInit } from '@utils/common';
@@ -43,8 +45,27 @@ async function connectMonomerToAtom(page: Page) {
   await page.mouse.up();
 }
 
-function getAtomLocator(page: Page, arg1: { atomAlias: string }) {
-  throw new Error('Function not implemented.');
+async function interactWithMicroMolecule(
+  page: Page,
+  labelText: string,
+  action: 'hover' | 'click',
+  index: number = 0,
+): Promise<void> {
+  const element = page
+    .locator('g')
+    .filter({ hasText: new RegExp(`^${labelText}$`) })
+    .locator('rect')
+    .nth(index);
+
+  // Wait for the element to be visible
+  await element.waitFor({ state: 'visible' });
+
+  // Perform the requested action
+  if (action === 'hover') {
+    await element.hover();
+  } else if (action === 'click') {
+    await element.click();
+  }
 }
 
 test.describe('Ketcher bugs in 3.0.0', () => {
@@ -134,6 +155,35 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
   });
 
+  test(`Case 4: Replacing all monomers (or part of them) in edit mode system not cuts sequence on two`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/5341
+     * Description: Replacing all monomers (or part of them) in edit mode system not cuts sequence on two
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Load from file
+     * 3. Select three @ symbols in edit mode (having blinking cursor somewhere in the middle of sequence - this is important!
+     * 4. Click any monomer from the library (C peptide in my case) - click Yes in appeared Confirm Your Action dialog
+     */
+    await selectSequenceLayoutModeTool(page);
+    await await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Bugs/Replacing all monomers (or part of them) in edit mode - works wrong - system cuts sequence on two.ket',
+      page,
+    );
+    await page.keyboard.down('Shift');
+    await clickOnSequenceSymbol(page, '@');
+    await clickOnSequenceSymbol(page, '@', { nthNumber: 1 });
+    await clickOnSequenceSymbol(page, '@', { nthNumber: 2 });
+    await page.keyboard.up('Shift');
+    await selectMonomer(page, Peptides.C);
+    await pressButton(page, 'Yes');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
   test(`Case 5: Side chain attachment point shown in wrong place in Snake mode`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
@@ -146,20 +196,17 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Hover mouse cursor over base
      * 5. Take a screenshot to validate the side chain attachment point is shown in the right place
      */
-    await turnOnMacromoleculesEditor(page);
     await selectSnakeLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'RNA1{R(A)P}$$$$V2.0',
     );
-
-    await selectSingleBondTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
     const baseLocator = getMonomerLocator(page, {
       monomerAlias: 'A',
       monomerType: MonomerType.Base,
     }).first();
-
     await baseLocator.hover({ force: true });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -180,27 +227,22 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Enter letters
      * 6. Take a screenshot to validate user can not create new sequences in the “Modify RNA Builder” mode
      */
-    await turnOnMacromoleculesEditor(page);
     await selectSequenceLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
       'RNA1{R(U)P.R(U)P.R(U)}$$$$V2.0',
     );
-
     await selectAllStructuresOnCanvas(page);
     await clickOnSequenceSymbol(page, 'U');
     await clickOnSequenceSymbol(page, 'U', { button: 'right' });
     await page.getByTestId('modify_in_rna_builder').click();
-
     await page.keyboard.press('Enter');
     await page.keyboard.type('AAA');
-
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectClearCanvasTool(page);
   });
 
   test(`Case 7: Bond length is different for monomers loaded from HELM and from the library`, async () => {
@@ -220,9 +262,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P}$$$$V2.0',
     );
-
     await addMonomerToCenterOfCanvas(page, Presets.A);
-
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -247,14 +287,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await selectClearCanvasTool(page);
-
     await selectSequenceLayoutModeTool(page);
     await page.keyboard.press('U');
     await page.keyboard.press('U');
     await page.keyboard.press('U');
     await page.keyboard.press('ArrowUp');
     await pasteFromClipboardByKeyboard(page);
-
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -278,11 +316,13 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       "KET/Bugs/Movement of microstructures on Sequence mode doesn't work.ket",
       page,
     );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectAllStructuresOnCanvas(page);
-    const molecule = getAtomLocator(page, { atomAlias: 'C' }).first();
-    await molecule.hover({ force: true });
+    await interactWithMicroMolecule(page, 'H3C', 'hover', 1);
     await dragMouseTo(200, 200, page);
-
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

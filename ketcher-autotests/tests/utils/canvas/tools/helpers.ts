@@ -390,6 +390,15 @@ export async function setBondLengthValue(page: Page, value: string) {
     .fill(value);
 }
 
+export async function getBondLengthValue(page: Page): Promise<string | null> {
+  return await page
+    .locator('fieldset')
+    .filter({ hasText: 'Aromatic Bonds as circleBond' })
+    .getByRole('textbox')
+    .first()
+    .inputValue();
+}
+
 export async function setBondThicknessOptionUnit(page: Page, unitName: string) {
   await page
     .locator('fieldset')

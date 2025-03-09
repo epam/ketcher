@@ -6,13 +6,17 @@ import { Page, test, expect } from '@playwright/test';
 import {
   addMonomerToCenterOfCanvas,
   AtomButton,
+  bondsSettings,
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
   FunctionalGroups,
+  getBondLengthValue,
   MacroFileType,
+  openSettings,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
+  pressButton,
   resetZoomLevelToDefault,
   RingButton,
   selectAllStructuresOnCanvas,
@@ -24,6 +28,8 @@ import {
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   selectTopPanelButton,
+  setBondLengthOptionUnit,
+  setBondLengthValue,
   takeEditorScreenshot,
   TopPanelButton,
   waitForPageInit,
@@ -32,6 +38,7 @@ import {
   chooseFileFormat,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
+  zoomWithMouseWheel,
 } from '@utils/macromolecules';
 
 declare global {
@@ -296,6 +303,66 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
   await page.keyboard.press('ArrowDown');
   await pasteFromClipboardByKeyboard(page);
 
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 10: System reset micromolecule canvas settings to default if switched to Macro mode and back`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 10
+   * Bug: https://github.com/epam/ketcher/issues/5855
+   * Description: System reset micromolecule canvas settings to default if switched to Macro mode and back
+   * Scenario:
+   * 1. Go to Micro
+   * 2. Open Settings, Bond section
+   * 3. Set Bond length to 80 and click Apply
+   * 4. Switch to Macro mode
+   * 5. Switch back to Micro mode again
+   * 6. Open Settings, Bond section again
+   * 7. Check if Bond length remains the same (80)
+   */
+  await turnOnMicromoleculesEditor(page);
+  await openSettings(page);
+  await bondsSettings(page);
+  await setBondLengthValue(page, '80');
+  await pressButton(page, 'Apply');
+
+  await turnOnMacromoleculesEditor(page);
+  await turnOnMicromoleculesEditor(page);
+  await openSettings(page);
+  await bondsSettings(page);
+  const bondLengthValue = await getBondLengthValue(page);
+  expect(bondLengthValue).toBe('80');
+  await pressButton(page, 'Cancel');
+});
+
+test(`Case 12: Label shift problem for ambiguous monomers`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 12
+   * Bug: https://github.com/epam/ketcher/issues/5982
+   * Description: Label shift problem for ambiguous monomers
+   * Scenario:
+   * 1. Load from HELM ambiguous monomer
+   * 2. Load from HELM one more ambiguous monomer
+   * 3. Take a screenshot to validate Sugar label (Mod0) at center of monomer
+   */
+  await selectFlexLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'PEPTIDE1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]}$$$$V2.0',
+  );
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{[O1[C@@H]%91[C@H](O)[C@H](O%92)[C@H]1CO%93.[*:3]%91.[*:1]%93.[*:2]%92 |$;;;;;;;;;_R3;_R1;_R2$|]([C1(C2=C(N=CN=1)N%91C=N2)N.[*:1]%91 |$;;;;;;;;;;_R1$|])[P%91(O)(O)=O.[*:1]%91 |$;;;;_R1$|]}$$$$V2.0',
+  );
+
+  await zoomWithMouseWheel(page, -600);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
+import { Presets } from '@constants/monomers/Presets';
 import { Page, test, expect } from '@playwright/test';
 import {
+  addMonomerToCenterOfCanvas,
   AtomButton,
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
@@ -237,6 +239,62 @@ test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for at
   await pasteFromClipboardAndAddToCanvas(page, '[LiH].C');
   await clickInTheMiddleOfTheScreen(page);
   await turnOnMacromoleculesEditor(page);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 8: There is no bond in the Sequence mode`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 8
+   * Bug: https://github.com/epam/ketcher/issues/4439
+   * Description: There is no bond in the Sequence mode
+   * Scenario:
+   * 1. Load from HELM chain connected to side chain
+   * 2. Switch to Sequence mode
+   * 3. Take a screenshot to validate the bond should be shown
+   */
+  await selectSequenceLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(C)P.RP.RP.R(C)P}|RNA2{R(G)P}$RNA2,RNA1,1:R1-6:R3$$$V2.0',
+  );
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of the sequence, where there is a phosphate, the cursor does not blink`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 9
+   * Bug: https://github.com/epam/ketcher/issues/4534
+   * Description: In the Text-editing mode, after inserting a fragment at the end of the sequence, where there is a phosphate, the cursor does not blink
+   * Scenario:
+   * 1. Switch to the Macro mode – Flex mode
+   * 2. Put T preset from the library select all and copy it to clipboard
+   * 3. Switch to the Sequence mode - the Text-editing mode
+   * 4. Enter any sequence (for example, UUU)
+   * 5. Paste the copied preset to the end of the sequence
+   * 6. Take a screenshot to validate the cursor blinks in the right place
+   */
+  await selectFlexLayoutModeTool(page);
+  await addMonomerToCenterOfCanvas(page, Presets.T);
+  await selectAllStructuresOnCanvas(page);
+  await copyToClipboardByKeyboard(page);
+  await selectClearCanvasTool(page);
+
+  await selectSequenceLayoutModeTool(page);
+  await page.keyboard.press('U');
+  await page.keyboard.press('U');
+  await page.keyboard.press('U');
+  await page.keyboard.press('ArrowDown');
+  await pasteFromClipboardByKeyboard(page);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

@@ -408,7 +408,7 @@ test(`Case 13: Export to ket (and getKET function) change incrementally internal
 
 test(`Case 14: Antisense of layout doesn't work on flex mode after load`, async () => {
   /*
-   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 13
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 14
    * Bug: https://github.com/epam/ketcher/issues/6109
    * Description: Antisense of layout doesn't work on flex mode after load
    * Scenario:
@@ -432,7 +432,7 @@ test(`Case 14: Antisense of layout doesn't work on flex mode after load`, async 
 
 test(`Case 16: Lets get back to U (instead of T) for the complementary base of A`, async () => {
   /*
-   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 13
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 16
    * Bug: https://github.com/epam/ketcher/issues/6115
    * Description: Lets get back to U (instead of T) for the complementary base of A
    * Scenario:
@@ -467,4 +467,65 @@ test(`Case 16: Lets get back to U (instead of T) for the complementary base of A
     monomerType: MonomerType.Base,
   }).first();
   await expect(baseU).toHaveCount(1);
+});
+
+test(`Case 17: Create Antisense Strand doesn't work in some cases`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 17
+   * Bug: https://github.com/epam/ketcher/issues/6115
+   * Description: Create Antisense Strand doesn't work in some cases
+   * Scenario:
+   * 1. Go to Macro mode -> Snake mode
+   * 2. Load from HELM: Certain sequence
+   * 3. Select certain monomers, call context menu and click Create Antisense Strand
+   * 4. Take screenshot to validate Create Antisense Strand works as expected
+   */
+  await selectSnakeLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{[dR](G)[bP]}|RNA2{R(T)P}|PEPTIDE1{D}|PEPTIDE2{E}$PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,PEPTIDE2,1:R3-1:R3|RNA1,PEPTIDE1,3:R2-1:R1$$$V2.0',
+  );
+
+  const peptideE = getMonomerLocator(page, {
+    monomerAlias: 'E',
+    monomerType: MonomerType.Peptide,
+  }).first();
+  const peptideD = getMonomerLocator(page, {
+    monomerAlias: 'D',
+    monomerType: MonomerType.Peptide,
+  }).first();
+  const sugarR = getMonomerLocator(page, {
+    monomerAlias: 'R',
+    monomerType: MonomerType.Sugar,
+  }).first();
+  const baseT = getMonomerLocator(page, {
+    monomerAlias: 'T',
+    monomerType: MonomerType.Base,
+  }).first();
+  const phosphateP = getMonomerLocator(page, {
+    monomerAlias: 'P',
+    monomerType: MonomerType.Phosphate,
+  }).first();
+
+  await page.keyboard.down('Shift');
+  await peptideE.click();
+  await peptideD.click();
+  await sugarR.click();
+  await baseT.click();
+  await phosphateP.click();
+  await page.keyboard.up('Shift');
+  await baseT.click({ button: 'right', force: true });
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_chain')
+    .first();
+
+  await createAntisenseStrandOption.click();
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
 });

@@ -12,6 +12,7 @@ import {
   FunctionalGroups,
   getBondLengthValue,
   MacroFileType,
+  openFileAndAddToCanvas,
   openSettings,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -28,12 +29,15 @@ import {
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   selectTopPanelButton,
-  setBondLengthOptionUnit,
   setBondLengthValue,
   takeEditorScreenshot,
   TopPanelButton,
   waitForPageInit,
 } from '@utils';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import {
   chooseFileFormat,
   turnOnMacromoleculesEditor,
@@ -367,4 +371,35 @@ test(`Case 12: Label shift problem for ambiguous monomers`, async () => {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
+});
+
+test(`Case 13: Export to ket (and getKET function) change incrementally internal IDs every call`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 13
+   * Bug: https://github.com/epam/ketcher/issues/5873
+   * Description: Export to ket (and getKET function) change incrementally internal IDs every call
+   * Scenario:
+   * 1. Go to Micro mode
+   * 2. Load from file: Export to ket (and getKET function) change incrementally internal IDs every call.ket
+   * 3. Save the file as .ket
+   * 4. Save the file as .ket again to validate the internal IDs remain the same
+   */
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvas(
+    'KET/Bugs/Export to ket (and getKET function) change incrementally internal IDs every call.ket',
+    page,
+  );
+
+  await verifyFileExport(
+    page,
+    'KET/Bugs/Export to ket (and getKET function) change incrementally internal IDs every call-expected.ket',
+    FileType.KET,
+  );
+
+  await verifyFileExport(
+    page,
+    'KET/Bugs/Export to ket (and getKET function) change incrementally internal IDs every call-expected.ket',
+    FileType.KET,
+  );
 });

@@ -135,8 +135,7 @@ test.afterAll(async ({ browser }) => {
 test.describe('Import-Saving .idt Files', () => {
   test(`Import .idt file`, async () => {
     await openFileAndAddToCanvasMacro('IDT/idt-a.idt', page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check option "IDT" to the format dropdown menu of modal window Paste from the clipboard is exist', async () => {
@@ -744,7 +743,7 @@ test.describe('Import-Saving .idt Files', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
@@ -1597,8 +1596,7 @@ test.describe('Ambiguous monomers: ', () => {
     );
 
     await zoomWithMouseWheel(page, -600);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
@@ -1626,8 +1624,7 @@ test.describe('Ambiguous monomers: ', () => {
     );
 
     await zoomWithMouseWheel(page, -600);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
@@ -1655,7 +1652,7 @@ test.describe('Ambiguous monomers: ', () => {
 
     await zoomWithMouseWheel(page, -200);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
@@ -1684,7 +1681,7 @@ test.describe('Ambiguous monomers: ', () => {
 
     await zoomWithMouseWheel(page, -200);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
@@ -1712,7 +1709,7 @@ test.describe('Ambiguous monomers: ', () => {
 
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
@@ -1739,7 +1736,7 @@ test.describe('Ambiguous monomers: ', () => {
     );
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await verifyFileExport(
       page,
       'IDT/Ambiguous DNA Bases (mixed)-expected.idt',
@@ -1771,7 +1768,7 @@ test.describe('Ambiguous monomers: ', () => {
 
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
@@ -1798,7 +1795,7 @@ test.describe('Ambiguous monomers: ', () => {
 
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await verifyFileExport(
       page,
       'IDT/Ambiguous RNA Bases (mixed)-expected.idt',
@@ -1828,8 +1825,7 @@ test.describe('Ambiguous monomers: ', () => {
       page,
     );
     await zoomWithMouseWheel(page, -200);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page);
@@ -1852,8 +1848,7 @@ test.describe('Ambiguous monomers: ', () => {
       page,
     );
     await zoomWithMouseWheel(page, -200);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await verifyFileExport(
       page,
       'IDT/Ambiguous (common) Bases (mixed)-expected.idt',
@@ -1886,7 +1881,7 @@ test.describe('Ambiguous monomers: ', () => {
 
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
@@ -1917,7 +1912,7 @@ test.describe('Ambiguous monomers: ', () => {
 
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');

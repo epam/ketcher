@@ -625,7 +625,7 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
     await bondLocator.first().hover({ force: true });
     await dragMouseTo(400, 400, page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   }
 });
 

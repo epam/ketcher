@@ -12,6 +12,7 @@ import {
   FunctionalGroups,
   getBondLengthValue,
   MacroFileType,
+  MonomerType,
   openFileAndAddToCanvas,
   openSettings,
   pasteFromClipboardAndAddToCanvas,
@@ -44,6 +45,7 @@ import {
   turnOnMicromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 declare global {
   interface Window {
@@ -419,11 +421,50 @@ test(`Case 14: Antisense of layout doesn't work on flex mode after load`, async 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    'RNA1{[MOE](G)P.[MOE](T)P.[dR](U)[sP].R([m3C])P.[MOE](A)}|RNA2{R(A)P.R(G)P.R(T)P.[MOE](A,C)[sP].[dR]([cnes4T])}$RNA1,RNA2,14:pair-8:pair|RNA1,RNA2,11:pair-11:pair|RNA1,RNA2,8:pair-14:pair$$$V2.0',
+    'RNA1{R(A)P}$$$$V2.0',
   );
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
+});
+
+test(`Case 16: Lets get back to U (instead of T) for the complementary base of A`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 13
+   * Bug: https://github.com/epam/ketcher/issues/6115
+   * Description: Lets get back to U (instead of T) for the complementary base of A
+   * Scenario:
+   * 1. Go to Macro mode -> Snake mode
+   * 2. Load from HELM: A preset
+   * 3. Select all monomers and click Create Antisense Strand from context menu
+   * 4. Validate the complementary base of A is U
+   */
+  await selectFlexLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P}$$$$V2.0',
+  );
+
+  const baseA = getMonomerLocator(page, {
+    monomerAlias: 'A',
+    monomerType: MonomerType.Base,
+  }).first();
+
+  await selectAllStructuresOnCanvas(page);
+  await baseA.click({ button: 'right', force: true });
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_chain')
+    .first();
+
+  await createAntisenseStrandOption.click();
+
+  const baseU = getMonomerLocator(page, {
+    monomerAlias: 'U',
+    monomerType: MonomerType.Base,
+  }).first();
+  await expect(baseU).toHaveCount(1);
 });

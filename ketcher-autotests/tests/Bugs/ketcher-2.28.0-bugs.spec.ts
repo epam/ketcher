@@ -403,3 +403,27 @@ test(`Case 13: Export to ket (and getKET function) change incrementally internal
     FileType.KET,
   );
 });
+
+test(`Case 14: Antisense of layout doesn't work on flex mode after load`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 13
+   * Bug: https://github.com/epam/ketcher/issues/6109
+   * Description: Antisense of layout doesn't work on flex mode after load
+   * Scenario:
+   * 1. Go to Macro mode -> Flex mode
+   * 2. Load from HELM certain sequence
+   * 3. Take a screenshot to validate antisense of layout works as expected
+   */
+  await selectFlexLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{[MOE](G)P.[MOE](T)P.[dR](U)[sP].R([m3C])P.[MOE](A)}|RNA2{R(A)P.R(G)P.R(T)P.[MOE](A,C)[sP].[dR]([cnes4T])}$RNA1,RNA2,14:pair-8:pair|RNA1,RNA2,11:pair-11:pair|RNA1,RNA2,8:pair-14:pair$$$V2.0',
+  );
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});

@@ -777,3 +777,27 @@ test(`Case 24: System doesn't flip chain if connected to monomer but not to base
     hideMacromoleculeEditorScrollBars: true,
   });
 });
+
+test(`Case 25: System doesn't flip chain if connected to monomer but not to base (2)`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 25
+   * Bug: https://github.com/epam/ketcher/issues/6074
+   * Description: System doesn't flip chain if connected to monomer but not to base (2)
+   * Scenario:
+   * 1. Go to Macro - Snake mode
+   * 2. Load from HELM certein sequence
+   * 3. Take screenshot to validate H-bond follows snake pattern
+   */
+  await selectSnakeLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA1,RNA2,2:pair-3:pair$$$V2.0',
+  );
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});

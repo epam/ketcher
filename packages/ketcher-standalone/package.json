@@ -84,14 +84,16 @@
       "require": "./dist/cjs/index.js"
     },
     "./dist/binaryWasm": {
-      "import": "./dist/binaryWasm/index.js"
+      "import": "./dist/binaryWasm/index.js",
+      "require": "./dist/binaryWasm/index.js"
     },
     "./dist/jsNoRender": {
       "import": "./dist/jsNoRender/index.js",
       "require": "./dist/cjs/jsNoRender/index.js"
     },
     "./dist/binaryWasmNoRender": {
-      "import": "./dist/binaryWasmNoRender/index.js"
+      "import": "./dist/binaryWasmNoRender/index.js",
+      "require": "./dist/binaryWasmNoRender/index.js"
     }
   }
 }

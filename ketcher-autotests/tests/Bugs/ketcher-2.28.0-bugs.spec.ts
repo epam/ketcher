@@ -728,3 +728,54 @@ test(`Case 22: Smaller chain should be at the bottom`, async () => {
     hideMacromoleculeEditorScrollBars: true,
   });
 });
+
+test(`Case 23: Antisense layout is wrong for any ambiguouse base from the library`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 23
+   * Bug: https://github.com/epam/ketcher/issues/6087
+   * Description: Antisense layout is wrong for any ambiguouse base from the library
+   * Scenario:
+   * 1. Go to Macro - Snake mode
+   * 2. Load from HELM certein sequence
+   * 3. Take screenshot to validate layout is correct
+   */
+  await selectSnakeLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{[dR](A,C,G,U)P.[dR](C,G,U)P.[dR](A,G,U)P.[dR](A,C,U)P.[dR](G,U)P.[dR](A,U)P.[dR](C,U)}|RNA2{R(A,C,G,T)P.R(C,G,T)P.R(A,G,T)P.R(A,C,T)P.R(G,T)P.R(A,T)P.R(C,T)}|RNA3{R(A,C)P.R(A,G)P.R(C,G)P.R(A,C,G)}|RNA4{R(A,C,G,U)P.R(A,C,G)P.R(A,C,U)P.R(A,G,U)P.R(A,C)P.R(A,U)P.R(A,G)}|RNA5{R(A,C,G,U)P.R(A,C,G)P.R(A,C,U)P.R(A,G,U)P.R(A,C)P.R(A,U)P.R(A,G)}|RNA6{R(G,U)P.R(C,U)P.R(C,G)P.R(C,G,U)}$RNA1,RNA4,2:pair-20:pair|RNA1,RNA4,5:pair-17:pair|RNA1,RNA4,8:pair-14:pair|RNA1,RNA4,11:pair-11:pair|RNA1,RNA4,14:pair-8:pair|RNA1,RNA4,17:pair-5:pair|RNA1,RNA4,20:pair-2:pair|RNA2,RNA5,2:pair-20:pair|RNA2,RNA5,5:pair-17:pair|RNA2,RNA5,8:pair-14:pair|RNA2,RNA5,11:pair-11:pair|RNA2,RNA5,14:pair-8:pair|RNA2,RNA5,17:pair-5:pair|RNA2,RNA5,20:pair-2:pair|RNA3,RNA6,2:pair-11:pair|RNA3,RNA6,5:pair-8:pair|RNA3,RNA6,8:pair-5:pair|RNA3,RNA6,11:pair-2:pair$$$V2.0',
+  );
+
+  await zoomWithMouseWheel(page, 250);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 24: Antisense layout is wrong for any ambiguouse base from the library`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 23
+     * Bug: https://github.com/epam/ketcher/issues/6080
+     * Description: Antisense layout is wrong for any ambiguouse base from the library
+     * Scenario:
+     * 1. Go to Macro - Snake mode
+     * 2. Load from HELM certein sequence
+     * 3. Take screenshot to validate layout is correct
+     */
+    await selectSnakeLayoutModeTool(page);
+  
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[dR](A,C,G,U)P.[dR](C,G,U)P.[dR](A,G,U)P.[dR](A,C,U)P.[dR](G,U)P.[dR](A,U)P.[dR](C,U)}|RNA2{R(A,C,G,T)P.R(C,G,T)P.R(A,G,T)P.R(A,C,T)P.R(G,T)P.R(A,T)P.R(C,T)}|RNA3{R(A,C)P.R(A,G)P.R(C,G)P.R(A,C,G)}|RNA4{R(A,C,G,U)P.R(A,C,G)P.R(A,C,U)P.R(A,G,U)P.R(A,C)P.R(A,U)P.R(A,G)}|RNA5{R(A,C,G,U)P.R(A,C,G)P.R(A,C,U)P.R(A,G,U)P.R(A,C)P.R(A,U)P.R(A,G)}|RNA6{R(G,U)P.R(C,U)P.R(C,G)P.R(C,G,U)}$RNA1,RNA4,2:pair-20:pair|RNA1,RNA4,5:pair-17:pair|RNA1,RNA4,8:pair-14:pair|RNA1,RNA4,11:pair-11:pair|RNA1,RNA4,14:pair-8:pair|RNA1,RNA4,17:pair-5:pair|RNA1,RNA4,20:pair-2:pair|RNA2,RNA5,2:pair-20:pair|RNA2,RNA5,5:pair-17:pair|RNA2,RNA5,8:pair-14:pair|RNA2,RNA5,11:pair-11:pair|RNA2,RNA5,14:pair-8:pair|RNA2,RNA5,17:pair-5:pair|RNA2,RNA5,20:pair-2:pair|RNA3,RNA6,2:pair-11:pair|RNA3,RNA6,5:pair-8:pair|RNA3,RNA6,8:pair-5:pair|RNA3,RNA6,11:pair-2:pair$$$V2.0',
+    );
+  
+    await zoomWithMouseWheel(page, 250);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+  

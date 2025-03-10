@@ -280,6 +280,7 @@ class StructEditor extends Component {
       onBondEdit,
       onZoomIn,
       onZoomOut,
+      onZoomChanged,
       onRgroupEdit,
       onSgroupEdit,
       onRemoveFG,

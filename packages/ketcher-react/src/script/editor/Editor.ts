@@ -33,6 +33,7 @@ import {
   ketcherProvider,
   KetcherLogger,
   fromPaste,
+  Coordinates,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -147,6 +148,7 @@ class Editor implements KetcherEditor {
     elementEdit: PipelineSubscription;
     zoomIn: PipelineSubscription;
     zoomOut: PipelineSubscription;
+    zoomChanged: PipelineSubscription;
     bondEdit: PipelineSubscription;
     rgroupEdit: PipelineSubscription;
     sgroupEdit: PipelineSubscription;
@@ -208,6 +210,7 @@ class Editor implements KetcherEditor {
       bondEdit: new PipelineSubscription(),
       zoomIn: new PipelineSubscription(),
       zoomOut: new PipelineSubscription(),
+      zoomChanged: new PipelineSubscription(),
       rgroupEdit: new PipelineSubscription(),
       sgroupEdit: new PipelineSubscription(),
       sdataEdit: new PipelineSubscription(),
@@ -327,16 +330,27 @@ class Editor implements KetcherEditor {
   }
 
   // this is used by API addFragment method
-  structToAddFragment(value: Struct, x?: number, y?: number): Struct {
+  structToAddFragment(struct: Struct, x?: number, y?: number): Struct {
     if (x != null && y != null) {
       const position = new Vec2(x, y);
-      const [action] = fromPaste(this.render.ctab, value, position, 0);
+      const [action] = fromPaste(
+        this.render.ctab,
+        struct,
+        position,
+        0,
+        false,
+        true,
+      );
       this.update(action, true);
-      return this.render.ctab.molecule;
     } else {
-      const superStruct = value.mergeInto(this.render.ctab.molecule.clone());
-      return this.renderAndRecoordinateStruct(superStruct);
+      const superStruct = struct.mergeInto(this.render.ctab.molecule.clone());
+
+      this.renderAndRecoordinateStruct(superStruct);
     }
+
+    this.centerViewportAccordingToStruct();
+
+    return this.render.ctab.molecule;
   }
 
   setOptions(opts: string) {
@@ -419,17 +433,39 @@ class Editor implements KetcherEditor {
     this.update(action, true);
   }
 
-  positionStruct(x: number, y: number) {
-    const structure = this.render.ctab;
-    const structCenter = getStructCenter(structure);
-    const viewBoxCenter = new Vec2(
-      this.render.viewBox.minX + x,
-      this.render.viewBox.minY + y,
+  public centerViewportAccordingToStruct(struct: Struct = this.struct()) {
+    const isFitMinZoom = this.zoomAccordingContent(struct);
+
+    const structBbox = struct.getCoordBoundingBox();
+    const newScrollCoordinates = Coordinates.modelToCanvas(
+      isFitMinZoom
+        ? new Vec2(
+            structBbox.min.x + (structBbox.max.x - structBbox.min.x) / 2,
+            structBbox.min.y + (structBbox.max.y - structBbox.min.y) / 2,
+          )
+        : new Vec2(structBbox.min.x, structBbox.min.y),
+    ).sub(
+      new Vec2(this.render.viewBox.width / 2, this.render.viewBox.height / 2),
     );
-    const shiftVector = viewBoxCenter.sub(structCenter);
-    const structureToMove = getSelectionMap(structure);
-    const action = fromMultipleMove(structure, structureToMove, shiftVector);
+
+    this.render.setViewBox((viewBox) => {
+      return {
+        ...viewBox,
+        minX: newScrollCoordinates.x,
+        minY: newScrollCoordinates.y,
+      };
+    });
+  }
+
+  positionStruct(x: number, y: number) {
+    const struct = this.struct();
+    const reStruct = this.render.ctab;
+    const structBbox = struct.getCoordBoundingBox();
+    const shiftVector = new Vec2(x, y).sub(structBbox.min);
+    const structureToMove = getSelectionMap(reStruct);
+    const action = fromMultipleMove(reStruct, structureToMove, shiftVector);
     this.update(action, true);
+    this.centerViewportAccordingToStruct();
   }
 
   zoomAccordingContent(struct: Struct) {
@@ -460,7 +496,7 @@ class Editor implements KetcherEditor {
       parsedStructSizeInPixels.height + MARGIN_IN_PIXELS <
         clientAreaBoundingBox.height
     ) {
-      return;
+      return true;
     }
 
     let newZoomValue =
@@ -472,7 +508,7 @@ class Editor implements KetcherEditor {
 
     if (newZoomValue >= MAX_ZOOM_VALUE) {
       this.zoom(MAX_ZOOM_VALUE);
-      return;
+      return true;
     }
 
     newZoomValue -= MARGIN_IN_PIXELS / clientAreaBoundingBox.width;
@@ -482,6 +518,9 @@ class Editor implements KetcherEditor {
         ? MIN_ZOOM_VALUE
         : Number(newZoomValue.toFixed(2)),
     );
+    this.event.zoomChanged.dispatch();
+
+    return newZoomValue > MIN_ZOOM_VALUE;
   }
 
   selection(ci?: any) {

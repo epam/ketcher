@@ -670,3 +670,37 @@ test(`Case 20: Antisense creation works wrong in case of partial selection`, asy
     hideMacromoleculeEditorScrollBars: true,
   });
 });
+
+test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 21
+   * Bug: https://github.com/epam/ketcher/issues/6061
+   * Description: RNA chain remain flipped after hydrogen bond removal
+   * Scenario:
+   * 1. Go to Macro mode -> Flex mode
+   * 2. Load from HELM certein sequence
+   * 3. Remove hydrogen bond
+   * 4. Switch to Snake mode
+   * 4. Take screenshot to validate all chain ordered by snake mode
+   */
+  await selectFlexLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(C)P.R(G)P.R(G)P.R(A)P}|RNA2{R(A)P.R(C)P}|RNA3{R(A)P.R(G)P.R(T)P}$RNA1,RNA2,5:pair-2:pair$$$V2.0',
+  );
+
+  const hydrogenBond = getBondLocator(page, {
+    bondType: MacroBondType.Hydrogen,
+  }).first();
+
+  await selectEraseTool(page);
+  await hydrogenBond.click({ force: true });
+
+  await selectSnakeLayoutModeTool(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});

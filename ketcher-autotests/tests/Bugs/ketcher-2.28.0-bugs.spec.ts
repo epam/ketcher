@@ -679,7 +679,7 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
    * Description: RNA chain remain flipped after hydrogen bond removal
    * Scenario:
    * 1. Go to Macro mode -> Flex mode
-   * 2. Load from HELM certein sequence
+   * 2. Load from HELM certain sequence
    * 3. Remove hydrogen bond
    * 4. Switch to Snake mode
    * 4. Take screenshot to validate all chain ordered by snake mode
@@ -713,7 +713,7 @@ test(`Case 22: Smaller chain should be at the bottom`, async () => {
    * Description: Smaller chain should be at the bottom
    * Scenario:
    * 1. Go to Macro - Snake mode
-   * 2. Load from HELM certein sequence
+   * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate smaller chain is at the bottom
    */
   await selectSnakeLayoutModeTool(page);
@@ -737,7 +737,7 @@ test(`Case 23: Antisense layout is wrong for any ambiguouse base from the librar
    * Description: Antisense layout is wrong for any ambiguouse base from the library
    * Scenario:
    * 1. Go to Macro - Snake mode
-   * 2. Load from HELM certein sequence
+   * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate layout is correct
    */
   await selectSnakeLayoutModeTool(page);
@@ -786,7 +786,7 @@ test(`Case 25: System doesn't flip chain if connected to monomer but not to base
    * Description: System doesn't flip chain if connected to monomer but not to base (2)
    * Scenario:
    * 1. Go to Macro - Snake mode
-   * 2. Load from HELM certein sequence
+   * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate bottom chain is flipped
    */
   await selectSnakeLayoutModeTool(page);
@@ -810,7 +810,7 @@ test(`Case 26: System doesn't flip chain if connected to monomer but not to base
    * Description: System doesn't flip chain if connected to monomer but not to base
    * Scenario:
    * 1. Go to Macro - Snake mode
-   * 2. Load from HELM certein sequence
+   * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate bottom chain is flipped
    */
   await selectSnakeLayoutModeTool(page);
@@ -834,7 +834,7 @@ test(`Case 27: Same chain configuration imported by different HELM layouted diff
    * Description: Same chain configuration imported by different HELM layouted differently (anyway - both are wrong)
    * Scenario:
    * 1. Go to Macro - Snake mode
-   * 2. Load from HELM certein sequence
+   * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate layout is correct
    */
   await selectSnakeLayoutModeTool(page);
@@ -858,7 +858,7 @@ test(`Case 28: Two chains connected by H-bond arranged wrong if third bond prese
    * Description: Two chains connected by H-bond arranged wrong if third bond present on the canvas
    * Scenario:
    * 1. Go to Macro - Snake mode
-   * 2. Load from HELM certein sequence
+   * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate all chains arranged correctly
    */
   await selectSnakeLayoutModeTool(page);
@@ -882,7 +882,7 @@ test(`Case 29: Layout works wrong if bases of the same chain connected by H-bond
    * Description: Layout works wrong if bases of the same chain connected by H-bonds
    * Scenario:
    * 1. Go to Macro - Snake mode
-   * 2. Load from HELM certein sequence
+   * 2. Load from HELM certain sequence
    * 3. Take screenshot to validate layout goes correct
    */
   await selectSnakeLayoutModeTool(page);
@@ -919,6 +919,39 @@ test(`Case 30: Undo operation creates unremovable bonds on the canvas (clear can
   );
 
   await pressUndoButton(page);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 31: Unable to create antisense chains for ambiguous monomers from the library`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 31
+   * Bug: https://github.com/epam/ketcher/issues/6086
+   * Description: Unable to create antisense chains for ambiguous monomers from the library
+   * Scenario:
+   * 1. Go to Macro - Flex mode
+   * 2. Load from HELM certain sequence
+   * 3. Select all monomers and click Create Antisense Strand from context menu
+   * 3. Take screenshot to validate canvas is empty
+   */
+  await selectSnakeLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{[dR](A,C,G,U)P.[dR](C,G,U)P.[dR](A,G,U)P.[dR](A,C,U)P.[dR](G,U)P.[dR](A,U)P.[dR](C,U)P}|RNA2{R(A,C,G,T)P.R(C,G,T)P.R(A,G,T)P.R(A,C,T)P.R(G,T)P.R(A,T)P.R(C,T)P}|RNA3{R(A,C)P.R(A,G)P.R(C,G)P.R(A,C,G)P}$$$$V2.0',
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const sugarR = getMonomerLocator(page, {
+    monomerAlias: 'R',
+    monomerType: MonomerType.Sugar,
+  }).first();
+  await createAntisenseChain(page, sugarR);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

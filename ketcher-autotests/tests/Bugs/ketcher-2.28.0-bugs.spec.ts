@@ -852,9 +852,9 @@ test(`Case 27: Same chain configuration imported by different HELM layouted diff
 
 test(`Case 28: Two chains connected by H-bond arranged wrong if third bond present on the canvas`, async () => {
   /*
-   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 27
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 28
    * Bug: https://github.com/epam/ketcher/issues/6068
-   * Description: Same chain configuration imported by different HELM layouted differently (anyway - both are wrong)
+   * Description: Two chains connected by H-bond arranged wrong if third bond present on the canvas
    * Scenario:
    * 1. Go to Macro - Snake mode
    * 2. Load from HELM certein sequence
@@ -866,6 +866,30 @@ test(`Case 28: Two chains connected by H-bond arranged wrong if third bond prese
     page,
     MacroFileType.HELM,
     'RNA1{R(A)P.R(A)P}|RNA2{R(C)P.R(C)P.R(C)P}|RNA3{R(U)P.R(U)P}$RNA1,RNA2,5:pair-2:pair$$$V2.0',
+  );
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 29: Layout works wrong if bases of the same chain connected by H-bonds`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 29
+   * Bug: https://github.com/epam/ketcher/issues/6105
+   * Description: Layout works wrong if bases of the same chain connected by H-bonds
+   * Scenario:
+   * 1. Go to Macro - Snake mode
+   * 2. Load from HELM certein sequence
+   * 3. Take screenshot to validate layout goes correct
+   */
+  await selectSnakeLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(C)P.R(G)P.R(G)P.R(T)P.R(C)P.R(C)P}$RNA1,RNA1,2:pair-14:pair$$$V2.0',
   );
 
   await takeEditorScreenshot(page, {

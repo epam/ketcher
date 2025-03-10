@@ -1,9 +1,7 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
-  receiveFileComparisonData,
   openFileAndAddToCanvas,
-  saveToFile,
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
@@ -22,7 +20,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getSdf } from '@utils/formats';
 
 test.describe('CDF files', () => {
   test.beforeEach(async ({ page }) => {
@@ -33,22 +30,22 @@ test.describe('CDF files', () => {
 
     await openFileAndAddToCanvas('SDF/sdf-v2000-to-open.sdf', page);
     await verifyFileExport(
-              page,
-              'SDF/sdf-v2000-to-open-expected.sdf',
-              FileType.SDF,
-              'v2000',
-            );
+      page,
+      'SDF/sdf-v2000-to-open-expected.sdf',
+      FileType.SDF,
+      'v2000',
+    );
     await takeEditorScreenshot(page);
   });
 
   test('Open SDF v3000 file and save it', async ({ page }) => {
     await openFileAndAddToCanvas('SDF/sdf-v3000-to-open.sdf', page);
     await verifyFileExport(
-              page,
-              'SDF/sdf-v3000-to-open-expected.sdf',
-              FileType.SDF,
-              'v3000',
-            );
+      page,
+      'SDF/sdf-v3000-to-open-expected.sdf',
+      FileType.SDF,
+      'v3000',
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -79,11 +76,11 @@ test.describe('CDF files', () => {
       page,
     );
     await verifyFileExport(
-              page,
-              'SDF/unsplit-nucleotides-connected-with-nucleotides-v3000.sdf',
-              FileType.SDF,
-              'v3000',
-            );
+      page,
+      'SDF/unsplit-nucleotides-connected-with-nucleotides-v3000.sdf',
+      FileType.SDF,
+      'v3000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-nucleotides-v3000.sdf',
       page,
@@ -104,11 +101,11 @@ test.describe('CDF files', () => {
       page,
     );
     await verifyFileExport(
-              page,
-              'SDF/unsplit-nucleotides-connected-with-chems-v3000.sdf',
-              FileType.SDF,
-              'v3000',
-            );
+      page,
+      'SDF/unsplit-nucleotides-connected-with-chems-v3000.sdf',
+      FileType.SDF,
+      'v3000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-chems-v3000.sdf',
       page,
@@ -129,11 +126,11 @@ test.describe('CDF files', () => {
       page,
     );
     await verifyFileExport(
-              page,
-              'SDF/unsplit-nucleotides-connected-with-sugars-v3000.sdf',
-              FileType.SDF,
-              'v3000',
-            );
+      page,
+      'SDF/unsplit-nucleotides-connected-with-sugars-v3000.sdf',
+      FileType.SDF,
+      'v3000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-sugars-v3000.sdf',
       page,
@@ -154,11 +151,11 @@ test.describe('CDF files', () => {
       page,
     );
     await verifyFileExport(
-              page,
-              'SDF/unsplit-nucleotides-connected-with-bases-v3000.sdf',
-              FileType.SDF,
-              'v3000',
-            );
+      page,
+      'SDF/unsplit-nucleotides-connected-with-bases-v3000.sdf',
+      FileType.SDF,
+      'v3000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-bases-v3000.sdf',
       page,
@@ -179,11 +176,11 @@ test.describe('CDF files', () => {
       page,
     );
     await verifyFileExport(
-              page,
-              'SDF/unsplit-nucleotides-connected-with-phosphates-v3000.sdf',
-              FileType.SDF,
-              'v3000',
-            );
+      page,
+      'SDF/unsplit-nucleotides-connected-with-phosphates-v3000.sdf',
+      FileType.SDF,
+      'v3000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-phosphates-v3000.sdf',
       page,
@@ -204,11 +201,11 @@ test.describe('CDF files', () => {
       page,
     );
     await verifyFileExport(
-              page,
-              'SDF/unsplit-nucleotides-connected-with-peptides-v3000.sdf',
-              FileType.SDF,
-              'v3000',
-            );
+      page,
+      'SDF/unsplit-nucleotides-connected-with-peptides-v3000.sdf',
+      FileType.SDF,
+      'v3000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-peptides-v3000.sdf',
       page,
@@ -231,11 +228,11 @@ test.describe('CDF files', () => {
       page,
     );
     await verifyFileExport(
-              page,
-              'SDF/unsplit-nucleotides-connected-with-nucleotides-v2000.sdf',
-              FileType.SDF,
-              'v2000',
-            );
+      page,
+      'SDF/unsplit-nucleotides-connected-with-nucleotides-v2000.sdf',
+      FileType.SDF,
+      'v2000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-nucleotides-v2000.sdf',
       page,
@@ -258,11 +255,11 @@ test.describe('CDF files', () => {
       page,
     );
     await verifyFileExport(
-              page,
-              'SDF/unsplit-nucleotides-connected-with-chems-v2000.sdf',
-              FileType.SDF,
-              'v2000',
-            );
+      page,
+      'SDF/unsplit-nucleotides-connected-with-chems-v2000.sdf',
+      FileType.SDF,
+      'v2000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-chems-v2000.sdf',
       page,
@@ -285,11 +282,11 @@ test.describe('CDF files', () => {
       page,
     );
     await verifyFileExport(
-              page,
-              'SDF/unsplit-nucleotides-connected-with-sugars-v2000.sdf',
-              FileType.SDF,
-              'v2000',
-            );
+      page,
+      'SDF/unsplit-nucleotides-connected-with-sugars-v2000.sdf',
+      FileType.SDF,
+      'v2000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-sugars-v2000.sdf',
       page,
@@ -312,11 +309,11 @@ test.describe('CDF files', () => {
       page,
     );
     await verifyFileExport(
-              page,
-              'SDF/unsplit-nucleotides-connected-with-bases-v2000.sdf',
-              FileType.SDF,
-              'v2000',
-            );
+      page,
+      'SDF/unsplit-nucleotides-connected-with-bases-v2000.sdf',
+      FileType.SDF,
+      'v2000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-bases-v2000.sdf',
       page,
@@ -339,11 +336,11 @@ test.describe('CDF files', () => {
       page,
     );
     await verifyFileExport(
-              page,
-              'SDF/unsplit-nucleotides-connected-with-phosphates-v2000.sdf',
-              FileType.SDF,
-              'v2000',
-            );
+      page,
+      'SDF/unsplit-nucleotides-connected-with-phosphates-v2000.sdf',
+      FileType.SDF,
+      'v2000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-phosphates-v2000.sdf',
       page,
@@ -366,11 +363,11 @@ test.describe('CDF files', () => {
       page,
     );
     await verifyFileExport(
-              page,
-              'SDF/unsplit-nucleotides-connected-with-peptides-v2000.sdf',
-              FileType.SDF,
-              'v2000',
-            );
+      page,
+      'SDF/unsplit-nucleotides-connected-with-peptides-v2000.sdf',
+      FileType.SDF,
+      'v2000',
+    );
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-peptides-v2000.sdf',
       page,
@@ -496,11 +493,11 @@ test('The Bond length setting with px option is applied and it should be save to
   await takeEditorScreenshot(page);
 
   await verifyFileExport(
-            page,
-            'SDF/adenosine-triphosphate-px-bond-lengh-v2000.sdf',
-            FileType.SDF,
-            'v2000',
-          );
+    page,
+    'SDF/adenosine-triphosphate-px-bond-lengh-v2000.sdf',
+    FileType.SDF,
+    'v2000',
+  );
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-px-bond-lengh-v2000.sdf',
     page,
@@ -701,11 +698,11 @@ test('The Bond length setting with pt option is applied and it should be save to
   await takeEditorScreenshot(page);
 
   await verifyFileExport(
-            page,
-            'SDF/adenosine-triphosphate-pt-bond-lengh-v2000.sdf',
-            FileType.SDF,
-            'v2000',
-          );
+    page,
+    'SDF/adenosine-triphosphate-pt-bond-lengh-v2000.sdf',
+    FileType.SDF,
+    'v2000',
+  );
 
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-pt-bond-lengh-v2000.sdf',
@@ -733,11 +730,11 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 3
   await takeEditorScreenshot(page);
 
   await verifyFileExport(
-            page,
-            'SDF/adenosine-triphosphate-acs-style-v3000.sdf',
-            FileType.SDF,
-            'v3000',
-          );
+    page,
+    'SDF/adenosine-triphosphate-acs-style-v3000.sdf',
+    FileType.SDF,
+    'v3000',
+  );
 
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-acs-style-v3000.sdf',
@@ -764,11 +761,11 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 2
   await takeEditorScreenshot(page);
 
   await verifyFileExport(
-            page,
-            'SDF/adenosine-triphosphate-acs-style-v2000.sdf',
-            FileType.SDF,
-            'v2000',
-          );
+    page,
+    'SDF/adenosine-triphosphate-acs-style-v2000.sdf',
+    FileType.SDF,
+    'v2000',
+  );
 
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-acs-style-v2000.sdf',

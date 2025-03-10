@@ -56,7 +56,6 @@ export class TransientDrawingView {
       params: bond,
       topLayer: true,
       onShow: () => {
-        console.log('onShow', bond.id);
         bond.renderer?.setVisibility(false);
         if (bond.firstMonomer.renderer) {
           (
@@ -70,7 +69,6 @@ export class TransientDrawingView {
         }
       },
       onHide: () => {
-        console.log('onHide', bond.id);
         bond.renderer?.setVisibility(true);
         if (bond.firstMonomer.renderer) {
           (

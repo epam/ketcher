@@ -704,3 +704,27 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
     hideMacromoleculeEditorScrollBars: true,
   });
 });
+
+test(`Case 22: Smaller chain should be at the bottom`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 22
+   * Bug: https://github.com/epam/ketcher/issues/6081
+   * Description: Smaller chain should be at the bottom
+   * Scenario:
+   * 1. Go to Macro - Snake mode
+   * 2. Load from HELM certein sequence
+   * 3. Take screenshot to validate smaller chain is at the bottom
+   */
+  await selectSnakeLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{P}|RNA2{R(C)}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
+  );
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});

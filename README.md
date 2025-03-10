@@ -118,11 +118,18 @@ Parameters: `withAuxInfo: boolean`. Optional, by default, `false`.
 
 `isQueryStructureSelected(): boolean` – returns `true`, in case selected structure has query.
 
-`setMolecule(structure: string, options?: Object): Promise<void>` – draws passed structure on the canvas. Before drawing passed structure, current structure is removed.
-Parameters: `structure: string`. Structure is a string in any supported format. `options?: { position?: { x: number, y: number } }`. – (Optional) "position" specifies the X and Y coordinates on the canvas where the structure should be placed.
+`setMolecule(structure: string, options?: Object): Promise<void>` – draws passed structure on the canvas. Before drawing passed structure, current structure will be removed. The editor viewport will automatically adjust to fit all structures after insertion.
 
-`addFragment(structure: string, options?: Object): Promise<void>` – adds passed structure on the canvas. Current structure is not changed.
-Parameters: `structure: string`. Structure is a string in any supported format. `options?: { position?: { x: number, y: number } }`. – (Optional) "position" specifies the X and Y coordinates on the canvas where the structure should be placed.
+Parameters:
+
+- `structure: string`. Structure is a string in any supported format.
+- `options?: { position?: { x: number, y: number } }`. – (Optional) "position" - coordinates of top left corner of inserted structure in angstroms. Y coordinate value increases from bottom to top.
+
+`addFragment(structure: string, options?: Object): Promise<void>` – adds the given structure to the canvas without altering the current structure. The editor viewport will automatically adjust to fit all structures after insertion.
+
+Parameters: 
+- `structure: string`. Structure is a string in any supported format. 
+- `options?: { position?: { x: number, y: number } }`. – (Optional) "position" - coordinates of top left corner of inserted structure in angstroms. Y coordinate value increases from bottom to top.
 
 `layout(): Promise<void>` – performs layout algorithm for drawn structure.
 

@@ -126,19 +126,17 @@ export function getMonomerLocator(
     attributes['data-number-of-attachment-points'] = numberOfAttachmentPoints;
   }
 
+  if (rValues) {
+    rValues.forEach((value, index) => {
+      attributes[`data-R${index + 1}`] = `${value}`;
+    });
+  }
+
   const attributeSelectors = Object.entries(attributes)
     .map(([key, value]) => `[${key}="${value}"]`)
     .join('');
 
-  let locator = page.locator(attributeSelectors);
-
-  if (rValues) {
-    rValues.forEach((value, index) => {
-      locator = locator.filter({
-        has: page.locator(`[data-R${index + 1}="${value}"]`),
-      });
-    });
-  }
+  const locator = page.locator(attributeSelectors);
 
   return locator;
 }

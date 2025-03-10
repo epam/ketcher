@@ -566,7 +566,7 @@ export async function clickOnMicroBondByIndex(page: Page, bondIndex: number) {
   }
 }
 
-export async function getBondLocator(
+export function getBondLocator(
   page: Page,
   {
     bondType,
@@ -587,7 +587,7 @@ export async function getBondLocator(
     fromConnectionPoint?: string;
     toConnectionPoint?: string;
   },
-): Promise<Locator> {
+): Locator {
   const attributes: { [key: string]: string } = {};
 
   attributes['data-testid'] = 'bond';

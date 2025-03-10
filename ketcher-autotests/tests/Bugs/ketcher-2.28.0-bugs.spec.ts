@@ -11,6 +11,7 @@ import {
   copyToClipboardByKeyboard,
   FunctionalGroups,
   getBondLengthValue,
+  MacroBondType,
   MacroFileType,
   MonomerType,
   openFileAndAddToCanvas,
@@ -25,6 +26,7 @@ import {
   selectAtomInToolbar,
   selectCanvasArea,
   selectClearCanvasTool,
+  selectEraseTool,
   selectFlexLayoutModeTool,
   selectFunctionalGroups,
   selectRingButton,
@@ -50,6 +52,7 @@ import {
   createAntisenseChain,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 declare global {
   interface Window {
@@ -561,4 +564,48 @@ test(`Case 18: System creates antisense chain only for top chain if many of chai
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
+});
+
+test(`Case 19: System keeps antisense base layout and enumeration even after chain stops being antisense (and vice versa)`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 19
+   * Bug: https://github.com/epam/ketcher/issues/6102
+   * Description: System keeps antisense base layout and enumeration even after chain stops being antisense (and vice versa)
+   * Scenario:
+   * 1. Go to Macro mode -> Snake mode
+   * 2. Load from HELM two chain (sense and antisense)
+   * 3. Remove hydrogen bond
+   * 4. Validate system removes antisense base layout and change enumeration back to sense chain
+   */
+  await selectSnakeLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{[nC62r](T)P.[nC62r](G)P.[nC62r](C)P}|RNA2{R(A)P.R(C)P.[fR](G)P}$RNA1,RNA2,2:pair-8:pair$$$V2.0',
+  );
+
+  const hydrogenBond = getBondLocator(page, {
+    bondType: MacroBondType.Hydrogen,
+  }).first();
+
+  await selectEraseTool(page);
+  await hydrogenBond.click({ force: true });
+
+  const leftEndSugarfR = getMonomerLocator(page, {
+    monomerAlias: 'fR',
+    monomerType: MonomerType.Sugar,
+    rValues: [true, true, true],
+  });
+  const rightEndSugarR = getMonomerLocator(page, {
+    monomerAlias: 'R',
+    monomerType: MonomerType.Sugar,
+    rValues: [false, true, true],
+  });
+
+  const terminalIndicator3 = leftEndSugarfR.getByText('3');
+  const terminalIndicator5 = rightEndSugarR.getByText('5');
+
+  await expect(terminalIndicator3).toHaveCount(0);
+  await expect(terminalIndicator5).toHaveCount(1);
 });

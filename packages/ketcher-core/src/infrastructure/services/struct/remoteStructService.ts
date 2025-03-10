@@ -137,6 +137,7 @@ export function pickStandardServerOptions(options?: StructServiceOptions) {
 
   return {
     'dearomatize-on-load': options?.['dearomatize-on-load'],
+    'aromaticity-model': 'generic',
     'smart-layout': options?.['smart-layout'],
     'ignore-stereochemistry-errors': options?.['ignore-stereochemistry-errors'],
     'mass-skip-error-on-pseudoatoms':

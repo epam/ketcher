@@ -786,7 +786,7 @@ test(`Case 25: System doesn't flip chain if connected to monomer but not to base
    * Scenario:
    * 1. Go to Macro - Snake mode
    * 2. Load from HELM certein sequence
-   * 3. Take screenshot to validate H-bond follows snake pattern
+   * 3. Take screenshot to validate bottom chain is flipped
    */
   await selectSnakeLayoutModeTool(page);
 
@@ -794,6 +794,30 @@ test(`Case 25: System doesn't flip chain if connected to monomer but not to base
     page,
     MacroFileType.HELM,
     'RNA1{R(C)P}|RNA2{R(U)P.R(U)P}$RNA1,RNA2,2:pair-3:pair$$$V2.0',
+  );
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 26: System doesn't flip chain if connected to monomer but not to base`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 26
+   * Bug: https://github.com/epam/ketcher/issues/6070
+   * Description: System doesn't flip chain if connected to monomer but not to base
+   * Scenario:
+   * 1. Go to Macro - Snake mode
+   * 2. Load from HELM certein sequence
+   * 3. Take screenshot to validate bottom chain is flipped
+   */
+  await selectSnakeLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(A)P.R(A)P}|RNA2{R(C)P.R(C)P}|PEPTIDE1{A}$RNA2,PEPTIDE1,6:R2-1:R1|PEPTIDE1,RNA1,1:pair-8:pair$$$V2.0',
   );
 
   await takeEditorScreenshot(page, {

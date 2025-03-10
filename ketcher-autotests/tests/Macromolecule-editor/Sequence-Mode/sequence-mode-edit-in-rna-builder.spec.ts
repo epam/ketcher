@@ -331,7 +331,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check If among selected elements on canvas there is a single phosphate (selected without an adjacent nucleoside to left)', async ({

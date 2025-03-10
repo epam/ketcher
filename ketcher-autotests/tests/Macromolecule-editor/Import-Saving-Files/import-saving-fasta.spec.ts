@@ -119,8 +119,7 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('FASTA/fasta-snake-mode-rna.fasta', page);
     await selectSnakeLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check that you can save snake viewed chain of peptides in a .fasta file', async ({
@@ -422,8 +421,7 @@ test.describe('Import-Saving .fasta Files', () => {
     );
 
     await zoomWithMouseWheel(page, -600);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'FASTA');
@@ -489,7 +487,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
     await zoomWithMouseWheel(page, -200);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'FASTA');
@@ -562,7 +560,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'FASTA');
@@ -627,7 +625,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'FASTA');
@@ -691,8 +689,7 @@ test.describe('Import-Saving .fasta Files', () => {
     );
 
     await zoomWithMouseWheel(page, -200);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'FASTA');

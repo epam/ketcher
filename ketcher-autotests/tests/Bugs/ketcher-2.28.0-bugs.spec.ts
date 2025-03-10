@@ -53,6 +53,7 @@ import {
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 declare global {
   interface Window {
@@ -891,6 +892,33 @@ test(`Case 29: Layout works wrong if bases of the same chain connected by H-bond
     MacroFileType.HELM,
     'RNA1{R(A)P.R(C)P.R(G)P.R(G)P.R(T)P.R(C)P.R(C)P}$RNA1,RNA1,2:pair-14:pair$$$V2.0',
   );
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 30: Undo operation creates unremovable bonds on the canvas (clear canvas doesn't help)`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 30
+   * Bug: https://github.com/epam/ketcher/issues/6129
+   * Description: Undo operation creates unremovable bonds on the canvas (clear canvas doesn't help)
+   * Scenario:
+   * 1. Go to Macro - Snake mode
+   * 2. Load from HELM certein sequence
+   * 3. Press Undo button
+   * 3. Take screenshot to validate canvas is empty
+   */
+  await selectSnakeLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{P}|RNA2{R(C)}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
+  );
+
+  await pressUndoButton(page);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

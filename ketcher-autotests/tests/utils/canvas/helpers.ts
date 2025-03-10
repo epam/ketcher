@@ -563,3 +563,12 @@ export async function waitForElementInCanvas(
   const targetElement = canvas.locator(`div:has-text("${text}")`);
   await expect(targetElement).toBeVisible();
 }
+export async function selectCanvasArea(
+  page: Page,
+  firstCorner: { x: number; y: number },
+  secondCorner: { x: number; y: number },
+) {
+  await selectRectangleSelectionTool(page);
+  await page.mouse.move(firstCorner.x, firstCorner.y);
+  await dragMouseTo(secondCorner.x, secondCorner.y, page);
+}

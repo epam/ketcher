@@ -23,6 +23,7 @@ import {
   RingButton,
   selectAllStructuresOnCanvas,
   selectAtomInToolbar,
+  selectCanvasArea,
   selectClearCanvasTool,
   selectFlexLayoutModeTool,
   selectFunctionalGroups,
@@ -45,7 +46,10 @@ import {
   turnOnMicromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  createAntisenseChain,
+  getMonomerLocator,
+} from '@utils/macromolecules/monomer';
 
 declare global {
   interface Window {
@@ -455,12 +459,7 @@ test(`Case 16: Lets get back to U (instead of T) for the complementary base of A
   }).first();
 
   await selectAllStructuresOnCanvas(page);
-  await baseA.click({ button: 'right', force: true });
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_chain')
-    .first();
-
-  await createAntisenseStrandOption.click();
+  await createAntisenseChain(page, baseA);
 
   const baseU = getMonomerLocator(page, {
     monomerAlias: 'U',
@@ -523,6 +522,40 @@ test(`Case 17: Create Antisense Strand doesn't work in some cases`, async () => 
     .first();
 
   await createAntisenseStrandOption.click();
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 18: System creates antisense chain only for top chain if many of chains selected`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 18
+   * Bug: https://github.com/epam/ketcher/issues/6097
+   * Description: System creates antisense chain only for top chain if many of chains selected
+   * Scenario:
+   * 1. Go to Macro mode -> Snake mode
+   * 2. Load from HELM two RNA chains
+   * 3. Select half of monomers of both chains and click Create Antisense Strand from context menu
+   * 4. Take screenshot to validate Create Antisense Strand works as expected
+   */
+  await selectSnakeLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(A)P.R(A)P.R(A)P.R(T)}|RNA2{R(C)P.R(C)P.R(C)P.R(C)P.R(C)}$$$$V2.0',
+  );
+
+  await selectCanvasArea(page, { x: 420, y: 75 }, { x: 600, y: 400 });
+
+  const baseT = getMonomerLocator(page, {
+    monomerAlias: 'T',
+    monomerType: MonomerType.Base,
+  }).first();
+
+  await createAntisenseChain(page, baseT);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

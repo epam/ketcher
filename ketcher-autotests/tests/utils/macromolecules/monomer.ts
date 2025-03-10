@@ -165,3 +165,13 @@ export function getAtomLocator(page: Page, options: GetAtomLocatorOptions) {
 
   return locator;
 }
+
+export async function createAntisenseChain(page: Page, monomer: Locator) {
+  await monomer.click({ button: 'right', force: true });
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_chain')
+    .first();
+
+  await createAntisenseStrandOption.click();
+}

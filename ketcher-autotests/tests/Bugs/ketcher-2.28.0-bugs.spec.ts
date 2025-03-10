@@ -849,3 +849,27 @@ test(`Case 27: Same chain configuration imported by different HELM layouted diff
     hideMacromoleculeEditorScrollBars: true,
   });
 });
+
+test(`Case 28: Two chains connected by H-bond arranged wrong if third bond present on the canvas`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 27
+   * Bug: https://github.com/epam/ketcher/issues/6068
+   * Description: Same chain configuration imported by different HELM layouted differently (anyway - both are wrong)
+   * Scenario:
+   * 1. Go to Macro - Snake mode
+   * 2. Load from HELM certein sequence
+   * 3. Take screenshot to validate all chains arranged correctly
+   */
+  await selectSnakeLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(A)P}|RNA2{R(C)P.R(C)P.R(C)P}|RNA3{R(U)P.R(U)P}$RNA1,RNA2,5:pair-2:pair$$$V2.0',
+  );
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});

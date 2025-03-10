@@ -6,6 +6,8 @@ type: Bug
 assignees: ''
 
 ---
+**Summary**
+Short summary of problem here
 
 **Steps to Reproduce**
 1. Go to '...'

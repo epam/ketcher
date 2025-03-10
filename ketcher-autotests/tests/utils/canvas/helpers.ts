@@ -529,6 +529,13 @@ export async function selectCleanTool(page: Page) {
   );
 }
 
+export async function selectCalculateTool(page: Page) {
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
+  );
+}
+
 export async function selectLayoutTool(page: Page) {
   await waitForSpinnerFinishedWork(
     page,

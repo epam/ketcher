@@ -23,12 +23,37 @@ import {
   dragMouseTo,
   selectMonomer,
   pressButton,
+  drawBenzeneRing,
+  moveOnAtom,
+  selectRectangleSelection,
+  clickOnAtom,
+  openFileAndAddToCanvasAsNewProject,
+  selectEraseTool,
+  selectPartOfMolecules,
+  selectAromatizeTool,
+  selectDearomatizeTool,
+  selectLayoutTool,
+  selectCleanTool,
+  selectCalculateTool,
+  selectAddRemoveExplicitHydrogens,
+  clickOnCanvas,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { waitForPageInit } from '@utils/common';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { pageReload } from '@utils/common/helpers';
+import {
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
+import {
+  clickOnSequenceSymbol,
+  hoverOnSequenceSymbol,
+  switchToDNAMode,
+  switchToPeptideMode,
+} from '@utils/macromolecules/sequence';
+import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 
 let page: Page;
 
@@ -76,8 +101,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await turnOnMacromoleculesEditor(page, false, false);
   });
 
-  test.afterEach(async () => {
+  test.afterEach(async ({ context: _ }, testInfo) => {
     await selectClearCanvasTool(page);
+    await processResetToDefaultState(testInfo, page);
   });
 
   test.afterAll(async ({ browser }) => {
@@ -89,7 +115,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/4526
      * Description: In the Text-editing mode, the canvas is moved to make the newly added sequence visible.
-     * Case:
+     * Scenario:
      * 1. Switch to the Macro mode - the Text-editing mode
      * 2. Add sequences to the canvas until they vertically fill the viewport (without using the scroll bar)
      * 3. Press the “Enter” key, and enter one more sequence by typing it manually
@@ -117,7 +143,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/5115
      * Description: Switching from Sequence mode to Flex mode and back not shifts visible area of canvas beyond visible frame.
-     * Case:
+     * Scenario:
      * 1. Go to Macromolecules - Snake mode
      * 2. Load from file
      * 3. Switch view to Sequence mode
@@ -140,7 +166,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6021
      * Description: Connection between molecule and monomer affect an amount of implicit hydrogens.
-     * Case:
+     * Scenario:
      * 1. Open prepared file in Macro mode -> Flex mode
      * 2. Connect monomer to molecule's atom with implicit hydrogen in label
      */
@@ -161,13 +187,13 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * Bug: https://github.com/epam/ketcher/issues/5341
      * Description: Replacing all monomers (or part of them) in edit mode system not cuts sequence on two
      * Scenario:
-     * 1. Go to Macromolecules mode - Flex mode
+     * 1. Go to Macromolecules mode - Sequence mode
      * 2. Load from file
      * 3. Select three @ symbols in edit mode (having blinking cursor somewhere in the middle of sequence - this is important!
      * 4. Click any monomer from the library (C peptide in my case) - click Yes in appeared Confirm Your Action dialog
      */
     await selectSequenceLayoutModeTool(page);
-    await await openFileAndAddToCanvasAsNewProjectMacro(
+    await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Bugs/Replacing all monomers (or part of them) in edit mode - works wrong - system cuts sequence on two.ket',
       page,
     );
@@ -311,7 +337,6 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Drag any atom and try to move it
      * 5. Take a screenshot to validate movement of microstructures on Sequence mode works as expected
      */
-    await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       "KET/Bugs/Movement of microstructures on Sequence mode doesn't work.ket",
       page,
@@ -327,5 +352,338 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+  });
+
+  test(`Case 10: System not opens "intellisence"-like dropdown control`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6112
+     * Description: System not opens "intellisence"-like dropdown control
+     * Scenario:
+     * 1. Draw structure on ketcher canvas
+     * 2. Change C1 of a molecule to O using the keyboard and then try to change C2 to N very
+     * quickly afterward
+     */
+    await turnOnMicromoleculesEditor(page);
+    await drawBenzeneRing(page);
+    await selectRectangleSelection(page);
+    await clickOnAtom(page, 'C', 0);
+    await page.keyboard.press('O');
+    await moveOnAtom(page, 'C', 1);
+    await page.keyboard.press('N');
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 11: Undo operation work for monomer at micro mode if it was deleted`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6112
+     * Description: Undo operation work for monomer at micro mode if it was deleted
+     * Scenario:
+     * 1. Load from file any ambiguous monomer
+     * 2. Delete it
+     * 3. Press Undo
+     * 4. Take a screenshot
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
+      page,
+    );
+    await selectAllStructuresOnCanvas(page);
+    await selectEraseTool(page);
+    await takeEditorScreenshot(page);
+    await pressUndoButton(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 12: Canvas remain in edit mode if we insert monomer from the library`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/5231
+     * Description: Canvas remain in edit mode if we insert monomer from the library
+     * Scenario:
+     * 1. Go to Macromolecules mode - Sequence mode
+     * 2. Go to the Library - Peptide tab
+     * 3. Click on A peptide
+     */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await selectMonomer(page, Peptides.A);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test(`Case 13: After Undo/Redo actions Enter not repeats these actions`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/4338
+     * Description: After Undo/Redo actions Enter not repeats these actions and switch to new line
+     * Scenario:
+     * 1. Go to Macromolecules mode - Sequence mode
+     * 2. Sequence mode >> RNA >>add AAATTT >> DNA >> add AAATTT >> Peptides >>add AAATTT
+     * 3. Undo several times >> Enter several times.
+     * 4. Take a screenshot
+     */
+    await page.keyboard.type('AAATT');
+    await switchToDNAMode(page);
+    await page.keyboard.type('AAATT');
+    await switchToPeptideMode(page);
+    await page.keyboard.type('AAATT');
+    for (let i = 0; i < 3; i++) {
+      await pressUndoButton(page);
+    }
+    await page.keyboard.press('Enter');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test(`Case 14: After pressing the Clear Canvas button in sequence-editing view, the Enter button start a new sequence not erases it`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/5139
+     * Description: After pressing the Clear Canvas button in sequence-editing view, the Enter button start a new sequence not erases it
+     * Scenario:
+     * 1. Go to Macromolecules mode - Sequence mode
+     * 2. Add any sequences to canvas ( start each new sequence with the enter button )
+     * 3. Press 'Clear canvas' button
+     * 4. Repeat p.2
+     * 5. Take a screenshot
+     */
+    await page.keyboard.type('AAATT');
+    await page.keyboard.press('Enter');
+    await page.keyboard.type('AAATT');
+    await page.keyboard.press('Enter');
+    await page.keyboard.type('AAATT');
+    await page.keyboard.press('Enter');
+    await selectClearCanvasTool(page);
+    await page.keyboard.type('AAATT');
+    await page.keyboard.press('Enter');
+    await page.keyboard.type('AAATT');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test(`Case 15: Selection of monomers disappear when the user moves the cursor`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/5032
+     * Description: Selection of monomers disappear when the user moves the cursor
+     * Scenario:
+     * 1. Go to Macromolecules mode - Sequence mode
+     * 2. Enter any sequence with at least 2 symbols.
+     * 3. Select a few monomers.
+     * 4. Press left on the keyboard.
+     * 5. Take a screenshot
+     */
+    await page.keyboard.type('AAATT');
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 3; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.keyboard.up('Shift');
+    await page.keyboard.press('ArrowLeft');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test(`Case 16: Undo/Redo operation for bonds and molecules (multi-select) works`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/5966
+     * Description: Undo/Redo operation for bonds and molecules (multi-select) works
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Load from file
+     * 3. Select bonds and atoms in the center of chain (using area selection tool)
+     * 4. Click Erase button
+     * 5. Press Undo button
+     * 6. Take a screenshot
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/Undo_Redo operation for bonds and molecules (multi-select) works wrong.ket',
+      page,
+    );
+    await selectPartOfMolecules(page);
+    await selectEraseTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await pressUndoButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test(`Case 17: Indigo functions work if monomer on micro canvas - system not throws an error: Error: Cannot deserialize input JSON`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/5796
+     * Description: Indigo functions work if monomer on micro canvas - system not throws an error: Error: Cannot deserialize input JSON
+     * Scenario:
+     * 1. Toggle to Molecules mode
+     * 2. Load from file any ambiguous monomer
+     * 3. Press Aromatize | Dearomatize | Layout | Clean Up | Calculate CIP | Add/Remove explicit hydrogens button
+     * 4. Take a screenshot
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
+      page,
+    );
+    await selectAromatizeTool(page);
+    await selectDearomatizeTool(page);
+    await selectLayoutTool(page);
+    await selectCleanTool(page);
+    await selectCalculateTool(page);
+    await selectAddRemoveExplicitHydrogens(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 18: All side chain bonds are shown in Sequence mode for bases, CHEMs, phosphates and sugars`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/5317
+     * Description: All side chain bonds are shown in Sequence mode for bases, CHEMs, phosphates and sugars
+     * Scenario:
+     * 1. Go to Macromolecules mode - Flex mode
+     * 2. Load from file
+     * 3. Switch to Sequence mode
+     * 4. Take a screenshot
+     */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/two sequences of bases (nC6n5U).ket',
+      page,
+    );
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 19: Hover mouse over ambiguous monomer on Micromolecules canvas not causes app crash`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6127
+     * Description: Hover mouse over ambiguous monomer on Micromolecules canvas not causes app crash
+     * Scenario:
+     * 1. Reload Ketcher <--- Important
+     * 2. Toggle to Molecules mode (DO NOT SWITCH TO Macro!)
+     * 3. Load from file any ambiguous monomer using Open As New Project way
+     * 4. Hover mouse over ambiguous monomer
+     * 5. Take a screenshot
+     */
+    await pageReload(page);
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
+      page,
+    );
+    await hoverOnSequenceSymbol(page, 'X', 0);
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 20: Entire element bounding box should be clickable, not only black dots`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6127
+     * Description: Entire element bounding box should be clickable, not only black dots
+     * Scenario:
+     * 1. Go to Macro - Flex mode
+     * 2. Load from file
+     * 3. Click on the center of double bond (e.g. between two black lines)
+     * 4. Take a screenshot
+     */
+    await turnOnMacromoleculesEditor(page, true, false);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/Entire element bounding box should be clickable, not only black dots.ket',
+      page,
+    );
+    await clickOnCanvas(page, 530, 380);
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 21: Structural distortion not occurs during multi expand and multi collapse of macromolecule abbreviations in Micro mode`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/5670
+     * Description: Structural distortion not occurs during multi expand and multi collapse of macromolecule abbreviations in Micro mode
+     * Scenario:
+     * 1. Open file in Macro mode (Flex mode)
+     * 2. Switch to Micro mode
+     * 3. Select all monomers and expand it and collapse it
+     * 4. Take a screenshot
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/monomers-cycled.ket',
+      page,
+    );
+    await turnOnMicromoleculesEditor(page);
+    await selectAllStructuresOnCanvas(page);
+    await page.getByText('1Nal').click({ button: 'right' });
+    await page.getByText('Expand monomers').click();
+    await takeEditorScreenshot(page);
+    await page.getByText('NH').click({ button: 'right' });
+    await page.getByText('Collapse monomers').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 22: Atom properties not missing on initial load in Macro mode and correct hydrogen rendering on mode switch`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6237
+     * Description: Atom properties not missing on initial load in Macro mode and correct hydrogen rendering on mode switch
+     * Scenario:
+     * 1. Open saved file in Macro mode
+     * 2. Switch to Micro mode
+     * 3. Take a screenshot
+     * 4. Switch back to Macro mode
+     * 5. Take a screenshot
+     */
+    await pageReload(page);
+    await turnOnMacromoleculesEditor(page, true, false);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/ketcher - 2025-01-06T161755.116.ket',
+      page,
+    );
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page, true, false);
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 23: Correct representation of hydrogens for Alias, Charge, Valence, and Radical properties in Macro mode`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6235
+     * Description: Correct representation of hydrogens for Alias, Charge, Valence, and Radical properties in Macro mode
+     * Scenario:
+     * 1. Open Ketcher in Micro mode
+     * 2. Open prepared file with all atom properties in macromolecules mode
+     * 3. Switch to Macro mode
+     * 4. Take a screenshot
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/ketcher - 2025-01-06T160012.582.ket',
+      page,
+    );
+    await turnOnMacromoleculesEditor(page, true, false);
+    await takeEditorScreenshot(page);
   });
 });

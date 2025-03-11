@@ -4,12 +4,12 @@ import {
   waitForPageInit,
   takeEditorScreenshot,
   pressButton,
-  bondsSettings,
   scrollToDownInSetting,
   openFileAndAddToCanvas,
   openSettings,
   resetAllSettingsToDefault,
   selectLayoutTool,
+  openBondsSettingsSection,
 } from '@utils';
 
 test.describe('ACS Style Settings', () => {

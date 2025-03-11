@@ -1,8 +1,8 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import {
-  bondsSettings,
   moveMouseAway,
+  openBondsSettingsSection,
   openFileAndAddToCanvasAsNewProject,
   openSettings,
   pressButton,

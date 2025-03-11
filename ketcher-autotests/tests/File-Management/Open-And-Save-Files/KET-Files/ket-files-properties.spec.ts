@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { expect, test } from '@playwright/test';
 import {
-  bondsSettings,
+  openBondsSettingsSection,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   openSettings,

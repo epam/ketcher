@@ -6,13 +6,13 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  bondsSettings,
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
   openSettings,
   selectAllStructuresOnCanvas,
   selectLayoutTool,
+  openBondsSettingsSection,
 } from '@utils';
 import {
   FileType,

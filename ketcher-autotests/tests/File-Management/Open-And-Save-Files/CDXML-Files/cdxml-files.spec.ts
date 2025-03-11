@@ -11,7 +11,6 @@ import {
   LeftPanelButton,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  bondsSettings,
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
@@ -23,6 +22,7 @@ import {
   selectLayoutTool,
   setHashSpacingOptionUnit,
   setHashSpacingValue,
+  openBondsSettingsSection,
 } from '@utils';
 import {
   FileType,

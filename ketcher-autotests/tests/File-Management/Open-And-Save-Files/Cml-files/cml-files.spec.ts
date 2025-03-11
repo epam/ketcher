@@ -5,7 +5,6 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   setReactionMarginSizeOptionUnit,
-  bondsSettings,
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
@@ -14,6 +13,7 @@ import {
   selectLayoutTool,
   setHashSpacingOptionUnit,
   setHashSpacingValue,
+  openBondsSettingsSection,
 } from '@utils';
 import {
   FileType,

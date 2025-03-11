@@ -6,7 +6,6 @@ import { Page, test, expect } from '@playwright/test';
 import {
   addMonomerToCenterOfCanvas,
   AtomButton,
-  bondsSettings,
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
   FunctionalGroups,
@@ -53,7 +52,6 @@ import {
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
 import {
-  createAntisenseChain,
   createRNAAntisenseChain,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';

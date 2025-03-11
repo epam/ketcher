@@ -21,7 +21,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  bondsSettings,
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
   setBondLengthOptionUnit,
@@ -31,6 +30,7 @@ import {
   selectLayoutTool,
   setHashSpacingValue,
   setHashSpacingOptionUnit,
+  openBondsSettingsSection,
 } from '@utils';
 
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';

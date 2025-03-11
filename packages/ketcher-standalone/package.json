@@ -1,6 +1,6 @@
 {
   "name": "ketcher-standalone",
-  "version": "3.1.0-rc.8",
+  "version": "3.1.0-rc.9",
   "description": "Web-based molecule sketcher",
   "license": "Apache-2.0",
   "homepage": "http://lifescience.opensource.epam.com/ketcher",
@@ -80,20 +80,20 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "require": "./dist/cjs/index.js"
+      "import": "./dist/main.js",
+      "require": "./dist/cjs/main.js"
     },
     "./dist/binaryWasm": {
-      "import": "./dist/binaryWasm/index.js",
-      "require": "./dist/binaryWasm/index.js"
+      "import": "./dist/binaryWasm/main.js",
+      "require": "./dist/binaryWasm/main.js"
     },
     "./dist/jsNoRender": {
-      "import": "./dist/jsNoRender/index.js",
-      "require": "./dist/cjs/jsNoRender/index.js"
+      "import": "./dist/jsNoRender/main.js",
+      "require": "./dist/cjs/jsNoRender/main.js"
     },
     "./dist/binaryWasmNoRender": {
-      "import": "./dist/binaryWasmNoRender/index.js",
-      "require": "./dist/binaryWasmNoRender/index.js"
+      "import": "./dist/binaryWasmNoRender/main.js",
+      "require": "./dist/binaryWasmNoRender/main.js"
     }
   }
 }

@@ -127,12 +127,14 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
    * 5. Take a screenshot to validate the exception is not thrown and replacement is successful
    */
   await turnOnMicromoleculesEditor(page);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let changeEventSubscriber: any;
   await page.evaluate(() => {
-    window.unsubscribeChangeEvent = window.ketcher.editor.subscribe(
-      'change',
-      () => console.log('hello'),
+    changeEventSubscriber = window.ketcher.editor.subscribe('change', () =>
+      console.log('hello'),
     );
   });
+
   await selectFunctionalGroups(FunctionalGroups.CF3, page);
   await clickInTheMiddleOfTheScreen(page);
   await selectAtomInToolbar(AtomButton.Bromine, page);
@@ -144,10 +146,7 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
   });
 
   await page.evaluate(() => {
-    if (window.unsubscribeChangeEvent) {
-      window.unsubscribeChangeEvent();
-      window.unsubscribeChangeEvent = () => {};
-    }
+    window.ketcher.editor.unsubscribe('change', changeEventSubscriber);
   });
 });
 
@@ -169,8 +168,10 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
     (msg) => msg.text() === 'in change event',
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let changeEventSubscriber: any;
   await page.evaluate(() => {
-    window.ketcher.editor.subscribe('change', () =>
+    changeEventSubscriber = window.ketcher.editor.subscribe('change', () =>
       console.log('in change event'),
     );
   });
@@ -182,10 +183,7 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
   expect(consoleMessage.text()).toBe('in change event');
 
   await page.evaluate(() => {
-    if (window.unsubscribeChangeEvent) {
-      window.unsubscribeChangeEvent();
-      window.unsubscribeChangeEvent = () => {};
-    }
+    window.ketcher.editor.unsubscribe('change', changeEventSubscriber);
   });
 });
 
@@ -249,6 +247,7 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
+  await pressButton(page, 'Cancel');
 });
 
 test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for atom in bonds too)`, async () => {
@@ -434,9 +433,9 @@ test(`Case 14: Antisense of layout doesn't work on flex mode after load`, async 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    'RNA1{R(A)P}$$$$V2.0',
+    'RNA1{[MOE](G)P.[MOE](T)P.[dR](U)[sP].R([m3C])P.[MOE](A)}|RNA2{[dR]([cnes4T])[sP].[MOE](A,C)P.R(T)P.R(G)P.R(A)}$RNA1,RNA2,8:pair-14:pair|RNA1,RNA2,11:pair-11:pair|RNA1,RNA2,14:pair-8:pair$$$V2.0',
   );
-
+  await resetZoomLevelToDefault(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

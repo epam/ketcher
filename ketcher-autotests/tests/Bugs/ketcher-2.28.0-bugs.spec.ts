@@ -15,6 +15,7 @@ import {
   MacroFileType,
   MonomerType,
   openFileAndAddToCanvas,
+  openFileAndAddToCanvasAsNewProject,
   openSettings,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -54,6 +55,7 @@ import {
 } from '@utils/macromolecules/monomer';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import { expandAbbreviation } from '@utils/sgroup/helpers';
 
 declare global {
   interface Window {
@@ -952,6 +954,34 @@ test(`Case 31: Unable to create antisense chains for ambiguous monomers from the
     monomerType: MonomerType.Sugar,
   }).first();
   await createAntisenseChain(page, sugarR);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 32: S-group in the middle of a chain does not expand when opening an SDF V3000 file`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 32
+   * Bug: https://github.com/epam/ketcher/issues/6185
+   * Description: S-group in the middle of a chain does not expand when opening an SDF V3000 file
+   * Scenario:
+   * 1. Go to Macro - Flex mode
+   * 2. Load an SDF file in V3000 format
+   * 3. Try to expand Gly_2, meS_3, Ala_4 S-groups
+   * 3. Take screenshot to validate S-groups got expanded to display its full structure within the chain
+   */
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(
+    'SDF/Bugs/S-group in the middle of a chain does not expand when opening an SDF V3000 file.sdf',
+    page,
+  );
+
+  const dC2SGroup = page.getByText('dC_2').first();
+
+  await expandAbbreviation(page, dC2SGroup);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

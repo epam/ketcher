@@ -73,12 +73,6 @@ export const SequenceSyncEditModeButton = () => {
     }
   }, [isSequenceMode, hasAtLeastOneAntisense]);
 
-  useEffect(() => {
-    if (!hasAtLeastOneAntisense) {
-      editor?.events.resetSequenceEditMode.dispatch();
-    }
-  }, [hasAtLeastOneAntisense]);
-
   return isSequenceMode && hasAtLeastOneAntisense ? (
     <>
       <StyledButton isActive={isSequenceSyncEditMode} onClick={handleClick}>

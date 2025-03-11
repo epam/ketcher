@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
+import { Bases } from '@constants/monomers/Bases';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { Page, test } from '@playwright/test';
@@ -37,14 +38,27 @@ import {
   selectCalculateTool,
   selectAddRemoveExplicitHydrogens,
   clickOnCanvas,
+  selectTopPanelButton,
+  TopPanelButton,
+  setMolecule,
+  FILE_TEST_DATA,
+  moveMouseAway,
+  selectRing,
+  RingButton,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { waitForPageInit } from '@utils/common';
+import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import { pageReload } from '@utils/common/helpers';
 import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
+import {
+  chooseFileFormat,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
+import { goToRNATab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   clickOnSequenceSymbol,
@@ -91,6 +105,17 @@ async function interactWithMicroMolecule(
   } else if (action === 'click') {
     await element.click();
   }
+}
+
+async function callContextMenuForMonomer(
+  page: Page,
+  monomerLocatorIndex: number,
+) {
+  const canvasLocator = page.getByTestId('ketcher-canvas');
+  await canvasLocator
+    .locator('g.monomer')
+    .nth(monomerLocatorIndex)
+    .click({ button: 'right', force: true });
 }
 
 test.describe('Ketcher bugs in 3.0.0', () => {
@@ -409,6 +434,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      */
     await turnOnMacromoleculesEditor(page, false, false);
     await selectMonomer(page, Peptides.A);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -684,6 +710,230 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
     );
     await turnOnMacromoleculesEditor(page, true, false);
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 24: Export to 3-letter sequence work`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6240
+     * Description: Export to 3-letter sequence work
+     * Scenario:
+     * 1. Go to Macro - Flex mode
+     * 2. Load from HELM: PEPTIDE1{A.C.D}$$$$V2.0
+     * 3. Open Save dialog and choose Sequence (3-letter code)
+     * 4. Press Save button
+     */
+    test.slow();
+    await turnOnMacromoleculesEditor(page, true, false);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{A.C.D}$$$$V2.0',
+    );
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'Sequence (3-letter code)');
+    await takeEditorScreenshot(page);
+    await pressButton(page, 'Save');
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 25: Super G and Super T monomers can be load from a saved RXN V3000 file`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6291
+     * Description: Super G and Super T monomers can be load from a saved RXN V3000 file
+     * Scenario:
+     * 1. Open Ketcher in Micro mode
+     * 2. Load RXN V3000 file with Super G and Super T monomers
+     * 3. Take a screenshot
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/super-g-and-super-t.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Rxn-V3000/Bugs/super-g-and-super-t-expected.rxn',
+      FileType.RXN,
+      'v3000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/Bugs/super-g-and-super-t-expected.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 26: Consistent zoom behavior when inserting a molecule via setMolecule and Paste from Clipboard/Open from File`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6370
+     * Description: Consistent zoom behavior when inserting a molecule via setMolecule and Paste from Clipboard/Open from File
+     * Scenario:
+     * 1. Open Ketcher -> Macro mode -> Flex
+     * 2. Load RXN V3000 file with Super G and Super T monomers
+     * 3. Take a screenshot
+     */
+    await turnOnMacromoleculesEditor(page, true, false);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'Molfiles-V3000/Bugs/macromol.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await setMolecule(page, FILE_TEST_DATA.macromol),
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 27: Layout in case of two sense chains connected to same antisense works as expected`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6106
+     * Description: Layout in case of two sense chains connected to same antisense works as expected
+     * Scenario:
+     * 1. Go to Macro - Snake mode
+     * 2. Load from HELM using paste from clipboard
+     * 3. Take a screenshot
+     */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await selectSnakeLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(C)P.R(G)P}|RNA2{R(T)P.R(C)P.R(C)P.R(C)P}|RNA3{R(C)P.R(C)P}$RNA1,RNA2,2:pair-2:pair|RNA3,RNA1,5:pair-8:pair$$$V2.0',
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 28: Ambiguous DNA bases (N, D, H, W) not converted to DNA bases on antisense creation`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6196
+     * Description: Ambiguous DNA bases (N, D, H, W) not converted to DNA bases on antisense creation
+     * Scenario:
+     * 1. Go to Macro - Snake mode
+     * 2. Load from HELM using paste from clipboard
+     * 3. Create antisense for that chain
+     * 4. Take a screenshot
+     */
+    test.slow();
+    await selectSnakeLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A,C,G,T)P.R(A,G,T)P.R(A,C,T)P.R(A,T)P}$$$$V2.0',
+    );
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForMonomer(page, 0);
+    const createAntisenseStrandOption = page
+      .getByTestId('create_antisense_rna_chain')
+      .first();
+
+    await createAntisenseStrandOption.click();
+    await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'HELM');
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 29: Cursor position after adding preset in sequence mode not causes an incorrect sequence formation`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6272
+     * Description: Cursor position after adding preset in sequence mode not causes an incorrect sequence formation
+     * Scenario:
+     * 1. Open Ketcher in Macro mode -> Sequence mode and navigate to the RNA tab.
+     * 2. Start clicking one by one on presets A, U, C, A, U
+     * 3. Observe the cursor position after adding the first nucleotide.
+     * 4. Continue adding presets and observe the chain formation.
+     * 5. Take a screenshot
+     */
+    await selectSequenceLayoutModeTool(page);
+    await goToRNATab(page);
+    await selectMonomer(page, Presets.A);
+    await selectMonomer(page, Presets.U);
+    await selectMonomer(page, Presets.C);
+    await selectMonomer(page, Presets.A);
+    await selectMonomer(page, Presets.U);
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 30: Macro structure not duplicated on canvas when using ketcher.getMolfile()`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6546
+     * Description: Macro structure not duplicated on canvas when using ketcher.getMolfile()
+     * Scenario:
+     * 1. Open Ketcher in Macro mode
+     * 2. Add any Macro structure to canvas (in my case it was MOE(A)P triplet) and switch to Micro mode
+     * 3. Run ketcher.getMolfile()
+     * 4. Open saved MOL file.
+     * 5. Take a screenshot
+     */
+    await goToRNATab(page);
+    await selectMonomer(page, Presets.MOE_A_P);
+    await turnOnMicromoleculesEditor(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/Bugs/moe-a-p-expected.mol',
+      FileType.MOL,
+      'v3000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/Bugs/moe-a-p-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 31: Modified phosphates not shift away from main structure during expand in Micro Mode`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6557
+     * Description: Modified phosphates not shift away from main structure during expand in Micro Mode
+     * Scenario:
+     * 1. Open Ketcher in Macro mode
+     * 2. Select all structure
+     * 3. Expand structure
+     * 4. Take a screenshot
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/modified-phosphates.ket',
+      page,
+    );
+    await selectAllStructuresOnCanvas(page);
+    await page.getByText('mph').first().click({ button: 'right' });
+    await page.getByText('Expand monomers').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 32: Natural monomer have standard bond lengths and angles`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6563
+     * Description: Natural monomer have standard bond lengths and angles
+     * Scenario:
+     * 1. Open Ketcher in Macro mode
+     * 2. Add base A to the canvas
+     * 3. Switch to Micro mode
+     * 4. Expand structure
+     * 5. Draw a cyclohexane
+     * 6. Compare bond lengths
+     */
+    await turnOnMacromoleculesEditor(page, false, false);
+    await selectMonomer(page, Bases.A);
+    await turnOnMicromoleculesEditor(page);
+    await selectAllStructuresOnCanvas(page);
+    await page.getByText('A', { exact: true }).click({ button: 'right' });
+    await page.getByText('Expand monomer').click();
+    await selectRing(RingButton.Cyclohexane, page);
+    await clickOnCanvas(page, 180, 180);
     await takeEditorScreenshot(page);
   });
 });

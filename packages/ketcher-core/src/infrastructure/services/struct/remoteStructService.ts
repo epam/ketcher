@@ -394,6 +394,9 @@ export class RemoteStructService implements StructService {
     options?: GenerateImageOptions,
   ): Promise<string> {
     const outputFormat: OutputFormatType = options?.outputFormat || 'png';
+    const stereoStyle: undefined | string = options?.stereoStyle;
+    const stereoStyleOption =
+      stereoStyle != null ? { 'render-stereo-style': stereoStyle } : {};
 
     return indigoCall(
       'POST',
@@ -425,6 +428,7 @@ export class RemoteStructService implements StructService {
         'render-output-sheet-height': options?.['render-output-sheet-height'],
         'render-output-format': outputFormat,
         'render-label-mode': getLabelRenderModeForIndigo(),
+        ...stereoStyleOption,
       },
       (response) => response.then((resp) => resp.text()),
     );

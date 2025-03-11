@@ -17,6 +17,7 @@ import {
   clickOnCanvas,
   selectZoomInTool,
   selectZoomOutTool,
+  moveMouseAway,
 } from '@utils';
 import {
   turnOnMacromoleculesEditor,
@@ -263,6 +264,7 @@ test.describe('Sequence mode selection for view mode', () => {
     await takeEditorScreenshot(page);
     await page.getByText('G').first().click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
+    await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 });

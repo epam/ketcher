@@ -54,6 +54,7 @@ import {
 } from '@utils/macromolecules';
 import {
   createAntisenseChain,
+  createRNAAntisenseChain,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
@@ -467,7 +468,7 @@ test(`Case 16: Lets get back to U (instead of T) for the complementary base of A
   }).first();
 
   await selectAllStructuresOnCanvas(page);
-  await createAntisenseChain(page, baseA);
+  await createRNAAntisenseChain(page, baseA);
 
   const baseU = getMonomerLocator(page, {
     monomerAlias: 'U',
@@ -523,13 +524,8 @@ test(`Case 17: Create Antisense Strand doesn't work in some cases`, async () => 
   await baseT.click();
   await phosphateP.click();
   await page.keyboard.up('Shift');
-  await baseT.click({ button: 'right', force: true });
 
-  const createAntisenseStrandOption = page
-    .getByTestId('create_antisense_chain')
-    .first();
-
-  await createAntisenseStrandOption.click();
+  await createRNAAntisenseChain(page, baseT);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -563,7 +559,7 @@ test(`Case 18: System creates antisense chain only for top chain if many of chai
     monomerType: MonomerType.Base,
   }).first();
 
-  await createAntisenseChain(page, baseT);
+  await createRNAAntisenseChain(page, baseT);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -668,7 +664,7 @@ test(`Case 20: Antisense creation works wrong in case of partial selection`, asy
   await sugarR.click();
   await page.keyboard.up('Shift');
 
-  await createAntisenseChain(page, sugarR);
+  await createRNAAntisenseChain(page, sugarR);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -955,7 +951,7 @@ test(`Case 31: Unable to create antisense chains for ambiguous monomers from the
     monomerAlias: 'R',
     monomerType: MonomerType.Sugar,
   }).first();
-  await createAntisenseChain(page, sugarR);
+  await createRNAAntisenseChain(page, sugarR);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

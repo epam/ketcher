@@ -398,6 +398,9 @@ export class CoreEditor {
       (isSequenceSyncEditMode: boolean) =>
         this.onChangeToggleIsSequenceSyncEditMode(isSequenceSyncEditMode),
     );
+    this.events.resetSequenceEditMode.add(() =>
+      this.onResetSequenceSyncEditMode(),
+    );
     this.events.createAntisenseChain.add((isDnaAntisense: boolean) => {
       this.onCreateAntisenseChain(isDnaAntisense);
     });
@@ -474,6 +477,14 @@ export class CoreEditor {
     } else {
       this.mode.turnOffSyncEditMode();
     }
+  }
+
+  private onResetSequenceSyncEditMode() {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.resetEditMode();
   }
 
   private onCreateAntisenseChain(isDnaAntisense: boolean) {

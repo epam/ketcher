@@ -344,6 +344,7 @@ class IndigoService implements StructService {
         'image-resolution': options?.['image-resolution'],
         'input-format': inputFormat,
         'molfile-saving-mode': options?.['molfile-saving-mode'],
+        'sequence-type': options?.['sequence-type'],
         monomerLibrary,
       };
 

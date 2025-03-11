@@ -137,6 +137,7 @@ export function pickStandardServerOptions(options?: StructServiceOptions) {
 
   return {
     'dearomatize-on-load': options?.['dearomatize-on-load'],
+    'aromaticity-model': 'generic',
     'smart-layout': options?.['smart-layout'],
     'ignore-stereochemistry-errors': options?.['ignore-stereochemistry-errors'],
     'mass-skip-error-on-pseudoatoms':
@@ -232,6 +233,7 @@ export class RemoteStructService implements StructService {
         options?.['reaction-component-margin-size'],
       'image-resolution': options?.['image-resolution'],
       'molfile-saving-mode': options?.['molfile-saving-mode'],
+      'sequence-type': options?.['sequence-type'],
     };
 
     return indigoCall(

@@ -1425,14 +1425,13 @@ export class SequenceMode extends BaseMode {
             if (
               this.isSyncEditMode &&
               antisenseNodeCreationResult &&
-              senseNodeToConnect
+              senseNodeToConnect &&
+              (senseNodeToConnect instanceof Nucleotide ||
+                senseNodeToConnect instanceof Nucleoside)
             ) {
               modelChanges.merge(
                 editor.drawingEntitiesManager.createPolymerBond(
-                  senseNodeToConnect instanceof Nucleotide ||
-                    senseNodeToConnect instanceof Nucleoside
-                    ? senseNodeToConnect?.rnaBase
-                    : senseNodeToConnect.monomer,
+                  senseNodeToConnect?.rnaBase,
                   antisenseNodeCreationResult.node instanceof Nucleotide ||
                     antisenseNodeCreationResult.node instanceof Nucleoside
                     ? antisenseNodeCreationResult.node?.rnaBase

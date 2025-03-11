@@ -121,6 +121,14 @@ export class SequenceMode extends BaseMode {
     return this._isSyncEditMode;
   }
 
+  private get needToEditSense() {
+    return this.isSyncEditMode || !this.isAntisenseEditMode;
+  }
+
+  private get needToEditAntisense() {
+    return this.isSyncEditMode || this.isAntisenseEditMode;
+  }
+
   private turnOnAntisenseEditMode() {
     this._isAntisenseEditMode = true;
     this.initialize(false, false, false);
@@ -773,7 +781,7 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.previousNodeInSameChain;
     const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
-    if (previousTwoStrandedNodeInSameChain?.senseNode) {
+    if (this.needToEditSense && previousTwoStrandedNodeInSameChain?.senseNode) {
       this.deleteBondToNextNodeInChain(
         previousTwoStrandedNodeInSameChain.senseNode instanceof
           BackBoneSequenceNode
@@ -781,19 +789,19 @@ export class SequenceMode extends BaseMode {
           : previousTwoStrandedNodeInSameChain?.senseNode,
         modelChanges,
       );
+
+      if (previousTwoStrandedNodeInSameChain?.senseNode instanceof Nucleotide) {
+        modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+      }
     }
 
-    if (currentTwoStrandedNode?.antisenseNode) {
+    if (this.needToEditAntisense && currentTwoStrandedNode?.antisenseNode) {
       this.deleteBondToNextNodeInChain(
         currentTwoStrandedNode.antisenseNode instanceof BackBoneSequenceNode
           ? currentTwoStrandedNode.antisenseNode.secondConnectedNode
           : currentTwoStrandedNode.antisenseNode,
         modelChanges,
       );
-    }
-
-    if (previousTwoStrandedNodeInSameChain?.senseNode instanceof Nucleotide) {
-      modelChanges.addOperation(SequenceRenderer.moveCaretForward());
     }
 
     modelChanges.addOperation(new ReinitializeModeOperation());
@@ -1078,20 +1086,17 @@ export class SequenceMode extends BaseMode {
           : SequenceRenderer.caretPosition;
       const selections = SequenceRenderer.selections;
       const modelChanges = new Command();
-      const needToEditSense = this.isSyncEditMode || !this.isAntisenseEditMode;
-      const needToEditAntisense =
-        this.isSyncEditMode || this.isAntisenseEditMode;
       let nodesToDelete: TwoStrandedNodesSelection;
 
       if (selections.length) {
         modelChanges.merge(this.deleteSelectedDrawingEntities());
         nodesToDelete = selections;
-        if (needToEditSense) {
+        if (this.needToEditSense) {
           modelChanges.merge(
             this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.SENSE),
           );
         }
-        if (needToEditAntisense) {
+        if (this.needToEditAntisense) {
           modelChanges.merge(
             this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.ANTISENSE),
           );
@@ -1106,7 +1111,7 @@ export class SequenceMode extends BaseMode {
           ],
         ];
 
-        if (needToEditSense && nodeToDelete.senseNode) {
+        if (this.needToEditSense && nodeToDelete.senseNode) {
           if (!(nodeToDelete.senseNode instanceof BackBoneSequenceNode)) {
             nodeToDelete.senseNode.monomers.forEach((monomer) => {
               modelChanges.merge(
@@ -1121,7 +1126,7 @@ export class SequenceMode extends BaseMode {
         }
 
         if (
-          needToEditAntisense &&
+          this.needToEditAntisense &&
           nodeToDelete.antisenseNode &&
           !(nodeToDelete.antisenseNode instanceof EmptySequenceNode)
         ) {
@@ -1361,14 +1366,10 @@ export class SequenceMode extends BaseMode {
               )) ||
             undefined;
           let senseNodeToConnect = currentTwoStrandedNode?.senseNode;
-          const needToEditSense =
-            this.isSyncEditMode || !this.isAntisenseEditMode;
-          const needToEditAntisense =
-            this.isSyncEditMode || this.isAntisenseEditMode;
           const isDnaEnteringMode =
             editor.sequenceTypeEnterMode === SequenceType.DNA;
 
-          if (needToEditSense) {
+          if (this.needToEditSense) {
             const insertNewSequenceItemResult = this.insertNewSequenceItem(
               editor,
               this.isAntisenseEditMode
@@ -1391,7 +1392,7 @@ export class SequenceMode extends BaseMode {
           }
 
           if (
-            needToEditAntisense &&
+            this.needToEditAntisense &&
             (this.isSyncEditMode
               ? previousTwoStrandedNodeInSameChain?.antisenseNode ||
                 currentTwoStrandedNode?.antisenseNode

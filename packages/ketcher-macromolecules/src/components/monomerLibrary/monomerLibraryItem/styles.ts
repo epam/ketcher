@@ -31,7 +31,6 @@ export const Card = styled.div<{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 5px;
   font-size: ${({ theme }) => theme.ketcher.font.size.small};
   color: ${({ theme }) => theme.ketcher.color.text.primary};
   position: relative;

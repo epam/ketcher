@@ -39,9 +39,9 @@ export const DetailsContainer = styled.div({
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  gap: '24px',
+  gap: '8px',
   justifyContent: 'start',
-  padding: '16px 12px',
+  padding: '8px',
 });
 
 export const StyledButton = styled(Button)((props) => {

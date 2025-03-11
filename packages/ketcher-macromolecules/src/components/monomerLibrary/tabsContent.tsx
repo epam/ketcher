@@ -1,10 +1,19 @@
-import { MONOMER_TYPES, MONOMER_LIBRARY_FAVORITES } from '../../constants';
+import {
+  MONOMER_TYPES,
+  MONOMER_LIBRARY_FAVORITES,
+  FavoriteStarSymbol,
+} from '../../constants';
 import { MonomerList } from './monomerLibraryList';
 import { RnaBuilder } from './RnaBuilder';
+import { IRnaPreset } from './RnaBuilder/types';
+import { TabsData } from 'components/shared/Tabs';
 
-export const tabsContent = (duplicatePreset, editPreset) => [
+export const tabsContent = (
+  duplicatePreset: (preset?: IRnaPreset) => void,
+  editPreset: (preset: IRnaPreset) => void,
+): TabsData => [
   {
-    caption: 'Favorites',
+    caption: FavoriteStarSymbol,
     component: MonomerList,
     testId: 'FAVORITES-TAB',
     props: {

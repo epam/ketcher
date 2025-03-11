@@ -82,7 +82,7 @@ export const defaultTheme: EditorTheme = {
     },
     tab: {
       regular: '#FFFFFF',
-      active: '#EFF2F5',
+      active: '#E1E5EA',
       hover: '#00838F',
       content: '#EFF2F5',
     },

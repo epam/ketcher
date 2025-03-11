@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ChangeEvent, useEffect, useRef } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Tabs } from 'components/shared/Tabs';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
 import { useAppDispatch, useAppSelector } from 'hooks';
@@ -31,7 +31,6 @@ import {
   MonomerLibraryHeader,
   MonomerLibraryInput,
   MonomerLibraryInputContainer,
-  MonomerLibrarySearchContainer,
   MonomerLibrarySearchIcon,
 } from './styles';
 
@@ -49,43 +48,58 @@ const MonomerLibrary = () => {
     presetsRef.current = presets;
     return true;
   });
-  const filterResults = (event: ChangeEvent<HTMLInputElement>) => {
-    dispatch(setSearchFilter(event.target.value));
-  };
 
-  const duplicatePreset = (preset?: IRnaPreset) => {
-    let name = `${preset?.name}${COPY}`;
-    let presetWithSameName: IRnaPreset | undefined;
+  const filterResults = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      dispatch(setSearchFilter(event.target.value));
+    },
+    [dispatch],
+  );
 
-    do {
-      presetWithSameName = presetsRef.current.find(
-        (preset) => preset.name === name,
-      );
-      if (presetWithSameName) name += COPY;
-    } while (presetWithSameName);
+  const duplicatePreset = useCallback(
+    (preset?: IRnaPreset) => {
+      let name = `${preset?.name}${COPY}`;
+      let presetWithSameName: IRnaPreset | undefined;
 
-    if (presetWithSameName) {
-      dispatch(setUniqueNameError(name));
-      return;
-    }
+      do {
+        presetWithSameName = presetsRef.current.find(
+          (preset) => preset.name === name,
+        );
+        if (presetWithSameName) name += COPY;
+      } while (presetWithSameName);
 
-    const nameToSet = presetWithSameName ? `${name}_Copy` : name;
-    const duplicatedPreset = {
-      ...preset,
-      name: nameToSet,
-      nameInList: nameToSet,
-      default: false,
-      favorite: false,
-    };
-    dispatch(setActivePreset(duplicatedPreset));
-    dispatch(setIsEditMode(true));
-    scrollToSelectedPreset(preset?.name);
-  };
+      if (presetWithSameName) {
+        dispatch(setUniqueNameError(name));
+        return;
+      }
 
-  const editPreset = (preset: IRnaPreset) => {
-    dispatch(setActivePreset(preset));
-    dispatch(setIsEditMode(true));
-  };
+      const nameToSet = presetWithSameName ? `${name}_Copy` : name;
+      const duplicatedPreset = {
+        ...preset,
+        name: nameToSet,
+        nameInList: nameToSet,
+        default: false,
+        favorite: false,
+      };
+      dispatch(setActivePreset(duplicatedPreset));
+      dispatch(setIsEditMode(true));
+      scrollToSelectedPreset(preset?.name);
+    },
+    [dispatch],
+  );
+
+  const editPreset = useCallback(
+    (preset: IRnaPreset) => {
+      dispatch(setActivePreset(preset));
+      dispatch(setIsEditMode(true));
+    },
+    [dispatch],
+  );
+
+  const tabs = useMemo(
+    () => tabsContent(duplicatePreset, editPreset),
+    [duplicatePreset, editPreset],
+  );
 
   return (
     <MonomerLibraryContainer data-testid="monomer-library">
@@ -100,7 +114,7 @@ const MonomerLibrary = () => {
           />
         </MonomerLibraryInputContainer>
       </MonomerLibraryHeader>
-      <Tabs tabs={tabsContent(duplicatePreset, editPreset)} />
+      <Tabs tabs={tabs} />
     </MonomerLibraryContainer>
   );
 };

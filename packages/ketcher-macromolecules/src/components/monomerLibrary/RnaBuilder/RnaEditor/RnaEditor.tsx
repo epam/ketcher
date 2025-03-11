@@ -36,6 +36,7 @@ import {
 } from 'state/rna-builder';
 import { scrollToElement } from 'helpers/dom';
 import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
+import clsx from 'clsx';
 
 export const scrollToSelectedPreset = (presetName) => {
   scrollToElement(`[data-rna-preset-item-name="${presetName}"]`);
@@ -83,11 +84,10 @@ export const RnaEditor = ({ duplicatePreset }) => {
   return (
     <RnaEditorContainer data-testid="rna-editor">
       <StyledHeader
-        className={
-          isSequenceEditInRNABuilderMode
-            ? 'styled-header--sequence-edit-mode'
-            : ''
-        }
+        className={clsx(
+          isSequenceEditInRNABuilderMode && 'styled-header--sequence-edit-mode',
+          expanded && 'styled-header--expanded',
+        )}
       >
         RNA Builder
         <ExpandButton

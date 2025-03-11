@@ -19,7 +19,7 @@ import { useState } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
 import { Card, CardTitle, NumberCircle } from './styles';
 import { IMonomerItemProps } from './types';
-import { MONOMER_TYPES } from '../../../constants';
+import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
 
@@ -69,7 +69,7 @@ const MonomerItem = ({
           }}
           className={`star ${favorite ? 'visible' : ''}`}
         >
-          ★
+          {FavoriteStarSymbol}
         </div>
       )}
       {isAmbiguousMonomerLibraryItem(item) && (

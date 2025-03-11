@@ -17,36 +17,34 @@
 import styled from '@emotion/styled';
 import { Button, Icon } from 'ketcher-react';
 
-export const RnaEditorContainer = styled.div((props) => ({
-  borderRadius: props.theme.ketcher.border.radius.regular,
-  backgroundColor: '#F7F9FA',
-  boxShadow: props.theme.ketcher.shadow.regular,
-  overflow: 'hidden',
-  margin: '12px',
-  flexShrink: 0,
-}));
+export const RnaEditorContainer = styled.div`
+  padding: 8px;
+`;
 
 export const StyledHeader = styled.div((props) => ({
-  height: '32px',
   backgroundColor: '#fff',
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  paddingLeft: '10px',
+  padding: '8px',
   fontSize: props.theme.ketcher.font.size.regular,
+  borderRadius: '4px',
   '&.styled-header--sequence-edit-mode': {
     backgroundColor: props.theme.ketcher.color.editMode.sequenceInRNABuilder,
   },
+  '&.styled-header--expanded': {
+    borderRadius: '4px 4px 0 0',
+  },
 }));
 
-export const ExpandButton = styled(Button)({
-  background: 'transparent',
-  width: '32px',
-  height: '100%',
-  outline: 'none',
-  borderRadius: '0',
-  padding: '0',
-});
+export const ExpandButton = styled(Button)`
+  background: transparent;
+  width: 16px;
+  height: 16px;
+  outline: none;
+  border-radius: 0;
+  padding: 0;
+`;
 
 export const ExpandIcon = styled(Icon)<{ expanded?: boolean }>(
   {

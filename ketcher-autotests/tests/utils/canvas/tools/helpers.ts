@@ -367,7 +367,20 @@ export async function openSettings(page: Page) {
   });
 }
 
-export async function bondsSettings(page: Page) {
+export async function openStereochemistrySettingsSection(page: Page) {
+  await page.getByText('Stereochemistry', { exact: true }).click();
+}
+
+export async function switchIgnoreTheChiralFlag(page: Page) {
+  await page
+    .locator('label')
+    .filter({ hasText: 'Ignore the chiral flag' })
+    .getByTestId('undefined-input-span')
+    .locator('span')
+    .click();
+}
+
+export async function openBondsSettingsSection(page: Page) {
   await page.getByText('Bonds', { exact: true }).click();
 }
 

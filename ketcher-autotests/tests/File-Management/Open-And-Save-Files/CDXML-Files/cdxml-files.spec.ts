@@ -468,7 +468,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '54.8');
     await pressButton(page, 'Apply');
@@ -499,7 +499,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '54.8');
     await pressButton(page, 'Apply');
@@ -528,7 +528,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -557,7 +557,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '7.8');
     await pressButton(page, 'Apply');

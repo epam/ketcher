@@ -14,9 +14,11 @@ import {
   MacroBondType,
   MacroFileType,
   MonomerType,
+  openBondsSettingsSection,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   openSettings,
+  openStereochemistrySettingsSection,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
@@ -35,6 +37,7 @@ import {
   selectSnakeLayoutModeTool,
   selectTopPanelButton,
   setBondLengthValue,
+  switchIgnoreTheChiralFlag,
   takeEditorScreenshot,
   TopPanelButton,
   waitForPageInit,
@@ -341,14 +344,14 @@ test(`Case 10: System reset micromolecule canvas settings to default if switched
    */
   await turnOnMicromoleculesEditor(page);
   await openSettings(page);
-  await bondsSettings(page);
+  await openBondsSettingsSection(page);
   await setBondLengthValue(page, '80');
   await pressButton(page, 'Apply');
 
   await turnOnMacromoleculesEditor(page);
   await turnOnMicromoleculesEditor(page);
   await openSettings(page);
-  await bondsSettings(page);
+  await openBondsSettingsSection(page);
   const bondLengthValue = await getBondLengthValue(page);
   expect(bondLengthValue).toBe('80');
   await pressButton(page, 'Cancel');
@@ -967,7 +970,7 @@ test(`Case 32: S-group in the middle of a chain does not expand when opening an 
    * Bug: https://github.com/epam/ketcher/issues/6185
    * Description: S-group in the middle of a chain does not expand when opening an SDF V3000 file
    * Scenario:
-   * 1. Go to Macro - Flex mode
+   * 1. Go to Molecules mode
    * 2. Load an SDF file in V3000 format
    * 3. Try to expand Gly_2, meS_3, Ala_4 S-groups
    * 3. Take screenshot to validate S-groups got expanded to display its full structure within the chain
@@ -982,6 +985,42 @@ test(`Case 32: S-group in the middle of a chain does not expand when opening an 
   const dC2SGroup = page.getByText('dC_2').first();
 
   await expandAbbreviation(page, dC2SGroup);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 33: Stereo flags are displayed despite enabling 'Ignore chiral flag' in MOL V2000 files`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 32
+   * Bug: https://github.com/epam/ketcher/issues/6161
+   * Description: Stereo flags are displayed despite enabling 'Ignore chiral flag' in MOL V2000 files
+   * Scenario:
+   * 1. Go to Macro - Flex mode
+   * 2. Take screenshot to whitness the stereo flags aren't displayed
+   * 3. Go to the application settings and enable the "Ignore the chiral flag" option.
+   * 4. Load the MOL V2000 file
+   * 5. Take screenshot to validate the stereo flags are displayed
+   */
+  await turnOnMicromoleculesEditor(page);
+
+  await openFileAndAddToCanvasAsNewProject(
+    "Molfiles-V2000/Bugs/Stereo flags are displayed despite enabling 'Ignore chiral flag' in MOL V2000 files.mol",
+    page,
+  );
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+
+  await openSettings(page);
+  await openBondsSettingsSection(page);
+  await openStereochemistrySettingsSection(page);
+  await switchIgnoreTheChiralFlag(page);
+  await pressButton(page, 'Apply');
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

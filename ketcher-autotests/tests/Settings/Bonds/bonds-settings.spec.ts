@@ -24,7 +24,7 @@ import {
 test('Verify Bonds setting menu', async ({ page }) => {
   await waitForPageInit(page);
   await openSettings(page);
-  await bondsSettings(page);
+  await openBondsSettingsSection(page);
   await scrollToDownInSetting(page);
   await takeEditorScreenshot(page);
 });
@@ -51,7 +51,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     const bondLenght = page.getByText('Bond length');
     expect(bondLenght).toHaveText('Bond length');
@@ -76,7 +76,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '27.8');
@@ -99,7 +99,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '2.8');
@@ -122,7 +122,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '0.8');
@@ -145,7 +145,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '17');
@@ -168,7 +168,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '69');
@@ -191,7 +191,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '3');
@@ -214,7 +214,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '1');
@@ -238,7 +238,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '58.87');
@@ -262,7 +262,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '16.68');
@@ -286,7 +286,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '0.78');
@@ -310,7 +310,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '0.52');
@@ -331,7 +331,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '1000');
@@ -352,7 +352,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '1000');
@@ -373,7 +373,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '1000');
@@ -394,7 +394,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '1000');
@@ -416,7 +416,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '3.1');
@@ -438,7 +438,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '0.2');
@@ -460,7 +460,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '13.1');
@@ -482,7 +482,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '3.1');
@@ -504,7 +504,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '4');
@@ -526,7 +526,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '1');
@@ -548,7 +548,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '3');
@@ -570,7 +570,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '2');
@@ -593,7 +593,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '3.17');
@@ -616,7 +616,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '0.13');
@@ -638,7 +638,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '3.81');
@@ -661,7 +661,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '.18');
@@ -683,7 +683,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '3.4');
@@ -705,7 +705,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '0.4');
@@ -727,7 +727,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '2.4');
@@ -749,7 +749,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '1.4');
@@ -771,7 +771,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '4');
@@ -793,7 +793,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '3');
@@ -815,7 +815,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '3');
@@ -837,7 +837,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '2');
@@ -860,7 +860,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '3.49');
@@ -883,7 +883,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '0.74');
@@ -906,7 +906,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '3.14');
@@ -929,7 +929,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '3.67');
@@ -952,7 +952,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     const hashSpacing = page.getByText('Hash spacing');
     expect(hashSpacing).toHaveText('Hash spacing');
@@ -977,7 +977,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '0.5');
@@ -1000,7 +1000,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '0.5');
@@ -1023,7 +1023,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '0.5');
@@ -1046,7 +1046,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '2');
@@ -1069,7 +1069,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '1');
@@ -1092,7 +1092,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '1');
@@ -1115,7 +1115,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '1');
@@ -1139,7 +1139,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '2.53');
@@ -1163,7 +1163,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '0.53');
@@ -1187,7 +1187,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '0.53');
@@ -1211,7 +1211,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '0.5');
@@ -1235,7 +1235,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '1000');
@@ -1259,7 +1259,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '1000');
@@ -1283,7 +1283,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '1000');
@@ -1307,7 +1307,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '1000');
@@ -1327,7 +1327,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     const bondSpacing = page.getByText('Bond spacing');
     expect(bondSpacing).toHaveText('Bond spacing');
@@ -1351,7 +1351,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '50');
     await moveMouseAway(page);
@@ -1372,7 +1372,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '10');
     await moveMouseAway(page);
@@ -1391,7 +1391,7 @@ test.describe('Bonds Settings', () => {
       page,
     );
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '100');
     await moveMouseAway(page);
@@ -1415,7 +1415,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '-7.8');
@@ -1435,7 +1435,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '-7.8');
@@ -1455,7 +1455,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '-7.8');
@@ -1475,7 +1475,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '-7.8');
@@ -1493,7 +1493,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         0 should not be allowed to be applyed
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '0');
@@ -1511,7 +1511,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         0 should not be allowed to be applyed
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '0');
@@ -1529,7 +1529,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         0 should not be allowed to be applyed
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '0');
@@ -1547,7 +1547,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         0 should not be allowed to be applyed
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '0');
@@ -1567,7 +1567,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         a 1000.1 value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '1000.1');
@@ -1587,7 +1587,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         1000.1 value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '1000.1');
@@ -1607,7 +1607,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         1000.1 value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '1000.1');
@@ -1627,7 +1627,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         1000.1 value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '1000.1');
@@ -1646,7 +1646,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '-0.2');
@@ -1665,7 +1665,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '-0.2');
@@ -1684,7 +1684,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '-0.2');
@@ -1703,7 +1703,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '-0.2');
@@ -1722,7 +1722,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: 0 should not be allowed to be applyed
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
     await setBondThicknessValue(page, '0');
@@ -1741,7 +1741,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: 0 should not be allowed to be applyed
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
     await setBondThicknessValue(page, '0');
@@ -1760,7 +1760,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: 0 should not be allowed to be applyed
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
     await setBondThicknessValue(page, '0');
@@ -1779,7 +1779,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: 0 should not be allowed to be applyed
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
     await setBondThicknessValue(page, '0');
@@ -1798,7 +1798,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '-1.4');
@@ -1817,7 +1817,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '-1.4');
@@ -1836,7 +1836,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '-1.4');
@@ -1855,7 +1855,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '-1.4');
@@ -1874,7 +1874,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: 0 should not be allowed to be applyed
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
     await setStereoBondWidthValue(page, '0');
@@ -1893,7 +1893,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: 0 should not be allowed to be applyed
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
     await setStereoBondWidthValue(page, '0');
@@ -1912,7 +1912,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: 0 should not be allowed to be applyed
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
     await setStereoBondWidthValue(page, '0');
@@ -1931,7 +1931,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: 0 should not be allowed to be applyed
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
     await setStereoBondWidthValue(page, '0');
@@ -1951,7 +1951,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '-0.5');
@@ -1971,7 +1971,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '-0.5');
@@ -1991,7 +1991,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '-0.5');
@@ -2011,7 +2011,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         a negative value should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '-0.5');
@@ -2029,7 +2029,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         0 should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '0');
@@ -2047,7 +2047,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         0 should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '0');
@@ -2065,7 +2065,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         0 should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '0');
@@ -2083,7 +2083,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         0 should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '0');
@@ -2103,7 +2103,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         1000.1 should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '1000.1');
@@ -2121,7 +2121,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         1000.1 should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '1000.1');
@@ -2139,7 +2139,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         1000.1 should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '1000.1');
@@ -2157,7 +2157,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         1000.1 should not be allowed to be entered
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '1000.1');
@@ -2174,7 +2174,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: Change "Double bond width" setting
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '0');
     await moveMouseAway(page);
@@ -2192,7 +2192,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: Change "Double bond width" setting
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '-19');
     await moveMouseAway(page);
@@ -2208,7 +2208,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: Change "Double bond width" setting
         */
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '101');
     await moveMouseAway(page);

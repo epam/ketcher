@@ -717,7 +717,7 @@ test.describe('Open and Save file', () => {
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '79.8');
     await pressButton(page, 'Apply');
@@ -746,7 +746,7 @@ test.describe('Open and Save file', () => {
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '1.8');
     await pressButton(page, 'Apply');

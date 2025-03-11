@@ -57,7 +57,7 @@ const useIndigoWorkerImport = (importToUse) => {
 const baseConfig = {
   input: {
     main: 'src/index.ts',
-    index: 'src/emptyIndex.ts',
+    index: 'src/emptyIndex.js',
   },
   external: ['ketcher-core', /@babel\/runtime/],
   plugins: [

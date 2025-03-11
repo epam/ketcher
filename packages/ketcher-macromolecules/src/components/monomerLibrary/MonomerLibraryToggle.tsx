@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { Icon } from 'ketcher-react';
+import { MONOMER_LIBRARY_WIDTH } from './styles';
 
 const StyledMonomerLibraryToggle = styled.div(({ theme }) => {
   return {
@@ -7,17 +8,18 @@ const StyledMonomerLibraryToggle = styled.div(({ theme }) => {
     fontSize: theme.ketcher.font.size.regular,
     color: theme.ketcher.color.text.secondary,
     position: 'absolute',
+    top: '12px',
+    right: `calc(${MONOMER_LIBRARY_WIDTH} + 12px)`,
     cursor: 'pointer',
-    top: 'calc(8px + 12px)',
-    right: 'calc(4px + 12px)',
     visibility: 'visible',
     opacity: 1,
     whiteSpace: 'nowrap',
     display: 'flex',
     lineHeight: 1,
-    padding: '5px 8px',
-    borderRadius: '4px',
+    borderRadius: '4px 0 0 4px',
     userSelect: 'none',
+    backgroundColor: theme.ketcher.color.background.primary,
+    padding: '12px 4px',
 
     '& > span': {
       display: 'flex',
@@ -32,6 +34,9 @@ const StyledMonomerLibraryToggle = styled.div(({ theme }) => {
     '&.hidden': {
       backgroundColor: theme.ketcher.color.button.primary.active,
       color: theme.ketcher.color.button.text.primary,
+      right: '12px',
+      padding: '11px 8px',
+      borderRadius: '4px',
     },
   };
 });
@@ -48,9 +53,9 @@ const MonomerLibraryToggle = ({ isHidden, onClick }: Props) => {
       onClick={onClick}
     >
       <span className="icon">
-        {isHidden ? <Icon name="arrows-left" /> : <Icon name="arrows-right" />}
+        <Icon name={isHidden ? 'arrows-left' : 'arrows-right'} />
       </span>
-      <span>{isHidden ? 'Show Library' : 'Hide'}</span>
+      {isHidden && <span>Show Library</span>}
     </StyledMonomerLibraryToggle>
   );
 };

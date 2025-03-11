@@ -25,7 +25,7 @@ export const MonomerLibraryContainer = styled.div(({ theme }) => ({
   boxShadow: '0px 2px 5px rgba(103, 104, 132, 0.15)',
   display: 'flex',
   flexDirection: 'column',
-  borderRadius: '4px',
+  borderRadius: '0 4px 4px',
 }));
 
 export const MonomerLibraryHeader = styled.div(() => ({
@@ -81,11 +81,22 @@ export const MonomerLibraryInputContainer = styled.div(({ theme }) => ({
 
 export const MonomerLibrarySearchIcon = styled(Icon)(({ theme }) => ({
   color: theme.ketcher.color.text.secondary,
+  height: '16px',
+  width: '16px',
 }));
 
 export const MonomerLibraryInput = styled(Input)({
-  outline: 0,
+  outline: 'none',
   ':hover': {
     outline: 'none',
   },
+  ':focus': {
+    outline: 'none',
+  },
+
+  backgroundColor: 'transparent',
+  border: 'none',
+  padding: 0,
+  margin: 0,
+  flexGrow: 1,
 });

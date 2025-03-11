@@ -21,6 +21,7 @@ import { StyledIcon } from '../RnaBuilder/RnaAccordion/Summary/styles';
 import { useAppDispatch } from 'hooks';
 import { togglePresetFavorites } from 'state/rna-builder';
 import { getPresetUniqueKey } from 'state/library';
+import { FavoriteStarSymbol } from '../../../constants';
 
 const RnaPresetItem = ({
   preset,
@@ -69,7 +70,7 @@ const RnaPresetItem = ({
         onClick={addFavorite}
         className={`star ${favorite ? 'visible' : ''}`}
       >
-        ★
+        {FavoriteStarSymbol}
       </div>
     </Card>
   );

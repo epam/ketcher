@@ -21,13 +21,14 @@ export const RnaEditorExpandedContainer = styled.div((props) => ({
   display: 'flex',
   flexDirection: 'column',
   padding: '10px',
+  backgroundColor: '#F7F9FA',
+  borderRadius: '0 0 4px 4px',
+
   '&.rna-editor-expanded--sequence-edit-mode': {
     padding: '8px',
     paddingTop: '10px',
     border: `2px ${props.theme.ketcher.color.editMode.sequenceInRNABuilder} solid`,
     borderTop: 'none',
-    borderBottomRightRadius: '4px',
-    borderBottomLeftRadius: '4px',
   },
 }));
 

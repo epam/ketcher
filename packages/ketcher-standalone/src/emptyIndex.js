@@ -4,7 +4,3 @@
 // To allow builders resolve this import we need to add this file and use it as an index entry point.
 
 // Package main entry point and package.json exports use main.ts file.
-
-const empty = {};
-
-export default empty;

@@ -134,7 +134,6 @@ export class CoreEditor {
     }
     this.subscribeEvents();
     this.renderersContainer = new RenderersManager({ theme });
-    this.transientDrawingView = new TransientDrawingView();
     this.drawingEntitiesManager = new DrawingEntitiesManager();
     this.viewModel = new ViewModel();
     this.domEventSetup();
@@ -144,6 +143,7 @@ export class CoreEditor {
     this.setupCopyPasteEvent();
     this.canvasOffset = this.canvas.getBoundingClientRect();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
+    this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
     const ketcher = ketcherProvider.getKetcher();

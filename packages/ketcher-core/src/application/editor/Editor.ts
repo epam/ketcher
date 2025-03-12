@@ -255,6 +255,14 @@ export class CoreEditor {
       .filter((templateRef) => {
         const template = monomersLibraryJson[templateRef.$ref];
 
+        if (!template) {
+          KetcherLogger.error(
+            `There is a ref for rna preset template ${templateRef.$ref}, but template definition is not found`,
+          );
+
+          return false;
+        }
+
         return (
           template.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
           template.class === KetMonomerGroupTemplateClass.RNA

@@ -539,18 +539,10 @@
         "type": "monomerTemplate",
         "atoms": [
             {
-                "label": "O",
-                "location": [
-                    -1.489,
-                    0.022,
-                    0
-                ]
-            },
-            {
                 "label": "C",
                 "location": [
-                    -1.148,
-                    0.962,
+                    7.071068,
+                    -8.753394,
                     0
                 ],
                 "stereoLabel": "abs"
@@ -558,8 +550,8 @@
             {
                 "label": "C",
                 "location": [
-                    -0.701,
-                    -0.593,
+                    7.880058,
+                    -8.165602,
                     0
                 ],
                 "stereoLabel": "abs"
@@ -567,8 +559,8 @@
             {
                 "label": "C",
                 "location": [
-                    -0.149,
-                    0.928,
+                    7.571062,
+                    -7.214513,
                     0
                 ],
                 "stereoLabel": "abs"
@@ -576,8 +568,8 @@
             {
                 "label": "C",
                 "location": [
-                    0.128,
-                    -0.033,
+                    6.571074,
+                    -7.214513,
                     0
                 ],
                 "stereoLabel": "abs"
@@ -585,88 +577,96 @@
             {
                 "label": "O",
                 "location": [
-                    0.464,
-                    1.717,
-                    0
-                ]
-            },
-            {
-                "label": "O",
-                "location": [
-                    1.066,
-                    -0.376,
+                    6.262078,
+                    -8.165602,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    -1.709,
-                    1.788,
+                    5.983277,
+                    -6.405505,
                     0
                 ]
             },
             {
                 "label": "O",
                 "location": [
-                    -0.728,
-                    -1.393,
-                    0
-                ]
-            },
-            {
-                "label": "O",
-                "location": [
-                    -2.707,
-                    1.717,
+                    4.988757,
+                    -6.510048,
                     0
                 ]
             },
             {
                 "label": "H",
                 "location": [
-                    -3.156,
-                    2.378,
-                    0
-                ]
-            },
-            {
-                "label": "H",
-                "location": [
-                    1.257,
-                    1.608,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    1.239,
-                    -1.362,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    2.179,
-                    -1.705,
+                    4.40096,
+                    -5.70104,
                     0
                 ]
             },
             {
                 "label": "O",
                 "location": [
-                    2.352,
-                    -2.691,
+                    8.158859,
+                    -6.405505,
+                    0
+                ]
+            },
+            {
+                "label": "H",
+                "location": [
+                    9.153379,
+                    -6.510048,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    7.071068,
+                    -9.753394,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    8.831114,
+                    -8.474622,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    3.103,
-                    -2.966,
+                    9.039021,
+                    -9.45277,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    9.990077,
+                    -9.761791,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    10.197985,
+                    -10.73994,
+                    0
+                ]
+            },
+            {
+                "label": "C",
+                "location": [
+                    11.14904,
+                    -11.04896,
                     0
                 ]
             }
@@ -676,51 +676,35 @@
                 "type": 1,
                 "atoms": [
                     0,
-                    1
+                    4
                 ]
             },
             {
                 "type": 1,
                 "atoms": [
-                    0,
-                    2
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    1,
+                    4,
                     3
                 ]
             },
             {
                 "type": 1,
                 "atoms": [
-                    1,
-                    7
-                ],
-                "stereo": 6
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    2,
-                    4
+                    3,
+                    2
                 ]
             },
             {
                 "type": 1,
                 "atoms": [
                     2,
-                    8
-                ],
-                "stereo": 6
+                    1
+                ]
             },
             {
                 "type": 1,
                 "atoms": [
-                    3,
-                    4
+                    1,
+                    0
                 ]
             },
             {
@@ -729,41 +713,57 @@
                     3,
                     5
                 ],
-                "stereo": 1
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    4,
-                    6
-                ],
-                "stereo": 1
+                "stereo": 6
             },
             {
                 "type": 1,
                 "atoms": [
                     5,
-                    11
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    7,
-                    9
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    9,
-                    10
+                    6
                 ]
             },
             {
                 "type": 1,
                 "atoms": [
                     6,
+                    7
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    2,
+                    8
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    8,
+                    9
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    0,
+                    10
+                ],
+                "stereo": 6
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    1,
+                    11
+                ],
+                "stereo": 1
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    11,
                     12
                 ]
             },
@@ -796,29 +796,29 @@
         "alias": "MOE",
         "attachmentPoints": [
             {
-                "attachmentAtom": 9,
+                "attachmentAtom": 6,
                 "type": "left",
                 "leavingGroup": {
                     "atoms": [
-                        10
+                        7
                     ]
                 }
             },
             {
-                "attachmentAtom": 5,
+                "attachmentAtom": 8,
                 "type": "right",
                 "leavingGroup": {
                     "atoms": [
-                        11
+                        9
                     ]
                 }
             },
             {
-                "attachmentAtom": 2,
+                "attachmentAtom": 0,
                 "type": "side",
                 "leavingGroup": {
                     "atoms": [
-                        8
+                        10
                     ]
                 }
             }
@@ -1170,82 +1170,82 @@
         "type": "monomerTemplate",
         "atoms": [
             {
-                "label": "C",
+                "label": "N",
                 "location": [
-                    1.241,
-                    0.9,
+                    8.775007,
+                    -8.324987,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    0.741,
-                    1.766,
-                    0
-                ]
-            },
-            {
-                "label": "C",
-                "location": [
-                    -0.259,
-                    1.766,
+                    9.275015,
+                    -9.191026,
                     0
                 ]
             },
             {
                 "label": "N",
                 "location": [
-                    -0.759,
-                    0.9,
+                    10.275007,
+                    -9.191038,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    -0.259,
-                    0.034,
+                    10.774993,
+                    -8.325013,
                     0
                 ]
             },
             {
-                "label": "N",
+                "label": "C",
                 "location": [
-                    0.741,
-                    0.034,
+                    10.274985,
+                    -7.458974,
                     0
                 ]
             },
             {
-                "label": "N",
+                "label": "C",
                 "location": [
-                    2.041,
-                    0.9,
-                    0
-                ]
-            },
-            {
-                "label": "O",
-                "location": [
-                    -0.659,
-                    -0.659,
+                    9.274993,
+                    -7.458962,
                     0
                 ]
             },
             {
                 "label": "H",
                 "location": [
-                    -1.559,
-                    0.9,
+                    7.775007,
+                    -8.324994,
+                    0
+                ]
+            },
+            {
+                "label": "O",
+                "location": [
+                    8.775009,
+                    -10.057048,
+                    0
+                ]
+            },
+            {
+                "label": "N",
+                "location": [
+                    11.774993,
+                    -8.325006,
                     0
                 ]
             },
             {
                 "label": "C",
                 "location": [
-                    1.141,
-                    2.459,
+                    10.774991,
+                    -6.592952,
                     0
                 ]
             }
@@ -1254,14 +1254,42 @@
             {
                 "type": 1,
                 "atoms": [
+                    5,
+                    0
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
                     0,
                     1
                 ]
             },
             {
+                "type": 1,
+                "atoms": [
+                    1,
+                    2
+                ]
+            },
+            {
                 "type": 2,
                 "atoms": [
-                    0,
+                    2,
+                    3
+                ]
+            },
+            {
+                "type": 1,
+                "atoms": [
+                    3,
+                    4
+                ]
+            },
+            {
+                "type": 2,
+                "atoms": [
+                    4,
                     5
                 ]
             },
@@ -1276,21 +1304,7 @@
                 "type": 2,
                 "atoms": [
                     1,
-                    2
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    2,
-                    3
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    3,
-                    4
+                    7
                 ]
             },
             {
@@ -1304,20 +1318,6 @@
                 "type": 1,
                 "atoms": [
                     4,
-                    5
-                ]
-            },
-            {
-                "type": 2,
-                "atoms": [
-                    4,
-                    7
-                ]
-            },
-            {
-                "type": 1,
-                "atoms": [
-                    1,
                     9
                 ]
             }
@@ -1329,11 +1329,11 @@
         "alias": "5meC",
         "attachmentPoints": [
             {
-                "attachmentAtom": 3,
+                "attachmentAtom": 0,
                 "type": "left",
                 "leavingGroup": {
                     "atoms": [
-                        8
+                        6
                     ]
                 }
             }

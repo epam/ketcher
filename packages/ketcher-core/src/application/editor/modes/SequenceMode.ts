@@ -154,6 +154,11 @@ export class SequenceMode extends BaseMode {
     this.initialize(false, false, false);
   }
 
+  public resetEditMode() {
+    this.turnOffAntisenseEditMode();
+    this.turnOffSyncEditMode();
+  }
+
   public initialize(
     needScroll = true,
     needRemoveSelection = true,

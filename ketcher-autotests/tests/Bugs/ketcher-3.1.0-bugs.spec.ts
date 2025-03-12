@@ -1,48 +1,18 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Bases } from '@constants/monomers/Bases';
 import { Peptides } from '@constants/monomers/Peptides';
-import { Presets } from '@constants/monomers/Presets';
 import { Page, test } from '@playwright/test';
 import {
   selectClearCanvasTool,
-  selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePageScreenshot,
-  openFileAndAddToCanvasAsNewProjectMacro,
-  selectMacroBond,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  MonomerType,
   selectAllStructuresOnCanvas,
-  addMonomerToCenterOfCanvas,
-  copyToClipboardByKeyboard,
-  pasteFromClipboardByKeyboard,
-  openFileAndAddToCanvasMacro,
-  dragMouseTo,
-  selectMonomer,
-  pressButton,
-  drawBenzeneRing,
-  moveOnAtom,
-  selectRectangleSelection,
   clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
-  selectEraseTool,
-  selectPartOfMolecules,
-  selectAromatizeTool,
-  selectDearomatizeTool,
-  selectLayoutTool,
-  selectCleanTool,
-  selectCalculateTool,
-  selectAddRemoveExplicitHydrogens,
   clickOnCanvas,
-  selectTopPanelButton,
-  TopPanelButton,
-  setMolecule,
-  FILE_TEST_DATA,
-  moveMouseAway,
   selectRing,
   RingButton,
   addMonomersToFavorites,
@@ -50,74 +20,20 @@ import {
   delay,
   openLayoutModeMenu,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { waitForPageInit, waitForRender } from '@utils/common';
 import {
-  waitForPageInit,
-  waitForRender,
-  waitForSpinnerFinishedWork,
-} from '@utils/common';
-import { pageReload } from '@utils/common/helpers';
-import {
-  FileType,
-  verifyFileExport,
-} from '@utils/files/receiveFileComparisonData';
-import {
-  chooseFileFormat,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
 import {
   goToFavoritesTab,
   goToPeptidesTab,
-  goToRNATab,
 } from '@utils/macromolecules/library';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import {
-  clickOnSequenceSymbol,
-  hoverOnSequenceSymbol,
-  switchToDNAMode,
-  switchToPeptideMode,
-} from '@utils/macromolecules/sequence';
+import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 
 let page: Page;
-
-async function connectMonomerToAtom(page: Page) {
-  await getMonomerLocator(page, Peptides.A).hover();
-  await page
-    .getByTestId('monomer')
-    .locator('g')
-    .filter({ hasText: 'R2' })
-    .locator('path')
-    .hover();
-  await page.mouse.down();
-  await page.locator('g').filter({ hasText: /^H2N$/ }).locator('rect').hover();
-  await page.mouse.up();
-}
-
-async function interactWithMicroMolecule(
-  page: Page,
-  labelText: string,
-  action: 'hover' | 'click',
-  index: number = 0,
-): Promise<void> {
-  const element = page
-    .locator('g')
-    .filter({ hasText: new RegExp(`^${labelText}$`) })
-    .locator('rect')
-    .nth(index);
-
-  // Wait for the element to be visible
-  await element.waitFor({ state: 'visible' });
-
-  // Perform the requested action
-  if (action === 'hover') {
-    await element.hover();
-  } else if (action === 'click') {
-    await element.click();
-  }
-}
 
 async function callContextMenuForMonomer(
   page: Page,

@@ -126,19 +126,60 @@ export function getMonomerLocator(
     attributes['data-number-of-attachment-points'] = numberOfAttachmentPoints;
   }
 
+  if (rValues) {
+    rValues.forEach((value, index) => {
+      attributes[`data-R${index + 1}`] = `${value}`;
+    });
+  }
+
   const attributeSelectors = Object.entries(attributes)
     .map(([key, value]) => `[${key}="${value}"]`)
     .join('');
 
-  let locator = page.locator(attributeSelectors);
-
-  if (rValues) {
-    rValues.forEach((value, index) => {
-      locator = locator.filter({
-        has: page.locator(`[data-R${index + 1}="${value}"]`),
-      });
-    });
-  }
+  const locator = page.locator(attributeSelectors);
 
   return locator;
+}
+
+type GetAtomLocatorOptions = {
+  atomAlias?: string;
+  atomId?: string | number;
+};
+
+export function getAtomLocator(page: Page, options: GetAtomLocatorOptions) {
+  const attributes: { [key: string]: string } = {};
+
+  attributes['data-testid'] = 'atom';
+
+  const { atomId, atomAlias } = options;
+  if (atomId) attributes['data-atomid'] = String(atomId);
+  if (atomAlias) attributes['data-atomalias'] = atomAlias;
+
+  const attributeSelectors = Object.entries(attributes)
+    .map(([key, value]) => `[${key}="${value}"]`)
+    .join('');
+
+  const locator = page.locator(attributeSelectors);
+
+  return locator;
+}
+
+export async function createRNAAntisenseChain(page: Page, monomer: Locator) {
+  await monomer.click({ button: 'right', force: true });
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_rna_chain')
+    .first();
+
+  await createAntisenseStrandOption.click();
+}
+
+export async function createDNAAntisenseChain(page: Page, monomer: Locator) {
+  await monomer.click({ button: 'right', force: true });
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_dna_chain')
+    .first();
+
+  await createAntisenseStrandOption.click();
 }

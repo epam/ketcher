@@ -16,10 +16,11 @@
     "lint:fix": "eslint . --fix",
     "prettier:write": "prettier --write \"./**/*.{js,ts}\" ",
     "docker:build": "docker-compose build autotests && docker-compose run --rm autotests bash /app/test_prepare.sh",
-    "docker:test": "docker-compose run --rm autotests bash /app/test_run.sh",
-    "docker:trace": "docker-compose run --rm autotests bash /app/test_run.sh --trace on",
-    "docker:update": "docker-compose run --rm autotests bash /app/test_run.sh --update-snapshots",
-    "docker:update:test": "docker-compose run --rm autotests bash /app/test_run.sh --update-snapshots -g"
+    "docker:test": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium",
+    "docker:test-popup": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium-ReactMUI857x648",
+    "docker:trace": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium --trace on",
+    "docker:update": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium --update-snapshots",
+    "docker:update:test": "docker-compose run --rm autotests bash /app/test_run.sh --project=chromium --update-snapshots -g"
   },
   "author": "Nitvex",
   "license": "ISC",

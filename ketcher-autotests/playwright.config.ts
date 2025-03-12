@@ -13,7 +13,7 @@ import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-const testDir = './ketcher-autotests/tests';
+// const testDir = './tests';
 // const snapshotDirReactMUI = path.join(testDir, 'Indigo-Tools/Aromatize-Dearomatize/ReactMUI857x648');
 
 function baseURLFullScale(): string {
@@ -47,9 +47,10 @@ if (process.env.NUM_WORKERS) {
 }
 
 const config: PlaywrightTestConfig = {
-  testDir,
-  // snapshotPathTemplate:
-  //   '__screenshots__{/projectName}/{testFilePath}/{arg}{ext}',
+  testDir: './tests',
+  snapshotPathTemplate:
+    '{testDir}/{testFilePath}-snapshots/{arg}-{projectName}-{platform}{ext}',
+
   timeout: 60_000,
   fullyParallel: true,
   forbidOnly: isCI,
@@ -68,6 +69,7 @@ const config: PlaywrightTestConfig = {
   },
   projects: [
     {
+      name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
         baseURL: baseURLFullScale(),

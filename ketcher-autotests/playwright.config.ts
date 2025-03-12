@@ -6,15 +6,12 @@ import {
   STANDALONE_URL,
   DEFAULT_KETCHER_STANDALONE_URL,
   MODES,
-  STANDALONE_REACT_MUI_MATERIAL_DIALOG_857X648_URL,
-  REMOTE_REACT_MUI_MATERIAL_DIALOG_857X648_URL,
+  STANDALONE_POPUP_URL,
+  REMOTE_POPUP_URL,
 } from './constants';
 import path from 'path';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
-
-// const testDir = './tests';
-// const snapshotDirReactMUI = path.join(testDir, 'Indigo-Tools/Aromatize-Dearomatize/ReactMUI857x648');
 
 function baseURLFullScale(): string {
   if (!process.env.MODE || !process.env.KETCHER_URL) {
@@ -28,15 +25,15 @@ function baseURLFullScale(): string {
   return `${process.env.KETCHER_URL}${REMOTE_URL}`;
 }
 
-function baseURLReactMUI857x648(): string {
+function baseURLPopup(): string {
   if (!process.env.MODE || !process.env.KETCHER_URL) {
     return DEFAULT_KETCHER_STANDALONE_URL;
   }
 
   if (process.env.MODE === MODES.STANDALONE) {
-    return `${process.env.KETCHER_URL}${STANDALONE_REACT_MUI_MATERIAL_DIALOG_857X648_URL}`;
+    return `${process.env.KETCHER_URL}${STANDALONE_POPUP_URL}`;
   }
-  return `${process.env.KETCHER_URL}${REMOTE_REACT_MUI_MATERIAL_DIALOG_857X648_URL}`;
+  return `${process.env.KETCHER_URL}${REMOTE_POPUP_URL}`;
 }
 
 const MAX_NUMBER_OF_RETRIES = 2;
@@ -78,10 +75,11 @@ const config: PlaywrightTestConfig = {
       },
     },
     {
-      name: 'chromium-ReactMUI857x648',
+      // former chromium-ReactMUI857x648
+      name: 'chromium-popup',
       use: {
         ...devices['Desktop Chrome'],
-        baseURL: baseURLReactMUI857x648(),
+        baseURL: baseURLPopup(),
         launchOptions: { headless: true },
         contextOptions: { permissions: ['clipboard-read', 'clipboard-write'] },
       },

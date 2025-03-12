@@ -3,8 +3,8 @@ export const DEFAULT_KETCHER_STANDALONE_URL =
 
 export const STANDALONE_URL = '/KetcherDemoSA/index.html';
 export const REMOTE_URL = '/KetcherDemo/index.html';
-export const STANDALONE_REACT_MUI_MATERIAL_DIALOG_857X648_URL = `/popup.html`;
-export const REMOTE_REACT_MUI_MATERIAL_DIALOG_857X648_URL = `/popup.html`;
+export const STANDALONE_POPUP_URL = `/popup.html`;
+export const REMOTE_POPUP_URL = `/popup.html`;
 
 export const API_INDIGO_URL = `${process.env.KETCHER_URL}/v2/indigo`;
 export const MODES = {

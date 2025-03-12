@@ -240,34 +240,31 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
     const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
 
-    let numberToDisplay;
+    if (this.isAntisenseNode && isNumber(antisenseNodeIndex)) {
+      return antisenseNodeIndex + 1;
+    }
 
-    this.twoStrandedNode.chain.subChains.find((subChain) => {
+    let numberToDisplay;
+    this.twoStrandedNode.chain.subChains.some((subChain) => {
       if (!this.isSubChainNode(this.node)) return false;
 
       const nodeIndex = subChain.nodes.indexOf(this.node);
-      if (nodeIndex !== -1) {
-        if (nodeIndex === 0) {
-          numberToDisplay = nodeIndex + 1;
-        } else if (nodeIndex === subChain.nodes.length - 1) {
-          numberToDisplay = nodeIndex + 1;
-        } else if (
-          nodeIndex === subChain.nodes.length - 2 &&
-          subChain.nodes[subChain.nodes.length - 1].monomer instanceof Phosphate
-        ) {
-          numberToDisplay = nodeIndex + 1;
-        } else if ((nodeIndex + 1) % this.nthSeparationInRow === 0) {
-          numberToDisplay = nodeIndex + 1;
-        }
+      if (nodeIndex === -1) return false;
+
+      if (nodeIndex === 0 || nodeIndex === subChain.nodes.length - 1) {
+        numberToDisplay = nodeIndex + 1;
+      } else if (
+        nodeIndex === subChain.nodes.length - 2 &&
+        subChain.nodes[subChain.nodes.length - 1].monomer instanceof Phosphate
+      ) {
+        numberToDisplay = nodeIndex + 1;
+      } else if ((nodeIndex + 1) % this.nthSeparationInRow === 0) {
+        numberToDisplay = nodeIndex + 1;
       }
-      return null;
+      return numberToDisplay !== undefined;
     });
 
-    return this.isAntisenseNode && isNumber(antisenseNodeIndex)
-      ? antisenseNodeIndex + 1
-      : isNumber(numberToDisplay)
-      ? numberToDisplay
-      : senseNodeIndex + 1;
+    return isNumber(numberToDisplay) ? numberToDisplay : senseNodeIndex + 1;
   }
 
   private appendCounterElement(
@@ -332,7 +329,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private get isBeginningOfSubChain() {
-    // debugger;
     return this.chain.subChains.some((subChain) => {
       const firstNode = subChain.nodes[0];
       return this.node === firstNode;
@@ -341,7 +337,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   // returns true if it is lastNode, and last node monomer is not Phosphate
   private get isLastInSubChain() {
-    // debugger;
     return this.chain.subChains.some((subChain) => {
       const lastNode = subChain.nodes[subChain.nodes.length - 1];
 
@@ -353,7 +348,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   // returns true if it is secondLastNode, and last node is not Phosphate
   private get isSecondLastNodeInSubChain() {
-    // debugger;
     return this.chain.subChains.some((subChain) => {
       const lastNode = subChain.nodes[subChain.nodes.length - 1];
       const secondLastNode = subChain.nodes[subChain.nodes.length - 2];
@@ -364,12 +358,10 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private get isNthNodeInSubChain() {
-    // debugger;
     return !!this.NthNodeInSubChainValue;
   }
 
   private get NthNodeInSubChainValue() {
-    // debugger;
     let nthNumber;
     this.twoStrandedNode.chain.subChains.find((subChain) => {
       if (!this.isSubChainNode(this.node)) return false;

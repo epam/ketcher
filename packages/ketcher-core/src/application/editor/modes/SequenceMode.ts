@@ -697,7 +697,15 @@ export class SequenceMode extends BaseMode {
       return;
     }
 
-    if (addPhosphateIfNeeded && firstNodeToConnect instanceof Nucleoside) {
+    if (
+      addPhosphateIfNeeded &&
+      firstNodeToConnect instanceof Nucleoside &&
+      (secondNodeToConnect instanceof Nucleotide ||
+        secondNodeToConnect instanceof Nucleoside ||
+        (secondNodeToConnect instanceof MonomerSequenceNode &&
+          secondNodeToConnect.monomer instanceof Phosphate &&
+          secondNodeToConnect.monomer.hydrogenBonds.length))
+    ) {
       modelChanges.merge(
         this.bondNodesThroughNewPhosphate(
           newNodePosition,
@@ -2473,6 +2481,9 @@ export class SequenceMode extends BaseMode {
           currentTwoStrandedNode instanceof BackBoneSequenceNode
             ? currentTwoStrandedNode.firstConnectedNode
             : undefined,
+          true,
+          true,
+          false,
         ),
       );
       return { modelChanges, node: newPhosphateNode };

@@ -26,6 +26,7 @@ import {
 } from 'state/rna-builder';
 import { Modal } from 'components/shared/modal';
 import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/styles';
+import { RnaTabs } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/RnaTabs';
 
 export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
   const dispatch = useAppDispatch();
@@ -42,7 +43,7 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
   return (
     <RnaBuilderContainer>
       <RnaEditor duplicatePreset={duplicatePreset} />
-      <RnaAccordion
+      <RnaTabs
         libraryName={libraryName}
         duplicatePreset={duplicatePreset}
         editPreset={editPreset}

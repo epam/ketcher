@@ -411,6 +411,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       (this.isSequenceEditInRnaBuilderModeTurnedOn &&
         !this.node.monomer.selected) ||
       (!this.isSyncEditMode &&
+        this.hasAntisenseInChain &&
         ((this.isAntisenseNode && !this.isAntisenseEditMode) ||
           (!this.isAntisenseNode && this.isAntisenseEditMode)))
     ) {

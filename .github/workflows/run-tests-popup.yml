@@ -43,7 +43,7 @@ jobs:
           name: ketcher-dist-micro
           path: example/dist
 
-  part:
+  popup-part:
     timeout-minutes: 120
     runs-on: self-hosted-a
     needs: build_ketcher

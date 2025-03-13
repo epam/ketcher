@@ -242,7 +242,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Adding symbols before separate phosphate should be restricted', async ({
+  test('Adding symbols before separate phosphate should be allowed', async ({
     page,
   }) => {
     /*

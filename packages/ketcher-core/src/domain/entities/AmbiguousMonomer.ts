@@ -18,6 +18,7 @@ import { Phosphate } from 'domain/entities/Phosphate';
 import { Sugar } from 'domain/entities/Sugar';
 import { RNABase } from 'domain/entities/RNABase';
 import { UnsplitNucleotide } from 'domain/entities/UnsplitNucleotide';
+import { ambiguousMapping } from 'domain/constants/monomers';
 
 export const DEFAULT_VARIANT_MONOMER_LABEL = '%';
 
@@ -39,12 +40,18 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
     position?: Vec2,
     generateId = true,
   ) {
-    const variantMonomerLabel =
+    let variantMonomerLabel: string;
+    if (
       variantMonomerItem.subtype ===
         KetAmbiguousMonomerTemplateSubType.MIXTURE ||
-      variantMonomerItem.label?.length > 1
-        ? DEFAULT_VARIANT_MONOMER_LABEL
-        : variantMonomerItem.label;
+      (variantMonomerItem.label && variantMonomerItem.label.length > 1)
+    ) {
+      variantMonomerLabel =
+        ambiguousMapping[variantMonomerItem.id] ||
+        DEFAULT_VARIANT_MONOMER_LABEL;
+    } else {
+      variantMonomerLabel = variantMonomerItem.label;
+    }
 
     super(
       {

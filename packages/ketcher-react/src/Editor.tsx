@@ -46,6 +46,15 @@ export const Editor = (props: Props) => {
     window.isPolymerEditorTurnedOn = toggleValue;
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+      togglePolymerEditor(true);
+      setTimeout(() => {
+        togglePolymerEditor(false);
+      }, 500);
+    }, 500);
+  }, []);
+
   const togglerComponent = !props.disableMacromoleculesEditor ? (
     <ModeControl
       toggle={togglePolymerEditor}

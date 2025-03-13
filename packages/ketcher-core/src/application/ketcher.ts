@@ -83,6 +83,10 @@ export class Ketcher {
     return this.#editor!;
   }
 
+  get coreEditor() {
+    return CoreEditor.provideEditorInstance();
+  }
+
   get eventBus(): EventEmitter {
     return this.#eventBus;
   }

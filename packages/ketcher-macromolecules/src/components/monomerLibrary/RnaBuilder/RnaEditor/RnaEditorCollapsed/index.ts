@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { RnaEditorCollapsed } from './RnaEditorCollapsed';
+export { default as RnaEditorCollapsed } from './RnaEditorCollapsed';

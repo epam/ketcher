@@ -16,6 +16,7 @@
 
 import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
+import clsx from 'clsx';
 import { Icon, IconName } from 'ketcher-react';
 import { useEffect, useMemo, useState } from 'react';
 import {
@@ -32,11 +33,13 @@ import {
   selectAmbiguousMonomersInCategory,
 } from 'state/library';
 import {
+  CompactDetailsContainer,
   DetailsContainer,
   DisabledArea,
   RnaAccordionContainer,
   RnaTab,
   RnaTabsContainer,
+  RnaTabWrapper,
   StyledAccordion,
   StyledAccordionWrapper,
   StyledButton,
@@ -228,18 +231,93 @@ export const RnaTabs = ({ libraryName, duplicatePreset, editPreset }) => {
             : null;
 
           return (
-            <RnaTab
-              label={caption}
-              icon={
-                <Icon
-                  name={groupData.iconName}
-                  onClick={() => setSelectedTab(groupData.groupName)}
-                />
-              }
-            />
+            <RnaTabWrapper className={clsx(showCaption && 'rna-tab--selected')}>
+              <RnaTab
+                label={caption}
+                title={groupData.groupName}
+                icon={
+                  <Icon
+                    name={groupData.iconName}
+                    onClick={() => setSelectedTab(groupData.groupName)}
+                  />
+                }
+              />
+            </RnaTabWrapper>
           );
         })}
       </RnaTabsContainer>
+      {groupsData.map((groupData) => {
+        if (groupData.groupName !== selectedTab) {
+          return null;
+        }
+        const variantMonomers = selectAmbiguousMonomersInCategory(
+          monomers,
+          groupData.groupName as MonomerGroups,
+        );
+        const details =
+          groupData.groupName === RnaBuilderPresetsItem.Presets ? (
+            <DetailsContainer>
+              <StyledButton onClick={() => onClickNewPreset()}>
+                New Preset
+              </StyledButton>
+              <RnaPresetGroup
+                duplicatePreset={duplicatePreset}
+                editPreset={editPreset}
+                presets={presets}
+              />
+              {isEditMode && !isActivePresetNewAndEmpty && <DisabledArea />}
+            </DetailsContainer>
+          ) : (
+            <DetailsContainer>
+              <>
+                {groupData.groups.map(({ groupItems, groupTitle }) => {
+                  return (
+                    <MonomerGroup
+                      key={groupTitle}
+                      title={
+                        groupData.groups.length > 1 ? groupTitle : undefined
+                      }
+                      groupName={groupData.groupName as MonomerGroups}
+                      items={groupItems as MonomerItemType[]}
+                      selectedMonomerUniqueKey={activeMonomerKey}
+                      onItemClick={(monomer) =>
+                        selectItem(monomer, groupData.groupName)
+                      }
+                    />
+                  );
+                })}
+                {variantMonomers.map((group) => {
+                  return (
+                    <MonomerGroup
+                      key={group.groupTitle}
+                      title={group.groupTitle}
+                      items={group.groupItems}
+                      libraryName={libraryName}
+                      selectedMonomerUniqueKey={activeMonomerKey}
+                      onItemClick={(monomer) =>
+                        selectItem(monomer, groupData.groupName)
+                      }
+                    />
+                  );
+                })}
+              </>
+            </DetailsContainer>
+          );
+
+        const firstTabSelected = selectedTab === RnaBuilderPresetsItem.Presets;
+        const lastTabSelected = selectedTab === MonomerGroups.NUCLEOTIDES;
+
+        return (
+          <CompactDetailsContainer
+            className={clsx(
+              firstTabSelected && 'first-tab',
+              lastTabSelected && 'last-tab',
+            )}
+          >
+            {details}
+          </CompactDetailsContainer>
+        );
+      })}
     </RnaAccordionContainer>
   );
 };

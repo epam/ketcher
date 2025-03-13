@@ -43,7 +43,24 @@ export const DetailsContainer = styled.div({
   gap: '8px',
   justifyContent: 'start',
   padding: '8px',
+  overflow: 'auto',
 });
+
+export const CompactDetailsContainer = styled.div`
+  height: 100%;
+  background-color: #f7f9fa;
+  border-radius: 4px;
+  margin: 4px 8px;
+  overflow: auto;
+
+  &.first-tab {
+    border-radius: 0 4px 4px 4px;
+  }
+
+  &.last-tab {
+    border-radius: 4px 0 4px 4px;
+  }
+`;
 
 export const StyledButton = styled(Button)((props) => {
   return {
@@ -64,8 +81,32 @@ export const DisabledArea = styled.div({
 
 export const RnaTabsContainer = styled.div`
   display: flex;
+  justify-content: space-between;
   gap: 8px;
   padding: 6px 8px 0;
+`;
+
+export const RnaTabWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &.rna-tab--selected {
+    & button {
+      border-radius: 4px 4px 0 0;
+      background-color: #f7f9fa;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background-color: #f7f9fa;
+    }
+  }
 `;
 
 export const RnaTab = styled(Tab)`
@@ -84,6 +125,10 @@ export const RnaTab = styled(Tab)`
   background-color: white;
   opacity: 1;
   text-transform: none;
+
+  &:hover {
+    background-color: #f3f8f9;
+  }
 
   > svg {
     height: 16px;

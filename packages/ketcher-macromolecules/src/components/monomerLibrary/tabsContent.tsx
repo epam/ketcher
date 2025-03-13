@@ -41,7 +41,7 @@ export const tabsContent = (
     },
   },
   {
-    caption: 'CHEM',
+    caption: 'Chem',
     component: MonomerList,
     testId: 'CHEM-TAB',
     props: {

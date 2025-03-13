@@ -420,7 +420,9 @@ export function fromSgroup(ssgroup) {
           fieldValue:
             fieldValue || getSdataDefault(sdataCustomSchema, 'fieldValue'),
         }
-      : type === 'SRU'
+      : type === 'SRU' &&
+        ssgroup.attrs.subscript == null &&
+        ssgroup.attrs.connectivity == null
       ? {
           subscript: 'n',
           connectivity: 'ht',

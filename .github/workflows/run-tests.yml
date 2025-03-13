@@ -1,4 +1,4 @@
-name: Run Playwright Tests
+name: Run Playwright Tests (FullScale)
 on:
   push:
     branches:
@@ -43,7 +43,7 @@ jobs:
           name: ketcher-dist-micro
           path: example/dist
 
-  playwright_tests:
+  part:
     timeout-minutes: 120
     runs-on: self-hosted-a
     needs: build_ketcher

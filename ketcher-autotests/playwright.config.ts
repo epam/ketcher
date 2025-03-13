@@ -77,7 +77,6 @@ const config: PlaywrightTestConfig = {
     {
       // former chromium-ReactMUI857x648
       name: 'chromium-popup',
-      grep: /chromium-popup/,
       use: {
         ...devices['Desktop Chrome'],
         baseURL: baseURLPopup(),

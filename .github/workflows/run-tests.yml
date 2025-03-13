@@ -51,8 +51,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6]
-        shardTotal: [6]
+        shardIndexForChromium: [1, 2, 3, 4, 5, 6]
+        shardIndexForChromiumPopup: [7]
+        shardTotal: [7]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -83,12 +84,15 @@ jobs:
           cd ketcher-autotests/
           npm i
           npx playwright install chromium
-          npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          npx playwright test --project=chromium --shard=${{ matrix.shardIndexForChromium }}/${{ matrix.shardTotal }}
+          npx playwright test --project=chromium --project=chromium-popup --grep @chromium-popup --shard=${{ matrix.shardIndexForChromiumPopup }}/${{ matrix.shardTotal }}
+      - name: Determine shard index
+        id: determine-shard
+        run: echo "shard_index=$(echo ${{ matrix.shardIndexForChromium }}${{ matrix.shardIndexForChromiumPopup }})" >> $GITHUB_ENV
+
       - uses: actions/upload-artifact@v4
-        # run even if previous steps fails
         if: always()
         with:
-          name: pw-report-${{ matrix.shardIndex }}
+          name: pw-report-${{ steps.determine-shard.outputs.shard_index }}
           path: ketcher-autotests/playwright-report/
           retention-days: 5
-  

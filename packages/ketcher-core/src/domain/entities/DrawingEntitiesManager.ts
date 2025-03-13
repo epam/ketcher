@@ -105,7 +105,6 @@ import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { KetcherLogger } from 'utilities';
-import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 
 export const CELL_WIDTH = 60;
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = CELL_WIDTH;
@@ -559,11 +558,6 @@ export class DrawingEntitiesManager {
     needToDeleteConnectedBonds = true,
   ) {
     const command = new Command();
-
-    if (monomer instanceof EmptyMonomer) {
-      return command;
-    }
-
     const operation = new MonomerDeleteOperation(
       monomer,
       this.addMonomerChangeModel.bind(

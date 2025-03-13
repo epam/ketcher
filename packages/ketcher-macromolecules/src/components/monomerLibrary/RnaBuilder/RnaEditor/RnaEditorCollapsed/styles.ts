@@ -16,25 +16,25 @@
 
 import styled from '@emotion/styled';
 
-export const RnaEditorCollapsedContainer = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: '10px',
-});
+export const RnaEditorCollapsedContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f7f9fa;
+  border-radius: 0 0 4px 4px;
+`;
 
-export const MonomerName = styled.span<{ grey?: boolean }>((props) => ({
-  fontSize: props.theme.ketcher.font.size.medium,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  color: props.grey
-    ? props.theme.ketcher.color.text.lightgrey
-    : props.theme.ketcher.color.text.primary,
-}));
+export const MonomerName = styled.span`
+  font-size: ${(props) => props.theme.ketcher.font.size.medium};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: ${(props) => props.theme.ketcher.color.text.primary};
+`;
 
-export const TextContainer = styled.div({
-  display: 'flex',
-  alignItems: 'center',
-  width: '100%',
-});
+export const TextContainer = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+`;

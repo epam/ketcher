@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import 'ketcher-react/dist/index.css';
 
 import { useEffect, useState } from 'react';
@@ -49,6 +51,8 @@ const App = () => {
     line1.setAttribute('y2', '1000');
     line1.setAttribute('stroke', 'black');
     line1.setAttribute('stroke-width', '1');
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     canvas.appendChild(line1);
 
     const line2 = document.createElementNS(
@@ -61,20 +65,30 @@ const App = () => {
     line2.setAttribute('y2', '0');
     line2.setAttribute('stroke', 'black');
     line2.setAttribute('stroke-width', '1');
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     canvas.appendChild(line2);
   };
 
-  const setActiveLibraryItemLabel = (monomer) => {
+  const setActiveLibraryItemLabel = (monomer: never) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const label = monomer.props ? monomer.props.MonomerFullName : monomer.label;
     _setActiveLibraryItemLabel(label);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     window.ketcher?.editor.struct(monomer.struct, false);
     appendLines();
     setIsOldMode(false);
   };
 
   document.onkeydown = function (e) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const currentActiveLabelIndex = monomersList.findIndex(
       (monomer) =>
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         (monomer.props ? monomer.props.MonomerFullName : monomer.label) ===
         activeLibraryItemLabel,
     );
@@ -97,11 +111,15 @@ const App = () => {
       const newIsOldMode = !isOldMode;
       const oldMonomer = monomersListOld.find(
         (monomer) =>
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           (monomer.props ? monomer.props.MonomerFullName : monomer.label) ===
           activeLibraryItemLabel,
       );
       const newMonomer = monomersList.find(
         (monomer) =>
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           (monomer.props ? monomer.props.MonomerFullName : monomer.label) ===
           activeLibraryItemLabel,
       );
@@ -109,8 +127,12 @@ const App = () => {
       setIsOldMode(newIsOldMode);
 
       if (newIsOldMode) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         window.ketcher.editor.struct(oldMonomer.struct, false);
       } else {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         window.ketcher.editor.struct(newMonomer.struct, false);
       }
       appendLines();
@@ -133,6 +155,8 @@ const App = () => {
       <div style={{ flex: 1, height: '100%', overflow: 'scroll' }}>
         {monomersList.map((monomer) => (
           <div
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
             key={monomer.props ? monomer.props.id : monomer.label}
             style={{
               display: 'flex',
@@ -144,6 +168,8 @@ const App = () => {
               margin: '0',
               background:
                 activeLibraryItemLabel ===
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 (monomer.props ? monomer.props.MonomerFullName : monomer.label)
                   ? 'lightblue'
                   : 'white',
@@ -156,8 +182,14 @@ const App = () => {
             }}
           >
             <p>
-              {monomer.label +
-                ` (${monomer.props ? monomer.props.MonomerFullName : ''})`}
+              {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                monomer.label +
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore
+                  ` (${monomer.props ? monomer.props.MonomerFullName : ''})`
+              }
             </p>
           </div>
         ))}
@@ -175,11 +207,15 @@ const App = () => {
             window.ketcher = ketcher;
             setTimeout(() => {
               setMonomersList(
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 ketcher.coreEditor.monomersLibrary.sort((a, b) =>
                   a.label.localeCompare(b.label),
                 ),
               );
               setMonomersListOld(
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
                 ketcher.coreEditor.monomersLibraryOld.sort((a, b) =>
                   a.label.localeCompare(b.label),
                 ),

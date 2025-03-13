@@ -161,8 +161,13 @@ export class CoreEditor {
   public lastCursorPositionOfCanvas: Vec2 = new Vec2(0, 0);
   private _monomersLibraryParsedJson: IKetMacromoleculesContent | null = null;
   private _monomersLibrary: MonomerItemType[] = [];
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   private _monomersLibraryParsedJsonOld: IKetMacromoleculesContent | null =
     null;
+
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   private _monomersLibraryOld: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
   public drawnStructuresWrapperElement: SVGGElement;

@@ -19,8 +19,17 @@ import {
   takeMonomerLibraryScreenshot,
   delay,
   openLayoutModeMenu,
+  clickOnBond,
+  BondType,
+  selectFlexLayoutModeTool,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  selectSequenceLayoutModeTool,
+  pasteFromClipboard,
+  openStructurePasteFromClipboard,
 } from '@utils';
 import { waitForPageInit, waitForRender } from '@utils/common';
+import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -29,7 +38,16 @@ import {
   goToFavoritesTab,
   goToPeptidesTab,
 } from '@utils/macromolecules/library';
-import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
+import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
+import {
+  pressSaveButton,
+  selectBaseSlot,
+} from '@utils/macromolecules/rnaBuilder';
+import {
+  clickOnSequenceSymbol,
+  doubleClickOnSequenceSymbol,
+  switchToPeptideMode,
+} from '@utils/macromolecules/sequence';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 
@@ -51,6 +69,10 @@ async function setRotationStep(page: Page, value: string) {
   await page.getByTestId('rotationStep-input').click();
   await page.getByTestId('rotationStep-input').fill(value);
   await page.getByTestId('OK').click();
+}
+
+async function switchSyncMode(page: Page) {
+  await page.locator('.e1846tr80').click();
 }
 
 test.describe('Ketcher bugs in 3.1.0', () => {
@@ -288,5 +310,402 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      */
     await openLayoutModeMenu(page);
     await takePageScreenshot(page);
+  });
+
+  test(`Case 11: System not shows Edit S-Group option for bond of molecule if it has attachment point`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/4941
+     * Description: System not shows Edit S-Group option for bond of molecule if it has attachment point
+     * Scenario:
+     * 1. Open KET file
+     * 2. Right click on the bond
+     * 3. Take a screenshot
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/Unable to change atom to another if molecule has attachment point.ket',
+      page,
+    );
+    await clickOnBond(page, BondType.SINGLE, 2, 'right');
+    await takeEditorScreenshot(page);
+  });
+
+  test(`Case 12: For D-OAla named monomer it should be D-Lactic acid name in preview tooltip`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/5195
+     * Description: For D-OAla named monomer it should be D-Lactic acid name in preview tooltip
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Switch to Flex mode
+     * 3. Hover over D-OAla monomer
+     * 4. Take a screenshot
+     */
+    await turnOnMacromoleculesEditor(page, true, false);
+    await goToPeptidesTab(page);
+    await waitForRender(page, async () => {
+      await page.getByTestId('D-OAla___D-Lactic acid').hover();
+    });
+    await takePageScreenshot(page);
+  });
+
+  test(`Case 13: Separate selenocysteine from cysteine and pyrrolysine from lysine`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/4722
+     * Description: Selenocysteine is a separate amino acid from cysteine.
+     * It should have its own section in the library under the symbol U containing the following monomersseC (new symbol U)
+     * and dSec (new symbol dU)Pyrrolysine is a separate amino acid from lysine.It should have its own section in the library
+     * under the symbol O containing the following monomers:Pyl (new symbol O) and dPyl( new symbol dO)
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Switch to Flex mode
+     * 3. Hover over O monomer
+     * 4. Take a screenshot
+     * 5. Hover over U monomer
+     * 6. Take a screenshot
+     */
+    await selectFlexLayoutModeTool(page);
+    await goToPeptidesTab(page);
+    await waitForRender(page, async () => {
+      await page.getByTestId('O___Pyrrolysine').hover();
+    });
+    await takePageScreenshot(page);
+    await waitForRender(page, async () => {
+      await page.getByTestId('U___Selenocysteine').hover();
+    });
+    await takePageScreenshot(page);
+  });
+
+  test('Case 14: Selection work in sequence editing with Shift+Up/Down arrow combination', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6602
+     * Bug: https://github.com/epam/ketcher/issues/4349
+     * Description: Selection work in sequence editing with Shift+Up/Down arrow combination.
+     * Scenario:
+     * 1. Switch to Macro mode - > Sequence mode
+     * 2. Add any sequence to canvas
+     * 3. Select sequence with Shift+Up/Down arrow combination
+     * 4. Take a screenshot
+     */
+    await selectSequenceLayoutModeTool(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type(
+        'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+      );
+    });
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 2; i++) {
+      await page.keyboard.press('ArrowUp');
+    }
+    await page.keyboard.up('Shift');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 1; i++) {
+      await page.keyboard.press('ArrowDown');
+    }
+    await page.keyboard.up('Shift');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test(`Case 15: Long bond not appears behind the structure after Copy-Paste in Flex Mode`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6600
+     * Bug: https://github.com/epam/ketcher/issues/6456
+     * Description: Long bond not appears behind the structure after Copy-Paste in Flex Mode
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Switch to Flex mode
+     * 3. Draw or load a structure that contains a long bond.
+     * 4. Copy (Ctrl+C) and Paste (Ctrl+V) the structure onto the canvas.
+     * 5. Take a screenshot
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/peptides-with-long-bond.ket',
+      page,
+    );
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await page.mouse.move(500, 500);
+    await pasteFromClipboardByKeyboard(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 16: Removing peptide from sense/antisence chain not cause unnessussary phosphate removal', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6602
+     * Bug: https://github.com/epam/ketcher/issues/6471
+     * Description: Removing peptide from sense/antisence chain not cause unnessussary phosphate removal.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Click between E symbols to switch to Edit mode
+     * 4. Press Backspace key to delete left E symbol
+     * 5. Take a screenshot
+     */
+    await selectSequenceLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P}|RNA2{R(U)P.R(U)}|PEPTIDE1{E.E}|RNA3{R(A)}$RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA3,2:R2-1:R1|RNA1,RNA2,2:pair-5:pair|RNA3,RNA2,2:pair-2:pair$$$V2.0',
+    );
+    await switchSyncMode(page);
+    await doubleClickOnSequenceSymbol(page, 'E', { nthNumber: 0 });
+    await page.keyboard.press('Backspace');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 17: Adding peptide between RNA and - symbol not breaks sense/antisense chain', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6602
+     * Bug: https://github.com/epam/ketcher/issues/6462
+     * Description: Adding peptide between RNA and - symbol not breaks sense/antisense chain.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Click between A and - symbols to switch to Edit mode
+     * 4. Switch editor to PEP mode and press C key
+     * 5. Take a screenshot
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(G)}|RNA2{R(U)}|RNA3{R(C)}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA3,5:pair-2:pair$$$V2.0',
+    );
+    await switchSyncMode(page);
+    await doubleClickOnSequenceSymbol(page, 'G', { nthNumber: 0 });
+    for (let i = 0; i < 2; i++) {
+      await page.keyboard.press('ArrowLeft');
+    }
+    await goToPeptidesTab(page);
+    await page.keyboard.type('C');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 18: System split chian pair on two if - symbol deleted', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6602
+     * Bug: https://github.com/epam/ketcher/issues/6447
+     * Description: System split chian pair on two if - symbol deleted.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Switch to Edit mode and remove - symbol
+     * 4. Take a screenshot
+     */
+    await selectSequenceLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(C)P.R(A)}|RNA2{R(U)}|RNA3{R(G)}$RNA2,RNA1,2:pair-5:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
+    );
+    await switchSyncMode(page);
+    await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 0 });
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('Backspace');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 19: System not merge two antisense chains if separator monomer got deleted', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6602
+     * Bug: https://github.com/epam/ketcher/issues/6446
+     * Description: System not merge two antisense chains if separator monomer got deleted.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Switch to Edit mode and remove first A nucleotide
+     * 4. Take a screenshot
+     */
+    await selectSequenceLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(C)P.R(A)P.R(C)P.R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(G)}|RNA4{R(G)}$RNA1,RNA2,14:pair-2:pair|RNA1,RNA3,8:pair-2:pair|RNA1,RNA4,2:pair-2:pair$$$V2.0',
+    );
+    await doubleClickOnSequenceSymbol(page, 'C', { nthNumber: 1 });
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('Backspace');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 20: Adding second chain with antisese chain to the canvas not cause layout problem', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6602
+     * Bug: https://github.com/epam/ketcher/issues/6098
+     * Description: Adding second chain with antisese chain to the canvas not cause layout problem.
+     * Scenario:
+     * 1. Go to Macro - Snake mode
+     * 2. Load from HELM
+     * 3. Paste same HELM once again
+     * 4. Take a screenshot
+     */
+    await selectSnakeLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(A)}|RNA2{R(T)P.R(T)}|RNA3{R(A)P}$RNA1,RNA2,5:pair-5:pair|RNA2,RNA3,2:pair-2:pair$$$V2.0',
+    );
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 21: Changing of ambiguous base via RNA Builder on Sequence mode not causes sequence corruption', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6602
+     * Bug: https://github.com/epam/ketcher/issues/6085
+     * Description: Changing of ambiguous base via RNA Builder on Sequence mode not causes sequence corruption.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode <--- Important
+     * 2. Load from HELM
+     * 3. Select any N nucleotide and select Modify in RNA Builder
+     * 4. Select 4ime6A base from the library and press Update button
+     * 5. Take a screenshot
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(A,C,G,T)P.R(A)}$$$$V2.0',
+    );
+    await clickOnSequenceSymbol(page, 'N', { nthNumber: 0 });
+    await clickOnSequenceSymbol(page, 'N', { nthNumber: 0, button: 'right' });
+    await page.getByTestId('modify_in_rna_builder').click();
+    await selectBaseSlot(page);
+    await page.getByTestId('4ime6A___N6-[2-(4-Imidazoyl)ethyl]adenine').click();
+    await pressSaveButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 22: Undo of deleted bond on sequence mode not causes "ghost" monomer appearence on the canvas', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6602
+     * Bug: https://github.com/epam/ketcher/issues/6493
+     * Description: Undo of deleted bond on sequence mode not causes "ghost" monomer appearence on the canvas.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Switch to Edit mode and remove - symbol
+     * 4. Press Undo button
+     * 5. Switch to Flex mode
+     * 6. Take a screenshot
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(C)P.R(A)}|RNA2{R(U)}|RNA3{R(G)}$RNA2,RNA1,2:pair-5:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
+    );
+    await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 0 });
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.press('Backspace');
+    await pressUndoButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 23: Connection points not appear visually disconnected when moving monomers in Flex and Snake mode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6602
+     * Bug: https://github.com/epam/ketcher/issues/5780
+     * Description: Connection points not appear visually disconnected when moving monomers in Flex and Snake mode.
+     * Scenario:
+     * 1. Open Macro -> Snake mode
+     * 2. Open structure
+     * 3. Move monomer
+     * 4. Take a screenshot
+     */
+    const firstMonomer = getMonomerLocator(page, Peptides.F).first();
+    await selectSnakeLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/structure-in-snake-mode.ket',
+      page,
+    );
+    await moveMonomer(page, firstMonomer, 200, 400);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 24: Peptide sequence not pasting directly on canvas', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6602
+     * Bug: https://github.com/epam/ketcher/issues/6588
+     * Description: Peptide sequence not pasting directly on canvas.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Copy and paste directly onto the canvas sequence GATYLIK
+     * 3. Take a screenshot
+     * It’s not working properly now. After the release of Ketcher 3.2.0-rc.2, the screenshot should be updated
+     */
+    await selectSequenceLayoutModeTool(page);
+    await switchToPeptideMode(page);
+    await openStructurePasteFromClipboard(page);
+    await pasteFromClipboard(page, 'GATYLIK');
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await closeErrorAndInfoModals(page);
+    await pasteFromClipboardByKeyboard(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 });

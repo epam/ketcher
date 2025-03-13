@@ -301,20 +301,21 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       !(this.node instanceof LinkerSequenceNode) &&
       // don't display counters for Phosphate
       !(this.node.monomer instanceof Phosphate) &&
+      // don't display counters for empty sequence node and backbone sequence node
+      !(this.node instanceof EmptySequenceNode) &&
+      !(this.node instanceof BackBoneSequenceNode) &&
       // display for first and last in subchain (except last MonomerSequenceNode)
       // for second last in subchain if last is MonomerSequenceNode (ex. Phosphate)
       // for every nth node in row (10th) in subchain
       ((!this.isBeginningOfChain && this.isBeginningOfSubChain) ||
         this.isLastInSubChain ||
         this.isSecondLastNodeInSubChain ||
-        (!(this.node instanceof EmptySequenceNode) &&
-          !(this.node instanceof BackBoneSequenceNode) &&
-          (!this.isSyncEditMode ||
-            !this.hasAntisenseInChain ||
-            !(
-              this.counterNumber > 9 &&
-              this.isNextSymbolEditing(editingNodeIndexOverall)
-            )) &&
+        ((!this.isSyncEditMode ||
+          !this.hasAntisenseInChain ||
+          !(
+            this.counterNumber > 9 &&
+            this.isNextSymbolEditing(editingNodeIndexOverall)
+          )) &&
           (this.isAntisenseNode && isNumber(antisenseNodeIndex)
             ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
               antisenseNodeIndex === this.chain.length - 1

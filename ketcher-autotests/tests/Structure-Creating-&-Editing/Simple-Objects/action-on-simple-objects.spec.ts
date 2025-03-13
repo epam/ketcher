@@ -202,7 +202,7 @@ test.describe('Action on simples objects', () => {
     await clickInTheMiddleOfTheScreen(page);
     await drawBenzeneRing(page);
     await saveToTemplates(page);
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await takeEditorScreenshot(page);

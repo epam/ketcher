@@ -683,7 +683,7 @@ test.describe('Image files', () => {
      */
     await openFileAndAddToCanvasAsNewProject('KET/images-png-svg.ket', page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
@@ -701,7 +701,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
@@ -719,7 +719,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
@@ -735,7 +735,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
@@ -946,7 +946,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 400);
     await saveToTemplates(page, 'My Custom Template');
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page

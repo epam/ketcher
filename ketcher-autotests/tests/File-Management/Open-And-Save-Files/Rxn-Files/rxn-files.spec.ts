@@ -31,6 +31,7 @@ import {
   setHashSpacingValue,
   setHashSpacingOptionUnit,
   openBondsSettingsSection,
+  selectClearCanvasTool,
 } from '@utils';
 
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
@@ -187,7 +188,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await savedFileInfoStartsWithRxn(page);
 
     await pressButton(page, 'Cancel');
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);

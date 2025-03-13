@@ -512,7 +512,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/functional-group-expanded.mol',

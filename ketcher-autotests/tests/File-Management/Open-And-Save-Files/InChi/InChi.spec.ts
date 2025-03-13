@@ -15,6 +15,7 @@ import {
   copyToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProject,
   selectOpenFileTool,
+  selectClearCanvasTool,
 } from '@utils';
 import {
   FileType,
@@ -397,7 +398,7 @@ test.describe('Open and Save InChI file', () => {
       .inputValue();
     await copyToClipboardByKeyboard(page);
     await page.getByTestId('close-icon').click();
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await pasteFromClipboardAndAddToCanvas(page, inChistring);
   });
 

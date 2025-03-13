@@ -35,7 +35,7 @@ const StyledMonomerLibraryToggle = styled.div(({ theme }) => {
       backgroundColor: theme.ketcher.color.button.primary.active,
       color: theme.ketcher.color.button.text.primary,
       right: '12px',
-      padding: '11px 8px',
+      padding: '10px 8px',
       borderRadius: '4px',
     },
   };

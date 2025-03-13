@@ -21,21 +21,30 @@ export const RnaEditorContainer = styled.div`
   padding: 8px;
 `;
 
-export const StyledHeader = styled.div((props) => ({
-  backgroundColor: '#fff',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: '8px',
-  fontSize: props.theme.ketcher.font.size.regular,
-  borderRadius: '4px',
-  '&.styled-header--sequence-edit-mode': {
-    backgroundColor: props.theme.ketcher.color.editMode.sequenceInRNABuilder,
-  },
-  '&.styled-header--expanded': {
-    borderRadius: '4px 4px 0 0',
-  },
-}));
+export const StyledHeader = styled.button`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background-color: ${(props) => props.theme.ketcher.color.background.primary};
+  font-weight: ${(props) => props.theme.ketcher.font.weight.regular};
+  font-size: ${(props) => props.theme.ketcher.font.size.regular};
+  border: none;
+  border-radius: 4px;
+  text-transform: none;
+  cursor: pointer;
+
+  &.styled-header--sequence-edit-mode {
+    background-color: ${(props) =>
+      props.theme.ketcher.color.editMode.sequenceInRNABuilder};
+  }
+
+  &.styled-header--expanded,
+  &.styled-header--active-preset {
+    border-radius: 4px 4px 0 0;
+  }
+`;
 
 export const ExpandButton = styled(Button)`
   background: transparent;
@@ -46,12 +55,8 @@ export const ExpandButton = styled(Button)`
   padding: 0;
 `;
 
-export const ExpandIcon = styled(Icon)<{ expanded?: boolean }>(
-  {
-    height: '16px',
-    width: '16px',
-  },
-  ({ expanded }) => ({
-    transform: expanded ? 'rotate(180deg)' : 'none',
-  }),
-);
+export const ExpandIcon = styled(Icon)<{ expanded?: boolean }>`
+  height: 16px;
+  width: 16px;
+  transform: ${(props) => (props.expanded ? 'rotate(180deg)' : 'none')};
+`;

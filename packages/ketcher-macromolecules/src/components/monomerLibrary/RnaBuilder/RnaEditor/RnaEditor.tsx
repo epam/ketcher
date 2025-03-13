@@ -87,18 +87,16 @@ export const RnaEditor = ({ duplicatePreset }) => {
         className={clsx(
           isSequenceEditInRNABuilderMode && 'styled-header--sequence-edit-mode',
           expanded && 'styled-header--expanded',
+          activePreset?.name && 'styled-header--active-preset',
         )}
+        onClick={expandEditor}
+        data-testid="rna-builder-expand-button"
       >
         RNA Builder
-        <ExpandButton
-          onClick={expandEditor}
-          data-testid="rna-builder-expand-button"
-        >
-          <ExpandIcon expanded={expanded} name="chevron" />
-        </ExpandButton>
+        <ExpandIcon expanded={expanded} name="chevron" />
       </StyledHeader>
-      {activePreset ? (
-        expanded ? (
+      {activePreset &&
+        (expanded ? (
           <RnaEditorExpanded
             isEditMode={isEditMode}
             onDuplicate={duplicatePreset}
@@ -108,10 +106,7 @@ export const RnaEditor = ({ duplicatePreset }) => {
             name={activePreset.name}
             fullName={activePresetFullName}
           />
-        )
-      ) : (
-        <></>
-      )}
+        ))}
     </RnaEditorContainer>
   );
 };

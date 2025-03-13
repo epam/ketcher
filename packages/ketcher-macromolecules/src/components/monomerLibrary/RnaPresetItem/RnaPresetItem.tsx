@@ -16,7 +16,7 @@
 import { EmptyFunction } from 'helpers';
 import { Card } from './styles';
 import { IRNAPresetItemProps } from './types';
-import React, { useState } from 'react';
+import { memo, MouseEvent, useCallback } from 'react';
 import { StyledIcon } from '../RnaBuilder/RnaAccordion/Summary/styles';
 import { useAppDispatch } from 'hooks';
 import { togglePresetFavorites } from 'state/rna-builder';
@@ -31,20 +31,15 @@ const RnaPresetItem = ({
   onMouseLeave = EmptyFunction,
   onMouseMove = EmptyFunction,
 }: IRNAPresetItemProps) => {
-  const [showDots, setShowDots] = useState(false);
-  const [favorite, setFavorite] = useState(preset.favorite);
   const dispatch = useAppDispatch();
-  const onMouseOver = (): void => {
-    setShowDots(true);
-  };
-  const onMouseOut = (): void => {
-    setShowDots(false);
-  };
-  const addFavorite = (event: React.MouseEvent): void => {
-    event.stopPropagation();
-    setFavorite(!favorite);
-    dispatch(togglePresetFavorites(preset));
-  };
+
+  const addFavorite = useCallback(
+    (event: MouseEvent): void => {
+      event.stopPropagation();
+      dispatch(togglePresetFavorites(preset));
+    },
+    [dispatch, preset],
+  );
 
   return (
     <Card
@@ -53,8 +48,6 @@ const RnaPresetItem = ({
       onContextMenu={onContextMenu}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
-      onMouseOver={onMouseOver}
-      onMouseOut={onMouseOut}
       selected={isSelected}
       code={preset.name}
       data-rna-preset-item-name={preset.name}
@@ -62,13 +55,13 @@ const RnaPresetItem = ({
       <span>{preset.name}</span>
       <StyledIcon
         name="vertical-dots"
-        className={showDots ? 'dots' : 'dots hidden'}
+        className="dots"
         onClick={onContextMenu}
       ></StyledIcon>
       <div
         aria-hidden
         onClick={addFavorite}
-        className={`star ${favorite ? 'visible' : ''}`}
+        className={`star ${preset.favorite ? 'visible' : ''}`}
       >
         {FavoriteStarSymbol}
       </div>
@@ -76,4 +69,4 @@ const RnaPresetItem = ({
   );
 };
 
-export { RnaPresetItem };
+export default memo(RnaPresetItem);

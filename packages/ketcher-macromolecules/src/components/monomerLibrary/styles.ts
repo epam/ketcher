@@ -18,85 +18,56 @@ import { Input, Icon } from 'ketcher-react';
 
 export const MONOMER_LIBRARY_WIDTH = '254px';
 
-export const MonomerLibraryContainer = styled.div(({ theme }) => ({
-  width: MONOMER_LIBRARY_WIDTH,
-  height: 'calc(100% - 16px)',
-  backgroundColor: theme.ketcher.color.background.primary,
-  boxShadow: '0px 2px 5px rgba(103, 104, 132, 0.15)',
-  display: 'flex',
-  flexDirection: 'column',
-  borderRadius: '0 4px 4px',
-}));
+export const MonomerLibraryContainer = styled.div`
+  width: ${MONOMER_LIBRARY_WIDTH};
+  height: calc(100% - 16px);
+  display: flex;
+  flex-direction: column;
+  background-color: ${(props) => props.theme.ketcher.color.background.primary};
+  box-shadow: 0 2px 5px rgba(103, 104, 132, 0.15);
+  border-radius: 0 4px 4px;
+`;
 
-export const MonomerLibraryHeader = styled.div(() => ({
-  padding: '10px',
-  position: 'relative',
-}));
+export const MonomerLibraryHeader = styled.div`
+  padding: 10px;
+  position: relative;
+`;
 
-export const MonomerLibrarySearchContainer = styled.div(({ theme }) => ({
-  padding: '10px 0',
+export const MonomerLibraryInputContainer = styled.div`
+  height: 24px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 4px;
+  background-color: ${(props) =>
+    props.theme.ketcher.color.input.background.default};
+  border-radius: 4px;
 
-  '& > div': {
-    background: theme.ketcher.color.input.background.default,
-    display: 'flex',
-    height: '24px',
-    flexDirection: 'row',
-    border: '1px solid transparent',
-    borderRadius: '4px',
-    padding: '0 4px',
+  &:hover,
+  &:has(input:focus) {
+    outline: ${(props) => props.theme.ketcher.outline.selected.small};
+  }
+`;
 
-    '& > span': {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
+export const MonomerLibrarySearchIcon = styled(Icon)`
+  height: 16px;
+  width: 16px;
+  color: ${(props) => props.theme.ketcher.color.text.secondary};
+`;
 
-    '&:has(input:focus)': {
-      outline: `1px solid ${theme.ketcher.color.input.border.focus}`,
-    },
+export const MonomerLibraryInput = styled(Input)`
+  flex-grow: 1;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  border: none;
+  outline: none;
 
-    '& > input': {
-      background: 'transparent',
-      border: 'none',
-      padding: '0 0 0 8px',
-      margin: 0,
-      flex: 1,
+  &:hover {
+    outline: none;
+  }
 
-      '&:focus': {
-        outline: 'none',
-      },
-    },
-  },
-}));
-
-export const MonomerLibraryInputContainer = styled.div(({ theme }) => ({
-  height: '24px',
-  display: 'flex',
-  gap: '4px',
-  alignItems: 'center',
-  padding: '4px',
-  backgroundColor: theme.ketcher.color.input.background.default,
-  borderRadius: '4px',
-}));
-
-export const MonomerLibrarySearchIcon = styled(Icon)(({ theme }) => ({
-  color: theme.ketcher.color.text.secondary,
-  height: '16px',
-  width: '16px',
-}));
-
-export const MonomerLibraryInput = styled(Input)({
-  outline: 'none',
-  ':hover': {
-    outline: 'none',
-  },
-  ':focus': {
-    outline: 'none',
-  },
-
-  backgroundColor: 'transparent',
-  border: 'none',
-  padding: 0,
-  margin: 0,
-  flexGrow: 1,
-});
+  &:focus {
+    outline: none;
+  }
+`;

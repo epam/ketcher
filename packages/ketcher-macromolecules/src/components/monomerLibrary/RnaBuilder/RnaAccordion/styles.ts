@@ -16,6 +16,7 @@
 
 import styled from '@emotion/styled';
 import { Accordion, Button } from 'ketcher-react';
+import { Tab } from '@mui/material';
 
 export const RnaAccordionContainer = styled.div({
   display: 'flex',
@@ -60,3 +61,37 @@ export const DisabledArea = styled.div({
   top: 0,
   left: 0,
 });
+
+export const RnaTabsContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  padding: 6px 8px 0;
+`;
+
+export const RnaTab = styled(Tab)`
+  height: 24px;
+  min-height: 24px;
+  min-width: 24px;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  font-weight: 400;
+  font-size: 10px;
+  border-radius: 4px;
+  background-color: white;
+  opacity: 1;
+  text-transform: none;
+
+  > svg {
+    height: 16px;
+    width: 16px;
+    color: #b4b9d6;
+
+    &.MuiTab-iconWrapper {
+      margin: 0;
+    }
+  }
+`;

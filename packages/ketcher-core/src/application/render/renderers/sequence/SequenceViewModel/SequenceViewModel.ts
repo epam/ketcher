@@ -38,7 +38,7 @@ export class SequenceViewModel {
 
   private chainToHasAntisense: Map<Chain, boolean> = new Map();
 
-  constructor(chainsCollection: ChainsCollection) {
+  constructor(public chainsCollection: ChainsCollection) {
     this.fillNodes(chainsCollection);
     this.fillChains();
     this.postProcessNodes(chainsCollection);

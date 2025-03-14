@@ -25,6 +25,7 @@ import {
   selectSequenceLayoutModeTool,
   selectFlexLayoutModeTool,
   copyToClipboardByKeyboard,
+  openFileAndAddToCanvasAsNewProjectMacro,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -3121,14 +3122,14 @@ test(`19. Verify dot placement for a modified phosphate in sequence mode in sens
 test(`20. Verify correct dot placement after mode switches from Sequence to Flex(Snake) and back`, async () => {
   /*
    * Test task: https://github.com/epam/ketcher/issues/6679
-   * Description: Verify dot placement for a modified phosphate in sequence mode in sense and antisense chains
+   * Description: Verify correct dot placement after mode switches from Sequence to Flex(Snake) and back
    * Case:
    *       1. Switch to Sequence mode
    *       2. Load chain/antisense pair with modified phosphates from HELM
    *       3. Switch to Flex mode
    *       4. Switch to Snake mode
    *       5. Switch to Sequence mode
-   *       3. Take screenshot to validate dot position
+   *       6. Take screenshot to validate dot position
    */
   test.setTimeout(20000);
 
@@ -3143,6 +3144,43 @@ test(`20. Verify correct dot placement after mode switches from Sequence to Flex
   await selectFlexLayoutModeTool(page);
   await selectSnakeLayoutModeTool(page);
   await selectSequenceLayoutModeTool(page);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`21. Verify dot positioning after file save and reload (KET and MOL V3000)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify dot positioning after file save and reload (KET and MOL V3000)
+   * Case:
+   *       1. Switch to Sequence mode
+   *       2. Load chain/antisense pair with modified phosphates from KET
+   *       3. Take screenshot to validate dot position
+   *       3. Clear canvas
+   *       4. Load chain/antisense pair with modified phosphates from MOL v3000
+   *       5. Take screenshot to validate dot position
+   */
+  test.setTimeout(20000);
+
+  await selectSequenceLayoutModeTool(page);
+
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'KET/Antisense-Chains/Verify dot positioning after file save and reload.ket',
+    page,
+  );
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'Molfiles-V3000/Antisense-Chains/Verify dot positioning after file save and reload.mol',
+    page,
+  );
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

@@ -1,4 +1,4 @@
-name: Run Playwright Tests (FullScale)
+name: Run Playwright Tests (Popup)
 on:
   push:
     branches:
@@ -43,7 +43,7 @@ jobs:
           name: ketcher-dist-micro
           path: example/dist
 
-  part:
+  popup-part:
     timeout-minutes: 120
     runs-on: self-hosted-a
     needs: build_ketcher
@@ -51,8 +51,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4, 5, 6]
-        shardTotal: [6]
+        shardIndex: [1]
+        shardTotal: [1]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -83,12 +83,12 @@ jobs:
           cd ketcher-autotests/
           npm i
           npx playwright install chromium
-          npx playwright test --project=chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          npx playwright test --project=chromium-popup --grep @chromium-popup --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - uses: actions/upload-artifact@v4
         # run even if previous steps fails
         if: always()
         with:
-          name: pw-report-${{ matrix.shardIndex }}
+          name: pw-report-popup-${{ matrix.shardIndex }}
           path: ketcher-autotests/playwright-report/
           retention-days: 5
   

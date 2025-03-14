@@ -61,10 +61,12 @@ export class Nucleotide {
     sugarName: RNA_DNA_NON_MODIFIED_PART = RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA,
   ) {
     const editor = CoreEditor.provideEditorInstance();
+    const isDnaSugar = sugarName === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA;
     const rnaBaseLibraryItem = getRnaPartLibraryItem(
       editor,
       rnaBaseName,
       KetMonomerClass.Base,
+      isDnaSugar,
     );
     const phosphateLibraryItem = getRnaPartLibraryItem(
       editor,

@@ -81,6 +81,13 @@ const App = () => {
     setIsOldMode(false);
   };
 
+  const scrollToActiveItem = () => {
+    const activeItem = document.querySelector(
+      `[data-monomer-name="${activeLibraryItemLabel}"]`,
+    );
+    activeItem?.scrollIntoView({ block: 'center' });
+  };
+
   document.onkeydown = function (e) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -93,18 +100,24 @@ const App = () => {
     );
 
     if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      e.stopPropagation();
       if (currentActiveLabelIndex < monomersList.length - 1) {
         setActiveLibraryItemLabel(monomersList[currentActiveLabelIndex + 1]);
       } else {
         setActiveLibraryItemLabel(monomersList[monomersList.length - 1]);
       }
+      scrollToActiveItem();
     } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      e.stopPropagation();
       if (currentActiveLabelIndex > 0) {
         setActiveLibraryItemLabel(monomersList[currentActiveLabelIndex - 1]);
       } else {
         setActiveLibraryItemLabel(monomersList[0]);
       }
-    } else if (e.key === 'l') {
+      scrollToActiveItem();
+    } else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
       e.preventDefault();
       e.stopPropagation();
       const newIsOldMode = !isOldMode;
@@ -135,9 +148,11 @@ const App = () => {
         window.ketcher.editor.struct(newMonomer.struct, false);
       }
       appendLines();
+      scrollToActiveItem();
     }
   };
 
+  // @ts-ignore
   return (
     <div
       style={{
@@ -157,6 +172,11 @@ const App = () => {
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             key={monomer.props ? monomer.props.id : monomer.label}
+            data-monomer-name={
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              monomer.props ? monomer.props.MonomerFullName : monomer.label
+            }
             style={{
               display: 'flex',
               flexDirection: 'row',

@@ -9,6 +9,7 @@ export interface MonomerConnectionOnlyProps {
 }
 
 export interface ConfirmationDialogOnlyProps {
+  title?: string;
   confirmationText?: string;
   onConfirm?: () => void;
 }

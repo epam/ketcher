@@ -10,8 +10,9 @@ import { KetMonomerClass } from 'application/formatters';
 
 export function getRnaPartLibraryItem(
   editor: CoreEditor,
-  rnaBaseName: string,
+  libraryItemLabel: string,
   monomerClass?: KetMonomerClass,
+  isDna = false,
 ) {
   return editor.monomersLibrary.find((libraryItem) => {
     if (isAmbiguousMonomerLibraryItem(libraryItem)) {
@@ -22,20 +23,20 @@ export function getRnaPartLibraryItem(
         return false;
       }
 
-      if (libraryItem.label !== rnaBaseName) {
+      if (libraryItem.label !== libraryItemLabel) {
         return false;
       }
 
-      return libraryItem.options.every(
-        (option) =>
-          option.templateId.includes(RnaDnaBaseNames.URACIL) ||
-          !option.templateId.includes(RnaDnaBaseNames.THYMINE),
+      return libraryItem.options.some((option) =>
+        isDna
+          ? option.templateId.includes(RnaDnaBaseNames.THYMINE)
+          : option.templateId.includes(RnaDnaBaseNames.URACIL),
       );
     }
 
     return (
       (!monomerClass || libraryItem.props.MonomerClass === monomerClass) &&
-      libraryItem.props.MonomerName === rnaBaseName
+      libraryItem.props.MonomerName === libraryItemLabel
     );
   });
 }

@@ -6,15 +6,12 @@ import {
   selectTopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
-  saveToFile,
   openFile,
-  receiveFileComparisonData,
   selectOptionInDropdown,
   pressButton,
   selectSnakeLayoutModeTool,
   chooseFileFormat,
   readFileContents,
-  getSequence,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   TypeDropdownOptions,
@@ -100,11 +97,7 @@ test.describe('Import-Saving .seq Files', () => {
   test('Check that empty file can be saved in .seq format', async ({
     page,
   }) => {
-    await verifyFileExport(
-      page,
-      'Sequence/sequence-empty.seq',
-      FileType.SEQ,
-    );
+    await verifyFileExport(page, 'Sequence/sequence-empty.seq', FileType.SEQ);
   });
 
   test('Check that system does not let importing empty .seq file', async ({
@@ -308,7 +301,7 @@ test.describe('Import-Saving .seq Files', () => {
     'Saving ambiguous peptides (without mapping, alternatives) in Sequence format',
     { tag: ['@IncorrectResultBecauseOfBug'] },
     async ({ page }) => {
-    /*
+      /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.3 Verify saving ambiguous peptides (without mapping, alternatives) in Sequence format (macro mode)
     Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
@@ -317,29 +310,30 @@ test.describe('Import-Saving .seq Files', () => {
             (Error should occure)
           4. Take screenshot to make sure export is correct
     */
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
-      page,
-    );
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
+        page,
+      );
 
-    await zoomWithMouseWheel(page, -200);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+      await zoomWithMouseWheel(page, -200);
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'Sequence (1-letter code)');
-    test.fixme(
-      true,
-      `That test fails because of https://github.com/epam/ketcher/issues/6635 issue.`,
-    );
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await chooseFileFormat(page, 'Sequence (1-letter code)');
+      test.fixme(
+        true,
+        `That test fails because of https://github.com/epam/ketcher/issues/6635 issue.`,
+      );
 
-    await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page);
 
-    await closeErrorMessage(page);
+      await closeErrorMessage(page);
 
-    await pressButton(page, 'Cancel');
-    await zoomWithMouseWheel(page, 200);
-  });
+      await pressButton(page, 'Cancel');
+      await zoomWithMouseWheel(page, 200);
+    },
+  );
 
   test(
     'Saving ambiguous peptides (without mapping, mixed) in Sequence format',
@@ -406,10 +400,10 @@ test.describe('Import-Saving .seq Files', () => {
     await zoomWithMouseWheel(page, 100);
   });
 
-  test(
-    'Saving ambiguous DNA bases (with mapping, mixed) in Sequence format',
-    async ({ page }) => {
-      /*
+  test('Saving ambiguous DNA bases (with mapping, mixed) in Sequence format', async ({
+    page,
+  }) => {
+    /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.6 Verify saving ambiguous DNA bases (with mapping, mixed) in Sequence format (macro mode)
     Case: 1. Load ambiguous bases (that have mapping to library) from KET 
@@ -418,25 +412,24 @@ test.describe('Import-Saving .seq Files', () => {
              (Error should occure)
           4. Take screenshot to make sure export is correct
     */
-      await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
-        page,
-      );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
+      page,
+    );
 
-      await zoomWithMouseWheel(page, -100);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+    await zoomWithMouseWheel(page, -100);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'Sequence (1-letter code)');
-      await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'Sequence (1-letter code)');
+    await takeEditorScreenshot(page);
 
-      await closeErrorMessage(page);
+    await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 100);
-    },
-  );
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 100);
+  });
 
   test('Saving ambiguous RNA bases (with mapping, alternatives) in Sequence format', async ({
     page,
@@ -465,10 +458,10 @@ test.describe('Import-Saving .seq Files', () => {
     await zoomWithMouseWheel(page, 100);
   });
 
-  test(
-    'Saving ambiguous RNA bases (with mapping, mixed) in Sequence format',
-    async ({ page }) => {
-      /*
+  test('Saving ambiguous RNA bases (with mapping, mixed) in Sequence format', async ({
+    page,
+  }) => {
+    /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.8 Verify saving ambiguous RNA bases (with mapping, mixed) in Sequence format (macro mode)
     Case: 1. Load ambiguous bases (that have mapping to library) from KET 
@@ -477,24 +470,23 @@ test.describe('Import-Saving .seq Files', () => {
              (Error should occure)
           4. Take screenshot to make sure export is correct
     */
-      await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
-        page,
-      );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
+      page,
+    );
 
-      await zoomWithMouseWheel(page, -100);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+    await zoomWithMouseWheel(page, -100);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'Sequence (1-letter code)');
-      await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'Sequence (1-letter code)');
+    await takeEditorScreenshot(page);
 
-      await closeErrorMessage(page);
-      await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 100);
-    },
-  );
+    await closeErrorMessage(page);
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 100);
+  });
 
   test('Saving ambiguous (common) bases (with mapping, alternatives) in Sequence format', async ({
     page,
@@ -522,10 +514,10 @@ test.describe('Import-Saving .seq Files', () => {
     await zoomWithMouseWheel(page, 200);
   });
 
-  test(
-    'Saving ambiguous (common) bases (with mapping, mixed) in Sequence format',
-    async ({ page }) => {
-      /*
+  test('Saving ambiguous (common) bases (with mapping, mixed) in Sequence format', async ({
+    page,
+  }) => {
+    /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.10 Verify saving ambiguous (common) bases (with mapping, mixed) in Sequence format (macro mode)
     Case: 1. Load ambiguous bases (that have mapping to library) from KET 
@@ -534,24 +526,23 @@ test.describe('Import-Saving .seq Files', () => {
              (Error should occure)
           4. Take screenshot to make sure export is correct
     */
-      await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
-        page,
-      );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
+      page,
+    );
 
-      await zoomWithMouseWheel(page, -200);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+    await zoomWithMouseWheel(page, -200);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'Sequence (1-letter code)');
-      await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'Sequence (1-letter code)');
+    await takeEditorScreenshot(page);
 
-      await closeErrorMessage(page);
-      await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 200);
-    },
-  );
+    await closeErrorMessage(page);
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 200);
+  });
 });
 
 test.describe('Import correct Sequence file: ', () => {
@@ -918,7 +909,8 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     sequenceString:
       'not applicable - export on pure peptide sequences to sequence is impossible',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: false,//todo clean this too
+    // todo clean this too
+    shouldFail: false,
   },
   {
     testCaseDescription:

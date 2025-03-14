@@ -849,8 +849,6 @@ test.describe('Macro-Micro-Switcher2', () => {
     /* 
       Test case: https://github.com/epam/ketcher/issues/5995
       Description: Switching the typing type using hotkeys updates the library tab accordingly
-      We have a bug https://github.com/epam/ketcher/issues/6505
-      When fixing it, we need to update the test
       Case:
       1. Open macromolecules mode
       2. Press Ctrl+Alt+D for DNA

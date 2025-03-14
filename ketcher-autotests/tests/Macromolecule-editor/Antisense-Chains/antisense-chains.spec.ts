@@ -26,13 +26,19 @@ import {
   selectFlexLayoutModeTool,
   copyToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProjectMacro,
+  moveMouseAway,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  createDNAAntisenseChain,
+  createRNAAntisenseChain,
+  getMonomerLocator,
+  getSymbolLocator,
+} from '@utils/macromolecules/monomer';
 import {
   verifyFileExport,
   FileType,
@@ -3248,6 +3254,72 @@ test(`23. Verify dot positioning after deleting and Undo/Redo actions`, async ()
   await page.keyboard.press('Delete');
   await pressUndoButton(page);
 
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`24.1 Verify presence of "Create RNA Antisense Strand" in the context menu for valid selection`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify presence of "Create RNA Antisense Strand" in the context menu for valid selection
+   * Case:
+   *       1. Switch to Flex mode
+   *       2. Load chain/antisense pair with modified phosphates from HELM
+   *       3. Select all structures on the canvas
+   *       4. Call context menu for monomer A and click "Create RNA Antisense Strand" option
+   *       5. Take screenshot to validate dot Antisense Strand creation
+   */
+  test.setTimeout(40000);
+
+  await selectSequenceLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R(C,G,T)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)P.R(C)P.R(G)P.R(T)P.R(U)P}$$$$V2.0`,
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+  await createRNAAntisenseChain(page, anySymbolA);
+
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`24.2 Verify presence of "Create DNA Antisense Strand" in the context menu for valid selection`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify presence of "Create DNA Antisense Strand" in the context menu for valid selection
+   * Case:
+   *       1. Switch to Flex mode
+   *       2. Load chain/antisense pair with modified phosphates from HELM
+   *       3. Select all structures on the canvas
+   *       4. Call context menu for monomer A and click "Create DNA Antisense Strand" option
+   *       5. Take screenshot to validate dot Antisense Strand creation
+   */
+  test.setTimeout(40000);
+
+  await selectSequenceLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R(C,G,T)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)P.R(C)P.R(G)P.R(T)P.R(U)P}$$$$V2.0`,
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+  await createDNAAntisenseChain(page, anySymbolA);
+
+  await moveMouseAway(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

@@ -255,6 +255,14 @@ export class CoreEditor {
       .filter((templateRef) => {
         const template = monomersLibraryJson[templateRef.$ref];
 
+        if (!template) {
+          KetcherLogger.error(
+            `There is a ref for rna preset template ${templateRef.$ref}, but template definition is not found`,
+          );
+
+          return false;
+        }
+
         return (
           template.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
           template.class === KetMonomerGroupTemplateClass.RNA
@@ -398,6 +406,9 @@ export class CoreEditor {
       (isSequenceSyncEditMode: boolean) =>
         this.onChangeToggleIsSequenceSyncEditMode(isSequenceSyncEditMode),
     );
+    this.events.resetSequenceEditMode.add(() =>
+      this.onResetSequenceSyncEditMode(),
+    );
     this.events.createAntisenseChain.add((isDnaAntisense: boolean) => {
       this.onCreateAntisenseChain(isDnaAntisense);
     });
@@ -474,6 +485,14 @@ export class CoreEditor {
     } else {
       this.mode.turnOffSyncEditMode();
     }
+  }
+
+  private onResetSequenceSyncEditMode() {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.resetEditMode();
   }
 
   private onCreateAntisenseChain(isDnaAntisense: boolean) {

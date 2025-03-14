@@ -85,7 +85,7 @@ const ambiguousMonomers: IHELMString[] = [
   {
     testDescription:
       '1. Ambiguous alternatives peptide made of peptide(R1) and peptide(R1) should result in peptide(R1)',
-    HELMString: 'PEPTIDE1{([Pyrro],[Am-])}$$$V2.0',
+    HELMString: 'PEPTIDE1{([Pyrro],[-Am])}$$$V2.0',
     monomerLocatorIndex: 2,
   },
   {
@@ -121,7 +121,7 @@ const ambiguousMonomers: IHELMString[] = [
   {
     testDescription:
       '7. Ambiguous alternatives peptide made of peptide(R2) and peptide(R1) should result in peptide with no APs',
-    HELMString: 'PEPTIDE1{([Glc],[Am-])}$$$V2.0',
+    HELMString: 'PEPTIDE1{([Glc],[-Am])}$$$V2.0',
     monomerLocatorIndex: 2,
   },
   {
@@ -157,7 +157,7 @@ const ambiguousMonomers: IHELMString[] = [
   {
     testDescription:
       '13. Ambiguous alternatives peptide made of peptide(R2+R3) and peptide(R1) should result in peptide with no APs',
-    HELMString: 'PEPTIDE1{([Mpa],[Am-])}$$$V2.0',
+    HELMString: 'PEPTIDE1{([Mpa],[-Am])}$$$V2.0',
     monomerLocatorIndex: 2,
   },
   {
@@ -175,7 +175,7 @@ const ambiguousMonomers: IHELMString[] = [
   {
     testDescription:
       '16. Ambiguous mixed peptide made of peptide(R1) and peptide(R1) should result in peptide(R1)',
-    HELMString: 'PEPTIDE1{([Pyrro]+[Am-])}$$$V2.0',
+    HELMString: 'PEPTIDE1{([Pyrro]+[-Am])}$$$V2.0',
     monomerLocatorIndex: 2,
   },
   {
@@ -211,7 +211,7 @@ const ambiguousMonomers: IHELMString[] = [
   {
     testDescription:
       '22. Ambiguous mixed peptide made of peptide(R2) and peptide(R1) should result in peptide with no APs',
-    HELMString: 'PEPTIDE1{([Glc]+[Am-])}$$$V2.0',
+    HELMString: 'PEPTIDE1{([Glc]+[-Am])}$$$V2.0',
     monomerLocatorIndex: 2,
   },
   {
@@ -247,7 +247,7 @@ const ambiguousMonomers: IHELMString[] = [
   {
     testDescription:
       '28. Ambiguous mixed peptide made of peptide(R2+R3) and peptide(R1) should result in peptide with no APs',
-    HELMString: 'PEPTIDE1{([Mpa]+[Am-])}$$$V2.0',
+    HELMString: 'PEPTIDE1{([Mpa]+[-Am])}$$$V2.0',
     monomerLocatorIndex: 2,
   },
   {

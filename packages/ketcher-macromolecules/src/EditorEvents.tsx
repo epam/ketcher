@@ -15,6 +15,7 @@
  ***************************************************************************/
 import { useCallback, useEffect } from 'react';
 import {
+  hasAntisenseChains,
   selectEditor,
   selectEditorActiveTool,
   selectTool,
@@ -57,6 +58,7 @@ export const EditorEvents = () => {
   const activeTool = useAppSelector(selectEditorActiveTool);
   const dispatch = useAppDispatch();
   const presets = useAppSelector(selectAllPresets);
+  const hasAtLeastOneAntisense = useAppSelector(hasAntisenseChains);
 
   const handleMonomersLibraryUpdate = useCallback(() => {
     dispatch(loadMonomerLibrary(editor?.monomersLibrary));
@@ -327,6 +329,12 @@ export const EditorEvents = () => {
       editor?.events.mouseLeavePolymerBond.remove(handleClosePreview);
     };
   }, [editor, activeTool, handleOpenPreview, handleClosePreview]);
+
+  useEffect(() => {
+    if (!hasAtLeastOneAntisense) {
+      editor?.events.resetSequenceEditMode.dispatch();
+    }
+  }, [hasAtLeastOneAntisense]);
 
   return <></>;
 };

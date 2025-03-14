@@ -356,11 +356,6 @@ const FailedTestSequenceReplaceMonomers: IFailedTestSequenceReplaceMonomer[] = [
     BugsInTests: ['https://github.com/epam/ketcher/issues/5337'],
   },
   {
-    // Replacing all monomers (or part of them) in edit mode - works wrong - system cuts sequence on two #5341
-    TestNameContains: ['Case 14-'],
-    BugsInTests: ['https://github.com/epam/ketcher/issues/5341'],
-  },
-  {
     //  Replacement of one base to base connected nucleoside to another one cause sequences disappear from the canvas #5333
     TestNameContains: ['Case 17-'],
     SequenceId: [13],

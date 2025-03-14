@@ -1,5 +1,5 @@
 import { D3SvgElementSelection } from 'application/render/types';
-import { Vec2 } from 'domain/entities';
+import { LinkerSequenceNode, Vec2 } from 'domain/entities';
 import { SubChainNode } from 'domain/entities/monomer-chains/types';
 import { BaseSequenceRenderer } from 'application/render/renderers/sequence/BaseSequenceRenderer';
 import { CoreEditor } from 'application/editor/internal';
@@ -12,6 +12,7 @@ import { isNumber } from 'lodash';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
 import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsCollection';
 import { PolymerBond } from 'domain/entities/PolymerBond';
+import { Phosphate } from 'domain/entities/Phosphate';
 import { SequenceMode } from 'application/editor';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
@@ -237,9 +238,31 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
     const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
 
-    return this.isAntisenseNode && isNumber(antisenseNodeIndex)
-      ? antisenseNodeIndex + 1
-      : senseNodeIndex + 1;
+    if (this.isAntisenseNode && isNumber(antisenseNodeIndex)) {
+      return antisenseNodeIndex + 1;
+    }
+
+    let numberToDisplay;
+    this.twoStrandedNode.chain.subChains.some((subChain) => {
+      if (!this.isSubChainNode(this.node)) return false;
+
+      const nodeIndex = subChain.nodes.indexOf(this.node);
+      if (nodeIndex === -1) return false;
+
+      if (nodeIndex === 0 || nodeIndex === subChain.nodes.length - 1) {
+        numberToDisplay = nodeIndex + 1;
+      } else if (
+        nodeIndex === subChain.nodes.length - 2 &&
+        subChain.nodes[subChain.nodes.length - 1].monomer instanceof Phosphate
+      ) {
+        numberToDisplay = nodeIndex + 1;
+      } else if ((nodeIndex + 1) % this.nthSeparationInRow === 0) {
+        numberToDisplay = nodeIndex + 1;
+      }
+      return numberToDisplay !== undefined;
+    });
+
+    return isNumber(numberToDisplay) ? numberToDisplay : senseNodeIndex + 1;
   }
 
   private appendCounterElement(
@@ -273,27 +296,85 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   private needDisplayCounter(editingNodeIndexOverall?: number) {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
 
-    // For simple chains or sense chains counter appears above each 10th symbol
-    // For antisense same but in opposite direction, that's why we compare division remainder with 1
     return (
+      // don't display counters for @ LinkerSequenceNode (ex. CHEM)
+      !(this.node instanceof LinkerSequenceNode) &&
+      // don't display counters for Phosphate
+      !(this.node.monomer instanceof Phosphate) &&
+      // don't display counters for empty sequence node and backbone sequence node
       !(this.node instanceof EmptySequenceNode) &&
       !(this.node instanceof BackBoneSequenceNode) &&
-      (!this.isSyncEditMode ||
-        !this.hasAntisenseInChain ||
-        !(
-          this.counterNumber > 9 &&
-          this.isNextSymbolEditing(editingNodeIndexOverall)
-        )) &&
-      (this.isAntisenseNode && isNumber(antisenseNodeIndex)
-        ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
-          antisenseNodeIndex === this.chain.length - 1
-        : (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0 ||
-          this.isLastMonomerInChain)
+      // display for first and last in subchain (except last MonomerSequenceNode)
+      // for second last in subchain if last is MonomerSequenceNode (ex. Phosphate)
+      // for every nth node in row (10th) in subchain
+      ((!this.isBeginningOfChain && this.isBeginningOfSubChain) ||
+        this.isLastInSubChain ||
+        this.isSecondLastNodeInSubChain ||
+        ((!this.isSyncEditMode ||
+          !this.hasAntisenseInChain ||
+          !(
+            this.counterNumber > 9 &&
+            this.isNextSymbolEditing(editingNodeIndexOverall)
+          )) &&
+          (this.isAntisenseNode && isNumber(antisenseNodeIndex)
+            ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
+              antisenseNodeIndex === this.chain.length - 1
+            : this.isNthNodeInSubChain || this.isLastMonomerInChain)))
     );
   }
 
   private get isBeginningOfChain() {
     return this.monomerIndexInChain === 0;
+  }
+
+  private get isBeginningOfSubChain() {
+    return this.chain.subChains.some((subChain) => {
+      const firstNode = subChain.nodes[0];
+      return this.node === firstNode;
+    });
+  }
+
+  // returns true if it is lastNode, and last node monomer is not Phosphate
+  private get isLastInSubChain() {
+    return this.chain.subChains.some((subChain) => {
+      const lastNode = subChain.nodes[subChain.nodes.length - 1];
+
+      return (
+        this.node === lastNode && !(this.node.monomer instanceof Phosphate)
+      );
+    });
+  }
+
+  // returns true if it is secondLastNode, and last node is not Phosphate
+  private get isSecondLastNodeInSubChain() {
+    return this.chain.subChains.some((subChain) => {
+      const lastNode = subChain.nodes[subChain.nodes.length - 1];
+      const secondLastNode = subChain.nodes[subChain.nodes.length - 2];
+      return (
+        this.node === secondLastNode && lastNode.monomer instanceof Phosphate
+      );
+    });
+  }
+
+  private get isNthNodeInSubChain() {
+    return !!this.NthNodeInSubChainValue;
+  }
+
+  private get NthNodeInSubChainValue() {
+    let nthNumber;
+    this.twoStrandedNode.chain.subChains.find((subChain) => {
+      if (!this.isSubChainNode(this.node)) return false;
+
+      const nodeIndex = subChain.nodes.indexOf(this.node);
+      if (nodeIndex === -1) return false;
+      if ((nodeIndex + 1) % this.nthSeparationInRow !== 0) return false;
+
+      console.log('nodeIndex + 1', nodeIndex + 1);
+      nthNumber = nodeIndex + 1;
+      return null;
+    });
+
+    return nthNumber;
   }
 
   public showCaret() {
@@ -405,6 +486,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
     this.appendEvents();
     this.redrawCounter();
+
     this.drawSelection();
 
     if (
@@ -546,6 +628,12 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     this.backgroundElement?.on('mouseleave', () => {
       this.removeBackgroundElementHover();
     });
+  }
+
+  private isSubChainNode(
+    node: SubChainNode | BackBoneSequenceNode,
+  ): node is SubChainNode {
+    return node && node.monomers !== undefined;
   }
 
   public setAntisenseNodeRenderer(antisenseNodeRenderer: this) {

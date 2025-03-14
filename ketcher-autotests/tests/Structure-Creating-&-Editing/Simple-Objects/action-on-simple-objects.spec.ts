@@ -21,6 +21,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
+  selectClearCanvasTool,
 } from '@utils';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 import {

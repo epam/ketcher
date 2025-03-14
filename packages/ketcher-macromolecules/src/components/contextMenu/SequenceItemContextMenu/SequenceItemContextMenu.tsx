@@ -17,6 +17,10 @@ import {
   RNABase,
   Sugar,
   isTwoStrandedNodeRestrictedForHydrogenBondCreation,
+  SequenceRenderer,
+  EmptySequenceNode,
+  BackBoneSequenceNode,
+  Chain,
 } from 'ketcher-core';
 import { setSelectedTabIndex } from 'state/library';
 import {
@@ -35,6 +39,7 @@ import {
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
 import { isAntisenseCreationDisabled } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { LIBRARY_TAB_INDEX } from 'src/constants';
+import { ITwoStrandedChainItem } from 'ketcher-core/dist/domain/entities/monomer-chains/ChainsCollection';
 
 type SequenceItemContextMenuType = {
   selections?: NodesSelection;
@@ -247,9 +252,112 @@ export const SequenceItemContextMenu = ({
           props.sequenceItemRenderer,
         );
         break;
-      case SequenceItemContextMenuNames.deleteHydrogenBond:
-        editor.events.deleteHydrogenBond.dispatch(props.sequenceItemRenderer);
+      case SequenceItemContextMenuNames.deleteHydrogenBond: {
+        const sequenceViewModel = SequenceRenderer.sequenceViewModel;
+        const monomerToChain =
+          sequenceViewModel.chainsCollection.monomerToChain;
+        const antisenseChainToSelectedNodeMap = new Map<
+          Chain,
+          Set<ITwoStrandedChainItem>
+        >();
+        const selectedTwoStrandedNodes: ITwoStrandedChainItem[] =
+          selections?.length
+            ? selections
+                .reduce(
+                  (acc, selectionRange) => [...acc, ...selectionRange],
+                  [],
+                )
+                .map((nodeSelection) => nodeSelection.twoStrandedNode)
+            : [props.sequenceItemRenderer?.twoStrandedNode];
+
+        selectedTwoStrandedNodes.forEach((selectedTwoStrandedNode) => {
+          if (
+            selectedTwoStrandedNode.antisenseChain &&
+            selectedTwoStrandedNode.antisenseNode &&
+            !(
+              selectedTwoStrandedNode.antisenseNode instanceof
+                EmptySequenceNode ||
+              selectedTwoStrandedNode.antisenseNode instanceof
+                BackBoneSequenceNode
+            )
+          ) {
+            if (
+              !antisenseChainToSelectedNodeMap.has(
+                selectedTwoStrandedNode.antisenseChain,
+              )
+            ) {
+              antisenseChainToSelectedNodeMap.set(
+                selectedTwoStrandedNode.antisenseChain,
+                new Set(),
+              );
+            }
+
+            const antisenseChainSelectedNodes =
+              antisenseChainToSelectedNodeMap.get(
+                selectedTwoStrandedNode.antisenseChain,
+              );
+
+            if (!antisenseChainSelectedNodes) {
+              return;
+            }
+
+            antisenseChainSelectedNodes.add(selectedTwoStrandedNode);
+          }
+        });
+
+        let isGoingToDeleteAllHydrogenBondsForAnyChain = false;
+
+        antisenseChainToSelectedNodeMap.forEach(
+          (selectedTwoStrandedNodes, chain) => {
+            const firstSelectedTwoStrandedNode = [
+              ...selectedTwoStrandedNodes.values(),
+            ][0];
+            const senseChain = firstSelectedTwoStrandedNode.chain;
+            const selectedAntisenseNodes = new Set(
+              [...selectedTwoStrandedNodes.values()].map(
+                (node) => node.antisenseNode,
+              ),
+            );
+            const hasMoreHydrogenConnectionsThanSelected = chain.nodes.some(
+              (node) => {
+                return (
+                  !selectedAntisenseNodes.has(node) &&
+                  node.monomers.some((monomer) => {
+                    return monomer.hydrogenBonds.some((hydrogenBond) => {
+                      const anotherMonomer =
+                        hydrogenBond.getAnotherMonomer(monomer);
+                      const anotherChain =
+                        anotherMonomer && monomerToChain.get(anotherMonomer);
+
+                      return anotherChain === senseChain;
+                    });
+                  })
+                );
+              },
+            );
+
+            if (!hasMoreHydrogenConnectionsThanSelected) {
+              isGoingToDeleteAllHydrogenBondsForAnyChain = true;
+            }
+          },
+        );
+
+        if (isGoingToDeleteAllHydrogenBondsForAnyChain) {
+          editor.events.openConfirmationDialog.dispatch({
+            title: 'Deletion of all Hydrogen Bonds',
+            confirmationText:
+              'Deleting all hydrogen bonds will cause the separation of two chains. Do you wish to proceed?',
+            onConfirm: () => {
+              editor.events.deleteHydrogenBond.dispatch(
+                props.sequenceItemRenderer,
+              );
+            },
+          });
+        } else {
+          editor.events.deleteHydrogenBond.dispatch(props.sequenceItemRenderer);
+        }
         break;
+      }
       default:
         break;
     }

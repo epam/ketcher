@@ -117,7 +117,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      */
     await openFileAndAddToCanvas('CDXML/cdxml-4716.cdxml', page);
 
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);

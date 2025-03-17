@@ -3,11 +3,11 @@ import { useAppSelector } from 'hooks';
 import { selectIsEditMode } from 'state/rna-builder';
 import {
   CompactGroupBlockContainer,
+  CompactGroupConnection,
   CompactGroupText,
-  CompactIcon,
 } from './styles';
 import { groupNameToRnaEditorItemLabel } from './utils';
-import { MonomerGroups } from '../../../../../../constants';
+import GroupIcon from './GroupIcon';
 
 export const GroupBlockCompact = ({
   groupName,
@@ -25,12 +25,11 @@ export const GroupBlockCompact = ({
     <CompactGroupBlockContainer
       selected={selected}
       onClick={onClick}
-      empty={empty}
       isEditMode={isEditMode}
-      isBase={groupName === MonomerGroups.BASES}
       data-testid={testid}
     >
-      <CompactIcon empty={empty} selected={selected} name={iconName} />
+      <CompactGroupConnection />
+      <GroupIcon name={iconName} selected={selected} empty={empty} />
       <CompactGroupText selected={selected} empty={empty}>
         {monomerName || groupNameToRnaEditorItemLabel[groupName]}
       </CompactGroupText>

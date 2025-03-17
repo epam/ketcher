@@ -11,11 +11,7 @@ import {
   BaseSequenceItemRenderer,
   ModeTypes,
   NodesSelection,
-  getRnaBaseFromSugar,
-  getSugarFromRnaBase,
   BaseMonomer,
-  RNABase,
-  Sugar,
   isTwoStrandedNodeRestrictedForHydrogenBondCreation,
   SequenceRenderer,
   EmptySequenceNode,
@@ -37,7 +33,10 @@ import {
   isNodeContainHydrogenBonds,
 } from 'components/contextMenu/SequenceItemContextMenu/helpers';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
-import { isAntisenseCreationDisabled } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
+import {
+  isAntisenseCreationDisabled,
+  isAntisenseOptionHidden,
+} from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { LIBRARY_TAB_INDEX } from 'src/constants';
 import { ITwoStrandedChainItem } from 'ketcher-core/dist/domain/entities/monomer-chains/ChainsCollection';
 
@@ -62,46 +61,17 @@ export const SequenceItemContextMenu = ({
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
   const menuProps = generateSequenceContextMenuProps(selections);
-  const extractedBaseMonomers: BaseMonomer[] =
-    selections?.[0]
-      ?.flatMap((item) => {
-        const node = item.node as {
-          sugar?: BaseMonomer;
-          rnaBase?: BaseMonomer;
-          phosphate?: BaseMonomer;
-          monomer?: BaseMonomer;
-        };
-        return node
-          ? [node.sugar, node.rnaBase, node.phosphate, node.monomer]
-          : [];
-      })
-      .filter(
-        (baseMonomer): baseMonomer is BaseMonomer => baseMonomer !== undefined,
-      ) || [];
+  const selectedMonomers: BaseMonomer[] =
+    selections
+      ?.flatMap((selectionRange) => [...selectionRange])
+      ?.flatMap((nodeSelection) => {
+        return nodeSelection.node.monomers;
+      }) || [];
 
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
   const isSequenceMode = useLayoutMode() === ModeTypes.sequence;
-
-  const isAntisenseOptionHidden = ({
-    props,
-  }: {
-    props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-  }) => {
-    return (
-      !props?.sequenceItemRenderer ||
-      !extractedBaseMonomers?.some((selectedMonomer) => {
-        return (
-          (selectedMonomer instanceof RNABase &&
-            getSugarFromRnaBase(selectedMonomer)) ||
-          (selectedMonomer instanceof Sugar &&
-            getRnaBaseFromSugar(selectedMonomer))
-        );
-      })
-    );
-  };
-
   const menuItems = [
     {
       name: SequenceItemContextMenuNames.title,
@@ -122,14 +92,16 @@ export const SequenceItemContextMenu = ({
     {
       name: SequenceItemContextMenuNames.createRnaAntisenseStrand,
       title: 'Create RNA antisense strand',
-      disabled: isAntisenseCreationDisabled(extractedBaseMonomers),
-      hidden: isAntisenseOptionHidden,
+      disabled: isAntisenseCreationDisabled(selectedMonomers),
+      hidden: () =>
+        !selectedMonomers || !isAntisenseOptionHidden(selectedMonomers),
     },
     {
       name: SequenceItemContextMenuNames.createDnaAntisenseStrand,
       title: 'Create DNA antisense strand',
-      disabled: isAntisenseCreationDisabled(extractedBaseMonomers),
-      hidden: isAntisenseOptionHidden,
+      disabled: isAntisenseCreationDisabled(selectedMonomers),
+      hidden: () =>
+        !selectedMonomers || !isAntisenseOptionHidden(selectedMonomers),
     },
     {
       name: SequenceItemContextMenuNames.modifyInRnaBuilder,

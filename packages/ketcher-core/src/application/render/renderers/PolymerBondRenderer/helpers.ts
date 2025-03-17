@@ -6,9 +6,11 @@ export const generateBend = (
   dx: number,
   dy: number,
 ): string => {
-  return `q ${SMOOTH_CORNER_SIZE * dx1},${SMOOTH_CORNER_SIZE * dy1} ${
-    SMOOTH_CORNER_SIZE * dx
-  },${SMOOTH_CORNER_SIZE * dy} `;
+  const controlPoint = `${SMOOTH_CORNER_SIZE * dx1},${
+    SMOOTH_CORNER_SIZE * dy1
+  }`;
+  const endPoint = `${SMOOTH_CORNER_SIZE * dx},${SMOOTH_CORNER_SIZE * dy}`;
+  return `q ${controlPoint} ${endPoint} `;
 };
 
 export const CORNER_LENGTH = 4;

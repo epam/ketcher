@@ -11,6 +11,7 @@ import {
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { getMonomerType } from '@utils/mappers/monomerMapper';
+import { clickOnSequenceSymbol } from './sequence';
 
 export async function moveMonomer(
   page: Page,
@@ -179,6 +180,40 @@ export async function createDNAAntisenseChain(page: Page, monomer: Locator) {
 
   const createAntisenseStrandOption = page
     .getByTestId('create_antisense_dna_chain')
+    .first();
+
+  await createAntisenseStrandOption.click();
+}
+
+export async function createRNAAntisenseStrand(
+  page: Page,
+  letter: string,
+  nthNumber = 0,
+) {
+  await clickOnSequenceSymbol(page, letter, {
+    nthNumber,
+    button: 'right',
+  });
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_rna_antisense_strand')
+    .first();
+
+  await createAntisenseStrandOption.click();
+}
+
+export async function createDNAAntisenseStrand(
+  page: Page,
+  letter: string,
+  nthNumber = 0,
+) {
+  await clickOnSequenceSymbol(page, letter, {
+    nthNumber,
+    button: 'right',
+  });
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_dna_antisense_strand')
     .first();
 
   await createAntisenseStrandOption.click();

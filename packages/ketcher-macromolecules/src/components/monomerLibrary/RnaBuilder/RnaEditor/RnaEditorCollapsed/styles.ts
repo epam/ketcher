@@ -21,7 +21,7 @@ export const RnaEditorCollapsedContainer = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 8px;
   background-color: #f7f9fa;
   border-radius: 0 0 4px 4px;
 `;

@@ -18,7 +18,7 @@ import { MonomerGroup } from 'components/monomerLibrary/monomerLibraryGroup';
 import { useAppSelector } from 'hooks';
 import clsx from 'clsx';
 import { Icon, IconName } from 'ketcher-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   MonomerCodeToGroup,
   MonomerGroupCodes,
@@ -40,11 +40,8 @@ import {
   RnaTab,
   RnaTabsContainer,
   RnaTabWrapper,
-  StyledAccordion,
-  StyledAccordionWrapper,
   StyledButton,
 } from './styles';
-import { Summary } from './Summary';
 import {
   createNewPreset,
   recalculateRnaBuilderValidations,
@@ -71,12 +68,10 @@ import {
   selectIsSequenceEditInRNABuilderMode,
 } from 'state/common';
 import { RnaPresetGroup } from 'components/monomerLibrary/RnaPresetGroup/RnaPresetGroup';
-import { Tabs } from 'components/shared/Tabs';
-import { Tab } from '@mui/material';
 
 interface IGroupsDataItem {
   groupName: MonomerGroups | RnaBuilderPresetsItem;
-  iconName: string;
+  iconName: IconName;
   groups: {
     groupItems: IRnaPreset[] | MonomerItemType[];
     groupTitle?: string;

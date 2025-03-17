@@ -14,6 +14,7 @@ export const tabsContent = (
 ): TabsData => [
   {
     caption: FavoriteStarSymbol,
+    tooltip: 'Favorites',
     component: MonomerList,
     testId: 'FAVORITES-TAB',
     props: {

@@ -48,10 +48,28 @@ export const DetailsContainer = styled.div({
 
 export const CompactDetailsContainer = styled.div`
   height: 100%;
+  position: relative;
   background-color: #f7f9fa;
   border-radius: 4px;
   margin: 4px 8px;
   overflow: auto;
+
+  & > div::before {
+    display: none;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 48px;
+    pointer-events: none;
+    z-index: 1;
+    background: linear-gradient(
+      to bottom,
+      rgba(247, 249, 250, 1),
+      rgba(247, 249, 250, 0)
+    );
+  }
 
   &.first-tab {
     border-radius: 0 4px 4px 4px;
@@ -103,7 +121,7 @@ export const RnaTabWrapper = styled.div`
       bottom: -4px;
       left: 0;
       right: 0;
-      height: 4px;
+      height: 8px;
       background-color: #f7f9fa;
     }
   }
@@ -113,13 +131,14 @@ export const RnaTab = styled(Tab)<{ selected?: boolean }>`
   height: 24px;
   min-height: 24px;
   min-width: 24px;
-  ${({ selected }) => (selected ? 'width: 110px' : '')}
+  ${({ selected }) => (selected ? 'width: 116px;' : '')}
   display: flex;
   flex-direction: row;
   gap: 4px;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: ${({ selected }) => (selected ? '8px' : '4px')};
+  ${({ selected }) => (selected ? 'margin-top: -8px;' : '')}
   font-weight: 400;
   font-size: 10px;
   border-radius: 4px;

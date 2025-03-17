@@ -100,7 +100,7 @@ export const isAntisenseCreationDisabled = (
   });
 };
 
-export const isAntisenseOptionHidden = (selectedMonomers: BaseMonomer[]) => {
+export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
   return selectedMonomers?.some((selectedMonomer) => {
     return (
       (selectedMonomer instanceof RNABase &&

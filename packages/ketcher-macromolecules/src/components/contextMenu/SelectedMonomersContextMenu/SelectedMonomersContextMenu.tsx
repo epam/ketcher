@@ -8,7 +8,7 @@ import { BaseMonomer } from 'ketcher-core';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
 import {
   isAntisenseCreationDisabled,
-  isAntisenseOptionHidden,
+  isAntisenseOptionVisible,
 } from './helpers';
 
 type SelectedMonomersContextMenuType = {
@@ -33,7 +33,7 @@ export const SelectedMonomersContextMenu = ({
       hidden: ({ props }: { props?: { selectedMonomers?: BaseMonomer[] } }) => {
         return (
           !props?.selectedMonomers ||
-          !isAntisenseOptionHidden(props?.selectedMonomers)
+          !isAntisenseOptionVisible(props?.selectedMonomers)
         );
       },
     },
@@ -45,7 +45,7 @@ export const SelectedMonomersContextMenu = ({
       hidden: ({ props }: { props?: { selectedMonomers?: BaseMonomer[] } }) => {
         return (
           !props?.selectedMonomers ||
-          !isAntisenseOptionHidden(props?.selectedMonomers)
+          !isAntisenseOptionVisible(props?.selectedMonomers)
         );
       },
     },

@@ -35,7 +35,7 @@ import {
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
 import {
   isAntisenseCreationDisabled,
-  isAntisenseOptionHidden,
+  isAntisenseOptionVisible,
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { LIBRARY_TAB_INDEX } from 'src/constants';
 import { ITwoStrandedChainItem } from 'ketcher-core/dist/domain/entities/monomer-chains/ChainsCollection';
@@ -62,12 +62,9 @@ export const SequenceItemContextMenu = ({
   const dispatch = useAppDispatch();
   const menuProps = generateSequenceContextMenuProps(selections);
   const selectedMonomers: BaseMonomer[] =
-    selections
-      ?.flatMap((selectionRange) => [...selectionRange])
-      ?.flatMap((nodeSelection) => {
-        return nodeSelection.node.monomers;
-      }) || [];
-
+    selections?.flat()?.flatMap((nodeSelection) => {
+      return nodeSelection.node.monomers;
+    }) || [];
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
@@ -94,14 +91,14 @@ export const SequenceItemContextMenu = ({
       title: 'Create RNA antisense strand',
       disabled: isAntisenseCreationDisabled(selectedMonomers),
       hidden: () =>
-        !selectedMonomers || !isAntisenseOptionHidden(selectedMonomers),
+        !selectedMonomers || !isAntisenseOptionVisible(selectedMonomers),
     },
     {
       name: SequenceItemContextMenuNames.createDnaAntisenseStrand,
       title: 'Create DNA antisense strand',
       disabled: isAntisenseCreationDisabled(selectedMonomers),
       hidden: () =>
-        !selectedMonomers || !isAntisenseOptionHidden(selectedMonomers),
+        !selectedMonomers || !isAntisenseOptionVisible(selectedMonomers),
     },
     {
       name: SequenceItemContextMenuNames.modifyInRnaBuilder,

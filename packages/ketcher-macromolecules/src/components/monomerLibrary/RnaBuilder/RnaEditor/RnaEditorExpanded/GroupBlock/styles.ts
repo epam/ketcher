@@ -113,3 +113,50 @@ export const GroupIcon = styled(Icon)<{
   paddingRight:
     props.name === 'sugar' ? '5px' : props.name === 'phosphate' ? '1px' : 0,
 }));
+
+export const CompactGroupBlockContainer = styled.div<{
+  isBase?: boolean;
+  selected?: boolean;
+  empty?: boolean;
+  isEditMode?: boolean;
+}>`
+  width: 60px;
+  order: ${({ isBase }) => (isBase ? -1 : 0)};
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px;
+  border-radius: 4px;
+  // background-color: ${({ theme }) => theme.ketcher.color.background.primary};
+  box-shadow: 0 1px 2px 0 rgba(180, 185, 214, 0.6);
+  cursor: pointer;
+  background-color: ${({ selected, theme }) =>
+    selected
+      ? theme.ketcher.color.button.primary.active
+      : theme.ketcher.color.background.primary};
+
+  &:hover {
+    outline: ${({ theme }) => theme.ketcher.outline.selected.small};
+  }
+`;
+
+export const CompactGroupText = styled.p<{
+  selected?: boolean;
+  empty?: boolean;
+}>`
+  margin: 0;
+  font-size: ${({ theme }) => theme.ketcher.font.size.small};
+  font-weight: ${({ theme }) => theme.ketcher.font.weight.regular};
+  color: ${({ selected, empty, theme }) =>
+    selected
+      ? theme.ketcher.color.button.text.primary
+      : empty
+      ? '#b4b9d6'
+      : theme.ketcher.color.text.primary};
+  opacity: ${({ selected, empty }) => (selected && empty ? 0.4 : 1)};
+`;
+
+export const CompactIcon = styled(GroupIcon)`
+  height: 16px;
+  width: 16px;
+`;

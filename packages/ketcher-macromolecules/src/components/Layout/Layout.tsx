@@ -73,8 +73,8 @@ const Top = styled.div<{ shortened?: boolean }>(({ shortened = false }) => ({
   height: '36px',
   // 22px for hide library button
   width: shortened
-    ? `calc(100% - ${MONOMER_LIBRARY_WIDTH} - 22px)`
-    : 'calc(100%)',
+    ? `calc(100% - ${MONOMER_LIBRARY_WIDTH})`
+    : 'calc(100% - 22px)',
   marginBottom: '6px',
   display: 'flex',
   justifyContent: 'space-between',

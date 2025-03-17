@@ -93,6 +93,7 @@ import { PolymerBondContextMenu } from 'components/contextMenu/PolymerBondContex
 import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
+import { RootSizeProvider } from './contexts';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -129,13 +130,15 @@ function EditorContainer({
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
-        <EditorWrapper ref={rootElRef} className={EditorClassName}>
-          <Editor
-            theme={editorTheme}
-            togglerComponent={togglerComponent}
-            monomersLibraryUpdate={monomersLibraryUpdate}
-          />
-        </EditorWrapper>
+        <RootSizeProvider rootRef={rootElRef}>
+          <EditorWrapper ref={rootElRef} className={EditorClassName}>
+            <Editor
+              theme={editorTheme}
+              togglerComponent={togglerComponent}
+              monomersLibraryUpdate={monomersLibraryUpdate}
+            />
+          </EditorWrapper>
+        </RootSizeProvider>
       </ThemeProvider>
     </Provider>
   );
@@ -233,7 +236,7 @@ function Editor({
     <>
       <Layout>
         <Layout.Top
-          shortened={!isMonomerLibraryHidden}
+          shortened={isMonomerLibraryHidden}
           data-testid="top-toolbar"
         >
           <TopMenuComponent />

@@ -17,7 +17,7 @@
 import { RnaAccordion } from './RnaAccordion';
 import { RnaEditor } from './RnaEditor';
 import { RnaBuilderContainer } from './styles';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useIsCompactView } from 'hooks';
 import {
   selectUniqueNameError,
   setUniqueNameError,
@@ -32,6 +32,9 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
   const dispatch = useAppDispatch();
   const uniqueNameError = useAppSelector(selectUniqueNameError);
   const invalidPresetError = useAppSelector(selectInvalidPresetError);
+
+  const isCompactView = useIsCompactView();
+
   const closeErrorModal = () => {
     if (uniqueNameError.length > 0) {
       dispatch(setUniqueNameError(''));
@@ -40,14 +43,23 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
       dispatch(setInvalidPresetError(''));
     }
   };
+
   return (
     <RnaBuilderContainer>
       <RnaEditor duplicatePreset={duplicatePreset} />
-      <RnaTabs
-        libraryName={libraryName}
-        duplicatePreset={duplicatePreset}
-        editPreset={editPreset}
-      />
+      {isCompactView ? (
+        <RnaTabs
+          libraryName={libraryName}
+          duplicatePreset={duplicatePreset}
+          editPreset={editPreset}
+        />
+      ) : (
+        <RnaAccordion
+          libraryName={libraryName}
+          duplicatePreset={duplicatePreset}
+          editPreset={editPreset}
+        />
+      )}
       <Modal
         isOpen={!!uniqueNameError || !!invalidPresetError}
         title="Error Message"

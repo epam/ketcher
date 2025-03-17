@@ -109,10 +109,11 @@ export const RnaTabWrapper = styled.div`
   }
 `;
 
-export const RnaTab = styled(Tab)`
+export const RnaTab = styled(Tab)<{ selected?: boolean }>`
   height: 24px;
   min-height: 24px;
   min-width: 24px;
+  ${({ selected }) => (selected ? 'width: 110px' : '')}
   display: flex;
   flex-direction: row;
   gap: 4px;

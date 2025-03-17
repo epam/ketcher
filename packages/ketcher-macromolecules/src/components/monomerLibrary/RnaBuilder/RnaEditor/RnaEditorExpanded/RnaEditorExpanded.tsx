@@ -19,6 +19,7 @@ import { MonomerGroups } from 'src/constants';
 import { GroupBlock } from './GroupBlock';
 import {
   ButtonsContainer,
+  CompactViewName,
   GroupsContainer,
   NameContainer,
   NameInput,
@@ -51,7 +52,7 @@ import {
   selectIsActivePresetNewAndEmpty,
   recalculateRnaBuilderValidations,
 } from 'state/rna-builder';
-import { useAppSelector, useLayoutMode } from 'hooks';
+import { useAppSelector, useIsCompactView, useLayoutMode } from 'hooks';
 import {
   scrollToSelectedMonomer,
   scrollToSelectedPreset,
@@ -70,6 +71,7 @@ import {
 } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
 import { openModal } from 'state/modal';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
+import clsx from 'clsx';
 
 type SequenceSelectionGroupNames = {
   [MonomerGroups.SUGARS]: string;
@@ -368,38 +370,52 @@ export const RnaEditorExpanded = ({
     );
   }
 
+  const isCompactView = useIsCompactView();
+
   return (
     <RnaEditorExpandedContainer
       data-testid="rna-editor-expanded"
-      className={
-        isSequenceEditInRNABuilderMode
-          ? 'rna-editor-expanded--sequence-edit-mode'
-          : ''
-      }
+      className={clsx(
+        isSequenceEditInRNABuilderMode &&
+          'rna-editor-expanded--sequence-edit-mode',
+      )}
     >
-      <NameContainer
-        selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
-        onClick={() => selectGroup(RnaBuilderPresetsItem.Presets)}
-      >
-        {isEditMode ? (
-          <NameInput
-            value={
-              isSequenceEditInRNABuilderMode
-                ? sequenceSelectionName
-                : newPreset?.name
-            }
-            placeholder="Name your structure"
-            disabled={isSequenceEditInRNABuilderMode}
-            onChange={onChangeName}
-          />
-        ) : (
-          <PresetName>{newPreset?.name}</PresetName>
-        )}
-        <NameLine
-          selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
+      {isCompactView ? (
+        <CompactViewName
+          value={
+            isSequenceEditInRNABuilderMode
+              ? sequenceSelectionName
+              : newPreset?.name
+          }
+          placeholder="Name your structure"
+          disabled={isSequenceEditInRNABuilderMode}
+          onChange={onChangeName}
         />
-      </NameContainer>
-      <GroupsContainer>
+      ) : (
+        <NameContainer
+          selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
+          onClick={() => selectGroup(RnaBuilderPresetsItem.Presets)}
+        >
+          {isEditMode ? (
+            <NameInput
+              value={
+                isSequenceEditInRNABuilderMode
+                  ? sequenceSelectionName
+                  : newPreset?.name
+              }
+              placeholder="Name your structure"
+              disabled={isSequenceEditInRNABuilderMode}
+              onChange={onChangeName}
+            />
+          ) : (
+            <PresetName>{newPreset?.name}</PresetName>
+          )}
+          <NameLine
+            selected={activeMonomerGroup === RnaBuilderPresetsItem.Presets}
+          />
+        </NameContainer>
+      )}
+      <GroupsContainer compact={isCompactView}>
         {groupsData.map(({ groupName, iconName, testId }) => {
           return (
             <GroupBlock

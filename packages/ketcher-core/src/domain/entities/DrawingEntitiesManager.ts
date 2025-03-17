@@ -1462,6 +1462,7 @@ export class DrawingEntitiesManager {
     isSnakeMode: boolean,
     needRedrawBonds = true,
     needRepositionMonomers = true,
+    needRecalculateOldAntisense = true,
   ) {
     if (this.monomers.size === 0) {
       return new Command();
@@ -1471,7 +1472,7 @@ export class DrawingEntitiesManager {
     const command = new Command();
     let chainsCollection: ChainsCollection;
 
-    command.merge(this.recalculateAntisenseChains());
+    command.merge(this.recalculateAntisenseChains(needRecalculateOldAntisense));
 
     // not only snake mode???
     if (isSnakeMode) {
@@ -2580,26 +2581,53 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public recalculateAntisenseChains() {
+  public recalculateAntisenseChains(needRecalculateOldAntisense = true) {
     const command = new Command();
     const chainsCollection = ChainsCollection.fromMonomers([
       ...this.monomers.values(),
     ]);
     const handledChains = new Set<Chain>();
 
-    this.monomers.forEach((monomer) => {
-      command.merge(
-        this.modifyMonomerItem(monomer, {
-          ...monomer.monomerItem,
-          isAntisense: false,
-          isSense: false,
-        }),
-      );
-    });
+    if (needRecalculateOldAntisense) {
+      this.monomers.forEach((monomer) => {
+        command.merge(
+          this.modifyMonomerItem(monomer, {
+            ...monomer.monomerItem,
+            isAntisense: false,
+            isSense: false,
+          }),
+        );
+      });
+    }
 
     chainsCollection.chains.forEach((chain) => {
       if (handledChains.has(chain)) {
         return;
+      }
+
+      if (!needRecalculateOldAntisense) {
+        const isAntisenseChain = chain.monomers.some(
+          (monomer) => monomer.monomerItem.isAntisense,
+        );
+        const isSenseChain = chain.monomers.some(
+          (monomer) => monomer.monomerItem.isSense,
+        );
+
+        if (isSenseChain) {
+          chain.monomers.forEach((monomer) => {
+            command.merge(this.markMonomerAsSense(monomer));
+          });
+
+          return;
+        }
+
+        if (isAntisenseChain) {
+          chain.monomers.forEach((monomer) => {
+            command.merge(this.markMonomerAsAntisense(monomer));
+          });
+
+          return;
+        }
       }
 
       let senseChain: GrouppedChain;

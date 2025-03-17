@@ -32,6 +32,7 @@ import {
   moveOnAtom,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  selectClearCanvasTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 let point: { x: number; y: number };
@@ -197,7 +198,7 @@ test.describe('Functional Groups', () => {
 
     await saveToTemplates(page);
 
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('0OOCH3CCl3OO').click();

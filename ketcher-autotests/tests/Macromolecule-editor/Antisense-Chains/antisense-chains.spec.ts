@@ -25,6 +25,7 @@ import {
   selectSequenceLayoutModeTool,
   selectFlexLayoutModeTool,
   copyToClipboardByKeyboard,
+  openFileAndAddToCanvasAsNewProjectMacro,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -3091,4 +3092,164 @@ test(`18. Flipping checks`, async () => {
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await resetZoomLevelToDefault(page);
+});
+
+test(`19. Verify dot placement for a modified phosphate in sequence mode in sense and antisense chains`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify dot placement for a modified phosphate in sequence mode in sense and antisense chains
+   * Case:
+   *       1. Switch to Sequence mode
+   *       2. Load chain/antisense pair with modified phosphates from HELM
+   *       3. Take screenshot to validate dot position
+   */
+  test.setTimeout(20000);
+
+  await selectSequenceLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA7{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
+  );
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`20. Verify correct dot placement after mode switches from Sequence to Flex(Snake) and back`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify correct dot placement after mode switches from Sequence to Flex(Snake) and back
+   * Case:
+   *       1. Switch to Sequence mode
+   *       2. Load chain/antisense pair with modified phosphates from HELM
+   *       3. Switch to Flex mode
+   *       4. Switch to Snake mode
+   *       5. Switch to Sequence mode
+   *       6. Take screenshot to validate dot position
+   */
+  test.setTimeout(20000);
+
+  await selectSequenceLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA7{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
+  );
+
+  await selectFlexLayoutModeTool(page);
+  await selectSnakeLayoutModeTool(page);
+  await selectSequenceLayoutModeTool(page);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`21. Verify dot positioning after file save and reload (KET and MOL V3000)`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify dot positioning after file save and reload (KET and MOL V3000)
+   * Case:
+   *       1. Switch to Sequence mode
+   *       2. Load chain/antisense pair with modified phosphates from KET
+   *       3. Take screenshot to validate dot position
+   *       3. Clear canvas
+   *       4. Load chain/antisense pair with modified phosphates from MOL v3000
+   *       5. Take screenshot to validate dot position
+   */
+  test.setTimeout(20000);
+
+  await selectSequenceLayoutModeTool(page);
+
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'KET/Antisense-Chains/Verify dot positioning after file save and reload.ket',
+    page,
+  );
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'Molfiles-V3000/Antisense-Chains/Verify dot positioning after file save and reload.mol',
+    page,
+  );
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`22. Verify dot positioning after copy and paste structures`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify dot positioning after file save and reload (KET and MOL V3000)
+   * Case:
+   *       1. Switch to Sequence mode
+   *       2. Load chain/antisense pair with modified phosphates from HELM
+   *       3. Select all structures on the canvas
+   *       4. Copy structures to clipboard
+   *       5. Clear canvas
+   *       6. Paste clipboard content to the canvas
+   *       7. Take screenshot to validate dot position
+   */
+  test.setTimeout(20000);
+
+  await selectSequenceLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA7{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
+  );
+
+  await selectAllStructuresOnCanvas(page);
+  await copyToClipboardByKeyboard(page);
+  await selectClearCanvasTool(page);
+  await pasteFromClipboardByKeyboard(page);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`23. Verify dot positioning after deleting and Undo/Redo actions`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify dot positioning after deleting and Undo/Redo actions
+   * Case:
+   *       1. Switch to Sequence mode
+   *       2. Load chain/antisense pair with modified phosphates from HELM
+   *       3. Select all structures on the canvas
+   *       4. Press Erase button
+   *       5. Press Undo button
+   *       6. Take screenshot to validate dot position
+   */
+  test.setTimeout(20000);
+
+  await selectSequenceLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA6{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA7{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R([cl6pur])[bnn].R(C,G,T)[bnn].R(C,G,U)[bnn].R(A,G)[bnn].R(A)}|RNA8{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r]([cl6pur])[bnn].[25d3r](C,G,T)[bnn].[25d3r](C,G,U)[bnn].[25d3r](A,G)[bnn].R(A)}$RNA5,RNA1,17:pair-2:pair|RNA5,RNA1,2:pair-17:pair|RNA5,RNA1,14:pair-5:pair|RNA1,RNA5,14:pair-5:pair|RNA5,RNA1,11:pair-8:pair|RNA5,RNA1,8:pair-11:pair|RNA6,RNA2,2:pair-17:pair|RNA6,RNA2,17:pair-2:pair|RNA6,RNA2,5:pair-14:pair|RNA6,RNA2,14:pair-5:pair|RNA6,RNA2,8:pair-11:pair|RNA6,RNA2,11:pair-8:pair|RNA7,RNA3,2:pair-29:pair|RNA7,RNA3,29:pair-2:pair|RNA7,RNA3,5:pair-26:pair|RNA7,RNA3,26:pair-5:pair|RNA7,RNA3,8:pair-23:pair|RNA7,RNA3,23:pair-8:pair|RNA7,RNA3,11:pair-20:pair|RNA7,RNA3,20:pair-11:pair|RNA7,RNA3,14:pair-17:pair|RNA7,RNA3,17:pair-14:pair|RNA8,RNA4,2:pair-29:pair|RNA8,RNA4,29:pair-2:pair|RNA8,RNA4,5:pair-26:pair|RNA8,RNA4,26:pair-5:pair|RNA8,RNA4,8:pair-23:pair|RNA8,RNA4,23:pair-8:pair|RNA8,RNA4,11:pair-20:pair|RNA8,RNA4,20:pair-11:pair|RNA8,RNA4,14:pair-17:pair|RNA8,RNA4,17:pair-14:pair$$$V2.0`,
+  );
+
+  await selectAllStructuresOnCanvas(page);
+  await page.keyboard.press('Delete');
+  await pressUndoButton(page);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
 });

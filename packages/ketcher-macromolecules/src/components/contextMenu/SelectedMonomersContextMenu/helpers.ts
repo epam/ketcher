@@ -2,6 +2,7 @@ import {
   AmbiguousMonomer,
   BaseMonomer,
   getRnaBaseFromSugar,
+  getSugarFromRnaBase,
   isRnaBaseOrAmbiguousRnaBase,
   KetAmbiguousMonomerTemplateSubType,
   RNABase,
@@ -95,6 +96,16 @@ export const isAntisenseCreationDisabled = (
       (rnaBaseForSugar &&
         (rnaBaseForSugar.hydrogenBonds.length > 0 ||
           !isSenseBase(rnaBaseForSugar)))
+    );
+  });
+};
+
+export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
+  return selectedMonomers?.some((selectedMonomer) => {
+    return (
+      (selectedMonomer instanceof RNABase &&
+        getSugarFromRnaBase(selectedMonomer)) ||
+      (selectedMonomer instanceof Sugar && getRnaBaseFromSugar(selectedMonomer))
     );
   });
 };

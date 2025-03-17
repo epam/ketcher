@@ -176,6 +176,8 @@ export class SequenceMode extends BaseMode {
           editor.canvas.width.baseVal.value,
           true,
           false,
+          true,
+          !this.isEditMode,
         )
       : new Command();
     const zoom = ZoomTool.instance;
@@ -232,7 +234,7 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
 
     this.isEditMode = false;
-    this.initialize(false, true, false);
+    this.initialize(false, true, true);
     editor.events.toggleSequenceEditMode.dispatch(false);
   }
 
@@ -701,7 +703,10 @@ export class SequenceMode extends BaseMode {
       addPhosphateIfNeeded &&
       firstNodeToConnect instanceof Nucleoside &&
       (secondNodeToConnect instanceof Nucleotide ||
-        secondNodeToConnect instanceof Nucleoside)
+        secondNodeToConnect instanceof Nucleoside ||
+        (secondNodeToConnect instanceof MonomerSequenceNode &&
+          secondNodeToConnect.monomer instanceof Phosphate &&
+          secondNodeToConnect.monomer.hydrogenBonds.length))
     ) {
       modelChanges.merge(
         this.bondNodesThroughNewPhosphate(
@@ -1094,16 +1099,33 @@ export class SequenceMode extends BaseMode {
       let nodesToDelete: TwoStrandedNodesSelection;
 
       if (selections.length) {
-        modelChanges.merge(this.deleteSelectedDrawingEntities());
         nodesToDelete = selections;
+
+        const senseNodesToDelete = nodesToDelete.filter((selectionRange) =>
+          selectionRange.every(
+            (nodeSelection) => nodeSelection.node.senseNode?.monomer.selected,
+          ),
+        );
+        const antisenseNodesToDelete = nodesToDelete.filter((selectionRange) =>
+          selectionRange.every(
+            (nodeSelection) =>
+              nodeSelection.node.antisenseNode?.monomer.selected,
+          ),
+        );
+
+        modelChanges.merge(this.deleteSelectedDrawingEntities());
+
         if (this.needToEditSense) {
           modelChanges.merge(
-            this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.SENSE),
+            this.handleNodesDeletion(senseNodesToDelete, STRAND_TYPE.SENSE),
           );
         }
         if (this.needToEditAntisense) {
           modelChanges.merge(
-            this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.ANTISENSE),
+            this.handleNodesDeletion(
+              antisenseNodesToDelete,
+              STRAND_TYPE.ANTISENSE,
+            ),
           );
         }
       } else if (nodeToDelete) {
@@ -2423,13 +2445,6 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.previousNodeInSameChain;
 
     if (
-      nextNodeToConnect instanceof MonomerSequenceNode &&
-      nextNodeToConnect.monomer instanceof Phosphate
-    ) {
-      return;
-    }
-
-    if (
       nextNodeToConnect instanceof EmptySequenceNode &&
       previousNodeToConnect
     ) {
@@ -2485,6 +2500,9 @@ export class SequenceMode extends BaseMode {
           currentTwoStrandedNode instanceof BackBoneSequenceNode
             ? currentTwoStrandedNode.firstConnectedNode
             : undefined,
+          true,
+          true,
+          false,
         ),
       );
       return { modelChanges, node: newPhosphateNode };

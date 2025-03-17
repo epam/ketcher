@@ -25,7 +25,7 @@ test.describe('Clear canvas', () => {
 
   test('Clear Canvas - checking button tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-1702
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     const button = page.getByTestId('clear-canvas');
     await expect(button).toHaveAttribute('title', 'Clear Canvas (Ctrl+Del)');
     await takeEditorScreenshot(page);
@@ -36,7 +36,7 @@ test.describe('Clear canvas', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('one two three');
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 
@@ -45,7 +45,7 @@ test.describe('Clear canvas', () => {
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
       await pressUndoButton(page);
@@ -98,7 +98,7 @@ test.describe('Clear canvas', () => {
     // Test case: EPMLSOPKET-1706
     await openFileAndAddToCanvas('SMILES/chain-with-r-group.smi', page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await pressUndoButton(page);
     await selectClearCanvasTool(page);
     await pressUndoButton(page);

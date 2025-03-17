@@ -13,6 +13,7 @@ import {
   BaseMonomer,
   Chem,
   LinkerSequenceNode,
+  MonomerSequenceNode,
   Phosphate,
   Pool,
   RNABase,
@@ -105,6 +106,7 @@ import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { KetcherLogger } from 'utilities';
+import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 
 export const CELL_WIDTH = 60;
 const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = CELL_WIDTH;
@@ -558,6 +560,11 @@ export class DrawingEntitiesManager {
     needToDeleteConnectedBonds = true,
   ) {
     const command = new Command();
+
+    if (monomer instanceof EmptyMonomer) {
+      return command;
+    }
+
     const operation = new MonomerDeleteOperation(
       monomer,
       this.addMonomerChangeModel.bind(
@@ -1461,6 +1468,7 @@ export class DrawingEntitiesManager {
     isSnakeMode: boolean,
     needRedrawBonds = true,
     needRepositionMonomers = true,
+    needRecalculateOldAntisense = true,
   ) {
     if (this.monomers.size === 0) {
       return new Command();
@@ -1470,7 +1478,7 @@ export class DrawingEntitiesManager {
     const command = new Command();
     let chainsCollection: ChainsCollection;
 
-    command.merge(this.recalculateAntisenseChains());
+    command.merge(this.recalculateAntisenseChains(needRecalculateOldAntisense));
 
     // not only snake mode???
     if (isSnakeMode) {
@@ -2579,26 +2587,53 @@ export class DrawingEntitiesManager {
     return command;
   }
 
-  public recalculateAntisenseChains() {
+  public recalculateAntisenseChains(needRecalculateOldAntisense = true) {
     const command = new Command();
     const chainsCollection = ChainsCollection.fromMonomers([
       ...this.monomers.values(),
     ]);
     const handledChains = new Set<Chain>();
 
-    this.monomers.forEach((monomer) => {
-      command.merge(
-        this.modifyMonomerItem(monomer, {
-          ...monomer.monomerItem,
-          isAntisense: false,
-          isSense: false,
-        }),
-      );
-    });
+    if (needRecalculateOldAntisense) {
+      this.monomers.forEach((monomer) => {
+        command.merge(
+          this.modifyMonomerItem(monomer, {
+            ...monomer.monomerItem,
+            isAntisense: false,
+            isSense: false,
+          }),
+        );
+      });
+    }
 
     chainsCollection.chains.forEach((chain) => {
       if (handledChains.has(chain)) {
         return;
+      }
+
+      if (!needRecalculateOldAntisense) {
+        const isAntisenseChain = chain.monomers.some(
+          (monomer) => monomer.monomerItem.isAntisense,
+        );
+        const isSenseChain = chain.monomers.some(
+          (monomer) => monomer.monomerItem.isSense,
+        );
+
+        if (isSenseChain) {
+          chain.monomers.forEach((monomer) => {
+            command.merge(this.markMonomerAsSense(monomer));
+          });
+
+          return;
+        }
+
+        if (isAntisenseChain) {
+          chain.monomers.forEach((monomer) => {
+            command.merge(this.markMonomerAsAntisense(monomer));
+          });
+
+          return;
+        }
       }
 
       let senseChain: GrouppedChain;
@@ -2804,18 +2839,28 @@ export class DrawingEntitiesManager {
     let lastAddedMonomer: BaseMonomer | undefined;
 
     selectedPiecesInChains.forEach((selectedPiece) => {
-      selectedPiece.reverse().forEach((node) => {
-        if (!node.monomer.selected) {
+      selectedPiece.reverse().forEach((nodeToHandle) => {
+        const senseNode =
+          nodeToHandle instanceof Nucleotide &&
+          nodeToHandle.phosphate.selected &&
+          !nodeToHandle.monomer.selected
+            ? new MonomerSequenceNode(nodeToHandle.phosphate)
+            : nodeToHandle;
+
+        if (!senseNode.monomer.selected) {
           lastAddedMonomer = undefined;
           lastAddedNode = undefined;
 
           return;
         }
 
-        if (node instanceof Nucleotide || node instanceof Nucleoside) {
+        if (
+          senseNode instanceof Nucleotide ||
+          senseNode instanceof Nucleoside
+        ) {
           const antisenseNodeCreationResult =
             DrawingEntitiesManager.createAntisenseNode(
-              node,
+              senseNode,
               false,
               isDnaAntisense,
             );
@@ -2831,7 +2876,7 @@ export class DrawingEntitiesManager {
 
           let addedPhosphate: BaseMonomer | undefined;
 
-          if (node instanceof Nucleotide && node.phosphate.selected) {
+          if (senseNode instanceof Nucleotide && senseNode.phosphate.selected) {
             const phosphateLibraryItem = getRnaPartLibraryItem(
               editor,
               RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
@@ -2847,7 +2892,7 @@ export class DrawingEntitiesManager {
 
             const monomerAddCommand = this.addMonomer(
               phosphateLibraryItem,
-              node.phosphate.position.add(new Vec2(0, 3)),
+              senseNode.phosphate.position.add(new Vec2(0, 3)),
             );
             addedPhosphate = monomerAddCommand.operations[0]
               .monomer as BaseMonomer;
@@ -2876,7 +2921,7 @@ export class DrawingEntitiesManager {
 
           command.merge(
             this.createPolymerBond(
-              node.rnaBase,
+              senseNode.rnaBase,
               addedNode.rnaBase,
               AttachmentPointName.HYDROGEN,
               AttachmentPointName.HYDROGEN,
@@ -2890,7 +2935,7 @@ export class DrawingEntitiesManager {
           lastAddedMonomer =
             lastAddedMonomer || lastAddedNode?.lastMonomerInNode;
 
-          node.monomers.reverse().forEach((monomer) => {
+          senseNode.monomers.reverse().forEach((monomer) => {
             if (!monomer.selected) {
               lastAddedMonomer = undefined;
               lastAddedNode = undefined;
@@ -2940,7 +2985,7 @@ export class DrawingEntitiesManager {
             lastAddedMonomer = addedMonomer;
           });
 
-          lastAddedNode = node;
+          lastAddedNode = senseNode;
         }
       });
       lastAddedNode = undefined;

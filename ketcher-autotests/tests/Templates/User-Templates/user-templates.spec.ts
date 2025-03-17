@@ -20,6 +20,7 @@ import {
   getEditorScreenshot,
   clickOnCanvas,
   selectCleanTool,
+  selectClearCanvasTool,
 } from '@utils';
 
 const CANVAS_CLICK_X = 300;
@@ -146,7 +147,7 @@ test.describe('Click User Templates on canvas', () => {
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('reaction_arrow_template');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
 
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
@@ -198,7 +199,7 @@ test.describe('Create and Save Templates', () => {
     await clickInTheMiddleOfTheScreen(page);
     await saveToTemplates(page);
 
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('0NNNNHNHNNHNNHNH').click();
@@ -241,7 +242,7 @@ test.describe('Create and Save Templates', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/long-structure.mol', page);
     await saveToTemplates(page);
 
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await drawBenzeneRing(page);
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();

@@ -57,6 +57,7 @@ const Tabs = (props: Props) => {
         {tabs.map((tabPanel, index) => (
           <StyledTab
             label={tabPanel.caption}
+            title={tabPanel.tooltip}
             key={index}
             data-testid={tabPanel.testId}
             {...a11yProps(index)}

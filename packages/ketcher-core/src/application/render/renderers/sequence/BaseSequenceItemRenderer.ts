@@ -14,7 +14,6 @@ import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsColl
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { SequenceMode } from 'application/editor';
-import { PhosphateSubChain } from 'domain/entities/monomer-chains/PhosphateSubChain';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 

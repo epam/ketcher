@@ -3265,11 +3265,11 @@ test(`24.1 Verify presence of "Create RNA Antisense Strand" in the context menu 
    * Test task: https://github.com/epam/ketcher/issues/6679
    * Description: Verify presence of "Create RNA Antisense Strand" in the context menu for valid selection
    * Case:
-   *       1. Switch to Flex mode
+   *       1. Switch to Sequence mode
    *       2. Load chain/antisense pair with modified phosphates from HELM
    *       3. Select all structures on the canvas
    *       4. Call context menu for monomer A and click "Create RNA Antisense Strand" option
-   *       5. Take screenshot to validate dot Antisense Strand creation
+   *       5. Take screenshot to validate Antisense Strand creation
    */
   test.setTimeout(40000);
 
@@ -3298,11 +3298,11 @@ test(`24.2 Verify presence of "Create DNA Antisense Strand" in the context menu 
    * Test task: https://github.com/epam/ketcher/issues/6679
    * Description: Verify presence of "Create DNA Antisense Strand" in the context menu for valid selection
    * Case:
-   *       1. Switch to Flex mode
+   *       1. Switch to Sequence mode
    *       2. Load chain/antisense pair with modified phosphates from HELM
    *       3. Select all structures on the canvas
    *       4. Call context menu for monomer A and click "Create DNA Antisense Strand" option
-   *       5. Take screenshot to validate dot Antisense Strand creation
+   *       5. Take screenshot to validate Antisense Strand creation
    */
   test.setTimeout(40000);
 
@@ -3324,4 +3324,43 @@ test(`24.2 Verify presence of "Create DNA Antisense Strand" in the context menu 
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
+});
+
+test(`25. Verify that the antisense strand creation options are disabled for an incorrect selection`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify that the antisense strand creation options are disabled for an incorrect selection
+   * Case:
+   *       1. Switch to Sequence mode
+   *       2. Load chain/antisense pair with modified phosphates from HELM
+   *       3. Select all structures on the canvas
+   *       4. Call context menu for monomer A
+   *       5. Validate that "Create RNA Antisense Strand" and "Create DNA Antisense Strand" options are disabled
+   */
+  test.setTimeout(40000);
+
+  await selectSequenceLayoutModeTool(page);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    `RNA1{R(A+C)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}$$$$V2.0`,
+  );
+
+  await selectAllStructuresOnCanvas(page);
+
+  const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+
+  const createAntisenseRNAStrandOption = page
+    .getByTestId('create_antisense_rna_chain')
+    .first();
+
+  const createAntisenseDNAStrandOption = page
+    .getByTestId('create_antisense_dna_chain')
+    .first();
+
+  await anySymbolA.click({ button: 'right', force: true });
+
+  await expect(createAntisenseRNAStrandOption).toBeDisabled();
+  await expect(createAntisenseDNAStrandOption).toBeDisabled();
 });

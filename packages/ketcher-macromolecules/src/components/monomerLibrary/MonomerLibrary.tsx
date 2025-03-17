@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Tabs } from 'components/shared/Tabs';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
@@ -73,7 +74,7 @@ const MonomerLibrary = () => {
         return;
       }
 
-      const nameToSet = presetWithSameName ? `${name}_Copy` : name;
+      const nameToSet = presetWithSameName ? `${name}${COPY}` : name;
       const duplicatedPreset = {
         ...preset,
         name: nameToSet,

@@ -2259,9 +2259,8 @@ const shortMonomerList: IMonomer[] = [
   },
   {
     monomerDescription: '7. Unsplit monomer 2-damdA (from library)',
-    contentType: MacroFileType.Ket,
-    KETFile:
-      'KET/Antisense-Chains/18. Unsplit monomer 2-damdA (from library).ket',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{[2-damdA]}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
     monomerLocatorIndex: 0,
@@ -3364,3 +3363,437 @@ test(`25. Verify that the antisense strand creation options are disabled for an 
   await expect(createAntisenseRNAStrandOption).toBeDisabled();
   await expect(createAntisenseDNAStrandOption).toBeDisabled();
 });
+
+async function callContextMenuForAnySymbol(page: Page) {
+  const anySymbol = getSymbolLocator(page, {}).first();
+  await anySymbol.click({ button: 'right', force: true });
+}
+
+for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
+  test(`26.1.1 Create antisense chain for: ${monomer.monomerDescription}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/6679
+     * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+     *              1. Validate that selecting a valid backbone with the correct R1-R2 connections and right-clicking displays the "Create
+     *                 Antisense RNA Strand" option (Requirement 1) and creation of antisense is possible
+     * Case:
+     *       1. Switch to Sequence mode
+     *       2. Load correct monomer from HELM or KET
+     *       3. Select it (using Control+A)
+     *       4. Call context menu for symbol and click "Create Antisense Strand" option
+     *       5. Take screenshot to validate Antisense creation
+     */
+    test.setTimeout(20000);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      monomer.shouldFail === true,
+      `That test fails because of ${monomer.issueNumber} issue(s).`,
+    );
+
+    await selectSequenceLayoutModeTool(page);
+    await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
+
+    await selectAllStructuresOnCanvas(page);
+
+    await callContextMenuForAnySymbol(page);
+
+    const createAntisenseRNAStrandOption = page
+      .getByTestId('create_antisense_rna_chain')
+      .first();
+    // Checking presence of Create Antisense RNA Strand option on the context menu and enabled
+    await expect(createAntisenseRNAStrandOption).toHaveCount(1);
+    await expect(createAntisenseRNAStrandOption).toHaveAttribute(
+      'aria-disabled',
+      'false',
+    );
+
+    await createAntisenseRNAStrandOption.click();
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+}
+
+for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
+  test(`26.1.2 Create antisense chain for: ${monomer.monomerDescription}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/6679
+     * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+     *              1. Validate that selecting a valid backbone with the correct R1-R2 connections and right-clicking displays the "Create
+     *                 Antisense DNA Strand" option (Requirement 1) and creation of antisense is possible
+     * Case:
+     *       1. Switch to Sequence mode
+     *       2. Load correct monomer from HELM or KET
+     *       3. Select it (using Control+A)
+     *       4. Call context menu for symbol and click "Create Antisense Strand" option
+     *       5. Take screenshot to validate Antisense creation
+     */
+    test.setTimeout(20000);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      monomer.shouldFail === true,
+      `That test fails because of ${monomer.issueNumber} issue(s).`,
+    );
+
+    await selectSequenceLayoutModeTool(page);
+    await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
+
+    await selectAllStructuresOnCanvas(page);
+
+    await callContextMenuForAnySymbol(page);
+
+    const createAntisenseDNAStrandOption = page
+      .getByTestId('create_antisense_dna_chain')
+      .first();
+    // Checking presence of Create Antisense RNA Strand option on the context menu and enabled
+    await expect(createAntisenseDNAStrandOption).toHaveCount(1);
+    await expect(createAntisenseDNAStrandOption).toHaveAttribute(
+      'aria-disabled',
+      'false',
+    );
+
+    await createAntisenseDNAStrandOption.click();
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+}
+
+for (const monomer of monomers.filter(
+  (m) => m.baseWithR3R1ConnectionPresent && !m.eligibleForAntisense,
+)) {
+  test(`26.2.1 Check that Create Antisense RNA Strand option disabled for not a sense base: ${monomer.monomerDescription}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/6679
+     * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+     *              2. Ensure that the "Create Antisense RNA Strand" option appears but is disabled
+     *                 when the base connected via R3-R1 is not a sense base
+     * Case:
+     *       1. Switch to Sequence mode
+     *       2. Load correct monomer from HELM or KET
+     *       3. Select it (using Control+A)
+     *       4. Call context menu for symbol
+     *       5. Check that "Create Antisense RNA Strand" option present but disabled
+     */
+    test.setTimeout(20000);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      monomer.shouldFail === true,
+      `That test fails because of ${monomer.issueNumber} issue(s).`,
+    );
+
+    await selectSequenceLayoutModeTool(page);
+    await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
+
+    await selectAllStructuresOnCanvas(page);
+
+    await callContextMenuForAnySymbol(page);
+
+    const createAntisenseRNAStrandOption = page
+      .getByTestId('create_antisense_rna_chain')
+      .first();
+    const createAntisenseRNAStrandOptionPresent =
+      (await createAntisenseRNAStrandOption.count()) > 0;
+    // Checking presence of Create Antisense Strand option on the context menu and its disabled state
+    await expect(createAntisenseRNAStrandOptionPresent).toBeTruthy();
+    if (createAntisenseRNAStrandOptionPresent) {
+      await expect(createAntisenseRNAStrandOption).toHaveAttribute(
+        'aria-disabled',
+        'true',
+      );
+    }
+  });
+}
+
+for (const monomer of monomers.filter(
+  (m) => m.baseWithR3R1ConnectionPresent && !m.eligibleForAntisense,
+)) {
+  test(`26.2.2 Check that Create Antisense DNA Strand option disabled for not a sense base: ${monomer.monomerDescription}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/6679
+     * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+     *              2. Ensure that the "Create Antisense DNA Strand" option appears but is disabled
+     *                 when the base connected via R3-R1 is not a sense base
+     * Case:
+     *       1. Switch to Sequence mode
+     *       2. Load correct monomer from HELM or KET
+     *       3. Select it (using Control+A)
+     *       4. Call context menu for symbol
+     *       5. Check that "Create Antisense DNA Strand" option present but disabled
+     */
+    test.setTimeout(20000);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      monomer.shouldFail === true,
+      `That test fails because of ${monomer.issueNumber} issue(s).`,
+    );
+
+    await selectSequenceLayoutModeTool(page);
+    await loadMonomerOnCanvas(page, monomer, monomer.pageReloadNeeded);
+
+    await selectAllStructuresOnCanvas(page);
+
+    await callContextMenuForAnySymbol(page);
+
+    const createAntisenseDNAStrandOption = page
+      .getByTestId('create_antisense_dna_chain')
+      .first();
+    const createAntisenseDNAStrandOptionPresent =
+      (await createAntisenseDNAStrandOption.count()) > 0;
+    // Checking presence of Create Antisense Strand option on the context menu and its disabled state
+    await expect(createAntisenseDNAStrandOptionPresent).toBeTruthy();
+    if (createAntisenseDNAStrandOptionPresent) {
+      await expect(createAntisenseDNAStrandOption).toHaveAttribute(
+        'aria-disabled',
+        'true',
+      );
+    }
+  });
+}
+
+for (const chain of chainWithExtraBondToBase) {
+  test(`26.3.1 Check that Create Antisense RNA Strand option disabled for: ${chain.monomerDescription}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/6679
+     * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+     *              3. Check if any of the bases connected to the sugars via R3-R1 have more bonds (hydrogen or covalent),
+     *              the "Create Antisense RNA Strand" option appear, but disabled
+     * Case:
+     *       1. Load correct monomer (with not antisense base) from HELM
+     *       2. Select it (using Control+A)
+     *       3. Call context menu for symbol
+     *       4. Check that "Create Antisense RNA Strand" option present but disabled
+     */
+    test.setTimeout(20000);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      chain.shouldFail === true,
+      `That test fails because of ${chain.issueNumber} issue(s).`,
+    );
+    await selectSequenceLayoutModeTool(page);
+    await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+
+    const createAntisenseRNAStrandOption = page
+      .getByTestId('create_antisense_rna_chain')
+      .first();
+    const createAntisenseRNAStrandOptionPresent =
+      (await createAntisenseRNAStrandOption.count()) > 0;
+    // Checking presence of Create Antisense Strand option on the context menu and its disabled state
+    await expect(createAntisenseRNAStrandOptionPresent).toBeTruthy();
+    if (createAntisenseRNAStrandOptionPresent) {
+      await expect(createAntisenseRNAStrandOption).toHaveAttribute(
+        'aria-disabled',
+        'true',
+      );
+    }
+  });
+}
+
+for (const chain of chainWithExtraBondToBase) {
+  test(`26.3.2 Check that Create Antisense DNA Strand option disabled for: ${chain.monomerDescription}`, async () => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/6679
+     * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+     *              3. Check if any of the bases connected to the sugars via R3-R1 have more bonds (hydrogen or covalent),
+     *              the "Create Antisense DNA Strand" option appear, but disabled
+     * Case:
+     *       1. Load correct monomer (with not antisense base) from HELM
+     *       2. Select it (using Control+A)
+     *       3. Call context menu for symbol
+     *       4. Check that "Create Antisense DNA Strand" option present but disabled
+     */
+    test.setTimeout(20000);
+    // Test should be skipped if related bug exists
+    test.fixme(
+      chain.shouldFail === true,
+      `That test fails because of ${chain.issueNumber} issue(s).`,
+    );
+    await selectSequenceLayoutModeTool(page);
+    await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+
+    const createAntisenseDNAStrandOption = page
+      .getByTestId('create_antisense_dna_chain')
+      .first();
+    const createAntisenseDNAStrandOptionPresent =
+      (await createAntisenseDNAStrandOption.count()) > 0;
+    // Checking presence of Create Antisense Strand option on the context menu and its disabled state
+    await expect(createAntisenseDNAStrandOptionPresent).toBeTruthy();
+    if (createAntisenseDNAStrandOptionPresent) {
+      await expect(createAntisenseDNAStrandOption).toHaveAttribute(
+        'aria-disabled',
+        'true',
+      );
+    }
+  });
+}
+
+for (const monomer1 of shortMonomerList) {
+  for (const monomer2 of shortMonomerList) {
+    test(`26.4.1 Antisence for two chains: ${monomer1.monomerDescription} and ${monomer2.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/6679
+       * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+       *              4. Check if multiple chains are selected and more than one satisfies the previous requirements(Requirement 1.2),
+       *                 the "Create Antisense RNA Strand" option appear, multiple antisense chains are created
+       * Case:
+       *       1. Load two correct monomers from HELM
+       *       2. Select it (using Control+A)
+       *       3. Call context menu for monomer and click "Create Antisense RNA Strand" option
+       *       4. Take screenshot to validate Antisense creation
+       */
+      test.setTimeout(25000);
+      // Test should be skipped if related bug exists
+      test.fixme(
+        monomer1.shouldFail === true || monomer2.shouldFail === true,
+        `That test fails because of ${monomer1.issueNumber} ${monomer2.issueNumber} issue(s).`,
+      );
+
+      await selectSequenceLayoutModeTool(page);
+      await loadMonomerOnCanvas(
+        page,
+        monomer1,
+        monomer1.pageReloadNeeded || monomer2.pageReloadNeeded,
+      );
+      await loadMonomerOnCanvas(page, monomer2);
+
+      await selectAllStructuresOnCanvas(page);
+      await callContextMenuForAnySymbol(page);
+
+      const createAntisenseRNAStrandOption = page
+        .getByTestId('create_antisense_rna_chain')
+        .first();
+
+      if (
+        (monomer1.eligibleForAntisense &&
+          monomer1.baseWithR3R1ConnectionPresent &&
+          monomer2.eligibleForAntisense &&
+          monomer2.baseWithR3R1ConnectionPresent) ||
+        (monomer1.eligibleForAntisense &&
+          monomer1.baseWithR3R1ConnectionPresent &&
+          !monomer2.eligibleForAntisense &&
+          !monomer2.baseWithR3R1ConnectionPresent) ||
+        (!monomer1.eligibleForAntisense &&
+          !monomer1.baseWithR3R1ConnectionPresent &&
+          monomer2.eligibleForAntisense &&
+          monomer2.baseWithR3R1ConnectionPresent)
+      ) {
+        // Checking presence of Create Antisense Strand option on the context menu and enabled
+        await expect(createAntisenseRNAStrandOption).toHaveCount(1);
+        await expect(createAntisenseRNAStrandOption).toHaveAttribute(
+          'aria-disabled',
+          'false',
+        );
+
+        await createAntisenseRNAStrandOption.click();
+
+        await moveMouseAway(page);
+        await takeEditorScreenshot(page, {
+          hideMonomerPreview: true,
+          hideMacromoleculeEditorScrollBars: true,
+        });
+      } else if (
+        monomer1.baseWithR3R1ConnectionPresent ||
+        monomer2.baseWithR3R1ConnectionPresent
+      ) {
+        const createAntisenseRNAStrandOptionPresent =
+          (await createAntisenseRNAStrandOption.count()) > 0;
+        // Checking presence of Create Antisense Strand option on the context menu and its disabled state
+        await expect(createAntisenseRNAStrandOptionPresent).toBeTruthy();
+        if (createAntisenseRNAStrandOptionPresent) {
+          await expect(createAntisenseRNAStrandOption).toHaveAttribute(
+            'aria-disabled',
+            'true',
+          );
+        }
+      }
+    });
+  }
+}
+
+for (const monomer1 of shortMonomerList) {
+  for (const monomer2 of shortMonomerList) {
+    test(`26.4.2 Antisence for two chains: ${monomer1.monomerDescription} and ${monomer2.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/6679
+       * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+       *              4. Check if multiple chains are selected and more than one satisfies the previous requirements(Requirement 1.2),
+       *                 the "Create Antisense DNA Strand" option appear, multiple antisense chains are created
+       * Case:
+       *       1. Load two correct monomers from HELM
+       *       2. Select it (using Control+A)
+       *       3. Call context menu for monomer and click "Create Antisense DNA Strand" option
+       *       4. Take screenshot to validate Antisense creation
+       */
+      test.setTimeout(25000);
+      // Test should be skipped if related bug exists
+      test.fixme(
+        monomer1.shouldFail === true || monomer2.shouldFail === true,
+        `That test fails because of ${monomer1.issueNumber} ${monomer2.issueNumber} issue(s).`,
+      );
+
+      await selectSequenceLayoutModeTool(page);
+      await loadMonomerOnCanvas(
+        page,
+        monomer1,
+        monomer1.pageReloadNeeded || monomer2.pageReloadNeeded,
+      );
+      await loadMonomerOnCanvas(page, monomer2);
+
+      await selectAllStructuresOnCanvas(page);
+      await callContextMenuForAnySymbol(page);
+
+      const createAntisenseDNAStrandOption = page
+        .getByTestId('create_antisense_dna_chain')
+        .first();
+
+      if (
+        (monomer1.eligibleForAntisense &&
+          monomer1.baseWithR3R1ConnectionPresent &&
+          monomer2.eligibleForAntisense &&
+          monomer2.baseWithR3R1ConnectionPresent) ||
+        (monomer1.eligibleForAntisense &&
+          monomer1.baseWithR3R1ConnectionPresent &&
+          !monomer2.eligibleForAntisense &&
+          !monomer2.baseWithR3R1ConnectionPresent) ||
+        (!monomer1.eligibleForAntisense &&
+          !monomer1.baseWithR3R1ConnectionPresent &&
+          monomer2.eligibleForAntisense &&
+          monomer2.baseWithR3R1ConnectionPresent)
+      ) {
+        // Checking presence of Create Antisense Strand option on the context menu and enabled
+        await expect(createAntisenseDNAStrandOption).toHaveCount(1);
+        await expect(createAntisenseDNAStrandOption).toHaveAttribute(
+          'aria-disabled',
+          'false',
+        );
+
+        await createAntisenseDNAStrandOption.click();
+        await takeEditorScreenshot(page);
+      } else if (
+        monomer1.baseWithR3R1ConnectionPresent ||
+        monomer2.baseWithR3R1ConnectionPresent
+      ) {
+        const createAntisenseDNAStrandOptionPresent =
+          (await createAntisenseDNAStrandOption.count()) > 0;
+        // Checking presence of Create Antisense Strand option on the context menu and its disabled state
+        await expect(createAntisenseDNAStrandOptionPresent).toBeTruthy();
+        if (createAntisenseDNAStrandOptionPresent) {
+          await expect(createAntisenseDNAStrandOption).toHaveAttribute(
+            'aria-disabled',
+            'true',
+          );
+        }
+      }
+    });
+  }
+}

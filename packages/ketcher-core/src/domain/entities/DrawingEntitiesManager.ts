@@ -13,6 +13,7 @@ import {
   BaseMonomer,
   Chem,
   LinkerSequenceNode,
+  MonomerSequenceNode,
   Phosphate,
   Pool,
   RNABase,
@@ -2810,18 +2811,28 @@ export class DrawingEntitiesManager {
     let lastAddedMonomer: BaseMonomer | undefined;
 
     selectedPiecesInChains.forEach((selectedPiece) => {
-      selectedPiece.reverse().forEach((node) => {
-        if (!node.monomer.selected) {
+      selectedPiece.reverse().forEach((nodeToHandle) => {
+        const senseNode =
+          nodeToHandle instanceof Nucleotide &&
+          nodeToHandle.phosphate.selected &&
+          !nodeToHandle.monomer.selected
+            ? new MonomerSequenceNode(nodeToHandle.phosphate)
+            : nodeToHandle;
+
+        if (!senseNode.monomer.selected) {
           lastAddedMonomer = undefined;
           lastAddedNode = undefined;
 
           return;
         }
 
-        if (node instanceof Nucleotide || node instanceof Nucleoside) {
+        if (
+          senseNode instanceof Nucleotide ||
+          senseNode instanceof Nucleoside
+        ) {
           const antisenseNodeCreationResult =
             DrawingEntitiesManager.createAntisenseNode(
-              node,
+              senseNode,
               false,
               isDnaAntisense,
             );
@@ -2837,7 +2848,7 @@ export class DrawingEntitiesManager {
 
           let addedPhosphate: BaseMonomer | undefined;
 
-          if (node instanceof Nucleotide && node.phosphate.selected) {
+          if (senseNode instanceof Nucleotide && senseNode.phosphate.selected) {
             const phosphateLibraryItem = getRnaPartLibraryItem(
               editor,
               RNA_DNA_NON_MODIFIED_PART.PHOSPHATE,
@@ -2853,7 +2864,7 @@ export class DrawingEntitiesManager {
 
             const monomerAddCommand = this.addMonomer(
               phosphateLibraryItem,
-              node.phosphate.position.add(new Vec2(0, 3)),
+              senseNode.phosphate.position.add(new Vec2(0, 3)),
             );
             addedPhosphate = monomerAddCommand.operations[0]
               .monomer as BaseMonomer;
@@ -2882,7 +2893,7 @@ export class DrawingEntitiesManager {
 
           command.merge(
             this.createPolymerBond(
-              node.rnaBase,
+              senseNode.rnaBase,
               addedNode.rnaBase,
               AttachmentPointName.HYDROGEN,
               AttachmentPointName.HYDROGEN,
@@ -2896,7 +2907,7 @@ export class DrawingEntitiesManager {
           lastAddedMonomer =
             lastAddedMonomer || lastAddedNode?.lastMonomerInNode;
 
-          node.monomers.reverse().forEach((monomer) => {
+          senseNode.monomers.reverse().forEach((monomer) => {
             if (!monomer.selected) {
               lastAddedMonomer = undefined;
               lastAddedNode = undefined;
@@ -2946,7 +2957,7 @@ export class DrawingEntitiesManager {
             lastAddedMonomer = addedMonomer;
           });
 
-          lastAddedNode = node;
+          lastAddedNode = senseNode;
         }
       });
       lastAddedNode = undefined;

@@ -210,13 +210,11 @@ export const RnaTabs = ({ libraryName, duplicatePreset, editPreset }) => {
     dispatch(setIsEditMode(true));
   };
 
-  const [selectedTab, setSelectedTab] = useState(groupsData[0].groupName);
-
   return (
     <RnaAccordionContainer data-testid="rna-accordion">
       <RnaTabsContainer>
         {groupsData.map((groupData) => {
-          const showCaption = groupData.groupName === selectedTab;
+          const showCaption = groupData.groupName === activeRnaBuilderItem;
           const variantMonomers = selectAmbiguousMonomersInCategory(
             monomers,
             groupData.groupName as MonomerGroups,
@@ -235,10 +233,13 @@ export const RnaTabs = ({ libraryName, duplicatePreset, editPreset }) => {
               <RnaTab
                 label={caption}
                 title={groupData.groupName}
+                selected={showCaption}
                 icon={
                   <Icon
                     name={groupData.iconName}
-                    onClick={() => setSelectedTab(groupData.groupName)}
+                    onClick={() =>
+                      dispatch(setActiveRnaBuilderItem(groupData.groupName))
+                    }
                   />
                 }
               />
@@ -247,7 +248,7 @@ export const RnaTabs = ({ libraryName, duplicatePreset, editPreset }) => {
         })}
       </RnaTabsContainer>
       {groupsData.map((groupData) => {
-        if (groupData.groupName !== selectedTab) {
+        if (groupData.groupName !== activeRnaBuilderItem) {
           return null;
         }
         const variantMonomers = selectAmbiguousMonomersInCategory(
@@ -304,8 +305,10 @@ export const RnaTabs = ({ libraryName, duplicatePreset, editPreset }) => {
             </DetailsContainer>
           );
 
-        const firstTabSelected = selectedTab === RnaBuilderPresetsItem.Presets;
-        const lastTabSelected = selectedTab === MonomerGroups.NUCLEOTIDES;
+        const firstTabSelected =
+          activeRnaBuilderItem === RnaBuilderPresetsItem.Presets;
+        const lastTabSelected =
+          activeRnaBuilderItem === MonomerGroups.NUCLEOTIDES;
 
         return (
           <CompactDetailsContainer

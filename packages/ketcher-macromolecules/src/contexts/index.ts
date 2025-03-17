@@ -18,3 +18,4 @@ import MenuContext, { IMenuContext } from './menuContext';
 
 export { MenuContext };
 export type { IMenuContext };
+export * from './RootSizeContext';

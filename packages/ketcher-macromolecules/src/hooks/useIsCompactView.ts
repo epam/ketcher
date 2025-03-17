@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { RootSizeContext } from '../contexts';
 
 export const useIsCompactView = () => {
-  const { width } = useContext(RootSizeContext);
+  const { width, height } = useContext(RootSizeContext);
 
-  return width < 1024;
+  return height < 768 || width < 1024;
 };

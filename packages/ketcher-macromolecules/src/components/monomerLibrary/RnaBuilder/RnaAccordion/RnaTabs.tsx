@@ -242,6 +242,7 @@ export const RnaTabs = ({ libraryName, duplicatePreset, editPreset }) => {
                     }
                   />
                 }
+                key={groupData.groupName}
               />
             </RnaTabWrapper>
           );

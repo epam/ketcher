@@ -16,12 +16,6 @@
 
 import { MonomerGroups } from 'src/constants';
 
-export const groupNameToLabel = {
-  [MonomerGroups.SUGARS]: 'Select sugar',
-  [MonomerGroups.BASES]: 'Select base',
-  [MonomerGroups.PHOSPHATES]: 'Select phosphate',
-};
-
 export const groupNameToRnaEditorItemLabel = {
   [MonomerGroups.SUGARS]: 'Sugar',
   [MonomerGroups.BASES]: 'Base',

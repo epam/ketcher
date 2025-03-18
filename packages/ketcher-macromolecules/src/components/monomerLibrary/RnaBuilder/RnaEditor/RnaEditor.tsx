@@ -17,12 +17,7 @@
 import { useEffect, useState } from 'react';
 import { RnaEditorCollapsed } from './RnaEditorCollapsed';
 import { RnaEditorExpanded } from './RnaEditorExpanded';
-import {
-  ExpandButton,
-  ExpandIcon,
-  RnaEditorContainer,
-  StyledHeader,
-} from './styles';
+import { ExpandIcon, RnaEditorContainer, StyledHeader } from './styles';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   createNewPreset,

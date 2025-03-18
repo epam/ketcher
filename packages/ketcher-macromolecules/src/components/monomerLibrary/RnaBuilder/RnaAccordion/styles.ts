@@ -131,13 +131,13 @@ export const RnaTab = styled(Tab)<{ selected?: boolean }>`
   height: 24px;
   min-height: 24px;
   min-width: 24px;
-  ${({ selected }) => (selected ? 'width: 116px;' : '')}
+  ${({ selected }) => (selected ? 'min-width: 104px;' : '')}
   display: flex;
   flex-direction: row;
   gap: 4px;
   align-items: center;
   justify-content: center;
-  padding: ${({ selected }) => (selected ? '8px' : '4px')};
+  padding: 4px;
   ${({ selected }) => (selected ? 'margin-top: -8px;' : '')}
   font-weight: 400;
   font-size: 10px;

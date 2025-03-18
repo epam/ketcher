@@ -1,5 +1,5 @@
 import { act, render, screen } from '@testing-library/react';
-import { RnaAccordion } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/RnaAccordion';
+import { RnaAccordion } from './RnaAccordion';
 import { getMonomerUniqueKey } from 'state/library';
 import { MonomerItemType, Struct } from 'ketcher-core';
 import { MONOMER_TYPES } from '../../../../constants';

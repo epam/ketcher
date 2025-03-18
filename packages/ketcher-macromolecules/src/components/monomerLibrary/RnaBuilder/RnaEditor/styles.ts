@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import styled from '@emotion/styled';
-import { Button, Icon } from 'ketcher-react';
+import { Icon } from 'ketcher-react';
 
 export const RnaEditorContainer = styled.div`
   padding: 8px;
@@ -44,15 +44,6 @@ export const StyledHeader = styled.button`
   &.styled-header--active-preset {
     border-radius: 4px 4px 0 0;
   }
-`;
-
-export const ExpandButton = styled(Button)`
-  background: transparent;
-  width: 16px;
-  height: 16px;
-  outline: none;
-  border-radius: 0;
-  padding: 0;
 `;
 
 export const ExpandIcon = styled(Icon)<{ expanded?: boolean }>`

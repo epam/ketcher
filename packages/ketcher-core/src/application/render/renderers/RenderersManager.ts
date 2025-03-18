@@ -267,10 +267,9 @@ export class RenderersManager {
   public finishPolymerBondCreation(polymerBond: PolymerBond) {
     assert(polymerBond.secondMonomer);
 
+    // FIXME?: Do we need to handle `polymerBond instanceof HydrogenBond`?
     const polymerBondRenderer =
-      polymerBond instanceof HydrogenBond
-        ? new SnakeModeHydrogenBondRenderer(polymerBond)
-        : PolymerBondRendererFactory.createInstance(polymerBond);
+      PolymerBondRendererFactory.createInstance(polymerBond);
     this.polymerBonds.set(polymerBond.id, polymerBondRenderer);
     this.markForReEnumeration();
     polymerBond.firstMonomer.renderer?.redrawAttachmentPoints();

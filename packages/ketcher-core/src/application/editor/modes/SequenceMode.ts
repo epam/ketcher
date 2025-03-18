@@ -1099,16 +1099,33 @@ export class SequenceMode extends BaseMode {
       let nodesToDelete: TwoStrandedNodesSelection;
 
       if (selections.length) {
-        modelChanges.merge(this.deleteSelectedDrawingEntities());
         nodesToDelete = selections;
+
+        const senseNodesToDelete = nodesToDelete.filter((selectionRange) =>
+          selectionRange.every(
+            (nodeSelection) => nodeSelection.node.senseNode?.monomer.selected,
+          ),
+        );
+        const antisenseNodesToDelete = nodesToDelete.filter((selectionRange) =>
+          selectionRange.every(
+            (nodeSelection) =>
+              nodeSelection.node.antisenseNode?.monomer.selected,
+          ),
+        );
+
+        modelChanges.merge(this.deleteSelectedDrawingEntities());
+
         if (this.needToEditSense) {
           modelChanges.merge(
-            this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.SENSE),
+            this.handleNodesDeletion(senseNodesToDelete, STRAND_TYPE.SENSE),
           );
         }
         if (this.needToEditAntisense) {
           modelChanges.merge(
-            this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.ANTISENSE),
+            this.handleNodesDeletion(
+              antisenseNodesToDelete,
+              STRAND_TYPE.ANTISENSE,
+            ),
           );
         }
       } else if (nodeToDelete) {

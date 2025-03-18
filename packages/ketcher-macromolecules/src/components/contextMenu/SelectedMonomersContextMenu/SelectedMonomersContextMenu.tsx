@@ -4,15 +4,12 @@ import { createPortal } from 'react-dom';
 import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'ketcher-react';
 import { useAppSelector } from 'hooks';
 import { selectEditor } from 'state/common';
-import {
-  BaseMonomer,
-  getRnaBaseFromSugar,
-  getSugarFromRnaBase,
-  RNABase,
-  Sugar,
-} from 'ketcher-core';
+import { BaseMonomer } from 'ketcher-core';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
-import { isAntisenseCreationDisabled } from './helpers';
+import {
+  isAntisenseCreationDisabled,
+  isAntisenseOptionVisible,
+} from './helpers';
 
 type SelectedMonomersContextMenuType = {
   selectedMonomers: BaseMonomer[];
@@ -34,14 +31,10 @@ export const SelectedMonomersContextMenu = ({
       separator: false,
       disabled: isAntisenseCreationDisabled(selectedMonomers),
       hidden: ({ props }: { props?: { selectedMonomers?: BaseMonomer[] } }) => {
-        return !props?.selectedMonomers?.some((selectedMonomer) => {
-          return (
-            (selectedMonomer instanceof RNABase &&
-              getSugarFromRnaBase(selectedMonomer)) ||
-            (selectedMonomer instanceof Sugar &&
-              getRnaBaseFromSugar(selectedMonomer))
-          );
-        });
+        return (
+          !props?.selectedMonomers ||
+          !isAntisenseOptionVisible(props?.selectedMonomers)
+        );
       },
     },
     {
@@ -50,14 +43,10 @@ export const SelectedMonomersContextMenu = ({
       separator: true,
       disabled: isAntisenseCreationDisabled(selectedMonomers),
       hidden: ({ props }: { props?: { selectedMonomers?: BaseMonomer[] } }) => {
-        return !props?.selectedMonomers?.some((selectedMonomer) => {
-          return (
-            (selectedMonomer instanceof RNABase &&
-              getSugarFromRnaBase(selectedMonomer)) ||
-            (selectedMonomer instanceof Sugar &&
-              getRnaBaseFromSugar(selectedMonomer))
-          );
-        });
+        return (
+          !props?.selectedMonomers ||
+          !isAntisenseOptionVisible(props?.selectedMonomers)
+        );
       },
     },
     {

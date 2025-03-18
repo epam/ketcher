@@ -4124,3 +4124,43 @@ test(`26.8.2 Check that all other monomers in the backbone that are not a part o
     hideMacromoleculeEditorScrollBars: true,
   });
 });
+
+test(`27. Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense chain, the sync icon should appear on the top bar and be enabled/toggled on by default`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense
+   *              chain, the sync icon should appear on the top bar and be enabled/toggled on by default
+   * Case:
+   *       1. Swticth to Sequence mode (clear canvas)
+   *       2. Check that SYNC button is NOT present
+   *       3. Paste on the canvas single chain
+   *       4. Check that SYNC button is NOT present
+   *       5. Create Antisense RNA Strand
+   *       6. Check that SYNC button is present and enabled
+   */
+  test.setTimeout(20000);
+  await selectSequenceLayoutModeTool(page);
+
+  const syncButton = page.getByTestId('sync_sequence_edit_mode').first();
+  // checking that SYNC button is not present
+  await expect(syncButton).toHaveCount(0);
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    `RNA1{R(A)[bnn].R(C)[bnn].R(G)[bnn].R(T)[bnn].R(U)[bnn].R(A)}|RNA2{[25d3r](A)[bnn].[25d3r](C)[bnn].[25d3r](G)[bnn].[25d3r](T)[bnn].[25d3r](U)[bnn].R(A)}|RNA3{R([2imen2])[bnn].R([5meC])[bnn].R([4imen2])[bnn].R([cnes4T])[bnn].R([cpU])[bnn].R(C,G,T)[bnn].R(A,G)[bnn].R(A)}|RNA4{[25d3r]([2imen2])[bnn].[25d3r]([5meC])[bnn].[25d3r]([4imen2])[bnn].[25d3r]([cnes4T])[bnn].[25d3r]([cpU])[bnn].[25d3r](C,G,T)[bnn].[25d3r](A,G)[bnn].R(A)}|RNA5{R(A)P.R(C)P.R(G)P.R(T)P.R(U)P}$$$$V2.0`,
+  );
+
+  // checking that SYNC button is not present
+  await expect(syncButton).toHaveCount(0);
+
+  await selectAllStructuresOnCanvas(page);
+
+  const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+  await createDNAAntisenseChain(page, anySymbolA);
+
+  // checking that SYNC button is not present
+  await expect(syncButton).toHaveCount(1);
+  // checking that SYNC button is active
+  await expect(syncButton).toHaveAttribute('data-isactive', 'true');
+});

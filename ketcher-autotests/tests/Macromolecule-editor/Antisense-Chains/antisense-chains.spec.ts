@@ -3778,7 +3778,11 @@ for (const monomer1 of shortMonomerList) {
         );
 
         await createAntisenseDNAStrandOption.click();
-        await takeEditorScreenshot(page);
+        await moveMouseAway(page);
+        await takeEditorScreenshot(page, {
+          hideMonomerPreview: true,
+          hideMacromoleculeEditorScrollBars: true,
+        });
       } else if (
         monomer1.baseWithR3R1ConnectionPresent ||
         monomer2.baseWithR3R1ConnectionPresent

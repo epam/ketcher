@@ -1,5 +1,6 @@
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { FlexModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/FlexModePolymerBondRenderer';
+import { SnakeModeHydrogenBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModeHydrogenBondRenderer';
 import { SnakeModePolymerBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SnakeModePolymerBondRenderer';
 import { BackBoneBondSequenceRenderer } from 'application/render/renderers/sequence/BackBoneBondSequenceRenderer';
 import { PolymerBondSequenceRenderer } from 'application/render/renderers/sequence/PolymerBondSequenceRenderer';
@@ -20,7 +21,9 @@ export type FlexOrSequenceOrSnakeModePolymerBondRenderer =
 
 export class PolymerBond extends BaseBond {
   public secondMonomer?: BaseMonomer;
-  public renderer?: FlexOrSequenceOrSnakeModePolymerBondRenderer = undefined;
+  public renderer?:
+    | FlexOrSequenceOrSnakeModePolymerBondRenderer
+    | SnakeModeHydrogenBondRenderer = undefined;
   // Move to renderer
   public hasAntisenseInRow?: boolean = false;
   // Move to renderer
@@ -41,7 +44,9 @@ export class PolymerBond extends BaseBond {
   }
 
   public setRenderer(
-    renderer: FlexOrSequenceOrSnakeModePolymerBondRenderer,
+    renderer:
+      | FlexOrSequenceOrSnakeModePolymerBondRenderer
+      | SnakeModeHydrogenBondRenderer,
   ): void {
     super.setBaseRenderer(renderer as BaseRenderer);
     this.renderer = renderer;

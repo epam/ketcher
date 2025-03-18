@@ -3963,3 +3963,84 @@ test(`26.6.2 Check that every nucleotide (sugar and phosphate are part of the ba
     hideMacromoleculeEditorScrollBars: true,
   });
 });
+
+test(`26.7.1 Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (R) and the appropriate "antisense RNA base"`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+   *              7. Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate,
+   *              or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside
+   *              on the antisense chain that contains ribose (R) and the appropriate "antisense RNA base"
+   * Case:
+   *       1. Load chain with all type of phosphates and sugars
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense RNA Strand" option
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to R and P
+   */
+  test.setTimeout(20000);
+  await selectSequenceLayoutModeTool(page);
+
+  const chain = chainOfNucleosidesWithAllTypesOfSugar[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForAnySymbol(page);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_rna_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`26.7.2 Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (R) and the appropriate "antisense DNA base"`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+   *              7. Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate,
+   *              on the antisense chain that contains ribose (R) and the appropriate "antisense DNA base"
+   * Case:
+   *       1. Load chain with all type of phosphates and sugars
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense DNA Strand" option
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates connected to R and P
+   */
+  test.setTimeout(20000);
+  await selectSequenceLayoutModeTool(page);
+
+  const chain = chainOfNucleosidesWithAllTypesOfSugar[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForAnySymbol(page);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_dna_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});

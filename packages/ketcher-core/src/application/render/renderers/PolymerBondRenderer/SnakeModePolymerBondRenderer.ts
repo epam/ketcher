@@ -52,9 +52,9 @@ const CELL_HEIGHT = 40;
 const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 
 // TODO: Need to split the class by three:
-//  - SnakeModeBackboneBondRenderer (black “snake” line)
-//  - SnakeModeSideChainBondRenderer (blue “snake” line)
-//  - SnakeModeRNABaseAndSugarBondRenderer (black straight line)
+//  - `SnakeModeBackboneBondRenderer` (black “snake” line)
+//  - `SnakeModeSideChainBondRenderer` (blue “snake” line)
+//  - `SnakeModeRNABaseAndSugarBondRenderer` (black straight line)
 export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   private isSnakeBond = false; // `SnakeModeBackboneBondRenderer` or `SnakeModeRNABaseAndSugarBondRenderer`.

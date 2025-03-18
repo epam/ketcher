@@ -3804,8 +3804,9 @@ for (const monomer1 of shortMonomerList) {
 
 test(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (RNA)`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/6134
-   * Description: Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+   *              5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (RNA)
    * Case:
    *       1. Load chain with all type of monomers connected to R1, R2, R3, R4 attachment points
    *       2. Select it (using Control+A)
@@ -3842,8 +3843,9 @@ test(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R
 
 test(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (DNA)`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/6134
-   * Description: Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+   *              5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (DNA)
    * Case:
    *       1. Load chain with all type of monomers connected to R1, R2, R3, R4 attachment points
    *       2. Select it (using Control+A)
@@ -3871,6 +3873,90 @@ test(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R
   );
 
   await createAntisenseStrandOption.click();
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`26.6.1 Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (R), phosphate (P), and the appropriate "antisense RNA base"`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+   *              6. Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p),
+   *                 and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense
+   *                 chain that contains ribose (R), phosphate (P), and the appropriate "antisense RNA base"
+   * Case:
+   *       1. Load chain with all type of phosphates and sugars
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense RNA Strand" option
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to R and P
+   */
+  test.setTimeout(20000);
+  await selectSequenceLayoutModeTool(page);
+
+  const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForAnySymbol(page);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_rna_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`26.6.2 Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (R), phosphate (P), and the appropriate "antisense DNA base"`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+   *              6. Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p),
+   *                 and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense
+   *                 chain that contains ribose (R), phosphate (P), and the appropriate "antisense RNA base"
+   * Case:
+   *       1. Load chain with all type of phosphates and sugars
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense DNA Strand" option
+   *       4. Take screenshot to validate Antisense creation and that all sugars and phosphates converted to R and P
+   */
+  test.setTimeout(20000);
+  await selectSequenceLayoutModeTool(page);
+
+  const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForAnySymbol(page);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_dna_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+
   await moveMouseAway(page);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

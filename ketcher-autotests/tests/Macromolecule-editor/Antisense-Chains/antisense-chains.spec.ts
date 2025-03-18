@@ -4044,3 +4044,83 @@ test(`26.7.2 Check that every nucleoside (not a nucleotide, sugar is connected t
     hideMacromoleculeEditorScrollBars: true,
   });
 });
+
+test(`26.8.1 Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside directly copied to the antisense RNA strand`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+   *              8. Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside
+   *              directly copied to the antisense RNA strand
+   * Case:
+   *       1. Load chain with all types of modified monomers in one
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense RNA Strand" option
+   *       4. Take screenshot to validate Antisense creation and that monomers directly copied to antisense
+   */
+  test.setTimeout(20000);
+  await selectSequenceLayoutModeTool(page);
+
+  const chain = chainOfAllTypesModifiedMonomers[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForAnySymbol(page);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_rna_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`26.8.2 Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside directly copied to the antisense DNA strand`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
+   *              8. Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside
+   *              directly copied to the antisense DNA strand
+   * Case:
+   *       1. Load chain with all types of modified monomers in one
+   *       2. Select it (using Control+A)
+   *       3. Call context menu for monomer and click "Create Antisense DNA Strand" option
+   *       4. Take screenshot to validate Antisense creation and that monomers directly copied to antisense
+   */
+  test.setTimeout(20000);
+  await selectSequenceLayoutModeTool(page);
+
+  const chain = chainOfAllTypesModifiedMonomers[0];
+  await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
+
+  await selectAllStructuresOnCanvas(page);
+  await callContextMenuForAnySymbol(page);
+
+  const createAntisenseStrandOption = page
+    .getByTestId('create_antisense_dna_chain')
+    .first();
+
+  // Checking presence of Create Antisense Strand option on the context menu and enabled
+  await expect(createAntisenseStrandOption).toHaveCount(1);
+  await expect(createAntisenseStrandOption).toHaveAttribute(
+    'aria-disabled',
+    'false',
+  );
+
+  await createAntisenseStrandOption.click();
+  await moveMouseAway(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});

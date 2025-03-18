@@ -19,8 +19,6 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { BaseRenderer } from '../BaseRenderer';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { SnakeMode } from 'application/editor';
 import {
   CORNER_LENGTH,
   DOUBLE_CORNER_LENGTH,
@@ -75,10 +73,6 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   // TODO: Delete.
   public get isSnake(): true {
     return true;
-  }
-
-  private get isHydrogenBond() {
-    return this.polymerBond instanceof HydrogenBond;
   }
 
   public get rootBBox(): DOMRect | undefined {
@@ -175,7 +169,6 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     if (
       (this.polymerBond.isSideChainConnection ||
         this.isSideChainLikeBackbone) &&
-      (!this.isHydrogenBond || editor.mode instanceof SnakeMode) &&
       cells
     ) {
       this.appendSideConnectionBond(rootElement, cells);
@@ -450,24 +443,19 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.bodyElement = rootElement
       .append('path')
       .attr('class', `${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`)
-      .attr(
-        'stroke',
-        this.isHydrogenBond || this.isSideChainLikeBackbone
-          ? '#333333'
-          : '#43B5C0',
-      )
+      .attr('stroke', this.isSideChainLikeBackbone ? '#333333' : '#43B5C0')
       .attr('stroke-width', 1)
       .attr('d', dAttributeForPath)
       .attr('fill', 'none')
-      .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0')
+      .attr('stroke-dasharray', '0')
       .attr('pointer-events', 'all')
       .attr('data-testid', 'bond')
-      .attr('data-bondtype', this.isHydrogenBond ? 'hydrogen' : 'covalent')
+      .attr('data-bondtype', 'covalent')
       .attr('data-bondid', this.polymerBond.id)
       .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
       .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id);
 
-    if (!this.isHydrogenBond && this.bodyElement) {
+    if (this.bodyElement) {
       this.bodyElement
         .attr(
           'data-fromconnectionpoint',
@@ -794,7 +782,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .append('line')
       .attr('stroke', this.polymerBond.finished ? '#333333' : '#0097A8')
       .attr('stroke-width', 1)
-      .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0')
+      .attr('stroke-dasharray', '0')
       .attr('class', 'selection-area')
       .attr('x1', this.scaledPosition.startPosition.x)
       .attr('y1', this.scaledPosition.startPosition.y)
@@ -802,12 +790,12 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       .attr('y2', this.scaledPosition.endPosition.y)
       .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none')
       .attr('data-testid', 'bond')
-      .attr('data-bondtype', this.isHydrogenBond ? 'hydrogen' : 'covalent')
+      .attr('data-bondtype', 'covalent')
       .attr('data-bondid', this.polymerBond.id)
       .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
       .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id);
 
-    if (!this.isHydrogenBond && this.bodyElement) {
+    if (this.bodyElement) {
       this.bodyElement
         .attr(
           'data-fromconnectionpoint',
@@ -1029,10 +1017,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
       Array.from(allSideConnectionBondsBodyElements).forEach(
         (bondBodyElement) => {
-          bondBodyElement.setAttribute(
-            'stroke',
-            this.isHydrogenBond ? 'lightgrey' : '#C0E2E6',
-          );
+          bondBodyElement.setAttribute('stroke', '#C0E2E6');
         },
       );
     }
@@ -1063,9 +1048,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
           bondBodyElement.setAttribute(
             'stroke',
-            renderer.polymerBond.isSideChainConnection && !this.isHydrogenBond
-              ? '#43B5C0'
-              : '#333333',
+            renderer.polymerBond.isSideChainConnection ? '#43B5C0' : '#333333',
           );
         },
       );
@@ -1074,9 +1057,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     this.bodyElement
       .attr(
         'stroke',
-        this.polymerBond.isSideChainConnection && !this.isHydrogenBond
-          ? '#43B5C0'
-          : '#333333',
+        this.polymerBond.isSideChainConnection ? '#43B5C0' : '#333333',
       )
       .attr('pointer-events', 'stroke');
 

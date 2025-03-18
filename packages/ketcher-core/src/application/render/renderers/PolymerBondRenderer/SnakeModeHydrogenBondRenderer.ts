@@ -73,10 +73,6 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
     return true;
   }
 
-  private get isHydrogenBond(): true {
-    return true;
-  }
-
   public get rootBBox(): DOMRect | undefined {
     const rootNode = this.rootElement?.node();
     if (!rootNode) return;
@@ -171,7 +167,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
     if (
       (this.polymerBond.isSideChainConnection ||
         this.isSideChainLikeBackbone) &&
-      (!this.isHydrogenBond || editor.mode instanceof SnakeMode) &&
+      editor.mode instanceof SnakeMode &&
       cells
     ) {
       this.appendSideConnectionBond(rootElement, cells);
@@ -446,38 +442,17 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
     this.bodyElement = rootElement
       .append('path')
       .attr('class', `${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`)
-      .attr(
-        'stroke',
-        this.isHydrogenBond || this.isSideChainLikeBackbone
-          ? '#333333'
-          : '#43B5C0',
-      )
+      .attr('stroke', '#333333')
       .attr('stroke-width', 1)
       .attr('d', dAttributeForPath)
       .attr('fill', 'none')
-      .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0')
+      .attr('stroke-dasharray', '2')
       .attr('pointer-events', 'all')
       .attr('data-testid', 'bond')
-      .attr('data-bondtype', this.isHydrogenBond ? 'hydrogen' : 'covalent')
+      .attr('data-bondtype', 'hydrogen')
       .attr('data-bondid', this.polymerBond.id)
       .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
       .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id);
-
-    if (!this.isHydrogenBond && this.bodyElement) {
-      this.bodyElement
-        .attr(
-          'data-fromconnectionpoint',
-          this.polymerBond.firstMonomer.getAttachmentPointByBond(
-            this.polymerBond,
-          ) || '',
-        )
-        .attr(
-          'data-toconnectionpoint',
-          this.polymerBond.secondMonomer?.getAttachmentPointByBond(
-            this.polymerBond,
-          ) || '',
-        );
-    }
 
     this.path = dAttributeForPath;
 
@@ -790,7 +765,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
       .append('line')
       .attr('stroke', this.polymerBond.finished ? '#333333' : '#0097A8')
       .attr('stroke-width', 1)
-      .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0')
+      .attr('stroke-dasharray', '2')
       .attr('class', 'selection-area')
       .attr('x1', this.scaledPosition.startPosition.x)
       .attr('y1', this.scaledPosition.startPosition.y)
@@ -798,26 +773,10 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
       .attr('y2', this.scaledPosition.endPosition.y)
       .attr('pointer-events', this.polymerBond.finished ? 'stroke' : 'none')
       .attr('data-testid', 'bond')
-      .attr('data-bondtype', this.isHydrogenBond ? 'hydrogen' : 'covalent')
+      .attr('data-bondtype', 'hydrogen')
       .attr('data-bondid', this.polymerBond.id)
       .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
       .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id);
-
-    if (!this.isHydrogenBond && this.bodyElement) {
-      this.bodyElement
-        .attr(
-          'data-fromconnectionpoint',
-          this.polymerBond.firstMonomer.getAttachmentPointByBond(
-            this.polymerBond,
-          ) || '',
-        )
-        .attr(
-          'data-toconnectionpoint',
-          this.polymerBond.secondMonomer?.getAttachmentPointByBond(
-            this.polymerBond,
-          ) || '',
-        );
-    }
 
     return this.bodyElement;
   }
@@ -1025,10 +984,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
 
       Array.from(allSideConnectionBondsBodyElements).forEach(
         (bondBodyElement) => {
-          bondBodyElement.setAttribute(
-            'stroke',
-            this.isHydrogenBond ? 'lightgrey' : '#C0E2E6',
-          );
+          bondBodyElement.setAttribute('stroke', 'lightgrey');
         },
       );
     }
@@ -1054,27 +1010,12 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
 
       Array.from(allSideConnectionBondsBodyElements).forEach(
         (bondBodyElement) => {
-          const renderer =
-            bondBodyElement.__data__ as SnakeModeHydrogenBondRenderer;
-
-          bondBodyElement.setAttribute(
-            'stroke',
-            renderer.polymerBond.isSideChainConnection && !this.isHydrogenBond
-              ? '#43B5C0'
-              : '#333333',
-          );
+          bondBodyElement.setAttribute('stroke', '#333333');
         },
       );
     }
 
-    this.bodyElement
-      .attr(
-        'stroke',
-        this.polymerBond.isSideChainConnection && !this.isHydrogenBond
-          ? '#43B5C0'
-          : '#333333',
-      )
-      .attr('pointer-events', 'stroke');
+    this.bodyElement.attr('stroke', '#333333').attr('pointer-events', 'stroke');
 
     if (this.polymerBond.selected && this.selectionElement) {
       this.selectionElement.attr('stroke', '#57FF8F');

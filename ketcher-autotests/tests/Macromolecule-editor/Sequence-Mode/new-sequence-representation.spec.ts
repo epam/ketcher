@@ -1601,9 +1601,9 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
   const firstSymbol = page.locator(`[data-symbol-id="${minNonZeroSymbolId}"]`);
   await firstSymbol.first().dblclick();
 
-  await page.keyboard.press('ArrowLeft');
+  await page.keyboard.press('ArrowUp');
   // Dirty hack to move cursor to the first position
-  await page.keyboard.press('ArrowLeft');
+  await page.keyboard.press('ArrowUp');
 
   for (let i = 1; i < position; i++) {
     await page.keyboard.press('ArrowRight');

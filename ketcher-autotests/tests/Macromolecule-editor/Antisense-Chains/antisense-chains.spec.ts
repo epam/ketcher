@@ -3261,7 +3261,7 @@ test(`23. Verify dot positioning after deleting and Undo/Redo actions`, async ()
 
 test(`24.1 Verify presence of "Create RNA Antisense Strand" in the context menu for valid selection`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify presence of "Create RNA Antisense Strand" in the context menu for valid selection
    * Case:
    *       1. Switch to Sequence mode
@@ -3294,7 +3294,7 @@ test(`24.1 Verify presence of "Create RNA Antisense Strand" in the context menu 
 
 test(`24.2 Verify presence of "Create DNA Antisense Strand" in the context menu for valid selection`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify presence of "Create DNA Antisense Strand" in the context menu for valid selection
    * Case:
    *       1. Switch to Sequence mode
@@ -3327,7 +3327,7 @@ test(`24.2 Verify presence of "Create DNA Antisense Strand" in the context menu 
 
 test(`25. Verify that the antisense strand creation options are disabled for an incorrect selection`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify that the antisense strand creation options are disabled for an incorrect selection
    * Case:
    *       1. Switch to Sequence mode
@@ -3372,7 +3372,7 @@ async function callContextMenuForAnySymbol(page: Page) {
 for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
   test(`26.1.1 Create antisense chain for: ${monomer.monomerDescription}`, async () => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/6679
+     * Test task: https://github.com/epam/ketcher/issues/6684
      * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
      *              1. Validate that selecting a valid backbone with the correct R1-R2 connections and right-clicking displays the "Create
      *                 Antisense RNA Strand" option (Requirement 1) and creation of antisense is possible
@@ -3419,7 +3419,7 @@ for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
 for (const monomer of monomers.filter((m) => m.eligibleForAntisense)) {
   test(`26.1.2 Create antisense chain for: ${monomer.monomerDescription}`, async () => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/6679
+     * Test task: https://github.com/epam/ketcher/issues/6684
      * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
      *              1. Validate that selecting a valid backbone with the correct R1-R2 connections and right-clicking displays the "Create
      *                 Antisense DNA Strand" option (Requirement 1) and creation of antisense is possible
@@ -3468,7 +3468,7 @@ for (const monomer of monomers.filter(
 )) {
   test(`26.2.1 Check that Create Antisense RNA Strand option disabled for not a sense base: ${monomer.monomerDescription}`, async () => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/6679
+     * Test task: https://github.com/epam/ketcher/issues/6684
      * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
      *              2. Ensure that the "Create Antisense RNA Strand" option appears but is disabled
      *                 when the base connected via R3-R1 is not a sense base
@@ -3514,7 +3514,7 @@ for (const monomer of monomers.filter(
 )) {
   test(`26.2.2 Check that Create Antisense DNA Strand option disabled for not a sense base: ${monomer.monomerDescription}`, async () => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/6679
+     * Test task: https://github.com/epam/ketcher/issues/6684
      * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
      *              2. Ensure that the "Create Antisense DNA Strand" option appears but is disabled
      *                 when the base connected via R3-R1 is not a sense base
@@ -3558,7 +3558,7 @@ for (const monomer of monomers.filter(
 for (const chain of chainWithExtraBondToBase) {
   test(`26.3.1 Check that Create Antisense RNA Strand option disabled for: ${chain.monomerDescription}`, async () => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/6679
+     * Test task: https://github.com/epam/ketcher/issues/6684
      * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
      *              3. Check if any of the bases connected to the sugars via R3-R1 have more bonds (hydrogen or covalent),
      *              the "Create Antisense RNA Strand" option appear, but disabled
@@ -3599,7 +3599,7 @@ for (const chain of chainWithExtraBondToBase) {
 for (const chain of chainWithExtraBondToBase) {
   test(`26.3.2 Check that Create Antisense DNA Strand option disabled for: ${chain.monomerDescription}`, async () => {
     /*
-     * Test task: https://github.com/epam/ketcher/issues/6679
+     * Test task: https://github.com/epam/ketcher/issues/6684
      * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
      *              3. Check if any of the bases connected to the sugars via R3-R1 have more bonds (hydrogen or covalent),
      *              the "Create Antisense DNA Strand" option appear, but disabled
@@ -3641,7 +3641,7 @@ for (const monomer1 of shortMonomerList) {
   for (const monomer2 of shortMonomerList) {
     test(`26.4.1 Antisence for two chains: ${monomer1.monomerDescription} and ${monomer2.monomerDescription}`, async () => {
       /*
-       * Test task: https://github.com/epam/ketcher/issues/6679
+       * Test task: https://github.com/epam/ketcher/issues/6684
        * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
        *              4. Check if multiple chains are selected and more than one satisfies the previous requirements(Requirement 1.2),
        *                 the "Create Antisense RNA Strand" option appear, multiple antisense chains are created
@@ -3724,7 +3724,7 @@ for (const monomer1 of shortMonomerList) {
   for (const monomer2 of shortMonomerList) {
     test(`26.4.2 Antisence for two chains: ${monomer1.monomerDescription} and ${monomer2.monomerDescription}`, async () => {
       /*
-       * Test task: https://github.com/epam/ketcher/issues/6679
+       * Test task: https://github.com/epam/ketcher/issues/6684
        * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
        *              4. Check if multiple chains are selected and more than one satisfies the previous requirements(Requirement 1.2),
        *                 the "Create Antisense DNA Strand" option appear, multiple antisense chains are created
@@ -3804,7 +3804,7 @@ for (const monomer1 of shortMonomerList) {
 
 test(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (RNA)`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (RNA)
    * Case:
@@ -3843,7 +3843,7 @@ test(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R
 
 test(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (DNA)`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored (DNA)
    * Case:
@@ -3882,7 +3882,7 @@ test(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R
 
 test(`26.6.1 Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (R), phosphate (P), and the appropriate "antisense RNA base"`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              6. Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p),
    *                 and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense
@@ -3924,7 +3924,7 @@ test(`26.6.1 Check that every nucleotide (sugar and phosphate are part of the ba
 
 test(`26.6.2 Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (R), phosphate (P), and the appropriate "antisense DNA base"`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              6. Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p),
    *                 and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense
@@ -3966,7 +3966,7 @@ test(`26.6.2 Check that every nucleotide (sugar and phosphate are part of the ba
 
 test(`26.7.1 Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (R) and the appropriate "antisense RNA base"`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              7. Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate,
    *              or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside
@@ -4007,7 +4007,7 @@ test(`26.7.1 Check that every nucleoside (not a nucleotide, sugar is connected t
 
 test(`26.7.2 Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate, or has a free R2, but is connected to a "sense base" through R3) transform into a nucleoside on the antisense chain that contains ribose (R) and the appropriate "antisense DNA base"`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              7. Check that every nucleoside (not a nucleotide, sugar is connected through R2 to something that is not phosphate,
    *              on the antisense chain that contains ribose (R) and the appropriate "antisense DNA base"
@@ -4047,7 +4047,7 @@ test(`26.7.2 Check that every nucleoside (not a nucleotide, sugar is connected t
 
 test(`26.8.1 Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside directly copied to the antisense RNA strand`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an RNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              8. Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside
    *              directly copied to the antisense RNA strand
@@ -4087,7 +4087,7 @@ test(`26.8.1 Check that all other monomers in the backbone that are not a part o
 
 test(`26.8.2 Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside directly copied to the antisense DNA strand`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Verify creation of an DNA antisense strand follows the specified logic defined in ticket Introduce creating antisense chains #5678
    *              8. Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside
    *              directly copied to the antisense DNA strand
@@ -4127,7 +4127,7 @@ test(`26.8.2 Check that all other monomers in the backbone that are not a part o
 
 test(`27. Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense chain, the sync icon should appear on the top bar and be enabled/toggled on by default`, async () => {
   /*
-   * Test task: https://github.com/epam/ketcher/issues/6679
+   * Test task: https://github.com/epam/ketcher/issues/6684
    * Description: Check that if no other double-stranded sequences existed on the canvas before the creation of the new antisense
    *              chain, the sync icon should appear on the top bar and be enabled/toggled on by default
    * Case:

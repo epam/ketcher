@@ -24,8 +24,8 @@ import {
   setInvalidPresetError,
 } from 'state/rna-builder';
 import { Modal } from 'components/shared/modal';
-import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/styles';
-import { RnaUnifiedView } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/RnaUnifiedView';
+import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/styles';
+import { RnaElements } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/RnaElements';
 
 export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
   const dispatch = useAppDispatch();
@@ -46,7 +46,7 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
   return (
     <RnaBuilderContainer>
       <RnaEditor duplicatePreset={duplicatePreset} />
-      <RnaUnifiedView
+      <RnaElements
         libraryName={libraryName}
         duplicatePreset={duplicatePreset}
         editPreset={editPreset}

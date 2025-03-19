@@ -14,4 +14,4 @@
  * limitations under the License.
  ***************************************************************************/
 
-export { RnaUnifiedView } from './RnaUnifiedView';
+export { RnaElements } from './RnaElements';

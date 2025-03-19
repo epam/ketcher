@@ -14,6 +14,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import {
   switchToDNAMode,
   switchToPeptideMode,
@@ -1579,32 +1580,14 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
   page: Page,
   position: number,
 ) {
-  const minNonZeroSymbolId = await page.$$eval(
-    '[data-symbol-id]',
-    (elements) => {
-      const ids = elements
-        // Filter elements by data-has-left-connection attribute equal to "false"
-        .filter((el) => el.getAttribute('data-has-left-connection') === 'false')
-        // Get the value of the data-symbol-id attribute
-        .map((el) => el.getAttribute('data-symbol-id'))
-        // Discard null
-        .filter((id): id is string => id !== null)
-        // Convert to numbers
-        .map((id) => Number(id))
-        // Remove zeros
-        .filter((id) => id !== 0);
+  const firstSymbol = getSymbolLocator(page, {
+    isAntisense: false,
+    nodeIndexOverall: 0,
+  }).first();
 
-      // Return the minimum id or null if the array is empty
-      return ids.length > 0 ? Math.min(...ids) : null;
-    },
-  );
+  await firstSymbol.dblclick();
 
-  const firstSymbol = page.locator(`[data-symbol-id="${minNonZeroSymbolId}"]`);
-  await firstSymbol.first().dblclick();
-
-  await page.keyboard.press('ArrowUp');
-  // Dirty hack to move cursor to the first position
-  await page.keyboard.press('ArrowUp');
+  await page.keyboard.press('ArrowLeft');
 
   for (let i = 1; i < position; i++) {
     await page.keyboard.press('ArrowRight');

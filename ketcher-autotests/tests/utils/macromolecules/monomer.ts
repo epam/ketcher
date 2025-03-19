@@ -230,6 +230,8 @@ type SymbolLocatorOptions = {
   hasRightConnection?: boolean;
   hydrogenConnectionNumber?: string | number;
   dataSymbolType?: SymbolType;
+  nodeIndexOverall?: string | number;
+  isAntisense?: string | boolean;
 };
 
 export function getSymbolLocator(
@@ -249,24 +251,38 @@ export function getSymbolLocator(
     hasRightConnection,
     hydrogenConnectionNumber,
     dataSymbolType,
+    nodeIndexOverall,
+    isAntisense,
   } = options;
-  if (symbolId) attributes['data-symbol-id'] = String(symbolId);
-  if (chainId) attributes['data-chain-id'] = String(chainId);
-  if (sideConnectionNumber) {
+  if (Object.prototype.hasOwnProperty.call(options, 'symbolId')) {
+    attributes['data-symbol-id'] = String(symbolId);
+  }
+  if (Object.prototype.hasOwnProperty.call(options, 'chainId')) {
+    attributes['data-chain-id'] = String(chainId);
+  }
+  if (Object.prototype.hasOwnProperty.call(options, 'sideConnectionNumber')) {
     attributes['data-side-connection-number'] = String(sideConnectionNumber);
   }
-  if (hasLeftConnection) {
+  if (Object.prototype.hasOwnProperty.call(options, 'hasLeftConnection')) {
     attributes['data-has-left-connection'] = String(hasLeftConnection);
   }
-  if (hasRightConnection) {
+  if (Object.prototype.hasOwnProperty.call(options, 'hasRightConnection')) {
     attributes['data-has-right-connection'] = String(hasRightConnection);
   }
-  if (hydrogenConnectionNumber) {
+  if (
+    Object.prototype.hasOwnProperty.call(options, 'hydrogenConnectionNumber')
+  ) {
     attributes['data-hydrogen-connection-number'] = String(
       hydrogenConnectionNumber,
     );
   }
   if (dataSymbolType) attributes['data-symbol-type'] = dataSymbolType;
+  if (Object.prototype.hasOwnProperty.call(options, 'nodeIndexOverall')) {
+    attributes['data-nodeIndexOverall'] = String(nodeIndexOverall);
+  }
+  if (Object.prototype.hasOwnProperty.call(options, 'isAntisense')) {
+    attributes['data-isAntisense'] = String(isAntisense);
+  }
 
   const attributeSelectors = Object.entries(attributes)
     .map(([key, value]) => `[${key}="${value}"]`)

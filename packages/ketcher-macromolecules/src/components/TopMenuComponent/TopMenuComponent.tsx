@@ -25,7 +25,18 @@ import {
 import { modalComponentList } from 'components/modal/modalContainer';
 import { openModal } from 'state/modal';
 import { resetRnaBuilderAfterSequenceUpdate } from 'components/monomerLibrary/RnaBuilder/RnaEditor/RnaEditorExpanded/helpers';
-import { generateMenuShortcuts, hotkeysConfiguration } from 'ketcher-core';
+import {
+  BaseMonomer,
+  generateMenuShortcuts,
+  hotkeysConfiguration,
+} from 'ketcher-core';
+import {
+  hasOnlyDeoxyriboseSugars,
+  hasOnlyRiboseSugars,
+  isAntisenseCreationDisabled,
+} from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
+import { useState } from 'react';
+import { IconName } from 'ketcher-react';
 
 const shortcuts =
   generateMenuShortcuts<typeof hotkeysConfiguration>(hotkeysConfiguration);
@@ -37,8 +48,26 @@ export function TopMenuComponent() {
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
+  const [selectedEntities, setSelectedEntities] = useState<BaseMonomer[]>([]);
+  const [antisenseActiveOption, setAntisenseActiveOption] =
+    useState<IconName>();
   const activeMenuItems = [activeTool];
   const isDisabled = isSequenceEditInRNABuilderMode;
+  editor?.events.selectEntities.add((selectedEntities: BaseMonomer[]) => {
+    setSelectedEntities(selectedEntities);
+    if (
+      selectedEntities.length &&
+      !isAntisenseCreationDisabled(selectedEntities)
+    ) {
+      if (hasOnlyDeoxyriboseSugars(selectedEntities)) {
+        setAntisenseActiveOption('antisenseDnaStrand');
+      } else if (hasOnlyRiboseSugars(selectedEntities)) {
+        setAntisenseActiveOption('antisenseRnaStrand');
+      } else {
+        setAntisenseActiveOption('reset');
+      }
+    }
+  });
 
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {
@@ -51,6 +80,10 @@ export function TopMenuComponent() {
       editor.events.selectTool.dispatch(['select-rectangle']);
       if (isSequenceEditInRNABuilderMode)
         resetRnaBuilderAfterSequenceUpdate(dispatch, editor);
+    } else if (name === 'antisenseRnaStrand' || name === 'antisenseDnaStrand') {
+      editor.events.createAntisenseChain.dispatch(
+        name === 'antisenseDnaStrand',
+      );
     }
   };
 
@@ -74,7 +107,7 @@ export function TopMenuComponent() {
         />
         <Menu.Item itemId="save" title="Save as..." testId="save-button" />
       </Menu.Group>
-      <Menu.Group isHorizontal={true}>
+      <Menu.Group isHorizontal={true} divider={true}>
         <Menu.Item
           itemId="undo"
           title={`Undo (${shortcuts.undo})`}
@@ -87,6 +120,40 @@ export function TopMenuComponent() {
           disabled={isDisabled}
           testId="redo"
         />
+      </Menu.Group>
+      <Menu.Group isHorizontal={true}>
+        <Menu.Submenu
+          disabled={
+            !selectedEntities?.length ||
+            isAntisenseCreationDisabled(selectedEntities)
+          }
+          needOpenByMenuItemClick={false}
+          vertical={true}
+          layoutModeButton={true}
+          generalTitle="Create Antisense Strand"
+          activeItem={antisenseActiveOption}
+        >
+          <Menu.Item
+            itemId="antisenseRnaStrand"
+            title={`Create RNA Antisense Strand (${shortcuts.createRnaAntisenseStrand})`}
+            disabled={
+              !selectedEntities?.length ||
+              isAntisenseCreationDisabled(selectedEntities)
+            }
+            testId="antisenseRnaStrand"
+            type="button"
+          />
+          <Menu.Item
+            itemId="antisenseDnaStrand"
+            title={`Create DNA Antisense Strand (${shortcuts.createDnaAntisenseStrand})`}
+            disabled={
+              !selectedEntities?.length ||
+              isAntisenseCreationDisabled(selectedEntities)
+            }
+            testId="antisenseDnaStrand"
+            type="button"
+          />
+        </Menu.Submenu>
       </Menu.Group>
     </Menu>
   );

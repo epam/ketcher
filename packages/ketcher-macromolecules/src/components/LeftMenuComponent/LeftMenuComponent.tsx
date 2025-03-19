@@ -43,10 +43,14 @@ export function LeftMenuComponent() {
       activeMenuItems={activeMenuItems}
     >
       <Menu.Group divider={true}>
-        <Menu.Item itemId="hand" title="Hand Tool" testId="hand-tool" />
+        <Menu.Item
+          itemId="hand"
+          title={`Hand Tool (${shortcuts.hand})`}
+          testId="hand-tool"
+        />
         <Menu.Item
           itemId="select-rectangle"
-          title="Select Rectangle"
+          title={`Select Rectangle  (${shortcuts.exit})`}
           testId="select-rectangle"
         />
         <Menu.Item

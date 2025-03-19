@@ -32,3 +32,11 @@ export enum SequenceModeType {
   DNA = 'DNA',
   Peptide = 'Peptide',
 }
+
+export enum SymbolType {
+  RNA = 'RNA',
+  DNA = 'DNA',
+  Peptide = 'Peptide',
+  CHEM = 'CHEM',
+  Phosphate = 'Phosphate',
+}

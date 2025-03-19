@@ -61,6 +61,7 @@ export interface IEditorEvents {
   copySelectedStructure: Subscription;
   pasteFromClipboard: Subscription;
   deleteSelectedStructure: Subscription;
+  selectEntities: Subscription;
 }
 
 export let editorEvents: IEditorEvents;
@@ -122,6 +123,7 @@ export function resetEditorEvents() {
     copySelectedStructure: new Subscription(),
     pasteFromClipboard: new Subscription(),
     deleteSelectedStructure: new Subscription(),
+    selectEntities: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -159,6 +161,7 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'mouseDownOnSequenceItem',
   'doubleClickOnSequenceItem',
   'mouseUpAtom',
+  'selectEntities',
 ];
 
 export const hotkeysConfiguration = {
@@ -250,6 +253,18 @@ export const hotkeysConfiguration = {
     shortcut: 'Mod+b',
     handler: () => {
       ZoomTool.instance.drawScrollBars(true);
+    },
+  },
+  createRnaAntisenseStrand: {
+    shortcut: ['Mod+Shift+r'],
+    handler: (editor: CoreEditor) => {
+      editor.events.createAntisenseChain.dispatch(false);
+    },
+  },
+  createDnaAntisenseStrand: {
+    shortcut: ['Mod+Shift+d'],
+    handler: (editor: CoreEditor) => {
+      editor.events.createAntisenseChain.dispatch(true);
     },
   },
 };

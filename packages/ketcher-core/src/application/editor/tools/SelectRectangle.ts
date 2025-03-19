@@ -550,9 +550,10 @@ class SelectRectangle implements BaseTool {
 
   setSelectedEntities() {
     this.previousSelectedEntities =
-      this.editor.drawingEntitiesManager.allEntities.filter(
-        ([, drawingEntity]) => drawingEntity.selected,
-      );
+      this.editor.drawingEntitiesManager.selectedEntities;
+    this.editor.events.selectEntities.dispatch(
+      this.previousSelectedEntities.map((entity) => entity[1]),
+    );
   }
 
   destroy() {

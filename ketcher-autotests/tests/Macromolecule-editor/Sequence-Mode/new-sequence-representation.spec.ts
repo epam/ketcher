@@ -12,6 +12,7 @@ import {
   SequenceModeType,
   takeEditorScreenshot,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
@@ -1622,7 +1623,9 @@ for (const monomer of monomersToAdd) {
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, 1);
 
-      await page.keyboard.press(monomer.Letter);
+      await waitForRender(page, async () => {
+        await page.keyboard.press(monomer.Letter);
+      });
       await clickInTheMiddleOfTheScreen(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1668,7 +1671,9 @@ for (const monomer of monomersToAdd) {
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, 2);
 
-      await page.keyboard.press(monomer.Letter);
+      await waitForRender(page, async () => {
+        await page.keyboard.press(monomer.Letter);
+      });
       await clickInTheMiddleOfTheScreen(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1714,7 +1719,9 @@ for (const monomer of monomersToAdd) {
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, 3);
 
-      await page.keyboard.press(monomer.Letter);
+      await waitForRender(page, async () => {
+        await page.keyboard.press(monomer.Letter);
+      });
       await clickInTheMiddleOfTheScreen(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1762,7 +1769,9 @@ for (const monomer of monomersToAdd) {
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, 9);
 
-      await page.keyboard.press(monomer.Letter);
+      await waitForRender(page, async () => {
+        await page.keyboard.press(monomer.Letter);
+      });
       await clickInTheMiddleOfTheScreen(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1808,7 +1817,9 @@ for (const sequence of sequences) {
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, 1);
 
-    await page.keyboard.press('Delete');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Delete');
+    });
     await clickInTheMiddleOfTheScreen(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1853,7 +1864,9 @@ for (const sequence of sequences) {
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, 2);
 
-    await page.keyboard.press('Delete');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Delete');
+    });
     await clickInTheMiddleOfTheScreen(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1901,7 +1914,9 @@ for (const sequence of sequences) {
       !sequence.Rotation ? 3 : 7,
     );
 
-    await page.keyboard.press('Delete');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Delete');
+    });
     await clickInTheMiddleOfTheScreen(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1945,7 +1960,9 @@ for (const sequence of sequences) {
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, 2);
 
-    await page.keyboard.press('Backspace');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Backspace');
+    });
     await clickInTheMiddleOfTheScreen(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1988,7 +2005,9 @@ for (const sequence of sequences) {
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, 3);
 
-    await page.keyboard.press('Backspace');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Backspace');
+    });
     await clickInTheMiddleOfTheScreen(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -2034,7 +2053,10 @@ for (const sequence of sequences) {
       !sequence.Rotation ? 4 : 8,
     );
 
-    await page.keyboard.press('Backspace');
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Backspace');
+    });
+
     await clickInTheMiddleOfTheScreen(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(

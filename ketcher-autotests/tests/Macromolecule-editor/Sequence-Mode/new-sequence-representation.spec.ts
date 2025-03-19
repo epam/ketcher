@@ -232,36 +232,31 @@ const sequences: ISequence[] = [
     SequenceName: '(A---A)(OO)(Ab)',
     HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA3,2:pair-2:pair|RNA1,CHEM1,3:R2-1:R1|CHEM1,RNA2,1:R2-1:R1|CHEM2,RNA3,1:R2-1:R1$$$V2.0',
   },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 33,
-  //   SequenceName: '(A---A)(Ab)(A---A)',
-  //   HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
-  // },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 34,
-  //   SequenceName: '(A---A)(Ab)(A---O)',
-  //   HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,2:pair-2:pair|RNA1,CHEM1,8:pair-1:pair$$$V2.0',
-  // },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 35,
-  //   SequenceName: '(A---A)(Ab)(A---p)',
-  //   HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}|RNA3{P}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA3,8:pair-1:pair$$$V2.0',
-  // },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 36,
-  //   SequenceName: '(A---A)(Ob)(A---O)',
-  //   HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA3,2:pair-2:pair|RNA2,CHEM1,2:pair-1:pair|RNA1,CHEM2,3:R2-1:R1|CHEM2,RNA2,1:R2-1:R1$$$V2.0',
-  // },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 37,
-  //   SequenceName: '(A---A)(Ob)(A---p)',
-  //   HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)}|CHEM1{[4aPEGMal]}|RNA4{P}$RNA1,RNA3,2:pair-2:pair|RNA1,CHEM1,3:R2-1:R1|CHEM1,RNA2,1:R2-1:R1|RNA2,RNA4,2:pair-1:pair$$$V2.0',
-  // },
+  {
+    Id: 33,
+    SequenceName: '(A---A)(Ab)(A---A)',
+    HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
+  },
+  {
+    Id: 34,
+    SequenceName: '(A---A)(Ab)(A---O)',
+    HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,2:pair-2:pair|RNA1,CHEM1,8:pair-1:pair$$$V2.0',
+  },
+  {
+    Id: 35,
+    SequenceName: '(A---A)(Ab)(A---p)',
+    HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}|RNA3{P}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA3,8:pair-1:pair$$$V2.0',
+  },
+  {
+    Id: 36,
+    SequenceName: '(A---A)(Ob)(A---O)',
+    HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA3,2:pair-2:pair|RNA2,CHEM1,2:pair-1:pair|RNA1,CHEM2,3:R2-1:R1|CHEM2,RNA2,1:R2-1:R1$$$V2.0',
+  },
+  {
+    Id: 37,
+    SequenceName: '(A---A)(Ob)(A---p)',
+    HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)}|CHEM1{[4aPEGMal]}|RNA4{P}$RNA1,RNA3,2:pair-2:pair|RNA1,CHEM1,3:R2-1:R1|CHEM1,RNA2,1:R2-1:R1|RNA2,RNA4,2:pair-1:pair$$$V2.0',
+  },
   {
     Id: 38,
     SequenceName: '(A---A)(A_)(A---A)',
@@ -307,45 +302,41 @@ const sequences: ISequence[] = [
     RightAnchoredHELM:
       'RNA1{R(A)}|RNA2{R(A)}|RNA3{R(U)}|CHEM1{[4aPEGMal]}|PEPTIDE1{D.D.D.D}$RNA1,RNA3,2:pair-2:pair|RNA2,CHEM1,2:pair-1:pair|RNA3,CHEM1,1:R1-1:R2|PEPTIDE1,RNA2,1:R1-1:R2$$$V2.0',
   },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 46,
-  //   SequenceName: '(A---A)(b_)(A---p)',
-  //   HELM: 'RNA1{R(A)}|RNA2{R(A)}|RNA3{P.R(U)}$RNA1,RNA3,2:pair-3:pair|RNA2,RNA3,2:pair-1:pair$$$V2.0',
-  //   Rotation: true,
-  //   LeftAnchoredHELM:
-  //     'PEPTIDE1{D.D.D.D}|RNA1{R(A)}|RNA2{R(A)}|RNA3{P.R(U)}$RNA1,RNA3,2:pair-3:pair|RNA2,RNA3,2:pair-1:pair|PEPTIDE1,RNA1,4:R2-1:R1$$$V2.0',
-  //   RightAnchoredHELM:
-  //     'PEPTIDE1{D.D.D.D}|RNA1{R(A)}|RNA2{R(A)}|RNA3{P.R(U)}$RNA1,RNA3,2:pair-3:pair|RNA2,RNA3,2:pair-1:pair|PEPTIDE1,RNA2,1:R1-1:R2$$$V2.0',
-  // },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 47,
-  //   SequenceName: '(A---A)(_b)(A---A)',
-  //   HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
-  // },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 48,
-  //   SequenceName: '(A---A)(_b)(A---O)',
-  //   HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,2:pair-2:pair|RNA1,CHEM1,5:pair-1:pair$$$V2.0',
-  // },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 49,
-  //   SequenceName: '(A---A)(_b)(A---p)',
-  //   HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{P}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA3,5:pair-1:pair$$$V2.0',
-  // },
+  {
+    Id: 46,
+    SequenceName: '(A---A)(b_)(A---p)',
+    HELM: 'RNA1{R(A)}|RNA2{R(A)}|RNA3{P.R(U)}$RNA1,RNA3,2:pair-3:pair|RNA2,RNA3,2:pair-1:pair$$$V2.0',
+    Rotation: true,
+    LeftAnchoredHELM:
+      'PEPTIDE1{D.D.D.D}|RNA1{R(A)}|RNA2{R(A)}|RNA3{P.R(U)}$RNA1,RNA3,2:pair-3:pair|RNA2,RNA3,2:pair-1:pair|PEPTIDE1,RNA1,4:R2-1:R1$$$V2.0',
+    RightAnchoredHELM:
+      'PEPTIDE1{D.D.D.D}|RNA1{R(A)}|RNA2{R(A)}|RNA3{P.R(U)}$RNA1,RNA3,2:pair-3:pair|RNA2,RNA3,2:pair-1:pair|PEPTIDE1,RNA2,1:R1-1:R2$$$V2.0',
+  },
+  {
+    Id: 47,
+    SequenceName: '(A---A)(_b)(A---A)',
+    HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
+  },
+  {
+    Id: 48,
+    SequenceName: '(A---A)(_b)(A---O)',
+    HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,2:pair-2:pair|RNA1,CHEM1,5:pair-1:pair$$$V2.0',
+  },
+  {
+    Id: 49,
+    SequenceName: '(A---A)(_b)(A---p)',
+    HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{P}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA3,5:pair-1:pair$$$V2.0',
+  },
   {
     Id: 50,
     SequenceName: '(O---A)(A---O)(A---A)',
     HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)P}|RNA3{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA2,CHEM1,3:R2-1:R1|CHEM1,RNA3,1:R2-1:R1|CHEM2,RNA1,1:R2-1:R1|CHEM2,RNA3,1:pair-2:pair|RNA1,RNA2,5:pair-2:pair|RNA1,CHEM1,2:pair-1:pair$$$V2.0',
   },
-  // {
-  //   Id: 51,
-  //   SequenceName: '(O---A)(AO)(A---A)',
-  //   HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)P}|RNA3{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA2,CHEM1,3:R2-1:R1|CHEM1,RNA3,1:R2-1:R1|CHEM2,RNA1,1:R2-1:R1|CHEM2,RNA3,1:pair-2:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
-  // },
+  {
+    Id: 51,
+    SequenceName: '(O---A)(AO)(A---A)',
+    HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)P}|RNA3{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA2,CHEM1,3:R2-1:R1|CHEM1,RNA3,1:R2-1:R1|CHEM2,RNA1,1:R2-1:R1|CHEM2,RNA3,1:pair-2:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
+  },
   {
     Id: 52,
     SequenceName: '(p---A)(A---O)(A---A)',
@@ -421,18 +412,16 @@ const sequences: ISequence[] = [
     SequenceName: '(A---O)(OA)(A---A)',
     HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)P.R(U)P}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA2,RNA3,2:pair-2:pair|RNA3,CHEM1,6:R2-1:R1|RNA1,CHEM1,2:pair-1:pair|RNA1,CHEM2,3:R2-1:R1|CHEM2,RNA2,1:R2-1:R1$$$V2.0',
   },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 67,
-  //   SequenceName: '(A---O)(Ab)(A---A)',
-  //   HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,8:pair-2:pair|RNA1,CHEM1,2:pair-1:pair$$$V2.0',
-  // },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 68,
-  //   SequenceName: '(A---O)(Ob)(A---A)',
-  //   HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA2,RNA3,2:pair-2:pair|RNA1,CHEM1,2:pair-1:pair|RNA1,CHEM2,3:R2-1:R1|CHEM2,RNA2,1:R2-1:R1$$$V2.0',
-  // },
+  {
+    Id: 67,
+    SequenceName: '(A---O)(Ab)(A---A)',
+    HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,8:pair-2:pair|RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+  },
+  {
+    Id: 68,
+    SequenceName: '(A---O)(Ob)(A---A)',
+    HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA2,RNA3,2:pair-2:pair|RNA1,CHEM1,2:pair-1:pair|RNA1,CHEM2,3:R2-1:R1|CHEM2,RNA2,1:R2-1:R1$$$V2.0',
+  },
   {
     Id: 69,
     SequenceName: '(A---O)(A_)(A---A)',
@@ -443,23 +432,21 @@ const sequences: ISequence[] = [
     SequenceName: '(A---O)(O_)(A---A)',
     HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)P}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA2,RNA3,2:pair-2:pair|RNA1,CHEM1,2:pair-1:pair|RNA3,CHEM1,3:R2-1:R1|RNA1,CHEM2,3:R2-1:R1|CHEM2,RNA2,1:R2-1:R1$$$V2.0',
   },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 71,
-  //   SequenceName: '(A---O)(b_)(A---A)',
-  //   HELM: 'RNA1{R(A)}|RNA2{R(A)}|RNA3{R(U)P}|CHEM1{[4aPEGMal]}$RNA2,RNA3,2:pair-2:pair|RNA1,CHEM1,2:pair-1:pair|RNA3,CHEM1,3:R2-1:R1$$$V2.0',
-  //   Rotation: true,
-  //   LeftAnchoredHELM:
-  //     'PEPTIDE1{D.D.D.D}|RNA1{R(A)}|RNA2{R(A)}|RNA3{R(U)P}|CHEM1{[4aPEGMal]}$RNA2,RNA3,2:pair-2:pair|RNA1,CHEM1,2:pair-1:pair|RNA3,CHEM1,3:R2-1:R1|PEPTIDE1,RNA1,4:R2-1:R1$$$V2.0',
-  //   RightAnchoredHELM:
-  //     'PEPTIDE1{D.D.D.D}|RNA1{R(A)}|RNA2{R(A)}|RNA3{R(U)P}|CHEM1{[4aPEGMal]}$RNA2,RNA3,2:pair-2:pair|RNA1,CHEM1,2:pair-1:pair|RNA3,CHEM1,3:R2-1:R1|PEPTIDE1,RNA1,4:R2-1:R1$$$V2.0',
-  // },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 72,
-  //   SequenceName: '(A---O)(_b)(A---A)',
-  //   HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|RNA1,CHEM1,2:pair-1:pair$$$V2.0',
-  // },
+  {
+    Id: 71,
+    SequenceName: '(A---O)(b_)(A---A)',
+    HELM: 'RNA1{R(A)}|RNA2{R(A)}|RNA3{R(U)P}|CHEM1{[4aPEGMal]}$RNA2,RNA3,2:pair-2:pair|RNA1,CHEM1,2:pair-1:pair|RNA3,CHEM1,3:R2-1:R1$$$V2.0',
+    Rotation: true,
+    LeftAnchoredHELM:
+      'PEPTIDE1{D.D.D.D}|RNA1{R(A)}|RNA2{R(A)}|RNA3{R(U)P}|CHEM1{[4aPEGMal]}$RNA2,RNA3,2:pair-2:pair|RNA1,CHEM1,2:pair-1:pair|RNA3,CHEM1,3:R2-1:R1|PEPTIDE1,RNA1,4:R2-1:R1$$$V2.0',
+    RightAnchoredHELM:
+      'PEPTIDE1{D.D.D.D}|RNA1{R(A)}|RNA2{R(A)}|RNA3{R(U)P}|CHEM1{[4aPEGMal]}$RNA2,RNA3,2:pair-2:pair|RNA1,CHEM1,2:pair-1:pair|RNA3,CHEM1,3:R2-1:R1|PEPTIDE1,RNA1,4:R2-1:R1$$$V2.0',
+  },
+  {
+    Id: 72,
+    SequenceName: '(A---O)(_b)(A---A)',
+    HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|RNA1,CHEM1,2:pair-1:pair$$$V2.0',
+  },
   {
     Id: 73,
     SequenceName: '(O---O)(A---A)(A---A)',
@@ -510,12 +497,11 @@ const sequences: ISequence[] = [
     RightAnchoredHELM:
       'PEPTIDE1{D.D.D.D}|RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)P}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|CHEM1,RNA1,1:R2-1:R1|CHEM1,CHEM2,1:pair-1:pair|RNA2,CHEM2,6:R2-1:R1|PEPTIDE1,RNA1,1:R1-4:R2$$$V2.0',
   },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 81,
-  //   SequenceName: '(O---O)(Ab)(A---A)',
-  //   HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|CHEM1,RNA1,1:R2-1:R1|CHEM1,CHEM2,1:pair-1:pair$$$V2.0',
-  // },
+  {
+    Id: 81,
+    SequenceName: '(O---O)(Ab)(A---A)',
+    HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|CHEM1,RNA1,1:R2-1:R1|CHEM1,CHEM2,1:pair-1:pair$$$V2.0',
+  },
   {
     Id: 82,
     SequenceName: '(O---O)(A_)(A---A)',
@@ -581,12 +567,11 @@ const sequences: ISequence[] = [
     RightAnchoredHELM:
       'PEPTIDE1{D.D.D.D}|RNA1{P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P}|CHEM1{[4aPEGMal]}$RNA1,RNA2,6:pair-2:pair|RNA2,CHEM1,6:R2-1:R1|CHEM1,RNA1,1:pair-1:pair|PEPTIDE1,RNA1,1:R1-5:R2$$$V2.0',
   },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 92,
-  //   SequenceName: '(p---O)(Ab)(A---A)',
-  //   HELM: 'RNA1{P.R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,6:pair-2:pair|CHEM1,RNA1,1:pair-1:pair$$$V2.0',
-  // },
+  {
+    Id: 92,
+    SequenceName: '(p---O)(Ab)(A---A)',
+    HELM: 'RNA1{P.R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,6:pair-2:pair|CHEM1,RNA1,1:pair-1:pair$$$V2.0',
+  },
   {
     Id: 93,
     SequenceName: '(p---O)(A_)(A---A)',
@@ -677,18 +662,16 @@ const sequences: ISequence[] = [
     RightAnchoredHELM:
       'PEPTIDE1{D.D.D.D}|RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)P.R(U)P}|RNA4{P}|CHEM1{[4aPEGMal]}$RNA1,RNA4,2:pair-1:pair|RNA3,RNA4,6:R2-1:R1|RNA2,RNA3,2:pair-2:pair|RNA1,CHEM1,3:R2-1:R1|CHEM1,RNA2,1:R2-1:R1|RNA2,PEPTIDE1,1:R2-1:R1$$$V2.0',
   },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 108,
-  //   SequenceName: '(A---p)(Ab)(A---A)',
-  //   HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}|RNA3{P}$RNA1,RNA3,2:pair-1:pair|RNA1,RNA2,8:pair-2:pair$$$V2.0',
-  // },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 109,
-  //   SequenceName: '(A---p)(Ob)(A---A)',
-  //   HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)}|RNA4{P}|CHEM1{[4aPEGMal]}$RNA1,RNA4,2:pair-1:pair|RNA2,RNA3,2:pair-2:pair|RNA1,CHEM1,3:R2-1:R1|CHEM1,RNA2,1:R2-1:R1$$$V2.0',
-  // },
+  {
+    Id: 108,
+    SequenceName: '(A---p)(Ab)(A---A)',
+    HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}|RNA3{P}$RNA1,RNA3,2:pair-1:pair|RNA1,RNA2,8:pair-2:pair$$$V2.0',
+  },
+  {
+    Id: 109,
+    SequenceName: '(A---p)(Ob)(A---A)',
+    HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)}|RNA4{P}|CHEM1{[4aPEGMal]}$RNA1,RNA4,2:pair-1:pair|RNA2,RNA3,2:pair-2:pair|RNA1,CHEM1,3:R2-1:R1|CHEM1,RNA2,1:R2-1:R1$$$V2.0',
+  },
   {
     Id: 110,
     SequenceName: '(A---p)(A_)(A---A)',
@@ -699,23 +682,21 @@ const sequences: ISequence[] = [
     SequenceName: '(A---p)(O_)(A---A)',
     HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)P}|RNA4{P}|CHEM1{[4aPEGMal]}$RNA1,RNA4,2:pair-1:pair|RNA2,RNA3,2:pair-2:pair|RNA3,RNA4,3:R2-1:R1|RNA1,CHEM1,3:R2-1:R1|CHEM1,RNA2,1:R2-1:R1$$$V2.0',
   },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 112,
-  //   SequenceName: '(A---p)(b_)(A---A)',
-  //   HELM: 'RNA1{R(A)}|RNA2{R(A)}|RNA3{R(U)P}|RNA4{P}$RNA1,RNA4,2:pair-1:pair|RNA2,RNA3,2:pair-2:pair|RNA3,RNA4,3:R2-1:R1$$$V2.0',
-  //   Rotation: true,
-  //   LeftAnchoredHELM:
-  //     'PEPTIDE1{D.D.D.D}|RNA1{R(A)}|RNA2{R(A)}|RNA3{R(U)P}|RNA4{P}$RNA1,RNA4,2:pair-1:pair|RNA2,RNA3,2:pair-2:pair|RNA3,RNA4,3:R2-1:R1|PEPTIDE1,RNA1,4:R2-1:R1$$$V2.0',
-  //   RightAnchoredHELM:
-  //     'PEPTIDE1{D.D.D.D}|RNA1{R(A)}|RNA2{R(A)}|RNA3{R(U)P}|RNA4{P}$RNA1,RNA4,2:pair-1:pair|RNA2,RNA3,2:pair-2:pair|RNA3,RNA4,3:R2-1:R1|RNA2,PEPTIDE1,1:R2-1:R1$$$V2.0',
-  // },
-  // Removed due to the issue: https://github.com/epam/ketcher/issues/6543
-  // {
-  //   Id: 113,
-  //   SequenceName: '(A---p)(_b)(A---A)',
-  //   HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{P}$RNA1,RNA3,2:pair-1:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
-  // },
+  {
+    Id: 112,
+    SequenceName: '(A---p)(b_)(A---A)',
+    HELM: 'RNA1{R(A)}|RNA2{R(A)}|RNA3{R(U)P}|RNA4{P}$RNA1,RNA4,2:pair-1:pair|RNA2,RNA3,2:pair-2:pair|RNA3,RNA4,3:R2-1:R1$$$V2.0',
+    Rotation: true,
+    LeftAnchoredHELM:
+      'PEPTIDE1{D.D.D.D}|RNA1{R(A)}|RNA2{R(A)}|RNA3{R(U)P}|RNA4{P}$RNA1,RNA4,2:pair-1:pair|RNA2,RNA3,2:pair-2:pair|RNA3,RNA4,3:R2-1:R1|PEPTIDE1,RNA1,4:R2-1:R1$$$V2.0',
+    RightAnchoredHELM:
+      'PEPTIDE1{D.D.D.D}|RNA1{R(A)}|RNA2{R(A)}|RNA3{R(U)P}|RNA4{P}$RNA1,RNA4,2:pair-1:pair|RNA2,RNA3,2:pair-2:pair|RNA3,RNA4,3:R2-1:R1|RNA2,PEPTIDE1,1:R2-1:R1$$$V2.0',
+  },
+  {
+    Id: 113,
+    SequenceName: '(A---p)(_b)(A---A)',
+    HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{P}$RNA1,RNA3,2:pair-1:pair|RNA1,RNA2,5:pair-2:pair$$$V2.0',
+  },
   {
     Id: 114,
     SequenceName: '(O---p)(A---A)(A---A)',
@@ -1117,11 +1098,11 @@ const sequences: ISequence[] = [
     RightAnchoredHELM:
       'PEPTIDE1{D.D.D.D}|RNA1{R(A)P.R(A)P}|RNA2{R(U)P.R(U)P}|RNA3{P}|CHEM1{[4aPEGMal]}$RNA1,RNA2,5:pair-5:pair|RNA2,RNA3,6:R2-1:R1|RNA1,CHEM1,6:R2-1:R1|CHEM1,RNA2,1:pair-2:pair|PEPTIDE1,CHEM1,1:R1-1:R2$$$V2.0',
   },
-  // {
-  //   Id: 181,
-  //   SequenceName: '(Ap)(A---A)(A---O)',
-  //   HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P}|RNA3{P}|CHEM1{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|RNA2,RNA3,3:R2-1:R1|RNA2,CHEM1,1:R1-1:R2|RNA1,CHEM1,8:pair-1:pair$$$V2.0',
-  // },
+  {
+    Id: 181,
+    SequenceName: '(Ap)(A---A)(A---O)',
+    HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P}|RNA3{P}|CHEM1{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|RNA2,RNA3,3:R2-1:R1|RNA2,CHEM1,1:R1-1:R2|RNA1,CHEM1,8:pair-1:pair$$$V2.0',
+  },
   {
     Id: 182,
     SequenceName: '(Ap)(A---A)(O---O)',
@@ -1292,61 +1273,62 @@ const sequences: ISequence[] = [
     SequenceName: '(pp)(AA)(A---A)',
     HELM: 'RNA1{P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P}|RNA3{P}$RNA1,RNA2,6:pair-2:pair|RNA2,RNA3,6:R2-1:R1$$$V2.0',
   },
+  // Removed because of the bug: https://github.com/epam/ketcher/issues/6712
   // {
   //   Id: 208,
   //   SequenceName: '(bp)(A---A)(Ab)',
   //   HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)P}|RNA3{P}$RNA1,RNA2,2:pair-2:pair|RNA2,RNA3,3:R2-1:R1$$$V2.0',
   // },
-  // {
-  //   Id: 209,
-  //   SequenceName: '(Ab)(A---A)(A---A)',
-  //   HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
-  // },
-  // {
-  //   Id: 210,
-  //   SequenceName: '(Ab)(A---A)(A---O)',
-  //   HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|RNA2,CHEM1,1:R1-1:R2|RNA1,CHEM1,8:pair-1:pair$$$V2.0',
-  // },
-  // {
-  //   Id: 211,
-  //   SequenceName: '(Ab)(A---A)(O---O)',
-  //   HELM: 'RNA1{R(A)P.R(A)P}|RNA2{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|RNA2,CHEM1,1:R1-1:R2|RNA1,CHEM2,6:R2-1:R1|CHEM2,CHEM1,1:pair-1:pair$$$V2.0',
-  // },
-  // {
-  //   Id: 212,
-  //   SequenceName: '(Ab)(A---A)(AA)',
-  //   HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-5:pair$$$V2.0',
-  // },
-  // {
-  //   Id: 213,
-  //   SequenceName: '(Ab)(A---A)(AO)',
-  //   HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|CHEM1,RNA2,1:R2-1:R1$$$V2.0',
-  // },
-  // {
-  //   Id: 214,
-  //   SequenceName: '(Ab)(A---A)(OO)',
-  //   HELM: 'RNA1{R(A)P.R(A)P}|RNA2{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|CHEM1,RNA2,1:R2-1:R1|RNA1,CHEM2,6:R2-1:R1$$$V2.0',
-  // },
-  // {
-  //   Id: 215,
-  //   SequenceName: '(Ab)(A---A)(bO)',
-  //   HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|CHEM1,RNA2,1:R2-1:R1$$$V2.0',
-  // },
-  // {
-  //   Id: 216,
-  //   SequenceName: '(Ab)(A---A)(Ab)',
-  //   HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}$RNA1,RNA2,5:pair-2:pair$$$V2.0',
-  // },
-  // {
-  //   Id: 217,
-  //   SequenceName: '(Ab)(A---O)(A---A)',
-  //   HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P}|CHEM1{[4aPEGMal]}$RNA1,RNA2,8:pair-2:pair|RNA1,CHEM1,5:pair-1:pair|CHEM1,RNA2,1:R1-3:R2$$$V2.0',
-  // },
-  // {
-  //   Id: 218,
-  //   SequenceName: '(Ab)(O---O)(A---A)',
-  //   HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)P}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA2,RNA3,2:pair-2:pair|CHEM1,RNA3,1:R1-3:R2|RNA1,CHEM2,3:R2-1:R1|CHEM2,RNA2,1:R2-1:R1|CHEM2,CHEM1,1:pair-1:pair$$$V2.0',
-  // },
+  {
+    Id: 209,
+    SequenceName: '(Ab)(A---A)(A---A)',
+    HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
+  },
+  {
+    Id: 210,
+    SequenceName: '(Ab)(A---A)(A---O)',
+    HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|RNA2,CHEM1,1:R1-1:R2|RNA1,CHEM1,8:pair-1:pair$$$V2.0',
+  },
+  {
+    Id: 211,
+    SequenceName: '(Ab)(A---A)(O---O)',
+    HELM: 'RNA1{R(A)P.R(A)P}|RNA2{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|RNA2,CHEM1,1:R1-1:R2|RNA1,CHEM2,6:R2-1:R1|CHEM2,CHEM1,1:pair-1:pair$$$V2.0',
+  },
+  {
+    Id: 212,
+    SequenceName: '(Ab)(A---A)(AA)',
+    HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-5:pair$$$V2.0',
+  },
+  {
+    Id: 213,
+    SequenceName: '(Ab)(A---A)(AO)',
+    HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|CHEM1,RNA2,1:R2-1:R1$$$V2.0',
+  },
+  {
+    Id: 214,
+    SequenceName: '(Ab)(A---A)(OO)',
+    HELM: 'RNA1{R(A)P.R(A)P}|RNA2{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|CHEM1,RNA2,1:R2-1:R1|RNA1,CHEM2,6:R2-1:R1$$$V2.0',
+  },
+  {
+    Id: 215,
+    SequenceName: '(Ab)(A---A)(bO)',
+    HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,5:pair-2:pair|CHEM1,RNA2,1:R2-1:R1$$$V2.0',
+  },
+  {
+    Id: 216,
+    SequenceName: '(Ab)(A---A)(Ab)',
+    HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)}$RNA1,RNA2,5:pair-2:pair$$$V2.0',
+  },
+  {
+    Id: 217,
+    SequenceName: '(Ab)(A---O)(A---A)',
+    HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P}|CHEM1{[4aPEGMal]}$RNA1,RNA2,8:pair-2:pair|RNA1,CHEM1,5:pair-1:pair|CHEM1,RNA2,1:R1-3:R2$$$V2.0',
+  },
+  {
+    Id: 218,
+    SequenceName: '(Ab)(O---O)(A---A)',
+    HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)P}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA2,RNA3,2:pair-2:pair|CHEM1,RNA3,1:R1-3:R2|RNA1,CHEM2,3:R2-1:R1|CHEM2,RNA2,1:R2-1:R1|CHEM2,CHEM1,1:pair-1:pair$$$V2.0',
+  },
   {
     Id: 219,
     SequenceName: '(Ab)(AA)(A---A)',
@@ -1362,21 +1344,21 @@ const sequences: ISequence[] = [
     SequenceName: '(Ab)(OO)(A---A)',
     HELM: 'RNA1{R(A)P}|RNA2{R(A)}|RNA3{R(U)P}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA2,RNA3,2:pair-2:pair|RNA3,CHEM1,3:R2-1:R1|RNA1,CHEM2,3:R2-1:R1|CHEM2,RNA2,1:R2-1:R1$$$V2.0',
   },
-  // {
-  //   Id: 222,
-  //   SequenceName: '(Ob)(A---A)(A---O)',
-  //   HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA2,2:pair-2:pair|CHEM1,RNA1,1:R2-1:R1|CHEM2,RNA2,1:R2-1:R1|RNA1,CHEM2,5:pair-1:pair$$$V2.0',
-  // },
-  // {
-  //   Id: 223,
-  //   SequenceName: '(Ob)(A---A)(AO)',
-  //   HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA2,2:pair-2:pair|CHEM1,RNA1,1:R2-1:R1|CHEM2,RNA2,1:R2-1:R1$$$V2.0',
-  // },
-  // {
-  //   Id: 224,
-  //   SequenceName: '(Ob)(A---O)(A---A)',
-  //   HELM: 'RNA1{R(A)P.R(A)}|CHEM1{[4aPEGMal]}|RNA2{R(U)P}|CHEM2{[4aPEGMal]}$CHEM1,RNA1,1:R2-1:R1|RNA1,RNA2,5:pair-2:pair|RNA1,CHEM2,2:pair-1:pair|RNA2,CHEM2,3:R2-1:R1$$$V2.0',
-  // },
+  {
+    Id: 222,
+    SequenceName: '(Ob)(A---A)(A---O)',
+    HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA2,2:pair-2:pair|CHEM1,RNA1,1:R2-1:R1|CHEM2,RNA2,1:R2-1:R1|RNA1,CHEM2,5:pair-1:pair$$$V2.0',
+  },
+  {
+    Id: 223,
+    SequenceName: '(Ob)(A---A)(AO)',
+    HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA2,2:pair-2:pair|CHEM1,RNA1,1:R2-1:R1|CHEM2,RNA2,1:R2-1:R1$$$V2.0',
+  },
+  {
+    Id: 224,
+    SequenceName: '(Ob)(A---O)(A---A)',
+    HELM: 'RNA1{R(A)P.R(A)}|CHEM1{[4aPEGMal]}|RNA2{R(U)P}|CHEM2{[4aPEGMal]}$CHEM1,RNA1,1:R2-1:R1|RNA1,RNA2,5:pair-2:pair|RNA1,CHEM2,2:pair-1:pair|RNA2,CHEM2,3:R2-1:R1$$$V2.0',
+  },
   {
     Id: 225,
     SequenceName: '(Ob)(AO)(A---A)',

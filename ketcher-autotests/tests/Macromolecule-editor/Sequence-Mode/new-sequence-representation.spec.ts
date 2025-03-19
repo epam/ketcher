@@ -1094,11 +1094,12 @@ const sequences: ISequence[] = [
     SequenceName: '(pO)(AA)(A---A)',
     HELM: 'RNA1{P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P}|CHEM1{[4aPEGMal]}$RNA1,RNA2,6:pair-2:pair|RNA2,CHEM1,6:R2-1:R1$$$V2.0',
   },
-  {
-    Id: 178,
-    SequenceName: '(bO)(A---A)(Ab)',
-    HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)P}|CHEM1{[4aPEGMal]}$RNA1,RNA2,2:pair-2:pair|RNA2,CHEM1,3:R2-1:R1$$$V2.0',
-  },
+  // Commented out because of the bug: https://github.com/epam/ketcher/issues/6712
+  // {
+  //   Id: 178,
+  //   SequenceName: '(bO)(A---A)(Ab)',
+  //   HELM: 'RNA1{R(A)P.R(A)}|RNA2{R(U)P}|CHEM1{[4aPEGMal]}$RNA1,RNA2,2:pair-2:pair|RNA2,CHEM1,3:R2-1:R1$$$V2.0',
+  // },
   {
     Id: 179,
     SequenceName: '(Ap)(A---A)(A---A)',

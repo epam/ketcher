@@ -34,11 +34,11 @@ import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
 import clsx from 'clsx';
 
 export const scrollToSelectedPreset = (presetName) => {
-  scrollToElement(`[data-rna-preset-item-name="${presetName}"]`);
+  scrollToElement(`[data-rna-preset-item-name="${presetName}"]`, false);
 };
 
 export const scrollToSelectedMonomer = (monomerId) => {
-  scrollToElement(`[data-monomer-item-id="${monomerId}"]`);
+  scrollToElement(`[data-monomer-item-id="${monomerId}"]`, false);
 };
 
 export const RnaEditor = ({ duplicatePreset }) => {

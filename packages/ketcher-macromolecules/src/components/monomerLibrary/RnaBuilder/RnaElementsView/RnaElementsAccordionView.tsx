@@ -9,6 +9,7 @@ import {
   recalculateRnaBuilderValidations,
   RnaBuilderItem,
   RnaBuilderPresetsItem,
+  selectActiveMonomerKey,
   selectFilteredPresets,
   selectIsActivePresetNewAndEmpty,
   selectIsEditMode,
@@ -40,7 +41,6 @@ const RnaElementsAccordionView = ({
   onSelectItem,
   duplicatePreset,
   editPreset,
-  activeMonomerKey,
   libraryName,
 }: Props) => {
   const dispatch = useDispatch();
@@ -50,6 +50,7 @@ const RnaElementsAccordionView = ({
   const isActivePresetNewAndEmpty = useAppSelector(
     selectIsActivePresetNewAndEmpty,
   );
+  const activeMonomerKey = useAppSelector(selectActiveMonomerKey);
 
   const [expandedAccordion, setExpandedAccordion] =
     useState<RnaBuilderItem | null>(activeRnaBuilderItem);

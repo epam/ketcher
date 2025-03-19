@@ -51,6 +51,7 @@ import {
   setSequenceSelectionName,
   selectIsActivePresetNewAndEmpty,
   recalculateRnaBuilderValidations,
+  setActiveMonomerKey,
 } from 'state/rna-builder';
 import { useAppSelector, useIsCompactView, useLayoutMode } from 'hooks';
 import {
@@ -229,12 +230,23 @@ export const RnaEditorExpanded = ({
     if (selectedRNAPartMonomer && !isSequenceMode) {
       editor.events.selectMonomer.dispatch(selectedRNAPartMonomer);
     }
-    scrollToActiveItemInLibrary(selectedGroup);
-    dispatch(setActiveRnaBuilderItem(selectedGroup));
 
+    if (newPreset[monomerGroupToPresetGroup[selectedGroup]]) {
+      dispatch(
+        setActiveMonomerKey(
+          getMonomerUniqueKey(
+            newPreset[monomerGroupToPresetGroup[selectedGroup]],
+          ),
+        ),
+      );
+    }
+
+    dispatch(setActiveRnaBuilderItem(selectedGroup));
     dispatch(
       recalculateRnaBuilderValidations({ rnaPreset: newPreset, isEditMode }),
     );
+
+    setTimeout(() => scrollToActiveItemInLibrary(selectedGroup), 0);
   };
 
   const onChangeName = (event: ChangeEvent<HTMLInputElement>) => {

@@ -11,5 +11,4 @@ export type RnaElementsViewProps = {
   libraryName: LibraryNameType;
   duplicatePreset: (preset?: IRnaPreset) => void;
   editPreset: (preset: IRnaPreset) => void;
-  activeMonomerKey: string;
 };

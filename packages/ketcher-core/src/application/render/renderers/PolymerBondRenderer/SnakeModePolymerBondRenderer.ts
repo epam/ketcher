@@ -315,7 +315,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       startPosition.x >= (this.sideConnectionBondTurnPoint || endPosition.x)
         ? 180
         : 0;
-    let dAttributeForPath = `M ${startPosition.x},${startPosition.y} `;
+    let pathDAttributeValue = `M ${startPosition.x},${startPosition.y} `;
 
     const cos = Math.cos((xDirection * Math.PI) / 180);
 
@@ -330,14 +330,14 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const isSecondCellEmpty = cells[1].node === null;
 
     if (areCellsOnSameRow) {
-      dAttributeForPath += `L ${startPosition.x},${
+      pathDAttributeValue += `L ${startPosition.x},${
         startPosition.y -
         BOND_END_LENGTH -
         horizontalPartIntersectionsOffset * 3
       } `;
-      dAttributeForPath += generateBend(0, -1, cos, -1);
+      pathDAttributeValue += generateBend(0, -1, cos, -1);
     } else {
-      dAttributeForPath += `L ${startPosition.x},${
+      pathDAttributeValue += `L ${startPosition.x},${
         startPosition.y +
         BOND_END_LENGTH +
         horizontalPartIntersectionsOffset * 3
@@ -347,19 +347,21 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         !isSecondCellEmpty &&
         !isTwoNeighborRowsConnection
       ) {
-        dAttributeForPath += generateBend(0, 1, cos, 1);
+        pathDAttributeValue += generateBend(0, 1, cos, 1);
       }
     }
 
     if (isVerticalConnection && !isStraightVerticalConnection) {
-      dAttributeForPath += this.drawPartOfSideConnection(
+      const direction =
+        this.sideConnectionBondTurnPoint &&
+        startPosition.x < this.sideConnectionBondTurnPoint
+          ? 0
+          : 180;
+      pathDAttributeValue += this.drawPartOfSideConnection(
         true,
         firstCellConnection,
         firstCell,
-        this.sideConnectionBondTurnPoint &&
-          startPosition.x < this.sideConnectionBondTurnPoint
-          ? 0
-          : 180,
+        direction,
       );
     }
 
@@ -401,7 +403,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         const cos = Math.cos((_xDirection * Math.PI) / 180);
 
         if (!areCellsOnSameRow) {
-          dAttributeForPath += `V ${
+          pathDAttributeValue += `V ${
             endPosition.y -
             CELL_HEIGHT / 2 -
             SMOOTH_CORNER_SIZE -
@@ -411,41 +413,43 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
               : cellConnection.xOffset) *
               3
           } `;
-          dAttributeForPath += generateBend(0, sin, cos, 1);
+          pathDAttributeValue += generateBend(0, sin, cos, 1);
         }
-        dAttributeForPath += `H ${endPosition.x - SMOOTH_CORNER_SIZE * cos} `;
-        dAttributeForPath += generateBend(cos, 0, cos, 1);
+        pathDAttributeValue += `H ${endPosition.x - SMOOTH_CORNER_SIZE * cos} `;
+        pathDAttributeValue += generateBend(cos, 0, cos, 1);
         return;
       }
-      // empty cells
+
+      // Empty cells.
       if (cell.node === null) {
         return;
       }
 
-      // other cells
+      // Other cells.
       if (
         previousConnection &&
         previousConnection.direction !== cellConnection.direction
       ) {
-        const isHorizontal =
-          previousConnection.direction === 0 ||
-          previousConnection.direction === 180;
-
-        dAttributeForPath += this.drawPartOfSideConnection(
-          isHorizontal,
+        // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
+        const horizontal = new Set([0, 180]).has(
+          previousConnection.direction as ConnectionDirectionInDegrees,
+        );
+        const direction = horizontal
+          ? xDirection
+          : // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
+            (previousConnection.direction as ConnectionDirectionInDegrees);
+        pathDAttributeValue += this.drawPartOfSideConnection(
+          horizontal,
           previousConnection,
           previousCell,
-          // FIXME: Check. Is it correct to use `as ConnectionDirectionInDegrees` here?
-          isHorizontal
-            ? xDirection
-            : (previousConnection.direction as ConnectionDirectionInDegrees),
+          direction,
         );
       }
       previousCell = cell;
       previousConnection = cellConnection;
     });
 
-    dAttributeForPath += `L ${endPosition.x},${endPosition.y} `;
+    pathDAttributeValue += `L ${endPosition.x},${endPosition.y} `;
 
     this.bodyElement = rootElement
       .append('path')
@@ -457,7 +461,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           : '#43B5C0',
       )
       .attr('stroke-width', 1)
-      .attr('d', dAttributeForPath)
+      .attr('d', pathDAttributeValue)
       .attr('fill', 'none')
       .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0')
       .attr('pointer-events', 'all')
@@ -483,7 +487,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         );
     }
 
-    this.path = dAttributeForPath;
+    this.path = pathDAttributeValue;
 
     return this.bodyElement;
   }

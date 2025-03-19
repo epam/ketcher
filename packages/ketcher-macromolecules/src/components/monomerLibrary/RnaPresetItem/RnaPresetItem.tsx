@@ -17,7 +17,7 @@ import { EmptyFunction } from 'helpers';
 import { Card } from './styles';
 import { IRNAPresetItemProps } from './types';
 import { memo, MouseEvent, useCallback } from 'react';
-import { StyledIcon } from '../RnaBuilder/RnaAccordion/Summary/styles';
+import { StyledIcon } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/Summary/styles';
 import { useAppDispatch } from 'hooks';
 import { togglePresetFavorites } from 'state/rna-builder';
 import { getPresetUniqueKey } from 'state/library';

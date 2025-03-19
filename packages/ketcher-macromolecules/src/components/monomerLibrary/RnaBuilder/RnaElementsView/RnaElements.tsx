@@ -9,8 +9,8 @@ import {
   selectActiveRnaBuilderItem,
   selectIsEditMode,
   RnaBuilderPresetsItem,
+  setActiveMonomerKey,
 } from 'state/rna-builder';
-import { getMonomerUniqueKey } from 'state/library';
 import {
   selectEditor,
   selectIsSequenceEditInRNABuilderMode,
@@ -23,6 +23,7 @@ import { useDispatch } from 'react-redux';
 import { useGroupsData } from './hooks/useGroupsData';
 import RnaElementsTabsView from './RnaElementsTabsView';
 import RnaElementsAccordionView from './RnaElementsAccordionView';
+import { getMonomerUniqueKey } from 'state/library';
 
 interface RnaUnifiedViewProps {
   view: 'tabs' | 'accordion';
@@ -49,7 +50,6 @@ export const RnaElements = ({
   );
 
   const [newPreset, setNewPreset] = useState(activePreset);
-  const [activeMonomerKey, setActiveMonomerKey] = useState('');
 
   useEffect(() => {
     dispatch(
@@ -71,7 +71,7 @@ export const RnaElements = ({
 
   const handleItemSelection = useCallback(
     (monomer, groupName) => {
-      setActiveMonomerKey(getMonomerUniqueKey(monomer));
+      dispatch(setActiveMonomerKey(getMonomerUniqueKey(monomer)));
 
       if (!isSequenceEditInRNABuilderMode && !isEditMode) {
         editor.events.selectMonomer.dispatch(monomer);
@@ -106,7 +106,6 @@ export const RnaElements = ({
           libraryName={libraryName}
           editPreset={editPreset}
           duplicatePreset={duplicatePreset}
-          activeMonomerKey={activeMonomerKey}
         />
       ) : (
         <RnaElementsAccordionView
@@ -118,7 +117,6 @@ export const RnaElements = ({
           libraryName={libraryName}
           editPreset={editPreset}
           duplicatePreset={duplicatePreset}
-          activeMonomerKey={activeMonomerKey}
         />
       )}
     </RnaAccordionContainer>

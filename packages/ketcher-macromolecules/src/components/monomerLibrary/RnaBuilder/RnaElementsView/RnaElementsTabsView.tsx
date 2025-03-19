@@ -17,6 +17,7 @@ import clsx from 'clsx';
 import { Icon, IconName } from 'ketcher-react';
 import {
   RnaBuilderPresetsItem,
+  selectActiveMonomerKey,
   selectFilteredPresets,
   selectIsActivePresetNewAndEmpty,
   selectIsEditMode,
@@ -36,7 +37,6 @@ const RnaElementsTabsView = ({
   duplicatePreset,
   editPreset,
   libraryName,
-  activeMonomerKey,
 }: RnaElementsViewProps) => {
   const dispatch = useDispatch();
   const presets = useAppSelector(selectFilteredPresets);
@@ -45,6 +45,7 @@ const RnaElementsTabsView = ({
   const isActivePresetNewAndEmpty = useAppSelector(
     selectIsActivePresetNewAndEmpty,
   );
+  const activeMonomerKey = useAppSelector(selectActiveMonomerKey);
 
   return (
     <>

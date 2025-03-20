@@ -1,10 +1,11 @@
+import { SnakeMode } from 'application/editor';
 import { editorEvents } from 'application/editor/editorEvents';
 import { CoreEditor } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { SideChainConnectionBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SideChainConnectionBondRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
-import { BaseMonomer, Vec2 } from 'domain/entities';
+import { Vec2 } from 'domain/entities';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   Connection,
@@ -15,21 +16,19 @@ import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
 import { BaseRenderer } from '../BaseRenderer';
-import { SnakeMode } from 'application/editor';
 import {
   CORNER_LENGTH,
   DOUBLE_CORNER_LENGTH,
   generateBend,
   generateCornerFromBottomToRight,
-  generateCornerFromLeftToTop,
   generateCornerFromLeftToBottom,
-  generateCornerFromRightToTop,
+  generateCornerFromLeftToTop,
   generateCornerFromRightToBottom,
+  generateCornerFromRightToTop,
   generateCornerFromTopToLeft,
   generateCornerFromTopToRight,
   SMOOTH_CORNER_SIZE,
 } from './helpers';
-import { isNumber } from 'lodash';
 
 enum LineDirection {
   Horizontal = 'Horizontal',
@@ -101,41 +100,6 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
       startPosition: startPositionInPixels,
       endPosition: endPositionInPixels,
     };
-  }
-
-  // TODO: Unused?
-  public getSideConnectionEndpointAngle(monomer: BaseMonomer): number {
-    const editor = CoreEditor.provideEditorInstance();
-    const matrix = editor.drawingEntitiesManager.canvasMatrix;
-    const cells = matrix?.polymerBondToCells.get(this.polymerBond);
-    const startCellDirection = cells?.[0].connections?.find(
-      (connection) => connection.polymerBond === this.polymerBond,
-    )?.direction;
-    const endCellDirection = cells?.[cells.length - 1].connections?.find(
-      (connection) => connection.polymerBond === this.polymerBond,
-    )?.direction;
-    const startCellMonomer = cells?.[0].monomer;
-    const endpointDirection =
-      monomer === startCellMonomer ? startCellDirection : endCellDirection;
-    const startCellNormalizedDirection = isNumber(startCellDirection)
-      ? startCellDirection
-      : startCellDirection?.y;
-    const endCellNormalizedDirection = isNumber(endCellDirection)
-      ? endCellDirection
-      : endCellDirection?.y;
-    const normalizedDirection = isNumber(endpointDirection)
-      ? endpointDirection
-      : endpointDirection?.y;
-    const endpointAngle =
-      normalizedDirection === 0 ? -Math.PI / 2 : Math.PI / 2;
-
-    return startCellDirection === 90 && endCellDirection === 90 // vertical bond. need to check is it right that angles 90 and 90
-      ? monomer === startCellMonomer
-        ? -Math.PI / 2
-        : Math.PI / 2
-      : startCellNormalizedDirection === 0 && endCellNormalizedDirection === 270 // horizontal bond.
-      ? Math.PI / 2
-      : endpointAngle;
   }
 
   public moveSelection(): void {

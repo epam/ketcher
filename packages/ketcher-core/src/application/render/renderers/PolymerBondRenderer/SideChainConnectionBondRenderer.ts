@@ -127,11 +127,12 @@ export class SideChainConnectionBondRenderer {
     });
   }
 
+  // TODO: Can we use `-1 | 0 | 1` instead of `number`?
   public static generateBend(
     dx1: number,
     dy1: number,
     dx: number,
-    dy: number,
+    dy: -1 | 1,
   ): string {
     const size = this.SMOOTH_CORNER_SIZE;
     const controlPoint = `${size * dx1},${size * dy1}`;

@@ -347,6 +347,11 @@ export class DrawingEntitiesManager {
       }
     });
 
+    const editor = CoreEditor.provideEditorInstance();
+    editor.events.selectEntities.dispatch(
+      this.selectedEntities.map((entity) => entity[1]),
+    );
+
     return command;
   }
 
@@ -367,6 +372,11 @@ export class DrawingEntitiesManager {
         command.addOperation(operation);
       }
     });
+
+    const editor = CoreEditor.provideEditorInstance();
+    editor.events.selectEntities.dispatch(
+      this.selectedEntities.map((entity) => entity[1]),
+    );
 
     return command;
   }

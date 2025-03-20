@@ -58,13 +58,6 @@ export class SideChainConnectionBondRenderer {
     return Math.cos((xDirection * Math.PI) / 180) as -1 | 1;
   }
 
-  public static calculateSinForYDirection(
-    // TODO: Can we use `yDirection: 90 | 270`?
-    yDirection: number,
-  ): number {
-    return Math.sin((yDirection * Math.PI) / 180);
-  }
-
   public static checkIfConnectionIsStraightVertical(
     cells: readonly Cell[],
     connectionIsVertical: boolean,
@@ -188,7 +181,7 @@ export class SideChainConnectionBondRenderer {
     const yDirection = firstCellConnectionIsVertical
       ? 90
       : (direction as ConnectionDirectionOfLastCell).y;
-    const sin = this.calculateSinForYDirection(yDirection);
+    const sin = this.#calculateSinForYDirection(yDirection);
     const verticalLineY =
       endPositionY -
       CELL_HEIGHT / 2 -
@@ -200,5 +193,12 @@ export class SideChainConnectionBondRenderer {
       SVGPathDAttributeUtil.generateVerticalAbsoluteLine(verticalLineY);
     const bend = this.generateBend(0, sin, cos, 1);
     return `${line} ${bend}`;
+  }
+
+  static #calculateSinForYDirection(
+    // TODO: Can we use `yDirection: 90 | 270`?
+    yDirection: number,
+  ): number {
+    return Math.sin((yDirection * Math.PI) / 180);
   }
 }

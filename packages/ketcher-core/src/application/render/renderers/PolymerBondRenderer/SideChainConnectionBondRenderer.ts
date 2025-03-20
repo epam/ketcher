@@ -41,6 +41,12 @@ const CELL_HEIGHT = 40;
 export class SideChainConnectionBondRenderer {
   public static readonly SMOOTH_CORNER_SIZE = 5;
 
+  public static calculateCosForDirectionX(
+    directionX: ConnectionDirectionXInDegrees,
+  ): -1 | 1 {
+    return Math.cos((directionX * Math.PI) / 180) as -1 | 1;
+  }
+
   public static drawPartOfSideConnection({
     cell,
     connection,

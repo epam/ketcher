@@ -10,6 +10,7 @@ import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   Connection,
   ConnectionDirectionOfLastCell,
+  ConnectionDirectionXInDegrees,
 } from 'domain/entities/canvas-matrix/Connection';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
@@ -208,13 +209,14 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
     const endPosition = isFirstMonomerOfBondInFirstCell
       ? this.scaledPosition.endPosition
       : this.scaledPosition.startPosition;
-    const xDirection =
+    const xDirection: ConnectionDirectionXInDegrees =
       startPosition.x >= (this.sideConnectionBondTurnPoint || endPosition.x)
         ? 180
         : 0;
     let pathDAttributeValue = `M ${startPosition.x},${startPosition.y} `;
 
-    const cos = Math.cos((xDirection * Math.PI) / 180);
+    const cos =
+      SideChainConnectionBondRenderer.calculateCosForDirectionX(xDirection);
 
     let previousConnection: Connection;
     let previousCell: Cell;
@@ -276,7 +278,8 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
         },
       ) as Connection;
       const isLastCell = cellIndex === cells.length - 1;
-      const _xDirection = this.sideConnectionBondTurnPoint
+      const _xDirection: ConnectionDirectionXInDegrees = this
+        .sideConnectionBondTurnPoint
         ? endPosition.x < this.sideConnectionBondTurnPoint
           ? 180
           : 0
@@ -302,7 +305,10 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
           cellConnection.direction as ConnectionDirectionOfLastCell;
         const yDirection = isVerticalConnection ? 90 : directionObject.y;
         const sin = Math.sin((yDirection * Math.PI) / 180);
-        const cos = Math.cos((_xDirection * Math.PI) / 180);
+        const cos =
+          SideChainConnectionBondRenderer.calculateCosForDirectionX(
+            _xDirection,
+          );
 
         if (!areCellsOnSameRow) {
           pathDAttributeValue += `V ${

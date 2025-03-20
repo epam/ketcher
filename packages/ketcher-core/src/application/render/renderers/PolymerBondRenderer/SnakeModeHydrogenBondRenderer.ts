@@ -2,6 +2,7 @@ import { SnakeMode } from 'application/editor';
 import { editorEvents } from 'application/editor/editorEvents';
 import { CoreEditor } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import { SideChainConnectionBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SideChainConnectionBondRenderer';
 import { SVGPathDAttributeUtil } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtil';
 import { D3SvgElementSelection } from 'application/render/types';
@@ -79,10 +80,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
     return this.rootBBox?.height || 0;
   }
 
-  private get scaledPosition(): {
-    readonly endPosition: Vec2;
-    readonly startPosition: Vec2;
-  } {
+  private get scaledPosition(): PolymerBondRendererStartAndEndPositions {
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
     const startPositionInPixels = Coordinates.modelToCanvas(
@@ -178,49 +176,46 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
   // TODO: Specify the types.
   private appendSideConnectionBond(rootElement, cells: Cell[]) {
     const firstCell = cells[0];
+    const connectionOfTwoNeighborRows = cells.every(
+      (cell) => cell.y === firstCell.y || cell.y === firstCell.y + 1,
+    );
     const firstCellConnection = firstCell.connections.find(
       (connection: Connection): boolean => {
         return connection.polymerBond === this.polymerBond;
       },
     ) as Connection;
     const firstCellConnectionIsVertical = firstCellConnection.isVertical;
+    const horizontalPartIntersectionsOffset = firstCellConnection.xOffset;
     const connectionIsStraightVertical =
       SideChainConnectionBondRenderer.checkIfConnectionIsStraightVertical(
         cells,
         firstCellConnectionIsVertical,
       );
-    const isFirstMonomerOfBondInFirstCell = firstCell.node?.monomers.includes(
-      this.polymerBond.firstMonomer,
-    );
-    const connectionOfTwoNeighborRows = cells.every(
-      (cell) => cell.y === firstCell.y || cell.y === firstCell.y + 1,
-    );
-    const startPosition = isFirstMonomerOfBondInFirstCell
-      ? this.scaledPosition.startPosition
-      : this.scaledPosition.endPosition;
-    const endPosition = isFirstMonomerOfBondInFirstCell
-      ? this.scaledPosition.endPosition
-      : this.scaledPosition.startPosition;
+    const { endPosition, startPosition } =
+      SideChainConnectionBondRenderer.extractStartAndEndPositionsFromScaledPosition(
+        {
+          firstCellMonomers: firstCell.node?.monomers ?? [],
+          firstMonomer: this.polymerBond.firstMonomer,
+          scaledPosition: this.scaledPosition,
+        },
+      );
     const xDirection: ConnectionXDirectionInDegrees =
       startPosition.x >= (this.sideConnectionBondTurnPoint || endPosition.x)
         ? 180
         : 0;
+    const cos =
+      SideChainConnectionBondRenderer.calculateCosForXDirection(xDirection);
+
     let pathDAttributeValue =
       SVGPathDAttributeUtil.generateMoveTo(startPosition.x, startPosition.y) +
       ' ';
 
-    const cos =
-      SideChainConnectionBondRenderer.calculateCosForXDirection(xDirection);
-
     let previousConnection: Connection;
     let previousCell: Cell;
-
-    const horizontalPartIntersectionsOffset = firstCellConnection.xOffset;
 
     const areCellsOnSameRow = cells.every((cell) => {
       return cell.y === firstCell.y;
     });
-    const isSecondCellEmpty = cells[1].node === null;
 
     if (areCellsOnSameRow) {
       {
@@ -248,6 +243,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
             absoluteLineY,
           ) + ' ';
       }
+      const isSecondCellEmpty = cells[1].node === null;
       if (
         !connectionIsStraightVertical &&
         !isSecondCellEmpty &&

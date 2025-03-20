@@ -2,6 +2,7 @@ import {
   BaseMonomerRenderer,
   BaseSequenceItemRenderer,
 } from 'application/render';
+import { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import { SVGPathDAttributeUtil } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtil';
 import { BaseMonomer, Vec2 } from 'domain/entities';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
@@ -38,6 +39,12 @@ interface DrawPartOfSideConnectionForOtherCellsResult {
   readonly sideConnectionBondTurnPoint: number;
 }
 
+interface ExtractStartAndEndPositionsFromScaledPositionParameter {
+  readonly firstCellMonomers: readonly BaseMonomer[];
+  readonly firstMonomer: BaseMonomer;
+  readonly scaledPosition: PolymerBondRendererStartAndEndPositions;
+}
+
 interface GeneratePathPartForCellsWhichAreOnSameRowParameter {
   readonly cellConnection: Connection;
   readonly connectionOfTwoNeighborRows: boolean;
@@ -71,9 +78,9 @@ export class SideChainConnectionBondRenderer {
 
   public static checkIfConnectionIsStraightVertical(
     cells: readonly Cell[],
-    connectionIsVertical: boolean,
+    firstCellConnectionIsVertical: boolean,
   ): boolean {
-    if (!connectionIsVertical) return false;
+    if (!firstCellConnectionIsVertical) return false;
     if (cells.length === 2) return true;
     const [firstCell] = cells;
     // TODO: Is it possible to finish the cycle not in the end?
@@ -166,6 +173,25 @@ export class SideChainConnectionBondRenderer {
       horizontal,
       sideConnectionBondTurnPoint,
     });
+  }
+
+  public static extractStartAndEndPositionsFromScaledPosition({
+    firstCellMonomers,
+    firstMonomer,
+    scaledPosition,
+  }: ExtractStartAndEndPositionsFromScaledPositionParameter): PolymerBondRendererStartAndEndPositions {
+    const isFirstMonomerOfBondInFirstCell =
+      firstCellMonomers.includes(firstMonomer);
+    const endPosition = isFirstMonomerOfBondInFirstCell
+      ? scaledPosition.endPosition
+      : scaledPosition.startPosition;
+    const startPosition = isFirstMonomerOfBondInFirstCell
+      ? scaledPosition.startPosition
+      : scaledPosition.endPosition;
+    return {
+      endPosition,
+      startPosition,
+    };
   }
 
   // TODO: Can we use `-1 | 0 | 1` instead of `number`?

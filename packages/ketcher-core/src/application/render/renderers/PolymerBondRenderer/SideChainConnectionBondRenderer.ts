@@ -139,4 +139,8 @@ export class SideChainConnectionBondRenderer {
     const endPoint = `${size * dx},${size * dy}`;
     return `q ${controlPoint} ${endPoint}`;
   }
+
+  public static generateVerticalAbsoluteLine(y: number): string {
+    return `V ${y}`;
+  }
 }

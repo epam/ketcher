@@ -348,7 +348,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           );
 
         if (!areCellsOnSameRow) {
-          pathDAttributeValue += `V ${
+          const verticalLineY =
             endPosition.y -
             CELL_HEIGHT / 2 -
             SideChainConnectionBondRenderer.SMOOTH_CORNER_SIZE -
@@ -356,8 +356,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
             (isTwoNeighborRowsConnection
               ? maxHorizontalOffset - cellConnection.xOffset
               : cellConnection.xOffset) *
-              3
-          } `;
+              3;
+          pathDAttributeValue +=
+            SideChainConnectionBondRenderer.generateVerticalAbsoluteLine(
+              verticalLineY,
+            ) + ' ';
           pathDAttributeValue +=
             SideChainConnectionBondRenderer.generateBend(0, sin, cos, 1) + ' ';
         }

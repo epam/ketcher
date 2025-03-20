@@ -1,3 +1,6 @@
+import { Bases } from '@constants/monomers/Bases';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Sugars } from '@constants/monomers/Sugars';
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -9,6 +12,7 @@ import {
   selectRectangleSelectionTool,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 test.describe('Enumerations', () => {
   test.beforeEach(async ({ page }) => {
@@ -89,7 +93,7 @@ test.describe('Enumerations', () => {
     await openFileAndAddToCanvasMacro('KET/sugar-phosphate-baA.ket', page);
     await selectRectangleSelectionTool(page);
     await selectEraseTool(page);
-    await page.getByText('baA').locator('..').first().click();
+    await getMonomerLocator(page, Bases.baA).click();
     await takeEditorScreenshot(page);
   });
 
@@ -101,7 +105,7 @@ test.describe('Enumerations', () => {
     await openFileAndAddToCanvasMacro('KET/sugar-phosphate-baA.ket', page);
     await selectRectangleSelectionTool(page);
     await selectEraseTool(page);
-    await page.getByText('baA').locator('..').first().click();
+    await getMonomerLocator(page, Bases.baA).click();
     await clickUndo(page);
     await takeEditorScreenshot(page);
   });
@@ -118,7 +122,7 @@ test.describe('Enumerations', () => {
       page,
     );
     await selectEraseTool(page);
-    await page.getByText('Tml').locator('..').first().click();
+    await getMonomerLocator(page, Peptides.Tml).click();
     await takeEditorScreenshot(page);
   });
 
@@ -135,9 +139,9 @@ test.describe('Enumerations', () => {
       page,
     );
     await selectEraseTool(page);
-    await page.getByText('Tml').locator('..').first().click();
-    await page.getByText('His1Me').locator('..').first().click();
-    await page.getByText('D-Hyp').locator('..').first().click();
+    await getMonomerLocator(page, Peptides.Tml).click();
+    await getMonomerLocator(page, Peptides.His1Me).click();
+    await getMonomerLocator(page, Peptides.D_Hyp).click();
     await takeEditorScreenshot(page);
   });
 
@@ -152,7 +156,7 @@ test.describe('Enumerations', () => {
     await openFileAndAddToCanvasMacro('Molfiles-V3000/modified-rna.mol', page);
     await selectSnakeLayoutModeTool(page);
     await selectEraseTool(page);
-    await page.getByText('25R').locator('..').first().click();
+    await getMonomerLocator(page, Sugars._25R).click();
     await takeEditorScreenshot(page);
   });
 
@@ -167,7 +171,7 @@ test.describe('Enumerations', () => {
     await openFileAndAddToCanvasMacro('Molfiles-V3000/modified-rna.mol', page);
     await selectSnakeLayoutModeTool(page);
     await selectEraseTool(page);
-    await page.getByText('3A6').locator('..').first().click();
+    await getMonomerLocator(page, Sugars._3A6).click();
     await takeEditorScreenshot(page);
   });
 
@@ -185,7 +189,7 @@ test.describe('Enumerations', () => {
     );
     await selectSnakeLayoutModeTool(page);
     await selectEraseTool(page);
-    await page.getByText('5A6').locator('..').first().click();
+    await getMonomerLocator(page, Sugars._5A6).click();
     await takeEditorScreenshot(page);
   });
 
@@ -202,9 +206,10 @@ test.describe('Enumerations', () => {
       page,
     );
     await selectEraseTool(page);
-    await page.getByText('Tml').locator('..').first().click();
-    await page.getByText('His1Me').locator('..').first().click();
-    await page.getByText('D-Hyp').locator('..').first().click();
+    await getMonomerLocator(page, Peptides.Tml).click();
+    await getMonomerLocator(page, Peptides.His1Me).click();
+    await getMonomerLocator(page, Peptides.D_Hyp).click();
+
     const pressCount = 3;
     for (let i = 0; i < pressCount; i++) {
       await clickUndo(page);
@@ -225,8 +230,8 @@ test.describe('Enumerations', () => {
       page,
     );
     await selectEraseTool(page);
-    await page.getByText('Hcy').locator('..').first().click();
-    await page.getByText('meC').locator('..').first().click();
+    await getMonomerLocator(page, Peptides.Hcy).click();
+    await getMonomerLocator(page, Peptides.meC).click();
     await takeEditorScreenshot(page);
     const pressCount = 2;
     for (let i = 0; i < pressCount; i++) {

@@ -16,10 +16,9 @@ import {
   moveMouseAway,
   RingButton,
   selectTool,
-  selectTopPanelButton,
   takeEditorScreenshot,
-  TopPanelButton,
   waitForPageInit,
+  selectClearCanvasTool,
 } from '@utils';
 import {
   pressRedoButton,
@@ -92,14 +91,14 @@ async function manipulateRingsByName(type: RingButton, page: Page) {
   await placeTwoRingsMergedByAtom(type, page);
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
-  await selectTopPanelButton(TopPanelButton.Clear, page);
+  await selectClearCanvasTool(page);
 
   await placeTwoRingsMergedByAtom(type, page);
   await mergeRingByBond(type, page);
   await mergeDistantRingByABond(type, page);
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
-  await selectTopPanelButton(TopPanelButton.Clear, page);
+  await selectClearCanvasTool(page);
 
   await selectButtonByTitle(type, page);
   await clickInTheMiddleOfTheScreen(page);

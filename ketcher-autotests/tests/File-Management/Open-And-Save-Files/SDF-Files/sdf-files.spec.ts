@@ -1,15 +1,12 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
-  receiveFileComparisonData,
   openFileAndAddToCanvas,
-  saveToFile,
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   clickOnSaveFileAndOpenDropdown,
   selectFormatForSaving,
-  bondsSettings,
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
@@ -17,12 +14,12 @@ import {
   selectLayoutTool,
   setHashSpacingOptionUnit,
   setHashSpacingValue,
+  openBondsSettingsSection,
 } from '@utils';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getSdf } from '@utils/formats';
 
 test.describe('CDF files', () => {
   test.beforeEach(async ({ page }) => {
@@ -32,45 +29,23 @@ test.describe('CDF files', () => {
     await waitForPageInit(page);
 
     await openFileAndAddToCanvas('SDF/sdf-v2000-to-open.sdf', page);
-    try {
-      const expectedFile = await getSdf(page, 'v2000');
-      await saveToFile('SDF/sdf-v2000-to-open-expected.sdf', expectedFile);
-    } catch (error) {
-      console.log(error);
-    }
-
-    const METADATA_STRING_INDEX = [1, 19];
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/SDF/sdf-v2000-to-open-expected.sdf',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v2000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
+    await verifyFileExport(
+      page,
+      'SDF/sdf-v2000-to-open-expected.sdf',
+      FileType.SDF,
+      'v2000',
+    );
     await takeEditorScreenshot(page);
   });
 
   test('Open SDF v3000 file and save it', async ({ page }) => {
     await openFileAndAddToCanvas('SDF/sdf-v3000-to-open.sdf', page);
-    try {
-      const expectedFile = await getSdf(page, 'v3000');
-      await saveToFile('SDF/sdf-v3000-to-open-expected.sdf', expectedFile);
-    } catch (error) {
-      console.log(error);
-    }
-
-    const METADATA_STRING_INDEX = [1, 26];
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/SDF/sdf-v3000-to-open-expected.sdf',
-        metaDataIndexes: METADATA_STRING_INDEX,
-        fileFormat: 'v3000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
+    await verifyFileExport(
+      page,
+      'SDF/sdf-v3000-to-open-expected.sdf',
+      FileType.SDF,
+      'v3000',
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -100,25 +75,12 @@ test.describe('CDF files', () => {
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
     );
-    const expectedFile = await getSdf(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/unsplit-nucleotides-connected-with-nucleotides-v3000.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v3000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [1, 107, 213, 319, 425, 531];
-
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/unsplit-nucleotides-connected-with-nucleotides-v3000.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-nucleotides-v3000.sdf',
       page,
@@ -138,27 +100,12 @@ test.describe('CDF files', () => {
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
     );
-    const expectedFile = await getSdf(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/unsplit-nucleotides-connected-with-chems-v3000.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v3000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      1, 182, 363, 544, 725, 906, 1087, 1267, 1448,
-    ];
-
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/unsplit-nucleotides-connected-with-chems-v3000.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-chems-v3000.sdf',
       page,
@@ -178,27 +125,12 @@ test.describe('CDF files', () => {
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
     );
-    const expectedFile = await getSdf(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/unsplit-nucleotides-connected-with-sugars-v3000.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v3000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      1, 178, 355, 532, 709, 886, 1063, 1240, 1417,
-    ];
-
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/unsplit-nucleotides-connected-with-sugars-v3000.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-sugars-v3000.sdf',
       page,
@@ -218,27 +150,12 @@ test.describe('CDF files', () => {
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
     );
-    const expectedFile = await getSdf(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/unsplit-nucleotides-connected-with-bases-v3000.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v3000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      1, 186, 371, 556, 741, 926, 1111, 1296, 1481,
-    ];
-
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/unsplit-nucleotides-connected-with-bases-v3000.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-bases-v3000.sdf',
       page,
@@ -258,27 +175,12 @@ test.describe('CDF files', () => {
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
     );
-    const expectedFile = await getSdf(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/unsplit-nucleotides-connected-with-phosphates-v3000.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v3000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      1, 165, 329, 493, 657, 821, 985, 1149, 1313,
-    ];
-
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/unsplit-nucleotides-connected-with-phosphates-v3000.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-phosphates-v3000.sdf',
       page,
@@ -298,27 +200,12 @@ test.describe('CDF files', () => {
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
     );
-    const expectedFile = await getSdf(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/unsplit-nucleotides-connected-with-peptides-v3000.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v3000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      1, 188, 375, 562, 749, 936, 1123, 1310, 1497,
-    ];
-
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/unsplit-nucleotides-connected-with-peptides-v3000.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-peptides-v3000.sdf',
       page,
@@ -340,25 +227,12 @@ test.describe('CDF files', () => {
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
     );
-    const expectedFile = await getSdf(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/unsplit-nucleotides-connected-with-nucleotides-v2000.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [1, 107, 213, 319, 425, 531];
-
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/unsplit-nucleotides-connected-with-nucleotides-v2000.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-nucleotides-v2000.sdf',
       page,
@@ -380,27 +254,12 @@ test.describe('CDF files', () => {
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
     );
-    const expectedFile = await getSdf(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/unsplit-nucleotides-connected-with-chems-v2000.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      1, 182, 363, 544, 725, 906, 1087, 1267, 1448,
-    ];
-
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/unsplit-nucleotides-connected-with-chems-v2000.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-chems-v2000.sdf',
       page,
@@ -422,27 +281,12 @@ test.describe('CDF files', () => {
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
     );
-    const expectedFile = await getSdf(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/unsplit-nucleotides-connected-with-sugars-v2000.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      1, 178, 355, 532, 709, 886, 1063, 1240, 1417,
-    ];
-
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/unsplit-nucleotides-connected-with-sugars-v2000.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-sugars-v2000.sdf',
       page,
@@ -464,27 +308,12 @@ test.describe('CDF files', () => {
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
     );
-    const expectedFile = await getSdf(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/unsplit-nucleotides-connected-with-bases-v2000.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      1, 186, 371, 556, 741, 926, 1111, 1296, 1481,
-    ];
-
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/unsplit-nucleotides-connected-with-bases-v2000.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-bases-v2000.sdf',
       page,
@@ -506,27 +335,12 @@ test.describe('CDF files', () => {
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
     );
-    const expectedFile = await getSdf(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/unsplit-nucleotides-connected-with-phosphates-v2000.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      1, 165, 329, 493, 657, 821, 985, 1149, 1313,
-    ];
-
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/unsplit-nucleotides-connected-with-phosphates-v2000.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-phosphates-v2000.sdf',
       page,
@@ -548,27 +362,12 @@ test.describe('CDF files', () => {
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
     );
-    const expectedFile = await getSdf(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/unsplit-nucleotides-connected-with-peptides-v2000.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v2000',
     );
-
-    // eslint-disable-next-line no-magic-numbers
-    const METADATA_STRINGS_INDEXES = [
-      1, 188, 375, 562, 749, 936, 1123, 1310, 1497,
-    ];
-
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/unsplit-nucleotides-connected-with-peptides-v2000.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/unsplit-nucleotides-connected-with-peptides-v2000.sdf',
       page,
@@ -687,31 +486,18 @@ test('The Bond length setting with px option is applied and it should be save to
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
   await openSettings(page);
-  await bondsSettings(page);
+  await openBondsSettingsSection(page);
   await setBondLengthOptionUnit(page, 'px-option');
   await setBondLengthValue(page, '79.8');
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
 
-  const expectedFile = await getSdf(page, 'v2000');
-  await saveToFile(
+  await verifyFileExport(
+    page,
     'SDF/adenosine-triphosphate-px-bond-lengh-v2000.sdf',
-    expectedFile,
+    FileType.SDF,
+    'v2000',
   );
-
-  const METADATA_STRINGS_INDEXES = [1];
-
-  const { fileExpected: sdfFileExpected, file: sdfFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/SDF/adenosine-triphosphate-px-bond-lengh-v2000.sdf',
-      metaDataIndexes: METADATA_STRINGS_INDEXES,
-      fileFormat: 'v2000',
-    });
-
-  expect(sdfFile).toEqual(sdfFileExpected);
-
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-px-bond-lengh-v2000.sdf',
     page,
@@ -730,7 +516,7 @@ test('The Hash spacing setting with px option is applied and it should be save t
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
   await openSettings(page);
-  await bondsSettings(page);
+  await openBondsSettingsSection(page);
   await setHashSpacingOptionUnit(page, 'px-option');
   await setHashSpacingValue(page, '79.8');
   await pressButton(page, 'Apply');
@@ -740,7 +526,6 @@ test('The Hash spacing setting with px option is applied and it should be save t
     'SDF/adenosine-triphosphate-px-hash-spacing-v2000-expected.sdf',
     FileType.SDF,
     'v2000',
-    [1],
   );
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-px-hash-spacing-v2000-expected.sdf',
@@ -760,7 +545,7 @@ test('The Hash spacing setting with px option is applied and it should be save t
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
   await openSettings(page);
-  await bondsSettings(page);
+  await openBondsSettingsSection(page);
   await setHashSpacingOptionUnit(page, 'px-option');
   await setHashSpacingValue(page, '79.8');
   await pressButton(page, 'Apply');
@@ -770,7 +555,6 @@ test('The Hash spacing setting with px option is applied and it should be save t
     'SDF/adenosine-triphosphate-px-hash-spacing-v3000-expected.sdf',
     FileType.SDF,
     'v3000',
-    [1],
   );
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-px-hash-spacing-v3000-expected.sdf',
@@ -790,7 +574,7 @@ test('The Hash spacing setting with cm option is applied and it should be save t
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
   await openSettings(page);
-  await bondsSettings(page);
+  await openBondsSettingsSection(page);
   await setHashSpacingOptionUnit(page, 'cm-option');
   await setHashSpacingValue(page, '79.8');
   await pressButton(page, 'Apply');
@@ -800,7 +584,6 @@ test('The Hash spacing setting with cm option is applied and it should be save t
     'SDF/adenosine-triphosphate-cm-hash-spacing-v2000-expected.sdf',
     FileType.SDF,
     'v2000',
-    [1],
   );
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-cm-hash-spacing-v2000-expected.sdf',
@@ -820,7 +603,7 @@ test('The Hash spacing setting with cm option is applied and it should be save t
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
   await openSettings(page);
-  await bondsSettings(page);
+  await openBondsSettingsSection(page);
   await setHashSpacingOptionUnit(page, 'cm-option');
   await setHashSpacingValue(page, '79.8');
   await pressButton(page, 'Apply');
@@ -830,7 +613,6 @@ test('The Hash spacing setting with cm option is applied and it should be save t
     'SDF/adenosine-triphosphate-cm-hash-spacing-v3000-expected.sdf',
     FileType.SDF,
     'v3000',
-    [1],
   );
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-cm-hash-spacing-v3000-expected.sdf',
@@ -850,7 +632,7 @@ test('The Hash spacing setting with inch option is applied and it should be save
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
   await openSettings(page);
-  await bondsSettings(page);
+  await openBondsSettingsSection(page);
   await setHashSpacingOptionUnit(page, 'inch-option');
   await setHashSpacingValue(page, '79.8');
   await pressButton(page, 'Apply');
@@ -860,7 +642,6 @@ test('The Hash spacing setting with inch option is applied and it should be save
     'SDF/adenosine-triphosphate-inch-hash-spacing-v2000-expected.sdf',
     FileType.SDF,
     'v2000',
-    [1],
   );
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-inch-hash-spacing-v2000-expected.sdf',
@@ -880,7 +661,7 @@ test('The Hash spacing setting with inch option is applied and it should be save
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
   await openSettings(page);
-  await bondsSettings(page);
+  await openBondsSettingsSection(page);
   await setHashSpacingOptionUnit(page, 'inch-option');
   await setHashSpacingValue(page, '79.8');
   await pressButton(page, 'Apply');
@@ -890,7 +671,6 @@ test('The Hash spacing setting with inch option is applied and it should be save
     'SDF/adenosine-triphosphate-inch-hash-spacing-v3000-expected.sdf',
     FileType.SDF,
     'v3000',
-    [1],
   );
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-inch-hash-spacing-v3000-expected.sdf',
@@ -911,30 +691,18 @@ test('The Bond length setting with pt option is applied and it should be save to
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
   await openSettings(page);
-  await bondsSettings(page);
+  await openBondsSettingsSection(page);
   await setBondLengthOptionUnit(page, 'pt-option');
   await setBondLengthValue(page, '29.8');
   await pressButton(page, 'Apply');
   await takeEditorScreenshot(page);
 
-  const expectedFile = await getSdf(page, 'v2000');
-  await saveToFile(
+  await verifyFileExport(
+    page,
     'SDF/adenosine-triphosphate-pt-bond-lengh-v2000.sdf',
-    expectedFile,
+    FileType.SDF,
+    'v2000',
   );
-
-  const METADATA_STRINGS_INDEXES = [1];
-
-  const { fileExpected: sdfFileExpected, file: sdfFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/SDF/adenosine-triphosphate-pt-bond-lengh-v2000.sdf',
-      metaDataIndexes: METADATA_STRINGS_INDEXES,
-      fileFormat: 'v2000',
-    });
-
-  expect(sdfFile).toEqual(sdfFileExpected);
 
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-pt-bond-lengh-v2000.sdf',
@@ -961,24 +729,12 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 3
   await selectLayoutTool(page);
   await takeEditorScreenshot(page);
 
-  const expectedFile = await getSdf(page, 'v3000');
-  await saveToFile(
+  await verifyFileExport(
+    page,
     'SDF/adenosine-triphosphate-acs-style-v3000.sdf',
-    expectedFile,
+    FileType.SDF,
+    'v3000',
   );
-
-  const METADATA_STRINGS_INDEXES = [1];
-
-  const { fileExpected: sdfFileExpected, file: sdfFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/SDF/adenosine-triphosphate-acs-style-v3000.sdf',
-      metaDataIndexes: METADATA_STRINGS_INDEXES,
-      fileFormat: 'v3000',
-    });
-
-  expect(sdfFile).toEqual(sdfFileExpected);
 
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-acs-style-v3000.sdf',
@@ -1004,24 +760,12 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 2
   await selectLayoutTool(page);
   await takeEditorScreenshot(page);
 
-  const expectedFile = await getSdf(page, 'v2000');
-  await saveToFile(
+  await verifyFileExport(
+    page,
     'SDF/adenosine-triphosphate-acs-style-v2000.sdf',
-    expectedFile,
+    FileType.SDF,
+    'v2000',
   );
-
-  const METADATA_STRINGS_INDEXES = [1];
-
-  const { fileExpected: sdfFileExpected, file: sdfFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'tests/test-data/SDF/adenosine-triphosphate-acs-style-v2000.sdf',
-      metaDataIndexes: METADATA_STRINGS_INDEXES,
-      fileFormat: 'v2000',
-    });
-
-  expect(sdfFile).toEqual(sdfFileExpected);
 
   await openFileAndAddToCanvasAsNewProject(
     'SDF/adenosine-triphosphate-acs-style-v2000.sdf',

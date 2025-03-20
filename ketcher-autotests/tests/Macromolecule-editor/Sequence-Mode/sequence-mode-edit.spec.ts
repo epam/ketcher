@@ -1,18 +1,17 @@
 /* eslint-disable no-magic-numbers */
-import {
-  Bases,
-  Chem,
-  Nucleotides,
-  Peptides,
-  Phosphates,
-  Presets,
-  Sugars,
-} from '@constants/monomers';
+import { Bases } from '@constants/monomers/Bases';
+import { Chem } from '@constants/monomers/Chem';
+import { Nucleotides } from '@constants/monomers/Nucleotides';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Phosphates } from '@constants/monomers/Phosphates';
+import { Presets } from '@constants/monomers/Presets';
+import { Sugars } from '@constants/monomers/Sugars';
 import { test } from '@playwright/test';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
   moveMouseAway,
+  openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
@@ -29,19 +28,31 @@ import {
   typePeptideAlphabet,
   typeRNADNAAlphabet,
   waitForPageInit,
+  waitForRender,
 } from '@utils';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import {
   enterSequence,
   turnOnMacromoleculesEditor,
   waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { expandCollapseRnaBuilder } from '@utils/macromolecules/rnaBuilder';
 import {
   clickOnSequenceSymbol,
   doubleClickOnSequenceSymbol,
   hoverOnSequenceSymbol,
+  switchToDNAMode,
+  switchToPeptideMode,
 } from '@utils/macromolecules/sequence';
+import {
+  pressRedoButton,
+  pressUndoButton,
+} from '@utils/macromolecules/topToolBar';
 
 test.describe('Sequence edit mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -98,7 +109,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Exiting text-editing mode occurs with a click outside the sequence', async ({
@@ -202,7 +213,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Users can add new nucleotides in the middle of a sequence fragment as text', async ({
@@ -224,7 +235,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check that when adding new nucleotides to beginning of a row, order of chains not changes in Sequence mode', async ({
@@ -243,7 +254,7 @@ test.describe('Sequence edit mode', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Adding symbols before separate phosphate should be restricted', async ({
+  test('Adding symbols before separate phosphate should be allowed', async ({
     page,
   }) => {
     /*
@@ -274,7 +285,6 @@ test.describe('Sequence edit mode', () => {
     await openFileAndAddToCanvasMacro('KET/cyclic-sequence-tcgu.ket', page);
     await page
       .getByText('U', { exact: true })
-      .locator('..')
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
@@ -354,7 +364,7 @@ test.describe('Sequence edit mode', () => {
       await takeEditorScreenshot(page);
       await moveMouseAway(page);
     }
-    await page.getByText('5HydMe').locator('..').locator('..').first().click();
+    await getMonomerLocator(page, { monomerAlias: '5HydMe-dC' }).click();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -378,6 +388,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Sugar type of monomer in the library appears.
     */
     await selectMonomer(page, Sugars._25d3r);
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 
@@ -389,6 +400,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Base type of monomer in the library appears.
     */
     await selectMonomer(page, Bases.c7A);
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 
@@ -400,6 +412,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Phosphate type of monomer in the library appears.
     */
     await selectMonomer(page, Phosphates.ibun);
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 
@@ -411,6 +424,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Nucleotide type of monomer in the library appears.
     */
     await selectMonomer(page, Nucleotides.Super_T);
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 
@@ -422,6 +436,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for CHEM type of monomer in the library appears.
     */
     await selectMonomer(page, Chem.DOTA);
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 
@@ -454,7 +469,7 @@ test.describe('Sequence edit mode', () => {
     */
     await goToRNATab(page);
     await expandCollapseRnaBuilder(page);
-    await page.getByTestId(Presets.dR_U_P).hover();
+    await page.getByTestId(Presets.dR_U_P.testId).hover();
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
@@ -628,5 +643,266 @@ test.describe('Sequence edit mode', () => {
       await takeEditorScreenshot(page);
       await selectClearCanvasTool(page);
     }
+  });
+
+  test('Verify typing "p" (or "P") in sequence mode (RNA) inserts a default phosphate ( at the beginning, middle, and end of the chain )', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6357
+     * Description: Verify typing "p" (or "P") in sequence mode (RNA) inserts a default phosphate ( at the beginning, middle, and end of the chain ).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "p" (or "P") in the sequence at the beginning, middle, and end of the chain
+     * 3. Take a screenshot
+     */
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPAAApPAAAPp');
+    });
+    await takeEditorScreenshot(page);
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify typing "p" (or "P") in sequence mode (DNA) inserts a default phosphate ( at the beginning, middle, and end of the chain )', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6357
+     * Description: Verify typing "p" (or "P") in sequence mode (DNA) inserts a default phosphate ( at the beginning, middle, and end of the chain ).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - DNA
+     * 2. Start typing "p" (or "P") in the sequence at the beginning, middle, and end of the chain
+     * 3. Take a screenshot
+     */
+    await switchToDNAMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPAAApPAAAPp');
+    });
+    await takeEditorScreenshot(page);
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify typing "p" (or "P") in sequence mode (PEP) not inserts a default phosphate ( at the beginning, middle, and end of the chain )', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6357
+     * Description: Verify typing "p" (or "P") in sequence mode (PEP) not inserts a default phosphate ( at the beginning, middle, and end of the chain ).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - PEP
+     * 2. Start typing "p" (or "P") in the sequence at the beginning, middle, and end of the chain
+     * 3. Take a screenshot
+     */
+    await switchToPeptideMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPAAApPAAAPp');
+    });
+    await takeEditorScreenshot(page);
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check consecutive typing of multiple "p" characters in RNA or DNA', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6357
+     * Description: Check consecutive typing of multiple "p" characters in RNA or DNA.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "p" (or "P") in the sequence
+     * 3. Switch to DNA mode
+     * 4. Start typing "p" (or "P") in the sequence
+     * 5. Take a screenshot
+     */
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPPppPPpPp');
+    });
+    await switchToDNAMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPPppPPpPp');
+    });
+    await takeEditorScreenshot(page);
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Check typing of  "p" characters in RNA switch to DNA by hotkey and typing "p"', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6357
+     * Description: Check typing of  "p" characters in RNA switch to DNA by hotkey and typing "p".
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "p" (or "P") in the sequence
+     * 3. Switch to DNA mode by hotkey
+     * 4. Start typing "p" (or "P") in the sequence
+     * 5. Take a screenshot
+     */
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPAAApPAAAPp');
+    });
+    await page.keyboard.press('Control+Alt+D');
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPAAApPAAAPp');
+    });
+    await takeEditorScreenshot(page);
+    await selectFlexLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Ensure undo/redo functionality works for typed phosphates', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6357
+     * Description: Ensure undo/redo functionality works for typed phosphates.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "p" (or "P") in the sequence
+     * 3. Switch to DNA mode
+     * 4. Start typing "p" (or "P") in the sequence
+     * 5. Switch to PEP mode
+     * 6. Start typing "p" (or "P") in the sequence
+     * 7. Clear canvas and make undo/redo
+     * 8. Take a screenshot
+     */
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPPppPPpPp');
+    });
+    await switchToDNAMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPPppPPpPp');
+    });
+    await switchToPeptideMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPPppPPpPp');
+    });
+    await takeEditorScreenshot(page);
+    await selectClearCanvasTool(page);
+    await takeEditorScreenshot(page);
+    await pressUndoButton(page);
+    await takeEditorScreenshot(page);
+    await pressRedoButton(page);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate saving and opening a sequence with typed phosphates (KET)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6357
+     * Description: Validate saving and opening a sequence with typed phosphates (KET).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "p" (or "P") in the sequence
+     * 3. Switch to DNA mode
+     * 4. Start typing "p" (or "P") in the sequence
+     * 5. Switch to PEP mode
+     * 6. Start typing "p" (or "P") in the sequence
+     * 7. Save and open the KET file
+     * 8. Take a screenshot
+     */
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPPppPPpPp');
+    });
+    await switchToDNAMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPPppPPpPp');
+    });
+    await switchToPeptideMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPPppPPpPp');
+    });
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'KET/rna-dna-pep-sequence-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/rna-dna-pep-sequence-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Validate saving and opening a sequence with typed phosphates (MOL V3000)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6357
+     * Description: Validate saving and opening a sequence with typed phosphates (MOL V3000).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "p" (or "P") in the sequence
+     * 3. Switch to DNA mode
+     * 4. Start typing "p" (or "P") in the sequence
+     * 5. Switch to PEP mode
+     * 6. Start typing "p" (or "P") in the sequence
+     * 7. Save and open the MOL V3000 file
+     * 8. Take a screenshot
+     */
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPPppPPpPp');
+    });
+    await switchToDNAMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPPppPPpPp');
+    });
+    await switchToPeptideMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPPppPPpPp');
+    });
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/rna-dna-pep-sequence-expected.mol',
+      FileType.MOL,
+      'v3000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/rna-dna-pep-sequence-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify that typed phosphates are deleted and can be restored using the Undo action', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6357
+     * Description: Verify that typed phosphates are deleted and can be restored using the Undo action.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "p" (or "P") in the sequence
+     * 3. Switch to DNA mode
+     * 4. Start typing "p" (or "P") in the sequence
+     * 5. Switch to PEP mode
+     * 6. Start typing "p" (or "P") in the sequence
+     * 7. Delete all typed phosphates by Backspace and make Undo action
+     * 8. Take a screenshot
+     */
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPPppPPpPp');
+    });
+    await switchToDNAMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPPppPPpPp');
+    });
+    await switchToPeptideMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('pPPppPPpPp');
+    });
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await page.keyboard.press('Backspace');
+    await takeEditorScreenshot(page);
+    await pressUndoButton(page);
+    await takeEditorScreenshot(page);
   });
 });

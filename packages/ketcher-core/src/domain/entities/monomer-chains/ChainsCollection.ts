@@ -3,7 +3,6 @@ import {
   AmbiguousMonomer,
   BaseMonomer,
   Chem,
-  EmptySequenceNode,
   IsChainCycled,
   Peptide,
   Phosphate,
@@ -24,9 +23,7 @@ import {
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
 import { isMonomerSgroupWithAttachmentPoints } from '../../../utilities/monomers';
-import { isNumber } from 'lodash';
 import { BackBoneSequenceNode } from 'domain/entities/BackBoneSequenceNode';
-import { getPreviousConnectedNode } from 'domain/helpers/chains';
 
 export interface ComplimentaryChainsWithData {
   complimentaryChain: Chain;
@@ -117,7 +114,10 @@ export class ChainsCollection {
         });
       });
     });
+
     this.chains = [...reorderedChains.values()];
+
+    this.reorderChainsPutSenseChainOrderInAccordanceAntisenseConnection();
   }
 
   public add(chain: Chain) {
@@ -420,6 +420,114 @@ export class ChainsCollection {
     }
   }
 
+  private getComplimentaryChainIfNucleotide(
+    node: SubChainNode,
+    monomerToChain: Map<BaseMonomer, Chain>,
+    monomerToNode: Map<BaseMonomer, SubChainNode>,
+  ) {
+    let complimentaryChain: Chain | undefined;
+    let complimentaryNode: SubChainNode | undefined;
+
+    for (const monomerToCheck of node.monomers) {
+      const { monomer, complimentaryMonomer } =
+        this.getFirstComplimentaryMonomer(monomerToCheck) || {};
+      const complimentaryNodeOrUndefined =
+        complimentaryMonomer && monomerToNode.get(complimentaryMonomer);
+      const complimentaryChainOrUndefined =
+        complimentaryMonomer && monomerToChain.get(complimentaryMonomer);
+
+      const isRnaMonomer =
+        isRnaBaseOrAmbiguousRnaBase(monomer) &&
+        Boolean(getSugarFromRnaBase(monomer));
+      const isRnaComplimentaryMonomer =
+        isRnaBaseOrAmbiguousRnaBase(complimentaryMonomer) &&
+        Boolean(getSugarFromRnaBase(complimentaryMonomer));
+
+      if (
+        !complimentaryNodeOrUndefined ||
+        !complimentaryChainOrUndefined ||
+        !(isRnaMonomer || isRnaComplimentaryMonomer)
+      ) {
+        continue;
+      }
+
+      // return first found complimentary chain and node
+      return {
+        complimentaryChain: complimentaryChainOrUndefined,
+        complimentaryNode: complimentaryNodeOrUndefined,
+      };
+    }
+
+    return { complimentaryChain, complimentaryNode };
+  }
+
+  private reorderChainsPutSenseChainOrderInAccordanceAntisenseConnection() {
+    const handledChain = new Set<Chain>();
+    const monomerToChain = this.monomerToChain;
+    const monomerToNode = this.monomerToNode;
+    const reorderedSenseForSequentialAntisenseChains: Chain[] = new Array(
+      this.chains.length,
+    );
+    this.chains.forEach((chain) => {
+      if (!handledChain.has(chain)) {
+        reorderedSenseForSequentialAntisenseChains[handledChain.size] = chain;
+        handledChain.add(chain);
+      }
+
+      if (chain.isAntisense) {
+        return;
+      }
+
+      chain.forEachNode(({ node: sNode }) => {
+        const {
+          complimentaryChain: antisenseChain,
+          complimentaryNode: antisenseNode,
+        } =
+          this.getComplimentaryChainIfNucleotide(
+            sNode,
+            monomerToChain,
+            monomerToNode,
+          ) ?? {};
+        if (!antisenseChain) {
+          return;
+        }
+
+        let isFindCur = false;
+        antisenseChain.forEachNode(({ node: aNode }) => {
+          if (aNode === antisenseNode) {
+            isFindCur = true;
+          }
+          if (!isFindCur) {
+            const { complimentaryChain: anotherSenseChain } =
+              this.getComplimentaryChainIfNucleotide(
+                aNode,
+                monomerToChain,
+                monomerToNode,
+              ) ?? {};
+            if (anotherSenseChain && !handledChain.has(anotherSenseChain)) {
+              const curChainIdx =
+                reorderedSenseForSequentialAntisenseChains.findIndex(
+                  (v) => v === chain,
+                );
+              let last = anotherSenseChain;
+              for (
+                let i = curChainIdx;
+                i < reorderedSenseForSequentialAntisenseChains.length;
+                i++
+              ) {
+                const tmp = reorderedSenseForSequentialAntisenseChains[i];
+                reorderedSenseForSequentialAntisenseChains[i] = last;
+                last = tmp;
+              }
+              handledChain.add(anotherSenseChain);
+            }
+          }
+        });
+      });
+    });
+    this.chains = [...reorderedSenseForSequentialAntisenseChains];
+  }
+
   // for example
   // 1 x x x
   //   |
@@ -432,7 +540,6 @@ export class ChainsCollection {
   // in the picture we have 5 chains, if we pass number 1 it return 1, 2 and 3, if pass 5, return 4, 5
   public getAllChainsWithConnectionInBlock(c: Chain) {
     const chains: GrouppedChain[] = [{ group: 0, chain: c }];
-    const monomerToNode = this.monomerToNode;
     const cycledComplimentaryChains = new Set<Chain>(
       this.findCycledComplimentaryChains(c, c),
     );
@@ -440,49 +547,35 @@ export class ChainsCollection {
     const res: GrouppedChain[] = [{ group: 0, chain: c }];
     const handledChains = new Set<Chain>([c]);
     const monomerToChain = this.monomerToChain;
+    const monomerToNode = this.monomerToNode;
 
     while (chains.length) {
       const { group, chain } = chains.pop() as GrouppedChain;
 
       chain.forEachNode(({ node }) => {
-        node.monomers.forEach((nodeMonomer) => {
-          const { monomer, complimentaryMonomer } =
-            this.getFirstComplimentaryMonomer(nodeMonomer) || {};
-          const complimentaryNode =
-            complimentaryMonomer && monomerToNode.get(complimentaryMonomer);
-          const complimentaryChain =
-            complimentaryMonomer && monomerToChain.get(complimentaryMonomer);
+        const { complimentaryChain } =
+          this.getComplimentaryChainIfNucleotide(
+            node,
+            monomerToChain,
+            monomerToNode,
+          ) ?? {};
 
-          const isRnaMonomer =
-            isRnaBaseOrAmbiguousRnaBase(monomer) &&
-            Boolean(getSugarFromRnaBase(monomer));
-          const isRnaComplimentaryMonomer =
-            isRnaBaseOrAmbiguousRnaBase(complimentaryMonomer) &&
-            Boolean(getSugarFromRnaBase(complimentaryMonomer));
+        if (
+          !complimentaryChain ||
+          handledChains.has(complimentaryChain) ||
+          cycledComplimentaryChains.has(complimentaryChain)
+        ) {
+          return;
+        }
 
-          if (
-            !complimentaryNode ||
-            !complimentaryChain ||
-            !(isRnaMonomer || isRnaComplimentaryMonomer) ||
-            handledChains.has(complimentaryChain) ||
-            cycledComplimentaryChains.has(complimentaryChain)
-          ) {
-            return;
-          }
-
-          handledChains.add(complimentaryChain);
-          const el = { chain: complimentaryChain, group: Number(!group) };
-          chains.push(el);
-          res.push(el);
-        });
+        handledChains.add(complimentaryChain);
+        const el = { chain: complimentaryChain, group: Number(!group) };
+        chains.push(el);
+        res.push(el);
       });
     }
 
     return res;
-  }
-
-  public getChainByMonomer(monomer: BaseMonomer) {
-    return this.monomerToChain.get(monomer);
   }
 
   public getComplimentaryChainsWithData(
@@ -522,253 +615,5 @@ export class ChainsCollection {
     });
 
     return complimentaryChainsWithData;
-  }
-
-  public getAntisenseChainsWithData(chain: Chain) {
-    const complimentaryChainsWithData =
-      this.getComplimentaryChainsWithData(chain);
-    const antisenseChainsWithData = complimentaryChainsWithData.filter(
-      (complimentaryChainWithData) =>
-        complimentaryChainWithData.complimentaryChain.firstMonomer?.monomerItem
-          .isAntisense,
-    );
-    const antisenseChainsStartIndexes = antisenseChainsWithData.map(
-      (antisenseChainWithData) => {
-        const firstConnectedAntisenseNodeIndex =
-          antisenseChainWithData.complimentaryChain.nodes.findIndex((node) => {
-            return (
-              node === antisenseChainWithData.firstConnectedComplimentaryNode
-            );
-          });
-        const senseNodeIndex = chain.nodes.indexOf(
-          antisenseChainWithData.firstConnectedNode,
-        );
-
-        if (!isNumber(senseNodeIndex)) {
-          return -1;
-        }
-
-        return senseNodeIndex - firstConnectedAntisenseNodeIndex;
-      },
-    );
-    const antisenseChainsStartIndexesMap = new Map(
-      antisenseChainsStartIndexes.map((antisenseChainsStartIndex, index) => [
-        antisenseChainsStartIndex,
-        antisenseChainsWithData[index],
-      ]),
-    );
-
-    const antisenseNodesToIndexesMap = new Map<
-      number,
-      { node: SubChainNode; chain: Chain; nodeIndex: number }
-    >();
-
-    antisenseChainsStartIndexesMap.forEach((chainWithData, firstNodeIndex) => {
-      chainWithData.complimentaryChain.nodes.forEach((node, index) => {
-        antisenseNodesToIndexesMap.set(firstNodeIndex + index, {
-          node,
-          chain: chainWithData.complimentaryChain,
-          nodeIndex: index,
-        });
-      });
-    });
-
-    return {
-      antisenseChainsWithData,
-      antisenseChainsStartIndexes,
-      antisenseChainsStartIndexesMap,
-      antisenseNodesToIndexesMap,
-    };
-  }
-
-  public getAlignedSenseAntisenseChainItems(chain: Chain) {
-    const handledNodes = new Set<SubChainNode>();
-    const monomerToNode = this.monomerToNode;
-    const monomerToChain = this.monomerToChain;
-    const { antisenseChainsStartIndexes, antisenseNodesToIndexesMap } =
-      this.getAntisenseChainsWithData(chain);
-    const twoStrandedChainItems: ITwoStrandedChainItem[] = [];
-    let currentSenseIterationIndex = 0;
-    let currentAntisenseGlobalIterationIndex = Math.min(
-      ...antisenseChainsStartIndexes,
-    );
-    let currentAntisenseLocalIterationIndex = 0;
-    let previousHandledAntisenseNode: SubChainNode | undefined;
-    let isIterationFinished = false;
-
-    while (!isIterationFinished) {
-      const antisenseNodeWithData = antisenseNodesToIndexesMap.get(
-        currentAntisenseGlobalIterationIndex,
-      );
-      const antisenseNode = antisenseNodeWithData?.node;
-      const antisenseChain = antisenseNodeWithData?.chain;
-      const senseNode = chain.nodes[currentSenseIterationIndex];
-
-      if (!senseNode && !antisenseNode) {
-        isIterationFinished = true;
-        continue;
-      }
-
-      if (senseNode && handledNodes.has(senseNode)) {
-        continue;
-      }
-
-      if (!antisenseNode) {
-        twoStrandedChainItems.push({
-          senseNode,
-          senseNodeIndex: currentSenseIterationIndex,
-          chain,
-        });
-        handledNodes.add(senseNode);
-        currentSenseIterationIndex++;
-        currentAntisenseGlobalIterationIndex = currentSenseIterationIndex;
-        currentAntisenseLocalIterationIndex = 0;
-      } else if (
-        !getPreviousConnectedNode(antisenseNode, monomerToNode) &&
-        previousHandledAntisenseNode &&
-        previousHandledAntisenseNode !== antisenseNode
-      ) {
-        const secondConnectedSenseNode = senseNode;
-        const firstConnectedSenseNode = getPreviousConnectedNode(
-          senseNode,
-          monomerToNode,
-        );
-
-        twoStrandedChainItems.push({
-          senseNode:
-            (firstConnectedSenseNode &&
-              new BackBoneSequenceNode(
-                firstConnectedSenseNode,
-                secondConnectedSenseNode,
-              )) ||
-            undefined,
-          senseNodeIndex: currentSenseIterationIndex,
-          antisenseNode: new EmptySequenceNode(),
-          chain,
-          antisenseChain,
-          antisenseNodeIndex: currentAntisenseLocalIterationIndex,
-        });
-        currentAntisenseLocalIterationIndex = 0;
-        currentAntisenseGlobalIterationIndex = currentSenseIterationIndex;
-      } else if (
-        senseNode?.monomers.some((monomer) => {
-          return monomer.hydrogenBonds.some((hydrogenBond) => {
-            const anotherMonomer = hydrogenBond.getAnotherMonomer(monomer);
-            const anotherNode =
-              anotherMonomer && monomerToNode.get(anotherMonomer);
-
-            return anotherNode === antisenseNode;
-          });
-        })
-      ) {
-        twoStrandedChainItems.push({
-          senseNode,
-          senseNodeIndex: currentSenseIterationIndex,
-          antisenseNode,
-          chain,
-          antisenseChain,
-          antisenseNodeIndex: currentAntisenseLocalIterationIndex,
-        });
-        handledNodes.add(senseNode);
-        handledNodes.add(antisenseNode);
-        currentSenseIterationIndex++;
-        currentAntisenseGlobalIterationIndex++;
-        currentAntisenseLocalIterationIndex++;
-      } else if (
-        senseNode?.monomers.some((monomer) => {
-          return monomer.hydrogenBonds.some((hydrogenBond) => {
-            const anotherMonomer = hydrogenBond.getAnotherMonomer(monomer);
-            const anotherChain =
-              anotherMonomer && monomerToChain.get(anotherMonomer);
-
-            return anotherChain === antisenseChain;
-          });
-        })
-      ) {
-        const secondConnectedSenseNode = senseNode;
-        const firstConnectedSenseNode = getPreviousConnectedNode(
-          senseNode,
-          monomerToNode,
-        );
-
-        twoStrandedChainItems.push({
-          senseNode: firstConnectedSenseNode
-            ? new BackBoneSequenceNode(
-                firstConnectedSenseNode,
-                secondConnectedSenseNode,
-              )
-            : undefined,
-          senseNodeIndex: currentSenseIterationIndex,
-          antisenseNode,
-          chain,
-          antisenseChain,
-          antisenseNodeIndex: currentAntisenseLocalIterationIndex,
-        });
-        handledNodes.add(antisenseNode);
-        currentAntisenseGlobalIterationIndex++;
-        currentAntisenseLocalIterationIndex++;
-      } else if (
-        antisenseNode.monomers.some((monomer) => {
-          return monomer.hydrogenBonds.some((hydrogenBond) => {
-            const anotherMonomer = hydrogenBond.getAnotherMonomer(monomer);
-            const anotherNode =
-              anotherMonomer && monomerToNode.get(anotherMonomer);
-            const anotherChain =
-              anotherMonomer && monomerToChain.get(anotherMonomer);
-
-            return (
-              anotherChain === chain &&
-              anotherNode &&
-              !handledNodes.has(anotherNode)
-            );
-          });
-        })
-      ) {
-        const secondConnectedAntisenseNode = antisenseNode;
-        const firstConnectedAntisenseNode = getPreviousConnectedNode(
-          secondConnectedAntisenseNode,
-          monomerToNode,
-        );
-
-        twoStrandedChainItems.push({
-          senseNode,
-          senseNodeIndex: currentSenseIterationIndex,
-          antisenseNode: firstConnectedAntisenseNode
-            ? new BackBoneSequenceNode(
-                firstConnectedAntisenseNode,
-                secondConnectedAntisenseNode,
-              )
-            : undefined,
-          chain,
-          antisenseChain,
-        });
-        handledNodes.add(senseNode);
-        currentSenseIterationIndex++;
-      } else {
-        twoStrandedChainItems.push({
-          senseNode,
-          senseNodeIndex: currentSenseIterationIndex,
-          antisenseNode,
-          chain,
-          antisenseChain,
-          antisenseNodeIndex: currentAntisenseLocalIterationIndex,
-        });
-        handledNodes.add(senseNode);
-        handledNodes.add(antisenseNode);
-        currentSenseIterationIndex++;
-        currentAntisenseGlobalIterationIndex++;
-        currentAntisenseLocalIterationIndex++;
-      }
-
-      previousHandledAntisenseNode = antisenseNode;
-    }
-
-    return twoStrandedChainItems;
-  }
-
-  public getAlignedSenseAntisenseChains() {
-    return this.chains
-      .filter((chain) => !chain.isAntisense)
-      .map((chain) => this.getAlignedSenseAntisenseChainItems(chain));
   }
 }

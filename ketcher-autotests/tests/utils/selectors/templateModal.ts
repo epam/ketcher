@@ -1,15 +1,14 @@
-import {
-  Bases,
-  Chem,
-  Nucleotides,
-  Peptides,
-  Phosphates,
-  Presets,
-  Sugars,
-} from '@constants/monomers';
+import { Bases } from '@constants/monomers/Bases';
+import { Chem } from '@constants/monomers/Chem';
+import { Nucleotides } from '@constants/monomers/Nucleotides';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Phosphates } from '@constants/monomers/Phosphates';
+import { Presets } from '@constants/monomers/Presets';
+import { Sugars } from '@constants/monomers/Sugars';
 import { Page, expect } from '@playwright/test';
 import {
   LeftPanelButton,
+  Monomer,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -115,7 +114,7 @@ export enum RnaPartDropDown {
   Phosphates = 'summary-Phosphates',
 }
 
-const monomerTabMapping: Partial<Record<MonomerLocationTabs, string[]>> = {
+const monomerTabMapping: Partial<Record<MonomerLocationTabs, Monomer[]>> = {
   [MonomerLocationTabs.BASES]: Object.values(Bases),
   [MonomerLocationTabs.CHEM]: Object.values(Chem),
   [MonomerLocationTabs.NUCLEOTIDES]: Object.values(Nucleotides),
@@ -124,15 +123,6 @@ const monomerTabMapping: Partial<Record<MonomerLocationTabs, string[]>> = {
   [MonomerLocationTabs.PRESETS]: Object.values(Presets),
   [MonomerLocationTabs.SUGARS]: Object.values(Sugars),
 };
-
-export type Monomer =
-  | Bases
-  | Chem
-  | Nucleotides
-  | Phosphates
-  | Peptides
-  | Presets
-  | Sugars;
 
 const getMonomerLocationTabNameBymonomer = (
   monomer: Monomer,
@@ -143,7 +133,9 @@ const getMonomerLocationTabNameBymonomer = (
     }
   }
 
-  throw new Error(`MonomerLocationTab is not defined for monomer ${monomer}`);
+  throw new Error(
+    `MonomerLocationTab is not defined for monomer ${monomer.testId}`,
+  );
 };
 
 /**
@@ -160,7 +152,7 @@ export async function selectMonomer(
     : getMonomerLocationTabNameBymonomer(monomer);
 
   await goToMonomerLocationTab(page, tab);
-  await page.getByTestId(monomer).click();
+  await page.getByTestId(monomer.testId).click();
 }
 
 /**
@@ -179,7 +171,7 @@ export async function addMonomerToFavorites(page: Page, monomer: Monomer) {
   const tab = getMonomerLocationTabNameBymonomer(monomer);
   await goToMonomerLocationTab(page, tab);
 
-  const favoritesStar = page.getByTestId(monomer).getByText('★');
+  const favoritesStar = page.getByTestId(monomer.testId).getByText('★');
   const isFavorite = (await favoritesStar.getAttribute('class'))?.includes(
     'visible',
   );
@@ -203,7 +195,7 @@ export async function removeMonomerFromFavorites(
 
   await goToMonomerLocationTab(page, tab);
 
-  const favoritesStar = page.getByTestId(monomer).getByText('★');
+  const favoritesStar = page.getByTestId(monomer.testId).getByText('★');
   const isFavorite = (await favoritesStar.getAttribute('class'))?.includes(
     'visible',
   );

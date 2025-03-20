@@ -15,6 +15,7 @@
  ***************************************************************************/
 
 import {
+  Action,
   Atom,
   Bond,
   FlipDirection,
@@ -245,13 +246,36 @@ class RotateTool implements Tool {
 
     const dragCtx = this.dragCtx;
 
-    const action = dragCtx.action
-      ? fromItemsFuse(this.reStruct, dragCtx.mergeItems).mergeWith(
-          dragCtx.action,
-        )
-      : fromItemsFuse(this.reStruct, dragCtx.mergeItems);
-    delete this.dragCtx;
+    let isMergingSGroup = false;
 
+    const { atoms, bonds } = dragCtx.mergeItems ?? {};
+
+    atoms?.forEach((dst: number, src: number) => {
+      if (
+        this.struct.isAtomFromMacromolecule(src) ||
+        this.struct.isAtomFromMacromolecule(dst)
+      ) {
+        isMergingSGroup = true;
+      }
+    });
+    bonds?.forEach((dst: number, src: number) => {
+      if (
+        this.struct.isBondFromMacromolecule(src) ||
+        this.struct.isBondFromMacromolecule(dst)
+      ) {
+        isMergingSGroup = true;
+      }
+    });
+
+    let action: Action = dragCtx.action;
+
+    if (!isMergingSGroup) {
+      action = action
+        ? fromItemsFuse(this.reStruct, dragCtx.mergeItems).mergeWith(action)
+        : fromItemsFuse(this.reStruct, dragCtx.mergeItems);
+    }
+
+    delete this.dragCtx;
     this.editor.update(action);
 
     if (dragCtx.mergeItems) {

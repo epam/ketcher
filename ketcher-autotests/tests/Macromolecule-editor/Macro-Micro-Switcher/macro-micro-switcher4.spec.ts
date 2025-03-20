@@ -152,13 +152,13 @@ test(`Verify that deleting a bond in macro mode removes the bond while maintaini
 
   await selectEraseTool(page);
   // removing single bond
-  await clickOnMicroBondByIndex(page, 39);
+  await clickOnMicroBondByIndex(page, 41);
   // removing double bond
-  await clickOnMicroBondByIndex(page, 45);
+  await clickOnMicroBondByIndex(page, 47);
   // removing single up bond
-  await clickOnMicroBondByIndex(page, 51);
+  await clickOnMicroBondByIndex(page, 53);
   // removing single down bond
-  await clickOnMicroBondByIndex(page, 51);
+  await clickOnMicroBondByIndex(page, 53);
 
   await takeEditorScreenshot(page);
 });
@@ -264,7 +264,6 @@ test(`Verify that all 16 bond types are saved/loaded correctly in macromolecules
     'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.mol',
     FileType.MOL,
     'v3000',
-    [1],
   );
 
   await openFileAndAddToCanvasAsNewProject(
@@ -384,7 +383,6 @@ test(`Verify that all 16 types of bonds saved in macro mode can be opened in mic
     'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.mol',
     FileType.MOL,
     'v3000',
-    [1],
   );
 
   await turnOnMicromoleculesEditor(page);
@@ -627,7 +625,7 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
     await bondLocator.first().hover({ force: true });
     await dragMouseTo(400, 400, page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   }
 });
 

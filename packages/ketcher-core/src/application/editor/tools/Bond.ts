@@ -110,6 +110,7 @@ class PolymerBond implements BaseTool {
         );
         return;
       }
+
       const { polymerBond, command: modelChanges } =
         this.editor.drawingEntitiesManager.startPolymerBondCreation(
           selectedRenderer.monomer,
@@ -320,6 +321,11 @@ class PolymerBond implements BaseTool {
       }
       const modelChanges = this.finishBondCreation(renderer.monomer);
       this.history.update(modelChanges);
+      if (modelChanges.operations[0]?.polymerBond) {
+        this.editor.drawingEntitiesManager.detectBondsOverlappedByMonomers([
+          modelChanges.operations[0].polymerBond,
+        ]);
+      }
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,
@@ -377,6 +383,7 @@ class PolymerBond implements BaseTool {
         'You have connected monomers with attachment points of the same group',
       );
     }
+
     return this.editor.drawingEntitiesManager.finishPolymerBondCreation(
       this.bondRenderer.polymerBond,
       secondMonomer,
@@ -437,6 +444,11 @@ class PolymerBond implements BaseTool {
 
       // This logic so far is only for no-modal connections. Maybe then we can chain it after modal invoke
       const modelChanges = this.finishBondCreation(renderer.monomer);
+      if (modelChanges.operations[0]?.polymerBond) {
+        this.editor.drawingEntitiesManager.detectBondsOverlappedByMonomers([
+          modelChanges.operations[0].polymerBond,
+        ]);
+      }
       this.editor.renderersContainer.update(modelChanges);
       this.editor.renderersContainer.deletePolymerBond(
         this.bondRenderer.polymerBond,
@@ -454,21 +466,32 @@ class PolymerBond implements BaseTool {
 
     const atomRenderer = event.target.__data__ as AtomRenderer;
     const monomer = this.bondRenderer?.polymerBond.firstMonomer;
+
+    if (!this.isHydrogenBond && !monomer.chosenFirstAttachmentPointForBond) {
+      this.editor.events.error.dispatch(
+        'Monomer to Atom supports only attachment points for bond creation',
+      );
+      return;
+    }
+
     const attachmentPoint =
       monomer.getPotentialAttachmentPointByBond(
         this.bondRenderer?.polymerBond,
       ) || monomer?.getValidSourcePoint();
 
+    // Remove temporary Polymer Bond
     this.editor.drawingEntitiesManager.deletePolymerBond(
       this.bondRenderer?.polymerBond,
     );
     this.bondRenderer?.remove();
     this.bondRenderer = undefined;
+    monomer.setChosenFirstAttachmentPoint(null);
 
     if (!attachmentPoint) {
       return;
     }
 
+    // Establish new Monomer to Atom Bond
     const modelChanges =
       this.editor.drawingEntitiesManager.addMonomerToAtomBond(
         monomer,

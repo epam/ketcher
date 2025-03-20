@@ -23,6 +23,7 @@ import {
 import { EmptySubChain } from 'domain/entities/monomer-chains/EmptySubChain';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 
+let id = 0;
 export class Chain {
   public subChains: BaseSubChain[] = [];
 
@@ -30,7 +31,10 @@ export class Chain {
 
   public isCyclic = false;
 
+  public id: number;
+
   constructor(firstMonomer?: BaseMonomer, isCyclic?: boolean) {
+    this.id = id++;
     if (firstMonomer) {
       this.firstMonomer = firstMonomer;
 
@@ -200,6 +204,30 @@ export class Chain {
         nodeIndex++;
       });
     });
+  }
+
+  public forEachNodeReversed(
+    callback: ({
+      node,
+      subChain,
+    }: {
+      node: SubChainNode;
+      subChain: BaseSubChain;
+      nodeIndex: number;
+    }) => void,
+  ) {
+    let nodeIndex = this.length - 1;
+
+    for (let i = this.subChains.length - 1; i >= 0; i--) {
+      for (let j = this.subChains[i].nodes.length - 1; j >= 0; j--) {
+        callback({
+          node: this.subChains[i].nodes[j],
+          subChain: this.subChains[i],
+          nodeIndex,
+        });
+        nodeIndex--;
+      }
+    }
   }
 
   public static createChainWithEmptyNode() {

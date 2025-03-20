@@ -88,9 +88,16 @@ export const SequenceTypeGroupButton = () => {
 
   useEffect(() => {
     editor?.events.selectMode.add(onToggleSequenceMode);
-    editor?.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
-      setActiveSequenceType(mode),
-    );
+    editor?.events.changeSequenceTypeEnterMode.add((mode: SequenceType) => {
+      dispatch(
+        setSelectedTabIndex(
+          mode === MONOMER_TYPES.PEPTIDE
+            ? LIBRARY_TAB_INDEX.PEPTIDES
+            : LIBRARY_TAB_INDEX.RNA,
+        ),
+      );
+      setActiveSequenceType(mode);
+    });
     editor?.events.changeSequenceTypeEnterMode.dispatch(SequenceType.RNA);
 
     return () => {
@@ -103,13 +110,6 @@ export const SequenceTypeGroupButton = () => {
   }, [layoutMode]);
 
   const handleSelectSequenceType = (sequenceType: string) => {
-    dispatch(
-      setSelectedTabIndex(
-        sequenceType === MONOMER_TYPES.PEPTIDE
-          ? LIBRARY_TAB_INDEX.PEPTIDES
-          : LIBRARY_TAB_INDEX.RNA,
-      ),
-    );
     editor.events.changeSequenceTypeEnterMode.dispatch(sequenceType);
   };
 

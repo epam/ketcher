@@ -34,6 +34,7 @@ import {
   generateCornerFromTopToRight,
   SMOOTH_CORNER_SIZE,
 } from './helpers';
+import { isNumber } from 'lodash';
 
 enum LineDirection {
   Horizontal = 'Horizontal',
@@ -113,6 +114,40 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       startPosition: startPositionInPixels,
       endPosition: endPositionInPixels,
     };
+  }
+
+  public getSideConnectionEndpointAngle(monomer: BaseMonomer): number {
+    const editor = CoreEditor.provideEditorInstance();
+    const matrix = editor.drawingEntitiesManager.canvasMatrix;
+    const cells = matrix?.polymerBondToCells.get(this.polymerBond);
+    const startCellDirection = cells?.[0].connections?.find(
+      (connection) => connection.polymerBond === this.polymerBond,
+    )?.direction;
+    const endCellDirection = cells?.[cells.length - 1].connections?.find(
+      (connection) => connection.polymerBond === this.polymerBond,
+    )?.direction;
+    const startCellMonomer = cells?.[0].monomer;
+    const endpointDirection =
+      monomer === startCellMonomer ? startCellDirection : endCellDirection;
+    const startCellNormalizedDirection = isNumber(startCellDirection)
+      ? startCellDirection
+      : startCellDirection?.y;
+    const endCellNormalizedDirection = isNumber(endCellDirection)
+      ? endCellDirection
+      : endCellDirection?.y;
+    const normalizedDirection = isNumber(endpointDirection)
+      ? endpointDirection
+      : endpointDirection?.y;
+    const endpointAngle =
+      normalizedDirection === 0 ? -Math.PI / 2 : Math.PI / 2;
+
+    return startCellDirection === 90 && endCellDirection === 90 // vertical bond. need to check is it right that angles 90 and 90
+      ? monomer === startCellMonomer
+        ? -Math.PI / 2
+        : Math.PI / 2
+      : startCellNormalizedDirection === 0 && endCellNormalizedDirection === 270 // horizontal bond.
+      ? Math.PI / 2
+      : endpointAngle;
   }
 
   public moveSelection(): void {
@@ -464,13 +499,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   private get isSideChainLikeBackbone() {
     return (
       !this.polymerBond.isSideChainConnection &&
-      this.polymerBond.isCyclicOverlappingBond
+      this.polymerBond.isOverlappedByMonomer
     );
   }
 
   private updateSnakeBondPath(
-    startPosition: Vec2,
-    endPosition: Vec2,
+    _startPosition: Vec2,
+    _endPosition: Vec2,
     reCheckAttachmentPoint = true,
   ): void {
     const isR1TheCurrentAttachmentPointOfFirstMonomer =
@@ -480,15 +515,17 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       this.polymerBond.firstMonomer.getPotentialAttachmentPointByBond(
         this.polymerBond,
       ) === 'R1';
+    const isAntisense = this.polymerBond.firstMonomer.monomerItem.isAntisense;
+    const startPosition = isAntisense ? _endPosition : _startPosition;
+    const endPosition = isAntisense ? _startPosition : _endPosition;
 
     // check if there is nucleotide in current row
     const isBondConnectedWithNucleotide =
       this.polymerBond.firstMonomer.isMonomerInRnaChainRow;
-    const verticalLineLength = this.polymerBond.firstMonomer.monomerItem
-      .isAntisense
+    const verticalLineLength = isAntisense
       ? RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH
       : this.polymerBond.firstMonomer.monomerItem.isSense &&
-        (this.polymerBond.restOfRowsWithAntisense || 0) > 0
+        this.polymerBond.hasAntisenseInRow
       ? RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH
       : isBondConnectedWithNucleotide
       ? RNA_CHAIN_VERTICAL_LINE_LENGTH
@@ -574,7 +611,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         LineDirection.Horizontal,
         -(
           startPosition.x -
-          endPosition.x +
+          (this.polymerBond.nextRowPositionX || endPosition.x) +
           LINE_FROM_MONOMER_LENGTH * 2 +
           this.getMonomerWidth()
         ),
@@ -590,7 +627,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       this.path = this.path.concat(generateCornerFromTopToRight());
       this.addLine(
         LineDirection.Horizontal,
-        LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
+        this.polymerBond.nextRowPositionX
+          ? endPosition.x -
+              this.polymerBond.nextRowPositionX +
+              this.getMonomerWidth()
+          : LINE_FROM_MONOMER_LENGTH + this.getMonomerWidth() / 2,
       );
     } else if (this.isSecondMonomerTopLeft(startPosition, endPosition)) {
       if (

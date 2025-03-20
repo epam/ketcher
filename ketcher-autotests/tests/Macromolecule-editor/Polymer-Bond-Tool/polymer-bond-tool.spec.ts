@@ -1,4 +1,7 @@
 /* eslint-disable no-magic-numbers */
+import { Chem } from '@constants/monomers/Chem';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Presets } from '@constants/monomers/Presets';
 import {
   test,
   expect,
@@ -13,8 +16,6 @@ import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pressButton,
-  selectTopPanelButton,
-  TopPanelButton,
   saveToFile,
   receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
@@ -32,6 +33,13 @@ import {
   clickOnCanvas,
   selectMacroBond,
   selectMonomer,
+  selectOpenFileTool,
+  selectSequenceLayoutModeTool,
+  selectEraseTool,
+  selectAllStructuresOnCanvas,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  selectSnakeLayoutModeTool,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
@@ -40,13 +48,19 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
-import { connectMonomersWithBonds } from '@utils/macromolecules/monomer';
-import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import {
+  connectMonomersWithBonds,
+  getMonomerLocator,
+  moveMonomer,
+} from '@utils/macromolecules/monomer';
+import {
+  bondTwoMonomers,
+  bondTwoMonomersPointToPoint,
+} from '@utils/macromolecules/polymerBond';
 import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
-import { Chem, Peptides, Presets } from '@constants/monomers';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -123,37 +137,30 @@ test('Create bond between two peptides', async () => {
     Description: Polymer bond tool
     */
   // Choose peptide
-  const MONOMER_NAME = Peptides.Tza;
-  const MONOMER_ALIAS = 'Tza';
-
   const peptide1 = await addSingleMonomerToCanvas(
     page,
-    MONOMER_NAME,
-    MONOMER_ALIAS,
+    Peptides.Tza,
     300,
     300,
     0,
   );
   const peptide2 = await addSingleMonomerToCanvas(
     page,
-    MONOMER_NAME,
-    MONOMER_ALIAS,
+    Peptides.Tza,
     400,
     400,
     1,
   );
   const peptide3 = await addSingleMonomerToCanvas(
     page,
-    MONOMER_NAME,
-    MONOMER_ALIAS,
+    Peptides.Tza,
     500,
     500,
     2,
   );
   const peptide4 = await addSingleMonomerToCanvas(
     page,
-    MONOMER_NAME,
-    MONOMER_ALIAS,
+    Peptides.Tza,
     500,
     200,
     3,
@@ -194,7 +201,7 @@ test('Create bond between two chems', async () => {
   await clickOnCanvas(page, 400, 400);
 
   // Get 2 chems locators
-  const chems = await page.getByText('hxy').locator('..');
+  const chems = page.getByText('hxy').locator('..');
   const chem1 = chems.nth(0);
   const chem2 = chems.nth(1);
 
@@ -222,20 +229,17 @@ test('Select monomers and pass a bond', async () => {
       than 1 bond between the first and the second monomer
       */
   await pageReload(page);
-  const MONOMER_NAME = Peptides.Tza;
-  const MONOMER_ALIAS = 'Tza';
+
   const peptide1 = await addSingleMonomerToCanvas(
     page,
-    MONOMER_NAME,
-    MONOMER_ALIAS,
+    Peptides.Tza,
     300,
     300,
     0,
   );
   const peptide2 = await addSingleMonomerToCanvas(
     page,
-    MONOMER_NAME,
-    MONOMER_ALIAS,
+    Peptides.Tza,
     400,
     400,
     1,
@@ -263,7 +267,7 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Peptides.Edc);
   await clickOnCanvas(page, x, y);
-  await connectMonomersWithBonds(page, ['Bal', 'Edc']);
+  await connectMonomersWithBonds(page, ['bAla', 'Edc']);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
@@ -605,7 +609,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     });
 
   expect(fastaFile).toEqual(fastaFileExpected);
-  await selectTopPanelButton(TopPanelButton.Open, page);
+  await selectOpenFileTool(page);
   await openFile('FASTA/two-peptides-connected-expected.fasta', page);
   await selectOptionInTypeDropdown2('Peptide', page);
   await pressButton(page, 'Open as New');
@@ -709,11 +713,371 @@ test('Verify behaviour when a non-bond is right-clicked', async () => {
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
-  await page
-    .getByText('Phe4Me')
-    .locator('..')
-    .first()
-    .click({ button: 'right' });
+  await getMonomerLocator(page, Peptides.Phe4Me).click({ button: 'right' });
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+  });
+});
+
+test('Edit long bonds connections by Edit attachment point menu', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6167
+    Description: Long bond can be edited by Edit Connection Point menu.
+    Case:
+    1. Load ket file with five peptides
+    2. Connect first monomer and fifth monomer by R1 and R3
+    3. Right click on Long bond
+    4. Click on Edit Connection Points
+    5. Click on R3 and R2
+    6. Click on Reconnect
+    7. Take screenshot
+    */
+  await pageReload(page);
+  const firstMonomer = getMonomerLocator(page, Peptides.C);
+  const secondMonomer = getMonomerLocator(page, Peptides.dC);
+  await openFileAndAddToCanvasMacro(
+    'KET/five-peptides-connected-by-r2-r1.ket',
+    page,
+  );
+  await bondTwoMonomersPointToPoint(
+    page,
+    firstMonomer,
+    secondMonomer,
+    'R1',
+    'R3',
+  );
+  await page.mouse.click(517, 364, { button: 'right' });
+  await page.getByText('Edit Connection Points...').click();
+  await page.getByRole('button', { name: 'R3' }).first().click();
+  await page.getByRole('button', { name: 'R2' }).nth(1).click();
+  await takeEditorScreenshot(page);
+  await pressButton(page, 'Reconnect');
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+  });
+});
+
+test('Delete long bonds and perform Undo/Redo actions', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6167
+    Description: Long bond can be deleted and restored.
+    Case:
+    1. Load ket file with five peptides
+    2. Connect first monomer and fifth monomer by R1 and R3
+    3. Delete long bond
+    4. Take screenshot
+    5. Perform Undo action
+    6. Perform Redo action
+    7. Take screenshot
+    */
+  await pageReload(page);
+  const firstMonomer = getMonomerLocator(page, Peptides.C);
+  const secondMonomer = getMonomerLocator(page, Peptides.dC);
+  await openFileAndAddToCanvasMacro(
+    'KET/five-peptides-connected-by-r2-r1.ket',
+    page,
+  );
+  await bondTwoMonomersPointToPoint(
+    page,
+    firstMonomer,
+    secondMonomer,
+    'R1',
+    'R3',
+  );
+  await selectEraseTool(page);
+  await page.mouse.click(517, 364);
+  await takeEditorScreenshot(page);
+  await pressUndoButton(page);
+  await takeEditorScreenshot(page);
+  await pressRedoButton(page);
+  await takeEditorScreenshot(page);
+});
+
+test('Delete monomer in structure with long bonds and perform Undo/Redo actions', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6167
+    Description: Monomer in structure with long bonds can be deleted and restored.
+    Case:
+    1. Load ket file with five peptides
+    2. Connect first monomer and fifth monomer by R1 and R3
+    3. Delete monomer
+    4. Take screenshot
+    5. Perform Undo action
+    6. Perform Redo action
+    7. Take screenshot
+    */
+  await pageReload(page);
+  const firstMonomer = getMonomerLocator(page, Peptides.C);
+  const secondMonomer = getMonomerLocator(page, Peptides.dC);
+  await openFileAndAddToCanvasMacro(
+    'KET/five-peptides-connected-by-r2-r1.ket',
+    page,
+  );
+  await bondTwoMonomersPointToPoint(
+    page,
+    firstMonomer,
+    secondMonomer,
+    'R1',
+    'R3',
+  );
+  await selectEraseTool(page);
+  await firstMonomer.click();
+  await takeEditorScreenshot(page);
+  await pressUndoButton(page);
+  await takeEditorScreenshot(page);
+  await pressRedoButton(page);
+  await takeEditorScreenshot(page);
+});
+
+test('Copy structure with long bonds and paste on canvas', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6167
+    Description: Structure with long bonds can be copied.
+    Case:
+    1. Load ket file with five peptides
+    2. Copy structure
+    3. Paste structure
+    4. Take screenshot
+    */
+  await pageReload(page);
+  await openFileAndAddToCanvasMacro(
+    'KET/five-peptides-connected-by-r2-r1-expected.ket',
+    page,
+  );
+  await takeEditorScreenshot(page);
+  await selectAllStructuresOnCanvas(page);
+  await copyToClipboardByKeyboard(page);
+  await page.mouse.move(300, 300);
+  await pasteFromClipboardByKeyboard(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+  });
+});
+
+const connectionVariants = [
+  { from: 'R1', to: 'R3' },
+  { from: 'R3', to: 'R2' },
+  { from: 'R3', to: 'R3' },
+];
+
+connectionVariants.forEach(({ from, to }) => {
+  test(`Verify that an ${from}-${to} connection forms a long bond that appears on top of monomers (modes Flex, Sequence)`, async () => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/6167
+      Description: Checks that a long bond between two peptides is placed above monomers in both Flex and Sequence modes.
+      Steps:
+      1. Load a .ket file with five peptides
+      2. Connect first monomer and fifth monomer by the specified R-group pair
+      3. Take a screenshot
+      4. Switch to Sequence mode
+      5. Take another screenshot
+    */
+    await pageReload(page);
+    const firstMonomer = getMonomerLocator(page, Peptides.C);
+    const secondMonomer = getMonomerLocator(page, Peptides.dC);
+    await openFileAndAddToCanvasMacro(
+      'KET/five-peptides-connected-by-r2-r1.ket',
+      page,
+    );
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      from,
+      to,
+    );
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+});
+
+const connectionVariants2 = [
+  { from: 'R1', to: 'R3' },
+  { from: 'R3', to: 'R2' },
+  { from: 'R3', to: 'R3' },
+];
+
+connectionVariants2.forEach(({ from, to }) => {
+  test(`Verify that an ${from}-${to} connection forms a long bond that appears on top of monomers (modes Snake, Sequence)`, async () => {
+    /*
+      Test case: https://github.com/epam/ketcher/issues/6167
+      Description: Checks that a long bond between two peptides is placed above monomers in both Snake and Sequence modes.
+      Steps:
+      1. Load a .ket file with five peptides in Snake mode
+      2. Connect first monomer and fifth monomer by the specified R-group pair
+      3. Take a screenshot
+      4. Switch to Sequence mode
+      5. Take another screenshot
+    */
+    await pageReload(page);
+    await selectSnakeLayoutModeTool(page);
+    const firstMonomer = getMonomerLocator(page, Peptides.C);
+    const secondMonomer = getMonomerLocator(page, Peptides.dC);
+    await openFileAndAddToCanvasMacro(
+      'KET/five-peptides-connected-by-r2-r1.ket',
+      page,
+    );
+    await bondTwoMonomersPointToPoint(
+      page,
+      firstMonomer,
+      secondMonomer,
+      from,
+      to,
+    );
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await selectSequenceLayoutModeTool(page);
+    await takeEditorScreenshot(page);
+  });
+});
+
+test('Save and Open structure with long bonds to/from KET', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6167
+    Description: Long bond can be saved and opened to/from KET.
+    Case:
+    1. Load ket file with five peptides
+    2. Connect first monomer and fifth monomer by R1 and R3
+    3. Save to KET
+    4. Open saved KET
+    5. Take screenshot
+    */
+  await pageReload(page);
+  const firstMonomer = getMonomerLocator(page, Peptides.C);
+  const secondMonomer = getMonomerLocator(page, Peptides.dC);
+  await openFileAndAddToCanvasMacro(
+    'KET/five-peptides-connected-by-r2-r1.ket',
+    page,
+  );
+  await bondTwoMonomersPointToPoint(
+    page,
+    firstMonomer,
+    secondMonomer,
+    'R1',
+    'R3',
+  );
+  await verifyFileExport(
+    page,
+    'KET/five-peptides-connected-by-r2-r1-expected.ket',
+    FileType.KET,
+  );
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/five-peptides-connected-by-r2-r1-expected.ket',
+    page,
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+  });
+});
+
+test('Save and Open structure with long bonds to/from MOL V3000', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6167
+    Description: Long bond can be saved and opened to/from KET.
+    Case:
+    1. Load ket file with five peptides
+    2. Connect first monomer and fifth monomer by R1 and R3
+    3. Save to MOL V3000
+    4. Open saved MOL V3000
+    5. Take screenshot
+    */
+  await pageReload(page);
+  const firstMonomer = getMonomerLocator(page, Peptides.C);
+  const secondMonomer = getMonomerLocator(page, Peptides.dC);
+  await openFileAndAddToCanvasMacro(
+    'KET/five-peptides-connected-by-r2-r1.ket',
+    page,
+  );
+  await bondTwoMonomersPointToPoint(
+    page,
+    firstMonomer,
+    secondMonomer,
+    'R1',
+    'R3',
+  );
+  await verifyFileExport(
+    page,
+    'Molfiles-V3000/five-peptides-connected-by-r2-r1-expected.mol',
+    FileType.MOL,
+    'v3000',
+  );
+  await openFileAndAddToCanvasAsNewProject(
+    'Molfiles-V3000/five-peptides-connected-by-r2-r1-expected.mol',
+    page,
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+  });
+});
+
+test('Connection R3-R3 not overlap each other when connected on one structure', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6167
+    Description: Connection R3-R3 not overlap each other when connected on one structure.
+    Case:
+    1. Load ket file with five peptides
+    2. Connect first monomer and fifth monomer by R3 and R3
+    3. Connect second monomer and fourth monomer by R3 and R3
+    4. Take screenshot
+    We have a bug https://github.com/epam/ketcher/issues/6459
+    After fix we should update snapshot.
+    */
+  await pageReload(page);
+  const firstMonomer = getMonomerLocator(page, Peptides.C);
+  const secondMonomer = getMonomerLocator(page, Peptides.Hcy);
+  const fourthMonomer = getMonomerLocator(page, Peptides.meC);
+  const fifthMonomer = getMonomerLocator(page, Peptides.dC);
+  await openFileAndAddToCanvasMacro(
+    'KET/five-peptides-connected-by-r2-r1.ket',
+    page,
+  );
+  await bondTwoMonomersPointToPoint(
+    page,
+    firstMonomer,
+    fifthMonomer,
+    'R3',
+    'R3',
+  );
+  await bondTwoMonomersPointToPoint(
+    page,
+    secondMonomer,
+    fourthMonomer,
+    'R3',
+    'R3',
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+  });
+});
+
+test('Long bond not turns into a direct bond when moving the second monomer', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6167
+    Description: Long bond not turns into a direct bond when moving the second monomer.
+    Case:
+    1. Load ket file with five peptides
+    2. Connect first monomer and fifth monomer by R1 and R3
+    3. Move second monomer up to long bond
+    4. Take screenshot
+    We have a bug https://github.com/epam/ketcher/issues/6458
+    After fix we should update snapshot.
+    */
+  await pageReload(page);
+  const firstMonomer = getMonomerLocator(page, Peptides.C);
+  const secondMonomer = getMonomerLocator(page, Peptides.Hcy);
+  const fifthMonomer = getMonomerLocator(page, Peptides.dC);
+  await openFileAndAddToCanvasMacro(
+    'KET/five-peptides-connected-by-r2-r1.ket',
+    page,
+  );
+  await bondTwoMonomersPointToPoint(
+    page,
+    firstMonomer,
+    fifthMonomer,
+    'R1',
+    'R3',
+  );
+  await moveMonomer(page, secondMonomer, 460, 350);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });

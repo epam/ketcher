@@ -285,3 +285,10 @@ export async function applyAutoMapMode(
     await takeEditorScreenshot(page);
   }
 }
+
+export async function selectSequenceTypeMode(
+  page: Page,
+  type: 'PEPTIDE' | 'RNA' | 'DNA',
+) {
+  await page.getByTestId(`${type}Btn`).click();
+}

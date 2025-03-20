@@ -293,13 +293,6 @@ export function initClipboard(dispatch) {
       }, ketcherInstance.eventBus);
       return result;
     },
-    onLegacyCopy() {
-      const state = global.currentState;
-      const editor = state.editor;
-      const data = legacyClipData(editor);
-      editor.selection(null);
-      return data;
-    },
     async onCopy() {
       const ketcherInstance = ketcherProvider.getKetcher();
       const result = await runAsyncAction(async () => {
@@ -398,7 +391,7 @@ async function clipData(editor: Editor) {
       ? ChemicalMimeType.Mol
       : ChemicalMimeType.Rxn;
 
-    res['text/plain'] = ket;
+    res['text/plain'] = data;
     res[type] = data;
 
     return res;

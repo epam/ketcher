@@ -184,18 +184,15 @@ export class RenderersManager {
 
     subChain.nodes.forEach((node) => {
       const monomerRenderer = node.monomer.renderer;
-      const monomerEnumeration = node.monomer.monomerItem.isAntisense
-        ? subChain.length - currentEnumeration + 1
-        : currentEnumeration;
       const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
-        ? monomerEnumeration === subChain.length
-        : monomerEnumeration === 1;
+        ? currentEnumeration === subChain.length
+        : currentEnumeration === 1;
 
       if (!monomerRenderer) {
         return;
       }
 
-      monomerRenderer.setEnumeration(monomerEnumeration);
+      monomerRenderer.setEnumeration(currentEnumeration);
       monomerRenderer.redrawEnumeration(needToDrawTerminalIndicator);
       currentEnumeration++;
     });
@@ -214,21 +211,18 @@ export class RenderersManager {
     );
 
     subChain.nodes.forEach((node) => {
-      const monomerEnumeration = node.monomer.monomerItem.isAntisense
-        ? nucleotidesAmount - currentEnumeration + 1
-        : currentEnumeration;
       const needToDrawTerminalIndicator = node.monomer.monomerItem.isAntisense
-        ? monomerEnumeration === nucleotidesAmount
-        : monomerEnumeration === 1;
+        ? currentEnumeration === nucleotidesAmount
+        : currentEnumeration === 1;
 
       if (node instanceof Nucleotide || node instanceof Nucleoside) {
-        node.rnaBase.renderer?.setEnumeration(monomerEnumeration);
+        node.rnaBase.renderer?.setEnumeration(currentEnumeration);
         node.rnaBase.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
-        node.sugar.renderer?.setEnumeration(monomerEnumeration);
+        node.sugar.renderer?.setEnumeration(currentEnumeration);
         node.sugar.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
         currentEnumeration++;
       } else if (node.monomer instanceof UnsplitNucleotide) {
-        node.monomer.renderer?.setEnumeration(monomerEnumeration);
+        node.monomer.renderer?.setEnumeration(currentEnumeration);
         node.monomer.renderer?.redrawEnumeration(needToDrawTerminalIndicator);
         currentEnumeration++;
       } else if (
@@ -401,7 +395,7 @@ export class RenderersManager {
     this.polymerBonds.forEach((polymerBondRenderer) => {
       if (
         !polymerBondRenderer.polymerBond.isSideChainConnection &&
-        !polymerBondRenderer.polymerBond.isCyclicOverlappingBond
+        !polymerBondRenderer.polymerBond.isOverlappedByMonomer
       ) {
         return;
       }

@@ -25,6 +25,7 @@ import {
   selectAllStructuresOnCanvas,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
+  selectOpenFileTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { waitForOpenButtonEnabled } from '@utils/common/loaders/waitForElementState';
@@ -286,7 +287,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: The "Add to Canvas" button is disabled in the "Open structure" dialog window
     */
     await enableViewOnlyModeBySetOptions(page);
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile(`KET/images-png-50-with-50-structures.ket`, page);
     await expect(page.getByText('Add to Canvas')).toBeDisabled();
     await expect(page.getByText('Open as New Project')).toBeEnabled();
@@ -516,7 +517,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'Molfiles-V2000/benzene-ring-saved-in-view-only-mode-molv2000-expected.mol',
       FileType.MOL,
       'v2000',
-      [1],
     );
 
     await openFileAndAddToCanvasAsNewProject(
@@ -541,7 +541,6 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       'Molfiles-V3000/benzene-ring-saved-in-view-only-mode-molv3000-expected.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
 
     await openFileAndAddToCanvasAsNewProject(

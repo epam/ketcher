@@ -7,6 +7,9 @@ import {
   NodesSelection,
   Phosphate,
   Entities,
+  SubChainNode,
+  BackBoneSequenceNode,
+  isTwoStrandedNodeRestrictedForHydrogenBondCreation,
 } from 'ketcher-core';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 
@@ -158,3 +161,21 @@ export const generateSequenceContextMenuProps = (
     hasAntisense,
   };
 };
+
+export function isEstablishHydrogenBondDisabled(
+  selections: NodesSelection = [],
+) {
+  return selections.every((selectionRange) => {
+    return selectionRange.every((selection) => {
+      return isTwoStrandedNodeRestrictedForHydrogenBondCreation(
+        selection.twoStrandedNode,
+      );
+    });
+  });
+}
+
+export function isNodeContainHydrogenBonds(
+  node: SubChainNode | BackBoneSequenceNode | undefined,
+) {
+  return node?.monomers.some((monomer) => monomer.hydrogenBonds.length !== 0);
+}

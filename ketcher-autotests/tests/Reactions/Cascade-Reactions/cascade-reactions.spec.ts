@@ -29,6 +29,7 @@ import {
   selectRectangleSelectionTool,
   waitForRender,
   selectLayoutTool,
+  selectOpenFileTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -97,7 +98,7 @@ test.describe('Cascade Reactions', () => {
     We have a bug https://github.com/epam/ketcher/issues/5273
     After fix we should update snapshot.
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('RDF-V2000/rdf-mol-v2000-no-reaction-3-elements.rdf', page);
     await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
@@ -109,7 +110,7 @@ test.describe('Cascade Reactions', () => {
     Description: RDF file with elements without reaction MOL V3000 can't be loaded and error is displayed - 
     Convert error! struct data not recognized as molecule, query, reaction or reaction query. 
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFile('RDF-V3000/rdf-mol-v3000-no-reaction-3-elements.rdf', page);
     await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
@@ -779,7 +780,7 @@ test.describe('Cascade Reactions', () => {
         1. Open RDF file Open Structure Preview
         2. Take screenshot
       */
-      await selectTopPanelButton(TopPanelButton.Open, page);
+      await selectOpenFileTool(page);
       await openFile(rdfFile, page);
       await takeEditorScreenshot(page);
     });
@@ -1007,7 +1008,6 @@ test.describe('Cascade Reactions', () => {
       'RDF-V2000/single-arrow-expected.rdf',
       FileType.RDF,
       'v2000',
-      [1, 5],
     );
     await openFileAndAddToCanvasAsNewProject(
       'RDF-V2000/single-arrow-expected.rdf',
@@ -1028,7 +1028,6 @@ test.describe('Cascade Reactions', () => {
       'RDF-V3000/single-arrow-expected.rdf',
       FileType.RDF,
       'v3000',
-      [1, 5],
     );
     await openFileAndAddToCanvasAsNewProject(
       'RDF-V3000/single-arrow-expected.rdf',
@@ -1052,7 +1051,6 @@ test.describe('Cascade Reactions', () => {
       'RDF-V2000/multi-tailed-arrow-default-expected.rdf',
       FileType.RDF,
       'v2000',
-      [1, 5],
     );
     await openFileAndAddToCanvasAsNewProject(
       'RDF-V2000/multi-tailed-arrow-default-expected.rdf',
@@ -1076,7 +1074,6 @@ test.describe('Cascade Reactions', () => {
       'RDF-V3000/multi-tailed-arrow-default-expected.rdf',
       FileType.RDF,
       'v3000',
-      [1, 5],
     );
     await openFileAndAddToCanvasAsNewProject(
       'RDF-V3000/multi-tailed-arrow-default-expected.rdf',

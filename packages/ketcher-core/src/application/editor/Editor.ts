@@ -65,16 +65,13 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
 import { initializeMode, parseMonomersLibrary } from './helpers';
+import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 
 interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
   mode?: BaseMode;
   monomersLibraryUpdate?: string | JSON;
-}
-
-function isMouseMainButtonPressed(event: MouseEvent) {
-  return event.button === 0;
 }
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
@@ -88,6 +85,7 @@ export class CoreEditor {
 
   public _type: EditorType;
   public renderersContainer: RenderersManager;
+  public transientDrawingView: TransientDrawingView;
   public drawingEntitiesManager: DrawingEntitiesManager;
   public viewModel: ViewModel;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
@@ -145,6 +143,7 @@ export class CoreEditor {
     this.setupCopyPasteEvent();
     this.canvasOffset = this.canvas.getBoundingClientRect();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
+    this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
     const ketcher = ketcherProvider.getKetcher();
@@ -255,6 +254,14 @@ export class CoreEditor {
     return monomersLibraryJson.root.templates
       .filter((templateRef) => {
         const template = monomersLibraryJson[templateRef.$ref];
+
+        if (!template) {
+          KetcherLogger.error(
+            `There is a ref for rna preset template ${templateRef.$ref}, but template definition is not found`,
+          );
+
+          return false;
+        }
 
         return (
           template.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
@@ -378,7 +385,14 @@ export class CoreEditor {
       (sequenceItemRenderer: BaseSequenceItemRenderer) =>
         this.onEditSequence(sequenceItemRenderer),
     );
-
+    this.events.establishHydrogenBond.add(
+      (sequenceItemRenderer: BaseSequenceItemRenderer) =>
+        this.onEstablishHydrogenBondSequenceMode(sequenceItemRenderer),
+    );
+    this.events.deleteHydrogenBond.add(
+      (sequenceItemRenderer: BaseSequenceItemRenderer) =>
+        this.onDeleteHydrogenBondSequenceMode(sequenceItemRenderer),
+    );
     this.events.turnOnSequenceEditInRNABuilderMode.add(() =>
       this.onTurnOnSequenceEditInRNABuilderMode(),
     );
@@ -388,8 +402,15 @@ export class CoreEditor {
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
     );
-    this.events.createAntisenseChain.add(() => {
-      this.onCreateAntisenseChain();
+    this.events.toggleIsSequenceSyncEditMode.add(
+      (isSequenceSyncEditMode: boolean) =>
+        this.onChangeToggleIsSequenceSyncEditMode(isSequenceSyncEditMode),
+    );
+    this.events.resetSequenceEditMode.add(() =>
+      this.onResetSequenceSyncEditMode(),
+    );
+    this.events.createAntisenseChain.add((isDnaAntisense: boolean) => {
+      this.onCreateAntisenseChain(isDnaAntisense);
     });
     this.events.copySelectedStructure.add(() => {
       this.mode.onCopy();
@@ -412,6 +433,26 @@ export class CoreEditor {
     this.mode.turnOnEditMode(sequenceItemRenderer);
   }
 
+  private onEstablishHydrogenBondSequenceMode(
+    sequenceItemRenderer: BaseSequenceItemRenderer,
+  ) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.establishHydrogenBond(sequenceItemRenderer);
+  }
+
+  private onDeleteHydrogenBondSequenceMode(
+    sequenceItemRenderer: BaseSequenceItemRenderer,
+  ) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.deleteHydrogenBond(sequenceItemRenderer);
+  }
+
   private onTurnOnSequenceEditInRNABuilderMode() {
     if (!(this.mode instanceof SequenceMode)) {
       return;
@@ -432,8 +473,31 @@ export class CoreEditor {
     this.sequenceTypeEnterMode = mode;
   }
 
-  private onCreateAntisenseChain() {
-    const modelChanges = this.drawingEntitiesManager.createAntisenseChain();
+  private onChangeToggleIsSequenceSyncEditMode(
+    isSequenceSyncEditMode: boolean,
+  ) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    if (isSequenceSyncEditMode) {
+      this.mode.turnOnSyncEditMode();
+    } else {
+      this.mode.turnOffSyncEditMode();
+    }
+  }
+
+  private onResetSequenceSyncEditMode() {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.resetEditMode();
+  }
+
+  private onCreateAntisenseChain(isDnaAntisense: boolean) {
+    const modelChanges =
+      this.drawingEntitiesManager.createAntisenseChain(isDnaAntisense);
     const history = new EditorHistory(this);
 
     this.renderersContainer.update(modelChanges);
@@ -669,6 +733,10 @@ export class CoreEditor {
     return trackedDomEvents;
   }
 
+  private isMouseMainButtonPressed(event) {
+    return event?.button === 0;
+  }
+
   private domEventSetup() {
     this.trackedDomEvents.forEach(({ target, eventName, toolEventHandler }) => {
       this.events[eventName] = new DOMSubscription();
@@ -681,7 +749,7 @@ export class CoreEditor {
 
         if (
           ['mouseup', 'mousedown', 'click', 'dbclick'].includes(event.type) &&
-          !isMouseMainButtonPressed(event)
+          !this.isMouseMainButtonPressed(event)
         ) {
           return true;
         }
@@ -772,6 +840,7 @@ export class CoreEditor {
     }
     this._monomersLibraryParsedJson = null;
     this._type = EditorType.Micromolecules;
+    this.drawingEntitiesManager = new DrawingEntitiesManager();
   }
 
   private switchToMacromolecules() {

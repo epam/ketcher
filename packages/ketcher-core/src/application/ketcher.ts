@@ -52,6 +52,11 @@ import {
   SupportedImageFormats,
   SupportedModes,
 } from 'application/ketcher.types';
+import { isNumber } from 'lodash';
+
+type SetMoleculeOptions = {
+  position?: { x: number; y: number };
+};
 
 const allowedApiSettings = {
   'general.dearomatize-on-load': 'dearomatize-on-load',
@@ -370,7 +375,10 @@ export class Ketcher {
     return hasQueryAtoms || hasQueryBonds;
   }
 
-  async setMolecule(structStr: string): Promise<void | undefined> {
+  async setMolecule(
+    structStr: string,
+    options?: SetMoleculeOptions,
+  ): Promise<void | undefined> {
     const macromoleculesEditor = CoreEditor.provideEditorInstance();
 
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
@@ -390,9 +398,16 @@ export class Ketcher {
         );
 
         struct.rescale();
-        this.#editor.struct(struct);
+
+        const { x, y } = options?.position ?? {};
+
+        // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
+        // It needs to rotate them by 180 degrees in y-axis.
+        this.#editor.struct(struct, false, x, isNumber(y) ? -y : y);
         this.#editor.zoomAccordingContent(struct);
-        this.#editor.centerStruct();
+        if (x == null && y == null) {
+          this.#editor.centerStruct();
+        }
       }
     }, this.eventBus);
   }
@@ -412,7 +427,10 @@ export class Ketcher {
     }, this.eventBus);
   }
 
-  async addFragment(structStr: string): Promise<void | undefined> {
+  async addFragment(
+    structStr: string,
+    options?: SetMoleculeOptions,
+  ): Promise<void | undefined> {
     const macromoleculesEditor = CoreEditor.provideEditorInstance();
 
     if (macromoleculesEditor?.isSequenceEditInRNABuilderMode) return;
@@ -437,7 +455,11 @@ export class Ketcher {
         );
 
         struct.rescale();
-        this.#editor.structToAddFragment(struct);
+        const { x, y } = options?.position ?? {};
+
+        // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
+        // It needs to rotate them by 180 degrees in y-axis.
+        this.#editor.structToAddFragment(struct, x, isNumber(y) ? -y : y);
       }
     }, this.eventBus);
   }

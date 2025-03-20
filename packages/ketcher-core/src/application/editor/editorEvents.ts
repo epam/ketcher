@@ -37,6 +37,8 @@ export interface IEditorEvents {
   keyDown: Subscription;
   editSequence: Subscription;
   startNewSequence: Subscription;
+  establishHydrogenBond: Subscription;
+  deleteHydrogenBond: Subscription;
   turnOnSequenceEditInRNABuilderMode: Subscription;
   turnOffSequenceEditInRNABuilderMode: Subscription;
   modifySequenceInRnaBuilder: Subscription;
@@ -46,6 +48,8 @@ export interface IEditorEvents {
   changeSequenceTypeEnterMode: Subscription;
   toggleSequenceEditMode: Subscription;
   toggleSequenceEditInRNABuilderMode: Subscription;
+  toggleIsSequenceSyncEditMode: Subscription;
+  resetSequenceEditMode: Subscription;
   clickOnSequenceItem: Subscription;
   mousedownBetweenSequenceItems: Subscription;
   mouseDownOnSequenceItem: Subscription;
@@ -93,6 +97,8 @@ export function resetEditorEvents() {
     keyDown: new Subscription(),
     editSequence: new Subscription(),
     startNewSequence: new Subscription(),
+    establishHydrogenBond: new Subscription(),
+    deleteHydrogenBond: new Subscription(),
     turnOnSequenceEditInRNABuilderMode: new Subscription(),
     turnOffSequenceEditInRNABuilderMode: new Subscription(),
     modifySequenceInRnaBuilder: new Subscription(),
@@ -102,6 +108,8 @@ export function resetEditorEvents() {
     changeSequenceTypeEnterMode: new Subscription(),
     toggleSequenceEditMode: new Subscription(),
     toggleSequenceEditInRNABuilderMode: new Subscription(),
+    toggleIsSequenceSyncEditMode: new Subscription(),
+    resetSequenceEditMode: new Subscription(),
     clickOnSequenceItem: new Subscription(),
     mousedownBetweenSequenceItems: new Subscription(),
     mouseDownOnSequenceItem: new Subscription(),

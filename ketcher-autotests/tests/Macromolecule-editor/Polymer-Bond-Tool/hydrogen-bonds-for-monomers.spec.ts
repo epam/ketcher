@@ -140,13 +140,15 @@ const monomers: { [monomerName: string]: IMonomer } = {
 
 async function loadTwoMonomers(
   page: Page,
-  leftMonomers: IMonomer,
-  rightMonomers: IMonomer,
+  leftMonomer: IMonomer,
+  rightMonomer: IMonomer,
 ) {
-  await openFileAndAddToCanvasMacro(leftMonomers.fileName, page);
+  await openFileAndAddToCanvasMacro(leftMonomer.fileName, page);
+
   const canvasLocator = page.getByTestId('ketcher-canvas').first();
+
   const leftMonomerLocator = canvasLocator
-    .getByText(leftMonomers.alias, { exact: true })
+    .getByText(leftMonomer.alias, { exact: true })
     .locator('..')
     .first();
 
@@ -154,20 +156,21 @@ async function loadTwoMonomers(
   await dragMouseTo(500, 370, page);
   await moveMouseAway(page);
 
-  await openFileAndAddToCanvasMacro(rightMonomers.fileName, page);
+  await openFileAndAddToCanvasMacro(rightMonomer.fileName, page);
+
   const rightMonomerLocator =
     (await canvasLocator
-      .getByText(leftMonomers.alias, {
+      .getByText(leftMonomer.alias, {
         exact: true,
       })
       .count()) > 1
       ? canvasLocator
-          .getByText(rightMonomers.alias, { exact: true })
+          .getByText(rightMonomer.alias, { exact: true })
           .nth(1)
           .locator('..')
           .first()
       : canvasLocator
-          .getByText(rightMonomers.alias, { exact: true })
+          .getByText(rightMonomer.alias, { exact: true })
           .locator('..')
           .first();
 
@@ -920,23 +923,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       test.setTimeout(25000);
 
       await loadTwoMonomers(page, leftMonomer, rightMolecule);
-
-      await bondTwoMonomersByCenterToCenter(
-        page,
-        leftMonomer,
-        rightMolecule,
-        MacroBondTool.SINGLE,
-      );
-
       await zoomWithMouseWheel(page, -600);
-
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-      });
-
-      await selectEraseTool(page);
-      await pressUndoButton(page);
-
       await bondTwoMonomersByCenterToCenter(
         page,
         leftMonomer,

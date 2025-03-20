@@ -1,3 +1,4 @@
+import { Peptides } from '@constants/monomers/Peptides';
 import { Page, test } from '@playwright/test';
 import {
   readFileContents,
@@ -12,6 +13,7 @@ import {
   clickInTheMiddleOfTheScreen,
   selectZoomOutTool,
 } from '@utils';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 const fileName = 'KET/alanine-monomers-bonded.ket';
 
@@ -23,10 +25,7 @@ async function shiftStructure(page: Page) {
   const toShiftToCoordinates = 400;
 
   await selectRectangleArea(page, startX, startY, endX, endY);
-  const alanine = await page
-    .getByText('A', { exact: true })
-    .locator('..')
-    .first();
+  const alanine = getMonomerLocator(page, Peptides.A).first();
   await alanine.hover();
   await dragMouseTo(toShiftToCoordinates, toShiftToCoordinates, page);
 }

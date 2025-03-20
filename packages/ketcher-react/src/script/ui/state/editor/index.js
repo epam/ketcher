@@ -243,6 +243,7 @@ export default function initEditor(dispatch, getState) {
 
     onZoomIn: updateAction,
     onZoomOut: updateAction,
+    onZoomChanged: updateAction,
 
     onShowMacromoleculesErrorMessage: (payload) =>
       dispatch(openInfoModalWithCustomMessage(payload)),

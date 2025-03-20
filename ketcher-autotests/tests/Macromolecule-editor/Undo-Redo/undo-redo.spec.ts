@@ -1,4 +1,9 @@
-import { Bases, Chem, Peptides, Presets } from '@constants/monomers';
+import { Bases } from '@constants/monomers/Bases';
+import { Chem } from '@constants/monomers/Chem';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Phosphates } from '@constants/monomers/Phosphates';
+import { Presets } from '@constants/monomers/Presets';
+import { Sugars } from '@constants/monomers/Sugars';
 import { Locator, test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -33,6 +38,7 @@ import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   connectMonomersWithBonds,
+  getMonomerLocator,
   moveMonomer,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -48,29 +54,12 @@ test.describe('Undo Redo', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
-    const MONOMER_NAME = Peptides.Tza;
-    const MONOMER_ALIAS = 'Tza';
 
-    peptide1 = await addSingleMonomerToCanvas(
-      page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
-      300,
-      300,
-      0,
-    );
-    peptide2 = await addSingleMonomerToCanvas(
-      page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
-      400,
-      300,
-      1,
-    );
+    peptide1 = await addSingleMonomerToCanvas(page, Peptides.Tza, 300, 300, 0);
+    peptide2 = await addSingleMonomerToCanvas(page, Peptides.Tza, 400, 300, 1);
     const peptide3 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       500,
       300,
       2,
@@ -179,19 +168,19 @@ test.describe('Undo-Redo tests', () => {
     await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
     await page.getByTestId('erase').click();
     const entitiesToDelete = [
-      'D-aIle',
-      'SertBu',
-      'Phe-ol',
-      'TyrabD',
-      '25R',
-      'c3A',
-      'msp',
-      'cpmA',
-      'SMPEG2',
+      Peptides.D_aIle,
+      Peptides.SertBu,
+      Peptides.Phe_ol,
+      Peptides.TyrabD,
+      Sugars._25R,
+      Bases.c3A,
+      Phosphates.msp,
+      Bases.cpmA,
+      Chem.SMPEG2,
     ];
 
     for (const entity of entitiesToDelete) {
-      await page.getByText(entity).locator('..').first().click();
+      await getMonomerLocator(page, entity).click();
     }
 
     const numberOfPress = 9;
@@ -299,16 +288,16 @@ test.describe('Undo-Redo tests', () => {
     await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
     await page.getByTestId('erase').click();
     const entitiesToDelete = [
-      'SertBu',
-      'TyrabD',
-      '25R',
-      'c3A',
-      'msp',
-      'SMPEG2',
+      Peptides.SertBu,
+      Peptides.TyrabD,
+      Sugars._25R,
+      Bases.c3A,
+      Phosphates.msp,
+      Chem.SMPEG2,
     ];
 
     for (const entity of entitiesToDelete) {
-      await page.getByText(entity).locator('..').first().click();
+      await getMonomerLocator(page, entity).click();
     }
 
     const numberOfPress = 6;
@@ -447,7 +436,7 @@ test.describe('Undo-Redo tests', () => {
     await page.mouse.move(x, y);
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
     await pressRedoButton(page);

@@ -10,6 +10,7 @@ import {
   waitForLoad,
   waitForPageInit,
   moveMouseAway,
+  selectOpenFileTool,
 } from '@utils';
 import {
   verifyFileExport,
@@ -92,7 +93,7 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4687
     Description: Reagent 'Cl' displays above reaction arrow
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await page.getByText('Paste from clipboard').click();
     await pasteFromClipboard(
       page,

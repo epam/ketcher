@@ -1,4 +1,4 @@
-import { Peptides } from '@constants/monomers';
+import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
@@ -26,39 +26,31 @@ test.describe('Check attachment point rotation', () => {
     Description: Attachment points and labels should rotate to bond on hover
     */
 
-    // Create 4 peptides on canvas
-    const MONOMER_NAME = Peptides.Tza;
-    const MONOMER_ALIAS = 'Tza';
-
     // Get 4 peptides locators
     const peptide1 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       300,
       300,
       0,
     );
     const peptide2 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       400,
       400,
       1,
     );
     const peptide3 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       500,
       500,
       2,
     );
     const peptide4 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       500,
       200,
       3,
@@ -97,22 +89,17 @@ test.describe('Check attachment point rotation', () => {
     Description: when monomers are moved, attachment points move also
     */
 
-    const MONOMER_NAME = Peptides.Tza;
-    const MONOMER_ALIAS = 'Tza';
-
     // Get 4 peptides locators
     const peptide1 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       300,
       300,
       0,
     );
     const peptide2 = await addSingleMonomerToCanvas(
       page,
-      MONOMER_NAME,
-      MONOMER_ALIAS,
+      Peptides.Tza,
       400,
       400,
       1,

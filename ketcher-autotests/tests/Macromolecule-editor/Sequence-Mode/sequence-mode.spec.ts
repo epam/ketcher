@@ -64,12 +64,10 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await scrollDown(page, SCROLL_DOWN_VALUE);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectFlexLayoutModeTool(page);
     await scrollDown(page, SCROLL_DOWN_VALUE);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Nucleotides are connected through R2-R1 bonds and switch to sequence mode.', async ({
@@ -115,8 +113,7 @@ test.describe('Sequence Mode', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/dna-long.mol', page);
     await selectSequenceLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Test sequence display for long Peptides chains', async ({ page }) => {
@@ -175,8 +172,7 @@ test.describe('Sequence Mode', () => {
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Press Undo button and verify that layout returns to unarranged state', async ({
@@ -214,8 +210,7 @@ test.describe('Sequence Mode', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/dna-long.mol', page);
     await selectSequenceLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Open RNA in sequence mode, switch to snake mode and confirm that RNA chain layout is left-to-right', async ({
@@ -230,7 +225,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Open modified RNA in sequence mode', async ({ page }) => {
@@ -264,7 +259,7 @@ test.describe('Sequence Mode', () => {
     await zoomWithMouseWheel(page, ZOOM_OUT_VALUE);
     await scrollDown(page, SCROLL_DOWN_VALUE);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   const testData = [
@@ -472,8 +467,7 @@ test.describe('Sequence Mode', () => {
     await enterSequence(page, 'cgatu');
     await page.keyboard.press('Escape');
     await selectFlexLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Create a multiple chains in sequence mode. Switch to flex mode and confirm that position of first monomer defines "top left" corner on canvas', async ({
@@ -496,8 +490,7 @@ test.describe('Sequence Mode', () => {
     await page.keyboard.press('Escape');
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('If nucleotide is being added to the end of sequence, then phosphate P should be added automatically between last two nucleosides', async ({
@@ -511,8 +504,7 @@ test.describe('Sequence Mode', () => {
     await startNewSequence(page);
     await enterSequence(page, 'cactt');
     await selectFlexLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Delete any nucleotide within RNA fragment using keyboard keys (Del, Backspace)', async ({
@@ -557,8 +549,7 @@ test.describe('Sequence Mode', () => {
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('Backspace');
     await selectFlexLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Verify that selecting RNA/DNA option defines sugar in newly added nucleotides from keyboard (ribose for RNA, deoxyribose for DNA)', async ({
@@ -575,8 +566,7 @@ test.describe('Sequence Mode', () => {
     await enterSequence(page, 'acgtu');
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   const testCases = [
@@ -729,7 +719,7 @@ test.describe('Sequence Mode', () => {
       '[DPhgol]}|PEPTIDE5{[DAPhg4].[Pro-ol]}|PEPTIDE6{[DALeu].[Leu-ol]}|PEPTIDE7{[OLeu].[-OtBu]}$$$$V2.0',
 
     'PEPTIDE1{[meP].[Pro-al]}|PEPTIDE2{[D-OVal].[dThrol]}|PEPTIDE3{[L-OVal].[-Et]}|PEPTIDE4{[Ac-].[-Bn]}|' +
-      'PEPTIDE5{[Bua-].[-OEt]}|PEPTIDE6{[Cbz-].[-Ph]}|PEPTIDE7{[Bn-].[Am-]}$$$$V2.0',
+      'PEPTIDE5{[Bua-].[-OEt]}|PEPTIDE6{[Cbz-].[-Ph]}|PEPTIDE7{[Bn-].[-Am]}$$$$V2.0',
 
     'PEPTIDE1{[DANcy].[Leu-al]}|PEPTIDE2{[fmoc-].[Thr-ol]}|PEPTIDE3{[DADip].[Val-ol]}|PEPTIDE4{[Glc].[-Me]}|' +
       'PEPTIDE5{[Boc-].[Aib-ol]}|PEPTIDE6{[Bz-]}|PEPTIDE7{[DAChg].[DADab]}$$$$V2.0',

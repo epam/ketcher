@@ -40,7 +40,7 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
-import { Sugars, Bases, Phosphates } from '@constants/monomers';
+import { Monomer } from '@utils/types';
 
 export async function drawBenzeneRing(page: Page) {
   await selectRing(RingButton.Benzene, page);
@@ -333,24 +333,24 @@ export async function resetAllSettingsToDefault(page: Page) {
 
 export async function addSingleMonomerToCanvas(
   page: Page,
-  monomerFullName: string,
-  alias: string,
+  monomerType: Monomer,
   positionX: number,
   positionY: number,
   index: number,
 ) {
-  await page.getByTestId(monomerFullName).click();
+  await page.getByTestId(monomerType.testId).click();
   await clickOnCanvas(page, positionX, positionY);
   await hideMonomerPreview(page);
-  return await page
-    .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='${alias}']]`)
+  return page
+    .locator(
+      `//\*[name() = 'g' and ./\*[name()='text' and .='${monomerType.alias}']]`,
+    )
     .nth(index);
 }
 
 export async function addBondedMonomersToCanvas(
   page: Page,
-  monomerFullName: string,
-  alias: string,
+  monomerType: Monomer,
   initialPositionX: number,
   initialPositionY: number,
   deltaX: number,
@@ -363,8 +363,7 @@ export async function addBondedMonomersToCanvas(
   for (let index = 0; index < amount; index++) {
     const monomer = await addSingleMonomerToCanvas(
       page,
-      monomerFullName,
-      alias,
+      monomerType,
       initialPositionX + deltaX * index,
       initialPositionY + deltaY * index,
       index,
@@ -385,33 +384,33 @@ export async function addBondedMonomersToCanvas(
 
 export async function addMonomerToCenterOfCanvas(
   page: Page,
-  monomerType: Sugars | Bases | Phosphates,
+  monomerType: Monomer,
 ) {
   await selectMonomer(page, monomerType);
   await clickInTheMiddleOfTheScreen(page);
   await selectRectangleSelectionTool(page);
 }
 
-export async function addPeptideOnCanvas(page: Page, peptideId: string) {
-  await page.getByTestId(peptideId).click();
+export async function addPeptideOnCanvas(page: Page, peptide: Monomer) {
+  await page.getByTestId(peptide.testId).click();
   await clickInTheMiddleOfTheScreen(page);
 }
 
 export async function addRnaPresetOnCanvas(
   page: Page,
-  presetId: string,
+  preset: Monomer,
   positionX: number,
   positionY: number,
   sugarIndex: number,
   phosphateIndex: number,
 ) {
-  await page.getByTestId(presetId).click();
+  await page.getByTestId(preset.testId).click();
   await clickOnCanvas(page, positionX, positionY);
   await hideMonomerPreview(page);
-  const sugar = await page
+  const sugar = page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='R']]`)
     .nth(sugarIndex);
-  const phosphate = await page
+  const phosphate = page
     .locator(`//\*[name() = 'g' and ./\*[name()='text' and .='P']]`)
     .nth(phosphateIndex);
 
@@ -530,10 +529,24 @@ export async function selectCleanTool(page: Page) {
   );
 }
 
+export async function selectCalculateTool(page: Page) {
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
+  );
+}
+
 export async function selectLayoutTool(page: Page) {
   await waitForSpinnerFinishedWork(
     page,
     async () => await selectTopPanelButton(TopPanelButton.Layout, page),
+  );
+}
+
+export async function selectOpenFileTool(page: Page) {
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await selectTopPanelButton(TopPanelButton.Open, page),
   );
 }
 
@@ -556,4 +569,13 @@ export async function waitForElementInCanvas(
   const canvas = page.getByTestId('ketcher-canvas');
   const targetElement = canvas.locator(`div:has-text("${text}")`);
   await expect(targetElement).toBeVisible();
+}
+export async function selectCanvasArea(
+  page: Page,
+  firstCorner: { x: number; y: number },
+  secondCorner: { x: number; y: number },
+) {
+  await selectRectangleSelectionTool(page);
+  await page.mouse.move(firstCorner.x, firstCorner.y);
+  await dragMouseTo(secondCorner.x, secondCorner.y, page);
 }

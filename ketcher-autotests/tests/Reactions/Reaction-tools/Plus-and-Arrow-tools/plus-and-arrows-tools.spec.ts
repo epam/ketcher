@@ -32,6 +32,7 @@ import {
   clickOnCanvas,
   selectCleanTool,
   selectLayoutTool,
+  selectClearCanvasTool,
 } from '@utils';
 import { pageReloadMicro } from '@utils/common/helpers';
 import {
@@ -471,11 +472,6 @@ test.describe('Plus and Arrows tools ', () => {
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await selectCleanTool(page);
-
-    test.fixme(
-      true,
-      `That test works wrong because of https://github.com/epam/Indigo/issues/2665 issue.`,
-    );
   });
 
   test('Save plus sign and arrow', async ({ page }) => {
@@ -647,7 +643,7 @@ test.describe('Plus and Arrows tools ', () => {
         page,
       );
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Clear, page);
+      await selectClearCanvasTool(page);
       await openFileAndAddToCanvas(
         `KET/resizing-reaction-arrow-saving.ket`,
         page,
@@ -678,7 +674,7 @@ test.describe('Plus and Arrows tools ', () => {
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
 
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
   });
 
   test.describe('Arrow snapping', () => {

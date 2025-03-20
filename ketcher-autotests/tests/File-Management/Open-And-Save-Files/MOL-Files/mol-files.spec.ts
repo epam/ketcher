@@ -6,13 +6,13 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  bondsSettings,
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
   openSettings,
   selectAllStructuresOnCanvas,
   selectLayoutTool,
+  openBondsSettingsSection,
 } from '@utils';
 import {
   FileType,
@@ -87,7 +87,6 @@ test('Open and Save file - Open/Save V3000 file with atom and bond properties 2/
     'Molfiles-V3000/atom-properties-V3000-expected.mol',
     FileType.MOL,
     'v3000',
-    [1],
   );
 });
 
@@ -120,7 +119,6 @@ test('Open and Save file - Open/Save Markush files 2/2 - save', async ({
     'Molfiles-V2000/markush-expected.mol',
     FileType.MOL,
     'v2000',
-    [0, 4],
   );
 });
 
@@ -185,7 +183,6 @@ test('Open and Save file - Open/Save V3000 *.mol file contains abbreviation 2/2 
     'Molfiles-V3000/sec_butyl_abr_V3000-expected.mol',
     FileType.MOL,
     'v3000',
-    [1],
   );
 });
 
@@ -218,7 +215,6 @@ test('Open and Save file - Open/Save file with R-Groups 2/2 - save', async ({
     'Molfiles-V2000/r-group-expected.mol',
     FileType.MOL,
     'v2000',
-    [0, 4],
   );
 });
 
@@ -289,7 +285,6 @@ test('Open and Save file - Open/Save V3000 mol file contains attached data 2/2 -
     'Molfiles-V3000/attached-data-V3000-expected.mol',
     FileType.MOL,
     'v3000',
-    [1],
   );
 });
 
@@ -322,7 +317,6 @@ test('Open and Save file - V3000 *.mol file contains Heteroatoms 2/2 - save', as
     'Molfiles-V3000/heteroatoms-V3000-expected.mol',
     FileType.MOL,
     'v3000',
-    [1],
   );
 });
 
@@ -419,7 +413,6 @@ test('Open and Save file - Open/Save V3000 mol file contains abs stereochemistry
     'Molfiles-V3000/V3000-abs-expected.mol',
     FileType.MOL,
     'v3000',
-    [1],
   );
 });
 
@@ -438,7 +431,6 @@ test('Open and Save file - Save V2000 molfile as V3000 molfile', async ({
     'Molfiles-V3000/spiro-expected.mol',
     FileType.MOL,
     'v3000',
-    [1, 3],
   );
 });
 
@@ -637,7 +629,6 @@ test.describe('Open and Save file', () => {
         'Molfiles-V3000/more-900-atoms-expected.mol',
         FileType.MOL,
         'v3000',
-        [1],
       );
     },
   );
@@ -726,7 +717,7 @@ test.describe('Open and Save file', () => {
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '79.8');
     await pressButton(page, 'Apply');
@@ -755,7 +746,7 @@ test.describe('Open and Save file', () => {
 
     await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '1.8');
     await pressButton(page, 'Apply');
@@ -765,7 +756,6 @@ test.describe('Open and Save file', () => {
       'Molfiles-V3000/adenosine-triphosphate-cm-bond-lengh.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V3000/adenosine-triphosphate-cm-bond-lengh.mol',
@@ -822,7 +812,6 @@ test.describe('Open and Save file', () => {
       'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',
       FileType.MOL,
       'v3000',
-      [1],
     );
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V3000/adenosine-triphosphate-acs-style.mol',

@@ -5,7 +5,6 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   setReactionMarginSizeOptionUnit,
-  bondsSettings,
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
@@ -14,6 +13,7 @@ import {
   selectLayoutTool,
   setHashSpacingOptionUnit,
   setHashSpacingValue,
+  openBondsSettingsSection,
 } from '@utils';
 import {
   FileType,
@@ -110,7 +110,7 @@ test.describe('CML files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with peptides could be saved to CML file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
@@ -136,7 +136,7 @@ test.describe('CML files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with nucleotides could be saved to CML file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
@@ -162,7 +162,7 @@ test.describe('CML files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with chems could be saved to CML file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
@@ -188,7 +188,7 @@ test.describe('CML files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with bases could be saved to CML file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
@@ -214,7 +214,7 @@ test.describe('CML files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with sugars could be saved to CML file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
@@ -240,7 +240,7 @@ test.describe('CML files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with phosphates could be saved to CML file and loaded back
     */
-
+    test.slow();
     await openFileAndAddToCanvas(
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
@@ -448,7 +448,7 @@ test.describe('CML files', () => {
     */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '67.8');
     await pressButton(page, 'Apply');
@@ -479,7 +479,7 @@ test.describe('CML files', () => {
     */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '54.8');
     await pressButton(page, 'Apply');
@@ -508,7 +508,7 @@ test.describe('CML files', () => {
     */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
     await setReactionMarginSizeValue(page, '1.8');
     await pressButton(page, 'Apply');

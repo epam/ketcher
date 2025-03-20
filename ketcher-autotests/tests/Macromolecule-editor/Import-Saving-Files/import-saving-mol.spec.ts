@@ -370,7 +370,7 @@ test.describe('Import-Saving .mol Files', () => {
     );
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     // Closing page since test expects it to have closed at the end
     const context = page.context();
@@ -755,6 +755,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
 
   for (const fileName of fileNames) {
     test(`for ${fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/Base-Templates/${fileName}.mol`,
         page,
@@ -815,6 +816,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
 
   for (const fileName of fileNames) {
     test(`for ${fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/CHEM-Templates/${fileName}.mol`,
         page,
@@ -875,6 +877,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
 
   for (const fileName of fileNames) {
     test(`for ${fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/Peptide-Templates/${fileName}.mol`,
         page,
@@ -936,6 +939,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
 
   for (const fileName of fileNames) {
     test(`for ${fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/Phosphate-Templates/${fileName}.mol`,
         page,
@@ -996,6 +1000,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
 
   for (const fileName of fileNames) {
     test(`for ${fileName}`, async () => {
+      await pageReload(page);
       await openFileAndAddToCanvasMacro(
         `Molfiles-V3000/Sugar-Templates/${fileName}.mol`,
         page,

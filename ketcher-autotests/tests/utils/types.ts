@@ -21,3 +21,22 @@ export enum MacroBondType {
   Single = 'covalent',
   Hydrogen = 'hydrogen',
 }
+
+export interface Monomer {
+  alias: string;
+  testId: string;
+}
+
+export enum SequenceModeType {
+  RNA = 'RNA',
+  DNA = 'DNA',
+  Peptide = 'Peptide',
+}
+
+export enum SymbolType {
+  RNA = 'RNA',
+  DNA = 'DNA',
+  Peptide = 'Peptide',
+  CHEM = 'CHEM',
+  Phosphate = 'Phosphate',
+}

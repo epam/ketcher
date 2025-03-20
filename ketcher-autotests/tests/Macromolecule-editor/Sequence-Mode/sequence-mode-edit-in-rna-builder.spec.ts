@@ -24,7 +24,9 @@ import {
 import { SUGAR } from '@constants/testIdConstants';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import { pressSaveButton } from '@utils/macromolecules/rnaBuilder';
-import { Bases, Phosphates, Sugars } from '@constants/monomers';
+import { Sugars } from '@constants/monomers/Sugars';
+import { Phosphates } from '@constants/monomers/Phosphates';
+import { Bases } from '@constants/monomers/Bases';
 
 test.describe('Sequence mode edit in RNA Builder', () => {
   test.beforeEach(async ({ page }) => {
@@ -41,18 +43,25 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await waitForMonomerPreview(page);
 
     // should see correct context menu title and available 'modify_in_rna_builder' button
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+    });
     await page.getByTestId('modify_in_rna_builder').click();
     // should see uploaded nucleotide data to RNA Builder and disabled "Update" button
     // should see disabled top bar's selectors
     // should see disabled top undo/redo/open buttons
+    await moveMouseAway(page);
     await takePageScreenshot(page);
     await page.getByTestId(SUGAR).click();
     // should see disabled and nondisabled sugars
-    await takeMonomerLibraryScreenshot(page);
+    await takeMonomerLibraryScreenshot(page, {
+      hideMonomerPreview: true,
+    });
     await selectMonomer(page, Sugars._25R);
     // should see updated sugar, updated title of preset and nondisabled "Update" button
-    await takeRNABuilderScreenshot(page);
+    await takeRNABuilderScreenshot(page, {
+      hideMonomerPreview: true,
+    });
     await pressSaveButton(page);
     // should see updated nucleotide in chain
     // should see nondisabled top bar's selectors
@@ -322,7 +331,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check If among selected elements on canvas there is a single phosphate (selected without an adjacent nucleoside to left)', async ({

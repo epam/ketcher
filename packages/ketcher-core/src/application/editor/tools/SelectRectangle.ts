@@ -13,7 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { Vec2 } from 'domain/entities';
+import {
+  BaseMonomer,
+  HydrogenBond,
+  MonomerToAtomBond,
+  PolymerBond,
+  Vec2,
+} from 'domain/entities';
 import { CoreEditor, EditorHistory } from 'application/editor/internal';
 import { brush as d3Brush, select } from 'd3';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
@@ -30,6 +36,19 @@ import {
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   SequenceRenderer,
 } from 'application/render';
+import { vectorUtils } from 'application/editor';
+
+type EmptySnapResult = {
+  snapPosition: null;
+};
+
+type SnapResult = {
+  snapPosition: Vec2;
+  isAngleSnapped: boolean;
+  isDistanceSnapped: boolean;
+  connectedMonomer: BaseMonomer;
+  bond: PolymerBond | HydrogenBond;
+};
 
 class SelectRectangle implements BaseTool {
   private brush;
@@ -146,7 +165,7 @@ class SelectRectangle implements BaseTool {
     const renderer = event.target.__data__;
     const drawingEntitiesToSelect: DrawingEntity[] = [];
     const ModKey = isMacOs ? event.metaKey : event.ctrlKey;
-    let modelChanges: Command;
+    const modelChanges = new Command();
 
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
     this.mousePositionBeforeMove = this.editor.lastCursorPositionOfCanvas;
@@ -168,8 +187,9 @@ class SelectRectangle implements BaseTool {
       if (renderer.drawingEntity.selected) {
         return;
       }
-      modelChanges =
-        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.unselectAllDrawingEntities(),
+      );
       SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
       const { command: selectModelChanges } =
         this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
@@ -184,10 +204,11 @@ class SelectRectangle implements BaseTool {
         ...this.editor.drawingEntitiesManager.selectedEntitiesArr,
         ...drawingEntitiesToSelect,
       ];
-      ({ command: modelChanges } =
+      const { command: selectModelChanges } =
         this.editor.drawingEntitiesManager.getAllSelectedEntitiesForEntities(
           drawingEntities,
-        ));
+        );
+      modelChanges.merge(selectModelChanges);
     } else if (renderer instanceof BaseSequenceItemRenderer && ModKey) {
       let drawingEntities: DrawingEntity[] = renderer.currentChain.nodes
         .map((node) => {
@@ -203,22 +224,215 @@ class SelectRectangle implements BaseTool {
         (bond) => bond.firstMonomer.selected && bond.secondMonomer?.selected,
       );
       drawingEntities = drawingEntities.concat(bondsInsideCurrentChain);
-      modelChanges =
+      modelChanges.merge(
         this.editor.drawingEntitiesManager.selectDrawingEntities(
           drawingEntities,
-        );
+        ),
+      );
     } else {
-      modelChanges =
-        this.editor.drawingEntitiesManager.unselectAllDrawingEntities();
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.unselectAllDrawingEntities(),
+      );
       SequenceRenderer.unselectEmptyAndBackboneSequenceNodes();
     }
+
+    modelChanges.merge(
+      this.editor.drawingEntitiesManager.hideAllMonomersHoverAndAttachmentPoints(),
+    );
     this.editor.renderersContainer.update(modelChanges);
     this.setSelectedEntities();
   }
 
-  mousemove() {
-    if (this.moveStarted) {
-      const modelChanges =
+  static calculateAngleSnap(
+    cursorPosition: Vec2,
+    connectedPosition: Vec2,
+    snapAngle: number,
+  ) {
+    const angle = vectorUtils.calcAngle(cursorPosition, connectedPosition);
+    const angleInDegrees = ((angle * 180) / Math.PI + 360) % 360;
+    const snapRest = Math.abs(angleInDegrees % snapAngle);
+    const leftBorder = snapAngle / 3;
+    const rightBorder = (2 * snapAngle) / 3;
+    let snappedAngle = angleInDegrees;
+
+    if (snapRest < leftBorder) {
+      snappedAngle = angleInDegrees - snapRest;
+    } else if (snapRest > rightBorder) {
+      snappedAngle = angleInDegrees + snapAngle - snapRest;
+    }
+
+    const isAngleSnapped = snappedAngle !== angleInDegrees;
+
+    if (!isAngleSnapped) {
+      return {
+        isAngleSnapped,
+      };
+    }
+
+    const snappedAngleRad = (snappedAngle * Math.PI) / 180;
+    const distance = Vec2.diff(cursorPosition, connectedPosition).length();
+    const angleSnapPosition = new Vec2(
+      connectedPosition.x + distance * -Math.cos(snappedAngleRad),
+      connectedPosition.y + distance * -Math.sin(snappedAngleRad),
+    );
+
+    return {
+      isAngleSnapped,
+      angleSnapPosition,
+      snappedAngleRad,
+    };
+  }
+
+  static calculateDistanceSnap(
+    cursorPosition: Vec2,
+    connectedPosition: Vec2,
+    snappedAngle: number | undefined,
+  ) {
+    const currentDistance = Vec2.diff(
+      cursorPosition,
+      connectedPosition,
+    ).length();
+    const standardBondLength = 1.5;
+    const isDistanceSnapped =
+      Math.abs(currentDistance - standardBondLength) < 0.375;
+
+    if (!isDistanceSnapped) {
+      return { isDistanceSnapped };
+    }
+
+    const editor = CoreEditor.provideEditorInstance();
+    let angle: number;
+    if (editor.mode.modeName === 'snake-layout-mode') {
+      let rawAngle = vectorUtils.calcAngle(cursorPosition, connectedPosition);
+      rawAngle = ((rawAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+      const step = Math.PI / 2;
+      angle = Math.round(rawAngle / step) * step;
+    } else {
+      angle =
+        snappedAngle ??
+        vectorUtils.calcAngle(cursorPosition, connectedPosition);
+    }
+
+    const distanceSnapPosition = new Vec2(
+      connectedPosition.x + standardBondLength * -Math.cos(angle),
+      connectedPosition.y + standardBondLength * -Math.sin(angle),
+    );
+    return { isDistanceSnapped, distanceSnapPosition };
+  }
+
+  private tryToSnap(event: MouseEvent): EmptySnapResult | SnapResult {
+    const emptyResult: EmptySnapResult = {
+      snapPosition: null,
+    };
+
+    const selectedEntities =
+      this.editor.drawingEntitiesManager.selectedEntitiesArr;
+    const modKeyPressed = isMacOs ? event.metaKey : event.ctrlKey;
+
+    if (
+      modKeyPressed ||
+      selectedEntities.length > 1 ||
+      !(selectedEntities[0] instanceof BaseMonomer)
+    ) {
+      return emptyResult;
+    }
+
+    const selectedMonomer = selectedEntities[0] as BaseMonomer;
+    const shortestMonomerBond = selectedMonomer.shortestBond;
+
+    if (
+      !shortestMonomerBond ||
+      shortestMonomerBond instanceof MonomerToAtomBond
+    ) {
+      return emptyResult;
+    }
+
+    const connectedMonomer =
+      shortestMonomerBond.getAnotherMonomer(selectedMonomer);
+    const cursorPositionInAngstroms = Coordinates.canvasToModel(
+      this.editor.lastCursorPositionOfCanvas,
+    );
+
+    if (connectedMonomer) {
+      const { isAngleSnapped, angleSnapPosition, snappedAngleRad } =
+        SelectRectangle.calculateAngleSnap(
+          cursorPositionInAngstroms,
+          connectedMonomer.position,
+          this.editor.mode.modeName === 'snake-layout-mode' ? 90 : 30,
+        );
+
+      const { isDistanceSnapped, distanceSnapPosition } =
+        SelectRectangle.calculateDistanceSnap(
+          cursorPositionInAngstroms,
+          connectedMonomer.position,
+          snappedAngleRad,
+        );
+
+      let snapPosition: Vec2 | undefined;
+      if (isAngleSnapped && isDistanceSnapped) {
+        snapPosition = distanceSnapPosition;
+      } else if (isAngleSnapped) {
+        snapPosition = angleSnapPosition;
+      } else if (isDistanceSnapped) {
+        snapPosition = distanceSnapPosition;
+      }
+
+      if (snapPosition) {
+        const distanceToSnapPosition = Vec2.diff(
+          cursorPositionInAngstroms,
+          snapPosition,
+        ).length();
+
+        if (distanceToSnapPosition < 0.375) {
+          return {
+            snapPosition: snapPosition.sub(selectedMonomer.position),
+            isAngleSnapped,
+            isDistanceSnapped,
+            connectedMonomer,
+            bond: shortestMonomerBond,
+          };
+        }
+      }
+
+      return emptyResult;
+    }
+
+    return emptyResult;
+  }
+
+  mousemove(event: MouseEvent) {
+    if (!this.moveStarted) {
+      return;
+    }
+
+    const modelChanges = new Command();
+
+    const snapResult = this.tryToSnap(event);
+    const { snapPosition } = snapResult;
+
+    if (snapPosition) {
+      modelChanges.merge(
+        this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+          snapPosition,
+        ),
+      );
+
+      const { isAngleSnapped, isDistanceSnapped, connectedMonomer, bond } =
+        snapResult;
+
+      isAngleSnapped
+        ? this.editor.transientDrawingView.showAngleSnap({
+            connectedMonomer,
+            polymerBond: bond,
+            isDistanceSnapped,
+          })
+        : this.editor.transientDrawingView.hideAngleSnap();
+
+      isDistanceSnapped
+        ? this.editor.transientDrawingView.showBondSnap(bond)
+        : this.editor.transientDrawingView.hideBondSnap();
+    } else {
+      modelChanges.merge(
         this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
           Coordinates.canvasToModel(
             new Vec2(
@@ -228,13 +442,20 @@ class SelectRectangle implements BaseTool {
                 this.mousePositionAfterMove.y,
             ),
           ),
-        );
-      this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
-      requestAnimationFrame(() => {
-        this.editor.renderersContainer.update(modelChanges);
-        this.editor.drawingEntitiesManager.rerenderPolymerBonds();
-      });
+        ),
+      );
+
+      this.editor.transientDrawingView.hideBondSnap();
+      this.editor.transientDrawingView.hideAngleSnap();
     }
+
+    this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
+
+    requestAnimationFrame(() => {
+      this.editor.renderersContainer.update(modelChanges);
+      this.editor.drawingEntitiesManager.rerenderBondsOverlappedByMonomers();
+      this.editor.transientDrawingView.update();
+    });
   }
 
   mouseup(event) {
@@ -250,6 +471,7 @@ class SelectRectangle implements BaseTool {
       ) {
         return;
       }
+
       const modelChanges =
         this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
           new Vec2(0, 0),
@@ -262,6 +484,8 @@ class SelectRectangle implements BaseTool {
         );
       this.history.update(modelChanges);
     }
+
+    this.editor.transientDrawingView.clear();
   }
 
   mouseOverDrawingEntity(event) {
@@ -284,6 +508,10 @@ class SelectRectangle implements BaseTool {
   }
 
   public mouseOverPolymerBond(event) {
+    if (event.buttons === 1) {
+      return;
+    }
+
     const renderer: DeprecatedFlexModeOrSnakeModePolymerBondRenderer =
       event.target.__data__;
 

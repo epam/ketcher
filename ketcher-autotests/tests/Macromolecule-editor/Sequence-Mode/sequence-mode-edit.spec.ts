@@ -45,9 +45,10 @@ import {
 } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
-  createDNAAntisenseStrand,
-  createRNAAntisenseStrand,
+  createDNAAntisenseChain,
+  createRNAAntisenseChain,
   getMonomerLocator,
+  getSymbolLocator,
 } from '@utils/macromolecules/monomer';
 import { expandCollapseRnaBuilder } from '@utils/macromolecules/rnaBuilder';
 import {
@@ -996,11 +997,12 @@ test.describe('Sequence edit mode', () => {
      * 5. Hover over the monomer R to see its connection to the Phosphate
      * 6. Take screenshot.
      */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await waitForRender(page, async () => {
       await page.keyboard.type('AAAAAA');
     });
     await selectAllStructuresOnCanvas(page);
-    await createRNAAntisenseStrand(page, 'A');
+    await createRNAAntisenseChain(page, anySymbolA);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1028,12 +1030,13 @@ test.describe('Sequence edit mode', () => {
      * 5. Hover over the monomer R to see its connection to the Phosphate
      * 6. Take screenshot.
      */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await switchToDNAMode(page);
     await waitForRender(page, async () => {
       await page.keyboard.type('AAAAAA');
     });
     await selectAllStructuresOnCanvas(page);
-    await createDNAAntisenseStrand(page, 'A');
+    await createDNAAntisenseChain(page, anySymbolA);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1059,12 +1062,13 @@ test.describe('Sequence edit mode', () => {
      * 3. Create antisense RNA sequence
      * 4. Take screenshot.
      */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await openFileAndAddToCanvasAsNewProject(
       'KET/monomer-does-not-have-attachment-point-r2.ket',
       page,
     );
     await selectAllStructuresOnCanvas(page);
-    await createRNAAntisenseStrand(page, 'A');
+    await createRNAAntisenseChain(page, anySymbolA);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1085,11 +1089,12 @@ test.describe('Sequence edit mode', () => {
      * 5. Copy and paste
      * 6. Take screenshot.
      */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await waitForRender(page, async () => {
       await page.keyboard.type('AAAAAA');
     });
     await selectAllStructuresOnCanvas(page);
-    await createRNAAntisenseStrand(page, 'A');
+    await createRNAAntisenseChain(page, anySymbolA);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1118,12 +1123,13 @@ test.describe('Sequence edit mode', () => {
      * 5. Copy and paste
      * 6. Take screenshot.
      */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await switchToDNAMode(page);
     await waitForRender(page, async () => {
       await page.keyboard.type('AAAAAA');
     });
     await selectAllStructuresOnCanvas(page);
-    await createDNAAntisenseStrand(page, 'A');
+    await createDNAAntisenseChain(page, anySymbolA);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1152,11 +1158,12 @@ test.describe('Sequence edit mode', () => {
      * 5. Restore it using Undo and Redo deletion
      * 6. Take screenshot.
      */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await waitForRender(page, async () => {
       await page.keyboard.type('AAAAAA');
     });
     await selectAllStructuresOnCanvas(page);
-    await createRNAAntisenseStrand(page, 'A');
+    await createRNAAntisenseChain(page, anySymbolA);
     await selectFlexLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
     await selectEraseTool(page);
@@ -1190,12 +1197,13 @@ test.describe('Sequence edit mode', () => {
      * 5. Restore it using Undo and Redo deletion
      * 6. Take screenshot.
      */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await switchToDNAMode(page);
     await waitForRender(page, async () => {
       await page.keyboard.type('AAAAAA');
     });
     await selectAllStructuresOnCanvas(page);
-    await createDNAAntisenseStrand(page, 'A');
+    await createDNAAntisenseChain(page, anySymbolA);
     await selectFlexLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
     await selectEraseTool(page);
@@ -1228,11 +1236,12 @@ test.describe('Sequence edit mode', () => {
      * 4. Save it to KET and open saved file
      * 5. Take screenshot.
      */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await waitForRender(page, async () => {
       await page.keyboard.type('AAAAAA');
     });
     await selectAllStructuresOnCanvas(page);
-    await createRNAAntisenseStrand(page, 'A');
+    await createRNAAntisenseChain(page, anySymbolA);
     await verifyFileExport(
       page,
       'KET/rna-AAAAAA-sequence-expected.ket',
@@ -1261,12 +1270,13 @@ test.describe('Sequence edit mode', () => {
      * 4. Save it to KET and open saved file
      * 5. Take screenshot.
      */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await switchToDNAMode(page);
     await waitForRender(page, async () => {
       await page.keyboard.type('AAAAAA');
     });
     await selectAllStructuresOnCanvas(page);
-    await createDNAAntisenseStrand(page, 'A');
+    await createDNAAntisenseChain(page, anySymbolA);
     await verifyFileExport(
       page,
       'KET/dna-AAAAAA-sequence-expected.ket',
@@ -1295,11 +1305,12 @@ test.describe('Sequence edit mode', () => {
      * 4. Save it to MOL V3000 and open saved file
      * 5. Take screenshot.
      */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await waitForRender(page, async () => {
       await page.keyboard.type('AAAAAA');
     });
     await selectAllStructuresOnCanvas(page);
-    await createRNAAntisenseStrand(page, 'A');
+    await createRNAAntisenseChain(page, anySymbolA);
     await verifyFileExport(
       page,
       'Molfiles-V3000/rna-AAAAAA-sequence-expected.mol',
@@ -1329,12 +1340,13 @@ test.describe('Sequence edit mode', () => {
      * 4. Save it to MOL V3000 and open saved file
      * 5. Take screenshot.
      */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await switchToDNAMode(page);
     await waitForRender(page, async () => {
       await page.keyboard.type('AAAAAA');
     });
     await selectAllStructuresOnCanvas(page);
-    await createDNAAntisenseStrand(page, 'A');
+    await createDNAAntisenseChain(page, anySymbolA);
     await verifyFileExport(
       page,
       'Molfiles-V3000/dna-AAAAAA-sequence-expected.mol',

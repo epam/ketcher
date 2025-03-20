@@ -12,7 +12,6 @@ import {
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { getMonomerType } from '@utils/mappers/monomerMapper';
-import { clickOnSequenceSymbol } from './sequence';
 
 export async function moveMonomer(
   page: Page,
@@ -294,34 +293,4 @@ export function getSymbolLocator(
     : page.locator(attributeSelectors);
 
   return locator;
-}
-
-export async function createRNAAntisenseStrand(
-  page: Page,
-  letter: string,
-  nthNumber = 0,
-) {
-  await clickOnSequenceSymbol(page, letter, {
-    nthNumber,
-    button: 'right',
-  });
-  const createAntisenseStrand = page.getByTestId('create_antisense_rna_chain');
-  await waitForRender(page, async () => {
-    await createAntisenseStrand.click();
-  });
-}
-
-export async function createDNAAntisenseStrand(
-  page: Page,
-  letter: string,
-  nthNumber = 0,
-) {
-  await clickOnSequenceSymbol(page, letter, {
-    nthNumber,
-    button: 'right',
-  });
-  const createAntisenseStrand = page.getByTestId('create_antisense_dna_chain');
-  await waitForRender(page, async () => {
-    await createAntisenseStrand.click();
-  });
 }

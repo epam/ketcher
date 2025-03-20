@@ -2,6 +2,7 @@ import { editorEvents } from 'application/editor/editorEvents';
 import { CoreEditor } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { SideChainConnectionBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SideChainConnectionBondRenderer';
+import { SVGPathDAttributeUtil } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtil';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
 import { BaseMonomer, Vec2 } from 'domain/entities';
@@ -272,7 +273,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           BOND_END_LENGTH -
           horizontalPartIntersectionsOffset * 3;
         pathDAttributeValue +=
-          SideChainConnectionBondRenderer.generateAbsoluteLine(
+          SVGPathDAttributeUtil.generateAbsoluteLine(
             startPosition.x,
             absoluteLineY,
           ) + ' ';
@@ -286,7 +287,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           BOND_END_LENGTH +
           horizontalPartIntersectionsOffset * 3;
         pathDAttributeValue +=
-          SideChainConnectionBondRenderer.generateAbsoluteLine(
+          SVGPathDAttributeUtil.generateAbsoluteLine(
             startPosition.x,
             absoluteLineY,
           ) + ' ';
@@ -370,9 +371,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
               : cellConnection.xOffset) *
               3;
           pathDAttributeValue +=
-            SideChainConnectionBondRenderer.generateVerticalAbsoluteLine(
-              verticalLineY,
-            ) + ' ';
+            SVGPathDAttributeUtil.generateVerticalAbsoluteLine(verticalLineY) +
+            ' ';
           pathDAttributeValue +=
             SideChainConnectionBondRenderer.generateBend(0, sin, cos, 1) + ' ';
         }
@@ -380,7 +380,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           endPosition.x -
           SideChainConnectionBondRenderer.SMOOTH_CORNER_SIZE * cos;
         pathDAttributeValue +=
-          SideChainConnectionBondRenderer.generateHorizontalAbsoluteLine(
+          SVGPathDAttributeUtil.generateHorizontalAbsoluteLine(
             horizontalLineX,
           ) + ' ';
         pathDAttributeValue +=
@@ -416,10 +416,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     });
 
     pathDAttributeValue +=
-      SideChainConnectionBondRenderer.generateAbsoluteLine(
-        endPosition.x,
-        endPosition.y,
-      ) + ' ';
+      SVGPathDAttributeUtil.generateAbsoluteLine(endPosition.x, endPosition.y) +
+      ' ';
 
     this.bodyElement = rootElement
       .append('path')
@@ -753,7 +751,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const start = `M ${Math.round(startPosition.x)},${Math.round(
       startPosition.y,
     )}`;
-    const line = `L ${Math.round(endPosition.x)},${Math.round(endPosition.y)}`;
+    const line = SVGPathDAttributeUtil.generateAbsoluteLine(
+      Math.round(endPosition.x),
+      Math.round(endPosition.y),
+    );
     this.path = `${start} ${line}`;
   }
 

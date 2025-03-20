@@ -127,10 +127,6 @@ export class SideChainConnectionBondRenderer {
     });
   }
 
-  public static generateAbsoluteLine(x: number, y: number): string {
-    return `L ${x},${y}`;
-  }
-
   // TODO: Can we use `-1 | 0 | 1` instead of `number`?
   public static generateBend(
     dx1: number,
@@ -142,13 +138,5 @@ export class SideChainConnectionBondRenderer {
     const controlPoint = `${size * dx1},${size * dy1}`;
     const endPoint = `${size * dx},${size * dy}`;
     return `q ${controlPoint} ${endPoint}`;
-  }
-
-  public static generateHorizontalAbsoluteLine(x: number): string {
-    return `H ${x}`;
-  }
-
-  public static generateVerticalAbsoluteLine(y: number): string {
-    return `V ${y}`;
   }
 }

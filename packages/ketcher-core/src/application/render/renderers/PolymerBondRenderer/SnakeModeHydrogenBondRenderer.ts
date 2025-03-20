@@ -9,7 +9,6 @@ import { Vec2 } from 'domain/entities';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   Connection,
-  ConnectionDirectionInDegrees,
   ConnectionDirectionOfLastCell,
 } from 'domain/entities/canvas-matrix/Connection';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -333,23 +332,16 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
         previousConnection &&
         previousConnection.direction !== cellConnection.direction
       ) {
-        // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
-        const horizontal = new Set([0, 180]).has(
-          previousConnection.direction as ConnectionDirectionInDegrees,
-        );
-        const direction = horizontal
-          ? xDirection
-          : // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
-            (previousConnection.direction as ConnectionDirectionInDegrees);
-        const result = SideChainConnectionBondRenderer.drawPartOfSideConnection(
-          {
-            cell: previousCell,
-            connection: previousConnection,
-            direction,
-            horizontal,
-            sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
-          },
-        );
+        const result =
+          SideChainConnectionBondRenderer.drawPartOfSideConnectionForOtherCells(
+            {
+              cell: previousCell,
+              connection: previousConnection,
+              sideConnectionBondTurnPoint:
+                this.sideConnectionBondTurnPoint ?? 0,
+              xDirection,
+            },
+          );
         pathDAttributeValue += result.pathPart;
         this.sideConnectionBondTurnPoint = result.sideConnectionBondTurnPoint;
       }

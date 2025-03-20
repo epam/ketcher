@@ -1,6 +1,7 @@
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { SubChainNode } from 'domain/entities';
 
+export type ConnectionDirectionXInDegrees = 0 | 180;
 export type ConnectionDirectionInDegrees = 0 | 90 | 180 | 270;
 export type ConnectionDirectionOfLastCell = {
   readonly x: number;

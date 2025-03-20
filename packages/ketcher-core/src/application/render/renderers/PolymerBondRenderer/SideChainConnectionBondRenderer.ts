@@ -11,6 +11,7 @@ import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   Connection,
   ConnectionDirectionInDegrees,
+  ConnectionDirectionXInDegrees,
 } from 'domain/entities/canvas-matrix/Connection';
 import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 
@@ -27,10 +28,21 @@ interface DrawPartOfSideConnectionResult {
   readonly sideConnectionBondTurnPoint: number;
 }
 
+interface DrawPartOfSideConnectionForOtherCellsParameter {
+  readonly cell: Cell;
+  readonly connection: Connection;
+  readonly sideConnectionBondTurnPoint: number;
+  readonly xDirection: ConnectionDirectionXInDegrees;
+}
+
+interface DrawPartOfSideConnectionForOtherCellsResult {
+  readonly pathPart: string;
+  readonly sideConnectionBondTurnPoint: number;
+}
+
 const CELL_HEIGHT = 40;
 
 export class SideChainConnectionBondRenderer {
-  // TODO: Specify the types.
   public static drawPartOfSideConnection({
     cell,
     connection,
@@ -85,5 +97,29 @@ export class SideChainConnectionBondRenderer {
       pathPart,
       sideConnectionBondTurnPoint: sideConnectionBondTurnPointInternal,
     };
+  }
+
+  // TODO: Specify the types.
+  public static drawPartOfSideConnectionForOtherCells({
+    cell,
+    connection,
+    sideConnectionBondTurnPoint,
+    xDirection,
+  }: DrawPartOfSideConnectionForOtherCellsParameter): DrawPartOfSideConnectionForOtherCellsResult {
+    // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
+    const horizontal = new Set([0, 180]).has(
+      connection.direction as ConnectionDirectionInDegrees,
+    );
+    const direction = horizontal
+      ? xDirection
+      : // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
+        (connection.direction as ConnectionDirectionInDegrees);
+    return this.drawPartOfSideConnection({
+      cell,
+      connection,
+      direction,
+      horizontal,
+      sideConnectionBondTurnPoint,
+    });
   }
 }

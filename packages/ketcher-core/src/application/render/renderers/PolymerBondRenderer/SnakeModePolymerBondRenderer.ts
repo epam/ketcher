@@ -8,27 +8,26 @@ import { BaseMonomer, Vec2 } from 'domain/entities';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   Connection,
-  ConnectionDirectionInDegrees,
   ConnectionDirectionOfLastCell,
 } from 'domain/entities/canvas-matrix/Connection';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
+import { isNumber } from 'lodash';
 import { BaseRenderer } from '../BaseRenderer';
 import {
   CORNER_LENGTH,
   DOUBLE_CORNER_LENGTH,
   generateBend,
   generateCornerFromBottomToRight,
-  generateCornerFromLeftToTop,
   generateCornerFromLeftToBottom,
-  generateCornerFromRightToTop,
+  generateCornerFromLeftToTop,
   generateCornerFromRightToBottom,
+  generateCornerFromRightToTop,
   generateCornerFromTopToLeft,
   generateCornerFromTopToRight,
   SMOOTH_CORNER_SIZE,
 } from './helpers';
-import { isNumber } from 'lodash';
 
 enum LineDirection {
   Horizontal = 'Horizontal',
@@ -370,23 +369,16 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         previousConnection &&
         previousConnection.direction !== cellConnection.direction
       ) {
-        // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
-        const horizontal = new Set([0, 180]).has(
-          previousConnection.direction as ConnectionDirectionInDegrees,
-        );
-        const direction = horizontal
-          ? xDirection
-          : // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
-            (previousConnection.direction as ConnectionDirectionInDegrees);
-        const result = SideChainConnectionBondRenderer.drawPartOfSideConnection(
-          {
-            cell: previousCell,
-            connection: previousConnection,
-            direction,
-            horizontal,
-            sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
-          },
-        );
+        const result =
+          SideChainConnectionBondRenderer.drawPartOfSideConnectionForOtherCells(
+            {
+              cell: previousCell,
+              connection: previousConnection,
+              sideConnectionBondTurnPoint:
+                this.sideConnectionBondTurnPoint ?? 0,
+              xDirection,
+            },
+          );
         pathDAttributeValue += result.pathPart;
         this.sideConnectionBondTurnPoint = result.sideConnectionBondTurnPoint;
       }

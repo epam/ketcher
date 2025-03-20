@@ -182,6 +182,12 @@ export type EditorTheme = {
   transition: {
     regular: string;
   };
+  zIndex: {
+    base: number;
+    overlay: number;
+    modal: number;
+    critical: number;
+  };
 };
 
 export type ThemeType = { ketcher: EditorTheme };

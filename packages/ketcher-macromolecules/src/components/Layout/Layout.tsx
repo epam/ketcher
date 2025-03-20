@@ -71,10 +71,7 @@ const Right = styled(BaseLeftRightStyle)``;
 
 const Top = styled.div<{ shortened?: boolean }>(({ shortened = false }) => ({
   height: '36px',
-  // 22px for hide library button
-  width: shortened
-    ? `calc(100% - ${MONOMER_LIBRARY_WIDTH})`
-    : 'calc(100% - 22px)',
+  width: shortened ? `calc(100% - ${MONOMER_LIBRARY_WIDTH})` : 'calc(100%)',
   marginBottom: '6px',
   display: 'flex',
   justifyContent: 'space-between',

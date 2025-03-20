@@ -286,12 +286,6 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
         },
       ) as Connection;
       const isLastCell = cellIndex === cells.length - 1;
-      const _xDirection: ConnectionXDirectionInDegrees = this
-        .sideConnectionBondTurnPoint
-        ? endPosition.x < this.sideConnectionBondTurnPoint
-          ? 180
-          : 0
-        : xDirection;
       const maxXOffset = cell.connections.reduce(
         (max: number, connection: Connection): number => {
           return connection.isVertical || max > connection.xOffset
@@ -309,17 +303,26 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
           return;
         }
 
-        const directionObject =
-          cellConnection.direction as ConnectionDirectionOfLastCell;
-        const yDirection = connectionIsVertical ? 90 : directionObject.y;
-        const sin =
-          SideChainConnectionBondRenderer.calculateSinForYDirection(yDirection);
+        const _xDirection: ConnectionXDirectionInDegrees = this
+          .sideConnectionBondTurnPoint
+          ? endPosition.x < this.sideConnectionBondTurnPoint
+            ? 180
+            : 0
+          : xDirection;
         const cos =
           SideChainConnectionBondRenderer.calculateCosForXDirection(
             _xDirection,
           );
 
         if (!areCellsOnSameRow) {
+          const directionObject =
+            cellConnection.direction as ConnectionDirectionOfLastCell;
+          const yDirection = connectionIsVertical ? 90 : directionObject.y;
+          const sin =
+            SideChainConnectionBondRenderer.calculateSinForYDirection(
+              yDirection,
+            );
+
           const verticalLineY =
             endPosition.y -
             CELL_HEIGHT / 2 -

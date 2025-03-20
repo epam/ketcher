@@ -153,7 +153,8 @@ export const RnaTab = styled(Tab)<{ selected?: boolean }>`
   > svg {
     height: 16px;
     width: 16px;
-    color: #b4b9d6;
+    color: ${({ selected, theme }) =>
+      selected ? theme.ketcher.color.button.primary.active : '#b4b9d6'};
 
     &.MuiTab-iconWrapper {
       margin: 0;

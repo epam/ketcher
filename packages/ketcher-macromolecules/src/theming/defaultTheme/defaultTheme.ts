@@ -269,6 +269,12 @@ export const defaultTheme: EditorTheme = {
   transition: {
     regular: 'all .3s',
   },
+  zIndex: {
+    base: 0,
+    overlay: 100,
+    modal: 1000,
+    critical: 9999,
+  },
 };
 
 export const muiOverrides: MuiThemeOptions = {

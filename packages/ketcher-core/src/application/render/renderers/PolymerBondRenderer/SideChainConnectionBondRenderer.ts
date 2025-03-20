@@ -47,6 +47,25 @@ export class SideChainConnectionBondRenderer {
     return Math.cos((directionX * Math.PI) / 180) as -1 | 1;
   }
 
+  public static checkIfConnectionIsStraightVertical(
+    cells: readonly Cell[],
+    connectionIsVertical: boolean,
+  ): boolean {
+    if (!connectionIsVertical) return false;
+    if (cells.length === 2) return true;
+    const [firstCell] = cells;
+    // TODO: Is it possible to finish the cycle not in the end?
+    return cells.reduce(
+      (isStraight: boolean, cell: Cell, index: number): boolean => {
+        if (!isStraight || new Set([0, cells.length - 1]).has(index)) {
+          return isStraight;
+        }
+        return cell.x === firstCell.x && !cell.monomer;
+      },
+      true,
+    );
+  }
+
   public static drawPartOfSideConnection({
     cell,
     connection,

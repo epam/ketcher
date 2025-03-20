@@ -222,19 +222,12 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         return connection.polymerBond === this.polymerBond;
       },
     ) as Connection;
-    const isVerticalConnection = firstCellConnection.isVertical;
-    const isStraightVerticalConnection =
-      (cells.length === 2 ||
-        cells.reduce(
-          (isStraight: boolean, cell: Cell, index: number): boolean => {
-            if (!isStraight || index === 0 || index === cells.length - 1) {
-              return isStraight;
-            }
-            return cell.x === firstCell.x && !cell.monomer;
-          },
-          true,
-        )) &&
-      isVerticalConnection;
+    const connectionIsVertical = firstCellConnection.isVertical;
+    const connectionIsStraightVertical =
+      SideChainConnectionBondRenderer.checkIfConnectionIsStraightVertical(
+        cells,
+        connectionIsVertical,
+      );
     const isFirstMonomerOfBondInFirstCell = firstCell.node?.monomers.includes(
       this.polymerBond.firstMonomer,
     );
@@ -295,7 +288,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           ) + ' ';
       }
       if (
-        !isStraightVerticalConnection &&
+        !connectionIsStraightVertical &&
         !isSecondCellEmpty &&
         !isTwoNeighborRowsConnection
       ) {
@@ -304,7 +297,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       }
     }
 
-    if (isVerticalConnection && !isStraightVerticalConnection) {
+    if (connectionIsVertical && !connectionIsStraightVertical) {
       const direction =
         this.sideConnectionBondTurnPoint &&
         startPosition.x < this.sideConnectionBondTurnPoint
@@ -349,13 +342,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         maxHorizontalOffset > maxXOffset ? maxHorizontalOffset : maxXOffset;
 
       if (isLastCell) {
-        if (isStraightVerticalConnection) {
+        if (connectionIsStraightVertical) {
           return;
         }
 
         const directionObject =
           cellConnection.direction as ConnectionDirectionOfLastCell;
-        const yDirection = isVerticalConnection ? 90 : directionObject.y;
+        const yDirection = connectionIsVertical ? 90 : directionObject.y;
         const sin = Math.sin((yDirection * Math.PI) / 180);
         const cos =
           SideChainConnectionBondRenderer.calculateCosForDirectionX(

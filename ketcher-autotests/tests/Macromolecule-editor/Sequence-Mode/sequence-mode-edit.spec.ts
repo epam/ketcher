@@ -6,17 +6,20 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
+  Monomer,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   selectClearCanvasTool,
+  selectEraseTool,
   selectFlexLayoutModeTool,
+  selectMacroBond,
   selectMonomer,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
@@ -30,6 +33,7 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   FileType,
   verifyFileExport,
@@ -40,7 +44,12 @@ import {
   waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  createDNAAntisenseChain,
+  createRNAAntisenseChain,
+  getMonomerLocator,
+  getSymbolLocator,
+} from '@utils/macromolecules/monomer';
 import { expandCollapseRnaBuilder } from '@utils/macromolecules/rnaBuilder';
 import {
   clickOnSequenceSymbol,
@@ -53,6 +62,11 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+
+async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
+  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await getMonomerLocator(page, monomer).nth(nth).hover();
+}
 
 test.describe('Sequence edit mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -659,9 +673,15 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPAAApPAAAPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectFlexLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify typing "p" (or "P") in sequence mode (DNA) inserts a default phosphate ( at the beginning, middle, and end of the chain )', async ({
@@ -679,9 +699,15 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPAAApPAAAPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectFlexLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify typing "p" (or "P") in sequence mode (PEP) not inserts a default phosphate ( at the beginning, middle, and end of the chain )', async ({
@@ -699,9 +725,15 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPAAApPAAAPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectFlexLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Check consecutive typing of multiple "p" characters in RNA or DNA', async ({
@@ -724,9 +756,15 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPPppPPpPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectFlexLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Check typing of  "p" characters in RNA switch to DNA by hotkey and typing "p"', async ({
@@ -749,9 +787,15 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPAAApPAAAPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectFlexLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Ensure undo/redo functionality works for typed phosphates', async ({
@@ -781,13 +825,25 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPPppPPpPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectClearCanvasTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await pressUndoButton(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await pressRedoButton(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Validate saving and opening a sequence with typed phosphates (KET)', async ({
@@ -817,7 +873,10 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPPppPPpPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await verifyFileExport(
       page,
       'KET/rna-dna-pep-sequence-expected.ket',
@@ -827,7 +886,10 @@ test.describe('Sequence edit mode', () => {
       'KET/rna-dna-pep-sequence-expected.ket',
       page,
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Validate saving and opening a sequence with typed phosphates (MOL V3000)', async ({
@@ -857,7 +919,10 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPPppPPpPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await verifyFileExport(
       page,
       'Molfiles-V3000/rna-dna-pep-sequence-expected.mol',
@@ -868,7 +933,10 @@ test.describe('Sequence edit mode', () => {
       'Molfiles-V3000/rna-dna-pep-sequence-expected.mol',
       page,
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify that typed phosphates are deleted and can be restored using the Undo action', async ({
@@ -898,11 +966,400 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPPppPPpPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await pressUndoButton(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Verify backbone connection updates (R1-R2 or R2-R1) in automatically created antisense chains', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6355
+     * Description: Backbone connection updates (R1-R2 or R2-R1) in automatically created antisense chains.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Create AAAAAA sequence
+     * 3. Create antisense RNA sequence
+     * 4. Switch to Flex mode
+     * 5. Hover over the monomer R to see its connection to the Phosphate
+     * 6. Take screenshot.
+     */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await waitForRender(page, async () => {
+      await page.keyboard.type('AAAAAA');
+    });
+    await selectAllStructuresOnCanvas(page);
+    await createRNAAntisenseChain(page, anySymbolA);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectFlexLayoutModeTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await hoverMouseOverMonomer(page, Sugars.R, 11);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Verify backbone connection updates (R1-R2 or R2-R1) in automatically created DNA antisense chains', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6355
+     * Description: Backbone connection updates (R1-R2 or R2-R1) in automatically created antisense chains.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - DNA
+     * 2. Create AAAAAA sequence
+     * 3. Create antisense RNA sequence
+     * 4. Switch to Flex mode
+     * 5. Hover over the monomer R to see its connection to the Phosphate
+     * 6. Take screenshot.
+     */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await switchToDNAMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('AAAAAA');
+    });
+    await selectAllStructuresOnCanvas(page);
+    await createDNAAntisenseChain(page, anySymbolA);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectFlexLayoutModeTool(page);
+    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await hoverMouseOverMonomer(page, Sugars.dR, 11);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check error message if the monomer in the sense chain lacks R2 attachment point', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6355
+     * Description: Error message appears if the monomer in the sense chain lacks R2 attachment point.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Load file
+     * 3. Create antisense RNA sequence
+     * 4. Take screenshot.
+     */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/monomer-does-not-have-attachment-point-r2.ket',
+      page,
+    );
+    await selectAllStructuresOnCanvas(page);
+    await createRNAAntisenseChain(page, anySymbolA);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Verify that a created structure with an antisense RNA chain can be copied and pasted onto the canvas', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6355
+     * Description: Created structure with an antisense RNA chain can be copied and pasted onto the canvas.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Create AAAAAA sequence
+     * 3. Create antisense RNA sequence
+     * 4. Switch to Flex mode
+     * 5. Copy and paste
+     * 6. Take screenshot.
+     */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await waitForRender(page, async () => {
+      await page.keyboard.type('AAAAAA');
+    });
+    await selectAllStructuresOnCanvas(page);
+    await createRNAAntisenseChain(page, anySymbolA);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await selectFlexLayoutModeTool(page);
+    await pasteFromClipboardByKeyboard(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Verify that a created structure with an antisense DNA chain can be copied and pasted onto the canvas', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6355
+     * Description: Created structure with an antisense RNA chain can be copied and pasted onto the canvas.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - DNA
+     * 2. Create AAAAAA sequence
+     * 3. Create antisense DNA sequence
+     * 4. Switch to Flex mode
+     * 5. Copy and paste
+     * 6. Take screenshot.
+     */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await switchToDNAMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('AAAAAA');
+    });
+    await selectAllStructuresOnCanvas(page);
+    await createDNAAntisenseChain(page, anySymbolA);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await selectFlexLayoutModeTool(page);
+    await pasteFromClipboardByKeyboard(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Verify that a created structure with an antisense RNA chain can be deleted and restored by Undo/Redo', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6355
+     * Description: Created structure with an antisense RNA chain can be deleted and restored by Undo/Redo.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Create AAAAAA sequence
+     * 3. Create antisense RNA sequence
+     * 4. Select all structure and delete
+     * 5. Restore it using Undo and Redo deletion
+     * 6. Take screenshot.
+     */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await waitForRender(page, async () => {
+      await page.keyboard.type('AAAAAA');
+    });
+    await selectAllStructuresOnCanvas(page);
+    await createRNAAntisenseChain(page, anySymbolA);
+    await selectFlexLayoutModeTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await selectEraseTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await pressUndoButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await pressRedoButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Verify that a created structure with an antisense DNA chain can be deleted and restored by Undo/Redo', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6355
+     * Description: Created structure with an antisense DNA chain can be deleted and restored by Undo/Redo.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Create AAAAAA sequence
+     * 3. Create antisense DNA sequence
+     * 4. Select all structure and delete
+     * 5. Restore it using Undo and Redo deletion
+     * 6. Take screenshot.
+     */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await switchToDNAMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('AAAAAA');
+    });
+    await selectAllStructuresOnCanvas(page);
+    await createDNAAntisenseChain(page, anySymbolA);
+    await selectFlexLayoutModeTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await selectEraseTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await pressUndoButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await pressRedoButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Verify that a created structure with an antisense RNA chain can be saved and opened (KET)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6355
+     * Description: Created structure with an antisense RNA chain can be saved and opened (KET).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Create AAAAAA sequence
+     * 3. Create antisense RNA sequence
+     * 4. Save it to KET and open saved file
+     * 5. Take screenshot.
+     */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await waitForRender(page, async () => {
+      await page.keyboard.type('AAAAAA');
+    });
+    await selectAllStructuresOnCanvas(page);
+    await createRNAAntisenseChain(page, anySymbolA);
+    await verifyFileExport(
+      page,
+      'KET/rna-AAAAAA-sequence-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/rna-AAAAAA-sequence-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Verify that a created structure with an antisense DNA chain can be saved and opened (KET)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6355
+     * Description: Created structure with an antisense DNA chain can be saved and opened (KET).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - DNA
+     * 2. Create AAAAAA sequence
+     * 3. Create antisense DNA sequence
+     * 4. Save it to KET and open saved file
+     * 5. Take screenshot.
+     */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await switchToDNAMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('AAAAAA');
+    });
+    await selectAllStructuresOnCanvas(page);
+    await createDNAAntisenseChain(page, anySymbolA);
+    await verifyFileExport(
+      page,
+      'KET/dna-AAAAAA-sequence-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/dna-AAAAAA-sequence-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Verify that a created structure with an antisense RNA chain can be saved and opened (MOL V3000)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6355
+     * Description: Created structure with an antisense RNA chain can be saved and opened (MOL V3000).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Create AAAAAA sequence
+     * 3. Create antisense RNA sequence
+     * 4. Save it to MOL V3000 and open saved file
+     * 5. Take screenshot.
+     */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await waitForRender(page, async () => {
+      await page.keyboard.type('AAAAAA');
+    });
+    await selectAllStructuresOnCanvas(page);
+    await createRNAAntisenseChain(page, anySymbolA);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/rna-AAAAAA-sequence-expected.mol',
+      FileType.MOL,
+      'v3000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/rna-AAAAAA-sequence-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Verify that a created structure with an antisense DNA chain can be saved and opened (MOL V3000)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6355
+     * Description: Created structure with an antisense DNA chain can be saved and opened (MOL V3000).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - DNA
+     * 2. Create AAAAAA sequence
+     * 3. Create antisense DNA sequence
+     * 4. Save it to MOL V3000 and open saved file
+     * 5. Take screenshot.
+     */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await switchToDNAMode(page);
+    await waitForRender(page, async () => {
+      await page.keyboard.type('AAAAAA');
+    });
+    await selectAllStructuresOnCanvas(page);
+    await createDNAAntisenseChain(page, anySymbolA);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/dna-AAAAAA-sequence-expected.mol',
+      FileType.MOL,
+      'v3000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/dna-AAAAAA-sequence-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 });

@@ -47,10 +47,21 @@ interface GeneratePathPartForCellsWhichAreOnSameRowParameter {
   readonly maxHorizontalOffset: number;
 }
 
+interface GeneratePathPartForLastCellIfConnectionIsNotStraightVerticalParameter {
+  readonly cellConnection: Connection;
+  readonly cellsAreOnSameRow: boolean;
+  readonly connectionOfTwoNeighborRows: boolean;
+  readonly endPosition: Vec2;
+  readonly firstCellConnectionIsVertical: boolean;
+  readonly maxHorizontalOffset: number;
+  readonly sideConnectionBondTurnPoint: number;
+  readonly xDirection: ConnectionXDirectionInDegrees;
+}
+
 const CELL_HEIGHT = 40;
 
 export class SideChainConnectionBondRenderer {
-  public static readonly SMOOTH_CORNER_SIZE = 5;
+  public static readonly smoothCornerSize = 5;
 
   public static calculateCosForXDirection(
     xDirection: ConnectionXDirectionInDegrees,
@@ -124,7 +135,7 @@ export class SideChainConnectionBondRenderer {
         (maxYOffset + 1) * 3;
     }
     let pathPart = horizontal ? 'H ' : 'V ';
-    pathPart += `${endOfPathPart - this.SMOOTH_CORNER_SIZE * cos} `;
+    pathPart += `${endOfPathPart - this.smoothCornerSize * cos} `;
     pathPart += this.generateBend(cos, sin, cos, 1) + ' ';
 
     return {
@@ -164,13 +175,58 @@ export class SideChainConnectionBondRenderer {
     dx: number,
     dy: -1 | 1,
   ): string {
-    const size = this.SMOOTH_CORNER_SIZE;
+    const size = this.smoothCornerSize;
     const controlPoint = `${size * dx1},${size * dy1}`;
     const endPoint = `${size * dx},${size * dy}`;
     return `q ${controlPoint} ${endPoint}`;
   }
 
-  public static generatePathPartForCellsWhichAreOnSameRow({
+  public static generatePathPartForLastCellIfConnectionIsNotStraightVertical({
+    cellConnection,
+    cellsAreOnSameRow,
+    connectionOfTwoNeighborRows,
+    endPosition,
+    firstCellConnectionIsVertical,
+    maxHorizontalOffset,
+    sideConnectionBondTurnPoint,
+    xDirection,
+  }: GeneratePathPartForLastCellIfConnectionIsNotStraightVerticalParameter): string {
+    const _xDirection: ConnectionXDirectionInDegrees =
+      sideConnectionBondTurnPoint
+        ? endPosition.x < sideConnectionBondTurnPoint
+          ? 180
+          : 0
+        : xDirection;
+    const cos = this.calculateCosForXDirection(_xDirection);
+
+    let pathPart = '';
+    if (!cellsAreOnSameRow) {
+      pathPart +=
+        this.#generatePathPartForCellsWhichAreOnSameRow({
+          cellConnection,
+          connectionOfTwoNeighborRows,
+          cos,
+          endPositionY: endPosition.y,
+          firstCellConnectionIsVertical,
+          maxHorizontalOffset,
+        }) + ' ';
+    }
+    const horizontalLineX = endPosition.x - this.smoothCornerSize * cos;
+    pathPart +=
+      SVGPathDAttributeUtil.generateHorizontalAbsoluteLine(horizontalLineX) +
+      ' ';
+    pathPart += this.generateBend(cos, 0, cos, 1);
+    return pathPart;
+  }
+
+  static #calculateSinForYDirection(
+    // TODO: Can we use `yDirection: 90 | 270`?
+    yDirection: number,
+  ): number {
+    return Math.sin((yDirection * Math.PI) / 180);
+  }
+
+  static #generatePathPartForCellsWhichAreOnSameRow({
     cellConnection: { direction, xOffset, yOffset },
     connectionOfTwoNeighborRows,
     cos,
@@ -185,7 +241,7 @@ export class SideChainConnectionBondRenderer {
     const verticalLineY =
       endPositionY -
       CELL_HEIGHT / 2 -
-      this.SMOOTH_CORNER_SIZE -
+      this.smoothCornerSize -
       sin * (yOffset || 0) * 3 -
       (connectionOfTwoNeighborRows ? maxHorizontalOffset - xOffset : xOffset) *
         3;
@@ -193,12 +249,5 @@ export class SideChainConnectionBondRenderer {
       SVGPathDAttributeUtil.generateVerticalAbsoluteLine(verticalLineY);
     const bend = this.generateBend(0, sin, cos, 1);
     return `${line} ${bend}`;
-  }
-
-  static #calculateSinForYDirection(
-    // TODO: Can we use `yDirection: 90 | 270`?
-    yDirection: number,
-  ): number {
-    return Math.sin((yDirection * Math.PI) / 180);
   }
 }

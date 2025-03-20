@@ -338,39 +338,20 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           return;
         }
 
-        const _xDirection: ConnectionXDirectionInDegrees = this
-          .sideConnectionBondTurnPoint
-          ? endPosition.x < this.sideConnectionBondTurnPoint
-            ? 180
-            : 0
-          : xDirection;
-        const cos =
-          SideChainConnectionBondRenderer.calculateCosForXDirection(
-            _xDirection,
-          );
-
-        if (!areCellsOnSameRow) {
-          pathDAttributeValue +=
-            SideChainConnectionBondRenderer.generatePathPartForCellsWhichAreOnSameRow(
-              {
-                cellConnection,
-                connectionOfTwoNeighborRows,
-                cos,
-                endPositionY: endPosition.y,
-                firstCellConnectionIsVertical,
-                maxHorizontalOffset,
-              },
-            ) + ' ';
-        }
-        const horizontalLineX =
-          endPosition.x -
-          SideChainConnectionBondRenderer.SMOOTH_CORNER_SIZE * cos;
         pathDAttributeValue +=
-          SVGPathDAttributeUtil.generateHorizontalAbsoluteLine(
-            horizontalLineX,
+          SideChainConnectionBondRenderer.generatePathPartForLastCellIfConnectionIsNotStraightVertical(
+            {
+              cellConnection,
+              cellsAreOnSameRow: areCellsOnSameRow,
+              connectionOfTwoNeighborRows,
+              endPosition,
+              firstCellConnectionIsVertical,
+              maxHorizontalOffset,
+              sideConnectionBondTurnPoint:
+                this.sideConnectionBondTurnPoint ?? 0,
+              xDirection,
+            },
           ) + ' ';
-        pathDAttributeValue +=
-          SideChainConnectionBondRenderer.generateBend(cos, 0, cos, 1) + ' ';
         return;
       }
 

@@ -220,7 +220,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   private drawPartOfSideConnection(
-    isHorizontal: boolean,
+    horizontal: boolean,
     connection: Connection,
     cell: Cell,
     direction: ConnectionDirectionInDegrees,
@@ -244,27 +244,27 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     );
 
     let endOfPathPart: number;
-    if (isHorizontal && this.sideConnectionBondTurnPoint) {
+    if (horizontal && this.sideConnectionBondTurnPoint) {
       endOfPathPart = this.sideConnectionBondTurnPoint;
     } else {
       const { monomerSize, scaledMonomerPosition } = (
         cell.monomer as BaseMonomer
       ).renderer as BaseMonomerRenderer | BaseSequenceItemRenderer;
-      endOfPathPart = isHorizontal
+      endOfPathPart = horizontal
         ? scaledMonomerPosition.x + monomerSize.width / 2 + xOffset
         : scaledMonomerPosition.y + monomerSize.height / 2 + yOffset;
     }
 
     this.sideConnectionBondTurnPoint = endOfPathPart;
 
-    if (isHorizontal) {
+    if (horizontal) {
       endOfPathPart +=
         -(connection.yOffset || 0) * 3 +
         cos * -connection.xOffset * 3 +
         cos * (maxXOffset + 1) * 3 +
         (maxYOffset + 1) * 3;
     }
-    let pathPart = isHorizontal ? 'H ' : 'V ';
+    let pathPart = horizontal ? 'H ' : 'V ';
     pathPart += `${endOfPathPart - SMOOTH_CORNER_SIZE * cos} `;
     pathPart += generateBend(cos, sin, cos, 1);
 

@@ -226,12 +226,23 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     return this.bodyElement;
   }
 
-  private drawPartOfSideConnection(
-    horizontal: boolean,
-    connection: Connection,
-    cell: Cell,
-    direction: ConnectionDirectionInDegrees,
-  ): string {
+  // TODO: Specify the types.
+  private drawPartOfSideConnection({
+    cell,
+    connection,
+    direction,
+    horizontal,
+    sideConnectionBondTurnPoint,
+  }: {
+    readonly cell: Cell;
+    readonly connection: Connection;
+    readonly direction: ConnectionDirectionInDegrees;
+    readonly horizontal: boolean;
+    readonly sideConnectionBondTurnPoint: number;
+  }): {
+    readonly pathPart: string;
+    readonly sideConnectionBondTurnPoint: number;
+  } {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
     const xOffset = (CELL_WIDTH / 2) * cos;
@@ -251,8 +262,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     );
 
     let endOfPathPart: number;
-    if (horizontal && this.sideConnectionBondTurnPoint) {
-      endOfPathPart = this.sideConnectionBondTurnPoint;
+    if (horizontal && sideConnectionBondTurnPoint) {
+      endOfPathPart = sideConnectionBondTurnPoint;
     } else {
       const { monomerSize, scaledMonomerPosition } = (
         cell.monomer as BaseMonomer
@@ -262,7 +273,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         : scaledMonomerPosition.y + monomerSize.height / 2 + yOffset;
     }
 
-    this.sideConnectionBondTurnPoint = endOfPathPart;
+    const sideConnectionBondTurnPointInternal = endOfPathPart;
 
     if (horizontal) {
       endOfPathPart +=
@@ -275,7 +286,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     pathPart += `${endOfPathPart - SMOOTH_CORNER_SIZE * cos} `;
     pathPart += generateBend(cos, sin, cos, 1);
 
-    return pathPart;
+    return {
+      pathPart,
+      sideConnectionBondTurnPoint: sideConnectionBondTurnPointInternal,
+    };
   }
 
   // TODO: Specify the types.
@@ -357,12 +371,15 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         startPosition.x < this.sideConnectionBondTurnPoint
           ? 0
           : 180;
-      pathDAttributeValue += this.drawPartOfSideConnection(
-        true,
-        firstCellConnection,
-        firstCell,
+      const result = this.drawPartOfSideConnection({
+        cell: firstCell,
+        connection: firstCellConnection,
         direction,
-      );
+        horizontal: true,
+        sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
+      });
+      pathDAttributeValue += result.pathPart;
+      this.sideConnectionBondTurnPoint = result.sideConnectionBondTurnPoint;
     }
 
     let maxHorizontalOffset = 0;
@@ -438,12 +455,15 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           ? xDirection
           : // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
             (previousConnection.direction as ConnectionDirectionInDegrees);
-        pathDAttributeValue += this.drawPartOfSideConnection(
-          horizontal,
-          previousConnection,
-          previousCell,
+        const result = this.drawPartOfSideConnection({
+          cell: previousCell,
+          connection: previousConnection,
           direction,
-        );
+          horizontal,
+          sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
+        });
+        pathDAttributeValue += result.pathPart;
+        this.sideConnectionBondTurnPoint = result.sideConnectionBondTurnPoint;
       }
       previousCell = cell;
       previousConnection = cellConnection;

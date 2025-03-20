@@ -88,7 +88,7 @@ export class SideChainConnectionBondRenderer {
     }
     let pathPart = horizontal ? 'H ' : 'V ';
     pathPart += `${endOfPathPart - SMOOTH_CORNER_SIZE * cos} `;
-    pathPart += this.generateBend(cos, sin, cos, 1);
+    pathPart += this.generateBend(cos, sin, cos, 1) + ' ';
 
     return {
       pathPart,
@@ -129,6 +129,6 @@ export class SideChainConnectionBondRenderer {
     const size = SMOOTH_CORNER_SIZE;
     const controlPoint = `${size * dx1},${size * dy1}`;
     const endPoint = `${size * dx},${size * dy}`;
-    return `q ${controlPoint} ${endPoint} `;
+    return `q ${controlPoint} ${endPoint}`;
   }
 }

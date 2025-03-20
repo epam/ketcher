@@ -306,9 +306,9 @@ export async function createRNAAntisenseStrand(
     button: 'right',
   });
 
-  const createAntisenseStrandOption = page
-    .getByTestId('create_rna_antisense_strand')
-    .first();
+  const createAntisenseStrandOption = page.getByTestId(
+    'create_rna_antisense_strand',
+  );
 
   await createAntisenseStrandOption.click();
 }
@@ -323,9 +323,9 @@ export async function createDNAAntisenseStrand(
     button: 'right',
   });
 
-  const createAntisenseStrandOption = page
-    .getByTestId('create_dna_antisense_strand')
-    .first();
+  const createAntisenseStrandOption = page.getByTestId(
+    'create_dna_antisense_strand',
+  );
 
   await createAntisenseStrandOption.click();
 }

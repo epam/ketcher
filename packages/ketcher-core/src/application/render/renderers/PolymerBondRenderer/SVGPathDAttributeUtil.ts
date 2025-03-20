@@ -7,6 +7,10 @@ export class SVGPathDAttributeUtil {
     return `H ${x}`;
   }
 
+  public static generateMoveTo(x: number, y: number): string {
+    return `M ${x},${y}`;
+  }
+
   public static generateVerticalAbsoluteLine(y: number): string {
     return `V ${y}`;
   }

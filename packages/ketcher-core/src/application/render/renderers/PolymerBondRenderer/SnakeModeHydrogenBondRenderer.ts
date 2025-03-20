@@ -214,7 +214,9 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
       startPosition.x >= (this.sideConnectionBondTurnPoint || endPosition.x)
         ? 180
         : 0;
-    let pathDAttributeValue = `M ${startPosition.x},${startPosition.y} `;
+    let pathDAttributeValue =
+      SVGPathDAttributeUtil.generateMoveTo(startPosition.x, startPosition.y) +
+      ' ';
 
     const cos =
       SideChainConnectionBondRenderer.calculateCosForDirectionX(xDirection);
@@ -685,7 +687,10 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
     startPosition?: Vec2,
   ): void {
     const start = startPosition
-      ? `M ${Math.round(startPosition.x)},${Math.round(startPosition.y)}`
+      ? SVGPathDAttributeUtil.generateMoveTo(
+          Math.round(startPosition.x),
+          Math.round(startPosition.y),
+        )
       : this.path;
     const line =
       lineDirection === LineDirection.Horizontal
@@ -695,9 +700,10 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
   }
 
   private addRandomLine(startPosition: Vec2, endPosition: Vec2): void {
-    const start = `M ${Math.round(startPosition.x)},${Math.round(
-      startPosition.y,
-    )}`;
+    const start = SVGPathDAttributeUtil.generateMoveTo(
+      Math.round(startPosition.x),
+      Math.round(startPosition.y),
+    );
     const line = SVGPathDAttributeUtil.generateAbsoluteLine(
       Math.round(endPosition.x),
       Math.round(endPosition.y),

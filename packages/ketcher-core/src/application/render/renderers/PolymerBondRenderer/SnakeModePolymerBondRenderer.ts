@@ -250,11 +250,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     let previousConnection: Connection;
     let previousCell: Cell;
 
-    const areCellsOnSameRow = cells.every((cell) => {
+    const cellsAreOnSameRow = cells.every((cell) => {
       return cell.y === firstCell.y;
     });
-
-    if (areCellsOnSameRow) {
+    if (cellsAreOnSameRow) {
       {
         const absoluteLineY =
           startPosition.y -
@@ -280,10 +279,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
             absoluteLineY,
           ) + ' ';
       }
-      const isSecondCellEmpty = cells[1].node === null;
+      const secondCellIsEmpty = cells[1].node === null;
       if (
         !connectionIsStraightVertical &&
-        !isSecondCellEmpty &&
+        !secondCellIsEmpty &&
         !connectionOfTwoNeighborRows
       ) {
         pathDAttributeValue +=
@@ -316,7 +315,6 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           return connection.polymerBond === this.polymerBond;
         },
       ) as Connection;
-      const isLastCell = cellIndex === cells.length - 1;
       const maxXOffset = cell.connections.reduce(
         (max: number, connection: Connection): number => {
           return connection.isVertical || max > connection.xOffset
@@ -328,7 +326,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
       maxHorizontalOffset = Math.max(maxHorizontalOffset, maxXOffset);
 
-      if (isLastCell) {
+      const cellIsLast = cellIndex === cells.length - 1;
+      if (cellIsLast) {
         if (connectionIsStraightVertical) {
           return;
         }
@@ -337,7 +336,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           SideChainConnectionBondRenderer.generatePathPartForLastCellIfConnectionIsNotStraightVertical(
             {
               cellConnection,
-              cellsAreOnSameRow: areCellsOnSameRow,
+              cellsAreOnSameRow,
               connectionOfTwoNeighborRows,
               endPosition,
               firstCellConnectionIsVertical,

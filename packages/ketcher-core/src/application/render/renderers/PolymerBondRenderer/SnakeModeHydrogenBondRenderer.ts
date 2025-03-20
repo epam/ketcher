@@ -3,7 +3,7 @@ import { editorEvents } from 'application/editor/editorEvents';
 import { CoreEditor } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
-import { SideChainConnectionBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SideChainConnectionBondRenderer';
+import { SideChainConnectionBondRendererUtil } from 'application/render/renderers/PolymerBondRenderer/SideChainConnectionBondRendererUtil';
 import { SVGPathDAttributeUtil } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtil';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
@@ -187,12 +187,12 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
     const firstCellConnectionIsVertical = firstCellConnection.isVertical;
     const horizontalPartIntersectionsOffset = firstCellConnection.xOffset;
     const connectionIsStraightVertical =
-      SideChainConnectionBondRenderer.checkIfConnectionIsStraightVertical(
+      SideChainConnectionBondRendererUtil.checkIfConnectionIsStraightVertical(
         cells,
         firstCellConnectionIsVertical,
       );
     const { endPosition, startPosition } =
-      SideChainConnectionBondRenderer.extractStartAndEndPositionsFromScaledPosition(
+      SideChainConnectionBondRendererUtil.extractStartAndEndPositionsFromScaledPosition(
         {
           firstCellMonomers: firstCell.node?.monomers ?? [],
           firstMonomer: this.polymerBond.firstMonomer,
@@ -204,7 +204,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
         ? 180
         : 0;
     const cos =
-      SideChainConnectionBondRenderer.calculateCosForXDirection(xDirection);
+      SideChainConnectionBondRendererUtil.calculateCosForXDirection(xDirection);
 
     let pathDAttributeValue =
       SVGPathDAttributeUtil.generateMoveTo(startPosition.x, startPosition.y) +
@@ -229,7 +229,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
           ) + ' ';
       }
       pathDAttributeValue +=
-        SideChainConnectionBondRenderer.generateBend(0, -1, cos, -1) + ' ';
+        SideChainConnectionBondRendererUtil.generateBend(0, -1, cos, -1) + ' ';
     } else {
       {
         const absoluteLineY =
@@ -249,7 +249,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
         !connectionOfTwoNeighborRows
       ) {
         pathDAttributeValue +=
-          SideChainConnectionBondRenderer.generateBend(0, 1, cos, 1) + ' ';
+          SideChainConnectionBondRendererUtil.generateBend(0, 1, cos, 1) + ' ';
       }
     }
 
@@ -259,13 +259,14 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
         startPosition.x < this.sideConnectionBondTurnPoint
           ? 0
           : 180;
-      const result = SideChainConnectionBondRenderer.drawPartOfSideConnection({
-        cell: firstCell,
-        connection: firstCellConnection,
-        direction,
-        horizontal: true,
-        sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
-      });
+      const result =
+        SideChainConnectionBondRendererUtil.drawPartOfSideConnection({
+          cell: firstCell,
+          connection: firstCellConnection,
+          direction,
+          horizontal: true,
+          sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
+        });
       pathDAttributeValue += result.pathPart;
       this.sideConnectionBondTurnPoint = result.sideConnectionBondTurnPoint;
     }
@@ -296,7 +297,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
         }
 
         pathDAttributeValue +=
-          SideChainConnectionBondRenderer.generatePathPartForLastCellIfConnectionIsNotStraightVertical(
+          SideChainConnectionBondRendererUtil.generatePathPartForLastCellIfConnectionIsNotStraightVertical(
             {
               cellConnection,
               cellsAreOnSameRow,
@@ -323,7 +324,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
         previousConnection.direction !== cellConnection.direction
       ) {
         const result =
-          SideChainConnectionBondRenderer.drawPartOfSideConnectionForOtherCells(
+          SideChainConnectionBondRendererUtil.drawPartOfSideConnectionForOtherCells(
             {
               cell: previousCell,
               connection: previousConnection,

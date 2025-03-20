@@ -67,7 +67,7 @@ interface GeneratePathPartForLastCellIfConnectionIsNotStraightVerticalParameter 
 
 const CELL_HEIGHT = 40;
 
-export class SideChainConnectionBondRenderer {
+export class SideChainConnectionBondRendererUtil {
   public static readonly smoothCornerSize = 5;
 
   public static calculateCosForXDirection(

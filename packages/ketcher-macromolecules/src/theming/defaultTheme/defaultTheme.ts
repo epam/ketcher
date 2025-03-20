@@ -271,7 +271,8 @@ export const defaultTheme: EditorTheme = {
   },
   zIndex: {
     base: 0,
-    overlay: 100,
+    sticky: 100,
+    overlay: 200,
     modal: 1000,
     critical: 9999,
   },

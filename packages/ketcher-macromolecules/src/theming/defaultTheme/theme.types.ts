@@ -184,6 +184,7 @@ export type EditorTheme = {
   };
   zIndex: {
     base: number;
+    sticky: number;
     overlay: number;
     modal: number;
     critical: number;

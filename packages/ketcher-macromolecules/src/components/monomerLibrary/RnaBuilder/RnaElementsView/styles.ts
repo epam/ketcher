@@ -17,59 +17,43 @@
 import styled from '@emotion/styled';
 import { Accordion, Button } from 'ketcher-react';
 import { Tab } from '@mui/material';
+import { ScrollableFadingContainer } from 'components/shared';
 
-export const RnaAccordionContainer = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'flex-start',
-  overflow: 'hidden',
-  height: '100%',
-});
+export const RnaAccordionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
+  height: 100%;
+`;
 
-export const StyledAccordion = styled(Accordion)({
-  minHeight: '32px',
-});
+export const StyledAccordion = styled(Accordion)`
+  min-height: 32px;
+`;
 
-export const StyledAccordionWrapper = styled.div({
-  flexGrow: 2,
-  minHeight: '32px',
-});
+export const StyledAccordionWrapper = styled.div`
+  flex-grow: 2;
+  min-height: 32px;
+`;
 
-export const DetailsContainer = styled.div({
-  position: 'relative',
-  width: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '8px',
-  justifyContent: 'start',
-  padding: '8px',
-  overflow: 'auto',
-});
+export const DetailsContainer = styled.div`
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: start;
+  padding: 8px;
+  overflow: auto;
+`;
 
-export const CompactDetailsContainer = styled.div`
+export const CompactDetailsContainer = styled(ScrollableFadingContainer)`
   height: 100%;
   position: relative;
   background-color: #f7f9fa;
   border-radius: 4px;
   margin: 4px 8px;
   overflow: auto;
-
-  & > div::before {
-    display: none;
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 48px;
-    pointer-events: none;
-    z-index: 1;
-    background: linear-gradient(
-      to bottom,
-      rgba(247, 249, 250, 1),
-      rgba(247, 249, 250, 0)
-    );
-  }
 
   &.first-tab {
     border-radius: 0 4px 4px 4px;
@@ -80,22 +64,21 @@ export const CompactDetailsContainer = styled.div`
   }
 `;
 
-export const StyledButton = styled(Button)((props) => {
-  return {
-    backgroundColor: props.theme.ketcher.color.button.transparent.active,
-    color: props.theme.ketcher.color.text.light,
-    borderColor: props.theme.ketcher.color.text.light,
-  };
-});
+export const StyledButton = styled(Button)`
+  background-color: ${({ theme }) =>
+    theme.ketcher.color.button.transparent.active};
+  color: ${({ theme }) => theme.ketcher.color.text.light};
+  border-color: ${({ theme }) => theme.ketcher.color.text.light};
+`;
 
-export const DisabledArea = styled.div({
-  width: '100%',
-  height: '100%',
-  backgroundColor: '#eff2f594',
-  position: 'absolute',
-  top: 0,
-  left: 0,
-});
+export const DisabledArea = styled.div`
+  width: 100%;
+  height: 100%;
+  background-color: #eff2f594;
+  position: absolute;
+  top: 0;
+  left: 0;
+`;
 
 export const RnaTabsContainer = styled.div`
   display: flex;

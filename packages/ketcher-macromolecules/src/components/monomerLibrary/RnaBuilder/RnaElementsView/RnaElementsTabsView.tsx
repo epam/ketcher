@@ -51,48 +51,47 @@ const RnaElementsTabsView = ({
     <>
       <RnaTabsContainer>
         {groupsData.map((groupData) => {
-          const selected = groupData.groupName === activeRnaBuilderItem;
+          const { groupName, groups, iconName } = groupData;
+          const selected = groupName === activeRnaBuilderItem;
           const variantMonomers = selectAmbiguousMonomersInCategory(
             monomers,
-            groupData.groupName as MonomerGroups,
+            groupName as MonomerGroups,
           );
-          const quantity = [...groupData.groups, ...variantMonomers].reduce(
+          const quantity = [...groups, ...variantMonomers].reduce(
             (acc, group) => acc + (group.groupItems.length || 0),
             0,
           );
-          const caption = selected
-            ? `${groupData.groupName} (${quantity})`
-            : null;
+          const caption = selected ? `${groupName} (${quantity})` : null;
 
           return (
             <RnaTabWrapper
-              key={groupData.groupName}
+              key={groupName}
               className={clsx(selected && 'rna-tab--selected')}
             >
               <RnaTab
                 label={caption}
-                title={groupData.groupName}
+                title={groupName}
                 selected={selected}
-                icon={<Icon name={groupData.iconName as IconName} />}
-                onClick={() =>
-                  dispatch(setActiveRnaBuilderItem(groupData.groupName))
-                }
+                icon={<Icon name={iconName as IconName} />}
+                onClick={() => dispatch(setActiveRnaBuilderItem(groupName))}
+                data-testid={`summary-${groupName}`}
               />
             </RnaTabWrapper>
           );
         })}
       </RnaTabsContainer>
       {groupsData.map((groupData) => {
-        if (groupData.groupName !== activeRnaBuilderItem) {
+        const { groupName, groups } = groupData;
+        if (groupName !== activeRnaBuilderItem) {
           return null;
         }
 
         const variantMonomers = selectAmbiguousMonomersInCategory(
           monomers,
-          groupData.groupName as MonomerGroups,
+          groupName as MonomerGroups,
         );
         const details =
-          groupData.groupName === RnaBuilderPresetsItem.Presets ? (
+          groupName === RnaBuilderPresetsItem.Presets ? (
             <DetailsContainer>
               <StyledButton onClick={onNewPresetClick}>New Preset</StyledButton>
               <RnaPresetGroup
@@ -105,28 +104,24 @@ const RnaElementsTabsView = ({
           ) : (
             <DetailsContainer>
               <>
-                {groupData.groups.map(({ groupItems, groupTitle }) => (
+                {groups.map(({ groupItems, groupTitle }) => (
                   <MonomerGroup
                     key={groupTitle}
-                    title={groupData.groups.length > 1 ? groupTitle : undefined}
-                    groupName={groupData.groupName}
+                    title={groups.length > 1 ? groupTitle : undefined}
+                    groupName={groupName}
                     items={groupItems}
                     selectedMonomerUniqueKey={activeMonomerKey}
-                    onItemClick={(monomer) =>
-                      onSelectItem(monomer, groupData.groupName)
-                    }
+                    onItemClick={(monomer) => onSelectItem(monomer, groupName)}
                   />
                 ))}
-                {variantMonomers.map((group) => (
+                {variantMonomers.map(({ groupTitle, groupItems }) => (
                   <MonomerGroup
-                    key={group.groupTitle}
-                    title={group.groupTitle}
-                    items={group.groupItems}
+                    key={groupTitle}
+                    title={groupTitle}
+                    items={groupItems}
                     libraryName={libraryName}
                     selectedMonomerUniqueKey={activeMonomerKey}
-                    onItemClick={(monomer) =>
-                      onSelectItem(monomer, groupData.groupName)
-                    }
+                    onItemClick={(monomer) => onSelectItem(monomer, groupName)}
                   />
                 ))}
               </>
@@ -144,7 +139,7 @@ const RnaElementsTabsView = ({
               firstTabSelected && 'first-tab',
               lastTabSelected && 'last-tab',
             )}
-            key={groupData.groupName}
+            key={groupName}
           >
             {details}
           </CompactDetailsContainer>

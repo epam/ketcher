@@ -2,154 +2,117 @@
 
 exports[`Test Rna Editor Expanded component should render correctly in edit mode 1`] = `
 <div
-  class=" css-s8m56i"
+  class=" css-19n58l"
   data-testid="rna-editor-expanded"
 >
+  <input
+    class="css-9n8o5v"
+    placeholder="Name your structure"
+    value=""
+  />
   <div
-    class="css-19lk7et"
-  >
-    <input
-      class="css-1afs730"
-      placeholder="Name your structure"
-      value=""
-    />
-    <span
-      class="css-1o94icx"
-    />
-  </div>
-  <div
-    class="css-s3o4ys"
+    class="css-1rkdsvc"
   >
     <div
-      class="css-1b10s7n"
+      class="css-iku0qx"
       data-testid="rna-builder-slot--sugar"
     >
-      <svg
-        class="css-1418ssm"
-        fill="none"
-        height="20"
-        stroke-width="2"
-        viewBox="0 0 20 20"
-        width="20"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <rect
-          fill="currentColor"
-          height="18"
-          rx="1"
-          width="18"
-          x="1"
-          y="1"
-        />
-      </svg>
       <div
-        class="css-j7qwjs"
+        class="css-gcbx4i"
+      />
+      <div
+        class="css-oavnn6"
       >
-        <span
-          class="css-9c7r58"
+        <svg
+          class="css-gayeoq"
+          fill="currentColor"
+          height="14"
+          viewBox="0 0 14 14"
+          width="14"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          Sugar
-        </span>
-        <span
-          class="css-1mtxt16"
-        >
-          Not selected
-        </span>
+          <rect
+            height="12.6"
+            rx="1.3"
+            stroke="currentColor"
+            stroke-width="1.4"
+            width="12.6"
+            x="0.7"
+            y="0.7"
+          />
+        </svg>
       </div>
+      <p
+        class="css-iw6dsc"
+      >
+        Sugar
+      </p>
     </div>
     <div
-      class="css-1b10s7n"
+      class="css-iku0qx"
       data-testid="rna-builder-slot--base"
     >
-      <svg
-        class="css-1s5dbvi"
-        fill="none"
-        height="25"
-        stroke-width="2"
-        transform="translate(-3)"
-        viewBox="0 0 26 25"
-        width="26"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <rect
-          fill="currentColor"
-          height="15.013"
-          rx="1"
-          transform="rotate(45 13 1.414)"
-          width="15.013"
-          x="13"
-          y="1.414"
-        />
-        <rect
-          height="15.013"
-          rx="1"
-          stroke="currentColor"
-          transform="rotate(45 13 1.414)"
-          width="15.013"
-          x="13"
-          y="1.414"
-        />
-      </svg>
       <div
-        class="css-j7qwjs"
+        class="css-gcbx4i"
+      />
+      <div
+        class="css-oavnn6"
       >
-        <span
-          class="css-9c7r58"
+        <svg
+          class="css-gayeoq"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          Base
-        </span>
-        <span
-          class="css-1mtxt16"
-        >
-          Not selected
-        </span>
+          <path
+            d="M7.248 1.012a1.064 1.064 0 011.504 0l6.236 6.236c.416.415.416 1.089 0 1.504l-6.236 6.236a1.064 1.064 0 01-1.504 0L1.012 8.752a1.064 1.064 0 010-1.504l6.236-6.236z"
+            stroke="currentColor"
+            stroke-width="1.4"
+          />
+        </svg>
       </div>
+      <p
+        class="css-iw6dsc"
+      >
+        Base
+      </p>
     </div>
     <div
-      class="css-1b10s7n"
+      class="css-iku0qx"
       data-testid="rna-builder-slot--phosphate"
     >
-      <svg
-        class="css-b18d6u"
-        fill="none"
-        height="24"
-        stroke-width="2"
-        transform="translate(-2)"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <rect
-          fill="currentColor"
-          height="18"
-          rx="9"
-          width="18"
-          x="3"
-          y="3"
-        />
-        <rect
-          height="18"
-          rx="9"
-          stroke="currentColor"
-          width="18"
-          x="3"
-          y="3"
-        />
-      </svg>
       <div
-        class="css-j7qwjs"
+        class="css-gcbx4i"
+      />
+      <div
+        class="css-oavnn6"
       >
-        <span
-          class="css-9c7r58"
+        <svg
+          class="css-gayeoq"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          Phosphate
-        </span>
-        <span
-          class="css-1mtxt16"
-        >
-          Not selected
-        </span>
+          <rect
+            height="14.6"
+            rx="7.3"
+            stroke="currentColor"
+            stroke-width="1.4"
+            width="14.6"
+            x="0.7"
+            y="0.7"
+          />
+        </svg>
       </div>
+      <p
+        class="css-iw6dsc"
+      >
+        Phosphate
+      </p>
     </div>
   </div>
   <div
@@ -174,155 +137,118 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
 
 exports[`Test Rna Editor Expanded component should render correctly in edit mode with modification of sequence 1`] = `
 <div
-  class="rna-editor-expanded--sequence-edit-mode css-s8m56i"
+  class="rna-editor-expanded--sequence-edit-mode css-19n58l"
   data-testid="rna-editor-expanded"
 >
+  <input
+    class="css-9n8o5v"
+    disabled=""
+    placeholder="Name your structure"
+    value="2 nucleotides"
+  />
   <div
-    class="css-19lk7et"
-  >
-    <input
-      class="css-1afs730"
-      disabled=""
-      placeholder="Name your structure"
-      value="2 nucleotides"
-    />
-    <span
-      class="css-1o94icx"
-    />
-  </div>
-  <div
-    class="css-s3o4ys"
+    class="css-1rkdsvc"
   >
     <div
-      class="css-1b10s7n"
+      class="css-iku0qx"
       data-testid="rna-builder-slot--sugar"
     >
-      <svg
-        class="css-kjyl9m"
-        fill="none"
-        height="20"
-        stroke-width="2"
-        viewBox="0 0 20 20"
-        width="20"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <rect
-          fill="currentColor"
-          height="18"
-          rx="1"
-          width="18"
-          x="1"
-          y="1"
-        />
-      </svg>
       <div
-        class="css-j7qwjs"
+        class="css-gcbx4i"
+      />
+      <div
+        class="css-oavnn6"
       >
-        <span
-          class="css-9c7r58"
+        <svg
+          class="css-149rvax"
+          fill="currentColor"
+          height="14"
+          viewBox="0 0 14 14"
+          width="14"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          Sugar
-        </span>
-        <span
-          class="css-cdjx14"
-        >
-          R
-        </span>
+          <rect
+            height="12.6"
+            rx="1.3"
+            stroke="currentColor"
+            stroke-width="1.4"
+            width="12.6"
+            x="0.7"
+            y="0.7"
+          />
+        </svg>
       </div>
+      <p
+        class="css-p4815w"
+      >
+        R
+      </p>
     </div>
     <div
-      class="css-1b10s7n"
+      class="css-iku0qx"
       data-testid="rna-builder-slot--base"
     >
-      <svg
-        class="css-m4vfn7"
-        fill="none"
-        height="25"
-        stroke-width="2"
-        transform="translate(-3)"
-        viewBox="0 0 26 25"
-        width="26"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <rect
-          fill="currentColor"
-          height="15.013"
-          rx="1"
-          transform="rotate(45 13 1.414)"
-          width="15.013"
-          x="13"
-          y="1.414"
-        />
-        <rect
-          height="15.013"
-          rx="1"
-          stroke="currentColor"
-          transform="rotate(45 13 1.414)"
-          width="15.013"
-          x="13"
-          y="1.414"
-        />
-      </svg>
       <div
-        class="css-j7qwjs"
+        class="css-gcbx4i"
+      />
+      <div
+        class="css-oavnn6"
       >
-        <span
-          class="css-9c7r58"
+        <svg
+          class="css-149rvax"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          Base
-        </span>
-        <span
-          class="css-cdjx14"
-        >
-          [multiple]
-        </span>
+          <path
+            d="M7.248 1.012a1.064 1.064 0 011.504 0l6.236 6.236c.416.415.416 1.089 0 1.504l-6.236 6.236a1.064 1.064 0 01-1.504 0L1.012 8.752a1.064 1.064 0 010-1.504l6.236-6.236z"
+            stroke="currentColor"
+            stroke-width="1.4"
+          />
+        </svg>
       </div>
+      <p
+        class="css-p4815w"
+      >
+        [multiple]
+      </p>
     </div>
     <div
-      class="css-1b10s7n"
+      class="css-iku0qx"
       data-testid="rna-builder-slot--phosphate"
     >
-      <svg
-        class="css-ow7727"
-        fill="none"
-        height="24"
-        stroke-width="2"
-        transform="translate(-2)"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <rect
-          fill="currentColor"
-          height="18"
-          rx="9"
-          width="18"
-          x="3"
-          y="3"
-        />
-        <rect
-          height="18"
-          rx="9"
-          stroke="currentColor"
-          width="18"
-          x="3"
-          y="3"
-        />
-      </svg>
       <div
-        class="css-j7qwjs"
+        class="css-gcbx4i"
+      />
+      <div
+        class="css-oavnn6"
       >
-        <span
-          class="css-9c7r58"
+        <svg
+          class="css-149rvax"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          Phosphate
-        </span>
-        <span
-          class="css-cdjx14"
-        >
-          P
-        </span>
+          <rect
+            height="14.6"
+            rx="7.3"
+            stroke="currentColor"
+            stroke-width="1.4"
+            width="14.6"
+            x="0.7"
+            y="0.7"
+          />
+        </svg>
       </div>
+      <p
+        class="css-p4815w"
+      >
+        P
+      </p>
     </div>
   </div>
   <div
@@ -347,154 +273,117 @@ exports[`Test Rna Editor Expanded component should render correctly in edit mode
 
 exports[`Test Rna Editor Expanded component should render correctly in view mode 1`] = `
 <div
-  class=" css-s8m56i"
+  class=" css-19n58l"
   data-testid="rna-editor-expanded"
 >
+  <input
+    class="css-9n8o5v"
+    placeholder="Name your structure"
+    value="MyRna"
+  />
   <div
-    class="css-19lk7et"
+    class="css-1rkdsvc"
   >
     <div
-      class="css-1o4wo1x"
-    >
-      MyRna
-    </div>
-    <span
-      class="css-1o94icx"
-    />
-  </div>
-  <div
-    class="css-s3o4ys"
-  >
-    <div
-      class="css-1u2se0o"
+      class="css-iku0qx"
       data-testid="rna-builder-slot--sugar"
     >
-      <svg
-        class="css-1418ssm"
-        fill="none"
-        height="20"
-        stroke-width="2"
-        viewBox="0 0 20 20"
-        width="20"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <rect
-          fill="currentColor"
-          height="18"
-          rx="1"
-          width="18"
-          x="1"
-          y="1"
-        />
-      </svg>
       <div
-        class="css-j7qwjs"
+        class="css-gcbx4i"
+      />
+      <div
+        class="css-oavnn6"
       >
-        <span
-          class="css-9c7r58"
+        <svg
+          class="css-gayeoq"
+          fill="currentColor"
+          height="14"
+          viewBox="0 0 14 14"
+          width="14"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          Sugar
-        </span>
-        <span
-          class="css-1mtxt16"
-        >
-          Not selected
-        </span>
+          <rect
+            height="12.6"
+            rx="1.3"
+            stroke="currentColor"
+            stroke-width="1.4"
+            width="12.6"
+            x="0.7"
+            y="0.7"
+          />
+        </svg>
       </div>
+      <p
+        class="css-iw6dsc"
+      >
+        Sugar
+      </p>
     </div>
     <div
-      class="css-1u2se0o"
+      class="css-iku0qx"
       data-testid="rna-builder-slot--base"
     >
-      <svg
-        class="css-1s5dbvi"
-        fill="none"
-        height="25"
-        stroke-width="2"
-        transform="translate(-3)"
-        viewBox="0 0 26 25"
-        width="26"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <rect
-          fill="currentColor"
-          height="15.013"
-          rx="1"
-          transform="rotate(45 13 1.414)"
-          width="15.013"
-          x="13"
-          y="1.414"
-        />
-        <rect
-          height="15.013"
-          rx="1"
-          stroke="currentColor"
-          transform="rotate(45 13 1.414)"
-          width="15.013"
-          x="13"
-          y="1.414"
-        />
-      </svg>
       <div
-        class="css-j7qwjs"
+        class="css-gcbx4i"
+      />
+      <div
+        class="css-oavnn6"
       >
-        <span
-          class="css-9c7r58"
+        <svg
+          class="css-gayeoq"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          Base
-        </span>
-        <span
-          class="css-1mtxt16"
-        >
-          Not selected
-        </span>
+          <path
+            d="M7.248 1.012a1.064 1.064 0 011.504 0l6.236 6.236c.416.415.416 1.089 0 1.504l-6.236 6.236a1.064 1.064 0 01-1.504 0L1.012 8.752a1.064 1.064 0 010-1.504l6.236-6.236z"
+            stroke="currentColor"
+            stroke-width="1.4"
+          />
+        </svg>
       </div>
+      <p
+        class="css-iw6dsc"
+      >
+        Base
+      </p>
     </div>
     <div
-      class="css-1u2se0o"
+      class="css-iku0qx"
       data-testid="rna-builder-slot--phosphate"
     >
-      <svg
-        class="css-b18d6u"
-        fill="none"
-        height="24"
-        stroke-width="2"
-        transform="translate(-2)"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <rect
-          fill="currentColor"
-          height="18"
-          rx="9"
-          width="18"
-          x="3"
-          y="3"
-        />
-        <rect
-          height="18"
-          rx="9"
-          stroke="currentColor"
-          width="18"
-          x="3"
-          y="3"
-        />
-      </svg>
       <div
-        class="css-j7qwjs"
+        class="css-gcbx4i"
+      />
+      <div
+        class="css-oavnn6"
       >
-        <span
-          class="css-9c7r58"
+        <svg
+          class="css-gayeoq"
+          fill="currentColor"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
         >
-          Phosphate
-        </span>
-        <span
-          class="css-1mtxt16"
-        >
-          Not selected
-        </span>
+          <rect
+            height="14.6"
+            rx="7.3"
+            stroke="currentColor"
+            stroke-width="1.4"
+            width="14.6"
+            x="0.7"
+            y="0.7"
+          />
+        </svg>
       </div>
+      <p
+        class="css-iw6dsc"
+      >
+        Phosphate
+      </p>
     </div>
   </div>
   <div

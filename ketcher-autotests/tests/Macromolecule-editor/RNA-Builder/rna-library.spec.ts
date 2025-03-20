@@ -845,8 +845,7 @@ test.describe('RNA Library', () => {
     await drawThreeMonomersConnectedWithBonds(page);
     await selectEraseTool(page);
     await bondLine.click();
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Draw Sugar-Base-Phosphate and try to attach bond to occupied attachment point', async () => {
@@ -1067,7 +1066,7 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
     await turnOnMicromoleculesEditor(page);

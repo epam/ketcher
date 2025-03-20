@@ -5,8 +5,6 @@ import { D3SvgElementSelection } from 'application/render/types';
 import { MONOMER_SYMBOLS_IDS } from 'application/render/renderers/constants';
 import { KetMonomerClass } from 'application/formatters';
 
-const NUCLEOTIDE_SELECTED_ELEMENT_ID =
-  MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].selected;
 const NUCLEOTIDE_HOVERED_ELEMENT_ID =
   MONOMER_SYMBOLS_IDS[KetMonomerClass.RNA].hover;
 const NUCLEOTIDE_SYMBOL_ELEMENT_ID =
@@ -18,7 +16,6 @@ export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
   constructor(public monomer: UnsplitNucleotide, scale?: number) {
     super(
       monomer,
-      NUCLEOTIDE_SELECTED_ELEMENT_ID,
       NUCLEOTIDE_HOVERED_ELEMENT_ID,
       NUCLEOTIDE_SYMBOL_ELEMENT_ID,
       scale,

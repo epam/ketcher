@@ -13,6 +13,7 @@ import {
   getRxn,
   getSdf,
   getSmarts,
+  getSequence,
 } from '@utils/formats';
 import { selectSaveTool } from '@utils/canvas';
 import { pressButton } from '@utils/clicks';
@@ -30,6 +31,7 @@ export enum FileType {
   InChI = 'inchi',
   RDF = 'rdf',
   IDT = 'idt',
+  SEQ = 'seq',
 }
 
 type FileTypeHandler =
@@ -48,6 +50,7 @@ const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.SDF]: getSdf,
   [FileType.InChI]: getInchi,
   [FileType.IDT]: getIdt,
+  [FileType.SEQ]: getSequence,
 };
 
 async function getFileContent(

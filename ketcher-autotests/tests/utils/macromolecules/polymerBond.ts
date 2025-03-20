@@ -438,13 +438,12 @@ export async function bondMonomerPointToMoleculeAtom(
         atomBoundingBox.x + atomBoundingBox.width / 2 + connectionPointShift.x,
         atomBoundingBox.y + atomBoundingBox.height / 2 + connectionPointShift.y,
       );
-    } else {
-      await atom.hover({ force: true });
-      console.log(
-        'Failed to locate atom on the canvas - using Center instead.',
-      );
     }
+  } else {
+    await atom.hover({ force: true });
+    // console.log('Failed to locate atom on the canvas - using Center instead.');
   }
+
   await page.mouse.up();
 
   await moveMouseAway(page);
@@ -567,7 +566,7 @@ export async function clickOnMicroBondByIndex(page: Page, bondIndex: number) {
   }
 }
 
-export async function getBondLocator(
+export function getBondLocator(
   page: Page,
   {
     bondType,
@@ -588,7 +587,7 @@ export async function getBondLocator(
     fromConnectionPoint?: string;
     toConnectionPoint?: string;
   },
-): Promise<Locator> {
+): Locator {
   const attributes: { [key: string]: string } = {};
 
   attributes['data-testid'] = 'bond';

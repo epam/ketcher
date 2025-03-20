@@ -39,17 +39,6 @@ export const UnresolvedMonomerAvatar = () => (
         fill="#585858"
       />
     </symbol>
-    <symbol id="unresolved-monomer-selection">
-      <rect
-        width="29.5"
-        height="29.5"
-        x="0.5"
-        y="0.5"
-        rx="1.5"
-        fill="none"
-        stroke="#0097A8"
-      />
-    </symbol>
     <symbol id="unresolved-monomer-hover">
       <rect
         width="29.5"

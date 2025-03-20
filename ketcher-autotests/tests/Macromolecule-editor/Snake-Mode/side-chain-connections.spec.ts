@@ -135,8 +135,7 @@ test.describe('Side chain connections', () => {
 
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(`KET/side-connections-rna.ket`, page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Open file with peptide side chain connection', async () => {
@@ -147,8 +146,7 @@ test.describe('Side chain connections', () => {
 
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(`KET/side-connections-peptide.ket`, page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Open file with cycled side chain connection', async () => {
@@ -162,8 +160,7 @@ test.describe('Side chain connections', () => {
       `KET/side-connection-in-cycle-chain.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('1.1 Verify correct display of side-chain connections when two monomers are in the same row', async () => {
@@ -181,8 +178,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/1.1.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('1.2 Verify correct display of side-chain connections when two monomers are in the same row', async () => {
@@ -200,8 +196,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/1.2.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('1.3 Verify correct display of side-chain connections when two monomers are in the same row', async () => {
@@ -220,8 +215,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/1.3.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('1.4 Verify correct display of side-chain connections when two monomers are in the same row', async () => {
@@ -241,7 +235,7 @@ test.describe('Side chain connections', () => {
       page,
     );
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('2.1 Verify correct display of side-chain connections when two monomers are in different rows', async () => {
@@ -280,8 +274,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/2.2.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('2.3 Verify correct display of side-chain connections when two monomers are in different rows', async () => {
@@ -299,8 +292,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/2.3.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('2.4 Verify correct display of side-chain connections when two monomers are in different rows', async () => {
@@ -318,8 +310,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/2.4.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('2.5 Verify correct display of side-chain connections when two monomers are in different rows', async () => {
@@ -337,8 +328,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/2.5.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('2.6 Verify correct display of side-chain connections when two monomers are in different rows', async () => {
@@ -356,8 +346,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/2.5.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('2.7 Verify correct display of side-chain connections when two monomers are in different rows', async () => {
@@ -375,8 +364,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/2.5.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test(
@@ -788,8 +776,7 @@ test.describe('Side chain connections', () => {
     // Closing Library to enlarge canvas
     await hideLibrary(page);
     await openFileAndAddToCanvasMacro(`KET/Side-Chain-Connections/5.ket`, page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('6. Verify side-chain connections alignment and avoidance of overlap (vertical)', async () => {
@@ -806,7 +793,7 @@ test.describe('Side chain connections', () => {
     await hideLibrary(page);
     await openFileAndAddToCanvasMacro(`KET/Side-Chain-Connections/6.ket`, page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('6.1 Verify side-chain connections alignment and avoidance of overlap (vertical)', async () => {
@@ -826,7 +813,7 @@ test.describe('Side chain connections', () => {
       page,
     );
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('6.2 Verify side-chain connections alignment and avoidance of overlap (vertical)', async () => {
@@ -846,7 +833,7 @@ test.describe('Side chain connections', () => {
       page,
     );
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('7.1 Verify handling of RNA monomer connections between R1 of base and R3 of sugar (should be displayed as a straight line (usual way))', async () => {
@@ -865,8 +852,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/7.1.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('7.2 Verify handling of RNA monomer connections between R1 of base and R3 of sugar (should be displayed as a straight line (usual way))', async () => {
@@ -885,8 +871,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/7.2.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('7.3 Verify handling of RNA monomer connections between R1 of base and R3 of sugar (should be displayed as a straight line (usual way))', async () => {
@@ -905,8 +890,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/7.3.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('7.4 Verify handling of RNA monomer connections between R1 of base and R3 of sugar (should be displayed as a straight line (usual way))', async () => {
@@ -925,8 +909,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/7.4.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('7.5 Verify handling of RNA monomer connections between R1 of base and R3 of sugar (should be displayed as a straight line (usual way))', async () => {
@@ -945,8 +928,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/7.5.ket`,
       page,
     );
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('8. Verify display of side-chain connections when switching from snake mode to flex mode', async () => {
@@ -961,7 +943,7 @@ test.describe('Side chain connections', () => {
     await openFileAndAddToCanvasMacro(`KET/Side-Chain-Connections/8.ket`, page);
     await selectFlexLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('9. Verify display of side-chain connections when switching from snake mode to sequence mode', async () => {
@@ -974,8 +956,7 @@ test.describe('Side chain connections', () => {
     await hideLibrary(page);
     await openFileAndAddToCanvasMacro(`KET/Side-Chain-Connections/9.ket`, page);
     await selectSequenceLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('10. Verify display of side-chain connections when switching from sequence mode to flex mode', async () => {
@@ -992,7 +973,7 @@ test.describe('Side chain connections', () => {
     );
     await selectFlexLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('11. Verify selection of a single side-chain connection', async () => {

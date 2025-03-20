@@ -12,7 +12,17 @@ interface MenuItem {
   name: string;
   title?: string;
   separator?: boolean;
-  disabled?: boolean;
+  disabled?:
+    | boolean
+    | (({
+        props,
+      }: {
+        props?: {
+          polymerBondRenderer?: DeprecatedFlexModeOrSnakeModePolymerBondRenderer;
+          sequenceItemRenderer?: BaseSequenceItemRenderer;
+          selectedMonomers?: BaseMonomer[];
+        };
+      }) => boolean);
   hidden?: ({
     props,
   }: {

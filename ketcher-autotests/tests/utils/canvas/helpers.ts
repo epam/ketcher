@@ -529,6 +529,13 @@ export async function selectCleanTool(page: Page) {
   );
 }
 
+export async function selectCalculateTool(page: Page) {
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
+  );
+}
+
 export async function selectLayoutTool(page: Page) {
   await waitForSpinnerFinishedWork(
     page,
@@ -562,4 +569,13 @@ export async function waitForElementInCanvas(
   const canvas = page.getByTestId('ketcher-canvas');
   const targetElement = canvas.locator(`div:has-text("${text}")`);
   await expect(targetElement).toBeVisible();
+}
+export async function selectCanvasArea(
+  page: Page,
+  firstCorner: { x: number; y: number },
+  secondCorner: { x: number; y: number },
+) {
+  await selectRectangleSelectionTool(page);
+  await page.mouse.move(firstCorner.x, firstCorner.y);
+  await dragMouseTo(secondCorner.x, secondCorner.y, page);
 }

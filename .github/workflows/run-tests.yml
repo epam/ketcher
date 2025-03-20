@@ -1,4 +1,4 @@
-name: Run Playwright Tests
+name: Run Playwright Tests (FullScale)
 on:
   push:
     branches:
@@ -43,7 +43,7 @@ jobs:
           name: ketcher-dist-micro
           path: example/dist
 
-  playwright_tests:
+  part:
     timeout-minutes: 120
     runs-on: self-hosted-a
     needs: build_ketcher
@@ -83,7 +83,7 @@ jobs:
           cd ketcher-autotests/
           npm i
           npx playwright install chromium
-          npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+          npx playwright test --project=chromium --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       - uses: actions/upload-artifact@v4
         # run even if previous steps fails
         if: always()

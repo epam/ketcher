@@ -34,6 +34,7 @@ import {
   selectAromatizeTool,
   selectDearomatizeTool,
   selectAddRemoveExplicitHydrogens,
+  selectClearCanvasTool,
 } from '@utils';
 
 test.describe('Hot keys', () => {
@@ -509,7 +510,7 @@ test.describe('Hot key Del', () => {
     });
     await page.keyboard.press('Delete');
     await page.mouse.move(x, y);
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
   });
 });

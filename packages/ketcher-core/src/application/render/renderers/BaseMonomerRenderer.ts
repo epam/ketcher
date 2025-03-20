@@ -57,7 +57,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
 
   protected constructor(
     public monomer: BaseMonomer,
-    private monomerSelectedElementId: string,
     private monomerHoveredElementId: string,
     monomerSymbolElementId: string,
     private scale?: number,
@@ -384,6 +383,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     }
   }
 
+  public setLabelVisibility(isVisible: boolean) {
+    this.rootElement?.select('text').style('opacity', isVisible ? 1 : 0);
+  }
+
   public appendHover(
     hoverAreaElement: D3SvgElementSelection<SVGGElement, void>,
   ) {
@@ -431,13 +434,6 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
     if (this.selectionCircle) {
       this.selectionCircle.attr('cx', this.center.x).attr('cy', this.center.y);
     } else {
-      this.selectionBorder = this.rootElement
-        ?.append('use')
-        .attr('href', this.monomerSelectedElementId)
-        .attr('stroke', '#57FF8F')
-        .attr('pointer-events', 'none')
-        .attr('class', 'dynamic-element');
-
       this.selectionCircle = this.canvas
         ?.insert('circle', ':first-child')
         .attr('r', '21px')

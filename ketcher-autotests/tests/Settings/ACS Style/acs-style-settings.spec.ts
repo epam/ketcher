@@ -4,12 +4,12 @@ import {
   waitForPageInit,
   takeEditorScreenshot,
   pressButton,
-  bondsSettings,
   scrollToDownInSetting,
   openFileAndAddToCanvas,
   openSettings,
   resetAllSettingsToDefault,
   selectLayoutTool,
+  openBondsSettingsSection,
 } from '@utils';
 
 test.describe('ACS Style Settings', () => {
@@ -33,7 +33,7 @@ test.describe('ACS Style Settings', () => {
     await pressButton(page, 'Set ACS Settings');
     await page.waitForTimeout(3000);
     await takeEditorScreenshot(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
@@ -59,7 +59,7 @@ test.describe('ACS Style Settings', () => {
     await openSettings(page);
     await pressButton(page, 'Reset');
     await takeEditorScreenshot(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');

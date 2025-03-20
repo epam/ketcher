@@ -65,6 +65,7 @@ import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
 import { initializeMode, parseMonomersLibrary } from './helpers';
+import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -84,6 +85,7 @@ export class CoreEditor {
 
   public _type: EditorType;
   public renderersContainer: RenderersManager;
+  public transientDrawingView: TransientDrawingView;
   public drawingEntitiesManager: DrawingEntitiesManager;
   public viewModel: ViewModel;
   public lastCursorPosition: Vec2 = new Vec2(0, 0);
@@ -141,6 +143,7 @@ export class CoreEditor {
     this.setupCopyPasteEvent();
     this.canvasOffset = this.canvas.getBoundingClientRect();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
+    this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
     const ketcher = ketcherProvider.getKetcher();
@@ -251,6 +254,14 @@ export class CoreEditor {
     return monomersLibraryJson.root.templates
       .filter((templateRef) => {
         const template = monomersLibraryJson[templateRef.$ref];
+
+        if (!template) {
+          KetcherLogger.error(
+            `There is a ref for rna preset template ${templateRef.$ref}, but template definition is not found`,
+          );
+
+          return false;
+        }
 
         return (
           template.type === KetTemplateType.MONOMER_GROUP_TEMPLATE &&
@@ -374,7 +385,14 @@ export class CoreEditor {
       (sequenceItemRenderer: BaseSequenceItemRenderer) =>
         this.onEditSequence(sequenceItemRenderer),
     );
-
+    this.events.establishHydrogenBond.add(
+      (sequenceItemRenderer: BaseSequenceItemRenderer) =>
+        this.onEstablishHydrogenBondSequenceMode(sequenceItemRenderer),
+    );
+    this.events.deleteHydrogenBond.add(
+      (sequenceItemRenderer: BaseSequenceItemRenderer) =>
+        this.onDeleteHydrogenBondSequenceMode(sequenceItemRenderer),
+    );
     this.events.turnOnSequenceEditInRNABuilderMode.add(() =>
       this.onTurnOnSequenceEditInRNABuilderMode(),
     );
@@ -383,6 +401,13 @@ export class CoreEditor {
     );
     this.events.changeSequenceTypeEnterMode.add((mode: SequenceType) =>
       this.onChangeSequenceTypeEnterMode(mode),
+    );
+    this.events.toggleIsSequenceSyncEditMode.add(
+      (isSequenceSyncEditMode: boolean) =>
+        this.onChangeToggleIsSequenceSyncEditMode(isSequenceSyncEditMode),
+    );
+    this.events.resetSequenceEditMode.add(() =>
+      this.onResetSequenceSyncEditMode(),
     );
     this.events.createAntisenseChain.add((isDnaAntisense: boolean) => {
       this.onCreateAntisenseChain(isDnaAntisense);
@@ -408,6 +433,26 @@ export class CoreEditor {
     this.mode.turnOnEditMode(sequenceItemRenderer);
   }
 
+  private onEstablishHydrogenBondSequenceMode(
+    sequenceItemRenderer: BaseSequenceItemRenderer,
+  ) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.establishHydrogenBond(sequenceItemRenderer);
+  }
+
+  private onDeleteHydrogenBondSequenceMode(
+    sequenceItemRenderer: BaseSequenceItemRenderer,
+  ) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.deleteHydrogenBond(sequenceItemRenderer);
+  }
+
   private onTurnOnSequenceEditInRNABuilderMode() {
     if (!(this.mode instanceof SequenceMode)) {
       return;
@@ -426,6 +471,28 @@ export class CoreEditor {
 
   private onChangeSequenceTypeEnterMode(mode: SequenceType) {
     this.sequenceTypeEnterMode = mode;
+  }
+
+  private onChangeToggleIsSequenceSyncEditMode(
+    isSequenceSyncEditMode: boolean,
+  ) {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    if (isSequenceSyncEditMode) {
+      this.mode.turnOnSyncEditMode();
+    } else {
+      this.mode.turnOffSyncEditMode();
+    }
+  }
+
+  private onResetSequenceSyncEditMode() {
+    if (!(this.mode instanceof SequenceMode)) {
+      return;
+    }
+
+    this.mode.resetEditMode();
   }
 
   private onCreateAntisenseChain(isDnaAntisense: boolean) {

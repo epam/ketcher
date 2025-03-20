@@ -160,7 +160,7 @@ test.describe('Import/export sequence:', () => {
 
     await zoomWithMouseWheel(page, 300);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('It is possible to paste from clipboard A, T, C, G, U for DNA open structure', async () => {
@@ -181,7 +181,7 @@ test.describe('Import/export sequence:', () => {
 
     await zoomWithMouseWheel(page, 300);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('It is possible to paste from clipboard A, C, D, E, F, G, H, I, K, L, M, N, P, Q, R, S, T, V, W, Y for Peptide open structure', async () => {
@@ -205,7 +205,7 @@ test.describe('Import/export sequence:', () => {
 
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectFlexLayoutModeTool(page);
   });
 

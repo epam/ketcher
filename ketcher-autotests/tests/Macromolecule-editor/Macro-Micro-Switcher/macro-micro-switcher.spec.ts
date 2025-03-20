@@ -25,7 +25,6 @@ import {
   dragMouseTo,
   drawBenzeneRing,
   getControlModifier,
-  getSdf,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   openFile,
@@ -35,8 +34,6 @@ import {
   openPasteFromClipboard,
   pressButton,
   readFileContents,
-  receiveFileComparisonData,
-  saveToFile,
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
   selectAtomInToolbar,
@@ -1592,24 +1589,12 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    const expectedFile = await getSdf(page, 'v2000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v2000',
     );
-
-    const METADATA_STRINGS_INDEXES = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v2000',
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/one-attachment-point-added-in-micro-modesdfv2000-expected.sdf',
       page,
@@ -1626,24 +1611,12 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    const expectedFile = await getSdf(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v3000',
     );
-
-    const METADATA_STRINGS_INDEXES = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/one-attachment-point-added-in-micro-modesdfv3000-expected.sdf',
       page,
@@ -2218,24 +2191,12 @@ test.describe('Macro-Micro-Switcher', () => {
     After fix we need update expected file micro-macro-structure-v2000-expected.sdf
     */
       await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
-      const expectedFile = await getSdf(page, 'v2000');
-      await saveToFile(
+      await verifyFileExport(
+        page,
         'SDF/micro-macro-structure-v2000-expected.sdf',
-        expectedFile,
+        FileType.SDF,
+        'v2000',
       );
-
-      const METADATA_STRINGS_INDEXES = [1];
-
-      const { fileExpected: sdfFileExpected, file: sdfFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'tests/test-data/SDF/micro-macro-structure-v2000-expected.sdf',
-          metaDataIndexes: METADATA_STRINGS_INDEXES,
-          fileFormat: 'v2000',
-        });
-
-      expect(sdfFile).toEqual(sdfFileExpected);
       await openFileAndAddToCanvasAsNewProject(
         'SDF/micro-macro-structure-v2000-expected.sdf',
         page,
@@ -2250,24 +2211,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: It is possible to save micro-macro connection to sdf v3000 file.
     */
     await openFileAndAddToCanvas('KET/micro-macro-structure.ket', page);
-    const expectedFile = await getSdf(page, 'v3000');
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SDF/micro-macro-structure-v3000-expected.sdf',
-      expectedFile,
+      FileType.SDF,
+      'v3000',
     );
-
-    const METADATA_STRINGS_INDEXES = [1];
-
-    const { fileExpected: sdfFileExpected, file: sdfFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/SDF/micro-macro-structure-v3000-expected.sdf',
-        metaDataIndexes: METADATA_STRINGS_INDEXES,
-        fileFormat: 'v3000',
-      });
-
-    expect(sdfFile).toEqual(sdfFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'SDF/micro-macro-structure-v3000-expected.sdf',
       page,

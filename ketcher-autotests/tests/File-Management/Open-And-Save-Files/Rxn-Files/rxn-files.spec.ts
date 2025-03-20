@@ -21,7 +21,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  bondsSettings,
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
   setBondLengthOptionUnit,
@@ -31,6 +30,8 @@ import {
   selectLayoutTool,
   setHashSpacingValue,
   setHashSpacingOptionUnit,
+  openBondsSettingsSection,
+  selectClearCanvasTool,
 } from '@utils';
 
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
@@ -187,7 +188,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await savedFileInfoStartsWithRxn(page);
 
     await pressButton(page, 'Cancel');
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
@@ -892,7 +893,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -914,7 +915,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -942,7 +943,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -969,7 +970,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '67.8');
     await pressButton(page, 'Apply');
@@ -996,7 +997,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -1023,7 +1024,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -1050,7 +1051,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -1077,7 +1078,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -1104,7 +1105,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -1131,7 +1132,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -1153,7 +1154,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -1180,7 +1181,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -1207,7 +1208,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '47.8');
     await pressButton(page, 'Apply');

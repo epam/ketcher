@@ -185,7 +185,7 @@ test.describe('Import-Saving .ket Files', () => {
     await getMonomerLocator(page, { monomerAlias: 'Ph' }).first().hover();
     await dragMouseTo(400, 400, page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check that fields "class" and "classHELM" are presents into .ket file', async () => {
@@ -246,7 +246,7 @@ test.describe('Import-Saving .ket Files', () => {
     await openFileAndAddToCanvasMacro('KET/snake-mode-peptides.ket', page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check that .ket file with macro structures is imported correctly in macro mode when saving it in micro mode', async () => {

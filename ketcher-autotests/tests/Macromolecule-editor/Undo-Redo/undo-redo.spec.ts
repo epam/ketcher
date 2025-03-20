@@ -436,7 +436,7 @@ test.describe('Undo-Redo tests', () => {
     await page.mouse.move(x, y);
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
     await pressRedoButton(page);

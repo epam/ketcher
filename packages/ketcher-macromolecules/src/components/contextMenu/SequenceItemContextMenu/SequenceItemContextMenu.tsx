@@ -11,11 +11,12 @@ import {
   BaseSequenceItemRenderer,
   ModeTypes,
   NodesSelection,
-  getRnaBaseFromSugar,
-  getSugarFromRnaBase,
   BaseMonomer,
-  RNABase,
-  Sugar,
+  isTwoStrandedNodeRestrictedForHydrogenBondCreation,
+  SequenceRenderer,
+  EmptySequenceNode,
+  BackBoneSequenceNode,
+  Chain,
 } from 'ketcher-core';
 import { setSelectedTabIndex } from 'state/library';
 import {
@@ -26,10 +27,18 @@ import {
   setActiveRnaBuilderItem,
   setIsSequenceFirstsOnlyNucleoelementsSelected,
 } from 'state/rna-builder';
-import { generateSequenceContextMenuProps } from 'components/contextMenu/SequenceItemContextMenu/helpers';
+import {
+  generateSequenceContextMenuProps,
+  isEstablishHydrogenBondDisabled,
+  isNodeContainHydrogenBonds,
+} from 'components/contextMenu/SequenceItemContextMenu/helpers';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
-import { isAntisenseCreationDisabled } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
+import {
+  isAntisenseCreationDisabled,
+  isAntisenseOptionVisible,
+} from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { LIBRARY_TAB_INDEX } from 'src/constants';
+import { ITwoStrandedChainItem } from 'ketcher-core/dist/domain/entities/monomer-chains/ChainsCollection';
 
 type SequenceItemContextMenuType = {
   selections?: NodesSelection;
@@ -37,9 +46,11 @@ type SequenceItemContextMenuType = {
 
 export enum SequenceItemContextMenuNames {
   title = 'sequence_menu_title',
-  createRnaAntisenseStrand = 'create_rna_antisense_strand',
-  createDnaAntisenseStrand = 'create_dna_antisense_strand',
+  createRnaAntisenseStrand = 'create_antisense_rna_chain',
+  createDnaAntisenseStrand = 'create_antisense_dna_chain',
   modifyInRnaBuilder = 'modify_in_rna_builder',
+  establishHydrogenBond = 'establish_hydrogen_bond',
+  deleteHydrogenBond = 'delete_hydrogen_bond',
   editSequence = 'edit_sequence',
   startNewSequence = 'start_new_sequence',
 }
@@ -50,46 +61,14 @@ export const SequenceItemContextMenu = ({
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
   const menuProps = generateSequenceContextMenuProps(selections);
-  const extractedBaseMonomers: BaseMonomer[] =
-    selections?.[0]
-      ?.flatMap((item) => {
-        const node = item.node as {
-          sugar?: BaseMonomer;
-          rnaBase?: BaseMonomer;
-          phosphate?: BaseMonomer;
-          monomer?: BaseMonomer;
-        };
-        return node
-          ? [node.sugar, node.rnaBase, node.phosphate, node.monomer]
-          : [];
-      })
-      .filter(
-        (baseMonomer): baseMonomer is BaseMonomer => baseMonomer !== undefined,
-      ) || [];
-
+  const selectedMonomers: BaseMonomer[] =
+    selections?.flat()?.flatMap((nodeSelection) => {
+      return nodeSelection.node.monomers;
+    }) || [];
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
   const isSequenceMode = useLayoutMode() === ModeTypes.sequence;
-
-  const isAntisenseOptionHidden = ({
-    props,
-  }: {
-    props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
-  }) => {
-    return (
-      !props?.sequenceItemRenderer ||
-      !extractedBaseMonomers?.some((selectedMonomer) => {
-        return (
-          (selectedMonomer instanceof RNABase &&
-            getSugarFromRnaBase(selectedMonomer)) ||
-          (selectedMonomer instanceof Sugar &&
-            getRnaBaseFromSugar(selectedMonomer))
-        );
-      })
-    );
-  };
-
   const menuItems = [
     {
       name: SequenceItemContextMenuNames.title,
@@ -110,14 +89,16 @@ export const SequenceItemContextMenu = ({
     {
       name: SequenceItemContextMenuNames.createRnaAntisenseStrand,
       title: 'Create RNA antisense strand',
-      disabled: isAntisenseCreationDisabled(extractedBaseMonomers),
-      hidden: isAntisenseOptionHidden,
+      disabled: isAntisenseCreationDisabled(selectedMonomers),
+      hidden: () =>
+        !selectedMonomers || !isAntisenseOptionVisible(selectedMonomers),
     },
     {
       name: SequenceItemContextMenuNames.createDnaAntisenseStrand,
       title: 'Create DNA antisense strand',
-      disabled: isAntisenseCreationDisabled(extractedBaseMonomers),
-      hidden: isAntisenseOptionHidden,
+      disabled: isAntisenseCreationDisabled(selectedMonomers),
+      hidden: () =>
+        !selectedMonomers || !isAntisenseOptionVisible(selectedMonomers),
     },
     {
       name: SequenceItemContextMenuNames.modifyInRnaBuilder,
@@ -151,6 +132,52 @@ export const SequenceItemContextMenu = ({
       name: SequenceItemContextMenuNames.startNewSequence,
       title: 'Start new sequence',
       disabled: false,
+    },
+    {
+      name: SequenceItemContextMenuNames.establishHydrogenBond,
+      title: 'Establish Hydrogen Bonds',
+      disabled: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => {
+        return selections?.length === 0
+          ? isTwoStrandedNodeRestrictedForHydrogenBondCreation(
+              props?.sequenceItemRenderer?.twoStrandedNode,
+            )
+          : isEstablishHydrogenBondDisabled(selections);
+      },
+      hidden: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => {
+        return !props?.sequenceItemRenderer;
+      },
+    },
+    {
+      name: SequenceItemContextMenuNames.deleteHydrogenBond,
+      title: 'Delete Hydrogen Bonds',
+      disabled: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => {
+        return selections?.length === 0
+          ? !isNodeContainHydrogenBonds(props?.sequenceItemRenderer?.node)
+          : !selections?.some((selectionRange) => {
+              return selectionRange.some((selection) => {
+                return isNodeContainHydrogenBonds(selection.node);
+              });
+            });
+      },
+      hidden: ({
+        props,
+      }: {
+        props?: { sequenceItemRenderer?: BaseSequenceItemRenderer };
+      }) => {
+        return !props?.sequenceItemRenderer;
+      },
     },
   ];
 
@@ -189,6 +216,117 @@ export const SequenceItemContextMenu = ({
       case SequenceItemContextMenuNames.createDnaAntisenseStrand:
         editor.events.createAntisenseChain.dispatch(true);
         break;
+      case SequenceItemContextMenuNames.establishHydrogenBond:
+        editor.events.establishHydrogenBond.dispatch(
+          props.sequenceItemRenderer,
+        );
+        break;
+      case SequenceItemContextMenuNames.deleteHydrogenBond: {
+        const sequenceViewModel = SequenceRenderer.sequenceViewModel;
+        const monomerToChain =
+          sequenceViewModel.chainsCollection.monomerToChain;
+        const antisenseChainToSelectedNodeMap = new Map<
+          Chain,
+          Set<ITwoStrandedChainItem>
+        >();
+        const selectedTwoStrandedNodes: ITwoStrandedChainItem[] =
+          selections?.length
+            ? selections
+                .reduce(
+                  (acc, selectionRange) => [...acc, ...selectionRange],
+                  [],
+                )
+                .map((nodeSelection) => nodeSelection.twoStrandedNode)
+            : [props.sequenceItemRenderer?.twoStrandedNode];
+
+        selectedTwoStrandedNodes.forEach((selectedTwoStrandedNode) => {
+          if (
+            selectedTwoStrandedNode.antisenseChain &&
+            selectedTwoStrandedNode.antisenseNode &&
+            !(
+              selectedTwoStrandedNode.antisenseNode instanceof
+                EmptySequenceNode ||
+              selectedTwoStrandedNode.antisenseNode instanceof
+                BackBoneSequenceNode
+            )
+          ) {
+            if (
+              !antisenseChainToSelectedNodeMap.has(
+                selectedTwoStrandedNode.antisenseChain,
+              )
+            ) {
+              antisenseChainToSelectedNodeMap.set(
+                selectedTwoStrandedNode.antisenseChain,
+                new Set(),
+              );
+            }
+
+            const antisenseChainSelectedNodes =
+              antisenseChainToSelectedNodeMap.get(
+                selectedTwoStrandedNode.antisenseChain,
+              );
+
+            if (!antisenseChainSelectedNodes) {
+              return;
+            }
+
+            antisenseChainSelectedNodes.add(selectedTwoStrandedNode);
+          }
+        });
+
+        let isGoingToDeleteAllHydrogenBondsForAnyChain = false;
+
+        antisenseChainToSelectedNodeMap.forEach(
+          (selectedTwoStrandedNodes, chain) => {
+            const firstSelectedTwoStrandedNode = [
+              ...selectedTwoStrandedNodes.values(),
+            ][0];
+            const senseChain = firstSelectedTwoStrandedNode.chain;
+            const selectedAntisenseNodes = new Set(
+              [...selectedTwoStrandedNodes.values()].map(
+                (node) => node.antisenseNode,
+              ),
+            );
+            const hasMoreHydrogenConnectionsThanSelected = chain.nodes.some(
+              (node) => {
+                return (
+                  !selectedAntisenseNodes.has(node) &&
+                  node.monomers.some((monomer) => {
+                    return monomer.hydrogenBonds.some((hydrogenBond) => {
+                      const anotherMonomer =
+                        hydrogenBond.getAnotherMonomer(monomer);
+                      const anotherChain =
+                        anotherMonomer && monomerToChain.get(anotherMonomer);
+
+                      return anotherChain === senseChain;
+                    });
+                  })
+                );
+              },
+            );
+
+            if (!hasMoreHydrogenConnectionsThanSelected) {
+              isGoingToDeleteAllHydrogenBondsForAnyChain = true;
+            }
+          },
+        );
+
+        if (isGoingToDeleteAllHydrogenBondsForAnyChain) {
+          editor.events.openConfirmationDialog.dispatch({
+            title: 'Deletion of all Hydrogen Bonds',
+            confirmationText:
+              'Deleting all hydrogen bonds will cause the separation of two chains. Do you wish to proceed?',
+            onConfirm: () => {
+              editor.events.deleteHydrogenBond.dispatch(
+                props.sequenceItemRenderer,
+              );
+            },
+          });
+        } else {
+          editor.events.deleteHydrogenBond.dispatch(props.sequenceItemRenderer);
+        }
+        break;
+      }
       default:
         break;
     }

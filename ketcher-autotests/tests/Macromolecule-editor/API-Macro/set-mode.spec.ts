@@ -32,10 +32,10 @@ test.describe('setMode', () => {
     await openFileAndAddToCanvasMacro('KET/snake-mode-peptides.ket', page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await setMode(page, 'flex');
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Validate ketcher.setMode for Snake Mode', async ({ page }) => {

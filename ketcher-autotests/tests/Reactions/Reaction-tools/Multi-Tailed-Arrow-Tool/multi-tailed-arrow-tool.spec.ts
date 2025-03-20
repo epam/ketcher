@@ -1002,7 +1002,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await selectTopPanelButton(TopPanelButton.Save, page);
     await saveToTemplates(page);
-    await selectTopPanelButton(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
 
     await openStructureLibrary(page);
     await selectFromSaveToTemplates(page);

@@ -332,8 +332,7 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, phosphate8, sugar9);
 
     await selectSnakeLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Create snake bond for mix chains with nucleotides and peptides', async () => {
@@ -540,8 +539,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
 
     await selectSnakeLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Create snake mode for single monomer and nucleoside', async () => {
@@ -606,8 +604,7 @@ test.describe('Snake Bond Tool', () => {
     await getMonomerLocator(page, Peptides.meE).hover();
     await dragMouseTo(x, y, page);
     await clickOnCanvas(page, x1, y1);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Pressing "snake" layout button arrange nucleotides forming chain on screen in a snake-like pattern', async () => {
@@ -622,7 +619,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check if even very long chain fit into canvas (algorithm calculate the length of rows)', async () => {
@@ -638,7 +635,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check that switch to Flex mode on a snake chain change it into a chain with straight lines', async () => {
@@ -653,13 +650,13 @@ test.describe('Snake Bond Tool', () => {
     );
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectFlexLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check move any peptide from middle of chain above main snake chain', async () => {
@@ -678,12 +675,12 @@ test.describe('Snake Bond Tool', () => {
     );
     await scrollUp(page, 200);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await getMonomerLocator(page, Peptides.meS).hover();
     await dragMouseTo(x, y, page);
     await clickOnCanvas(page, x2, y2);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Check move any peptide from middle of chain above main flex chain', async () => {
@@ -724,7 +721,7 @@ test.describe('Snake Bond Tool', () => {
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   const testCases = [
@@ -937,11 +934,9 @@ test.describe('Snake Bond Tool', () => {
       }
     });
     await openFileAndAddToCanvasMacro(`KET/sequence-rna-2000.ket`, page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSnakeLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Maximum call stack size exceeded error not appears during snake layout for 4000 RNA', async () => {
@@ -971,11 +966,9 @@ test.describe('Snake Bond Tool', () => {
     // Workaround against fake scroll bars that sometimes shown even if they are not intended to
     await page.mouse.wheel(0, 400);
     await page.mouse.wheel(0, -400);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSnakeLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Maximum call stack size exceeded error not appears during snake layout for 4000 Peptides', async () => {
@@ -993,11 +986,9 @@ test.describe('Snake Bond Tool', () => {
       }
     });
     await openFileAndAddToCanvasMacro(`KET/sequence-peptides-4000.ket`, page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSnakeLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Maximum call stack size exceeded error not appears during snake layout for 8000 Peptides', async () => {
@@ -1021,11 +1012,9 @@ test.describe('Snake Bond Tool', () => {
       }
     });
     await openFileAndAddToCanvasMacro(`KET/sequence-peptides-8000.ket`, page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSnakeLayoutModeTool(page);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Activate Snake mode and open external rna-modified file', async () => {

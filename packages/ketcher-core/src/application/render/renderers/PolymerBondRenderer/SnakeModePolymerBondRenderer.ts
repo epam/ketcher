@@ -9,7 +9,6 @@ import { BaseMonomer, Vec2 } from 'domain/entities';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   Connection,
-  ConnectionDirectionOfLastCell,
   ConnectionXDirectionInDegrees,
 } from 'domain/entities/canvas-matrix/Connection';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
@@ -41,7 +40,6 @@ const RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH = 20;
 const RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH = 210;
 
 const BOND_END_LENGTH = 15;
-const CELL_HEIGHT = 40;
 const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 
 // TODO: Need to split the class by three:
@@ -222,16 +220,16 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         return connection.polymerBond === this.polymerBond;
       },
     ) as Connection;
-    const connectionIsVertical = firstCellConnection.isVertical;
+    const firstCellConnectionIsVertical = firstCellConnection.isVertical;
     const connectionIsStraightVertical =
       SideChainConnectionBondRenderer.checkIfConnectionIsStraightVertical(
         cells,
-        connectionIsVertical,
+        firstCellConnectionIsVertical,
       );
     const isFirstMonomerOfBondInFirstCell = firstCell.node?.monomers.includes(
       this.polymerBond.firstMonomer,
     );
-    const isTwoNeighborRowsConnection = cells.every(
+    const connectionOfTwoNeighborRows = cells.every(
       (cell) => cell.y === firstCell.y || cell.y === firstCell.y + 1,
     );
     const startPosition = isFirstMonomerOfBondInFirstCell
@@ -290,14 +288,14 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       if (
         !connectionIsStraightVertical &&
         !isSecondCellEmpty &&
-        !isTwoNeighborRowsConnection
+        !connectionOfTwoNeighborRows
       ) {
         pathDAttributeValue +=
           SideChainConnectionBondRenderer.generateBend(0, 1, cos, 1) + ' ';
       }
     }
 
-    if (connectionIsVertical && !connectionIsStraightVertical) {
+    if (firstCellConnectionIsVertical && !connectionIsStraightVertical) {
       const direction =
         this.sideConnectionBondTurnPoint &&
         startPosition.x < this.sideConnectionBondTurnPoint
@@ -352,28 +350,17 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           );
 
         if (!areCellsOnSameRow) {
-          const directionObject =
-            cellConnection.direction as ConnectionDirectionOfLastCell;
-          const yDirection = connectionIsVertical ? 90 : directionObject.y;
-          const sin =
-            SideChainConnectionBondRenderer.calculateSinForYDirection(
-              yDirection,
-            );
-
-          const verticalLineY =
-            endPosition.y -
-            CELL_HEIGHT / 2 -
-            SideChainConnectionBondRenderer.SMOOTH_CORNER_SIZE -
-            sin * (cellConnection.yOffset || 0) * 3 -
-            (isTwoNeighborRowsConnection
-              ? maxHorizontalOffset - cellConnection.xOffset
-              : cellConnection.xOffset) *
-              3;
           pathDAttributeValue +=
-            SVGPathDAttributeUtil.generateVerticalAbsoluteLine(verticalLineY) +
-            ' ';
-          pathDAttributeValue +=
-            SideChainConnectionBondRenderer.generateBend(0, sin, cos, 1) + ' ';
+            SideChainConnectionBondRenderer.generatePathPartForCellsWhichAreOnSameRow(
+              {
+                cellConnection,
+                connectionOfTwoNeighborRows,
+                cos,
+                endPositionY: endPosition.y,
+                firstCellConnectionIsVertical,
+                maxHorizontalOffset,
+              },
+            ) + ' ';
         }
         const horizontalLineX =
           endPosition.x -

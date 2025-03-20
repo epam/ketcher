@@ -2,11 +2,13 @@ import {
   BaseMonomerRenderer,
   BaseSequenceItemRenderer,
 } from 'application/render';
-import { BaseMonomer } from 'domain/entities';
+import { SVGPathDAttributeUtil } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtil';
+import { BaseMonomer, Vec2 } from 'domain/entities';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   Connection,
   ConnectionDirectionInDegrees,
+  ConnectionDirectionOfLastCell,
   ConnectionXDirectionInDegrees,
 } from 'domain/entities/canvas-matrix/Connection';
 import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
@@ -34,6 +36,15 @@ interface DrawPartOfSideConnectionForOtherCellsParameter {
 interface DrawPartOfSideConnectionForOtherCellsResult {
   readonly pathPart: string;
   readonly sideConnectionBondTurnPoint: number;
+}
+
+interface GeneratePathPartForCellsWhichAreOnSameRowParameter {
+  readonly cellConnection: Connection;
+  readonly connectionOfTwoNeighborRows: boolean;
+  readonly cos: -1 | 1;
+  readonly endPositionY: Vec2['y'];
+  readonly firstCellConnectionIsVertical: boolean;
+  readonly maxHorizontalOffset: number;
 }
 
 const CELL_HEIGHT = 40;
@@ -164,5 +175,30 @@ export class SideChainConnectionBondRenderer {
     const controlPoint = `${size * dx1},${size * dy1}`;
     const endPoint = `${size * dx},${size * dy}`;
     return `q ${controlPoint} ${endPoint}`;
+  }
+
+  public static generatePathPartForCellsWhichAreOnSameRow({
+    cellConnection: { direction, xOffset, yOffset },
+    connectionOfTwoNeighborRows,
+    cos,
+    endPositionY,
+    firstCellConnectionIsVertical,
+    maxHorizontalOffset,
+  }: GeneratePathPartForCellsWhichAreOnSameRowParameter): string {
+    const yDirection = firstCellConnectionIsVertical
+      ? 90
+      : (direction as ConnectionDirectionOfLastCell).y;
+    const sin = this.calculateSinForYDirection(yDirection);
+    const verticalLineY =
+      endPositionY -
+      CELL_HEIGHT / 2 -
+      this.SMOOTH_CORNER_SIZE -
+      sin * (yOffset || 0) * 3 -
+      (connectionOfTwoNeighborRows ? maxHorizontalOffset - xOffset : xOffset) *
+        3;
+    const line =
+      SVGPathDAttributeUtil.generateVerticalAbsoluteLine(verticalLineY);
+    const bend = this.generateBend(0, sin, cos, 1);
+    return `${line} ${bend}`;
   }
 }

@@ -364,10 +364,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           pathDAttributeValue +=
             SideChainConnectionBondRenderer.generateBend(0, sin, cos, 1) + ' ';
         }
-        pathDAttributeValue += `H ${
+        const horizontalLineX =
           endPosition.x -
-          SideChainConnectionBondRenderer.SMOOTH_CORNER_SIZE * cos
-        } `;
+          SideChainConnectionBondRenderer.SMOOTH_CORNER_SIZE * cos;
+        pathDAttributeValue +=
+          SideChainConnectionBondRenderer.generateHorizontalAbsoluteLine(
+            horizontalLineX,
+          ) + ' ';
         pathDAttributeValue +=
           SideChainConnectionBondRenderer.generateBend(cos, 0, cos, 1) + ' ';
         return;

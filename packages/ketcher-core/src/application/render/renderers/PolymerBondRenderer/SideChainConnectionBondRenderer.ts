@@ -140,6 +140,10 @@ export class SideChainConnectionBondRenderer {
     return `q ${controlPoint} ${endPoint}`;
   }
 
+  public static generateHorizontalAbsoluteLine(x: number): string {
+    return `H ${x}`;
+  }
+
   public static generateVerticalAbsoluteLine(y: number): string {
     return `V ${y}`;
   }

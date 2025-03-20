@@ -1,5 +1,3 @@
-export const SMOOTH_CORNER_SIZE = 5;
-
 export const CORNER_LENGTH = 4;
 export const DOUBLE_CORNER_LENGTH = CORNER_LENGTH * 2;
 

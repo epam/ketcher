@@ -25,7 +25,6 @@ import {
   generateCornerFromRightToTop,
   generateCornerFromTopToLeft,
   generateCornerFromTopToRight,
-  SMOOTH_CORNER_SIZE,
 } from './helpers';
 
 enum LineDirection {
@@ -309,7 +308,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
           pathDAttributeValue += `V ${
             endPosition.y -
             CELL_HEIGHT / 2 -
-            SMOOTH_CORNER_SIZE -
+            SideChainConnectionBondRenderer.SMOOTH_CORNER_SIZE -
             sin * (cellConnection.yOffset || 0) * 3 -
             (isTwoNeighborRowsConnection
               ? maxHorizontalOffset - cellConnection.xOffset
@@ -319,7 +318,10 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
           pathDAttributeValue +=
             SideChainConnectionBondRenderer.generateBend(0, sin, cos, 1) + ' ';
         }
-        pathDAttributeValue += `H ${endPosition.x - SMOOTH_CORNER_SIZE * cos} `;
+        pathDAttributeValue += `H ${
+          endPosition.x -
+          SideChainConnectionBondRenderer.SMOOTH_CORNER_SIZE * cos
+        } `;
         pathDAttributeValue +=
           SideChainConnectionBondRenderer.generateBend(cos, 0, cos, 1) + ' ';
         return;

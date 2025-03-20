@@ -127,6 +127,10 @@ export class SideChainConnectionBondRenderer {
     });
   }
 
+  public static generateAbsoluteLine(x: number, y: number): string {
+    return `L ${x},${y}`;
+  }
+
   // TODO: Can we use `-1 | 0 | 1` instead of `number`?
   public static generateBend(
     dx1: number,

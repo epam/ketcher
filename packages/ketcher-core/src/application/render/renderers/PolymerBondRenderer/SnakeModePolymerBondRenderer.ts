@@ -266,19 +266,31 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const isSecondCellEmpty = cells[1].node === null;
 
     if (areCellsOnSameRow) {
-      pathDAttributeValue += `L ${startPosition.x},${
-        startPosition.y -
-        BOND_END_LENGTH -
-        horizontalPartIntersectionsOffset * 3
-      } `;
+      {
+        const absoluteLineY =
+          startPosition.y -
+          BOND_END_LENGTH -
+          horizontalPartIntersectionsOffset * 3;
+        pathDAttributeValue +=
+          SideChainConnectionBondRenderer.generateAbsoluteLine(
+            startPosition.x,
+            absoluteLineY,
+          ) + ' ';
+      }
       pathDAttributeValue +=
         SideChainConnectionBondRenderer.generateBend(0, -1, cos, -1) + ' ';
     } else {
-      pathDAttributeValue += `L ${startPosition.x},${
-        startPosition.y +
-        BOND_END_LENGTH +
-        horizontalPartIntersectionsOffset * 3
-      } `;
+      {
+        const absoluteLineY =
+          startPosition.y +
+          BOND_END_LENGTH +
+          horizontalPartIntersectionsOffset * 3;
+        pathDAttributeValue +=
+          SideChainConnectionBondRenderer.generateAbsoluteLine(
+            startPosition.x,
+            absoluteLineY,
+          ) + ' ';
+      }
       if (
         !isStraightVerticalConnection &&
         !isSecondCellEmpty &&
@@ -403,7 +415,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       previousConnection = cellConnection;
     });
 
-    pathDAttributeValue += `L ${endPosition.x},${endPosition.y} `;
+    pathDAttributeValue +=
+      SideChainConnectionBondRenderer.generateAbsoluteLine(
+        endPosition.x,
+        endPosition.y,
+      ) + ' ';
 
     this.bodyElement = rootElement
       .append('path')

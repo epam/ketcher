@@ -672,9 +672,15 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPAAApPAAAPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectFlexLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify typing "p" (or "P") in sequence mode (DNA) inserts a default phosphate ( at the beginning, middle, and end of the chain )', async ({
@@ -692,9 +698,15 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPAAApPAAAPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectFlexLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify typing "p" (or "P") in sequence mode (PEP) not inserts a default phosphate ( at the beginning, middle, and end of the chain )', async ({
@@ -712,9 +724,15 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPAAApPAAAPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectFlexLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Check consecutive typing of multiple "p" characters in RNA or DNA', async ({
@@ -737,9 +755,15 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPPppPPpPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectFlexLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Check typing of  "p" characters in RNA switch to DNA by hotkey and typing "p"', async ({
@@ -762,9 +786,15 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPAAApPAAAPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectFlexLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Ensure undo/redo functionality works for typed phosphates', async ({
@@ -794,13 +824,25 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPPppPPpPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectClearCanvasTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await pressUndoButton(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await pressRedoButton(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Validate saving and opening a sequence with typed phosphates (KET)', async ({
@@ -830,7 +872,10 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPPppPPpPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await verifyFileExport(
       page,
       'KET/rna-dna-pep-sequence-expected.ket',
@@ -840,7 +885,10 @@ test.describe('Sequence edit mode', () => {
       'KET/rna-dna-pep-sequence-expected.ket',
       page,
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Validate saving and opening a sequence with typed phosphates (MOL V3000)', async ({
@@ -870,7 +918,10 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPPppPPpPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await verifyFileExport(
       page,
       'Molfiles-V3000/rna-dna-pep-sequence-expected.mol',
@@ -881,7 +932,10 @@ test.describe('Sequence edit mode', () => {
       'Molfiles-V3000/rna-dna-pep-sequence-expected.mol',
       page,
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify that typed phosphates are deleted and can be restored using the Undo action', async ({
@@ -911,12 +965,21 @@ test.describe('Sequence edit mode', () => {
     await waitForRender(page, async () => {
       await page.keyboard.type('pPPppPPpPp');
     });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await pressUndoButton(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify backbone connection updates (R1-R2 or R2-R1) in automatically created antisense chains', async ({
@@ -938,11 +1001,17 @@ test.describe('Sequence edit mode', () => {
     });
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseStrand(page, 'A');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectFlexLayoutModeTool(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await hoverMouseOverMonomer(page, Sugars.R, 11);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify backbone connection updates (R1-R2 or R2-R1) in automatically created DNA antisense chains', async ({
@@ -965,11 +1034,17 @@ test.describe('Sequence edit mode', () => {
     });
     await selectAllStructuresOnCanvas(page);
     await createDNAAntisenseStrand(page, 'A');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectFlexLayoutModeTool(page);
     await selectMacroBond(page, MacroBondTool.SINGLE);
     await hoverMouseOverMonomer(page, Sugars.dR, 11);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Check error message if the monomer in the sense chain lacks R2 attachment point', async ({
@@ -990,7 +1065,10 @@ test.describe('Sequence edit mode', () => {
     );
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseStrand(page, 'A');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify that a created structure with an antisense RNA chain can be copied and pasted onto the canvas', async ({
@@ -1012,12 +1090,18 @@ test.describe('Sequence edit mode', () => {
     });
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseStrand(page, 'A');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await selectFlexLayoutModeTool(page);
     await pasteFromClipboardByKeyboard(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify that a created structure with an antisense DNA chain can be copied and pasted onto the canvas', async ({
@@ -1040,12 +1124,18 @@ test.describe('Sequence edit mode', () => {
     });
     await selectAllStructuresOnCanvas(page);
     await createDNAAntisenseStrand(page, 'A');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await selectFlexLayoutModeTool(page);
     await pasteFromClipboardByKeyboard(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify that a created structure with an antisense RNA chain can be deleted and restored by Undo/Redo', async ({
@@ -1070,11 +1160,20 @@ test.describe('Sequence edit mode', () => {
     await selectFlexLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
     await selectEraseTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await pressUndoButton(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await pressRedoButton(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify that a created structure with an antisense DNA chain can be deleted and restored by Undo/Redo', async ({
@@ -1100,11 +1199,20 @@ test.describe('Sequence edit mode', () => {
     await selectFlexLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
     await selectEraseTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await pressUndoButton(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await pressRedoButton(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify that a created structure with an antisense RNA chain can be saved and opened (KET)', async ({
@@ -1134,7 +1242,10 @@ test.describe('Sequence edit mode', () => {
       'KET/rna-AAAAAA-sequence-expected.ket',
       page,
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify that a created structure with an antisense DNA chain can be saved and opened (KET)', async ({
@@ -1165,7 +1276,10 @@ test.describe('Sequence edit mode', () => {
       'KET/dna-AAAAAA-sequence-expected.ket',
       page,
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify that a created structure with an antisense RNA chain can be saved and opened (MOL V3000)', async ({
@@ -1196,7 +1310,10 @@ test.describe('Sequence edit mode', () => {
       'Molfiles-V3000/rna-AAAAAA-sequence-expected.mol',
       page,
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify that a created structure with an antisense DNA chain can be saved and opened (MOL V3000)', async ({
@@ -1228,6 +1345,9 @@ test.describe('Sequence edit mode', () => {
       'Molfiles-V3000/dna-AAAAAA-sequence-expected.mol',
       page,
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 });

@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { Provider } from 'react-redux';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
@@ -232,6 +232,10 @@ function Editor({
     dispatch(closeErrorTooltip());
   };
 
+  const toggleLibraryVisibility = useCallback(() => {
+    setIsMonomerLibraryHidden((prev) => !prev);
+  }, []);
+
   return (
     <>
       <Layout>
@@ -304,13 +308,12 @@ function Editor({
         </Layout.Main>
 
         <Layout.Right hide={isMonomerLibraryHidden}>
-          <MonomerLibrary />
+          <MonomerLibrary toggleLibraryVisibility={toggleLibraryVisibility} />
         </Layout.Right>
         <Layout.InsideRoot>
-          <MonomerLibraryToggle
-            isHidden={isMonomerLibraryHidden}
-            onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
-          />
+          {isMonomerLibraryHidden && (
+            <MonomerLibraryToggle onClick={toggleLibraryVisibility} />
+          )}
         </Layout.InsideRoot>
       </Layout>
       <Preview />

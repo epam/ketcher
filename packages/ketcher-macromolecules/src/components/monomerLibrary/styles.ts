@@ -25,17 +25,21 @@ export const MonomerLibraryContainer = styled.div`
   flex-direction: column;
   background-color: ${(props) => props.theme.ketcher.color.background.primary};
   box-shadow: 0 2px 5px rgba(103, 104, 132, 0.15);
-  border-radius: 0 4px 4px;
+  border-radius: 4px;
 `;
 
 export const MonomerLibraryHeader = styled.div`
-  padding: 10px;
+  padding: 10px 0 10px 8px;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;
 
 export const MonomerLibraryInputContainer = styled.div`
   height: 24px;
   display: flex;
+  flex-grow: 1;
   gap: 4px;
   align-items: center;
   padding: 4px;
@@ -47,6 +51,21 @@ export const MonomerLibraryInputContainer = styled.div`
   &:has(input:focus) {
     outline: ${(props) => props.theme.ketcher.outline.selected.small};
   }
+`;
+
+export const MonomerLibraryToggle = styled.button`
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  cursor: pointer;
+  background-color: ${({ theme }) => theme.ketcher.color.button.primary.active};
+  text-transform: none;
+  font-weight: ${({ theme }) => theme.ketcher.font.weight.regular};
+  font-size: ${({ theme }) => theme.ketcher.font.size.regular};
+  color: ${({ theme }) => theme.ketcher.color.button.text.primary};
 `;
 
 export const MonomerLibrarySearchIcon = styled(Icon)`

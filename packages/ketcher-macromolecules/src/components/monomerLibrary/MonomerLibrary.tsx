@@ -33,11 +33,17 @@ import {
   MonomerLibraryInput,
   MonomerLibraryInputContainer,
   MonomerLibrarySearchIcon,
+  MonomerLibraryToggle,
 } from './styles';
+import { Icon } from 'ketcher-react';
 
 const COPY = '_Copy';
 
-const MonomerLibrary = () => {
+type Props = {
+  toggleLibraryVisibility: VoidFunction;
+};
+
+const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
   const presetsRef = useRef<IRnaPreset[]>([]);
   const dispatch = useAppDispatch();
 
@@ -114,6 +120,12 @@ const MonomerLibrary = () => {
             placeholder="Search by name..."
           />
         </MonomerLibraryInputContainer>
+        <MonomerLibraryToggle
+          title="Hide library"
+          onClick={toggleLibraryVisibility}
+        >
+          <Icon name="arrows-right" />
+        </MonomerLibraryToggle>
       </MonomerLibraryHeader>
       <Tabs tabs={tabs} />
     </MonomerLibraryContainer>

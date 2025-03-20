@@ -1,10 +1,7 @@
 import { editorEvents } from 'application/editor/editorEvents';
 import { CoreEditor } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
-import {
-  BaseMonomerRenderer,
-  BaseSequenceItemRenderer,
-} from 'application/render';
+import { SideChainConnectionBondRenderer } from 'application/render/renderers/PolymerBondRenderer/SideChainConnectionBondRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
 import { BaseMonomer, Vec2 } from 'domain/entities';
@@ -14,7 +11,6 @@ import {
   ConnectionDirectionInDegrees,
   ConnectionDirectionOfLastCell,
 } from 'domain/entities/canvas-matrix/Connection';
-import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
@@ -107,6 +103,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
     };
   }
 
+  // TODO: Unused?
   public getSideConnectionEndpointAngle(monomer: BaseMonomer): number {
     const editor = CoreEditor.provideEditorInstance();
     const matrix = editor.drawingEntitiesManager.canvasMatrix;
@@ -217,58 +214,6 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
     return this.bodyElement;
   }
 
-  private drawPartOfSideConnection(
-    isHorizontal: boolean,
-    connection: Connection,
-    cell: Cell,
-    direction: ConnectionDirectionInDegrees,
-  ): string {
-    const sin = Math.sin((direction * Math.PI) / 180);
-    const cos = Math.cos((direction * Math.PI) / 180);
-    const xOffset = (CELL_WIDTH / 2) * cos;
-    const yOffset = (CELL_HEIGHT / 2) * sin;
-    const maxXOffset = cell.connections.reduce(
-      (max: number, connection: Connection): number => {
-        return max > connection.xOffset ? max : connection.xOffset;
-      },
-      0,
-    );
-    const maxYOffset = cell.connections.reduce(
-      (max: number, connection: Connection): number => {
-        const connectionYOffset = connection.yOffset || 0;
-        return max > connectionYOffset ? max : connectionYOffset;
-      },
-      0,
-    );
-
-    let endOfPathPart: number;
-    if (isHorizontal && this.sideConnectionBondTurnPoint) {
-      endOfPathPart = this.sideConnectionBondTurnPoint;
-    } else {
-      const { monomerSize, scaledMonomerPosition } = (
-        cell.monomer as BaseMonomer
-      ).renderer as BaseMonomerRenderer | BaseSequenceItemRenderer;
-      endOfPathPart = isHorizontal
-        ? scaledMonomerPosition.x + monomerSize.width / 2 + xOffset
-        : scaledMonomerPosition.y + monomerSize.height / 2 + yOffset;
-    }
-
-    this.sideConnectionBondTurnPoint = endOfPathPart;
-
-    if (isHorizontal) {
-      endOfPathPart +=
-        -(connection.yOffset || 0) * 3 +
-        cos * -connection.xOffset * 3 +
-        cos * (maxXOffset + 1) * 3 +
-        (maxYOffset + 1) * 3;
-    }
-    let pathPart = isHorizontal ? 'H ' : 'V ';
-    pathPart += `${endOfPathPart - SMOOTH_CORNER_SIZE * cos} `;
-    pathPart += generateBend(cos, sin, cos, 1);
-
-    return pathPart;
-  }
-
   // TODO: Specify the types.
   private appendSideConnectionBond(rootElement, cells: Cell[]) {
     const firstCell = cells[0];
@@ -343,15 +288,20 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
     }
 
     if (isVerticalConnection && !isStraightVerticalConnection) {
-      pathDAttributeValue += this.drawPartOfSideConnection(
-        true,
-        firstCellConnection,
-        firstCell,
+      const direction =
         this.sideConnectionBondTurnPoint &&
-          startPosition.x < this.sideConnectionBondTurnPoint
+        startPosition.x < this.sideConnectionBondTurnPoint
           ? 0
-          : 180,
-      );
+          : 180;
+      const result = SideChainConnectionBondRenderer.drawPartOfSideConnection({
+        cell: firstCell,
+        connection: firstCellConnection,
+        direction,
+        horizontal: true,
+        sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
+      });
+      pathDAttributeValue += result.pathPart;
+      this.sideConnectionBondTurnPoint = result.sideConnectionBondTurnPoint;
     }
 
     let maxHorizontalOffset = 0;
@@ -408,29 +358,36 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
         pathDAttributeValue += generateBend(cos, 0, cos, 1);
         return;
       }
-      // empty cells
+
+      // Empty cells.
       if (cell.node === null) {
         return;
       }
 
-      // other cells
+      // Other cells.
       if (
         previousConnection &&
         previousConnection.direction !== cellConnection.direction
       ) {
-        const isHorizontal =
-          previousConnection.direction === 0 ||
-          previousConnection.direction === 180;
-
-        pathDAttributeValue += this.drawPartOfSideConnection(
-          isHorizontal,
-          previousConnection,
-          previousCell,
-          // FIXME: Check. Is it correct to use `as ConnectionDirectionInDegrees` here?
-          isHorizontal
-            ? xDirection
-            : (previousConnection.direction as ConnectionDirectionInDegrees),
+        // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
+        const horizontal = new Set([0, 180]).has(
+          previousConnection.direction as ConnectionDirectionInDegrees,
         );
+        const direction = horizontal
+          ? xDirection
+          : // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
+            (previousConnection.direction as ConnectionDirectionInDegrees);
+        const result = SideChainConnectionBondRenderer.drawPartOfSideConnection(
+          {
+            cell: previousCell,
+            connection: previousConnection,
+            direction,
+            horizontal,
+            sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
+          },
+        );
+        pathDAttributeValue += result.pathPart;
+        this.sideConnectionBondTurnPoint = result.sideConnectionBondTurnPoint;
       }
       previousCell = cell;
       previousConnection = cellConnection;

@@ -166,6 +166,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           0,
         ),
       )
+      .attr('data-isAntisense', this.isAntisenseNode)
+      .attr('data-nodeIndexOverall', this.nodeIndexOverall)
       .attr('transition', 'transform 0.2s')
       .attr(
         'transform',

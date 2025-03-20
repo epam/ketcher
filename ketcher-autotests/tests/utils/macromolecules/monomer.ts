@@ -7,6 +7,7 @@ import {
   selectLeftPanelButton,
   selectMacroBond,
   selectRectangleSelectionTool,
+  SymbolType,
   waitForRender,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
@@ -91,7 +92,7 @@ export function getMonomerLocatorById(page: Page, id: number | string) {
     .first();
 }
 
-type GetMonomerLocatorOptions = {
+type MonomerLocatorOptions = {
   numberOfAttachmentPoints?: string;
   rValues?: boolean[];
 } & (
@@ -103,10 +104,7 @@ type GetMonomerLocatorOptions = {
   | Monomer
 );
 
-export function getMonomerLocator(
-  page: Page,
-  options: GetMonomerLocatorOptions,
-) {
+export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
   const attributes: { [key: string]: string } = {};
 
   attributes['data-testid'] = 'monomer';
@@ -183,6 +181,119 @@ export async function createDNAAntisenseChain(page: Page, monomer: Locator) {
     .first();
 
   await createAntisenseStrandOption.click();
+}
+
+export function getSequenceMonomerLocator(
+  page: Page,
+  options: MonomerLocatorOptions,
+) {
+  const attributes: { [key: string]: string } = {};
+
+  attributes['data-testid'] = 'monomer';
+
+  if ('testId' in options) {
+    attributes['data-monomeralias'] = options.alias;
+    attributes['data-monomertype'] = getMonomerType(options);
+  } else {
+    const { monomerAlias, monomerType, monomerId } = options;
+    if (monomerAlias) attributes['data-monomeralias'] = monomerAlias;
+    if (monomerType) attributes['data-monomertype'] = monomerType;
+    if (monomerId) attributes['data-monomerid'] = String(monomerId);
+  }
+
+  const { numberOfAttachmentPoints, rValues } = options;
+
+  if (numberOfAttachmentPoints) {
+    attributes['data-number-of-attachment-points'] = numberOfAttachmentPoints;
+  }
+
+  if (rValues) {
+    rValues.forEach((value, index) => {
+      attributes[`data-R${index + 1}`] = `${value}`;
+    });
+  }
+
+  const attributeSelectors = Object.entries(attributes)
+    .map(([key, value]) => `[${key}="${value}"]`)
+    .join('');
+
+  const locator = page.locator(attributeSelectors);
+
+  return locator;
+}
+
+type SymbolLocatorOptions = {
+  symbolAlias?: string;
+  symbolId?: string | number;
+  chainId?: string | number;
+  sideConnectionNumber?: string | number;
+  hasLeftConnection?: boolean;
+  hasRightConnection?: boolean;
+  hydrogenConnectionNumber?: string | number;
+  dataSymbolType?: SymbolType;
+  nodeIndexOverall?: string | number;
+  isAntisense?: string | boolean;
+};
+
+export function getSymbolLocator(
+  page: Page,
+  options: SymbolLocatorOptions,
+): Locator {
+  const attributes: { [key: string]: string } = {};
+
+  attributes['data-testid'] = 'sequence-item';
+
+  const {
+    symbolAlias,
+    symbolId,
+    chainId,
+    sideConnectionNumber,
+    hasLeftConnection,
+    hasRightConnection,
+    hydrogenConnectionNumber,
+    dataSymbolType,
+    nodeIndexOverall,
+    isAntisense,
+  } = options;
+  if (Object.prototype.hasOwnProperty.call(options, 'symbolId')) {
+    attributes['data-symbol-id'] = String(symbolId);
+  }
+  if (Object.prototype.hasOwnProperty.call(options, 'chainId')) {
+    attributes['data-chain-id'] = String(chainId);
+  }
+  if (Object.prototype.hasOwnProperty.call(options, 'sideConnectionNumber')) {
+    attributes['data-side-connection-number'] = String(sideConnectionNumber);
+  }
+  if (Object.prototype.hasOwnProperty.call(options, 'hasLeftConnection')) {
+    attributes['data-has-left-connection'] = String(hasLeftConnection);
+  }
+  if (Object.prototype.hasOwnProperty.call(options, 'hasRightConnection')) {
+    attributes['data-has-right-connection'] = String(hasRightConnection);
+  }
+  if (
+    Object.prototype.hasOwnProperty.call(options, 'hydrogenConnectionNumber')
+  ) {
+    attributes['data-hydrogen-connection-number'] = String(
+      hydrogenConnectionNumber,
+    );
+  }
+  if (dataSymbolType) attributes['data-symbol-type'] = dataSymbolType;
+  if (Object.prototype.hasOwnProperty.call(options, 'nodeIndexOverall')) {
+    attributes['data-nodeIndexOverall'] = String(nodeIndexOverall);
+  }
+  if (Object.prototype.hasOwnProperty.call(options, 'isAntisense')) {
+    attributes['data-isAntisense'] = String(isAntisense);
+  }
+
+  const attributeSelectors = Object.entries(attributes)
+    .map(([key, value]) => `[${key}="${value}"]`)
+    .join('');
+
+  const locator = symbolAlias
+    ? page.locator(attributeSelectors).getByText(symbolAlias)
+    : page.locator(attributeSelectors);
+
+  return locator;
 }
 
 export async function createRNAAntisenseStrand(

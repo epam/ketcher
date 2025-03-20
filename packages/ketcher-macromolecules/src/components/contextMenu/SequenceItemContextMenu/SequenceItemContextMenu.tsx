@@ -46,8 +46,8 @@ type SequenceItemContextMenuType = {
 
 export enum SequenceItemContextMenuNames {
   title = 'sequence_menu_title',
-  createRnaAntisenseStrand = 'create_rna_antisense_strand',
-  createDnaAntisenseStrand = 'create_dna_antisense_strand',
+  createRnaAntisenseStrand = 'create_antisense_rna_chain',
+  createDnaAntisenseStrand = 'create_antisense_dna_chain',
   modifyInRnaBuilder = 'modify_in_rna_builder',
   establishHydrogenBond = 'establish_hydrogen_bond',
   deleteHydrogenBond = 'delete_hydrogen_bond',

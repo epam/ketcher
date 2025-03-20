@@ -75,7 +75,12 @@ export const SequenceSyncEditModeButton = () => {
 
   return isSequenceMode && hasAtLeastOneAntisense ? (
     <>
-      <StyledButton isActive={isSequenceSyncEditMode} onClick={handleClick}>
+      <StyledButton
+        isActive={isSequenceSyncEditMode}
+        onClick={handleClick}
+        data-testid="sync_sequence_edit_mode"
+        data-isActive={isSequenceSyncEditMode}
+      >
         <svg
           width="24"
           height="24"

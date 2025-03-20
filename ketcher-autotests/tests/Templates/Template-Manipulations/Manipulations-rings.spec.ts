@@ -16,9 +16,7 @@ import {
   moveMouseAway,
   RingButton,
   selectTool,
-  selectTopPanelButton,
   takeEditorScreenshot,
-  TopPanelButton,
   waitForPageInit,
   selectClearCanvasTool,
 } from '@utils';

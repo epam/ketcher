@@ -18,7 +18,6 @@ import { BaseRenderer } from '../BaseRenderer';
 import {
   CORNER_LENGTH,
   DOUBLE_CORNER_LENGTH,
-  generateBend,
   generateCornerFromBottomToRight,
   generateCornerFromLeftToBottom,
   generateCornerFromLeftToTop,

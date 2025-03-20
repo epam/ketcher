@@ -1,17 +1,5 @@
 export const SMOOTH_CORNER_SIZE = 5;
 
-export const generateBend = (
-  dx1: number,
-  dy1: number,
-  dx: number,
-  dy: number,
-): string => {
-  const size = SMOOTH_CORNER_SIZE;
-  const controlPoint = `${size * dx1},${size * dy1}`;
-  const endPoint = `${size * dx},${size * dy}`;
-  return `q ${controlPoint} ${endPoint} `;
-};
-
 export const CORNER_LENGTH = 4;
 export const DOUBLE_CORNER_LENGTH = CORNER_LENGTH * 2;
 

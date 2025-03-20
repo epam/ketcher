@@ -2,10 +2,7 @@ import {
   BaseMonomerRenderer,
   BaseSequenceItemRenderer,
 } from 'application/render';
-import {
-  generateBend,
-  SMOOTH_CORNER_SIZE,
-} from 'application/render/renderers/PolymerBondRenderer/helpers';
+import { SMOOTH_CORNER_SIZE } from 'application/render/renderers/PolymerBondRenderer/helpers';
 import { BaseMonomer } from 'domain/entities';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
@@ -91,7 +88,7 @@ export class SideChainConnectionBondRenderer {
     }
     let pathPart = horizontal ? 'H ' : 'V ';
     pathPart += `${endOfPathPart - SMOOTH_CORNER_SIZE * cos} `;
-    pathPart += generateBend(cos, sin, cos, 1);
+    pathPart += this.generateBend(cos, sin, cos, 1);
 
     return {
       pathPart,
@@ -121,5 +118,17 @@ export class SideChainConnectionBondRenderer {
       horizontal,
       sideConnectionBondTurnPoint,
     });
+  }
+
+  public static generateBend(
+    dx1: number,
+    dy1: number,
+    dx: number,
+    dy: number,
+  ): string {
+    const size = SMOOTH_CORNER_SIZE;
+    const controlPoint = `${size * dx1},${size * dy1}`;
+    const endPoint = `${size * dx},${size * dy}`;
+    return `q ${controlPoint} ${endPoint} `;
   }
 }

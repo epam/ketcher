@@ -305,7 +305,7 @@ export async function createRNAAntisenseStrand(
     nthNumber,
     button: 'right',
   });
-  const createAntisenseStrand = page.getByTestId('create_rna_antisense_strand');
+  const createAntisenseStrand = page.getByTestId('create_antisense_rna_chain');
   await waitForRender(page, async () => {
     await createAntisenseStrand.click();
   });
@@ -320,7 +320,7 @@ export async function createDNAAntisenseStrand(
     nthNumber,
     button: 'right',
   });
-  const createAntisenseStrand = page.getByTestId('create_dna_antisense_strand');
+  const createAntisenseStrand = page.getByTestId('create_antisense_dna_chain');
   await waitForRender(page, async () => {
     await createAntisenseStrand.click();
   });

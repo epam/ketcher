@@ -7,7 +7,7 @@ import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   Connection,
   ConnectionDirectionInDegrees,
-  ConnectionDirectionXInDegrees,
+  ConnectionXDirectionInDegrees,
 } from 'domain/entities/canvas-matrix/Connection';
 import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 
@@ -28,7 +28,7 @@ interface DrawPartOfSideConnectionForOtherCellsParameter {
   readonly cell: Cell;
   readonly connection: Connection;
   readonly sideConnectionBondTurnPoint: number;
-  readonly xDirection: ConnectionDirectionXInDegrees;
+  readonly xDirection: ConnectionXDirectionInDegrees;
 }
 
 interface DrawPartOfSideConnectionForOtherCellsResult {
@@ -41,10 +41,17 @@ const CELL_HEIGHT = 40;
 export class SideChainConnectionBondRenderer {
   public static readonly SMOOTH_CORNER_SIZE = 5;
 
-  public static calculateCosForDirectionX(
-    directionX: ConnectionDirectionXInDegrees,
+  public static calculateCosForXDirection(
+    xDirection: ConnectionXDirectionInDegrees,
   ): -1 | 1 {
-    return Math.cos((directionX * Math.PI) / 180) as -1 | 1;
+    return Math.cos((xDirection * Math.PI) / 180) as -1 | 1;
+  }
+
+  public static calculateSinForYDirection(
+    // TODO: Can we use `yDirection: 90 | 270`?
+    yDirection: number,
+  ): number {
+    return Math.sin((yDirection * Math.PI) / 180);
   }
 
   public static checkIfConnectionIsStraightVertical(

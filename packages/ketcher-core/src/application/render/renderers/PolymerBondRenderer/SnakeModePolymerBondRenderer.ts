@@ -10,7 +10,7 @@ import { Cell } from 'domain/entities/canvas-matrix/Cell';
 import {
   Connection,
   ConnectionDirectionOfLastCell,
-  ConnectionDirectionXInDegrees,
+  ConnectionXDirectionInDegrees,
 } from 'domain/entities/canvas-matrix/Connection';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
@@ -240,7 +240,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const endPosition = isFirstMonomerOfBondInFirstCell
       ? this.scaledPosition.endPosition
       : this.scaledPosition.startPosition;
-    const xDirection: ConnectionDirectionXInDegrees =
+    const xDirection: ConnectionXDirectionInDegrees =
       startPosition.x >= (this.sideConnectionBondTurnPoint || endPosition.x)
         ? 180
         : 0;
@@ -249,7 +249,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       ' ';
 
     const cos =
-      SideChainConnectionBondRenderer.calculateCosForDirectionX(xDirection);
+      SideChainConnectionBondRenderer.calculateCosForXDirection(xDirection);
 
     let previousConnection: Connection;
     let previousCell: Cell;
@@ -323,7 +323,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         },
       ) as Connection;
       const isLastCell = cellIndex === cells.length - 1;
-      const _xDirection: ConnectionDirectionXInDegrees = this
+      const _xDirection: ConnectionXDirectionInDegrees = this
         .sideConnectionBondTurnPoint
         ? endPosition.x < this.sideConnectionBondTurnPoint
           ? 180
@@ -349,9 +349,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         const directionObject =
           cellConnection.direction as ConnectionDirectionOfLastCell;
         const yDirection = connectionIsVertical ? 90 : directionObject.y;
-        const sin = Math.sin((yDirection * Math.PI) / 180);
+        const sin =
+          SideChainConnectionBondRenderer.calculateSinForYDirection(yDirection);
         const cos =
-          SideChainConnectionBondRenderer.calculateCosForDirectionX(
+          SideChainConnectionBondRenderer.calculateCosForXDirection(
             _xDirection,
           );
 

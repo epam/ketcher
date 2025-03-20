@@ -50,7 +50,6 @@ const BOND_END_LENGTH = 15;
 const CELL_HEIGHT = 40;
 const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 
-// TODO: Need to avoid `isHydrogenBond`.
 export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
   private editorEvents: typeof editorEvents;
   private isSnakeBond = false; // `SnakeModeBackboneBondRenderer` or `SnakeModeRNABaseAndSugarBondRenderer`.
@@ -307,7 +306,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
       startPosition.x >= (this.sideConnectionBondTurnPoint || endPosition.x)
         ? 180
         : 0;
-    let dAttributeForPath = `M ${startPosition.x},${startPosition.y} `;
+    let pathDAttributeValue = `M ${startPosition.x},${startPosition.y} `;
 
     const cos = Math.cos((xDirection * Math.PI) / 180);
 
@@ -322,14 +321,14 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
     const isSecondCellEmpty = cells[1].node === null;
 
     if (areCellsOnSameRow) {
-      dAttributeForPath += `L ${startPosition.x},${
+      pathDAttributeValue += `L ${startPosition.x},${
         startPosition.y -
         BOND_END_LENGTH -
         horizontalPartIntersectionsOffset * 3
       } `;
-      dAttributeForPath += generateBend(0, -1, cos, -1);
+      pathDAttributeValue += generateBend(0, -1, cos, -1);
     } else {
-      dAttributeForPath += `L ${startPosition.x},${
+      pathDAttributeValue += `L ${startPosition.x},${
         startPosition.y +
         BOND_END_LENGTH +
         horizontalPartIntersectionsOffset * 3
@@ -339,12 +338,12 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
         !isSecondCellEmpty &&
         !isTwoNeighborRowsConnection
       ) {
-        dAttributeForPath += generateBend(0, 1, cos, 1);
+        pathDAttributeValue += generateBend(0, 1, cos, 1);
       }
     }
 
     if (isVerticalConnection && !isStraightVerticalConnection) {
-      dAttributeForPath += this.drawPartOfSideConnection(
+      pathDAttributeValue += this.drawPartOfSideConnection(
         true,
         firstCellConnection,
         firstCell,
@@ -393,7 +392,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
         const cos = Math.cos((_xDirection * Math.PI) / 180);
 
         if (!areCellsOnSameRow) {
-          dAttributeForPath += `V ${
+          pathDAttributeValue += `V ${
             endPosition.y -
             CELL_HEIGHT / 2 -
             SMOOTH_CORNER_SIZE -
@@ -403,10 +402,10 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
               : cellConnection.xOffset) *
               3
           } `;
-          dAttributeForPath += generateBend(0, sin, cos, 1);
+          pathDAttributeValue += generateBend(0, sin, cos, 1);
         }
-        dAttributeForPath += `H ${endPosition.x - SMOOTH_CORNER_SIZE * cos} `;
-        dAttributeForPath += generateBend(cos, 0, cos, 1);
+        pathDAttributeValue += `H ${endPosition.x - SMOOTH_CORNER_SIZE * cos} `;
+        pathDAttributeValue += generateBend(cos, 0, cos, 1);
         return;
       }
       // empty cells
@@ -423,7 +422,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
           previousConnection.direction === 0 ||
           previousConnection.direction === 180;
 
-        dAttributeForPath += this.drawPartOfSideConnection(
+        pathDAttributeValue += this.drawPartOfSideConnection(
           isHorizontal,
           previousConnection,
           previousCell,
@@ -437,14 +436,14 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
       previousConnection = cellConnection;
     });
 
-    dAttributeForPath += `L ${endPosition.x},${endPosition.y} `;
+    pathDAttributeValue += `L ${endPosition.x},${endPosition.y} `;
 
     this.bodyElement = rootElement
       .append('path')
       .attr('class', `${SIDE_CONNECTION_BODY_ELEMENT_CLASS}`)
       .attr('stroke', '#333333')
       .attr('stroke-width', 1)
-      .attr('d', dAttributeForPath)
+      .attr('d', pathDAttributeValue)
       .attr('fill', 'none')
       .attr('stroke-dasharray', '2')
       .attr('pointer-events', 'all')
@@ -454,7 +453,7 @@ export class SnakeModeHydrogenBondRenderer extends BaseRenderer {
       .attr('data-frommonomerid', this.polymerBond.firstMonomer.id)
       .attr('data-tomonomerid', this.polymerBond.secondMonomer?.id);
 
-    this.path = dAttributeForPath;
+    this.path = pathDAttributeValue;
 
     return this.bodyElement;
   }

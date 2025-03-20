@@ -42,9 +42,12 @@ export class AmbiguousMonomer extends BaseMonomer implements IVariantMonomer {
   ) {
     let variantMonomerLabel: string;
     if (
-      variantMonomerItem.subtype ===
-        KetAmbiguousMonomerTemplateSubType.MIXTURE ||
-      (variantMonomerItem.label && variantMonomerItem.label.length > 1)
+      variantMonomerItem.subtype === KetAmbiguousMonomerTemplateSubType.MIXTURE
+    ) {
+      variantMonomerLabel = DEFAULT_VARIANT_MONOMER_LABEL;
+    } else if (
+      variantMonomerItem.label &&
+      variantMonomerItem.label.length > 1
     ) {
       variantMonomerLabel =
         ambiguousMapping[variantMonomerItem.id] ||

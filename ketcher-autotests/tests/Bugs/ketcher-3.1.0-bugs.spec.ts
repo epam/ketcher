@@ -27,6 +27,7 @@ import {
   selectSequenceLayoutModeTool,
   pasteFromClipboard,
   openStructurePasteFromClipboard,
+  switchSyncMode,
 } from '@utils';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
@@ -69,10 +70,6 @@ async function setRotationStep(page: Page, value: string) {
   await page.getByTestId('rotationStep-input').click();
   await page.getByTestId('rotationStep-input').fill(value);
   await page.getByTestId('OK').click();
-}
-
-async function switchSyncMode(page: Page) {
-  await page.locator('.e1846tr80').click();
 }
 
 test.describe('Ketcher bugs in 3.1.0', () => {

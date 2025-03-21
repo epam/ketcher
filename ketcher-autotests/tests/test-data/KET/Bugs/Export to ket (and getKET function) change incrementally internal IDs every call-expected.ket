@@ -16,8 +16,8 @@
         "type": "monomer",
         "id": "0",
         "position": {
-            "x": 7.350000000000001,
-            "y": -4
+            "x": 14.700000000000001,
+            "y": -8
         },
         "alias": "D",
         "templateId": "D___Aspartic acid"

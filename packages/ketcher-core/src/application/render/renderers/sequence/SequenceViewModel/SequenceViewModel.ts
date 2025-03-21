@@ -19,6 +19,7 @@ import {
   getNextConnectedNode,
   getPreviousConnectedNode,
 } from 'domain/helpers/chains';
+import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
 
 interface IForEachNodeParams {
   twoStrandedNode: ITwoStrandedChainItem;
@@ -106,7 +107,11 @@ export class SequenceViewModel {
                 (foundMonomersConnectedHydrogenBonds, hydrogenBond) => {
                   const monomerConnectedByHydrogenBond =
                     hydrogenBond.getAnotherMonomer(monomer);
-                  return monomerConnectedByHydrogenBond
+                  return monomerConnectedByHydrogenBond &&
+                    isRnaBaseApplicableForAntisense(
+                      monomerConnectedByHydrogenBond,
+                    ) &&
+                    isRnaBaseApplicableForAntisense(monomer)
                     ? [
                         ...foundMonomersConnectedHydrogenBonds,
                         monomerConnectedByHydrogenBond,

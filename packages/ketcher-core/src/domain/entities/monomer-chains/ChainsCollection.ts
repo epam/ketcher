@@ -16,8 +16,8 @@ import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
   getRnaBaseFromSugar,
-  getSugarFromRnaBase,
   isMonomerConnectedToR2RnaBase,
+  isRnaBaseApplicableForAntisense,
   isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
@@ -420,7 +420,7 @@ export class ChainsCollection {
     }
   }
 
-  private getComplimentaryChainIfNucleotide(
+  public getComplimentaryChainIfNucleotide(
     node: SubChainNode,
     monomerToChain: Map<BaseMonomer, Chain>,
     monomerToNode: Map<BaseMonomer, SubChainNode>,
@@ -440,14 +440,9 @@ export class ChainsCollection {
         continue;
       }
 
-      const isRnaMonomer =
-        monomer instanceof UnsplitNucleotide ||
-        (isRnaBaseOrAmbiguousRnaBase(monomer) &&
-          Boolean(getSugarFromRnaBase(monomer)));
+      const isRnaMonomer = isRnaBaseApplicableForAntisense(monomer);
       const isRnaComplimentaryMonomer =
-        complimentaryMonomer instanceof UnsplitNucleotide ||
-        (isRnaBaseOrAmbiguousRnaBase(complimentaryMonomer) &&
-          Boolean(getSugarFromRnaBase(complimentaryMonomer)));
+        isRnaBaseApplicableForAntisense(complimentaryMonomer);
 
       if (!isRnaMonomer || !isRnaComplimentaryMonomer) {
         continue;

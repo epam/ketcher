@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Bases } from '@constants/monomers/Bases';
 import { Chem } from '@constants/monomers/Chem';
@@ -10,10 +11,12 @@ import { Page, test } from '@playwright/test';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
+  MacroFileType,
   Monomer,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   selectClearCanvasTool,
@@ -66,6 +69,10 @@ import {
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await selectMacroBond(page, MacroBondTool.SINGLE);
   await getMonomerLocator(page, monomer).nth(nth).hover();
+}
+
+async function switchSyncMode(page: Page) {
+  await page.locator('.e1846tr80').click();
 }
 
 test.describe('Sequence edit mode', () => {
@@ -1357,6 +1364,140 @@ test.describe('Sequence edit mode', () => {
       'Molfiles-V3000/dna-AAAAAA-sequence-expected.mol',
       page,
     );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  const testConfigs = [
+    {
+      name: `Check that every monomer that has only one hydrogen bond placed on same y position as other participant in hydrogen bond`,
+      description:
+        'Every monomer that has only one hydrogen bond placed on the same y position as the other participant in the hydrogen bond (and that bond not behave as a side chain connection in snake mode)',
+      helmString:
+        'RNA1{R(C)P.R(G)P.R(U)P.R(C)P.R(G)P.R(U)}|RNA2{R(A)P.R(C)P.R(G)P.R(A)P.R(G)}$RNA1,RNA2,17:pair-2:pair|RNA1,RNA2,14:pair-5:pair|RNA1,RNA2,11:pair-8:pair|RNA1,RNA2,8:pair-11:pair|RNA1,RNA2,2:pair-14:pair$$$V2.0',
+    },
+    {
+      name: `Check that if a monomer has multiple H-bonds, it placed bellow/above the monomer that has the fewest number of H-bonds`,
+      description:
+        'If a monomer has multiple H-bonds, it placed bellow/above monomer that has the fewest number of H-bonds (or to the left one if the number of H-bonds is the same).',
+      helmString:
+        'RNA1{[5A6]([tCo])}|RNA2{[e2r]([o8G])}|RNA3{[MOE]([tfU])}|RNA4{[mR]([h56T])}|RNA5{R(G)}|RNA6{R(C)}|RNA7{R(A)}|RNA8{R([baA])}$RNA1,RNA2,1:R2-1:R1|RNA2,RNA3,1:R2-1:R1|RNA3,RNA4,1:R2-1:R1|RNA5,RNA6,1:R1-1:R2|RNA6,RNA7,1:R1-1:R2|RNA7,RNA8,1:R1-1:R2|RNA1,RNA5,2:pair-2:pair|RNA2,RNA7,2:pair-2:pair|RNA3,RNA7,2:pair-2:pair|RNA4,RNA8,2:pair-2:pair$$$V2.0',
+    },
+    {
+      name: `Check that for every region between two hydrogen bonds, one chain must have backbone bonds with the length of one bond`,
+      description:
+        'For every region between two hydrogen bonds, one chain must have backbone bonds with the length of one bond. For the other chain, all the other monomers aligned to the left so that the "long" bond is to the right for sense chains, and aligned to the right so that the "long" bond is to the left for antisense chains.',
+      helmString:
+        'RNA1{[mR]([h56T])[bnn].[mR](A,C,G,U)}|RNA2{[mR]([h56T])}|RNA3{[oxy].[mR]([baA])}|RNA4{[5A6]([tCo])[sP].[e2r]([o8G])}|RNA5{[MOE]([tfU])}|RNA6{R(A,C,G,U)P.R(A)}|RNA7{R(A)}|RNA8{R(U)}|RNA9{R(C)P.R(G)}|RNA10{R(A)}|PEPTIDE1{[Hhs]}|PEPTIDE2{[Hhs]}$RNA1,RNA2,4:R2-1:R1|RNA2,PEPTIDE1,1:R2-1:R1|PEPTIDE1,RNA3,1:R2-1:R1|RNA3,RNA4,2:R2-1:R1|RNA4,RNA5,4:R2-1:R1|RNA6,RNA7,1:R1-1:R2|RNA7,PEPTIDE2,1:R1-1:R2|PEPTIDE2,RNA8,1:R1-1:R2|RNA8,RNA9,1:R1-4:R2|RNA9,RNA10,1:R1-1:R2|RNA1,RNA6,2:pair-5:pair|RNA1,RNA6,5:pair-2:pair|RNA2,RNA7,2:pair-2:pair|RNA3,RNA8,3:pair-2:pair|RNA4,RNA9,2:pair-5:pair|RNA4,RNA9,5:pair-2:pair|RNA5,RNA10,2:pair-2:pair$$$V2.0',
+    },
+    {
+      name: `Short RNA structure with loop and complementary strands`,
+      description: 'Short RNA structure with loop and complementary strands.',
+      helmString:
+        'RNA1{R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)P.R(U)}|RNA2{R(A)P.R(A)P.R(A)P.R(A)P.R(A)}$RNA1,RNA2,62:pair-2:pair|RNA1,RNA2,59:pair-5:pair|RNA1,RNA2,56:pair-8:pair|RNA1,RNA2,53:pair-11:pair|RNA1,RNA2,2:pair-14:pair$$$V2.0',
+    },
+    {
+      name: `RNA strand partial complementarity`,
+      description: 'RNA strand partial complementarity.',
+      helmString:
+        'RNA1{R(C)P.R(G)P.R(U)P.R(C)P.R(U)}|RNA2{R(A)P.R(G)P.R(A)P.R(C)P.R(G)}$RNA1,RNA2,14:pair-2:pair|RNA1,RNA2,2:pair-14:pair|RNA1,RNA2,8:pair-11:pair|RNA1,RNA2,11:pair-8:pair$$$V2.0',
+    },
+  ];
+
+  for (const config of testConfigs) {
+    test(config.name, async ({ page }) => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6284
+       * Description: ${config.description}
+       * Scenario:
+       * 1. Go to Macro - Sequence mode
+       * 2. Load HELM
+       * 3. Take a screenshot
+       * 4. Switch to Flex mode
+       * 5. Take a screenshot
+       * 6. Switch to Snake mode
+       * 7. Take a screenshot
+       */
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        config.helmString,
+      );
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await selectFlexLayoutModeTool(page);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await selectSnakeLayoutModeTool(page);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    });
+  }
+
+  test('Check that when the caret (sync edit mode) is placed to the right of a symbol associated with a number AND that number is >9, the number should not be visible', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6425
+     * Description: When the caret (sync edit mode) is placed to the right of a symbol associated with
+     * a number AND that number is >9, the number should not be visible.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "AAAAAAAAAA" in the sequence
+     * 3. Create antisense RNA chain
+     * 4. Place the caret to the right of the last "A"
+     * 5. Take a screenshot
+     */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await waitForRender(page, async () => {
+      await page.keyboard.type('AAAAAAAAAA');
+    });
+    await selectAllStructuresOnCanvas(page);
+    await createRNAAntisenseChain(page, anySymbolA);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.keyboard.press('ArrowLeft');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that when the caret is moved from the above described position, or edit mode changed (to non-sync), or edit mode exited (view mode entered) the number reappear', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6425
+     * Description: When the caret is moved from the above described position, or edit mode changed (to non-sync),
+     * or edit mode exited (view mode entered) the number reappear.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "AAAAAAAAAA" in the sequence
+     * 3. Create antisense RNA chain
+     * 4. Change the edit mode to non-sync
+     * 5. Take a screenshot
+     */
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await waitForRender(page, async () => {
+      await page.keyboard.type('AAAAAAAAAA');
+    });
+    await selectAllStructuresOnCanvas(page);
+    await createRNAAntisenseChain(page, anySymbolA);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await switchSyncMode(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

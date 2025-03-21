@@ -29,6 +29,7 @@ import {
   SequenceType,
   startNewSequence,
   switchSequenceEnteringButtonType,
+  switchSyncMode,
   takeEditorScreenshot,
   takePageScreenshot,
   typePeptideAlphabet,
@@ -69,10 +70,6 @@ import {
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await selectMacroBond(page, MacroBondTool.SINGLE);
   await getMonomerLocator(page, monomer).nth(nth).hover();
-}
-
-async function switchSyncMode(page: Page) {
-  await page.locator('.e1846tr80').click();
 }
 
 test.describe('Sequence edit mode', () => {

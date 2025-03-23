@@ -329,6 +329,10 @@ export abstract class BaseMonomerRenderer extends BaseRenderer {
         this.monomer.listOfAttachmentPoints.length,
       )
       .attr(
+        'data-hydrogen-connection-number',
+        this.monomer.hydrogenBonds.length,
+      )
+      .attr(
         'transform',
         `translate(${this.scaledMonomerPosition.x}, ${
           this.scaledMonomerPosition.y

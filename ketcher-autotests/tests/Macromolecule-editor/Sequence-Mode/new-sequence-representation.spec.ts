@@ -2407,6 +2407,7 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
        *              2. Check if multiple monomers/symbols are selected and all symbols have H-bonds established with the monomer/symbol above/bellow it the option "Establish Hydrogen Bonds" disabled from the r-click menu ( Requirement: 1.3 )
        *              3. Check If multiple monomers are selected, and any of them have hydrogen bonds, the option "Delete Hydrogen Bonds" available in the r-click menu ( Requirement: 1.4 )
        *              4. Check If multiple monomers are selected, and selected symbols have no H-bonds, the option "Delete Hydrogen Bonds" disabled in the r-click menu ( Requirement: 1.4 )
+       *              5. Verify warning message on deleting all hydrogen bonds between two chains ( Requirement: 1.5 )
        * Scenario:
        * 1. Load sense and antisense sequences (and connect their c7io7n bases with hydrogen bond to make sence/antisense sequence)
        * 2. Switch to Sequence mode
@@ -2497,6 +2498,7 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       await selectAllStructuresOnCanvas(page);
       await antisenseSymbol.click({ button: 'right', force: true });
       await deleteHydrogenBondsOption.click({ force: true });
+      // 5. Verify warning message on deleting all hydrogen bonds between two chains ( Requirement: 1.5 )
       await pressYesInConfirmYourActionDialog(page);
       await selectAllStructuresOnCanvas(page);
       await antisenseSymbolWithHBond.click({ button: 'right', force: true });
@@ -2582,3 +2584,75 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
     await expect(establishHydrogenBondsOption).toBeDisabled();
   });
 }
+
+test(`Case 15. Verify warning message on deleting all hydrogen bonds between two chains`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 5
+   * Description: Verify warning message on deleting all hydrogen bonds between two chains
+   * Scenario:
+   * 1. Load sequence with two chains connected with hydrogen bonds
+   * 2. Select all symbols and call context menu
+   * 3. Click on "Delete Hydrogen Bonds"
+   * 4. Take screenshot to validate sequence order
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)P.R(U)}|RNA3{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}|RNA4{R(U)P.R(U)P.R(U)}|RNA5{[dR](T)P.[dR](T)}|RNA6{R(U)}|RNA7{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,2:pair-14:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,8:pair-8:pair|RNA1,RNA2,11:pair-5:pair|RNA1,RNA2,14:pair-2:pair|RNA1,RNA3,20:pair-11:pair|RNA1,RNA3,23:pair-8:pair|RNA1,RNA3,26:pair-5:pair|RNA1,RNA3,29:pair-2:pair|RNA1,RNA4,35:pair-8:pair|RNA1,RNA4,38:pair-5:pair|RNA1,RNA4,41:pair-2:pair|RNA1,RNA5,47:pair-5:pair|RNA1,RNA5,50:pair-2:pair|RNA1,RNA6,56:pair-2:pair|RNA1,RNA7,62:pair-11:pair|RNA1,RNA7,65:pair-8:pair|RNA1,RNA7,68:pair-5:pair|RNA1,RNA7,71:pair-2:pair$$$V2.0',
+  );
+
+  await selectSequenceLayoutModeTool(page);
+  await selectAllStructuresOnCanvas(page);
+
+  const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+
+  await anySymbolA.click({ button: 'right', force: true });
+  const deleteHydrogenBondsOption = page
+    .getByTestId('delete_hydrogen_bond')
+    .first();
+
+  await deleteHydrogenBondsOption.click({ force: true });
+  await pressYesInConfirmYourActionDialog(page);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 16. Check that when all H-bonds are deleted, the chain(s) that used to be placed bellow should be placed bellow the chain that was on top, one bellow the other starting from the chain on the left`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 6
+   * Description: Check that when all H-bonds are deleted, the chain(s) that used to be placed bellow should be placed bellow the chain that was on top, one bellow the other starting from the chain on the left ( Requirement: 1.5 )
+   * Scenario:
+   * 1. Load sequence with two chains connected with hydrogen bonds (antisense chain oriented form Y, X, W ... to A)
+   * 2. Select all symbols and call context menu
+   * 3. Click on "Delete Hydrogen Bonds"
+   * 4. Take screenshot to validate former antisenese sequence orientation (from A, B, C ... to Y)
+   */
+
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(A)P}|PEPTIDE1{(D,N).C.D.E.F.H.I.K.L.M.N.O.P.Q.R.S.T.V.W.(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y).Y}$RNA2,PEPTIDE1,3:R2-1:R1|RNA2,RNA1,2:pair-65:pair|RNA1,PEPTIDE1,2:pair-21:pair|RNA1,PEPTIDE1,5:pair-20:pair|RNA1,PEPTIDE1,8:pair-19:pair|RNA1,PEPTIDE1,11:pair-18:pair|RNA1,PEPTIDE1,14:pair-17:pair|RNA1,PEPTIDE1,17:pair-16:pair|RNA1,PEPTIDE1,20:pair-15:pair|RNA1,PEPTIDE1,23:pair-14:pair|RNA1,PEPTIDE1,26:pair-13:pair|RNA1,PEPTIDE1,29:pair-12:pair|RNA1,PEPTIDE1,32:pair-11:pair|RNA1,PEPTIDE1,35:pair-10:pair|RNA1,PEPTIDE1,38:pair-9:pair|RNA1,PEPTIDE1,41:pair-8:pair|RNA1,PEPTIDE1,44:pair-7:pair|RNA1,PEPTIDE1,47:pair-6:pair|RNA1,PEPTIDE1,50:pair-5:pair|RNA1,PEPTIDE1,53:pair-4:pair|RNA1,PEPTIDE1,56:pair-3:pair|RNA1,PEPTIDE1,59:pair-2:pair|RNA1,PEPTIDE1,62:pair-1:pair$$$V2.0',
+  );
+
+  await selectSequenceLayoutModeTool(page);
+  await selectAllStructuresOnCanvas(page);
+
+  const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+
+  await anySymbolA.click({ button: 'right', force: true });
+  const deleteHydrogenBondsOption = page
+    .getByTestId('delete_hydrogen_bond')
+    .first();
+
+  await deleteHydrogenBondsOption.click({ force: true });
+  await pressYesInConfirmYourActionDialog(page);
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});

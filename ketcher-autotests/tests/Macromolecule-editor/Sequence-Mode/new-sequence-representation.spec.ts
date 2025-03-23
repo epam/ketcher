@@ -10,6 +10,7 @@ import {
   openFileAndAddToCanvasMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
+  selectAllStructuresOnCanvas,
   selectClearCanvasTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
@@ -32,6 +33,7 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
+  pressYesInConfirmYourActionDialog,
   switchToDNAMode,
   switchToPeptideMode,
   switchToRNAMode,
@@ -2385,4 +2387,153 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
       ).toBe('0');
     });
   }
+}
+
+for (const senseSequence of sequencesForHydrogenBondTests) {
+  for (const antisenseSequence of sequencesForHydrogenBondTests) {
+    test(`Case 12-${senseSequence.Id}-${antisenseSequence.Id}. [${senseSequence.Description}]---[${antisenseSequence.Description}] Establish/Delete Hydrogen Bonds checks for multipal monomers`, async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 1
+       * Description: 1. Check if multiple monomers/symbols are selected and at least one of them does not have hydrogen bonds established with the monomer/symbol above/bellow it the option "Establish Hydrogen Bonds" available from the r-click menu ( Requirement: 1.3 )
+       *              2. Check if multiple monomers/symbols are selected and all symbols have H-bonds established with the monomer/symbol above/bellow it the option "Establish Hydrogen Bonds" disabled from the r-click menu ( Requirement: 1.3 )
+       *              3. Check If multiple monomers are selected, and any of them have hydrogen bonds, the option "Delete Hydrogen Bonds" available in the r-click menu ( Requirement: 1.4 )
+       *              4. Check If multiple monomers are selected, and selected symbols have no H-bonds, the option "Delete Hydrogen Bonds" disabled in the r-click menu ( Requirement: 1.4 )
+       * Scenario:
+       * 1. Load sense and antisense sequences (and connect their c7io7n bases with hydrogen bond to make sence/antisense sequence)
+       * 2. Switch to Sequence mode
+       * 3. Select all symbols and check that context menu has "Establish Hydrogen Bonds" option available and enabled ("Delete Hydrogen Bonds" option should be disabled)
+       * 4. Establish hydrogen bonds between all selected symbols
+       * 5. Select all symbols and check that context menu has "Establish Hydrogen Bonds" disabled
+       * 6. Select all symbols, call context menu and click "Delete Hydrogen Bonds" to delete all hydrogen bonds
+       * 7. Select all symbols and check that context menu has "Delete Hydrogen Bonds" disabled
+       */
+
+      await setupSenseAndAntiSenseSequences(
+        page,
+        senseSequence,
+        antisenseSequence,
+      );
+
+      await selectSequenceLayoutModeTool(page);
+
+      const senseSymbolId = await getSymbolLocator(page, {
+        hydrogenConnectionNumber: 0,
+        isAntisense: false,
+      })
+        .first()
+        .getAttribute('data-symbol-id');
+      const antisenseSymbolId = await getSymbolLocator(page, {
+        hydrogenConnectionNumber: 0,
+        isAntisense: true,
+      })
+        .first()
+        .getAttribute('data-symbol-id');
+
+      const senseSymbolWithHBondId = await getSymbolLocator(page, {
+        hydrogenConnectionNumber: 1,
+        isAntisense: false,
+      })
+        .first()
+        .getAttribute('data-symbol-id');
+      const antisenseSymbolWithHBondId = await getSymbolLocator(page, {
+        hydrogenConnectionNumber: 1,
+        isAntisense: true,
+      })
+        .first()
+        .getAttribute('data-symbol-id');
+
+      const senseSymbol = await getSymbolLocator(page, {
+        symbolId: senseSymbolId || '',
+      }).first();
+      const antisenseSymbol = await getSymbolLocator(page, {
+        symbolId: antisenseSymbolId || '',
+      }).first();
+      const senseSymbolWithHBond = await getSymbolLocator(page, {
+        symbolId: senseSymbolWithHBondId || '',
+      }).first();
+      const antisenseSymbolWithHBond = await getSymbolLocator(page, {
+        symbolId: antisenseSymbolWithHBondId || '',
+      }).first();
+
+      const establishHydrogenBondsOption = page
+        .getByTestId('establish_hydrogen_bond')
+        .first();
+      const deleteHydrogenBondsOption = page
+        .getByTestId('delete_hydrogen_bond')
+        .first();
+
+      // 1. Check if multiple monomers/symbols are selected and at least one of them does not have hydrogen bonds established
+      //    with the monomer/symbol above/bellow it the option "Establish Hydrogen Bonds" available from the r-click menu ( Requirement: 1.3 )
+      await selectAllStructuresOnCanvas(page);
+      await senseSymbolWithHBond.click({ button: 'right', force: true });
+      await expect(establishHydrogenBondsOption).toBeEnabled();
+
+      // 3. Check If multiple monomers are selected, and any of them have hydrogen bonds, the option "Delete Hydrogen Bonds"
+      //    available in the r-click menu ( Requirement: 1.4 )
+      await clickInTheMiddleOfTheScreen(page);
+      await senseSymbol.click({ button: 'right', force: true });
+      await expect(deleteHydrogenBondsOption).toBeEnabled();
+
+      // 2. Check if multiple monomers/symbols are selected and all symbols have H-bonds established with the monomer/symbol
+      //    above/bellow it the option "Establish Hydrogen Bonds" disabled from the r-click menu ( Requirement: 1.3 )
+      await clickInTheMiddleOfTheScreen(page);
+      await senseSymbolWithHBond.click({ button: 'right', force: true });
+      await establishHydrogenBondsOption.click({ force: true });
+      await selectAllStructuresOnCanvas(page);
+      await antisenseSymbol.click({ button: 'right', force: true });
+      await expect(establishHydrogenBondsOption).toBeDisabled();
+
+      // 4. Check If multiple monomers are selected, and selected symbols have no H-bonds, the option "Delete Hydrogen Bonds" disabled in the r-click menu ( Requirement: 1.4 )
+      await clickInTheMiddleOfTheScreen(page);
+      await selectAllStructuresOnCanvas(page);
+      await antisenseSymbol.click({ button: 'right', force: true });
+      await deleteHydrogenBondsOption.click({ force: true });
+      await pressYesInConfirmYourActionDialog(page);
+      await selectAllStructuresOnCanvas(page);
+      await antisenseSymbolWithHBond.click({ button: 'right', force: true });
+      await expect(deleteHydrogenBondsOption).toBeDisabled();
+    });
+  }
+}
+
+for (const senseSequence of sequencesForHydrogenBondTests) {
+  test(`Case 13-${senseSequence.Id}. ${senseSequence.Description} Check if there is no monomer opposite it, the option "Establish Hydrogen Bonds" disabled`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 3
+     * Description: Check if there is no monomer opposite it, the option "Establish Hydrogen Bonds" disabled ( Requirement: 1.1 )
+     * Scenario:
+     * 1. Load sense and antisense sequences (and connect their c7io7n bases with hydrogen bond to make sence/antisense sequence)
+     * 2. Switch to Sequence mode
+     * 3. Getting sense and antisense symbol ids and locators
+     * 4. Check that context menu has "Establish Hydrogen Bonds" option available and enabled ("Delete Hydrogen Bonds" option should be disabled)
+     * 5. Click "Establish Hydrogen Bonds" and check that hydrogen bond was established between sense and antisense symbols
+     * 6. If sense symbol is a RNA or DNA, check that all bases have hydrogen connection
+     * 7. Right click on the sense symbol and check that "Establish Hydrogen Bonds" option is disabled
+     * 8. Click on "Delete Hydrogen Bonds"
+     * 9. Check that hydrogen bond was removed
+     */
+
+    await setupSenseAndAntiSenseSequences(page, senseSequence, emptySequence);
+
+    await selectSequenceLayoutModeTool(page);
+
+    const senseSymbolId = await getSymbolLocator(page, {
+      hydrogenConnectionNumber: 0,
+      isAntisense: false,
+    })
+      .first()
+      .getAttribute('data-symbol-id');
+
+    const senseSymbol = await getSymbolLocator(page, {
+      symbolId: senseSymbolId || '',
+    }).first();
+
+    const establishHydrogenBondsOption = page
+      .getByTestId('establish_hydrogen_bond')
+      .first();
+
+    // Check if there is no monomer opposite it, the option "Establish Hydrogen Bonds" disabled ( Requirement: 1.1 )
+    await senseSymbol.click({ button: 'right', force: true });
+    await expect(establishHydrogenBondsOption).toBeDisabled();
+  });
 }

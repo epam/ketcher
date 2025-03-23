@@ -138,6 +138,7 @@ export class DrawingEntitiesManager {
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
   public snakeLayoutMatrix?: Matrix<Cell>;
+  public antisenseMonomerToSenseChain: Map<BaseMonomer, Chain> = new Map();
 
   public get bottomRightMonomerPosition(): Vec2 {
     let position: Vec2 | null = null;
@@ -2601,6 +2602,7 @@ export class DrawingEntitiesManager {
           }),
         );
       });
+      this.antisenseMonomerToSenseChain = new Map();
     }
 
     chainsCollection.chains.forEach((chain) => {
@@ -2715,6 +2717,7 @@ export class DrawingEntitiesManager {
       }
 
       const { group: senseGroup } = senseChain;
+
       chainsToCheck.forEach(({ chain, group }) => {
         handledChains.add(chain);
         if (group === senseGroup) {
@@ -2724,6 +2727,7 @@ export class DrawingEntitiesManager {
         } else {
           chain.monomers.forEach((monomer) => {
             command.merge(this.markMonomerAsAntisense(monomer));
+            this.antisenseMonomerToSenseChain.set(monomer, senseChain.chain);
           });
         }
       });

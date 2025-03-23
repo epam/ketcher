@@ -12,6 +12,7 @@ import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { isNumber } from 'lodash';
 import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
+import { CoreEditor } from 'application/editor';
 
 export interface SnakeLayoutNode {
   monomers: BaseMonomer[];
@@ -102,6 +103,7 @@ export class SnakeLayoutModel {
   private fillAntisenseNodes(chainsCollection: ChainsCollection) {
     const handledChainNodes = new Set<SubChainNode>();
     const monomerToChain = chainsCollection.monomerToChain;
+    const editor = CoreEditor.provideEditorInstance();
 
     chainsCollection.chains.forEach((chain) => {
       if (!chain.isAntisense) {
@@ -131,11 +133,17 @@ export class SnakeLayoutModel {
                   (foundMonomersConnectedHydrogenBonds, hydrogenBond) => {
                     const monomerConnectedByHydrogenBond =
                       hydrogenBond.getAnotherMonomer(monomer);
+
                     return monomerConnectedByHydrogenBond &&
-                      isRnaBaseApplicableForAntisense(
+                      ((isRnaBaseApplicableForAntisense(
                         monomerConnectedByHydrogenBond,
                       ) &&
-                      isRnaBaseApplicableForAntisense(monomer)
+                        isRnaBaseApplicableForAntisense(monomer)) ||
+                        editor.drawingEntitiesManager.antisenseMonomerToSenseChain.get(
+                          monomer,
+                        )?.firstMonomer ===
+                          monomerToChain.get(monomerConnectedByHydrogenBond)
+                            ?.firstMonomer)
                       ? [
                           ...foundMonomersConnectedHydrogenBonds,
                           monomerConnectedByHydrogenBond,

@@ -12,6 +12,7 @@ const NUCLEOTIDE_SYMBOL_ELEMENT_ID =
 
 export class UnsplitNucleotideRenderer extends BaseMonomerRenderer {
   public CHAIN_START_TERMINAL_INDICATOR_TEXT = '’5';
+  public CHAIN_END_TERMINAL_INDICATOR_TEXT = '’3';
 
   constructor(public monomer: UnsplitNucleotide, scale?: number) {
     super(

@@ -101,6 +101,7 @@ import { ReinitializeModeOperation } from 'application/editor/operations/modes';
 import {
   SnakeLayoutModel,
   SnakeLayoutNode,
+  TwoStrandedSnakeLayoutNode,
 } from 'domain/entities/snake-layout-model/SnakeLayoutModel';
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
@@ -137,6 +138,7 @@ export class DrawingEntitiesManager {
   public micromoleculesHiddenEntities: Struct = new Struct();
   public canvasMatrix?: CanvasMatrix;
   public snakeLayoutMatrix?: Matrix<Cell>;
+  public antisenseMonomerToSenseChain: Map<BaseMonomer, Chain> = new Map();
 
   public get bottomRightMonomerPosition(): Vec2 {
     let position: Vec2 | null = null;
@@ -1502,23 +1504,18 @@ export class DrawingEntitiesManager {
       let snakeLayoutNodesInRow: SnakeLayoutNode[] = [];
       let previousSenseNode: SnakeLayoutNode | undefined;
       let previousAntisenseNode: SnakeLayoutNode | undefined;
+      let previousTwoStrandedSnakeLayoutNode:
+        | TwoStrandedSnakeLayoutNode
+        | undefined;
       let nodeIndexInChain = -1;
 
       snakeLayoutModel.forEachNode(
         (twoStrandedSnakeLayoutNode, twoStrandedSnakeLayoutNodeIndex) => {
           const senseNode = twoStrandedSnakeLayoutNode.senseNode;
           const antisenseNode = twoStrandedSnakeLayoutNode.antisenseNode;
-          const firstMonomerInSenseNode = senseNode?.monomers[0];
-          const firstMonomerInPreviousSenseNode =
-            previousSenseNode?.monomers[0];
-          const senseNodeChain = firstMonomerInSenseNode
-            ? chainsCollection.monomerToChain.get(firstMonomerInSenseNode)
-            : undefined;
-          const previousSenseNodeChain = firstMonomerInPreviousSenseNode
-            ? chainsCollection.monomerToChain.get(
-                firstMonomerInPreviousSenseNode,
-              )
-            : undefined;
+          const senseNodeChain = twoStrandedSnakeLayoutNode.chain;
+          const previousSenseNodeChain =
+            previousTwoStrandedSnakeLayoutNode?.chain;
           const isFirstNodeOverall = twoStrandedSnakeLayoutNodeIndex === 0;
           const isNewSenseChain =
             senseNodeChain &&
@@ -1641,6 +1638,7 @@ export class DrawingEntitiesManager {
           lastPosition = newSenseNodePosition;
           previousSenseNode = senseNode || previousSenseNode;
           previousAntisenseNode = antisenseNode || previousAntisenseNode;
+          previousTwoStrandedSnakeLayoutNode = twoStrandedSnakeLayoutNode;
         },
       );
 
@@ -2604,6 +2602,7 @@ export class DrawingEntitiesManager {
           }),
         );
       });
+      this.antisenseMonomerToSenseChain = new Map();
     }
 
     chainsCollection.chains.forEach((chain) => {
@@ -2718,6 +2717,7 @@ export class DrawingEntitiesManager {
       }
 
       const { group: senseGroup } = senseChain;
+
       chainsToCheck.forEach(({ chain, group }) => {
         handledChains.add(chain);
         if (group === senseGroup) {
@@ -2727,6 +2727,7 @@ export class DrawingEntitiesManager {
         } else {
           chain.monomers.forEach((monomer) => {
             command.merge(this.markMonomerAsAntisense(monomer));
+            this.antisenseMonomerToSenseChain.set(monomer, senseChain.chain);
           });
         }
       });

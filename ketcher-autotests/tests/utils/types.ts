@@ -33,6 +33,11 @@ export enum SequenceModeType {
   Peptide = 'Peptide',
 }
 
+export enum SequenceChainType {
+  Sense = 'Sense',
+  Antisense = 'Antisense',
+}
+
 export enum SymbolType {
   RNA = 'RNA',
   DNA = 'DNA',

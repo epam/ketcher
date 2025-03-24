@@ -15,6 +15,7 @@ import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
+  SequenceChainType,
   SequenceModeType,
   SymbolType,
   takeEditorScreenshot,
@@ -26,6 +27,8 @@ import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import {
   getMonomerLocator,
   getSymbolLocator,
+  turnSyncEditModeOff,
+  turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomers,
@@ -1478,7 +1481,15 @@ async function selectSequenceMode(page: Page, sequenceMode: SequenceModeType) {
 
 async function turnIntoEditModeAndPlaceCursorToThePosition(
   page: Page,
-  position: number,
+  {
+    position,
+    senseOrAntisense = SequenceChainType.Sense,
+    syncEditMode = true,
+  }: {
+    position: number;
+    senseOrAntisense?: SequenceChainType;
+    syncEditMode?: boolean;
+  },
 ) {
   const firstSymbol = getSymbolLocator(page, {
     isAntisense: false,
@@ -1491,6 +1502,16 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
 
   for (let i = 1; i < position; i++) {
     await page.keyboard.press('ArrowRight');
+  }
+
+  if (syncEditMode) {
+    await turnSyncEditModeOn(page);
+  } else {
+    await turnSyncEditModeOff(page);
+  }
+
+  if (senseOrAntisense === SequenceChainType.Antisense) {
+    await page.keyboard.press('ArrowDown');
   }
 }
 
@@ -1522,7 +1543,7 @@ for (const monomer of monomersToAdd) {
       await selectSequenceLayoutModeTool(page);
       await selectSequenceMode(page, monomer.Type);
 
-      await turnIntoEditModeAndPlaceCursorToThePosition(page, 1);
+      await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 1 });
 
       await waitForRender(page, async () => {
         await page.keyboard.press(monomer.Letter);
@@ -1570,7 +1591,7 @@ for (const monomer of monomersToAdd) {
       await selectSequenceLayoutModeTool(page);
       await selectSequenceMode(page, monomer.Type);
 
-      await turnIntoEditModeAndPlaceCursorToThePosition(page, 2);
+      await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 2 });
 
       await waitForRender(page, async () => {
         await page.keyboard.press(monomer.Letter);
@@ -1618,7 +1639,7 @@ for (const monomer of monomersToAdd) {
       await selectSequenceLayoutModeTool(page);
       await selectSequenceMode(page, monomer.Type);
 
-      await turnIntoEditModeAndPlaceCursorToThePosition(page, 3);
+      await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 3 });
 
       await waitForRender(page, async () => {
         await page.keyboard.press(monomer.Letter);
@@ -1668,7 +1689,7 @@ for (const monomer of monomersToAdd) {
       await selectSequenceLayoutModeTool(page);
       await selectSequenceMode(page, monomer.Type);
 
-      await turnIntoEditModeAndPlaceCursorToThePosition(page, 9);
+      await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 9 });
 
       await waitForRender(page, async () => {
         await page.keyboard.press(monomer.Letter);
@@ -1716,7 +1737,7 @@ for (const sequence of sequences) {
     await selectSequenceLayoutModeTool(page);
     await selectSequenceMode(page, SequenceModeType.RNA);
 
-    await turnIntoEditModeAndPlaceCursorToThePosition(page, 1);
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 1 });
 
     await waitForRender(page, async () => {
       await page.keyboard.press('Delete');
@@ -1763,7 +1784,7 @@ for (const sequence of sequences) {
     await selectSequenceLayoutModeTool(page);
     await selectSequenceMode(page, SequenceModeType.RNA);
 
-    await turnIntoEditModeAndPlaceCursorToThePosition(page, 2);
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 2 });
 
     await waitForRender(page, async () => {
       await page.keyboard.press('Delete');
@@ -1810,10 +1831,9 @@ for (const sequence of sequences) {
     await selectSequenceLayoutModeTool(page);
     await selectSequenceMode(page, SequenceModeType.RNA);
 
-    await turnIntoEditModeAndPlaceCursorToThePosition(
-      page,
-      !sequence.Rotation ? 3 : 7,
-    );
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+      position: !sequence.Rotation ? 3 : 7,
+    });
 
     await waitForRender(page, async () => {
       await page.keyboard.press('Delete');
@@ -1859,7 +1879,7 @@ for (const sequence of sequences) {
     await selectSequenceLayoutModeTool(page);
     await selectSequenceMode(page, SequenceModeType.RNA);
 
-    await turnIntoEditModeAndPlaceCursorToThePosition(page, 2);
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 2 });
 
     await waitForRender(page, async () => {
       await page.keyboard.press('Backspace');
@@ -1904,7 +1924,7 @@ for (const sequence of sequences) {
     await selectSequenceLayoutModeTool(page);
     await selectSequenceMode(page, SequenceModeType.RNA);
 
-    await turnIntoEditModeAndPlaceCursorToThePosition(page, 3);
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 3 });
 
     await waitForRender(page, async () => {
       await page.keyboard.press('Backspace');
@@ -1949,10 +1969,11 @@ for (const sequence of sequences) {
     await selectSequenceLayoutModeTool(page);
     await selectSequenceMode(page, SequenceModeType.RNA);
 
-    await turnIntoEditModeAndPlaceCursorToThePosition(
-      page,
-      !sequence.Rotation ? 4 : 8,
-    );
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+      position: !sequence.Rotation ? 4 : 8,
+      senseOrAntisense: SequenceChainType.Antisense,
+      syncEditMode: false,
+    });
 
     await waitForRender(page, async () => {
       await page.keyboard.press('Backspace');
@@ -2656,3 +2677,1033 @@ test(`Case 16. Check that when all H-bonds are deleted, the chain(s) that used t
     hideMacromoleculeEditorScrollBars: true,
   });
 });
+
+for (const monomer of monomersToAdd) {
+  for (const sequence of sequences) {
+    test(`Case 17-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to first position of sence chain`, async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 7
+       * Description: User can add monomer (of every type) to first position in sense chain of sequence (of every configuration) in edit mode
+       * Scenario:
+       * 1. Clear canvas
+       * 2. Load sequence from HELM
+       * 3. Switch sequence to edit mode (Sync mode OFF) and move cursor to the first position of sense chain
+       * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
+       * 5. Press keyboard key to add monomer to the first position of sense chain
+       * 6. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
+       * 7. Take screenshot to validate that monomer was added in Sequence mode
+       * 8. Switch to Flex mode
+       * 9. Take screenshot to validate that monomer was added in Flex mode canvas
+       * 10. Add info to log if known bugs exist and skip test
+       */
+      if (sequence.HELM) {
+        await pasteFromClipboardAndAddToMacromoleculesCanvas(
+          page,
+          MacroFileType.HELM,
+          !sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM || '',
+        );
+      }
+      await selectSequenceLayoutModeTool(page);
+      await selectSequenceMode(page, monomer.Type);
+
+      await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+        position: 1,
+        senseOrAntisense: SequenceChainType.Sense,
+        syncEditMode: false,
+      });
+
+      await waitForRender(page, async () => {
+        await page.keyboard.press(monomer.Letter);
+      });
+      await clickInTheMiddleOfTheScreen(page);
+
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+      );
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+      await selectFlexLayoutModeTool(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(sequence, monomer);
+    });
+  }
+}
+
+for (const monomer of monomersToAdd) {
+  for (const sequence of sequences) {
+    test(`Case 18-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to second position of sence chain`, async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 8
+       * Description: User can add monomer (of every type) to second position in sense chain of sequence (of every configuration) in edit mode
+       * Scenario:
+       * 1. Clear canvas
+       * 2. Load sequence from HELM
+       * 3. Switch sequence to edit mode and move cursor to the second position of sense chain
+       * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
+       * 5. Press keyboard key to add monomer to the second position of sense chain
+       * 6. Take screenshot to validate that monomer was added in Sequence mode
+       * 6. Switch to Flex mode
+       * 7. Take screenshot to validate that monomer was added in Flex mode canvas
+       * 8. Add info to log if known bugs exist and skip test
+       */
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+      );
+      await selectSequenceLayoutModeTool(page);
+      await selectSequenceMode(page, monomer.Type);
+
+      await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+        position: 2,
+        senseOrAntisense: SequenceChainType.Sense,
+        syncEditMode: false,
+      });
+
+      await waitForRender(page, async () => {
+        await page.keyboard.press(monomer.Letter);
+      });
+      await clickInTheMiddleOfTheScreen(page);
+
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+      );
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+      await selectFlexLayoutModeTool(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(sequence, monomer);
+    });
+  }
+}
+
+for (const monomer of monomersToAdd) {
+  for (const sequence of sequences) {
+    test(`Case 19-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to third position of sense chain`, async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 9
+       * Description: User can add monomer (of every type) to third position in sense chain of sequence (of every configuration) in edit mode
+       * Scenario:
+       * 1. Clear canvas
+       * 2. Load sequence from HELM
+       * 3. Switch sequence to edit mode and move cursor to the third position of sense chain
+       * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
+       * 5. Press keyboard key to add monomer to the third position of sense chain
+       * 6. Take screenshot to validate that monomer was added in Sequence mode
+       * 6. Switch to Flex mode
+       * 7. Take screenshot to validate that monomer was added in Flex mode canvas
+       * 8. Add info to log if known bugs exist and skip test
+       */
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+      );
+      await selectSequenceLayoutModeTool(page);
+      await selectSequenceMode(page, monomer.Type);
+
+      await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+        position: 3,
+        senseOrAntisense: SequenceChainType.Sense,
+        syncEditMode: false,
+      });
+
+      await waitForRender(page, async () => {
+        await page.keyboard.press(monomer.Letter);
+      });
+      await clickInTheMiddleOfTheScreen(page);
+
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+      );
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+      await selectFlexLayoutModeTool(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(sequence, monomer);
+    });
+  }
+}
+
+for (const monomer of monomersToAdd) {
+  for (const sequence of sequences) {
+    test(`Case 20-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to last position of sense chain`, async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 10
+       * Description: User can add monomer (of every type) to last position in sense chain of sequence (of every configuration) in edit mode
+       * Scenario:
+       * 1. Clear canvas
+       * 2. Load sequence from HELM
+       * 3. Switch sequence to edit mode and move cursor to the last position of sencse chain
+       * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
+       * 5. Press keyboard key to add monomer to the last position of sencse chain
+       * 6. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
+       * 7. Take screenshot to validate that monomer was added in Sequence mode
+       * 8. Switch to Flex mode
+       * 9. Take screenshot to validate that monomer was added in Flex mode canvas
+       * 10 . Add info to log if known bugs exist and skip test
+       */
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+      );
+
+      await selectSequenceLayoutModeTool(page);
+      await selectSequenceMode(page, monomer.Type);
+
+      await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+        position: 9,
+        senseOrAntisense: SequenceChainType.Sense,
+        syncEditMode: false,
+      });
+
+      await waitForRender(page, async () => {
+        await page.keyboard.press(monomer.Letter);
+      });
+      await clickInTheMiddleOfTheScreen(page);
+
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+      );
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+      await selectFlexLayoutModeTool(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(sequence, monomer);
+    });
+  }
+}
+
+for (const sequence of sequences) {
+  test(`Case 21-${sequence.Id}. Delete first symbol of sense chain at ${sequence.SequenceName} with Delete key`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 11
+     * Description: User can delete monomer (of every type) on first position in sense chain of sequence (of every configuration) in edit mode
+     * Scenario:
+     * 1. Clear canvas
+     * 2. Load sequence from HELM
+     * 3. Switch sequence to edit mode and move cursor to the first position of sense chain
+     * 4. Press Delete keyboard key to delete first symbol of sense chain in seqience
+     * 5. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
+     * 6. Take screenshot to validate that monomer was deleted in Sequence mode
+     * 7. Switch to Flex mode
+     * 8. Take screenshot to validate that monomer was deleted in Flex mode canvas
+     * 9. Add info to log if known bugs exist and skip test
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectSequenceMode(page, SequenceModeType.RNA);
+
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+      position: 1,
+      senseOrAntisense: SequenceChainType.Sense,
+      syncEditMode: false,
+    });
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Delete');
+    });
+    await clickInTheMiddleOfTheScreen(page);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await selectFlexLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+    // skip that test if bug(s) exists
+    await checkForKnownBugs(sequence);
+  });
+}
+
+for (const sequence of sequences) {
+  test(`Case 22-${sequence.Id}. Delete second symbol  of sense chain at ${sequence.SequenceName} with Delete key`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 12
+     * Description: User can delete monomer (of every type) on second position in sense chain of sequence (of every configuration) in edit mode
+     * Scenario:
+     * 1. Clear canvas
+     * 2. Load sequence from HELM
+     * 3. Switch sequence to edit mode and move cursor to the second position of sense chain
+     * 4. Press Delete keyboard key to delete second symbol of sense chain in seqience
+     * 5. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
+     * 6. Take screenshot to validate that monomer was deleted in Sequence mode
+     * 7. Switch to Flex mode
+     * 8. Take screenshot to validate that monomer was deleted in Flex mode canvas
+     * 9. Add info to log if known bugs exist and skip test
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectSequenceMode(page, SequenceModeType.RNA);
+
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+      position: 2,
+      senseOrAntisense: SequenceChainType.Sense,
+      syncEditMode: false,
+    });
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Delete');
+    });
+    await clickInTheMiddleOfTheScreen(page);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await selectFlexLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+    // skip that test if bug(s) exists
+    await checkForKnownBugs(sequence);
+  });
+}
+
+for (const sequence of sequences) {
+  test(`Case 23-${sequence.Id}. Delete third symbol of sense chain at ${sequence.SequenceName} with Delete key`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 13
+     * Description: User can delete monomer (of every type) on third position in sense chain of sequence (of every configuration) in edit mode
+     * Scenario:
+     * 1. Clear canvas
+     * 2. Load sequence from HELM
+     * 3. Switch sequence to edit mode and move cursor to the third position of sense chain
+     * 4. Press Delete keyboard key to delete third symbol of sense chain in seqience
+     * 6. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
+     * 7. Take screenshot to validate that monomer was deleted in Sequence mode
+     * 8. Switch to Flex mode
+     * 9. Take screenshot to validate that monomer was deleted in Flex mode canvas
+     * 10. Add info to log if known bugs exist and skip test
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectSequenceMode(page, SequenceModeType.RNA);
+
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+      position: !sequence.Rotation ? 3 : 7,
+      senseOrAntisense: SequenceChainType.Sense,
+      syncEditMode: false,
+    });
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Delete');
+    });
+    await clickInTheMiddleOfTheScreen(page);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+    );
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await selectFlexLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+    // skip that test if bug(s) exists
+    await checkForKnownBugs(sequence);
+  });
+}
+
+for (const sequence of sequences) {
+  test(`Case 24-${sequence.Id}. Delete first symbol of sense chain at ${sequence.SequenceName} Backspace key`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 14
+     * Description: User can delete monomer (of every type) on first position in sense chain of sequence (of every configuration) in edit mode
+     * Scenario:
+     * 1. Clear canvas
+     * 2. Load sequence from HELM
+     * 3. Switch sequence to edit mode and move cursor to the second position of sense chain
+     * 4. Press Backspace keyboard key to delete first symbol of sense chain in seqience
+     * 5. Take screenshot to validate that monomer was deleted in Sequence mode
+     * 6. Switch to Flex mode
+     * 7. Take screenshot to validate that monomer was deleted in Flex mode canvas
+     * 8. Add info to log if known bugs exist and skip test
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectSequenceMode(page, SequenceModeType.RNA);
+
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+      position: 2,
+      senseOrAntisense: SequenceChainType.Sense,
+      syncEditMode: false,
+    });
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Backspace');
+    });
+    await clickInTheMiddleOfTheScreen(page);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await selectFlexLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+    // skip that test if bug(s) exists
+    await checkForKnownBugs(sequence);
+  });
+}
+
+for (const sequence of sequences) {
+  test(`Case 25-${sequence.Id}. Delete second symbol of sense chain at ${sequence.SequenceName} Backspace key`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 15
+     * Description: User can delete monomer (of every type) on second position in sense chain of sequence (of every configuration) in edit mode
+     * Scenario:
+     * 1. Clear canvas
+     * 2. Load sequence from HELM
+     * 3. Switch sequence to edit mode and move cursor to the third position of sense chain
+     * 4. Press Backspace keyboard key to delete second symbol of sense chain in seqience
+     * 5. Take screenshot to validate that monomer was deleted in Sequence mode
+     * 6. Switch to Flex mode
+     * 7. Take screenshot to validate that monomer was deleted in Flex mode canvas
+     * 8. Add info to log if known bugs exist and skip test
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectSequenceMode(page, SequenceModeType.RNA);
+
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+      position: 3,
+      senseOrAntisense: SequenceChainType.Sense,
+      syncEditMode: false,
+    });
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Backspace');
+    });
+    await clickInTheMiddleOfTheScreen(page);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await selectFlexLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+    // skip that test if bug(s) exists
+    await checkForKnownBugs(sequence);
+  });
+}
+
+for (const sequence of sequences) {
+  test(`Case 26-${sequence.Id}. Delete third symbol of sense chain at ${sequence.SequenceName} Backspace key`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 16
+     * Description: User can delete monomer (of every type) on third position in sense chain of sequence (of every configuration) in edit mode
+     * Scenario:
+     * 1. Clear canvas
+     * 2. Load sequence from HELM
+     * 3. Switch sequence to edit mode and move cursor to the forth position of sense chain
+     * 4. Press Backspace keyboard key to delete third symbol of sense chain in seqience
+     * 5. Take screenshot to validate that monomer was deleted in Sequence mode
+     * 6. Switch to Flex mode
+     * 7. Take screenshot to validate that monomer was deleted in Flex mode canvas
+     * 8. Add info to log if known bugs exist and skip test
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectSequenceMode(page, SequenceModeType.RNA);
+
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+      position: !sequence.Rotation ? 4 : 8,
+      senseOrAntisense: SequenceChainType.Sense,
+      syncEditMode: false,
+    });
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Backspace');
+    });
+
+    await clickInTheMiddleOfTheScreen(page);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+    );
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await selectFlexLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+    // skip that test if bug(s) exists
+    await checkForKnownBugs(sequence);
+  });
+}
+
+for (const monomer of monomersToAdd) {
+  for (const sequence of sequences) {
+    test(`Case 27-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to first position of antisence chain`, async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 17
+       * Description: User can add monomer (of every type) to first position in antisense chain of sequence (of every configuration) in edit mode
+       * Scenario:
+       * 1. Clear canvas
+       * 2. Load sequence from HELM
+       * 3. Switch sequence to edit mode (Sync mode OFF) and move cursor to the first position of antisense chain
+       * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
+       * 5. Press keyboard key to add monomer to the first position of antisense chain
+       * 6. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
+       * 7. Take screenshot to validate that monomer was added in Sequence mode
+       * 8. Switch to Flex mode
+       * 9. Take screenshot to validate that monomer was added in Flex mode canvas
+       * 10. Add info to log if known bugs exist and skip test
+       */
+      if (sequence.HELM) {
+        await pasteFromClipboardAndAddToMacromoleculesCanvas(
+          page,
+          MacroFileType.HELM,
+          !sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM || '',
+        );
+      }
+      await selectSequenceLayoutModeTool(page);
+      await selectSequenceMode(page, monomer.Type);
+
+      await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+        position: 1,
+        senseOrAntisense: SequenceChainType.Antisense,
+        syncEditMode: false,
+      });
+
+      await waitForRender(page, async () => {
+        await page.keyboard.press(monomer.Letter);
+      });
+      await clickInTheMiddleOfTheScreen(page);
+
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+      );
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+      await selectFlexLayoutModeTool(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(sequence, monomer);
+    });
+  }
+}
+
+for (const monomer of monomersToAdd) {
+  for (const sequence of sequences) {
+    test(`Case 28-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to second position of antisence chain`, async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 18
+       * Description: User can add monomer (of every type) to second position in antisense chain of sequence (of every configuration) in edit mode
+       * Scenario:
+       * 1. Clear canvas
+       * 2. Load sequence from HELM
+       * 3. Switch sequence to edit mode and move cursor to the second position of antisense chain
+       * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
+       * 5. Press keyboard key to add monomer to the second position of antisense chain
+       * 6. Take screenshot to validate that monomer was added in Sequence mode
+       * 6. Switch to Flex mode
+       * 7. Take screenshot to validate that monomer was added in Flex mode canvas
+       * 8. Add info to log if known bugs exist and skip test
+       */
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+      );
+      await selectSequenceLayoutModeTool(page);
+      await selectSequenceMode(page, monomer.Type);
+
+      await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+        position: 2,
+        senseOrAntisense: SequenceChainType.Antisense,
+        syncEditMode: false,
+      });
+
+      await waitForRender(page, async () => {
+        await page.keyboard.press(monomer.Letter);
+      });
+      await clickInTheMiddleOfTheScreen(page);
+
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+      );
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+      await selectFlexLayoutModeTool(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(sequence, monomer);
+    });
+  }
+}
+
+for (const monomer of monomersToAdd) {
+  for (const sequence of sequences) {
+    test(`Case 29-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to third position of antisense chain`, async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 19
+       * Description: User can add monomer (of every type) to third position in antisense chain of sequence (of every configuration) in edit mode
+       * Scenario:
+       * 1. Clear canvas
+       * 2. Load sequence from HELM
+       * 3. Switch sequence to edit mode and move cursor to the third position of antisense chain
+       * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
+       * 5. Press keyboard key to add monomer to the third position of antisense chain
+       * 6. Take screenshot to validate that monomer was added in Sequence mode
+       * 6. Switch to Flex mode
+       * 7. Take screenshot to validate that monomer was added in Flex mode canvas
+       * 8. Add info to log if known bugs exist and skip test
+       */
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+      );
+      await selectSequenceLayoutModeTool(page);
+      await selectSequenceMode(page, monomer.Type);
+
+      await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+        position: 3,
+        senseOrAntisense: SequenceChainType.Antisense,
+        syncEditMode: false,
+      });
+
+      await waitForRender(page, async () => {
+        await page.keyboard.press(monomer.Letter);
+      });
+      await clickInTheMiddleOfTheScreen(page);
+
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+      );
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+      await selectFlexLayoutModeTool(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(sequence, monomer);
+    });
+  }
+}
+
+for (const monomer of monomersToAdd) {
+  for (const sequence of sequences) {
+    test(`Case 30-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to last position of antisense chain`, async () => {
+      /*
+       * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 20
+       * Description: User can add monomer (of every type) to last position in sense chain of sequence (of every configuration) in edit mode
+       * Scenario:
+       * 1. Clear canvas
+       * 2. Load sequence from HELM
+       * 3. Switch sequence to edit mode and move cursor to the last position of antisencse chain
+       * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
+       * 5. Press keyboard key to add monomer to the last position of antisencse chain
+       * 6. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
+       * 7. Take screenshot to validate that monomer was added in Sequence mode
+       * 8. Switch to Flex mode
+       * 9. Take screenshot to validate that monomer was added in Flex mode canvas
+       * 10 . Add info to log if known bugs exist and skip test
+       */
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+      );
+
+      await selectSequenceLayoutModeTool(page);
+      await selectSequenceMode(page, monomer.Type);
+
+      await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+        position: 9,
+        senseOrAntisense: SequenceChainType.Antisense,
+        syncEditMode: false,
+      });
+
+      await waitForRender(page, async () => {
+        await page.keyboard.press(monomer.Letter);
+      });
+      await clickInTheMiddleOfTheScreen(page);
+
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+      );
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+      await selectFlexLayoutModeTool(page);
+
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+      // skip that test if bug(s) exists
+      await checkForKnownBugs(sequence, monomer);
+    });
+  }
+}
+
+for (const sequence of sequences) {
+  test(`Case 31-${sequence.Id}. Delete first symbol of antisense chain at ${sequence.SequenceName} with Delete key`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 21
+     * Description: User can delete monomer (of every type) on first position in antisense chain of sequence (of every configuration) in edit mode
+     * Scenario:
+     * 1. Clear canvas
+     * 2. Load sequence from HELM
+     * 3. Switch sequence to edit mode and move cursor to the first position of antisense chain
+     * 4. Press Delete keyboard key to delete first symbol of antisense chain in seqience
+     * 5. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
+     * 6. Take screenshot to validate that monomer was deleted in Sequence mode
+     * 7. Switch to Flex mode
+     * 8. Take screenshot to validate that monomer was deleted in Flex mode canvas
+     * 9. Add info to log if known bugs exist and skip test
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectSequenceMode(page, SequenceModeType.RNA);
+
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+      position: 1,
+      senseOrAntisense: SequenceChainType.Sense,
+      syncEditMode: false,
+    });
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Delete');
+    });
+    await clickInTheMiddleOfTheScreen(page);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await selectFlexLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+    // skip that test if bug(s) exists
+    await checkForKnownBugs(sequence);
+  });
+}
+
+for (const sequence of sequences) {
+  test(`Case 32-${sequence.Id}. Delete second symbol  of antisense chain at ${sequence.SequenceName} with Delete key`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 22
+     * Description: User can delete monomer (of every type) on second position in antisense chain of sequence (of every configuration) in edit mode
+     * Scenario:
+     * 1. Clear canvas
+     * 2. Load sequence from HELM
+     * 3. Switch sequence to edit mode and move cursor to the second position of antisense chain
+     * 4. Press Delete keyboard key to delete second symbol of antisense chain in seqience
+     * 5. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
+     * 6. Take screenshot to validate that monomer was deleted in Sequence mode
+     * 7. Switch to Flex mode
+     * 8. Take screenshot to validate that monomer was deleted in Flex mode canvas
+     * 9. Add info to log if known bugs exist and skip test
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectSequenceMode(page, SequenceModeType.RNA);
+
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+      position: 2,
+      senseOrAntisense: SequenceChainType.Antisense,
+      syncEditMode: false,
+    });
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Delete');
+    });
+    await clickInTheMiddleOfTheScreen(page);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await selectFlexLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+    // skip that test if bug(s) exists
+    await checkForKnownBugs(sequence);
+  });
+}
+
+for (const sequence of sequences) {
+  test(`Case 33-${sequence.Id}. Delete third symbol of antisense chain at ${sequence.SequenceName} with Delete key`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 23
+     * Description: User can delete monomer (of every type) on third position in antisense chain of sequence (of every configuration) in edit mode
+     * Scenario:
+     * 1. Clear canvas
+     * 2. Load sequence from HELM
+     * 3. Switch sequence to edit mode and move cursor to the third position of antisense chain
+     * 4. Press Delete keyboard key to delete third symbol of antisense chain in seqience
+     * 6. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
+     * 7. Take screenshot to validate that monomer was deleted in Sequence mode
+     * 8. Switch to Flex mode
+     * 9. Take screenshot to validate that monomer was deleted in Flex mode canvas
+     * 10. Add info to log if known bugs exist and skip test
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectSequenceMode(page, SequenceModeType.RNA);
+
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+      position: !sequence.Rotation ? 3 : 7,
+      senseOrAntisense: SequenceChainType.Antisense,
+      syncEditMode: false,
+    });
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Delete');
+    });
+    await clickInTheMiddleOfTheScreen(page);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+    );
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await selectFlexLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+    // skip that test if bug(s) exists
+    await checkForKnownBugs(sequence);
+  });
+}
+
+for (const sequence of sequences) {
+  test(`Case 34-${sequence.Id}. Delete first symbol of antisense chain at ${sequence.SequenceName} Backspace key`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 24
+     * Description: User can delete monomer (of every type) on first position in antisense chain of sequence (of every configuration) in edit mode
+     * Scenario:
+     * 1. Clear canvas
+     * 2. Load sequence from HELM
+     * 3. Switch sequence to edit mode and move cursor to the second position of antisense chain
+     * 4. Press Backspace keyboard key to delete first symbol of antisense chain in seqience
+     * 5. Take screenshot to validate that monomer was deleted in Sequence mode
+     * 6. Switch to Flex mode
+     * 7. Take screenshot to validate that monomer was deleted in Flex mode canvas
+     * 8. Add info to log if known bugs exist and skip test
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectSequenceMode(page, SequenceModeType.RNA);
+
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+      position: 2,
+      senseOrAntisense: SequenceChainType.Antisense,
+      syncEditMode: false,
+    });
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Backspace');
+    });
+    await clickInTheMiddleOfTheScreen(page);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await selectFlexLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+    // skip that test if bug(s) exists
+    await checkForKnownBugs(sequence);
+  });
+}
+
+for (const sequence of sequences) {
+  test(`Case 35-${sequence.Id}. Delete second symbol of sense chain at ${sequence.SequenceName} Backspace key`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 35
+     * Description: User can delete monomer (of every type) on second position in sense chain of sequence (of every configuration) in edit mode
+     * Scenario:
+     * 1. Clear canvas
+     * 2. Load sequence from HELM
+     * 3. Switch sequence to edit mode and move cursor to the third position of sense chain
+     * 4. Press Backspace keyboard key to delete second symbol of sense chain in seqience
+     * 5. Take screenshot to validate that monomer was deleted in Sequence mode
+     * 6. Switch to Flex mode
+     * 7. Take screenshot to validate that monomer was deleted in Flex mode canvas
+     * 8. Add info to log if known bugs exist and skip test
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectSequenceMode(page, SequenceModeType.RNA);
+
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+      position: 3,
+      senseOrAntisense: SequenceChainType.Antisense,
+      syncEditMode: false,
+    });
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Backspace');
+    });
+    await clickInTheMiddleOfTheScreen(page);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.RightAnchoredHELM) || '',
+    );
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await selectFlexLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+    // skip that test if bug(s) exists
+    await checkForKnownBugs(sequence);
+  });
+}
+
+for (const sequence of sequences) {
+  test(`Case 16-${sequence.Id}. Delete third symbol of sense chain at ${sequence.SequenceName} Backspace key`, async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 16
+     * Description: User can delete monomer (of every type) on third position in sense chain of sequence (of every configuration) in edit mode
+     * Scenario:
+     * 1. Clear canvas
+     * 2. Load sequence from HELM
+     * 3. Switch sequence to edit mode and move cursor to the forth position of sense chain
+     * 4. Press Backspace keyboard key to delete third symbol of sense chain in seqience
+     * 5. Take screenshot to validate that monomer was deleted in Sequence mode
+     * 6. Switch to Flex mode
+     * 7. Take screenshot to validate that monomer was deleted in Flex mode canvas
+     * 8. Add info to log if known bugs exist and skip test
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+    );
+    await selectSequenceLayoutModeTool(page);
+    await selectSequenceMode(page, SequenceModeType.RNA);
+
+    await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+      position: !sequence.Rotation ? 4 : 8,
+      senseOrAntisense: SequenceChainType.Sense,
+      syncEditMode: false,
+    });
+
+    await waitForRender(page, async () => {
+      await page.keyboard.press('Backspace');
+    });
+
+    await clickInTheMiddleOfTheScreen(page);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      (!sequence.Rotation ? sequence.HELM : sequence.LeftAnchoredHELM) || '',
+    );
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await selectFlexLayoutModeTool(page);
+
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+    // skip that test if bug(s) exists
+    await checkForKnownBugs(sequence);
+  });
+}

@@ -197,43 +197,20 @@ export async function createDNAAntisenseChain(page: Page, monomer: Locator) {
   await createAntisenseStrandOption.click();
 }
 
-export function getSequenceMonomerLocator(
-  page: Page,
-  options: MonomerLocatorOptions,
-) {
-  const attributes: { [key: string]: string } = {};
-
-  attributes['data-testid'] = 'monomer';
-
-  if ('testId' in options) {
-    attributes['data-monomeralias'] = options.alias;
-    attributes['data-monomertype'] = getMonomerType(options);
-  } else {
-    const { monomerAlias, monomerType, monomerId } = options;
-    if (monomerAlias) attributes['data-monomeralias'] = monomerAlias;
-    if (monomerType) attributes['data-monomertype'] = monomerType;
-    if (monomerId) attributes['data-monomerid'] = String(monomerId);
+export async function turnSyncEditModeOn(page: Page) {
+  const syncButton = page.getByTestId('sync_sequence_edit_mode').first();
+  const editMode = await syncButton.getAttribute('data-isactive');
+  if (editMode === 'false') {
+    await syncButton.click();
   }
+}
 
-  const { numberOfAttachmentPoints, rValues } = options;
-
-  if (numberOfAttachmentPoints) {
-    attributes['data-number-of-attachment-points'] = numberOfAttachmentPoints;
+export async function turnSyncEditModeOff(page: Page) {
+  const syncButton = page.getByTestId('sync_sequence_edit_mode').first();
+  const editMode = await syncButton.getAttribute('data-isactive');
+  if (editMode === 'true') {
+    await syncButton.click();
   }
-
-  if (rValues) {
-    rValues.forEach((value, index) => {
-      attributes[`data-R${index + 1}`] = `${value}`;
-    });
-  }
-
-  const attributeSelectors = Object.entries(attributes)
-    .map(([key, value]) => `[${key}="${value}"]`)
-    .join('');
-
-  const locator = page.locator(attributeSelectors);
-
-  return locator;
 }
 
 type SymbolLocatorOptions = {

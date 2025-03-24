@@ -40,6 +40,7 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectSnakeLayoutModeTool,
+  selectFlexLayoutModeTool,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
@@ -1048,6 +1049,187 @@ test('Connection R3-R3 not overlap each other when connected on one structure', 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
+});
+
+test('Check the existance of magnetic area for snapping to an angle or closest radial line', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6215
+    Description: The existance of magnetic area for snapping to an angle is 15px perpendicular from every one of 
+    the 12 radial lines (every 30 degrees) (black lines bellow), or to the closest radial line (if the 15px areas overlap).
+    Scenario:
+    1. Load ket file with two peptides connected by ordinary bond
+    2. Hover over the bond and move it
+    3. Take screenshot
+    */
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'KET/two-peptides-connected.ket',
+    page,
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await getMonomerLocator(page, Peptides.meE).click();
+  await page.mouse.down();
+  const coords = [
+    [600, 350],
+    [587, 300],
+    [465, 250],
+    [410, 280],
+    [410, 380],
+  ];
+  for (let i = 0; i < coords.length; i++) {
+    const [x, y] = coords[i];
+    await page.mouse.move(x, y);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  }
+});
+
+test('Check that magnetic areas (radial rays) exist only for monomers connected by covalent and hydrogen', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6215
+    Description: Magnetic areas (radial rays) exist only for monomers connected by covalent and hydrogen.
+    Scenario:
+    1. Load ket file with two peptides connected by hydrogen bond
+    2. Hover over the bond and move it
+    3. Take screenshot
+    */
+  await pageReload(page);
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'KET/two-peptides-connected-by-hydrogen-bond.ket',
+    page,
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await getMonomerLocator(page, Peptides.meE).click();
+  await page.mouse.down();
+  const coords = [
+    [600, 350],
+    [587, 300],
+    [465, 250],
+    [410, 280],
+    [410, 380],
+  ];
+  for (let i = 0; i < coords.length; i++) {
+    const [x, y] = coords[i];
+    await page.mouse.move(x, y);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  }
+});
+
+test('Check that If the user holds down CRTL (⌘/Command for MacOS) while moving the monomer no snapping should happen', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6215
+    Description: If the user holds down CRTL (⌘/Command for MacOS) while moving the monomer no snapping should happen.
+    Scenario:
+    1. Load ket file with two peptides connected by hydrogen bond
+    2. Hover over the bond and move it with pressed CTRL
+    3. Take screenshot
+    */
+  await pageReload(page);
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'KET/two-peptides-connected-by-hydrogen-bond.ket',
+    page,
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await getMonomerLocator(page, Peptides.meE).click();
+  await page.mouse.down();
+  await page.keyboard.down('Control');
+  const coords = [
+    [600, 350],
+    [587, 300],
+    [465, 250],
+    [410, 280],
+    [410, 380],
+  ];
+  for (let i = 0; i < coords.length; i++) {
+    const [x, y] = coords[i];
+    await page.mouse.move(x, y);
+    await takeEditorScreenshot(page);
+  }
+});
+
+test('Check that for snake mode, snapping should only happen at 4 radial lines (every 90 degrees)', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6215
+    Description: For snake mode, snapping only happen at 4 radial lines (every 90 degrees).
+    Scenario:
+    1. Load ket file in Snake mode with two peptides connected by ordinary bond
+    2. Hover over the bond and move it
+    3. Take screenshot
+    */
+  await selectSnakeLayoutModeTool(page);
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'KET/two-peptides-connected.ket',
+    page,
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await getMonomerLocator(page, Peptides.meE).click();
+  await page.mouse.down();
+  const coords = [
+    [100, 150],
+    [300, 100],
+  ];
+  for (let i = 0; i < coords.length; i++) {
+    const [x, y] = coords[i];
+    await page.mouse.move(x, y);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  }
+});
+
+test('Check the existance of magnetic area for snapping to an angle or closest radial line when drag monomer in the middle', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6215
+    Description: Check the existance of magnetic area for snapping to an angle or closest radial line when drag monomer in the middle.
+    Scenario:
+    1. Load ket file with three peptides connected by ordinary bond
+    2. Hover over the bond and move it
+    3. Take screenshot
+    */
+  await pageReload(page);
+  await selectFlexLayoutModeTool(page);
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'KET/three-monomer-connected-by-bond.ket',
+    page,
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await getMonomerLocator(page, Peptides.meE).click();
+  await page.mouse.down();
+  const coords = [
+    [520, 350],
+    [587, 300],
+    [500, 250],
+    [410, 280],
+    [410, 380],
+  ];
+  for (let i = 0; i < coords.length; i++) {
+    const [x, y] = coords[i];
+    await page.mouse.move(x, y);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  }
 });
 
 test('Long bond not turns into a direct bond when moving the second monomer', async () => {

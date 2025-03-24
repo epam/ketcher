@@ -159,6 +159,14 @@ class SelectRectangle implements BaseTool {
     }
   }
 
+  private startMoveIfNeeded(renderer: BaseRenderer) {
+    if (this.editor.mode.modeName === 'sequence-layout-mode') {
+      this.moveStarted = !(renderer instanceof BaseSequenceItemRenderer);
+    } else {
+      this.moveStarted = true;
+    }
+  }
+
   mousedown(event) {
     if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
 
@@ -183,7 +191,7 @@ class SelectRectangle implements BaseTool {
     }
 
     if (renderer instanceof BaseRenderer && !event.shiftKey && !ModKey) {
-      this.moveStarted = true;
+      this.startMoveIfNeeded(renderer);
       if (renderer.drawingEntity.selected) {
         return;
       }
@@ -324,6 +332,10 @@ class SelectRectangle implements BaseTool {
     const emptyResult: EmptySnapResult = {
       snapPosition: null,
     };
+
+    if (this.editor.mode.modeName === 'sequence-layout-mode') {
+      return emptyResult;
+    }
 
     const selectedEntities =
       this.editor.drawingEntitiesManager.selectedEntitiesArr;

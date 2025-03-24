@@ -27,10 +27,12 @@ export function getRnaPartLibraryItem(
         return false;
       }
 
-      return libraryItem.options.some((option) =>
+      return libraryItem.options.every((option) =>
         isDna
-          ? option.templateId.includes(RnaDnaBaseNames.THYMINE)
-          : option.templateId.includes(RnaDnaBaseNames.URACIL),
+          ? option.templateId.includes(RnaDnaBaseNames.THYMINE) ||
+            !option.templateId.includes(RnaDnaBaseNames.URACIL)
+          : option.templateId.includes(RnaDnaBaseNames.URACIL) ||
+            !option.templateId.includes(RnaDnaBaseNames.THYMINE),
       );
     }
 

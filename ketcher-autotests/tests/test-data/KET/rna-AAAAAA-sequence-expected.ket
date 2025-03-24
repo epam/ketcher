@@ -738,7 +738,7 @@
         "alias": "R",
         "attachmentPoints": [
             {
-                "attachmentAtom": 9,
+                "attachmentAtom": 10,
                 "leavingGroup": {
                     "atoms": [
                         11

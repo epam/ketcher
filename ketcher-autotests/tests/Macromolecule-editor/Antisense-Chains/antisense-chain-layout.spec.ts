@@ -364,8 +364,7 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     id: 2,
     monomerDescription:
       'Nucleoside with ambiguous alternative RNA base W - R(A,U)',
-    // Alias is not W because of the a bug
-    alias: '%',
+    alias: 'W',
     type: 'Nucleoside',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{R(A,U)}$$$$V2.0',
@@ -422,8 +421,7 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     id: 7,
     monomerDescription:
       'Nucleotide with ambiguous alternative RNA base W - R(A,U)P',
-    // Alias is not W because of the a bug
-    alias: '%',
+    alias: 'W',
     type: 'Nucleotide',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{R(A,U)P}$$$$V2.0',

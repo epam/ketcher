@@ -616,15 +616,14 @@ export class CoreEditor {
     assert(ModeConstructor);
     const history = new EditorHistory(this);
     const hasModeChanged = this.mode.modeName !== mode;
-    const lastHistoryCommand = history.historyStack[history.historyPointer - 1];
-    const isLastCommandTurnOnSnakeMode = lastHistoryCommand.operations.find(
-      (operation) => {
+    const isLastCommandTurnOnSnakeMode =
+      history.previousCommand?.operations.find((operation) => {
         return (
           operation instanceof SelectLayoutModeOperation &&
-          operation.mode === 'snake-layout-mode'
+          operation.mode === 'snake-layout-mode' &&
+          operation.prevMode !== 'snake-layout-mode'
         );
-      },
-    );
+      });
 
     if (isLastCommandTurnOnSnakeMode) {
       history.undo();

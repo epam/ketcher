@@ -126,18 +126,6 @@ export const GroupIcon = styled(Icon)<{
       : theme.ketcher.color.icon.grey};
 `;
 
-export const GroupIconAction = styled(GroupIcon)`
-  position: absolute;
-  height: 10px;
-  width: 10px;
-  top: 3px;
-  right: calc(50% - 5px);
-  fill: ${({ theme, empty }) =>
-    empty
-      ? theme.ketcher.color.background.primary
-      : theme.ketcher.color.text.secondary};
-`;
-
 export const CompactGroupBlockContainer = styled.div<{
   selected?: boolean;
   isEditMode?: boolean;

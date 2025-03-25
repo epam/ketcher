@@ -7,52 +7,72 @@ export const StyledTabs = styled(Tabs)`
   list-style-type: none;
   margin: 0;
   padding: 4px 8px 0 8px;
+  border-bottom: ${({ theme }) =>
+    `1px solid ${theme.ketcher.color.border.primary}`};
+  overflow: unset;
+
+  & .MuiTabs-scroller,
+  & .MuiTabs-flexContainer {
+    height: 100%;
+    overflow: unset !important;
+  }
 
   & .MuiTabs-indicator {
     display: none;
   }
 `;
 
-export const StyledTab = styled(Tab)(({ theme }) => ({
-  minHeight: 24,
-  minWidth: 0,
-  padding: '7px 12px',
-  fontSize: theme.ketcher.font.size.regular,
-  textTransform: 'none',
-  cursor: 'pointer',
-  textAlign: 'center',
-  backgroundColor: theme.ketcher.color.tab.regular,
-  color: theme.ketcher.color.text.light,
-  listStyleType: 'none',
-  marginLeft: '1px',
-  flex: '1 1 auto',
-  alignItems: 'center',
-  border: `1px solid transparent`,
-  borderBottom: `1px solid ${theme.ketcher.color.border.primary}`,
-  borderRadius: '4px 4px 0 0',
+export const StyledTab = styled(Tab)`
+  min-height: 24px;
+  min-width: 0;
+  position: relative;
+  padding: 7px 12px;
+  font-size: ${({ theme }) => theme.ketcher.font.size.regular};
+  text-transform: none;
+  cursor: pointer;
+  text-align: center;
+  background-color: ${({ theme }) => theme.ketcher.color.tab.regular};
+  color: ${({ theme }) => theme.ketcher.color.text.light};
+  list-style-type: none;
+  margin-left: 1px;
+  flex: 1 1 auto;
+  align-items: center;
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 4px 4px 0 0;
 
-  '&:first-of-type': {
-    marginLeft: 0,
-  },
+  &:first-of-type {
+    margin-left: 0;
+  }
 
-  '&:hover': {
-    backgroundColor: theme.ketcher.color.tab.regular,
-    color: theme.ketcher.color.text.primary,
-    border: `1px solid ${theme.ketcher.color.border.primary}`,
-  },
+  &:hover {
+    background-color: ${({ theme }) => theme.ketcher.color.tab.regular};
+    color: ${({ theme }) => theme.ketcher.color.text.primary};
+    border-color: ${({ theme }) => theme.ketcher.color.border.primary};
+  }
 
-  '&.Mui-selected': {
-    backgroundColor: theme.ketcher.color.tab.active,
-    color: theme.ketcher.color.text.primary,
-    border: `1px solid ${theme.ketcher.color.border.primary}`,
-    borderBottom: '1px solid transparent',
-  },
+  &.Mui-selected {
+    background-color: ${({ theme }) => theme.ketcher.color.tab.active};
+    color: ${({ theme }) => theme.ketcher.color.text.primary};
+    border-color: ${({ theme }) => theme.ketcher.color.border.primary};
+    margin-bottom: -1px;
+    padding-bottom: 8px;
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -1px; /* Adjust to cover the parent's bottom border */
+      height: 1px;
+      background-color: ${({ theme }) => theme.ketcher.color.tab.active};
+    }
+  }
 
   // Probably not the best way to do so
-  '&[data-testid="FAVORITES-TAB"]': {
-    color: '#faa500',
-  },
-}));
+  &[data-testid='FAVORITES-TAB'] {
+    color: #faa500;
+  }
+`;
 
 export const TabPanelContent = styled.div`
   display: flex;

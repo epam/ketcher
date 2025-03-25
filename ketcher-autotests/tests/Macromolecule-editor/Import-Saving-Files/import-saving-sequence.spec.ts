@@ -26,7 +26,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { closeErrorMessage, pageReload } from '@utils/common/helpers';
+import { closeErrorMessage } from '@utils/common/helpers';
 import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
@@ -605,7 +605,6 @@ test.describe('Import correct Sequence file: ', () => {
       Case: 1. Load Sequence file 
             2. Take screenshot to make sure import works correct
       */
-      if (correctSequenceFile.pageReloadNeeded) await pageReload(page);
 
       await openFileAndAddToCanvasAsNewProjectMacro(
         correctSequenceFile.SequenceFileName,
@@ -684,9 +683,6 @@ for (const correctSequence of correctSequences) {
      * Case: 1. Load Sequence file
      *       2. Take screenshot to make sure import works correct
      */
-    if (correctSequence.pageReloadNeeded) {
-      await pageReload(page);
-    }
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -760,9 +756,6 @@ for (const incorrectSequence of incorrectSequences) {
      * Case: 1. Load Sequence file
      *       2. Take screenshot to make sure error message is correct
      */
-    if (incorrectSequence.pageReloadNeeded) {
-      await pageReload(page);
-    }
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -848,7 +841,6 @@ for (const sequenceToExport of sequencesToExport) {
       2. Compare export result with source sequence string
   */
     test.setTimeout(35000);
-    if (sequenceToExport.pageReloadNeeded) await pageReload(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -952,7 +944,6 @@ for (const sequenceToExport of nonStandardAmbiguousPeptides) {
      *     For non pure peptide chains: "Convert error! Error during sequence type recognition(RNA, DNA or Peptide)"
      */
     test.setTimeout(35000);
-    if (sequenceToExport.pageReloadNeeded) await pageReload(page);
 
     if (sequenceToExport.HELMString) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1239,7 +1230,6 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
      *     2. Compare export result with source sequence string
      */
     test.setTimeout(35000);
-    if (sequenceToExport.pageReloadNeeded) await pageReload(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

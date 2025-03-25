@@ -201,9 +201,10 @@ test.describe('Import-Saving .mol Files', () => {
     In RNA, thymine (T) is replaced by uracil (U).
     We have bug https://github.com/epam/ketcher/issues/3383
     */
-      await pageReload(page);
       await openFileAndAddToCanvasMacro(`Molfiles-V3000/${fileType}.mol`, page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
     });
   }
 
@@ -574,7 +575,6 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with bases could be saved to mol 3000 file and loaded back
     */
-    await pageReload(page);
 
     await openFileAndAddToCanvasMacro(
       'KET/unsplit-nucleotides-connected-with-bases.ket',
@@ -602,7 +602,9 @@ test.describe('Import-Saving .mol Files', () => {
       'Molfiles-V3000/unsplit-nucleotides-connected-with-bases.mol',
       page,
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Validate that unsplit nucleotides connected with phosphates could be saved to mol 3000 file and loaded back', async () => {
@@ -610,7 +612,6 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with phosphates could be saved to mol 3000 file and loaded back
     */
-    await pageReload(page);
 
     await openFileAndAddToCanvasMacro(
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
@@ -638,7 +639,9 @@ test.describe('Import-Saving .mol Files', () => {
       'Molfiles-V3000/unsplit-nucleotides-connected-with-phosphates.mol',
       page,
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Validate that unsplit nucleotides connected with peptides could be saved to mol 3000 file and loaded back', async () => {
@@ -646,7 +649,6 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with peptides could be saved to mol 3000 file and loaded back
     */
-    await pageReload(page);
     await openFileAndAddToCanvasMacro(
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
@@ -673,7 +675,9 @@ test.describe('Import-Saving .mol Files', () => {
       'Molfiles-V3000/unsplit-nucleotides-connected-with-peptides.mol',
       page,
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 });
 

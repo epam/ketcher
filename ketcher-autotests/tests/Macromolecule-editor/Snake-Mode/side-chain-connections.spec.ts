@@ -207,7 +207,6 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations horisontally. 
     */
     // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await pageReload(page);
     await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
     await hideLibrary(page);
@@ -215,7 +214,10 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/1.3.ket`,
       page,
     );
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('1.4 Verify correct display of side-chain connections when two monomers are in the same row', async () => {
@@ -226,7 +228,6 @@ test.describe('Side chain connections', () => {
     /* connected by all possible combinations horisontally. 
     */
     // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await pageReload(page);
     await selectSnakeLayoutModeTool(page);
     // Closing Library to enlarge canvas
     await hideLibrary(page);
@@ -235,7 +236,10 @@ test.describe('Side chain connections', () => {
       page,
     );
     await moveMouseAway(page);
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('2.1 Verify correct display of side-chain connections when two monomers are in different rows', async () => {
@@ -383,7 +387,6 @@ test.describe('Side chain connections', () => {
     /*
     */
       // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-      await pageReload(page);
       await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
       await hideLibrary(page);
@@ -392,7 +395,9 @@ test.describe('Side chain connections', () => {
         page,
       );
       await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
     },
   );
 
@@ -582,7 +587,6 @@ test.describe('Side chain connections', () => {
     /*
     */
       // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-      await pageReload(page);
       await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
       await hideLibrary(page);
@@ -591,7 +595,9 @@ test.describe('Side chain connections', () => {
         page,
       );
       await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
     },
   );
 
@@ -639,7 +645,6 @@ test.describe('Side chain connections', () => {
     /*
     */
       // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-      await pageReload(page);
       await selectSnakeLayoutModeTool(page);
       // Closing Library to enlarge canvas
       await hideLibrary(page);
@@ -648,7 +653,9 @@ test.describe('Side chain connections', () => {
         page,
       );
       await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
     },
   );
 
@@ -1050,7 +1057,6 @@ test.describe('Side chain connections', () => {
     /* Case 14: Verify deletion of a side-chain connection in a complex RNA structure and Undo
     */
     // Workaround - to avoid label render issue (1 pixel shift up) we have to reload page
-    await pageReload(page);
     await selectFlexLayoutModeTool(page);
     // Closing Library to enlarge canvas
     await hideLibrary(page);
@@ -1071,7 +1077,9 @@ test.describe('Side chain connections', () => {
     await takeEditorScreenshot(page);
 
     await clickUndo(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('15. Verify copy-paste of a structure with side-chain connections', async () => {

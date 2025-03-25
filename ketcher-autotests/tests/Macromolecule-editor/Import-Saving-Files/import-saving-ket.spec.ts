@@ -101,7 +101,6 @@ test.describe('Import-Saving .ket Files', () => {
     see the whole picture in this test and in future ones, zoom is used
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-    await pageReload(page);
 
     await openFileAndAddToCanvasMacro('KET/fifty-monomers.ket', page);
 
@@ -114,7 +113,9 @@ test.describe('Import-Saving .ket Files', () => {
     const numberOfPressZoomOut = 6;
     await selectZoomOutTool(page, numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Check save and open of file with 100 monomers saved in KET format', async () => {
@@ -123,7 +124,6 @@ test.describe('Import-Saving .ket Files', () => {
     Description: Structure in center of canvas after opening
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-    await pageReload(page);
 
     await openFileAndAddToCanvasMacro('KET/hundred-monomers.ket', page);
 
@@ -136,7 +136,9 @@ test.describe('Import-Saving .ket Files', () => {
     const numberOfPressZoomOut = 7;
     await selectZoomOutTool(page, numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Check that empty file can be saved in .ket format', async () => {
@@ -154,7 +156,6 @@ test.describe('Import-Saving .ket Files', () => {
     Description: The monomer name is present in the preview after opening the saved file.
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-    await pageReload(page);
     await selectMonomer(page, Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/monomer-expected.ket', FileType.KET);
@@ -162,7 +163,9 @@ test.describe('Import-Saving .ket Files', () => {
     await openFileAndAddToCanvasMacro('KET/monomer-expected.ket', page);
     await getMonomerLocator(page, Peptides.bAla).hover();
     await waitForMonomerPreview(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Check that after loading from a file and then pressing undo, it does not break the selection/moving functionality', async () => {
@@ -194,7 +197,6 @@ test.describe('Import-Saving .ket Files', () => {
     Description: Fields "class" and "classHELM" are presents into .ket file.
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-    await pageReload(page);
     markResetToDefaultState('tabSelection');
 
     test.slow();
@@ -209,7 +211,6 @@ test.describe('Import-Saving .ket Files', () => {
     Description: "leavingGroup" section contain information about number of atoms.
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-    await pageReload(page);
     await selectMonomer(page, Peptides.D_2Nal);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/D-2Nal-expected.ket', FileType.KET);
@@ -297,7 +298,6 @@ test.describe('Import-Saving .ket Files', () => {
     Description: There should be possible to load monomers which not found in Monomer library
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-    await pageReload(page);
 
     await openFileAndAddToCanvasMacro('KET/unresolved-monomers.ket', page);
 
@@ -314,7 +314,6 @@ test.describe('Import-Saving .ket Files', () => {
     Description: .ket file with macro structures is exported and imported correctly .
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-    await pageReload(page);
 
     await openFileAndAddToCanvasMacro(
       'KET/unsplit-nucleotides-connected-with-another-monomers.ket',
@@ -337,14 +336,15 @@ test.describe('Import-Saving .ket Files', () => {
           3. Save canvas to KET
           4. Compate result with template
     */
-    await pageReload(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/AllAmbiguousMonomers.ket',
       page,
     );
 
     await zoomWithMouseWheel(page, -250);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
 
     await verifyFileExport(
       page,
@@ -736,14 +736,17 @@ for (const monomer of allTypesOfMonomers) {
      *       5. Load saved KET to the canvas
      *       6. Take screenshot to witness saved state
      */
-    await pageReload(page);
 
     await turnOnMicromoleculesEditor(page);
     await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await verifyFileExport(page, monomer.KETFile_Expected, FileType.KET);
     await openFileAndAddToCanvasAsNewProject(monomer.KETFile_Expected, page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await turnOnMacromoleculesEditor(page);
   });
 }
@@ -780,7 +783,6 @@ test(`Verify that the structure in macro mode can be saved as a .ket file, and a
    *       6. Take screenshot to witness saved state
    *        (screenshots have to be equal)
    */
-  await pageReload(page);
 
   const KETFile =
     'KET/Micro-Macro-Switcher/Complicated structures on the canvas.ket';
@@ -789,9 +791,9 @@ test(`Verify that the structure in macro mode can be saved as a .ket file, and a
 
   await openFileAndAddToCanvasAsNewProject(KETFile, page);
   await moveMouseAway(page);
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
   await verifyFileExport(page, KETFileExpected, FileType.KET);
   await openFileAndAddToCanvasAsNewProject(KETFileExpected, page);
   await moveMouseAway(page);
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 });

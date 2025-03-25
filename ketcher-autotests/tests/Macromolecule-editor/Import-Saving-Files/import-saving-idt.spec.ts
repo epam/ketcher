@@ -331,18 +331,22 @@ test.describe('Import-Saving .idt Files', () => {
     */
       markResetToDefaultState('defaultLayout');
 
-      await pageReload(page);
-
       await openFileAndAddToCanvasMacro(`IDT/${fileName}.idt`, page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
 
       await selectSequenceLayoutModeTool(page);
       await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
 
       await selectSnakeLayoutModeTool(page);
       await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
     });
   }
 
@@ -362,22 +366,26 @@ test.describe('Import-Saving .idt Files', () => {
     */
       markResetToDefaultState('defaultLayout');
 
-      await pageReload(page);
-
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         'IDT',
         `${fileName}`,
       );
 
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
 
       await selectSequenceLayoutModeTool(page);
       await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
 
       await selectSnakeLayoutModeTool(page);
       await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
     });
   }
 
@@ -596,11 +604,12 @@ test.describe('Import-Saving .idt Files', () => {
     Description: Error message appeared: "This molecule has unsupported monomer and couldn't be exported to IDT notation".
     */
     // Reload needed as monomer IDs increment in prior tests, affecting screenshots
-    await pageReload(page);
     await openFileAndAddToCanvasMacro('KET/5formD-form5C-cm.ket', page);
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify that if * is specified, Phosphorothioate (sP) is included in nucleotide if not it is (P)', async () => {
@@ -985,7 +994,6 @@ test.describe('Import-Saving .idt Files', () => {
     Description: Error message appears when saving macromolecules with unresolved monomers to non-IDT/KET formats.
     */
       // Reload needed as monomer IDs increment in prior tests, affecting screenshots
-      await pageReload(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         'IDT',
@@ -993,7 +1001,9 @@ test.describe('Import-Saving .idt Files', () => {
       );
       await selectTopPanelButton(TopPanelButton.Save, page);
       await chooseFileFormat(page, format as 'FASTA' | 'Sequence');
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
     });
   }
 
@@ -1450,10 +1460,11 @@ test.describe('Import correct IDT sequence: ', () => {
         2. Take screenshot of the canvas to compare it with example
     */
       test.setTimeout(20000);
-      if (correctIDTString.pageReloadNeeded) await pageReload(page);
 
       await loadIDTFromClipboard(page, correctIDTString.IDTString);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
 
       // Test should be skipped if related bug exists
       test.fixme(
@@ -1554,10 +1565,11 @@ test.describe('Import incorrect IDT sequence: ', () => {
         3. Take screenshot to compare it with example
       */
       test.setTimeout(20000);
-      if (incorrectIDTString.pageReloadNeeded) await pageReload(page);
 
       await loadIDTFromClipboard(page, incorrectIDTString.IDTString);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
 
       // if Error Message is not found - that means that error message didn't appear.
       // That shoul be considered as bug in that case
@@ -1617,7 +1629,6 @@ test.describe('Ambiguous monomers: ', () => {
              (Error message should occur)
           4. Take screenshot to make sure export is correct
     */
-    await pageReload(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
       page,
@@ -1628,7 +1639,9 @@ test.describe('Ambiguous monomers: ', () => {
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
 
     await closeErrorMessage(page);
     await pressButton(page, 'Cancel');
@@ -1673,7 +1686,6 @@ test.describe('Ambiguous monomers: ', () => {
             (Error should occure)
           4. Take screenshot to make sure export is correct
     */
-    await pageReload(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/Peptides (that have no mapping to library, mixed).ket',
       page,
@@ -1685,7 +1697,9 @@ test.describe('Ambiguous monomers: ', () => {
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
 
     await closeErrorMessage(page);
     await pressButton(page, 'Cancel');
@@ -1729,7 +1743,6 @@ test.describe('Ambiguous monomers: ', () => {
           3. Open Save dialog and choose IDT option
           4. Take screenshot to make sure export is correct
     */
-    await pageReload(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
       page,
@@ -1748,7 +1761,9 @@ test.describe('Ambiguous monomers: ', () => {
     );
     await takeEditorScreenshot(page);
     await zoomWithMouseWheel(page, 100);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Saving ambiguous RNA bases (with mapping, alternatives) in IDT format', async () => {
@@ -1873,7 +1888,6 @@ test.describe('Ambiguous monomers: ', () => {
              (Error message occurs)
           4. Take screenshot to make sure export is correct
     */
-    await pageReload(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/RNA ambigous bases connected to DNA sugar (mixed).ket',
       page,
@@ -1885,7 +1899,9 @@ test.describe('Ambiguous monomers: ', () => {
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
 
     await closeErrorMessage(page);
     await pressButton(page, 'Cancel');
@@ -1904,7 +1920,6 @@ test.describe('Ambiguous monomers: ', () => {
              (Error message occurs)
           4. Take screenshot to make sure export is correct
     */
-    await pageReload(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/DNA ambigous bases connected to RNA sugar (mixed).ket',
       page,
@@ -1916,7 +1931,9 @@ test.describe('Ambiguous monomers: ', () => {
 
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'IDT');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
 
     await closeErrorMessage(page);
     await pressButton(page, 'Cancel');

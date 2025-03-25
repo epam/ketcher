@@ -97,6 +97,11 @@ export async function openLayoutModeMenu(page: Page) {
   await modeSelectorButton.click();
 }
 
+export async function selectHandTool(page: Page) {
+  const handToolButton = page.getByTestId('hand-tool');
+  await handToolButton.click();
+}
+
 export async function hideLibrary(page: Page) {
   const hideLibraryLink = page.getByText('Hide');
   const isVisible = await hideLibraryLink.isVisible();

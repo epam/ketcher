@@ -33,6 +33,7 @@ class ClearTool implements BaseTool {
       modelChanges.addOperation(new ReinitializeModeOperation());
     }
 
+    this.editor.transientDrawingView.clear();
     this.editor.renderersContainer.update(modelChanges);
     this.history.update(modelChanges);
   }

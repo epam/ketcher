@@ -89,3 +89,4 @@ tests/test-data/KET/Phosphate-Templates/15 - (R1,R2,R3,R4,R5)-expected.ket
 tests/test-data/KET/Phosphate-Templates/15 - (R1,R2,R3,R4,R5).ket
 tests/test-data/KET/Phosphate-Templates/peptide-connection-rules-cases-template.ket
 tests/test-data/KET/Phosphate-Templates/Test-6-P-x.ket
+output.txt

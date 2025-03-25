@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 import { expect, test } from '@playwright/test';
 import {
-  bondsSettings,
+  openBondsSettingsSection,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   openSettings,
@@ -88,7 +88,7 @@ test.describe('Ket files', () => {
     await waitForPageInit(page);
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '57.8');
@@ -120,7 +120,7 @@ test.describe('Ket files', () => {
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await takeEditorScreenshot(page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '57.8');
@@ -150,7 +150,7 @@ test.describe('Ket files', () => {
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '27.8');
@@ -181,7 +181,7 @@ test.describe('Ket files', () => {
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '27.8');
@@ -210,7 +210,7 @@ test.describe('Ket files', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '1.8');
@@ -236,7 +236,7 @@ test.describe('Ket files', () => {
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '1.8');
@@ -266,7 +266,7 @@ test.describe('Ket files', () => {
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '47.8');
@@ -297,7 +297,7 @@ test.describe('Ket files', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
     await setReactionMarginSizeValue(page, '7.8');
@@ -323,7 +323,7 @@ test.describe('Ket files', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
     await setReactionMarginSizeValue(page, '3.8');
@@ -349,7 +349,7 @@ test.describe('Ket files', () => {
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
     await openSettings(page);
-    await bondsSettings(page);
+    await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
     await setReactionMarginSizeValue(page, '7.8');
@@ -398,7 +398,7 @@ test.describe('Ket files', () => {
   */
       await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
       await openSettings(page);
-      await bondsSettings(page);
+      await openBondsSettingsSection(page);
       await scrollToDownInSetting(page);
       await setReactionMarginSizeOptionUnit(page, 'px-option');
       await setReactionMarginSizeValue(page, '47.8');

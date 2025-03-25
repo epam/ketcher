@@ -19,6 +19,8 @@ import {
   getNextConnectedNode,
   getPreviousConnectedNode,
 } from 'domain/helpers/chains';
+import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
+import { CoreEditor } from 'application/editor';
 
 interface IForEachNodeParams {
   twoStrandedNode: ITwoStrandedChainItem;
@@ -38,7 +40,7 @@ export class SequenceViewModel {
 
   private chainToHasAntisense: Map<Chain, boolean> = new Map();
 
-  constructor(chainsCollection: ChainsCollection) {
+  constructor(public chainsCollection: ChainsCollection) {
     this.fillNodes(chainsCollection);
     this.fillChains();
     this.postProcessNodes(chainsCollection);
@@ -81,6 +83,7 @@ export class SequenceViewModel {
   private fillAntisenseNodes(chainsCollection: ChainsCollection) {
     const handledChainNodes = new Set<SubChainNode>();
     const monomerToChain = chainsCollection.monomerToChain;
+    const editor = CoreEditor.provideEditorInstance();
 
     chainsCollection.chains.forEach((chain) => {
       if (!chain.isAntisense) {
@@ -106,7 +109,16 @@ export class SequenceViewModel {
                 (foundMonomersConnectedHydrogenBonds, hydrogenBond) => {
                   const monomerConnectedByHydrogenBond =
                     hydrogenBond.getAnotherMonomer(monomer);
-                  return monomerConnectedByHydrogenBond
+                  return monomerConnectedByHydrogenBond &&
+                    ((isRnaBaseApplicableForAntisense(
+                      monomerConnectedByHydrogenBond,
+                    ) &&
+                      isRnaBaseApplicableForAntisense(monomer)) ||
+                      editor.drawingEntitiesManager.antisenseMonomerToSenseChain.get(
+                        monomer,
+                      )?.firstMonomer ===
+                        monomerToChain.get(monomerConnectedByHydrogenBond)
+                          ?.firstMonomer)
                     ? [
                         ...foundMonomersConnectedHydrogenBonds,
                         monomerConnectedByHydrogenBond,

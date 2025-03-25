@@ -6,15 +6,12 @@ import {
   selectTopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
-  saveToFile,
   openFile,
-  receiveFileComparisonData,
   selectOptionInDropdown,
   pressButton,
   selectSnakeLayoutModeTool,
   chooseFileFormat,
   readFileContents,
-  getSequence,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   TypeDropdownOptions,
@@ -25,7 +22,11 @@ import {
   selectSaveTool,
   selectOpenFileTool,
 } from '@utils';
-import { closeErrorMessage } from '@utils/common/helpers';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
+import { closeErrorMessage, pageReload } from '@utils/common/helpers';
 import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
@@ -86,40 +87,18 @@ test.describe('Import-Saving .seq Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
-    const expectedFile = await getSequence(page);
-    await saveToFile('Sequence/sequence-rna-a-expected.seq', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: sequenceFileExpected, file: sequenceFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Sequence/sequence-rna-a-expected.seq',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(sequenceFile).toEqual(sequenceFileExpected);
-
+    await verifyFileExport(
+      page,
+      'Sequence/sequence-rna-a-expected.seq',
+      FileType.SEQ,
+    );
     await takeEditorScreenshot(page);
   });
 
   test('Check that empty file can be saved in .seq format', async ({
     page,
   }) => {
-    const expectedFile = await getSequence(page);
-    await saveToFile('Sequence/sequence-empty.seq', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: sequenceFileExpected, file: sequenceFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'tests/test-data/Sequence/sequence-empty.seq',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(sequenceFile).toEqual(sequenceFileExpected);
+    await verifyFileExport(page, 'Sequence/sequence-empty.seq', FileType.SEQ);
   });
 
   test('Check that system does not let importing empty .seq file', async ({
@@ -165,23 +144,11 @@ test.describe('Import-Saving .seq Files', () => {
       page,
     );
     await selectSnakeLayoutModeTool(page);
-    const expectedFile = await getSequence(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Sequence/sequence-snake-mode-rna-expected.seq',
-      expectedFile,
+      FileType.SEQ,
     );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: sequenceFileExpected, file: sequenceFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Sequence/sequence-snake-mode-rna-expected.seq',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(sequenceFile).toEqual(sequenceFileExpected);
   });
 
   test('Should open .ket file and modify to .seq format in save modal textarea', async ({
@@ -285,12 +252,11 @@ test.describe('Import-Saving .seq Files', () => {
 
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'Sequence (1-letter code)');
-    await takeEditorScreenshot(page);
-
-    await pressButton(page, 'Cancel');
+    await verifyFileExport(
+      page,
+      'Sequence/Ambiguous-Monomers/Peptides (that have mapping to library, alternatives).seq',
+      FileType.SEQ,
+    );
     await zoomWithMouseWheel(page, 600);
   });
 
@@ -304,6 +270,7 @@ test.describe('Import-Saving .seq Files', () => {
     Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
+             (Error should occure)
           4. Take screenshot to make sure export is correct
     */
       await openFileAndAddToCanvasAsNewProjectMacro(
@@ -317,13 +284,13 @@ test.describe('Import-Saving .seq Files', () => {
 
       await selectTopPanelButton(TopPanelButton.Save, page);
       await chooseFileFormat(page, 'Sequence (1-letter code)');
-      await takeEditorScreenshot(page);
 
       test.fixme(
         true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
+        `That test fails because of https://github.com/epam/ketcher/issues/6635 issue.`,
       );
 
+      await takeEditorScreenshot(page);
       await closeErrorMessage(page);
 
       await pressButton(page, 'Cancel');
@@ -331,10 +298,11 @@ test.describe('Import-Saving .seq Files', () => {
     },
   );
 
-  test('Saving ambiguous peptides (without mapping, alternatives) in Sequence format', async ({
-    page,
-  }) => {
-    /*
+  test(
+    'Saving ambiguous peptides (without mapping, alternatives) in Sequence format',
+    { tag: ['@IncorrectResultBecauseOfBug'] },
+    async ({ page }) => {
+      /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.3 Verify saving ambiguous peptides (without mapping, alternatives) in Sequence format (macro mode)
     Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
@@ -343,29 +311,30 @@ test.describe('Import-Saving .seq Files', () => {
             (Error should occure)
           4. Take screenshot to make sure export is correct
     */
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
-      page,
-    );
+      await openFileAndAddToCanvasAsNewProjectMacro(
+        'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
+        page,
+      );
 
-    await zoomWithMouseWheel(page, -200);
-    await moveMouseAway(page);
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+      await zoomWithMouseWheel(page, -200);
+      await moveMouseAway(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'Sequence (1-letter code)');
-    await takeEditorScreenshot(page);
+      await selectTopPanelButton(TopPanelButton.Save, page);
+      await chooseFileFormat(page, 'Sequence (1-letter code)');
+      test.fixme(
+        true,
+        `That test fails because of https://github.com/epam/ketcher/issues/6635 issue.`,
+      );
 
-    test.fixme(
-      true,
-      `That test fails because of https://github.com/epam/Indigo/issues/2435, https://github.com/epam/Indigo/issues/2436 issue.`,
-    );
+      await takeEditorScreenshot(page);
 
-    await closeErrorMessage(page);
+      await closeErrorMessage(page);
 
-    await pressButton(page, 'Cancel');
-    await zoomWithMouseWheel(page, 200);
-  });
+      await pressButton(page, 'Cancel');
+      await zoomWithMouseWheel(page, 200);
+    },
+  );
 
   test(
     'Saving ambiguous peptides (without mapping, mixed) in Sequence format',
@@ -391,13 +360,13 @@ test.describe('Import-Saving .seq Files', () => {
 
       await selectTopPanelButton(TopPanelButton.Save, page);
       await chooseFileFormat(page, 'Sequence (1-letter code)');
-      await takeEditorScreenshot(page);
 
       test.fixme(
         true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2435, https://github.com/epam/Indigo/issues/2436 issue.`,
+        `That test fails because of https://github.com/epam/ketcher/issues/6635 issue.`,
       );
 
+      await takeEditorScreenshot(page);
       await closeErrorMessage(page);
 
       await pressButton(page, 'Cancel');
@@ -424,51 +393,44 @@ test.describe('Import-Saving .seq Files', () => {
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'Sequence (1-letter code)');
-    await takeEditorScreenshot(page);
-
-    await pressButton(page, 'Cancel');
+    await verifyFileExport(
+      page,
+      'Sequence/Ambiguous-Monomers/Ambiguous DNA Bases (alternatives).seq',
+      FileType.SEQ,
+    );
     await zoomWithMouseWheel(page, 100);
   });
 
-  test(
-    'Saving ambiguous DNA bases (with mapping, mixed) in Sequence format',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
+  test('Saving ambiguous DNA bases (with mapping, mixed) in Sequence format', async ({
+    page,
+  }) => {
+    /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.6 Verify saving ambiguous DNA bases (with mapping, mixed) in Sequence format (macro mode)
     Case: 1. Load ambiguous bases (that have mapping to library) from KET 
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
+             (Error should occure)
           4. Take screenshot to make sure export is correct
     */
-      await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
-        page,
-      );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Ambiguous DNA Bases (mixed).ket',
+      page,
+    );
 
-      await zoomWithMouseWheel(page, -100);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+    await zoomWithMouseWheel(page, -100);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'Sequence (1-letter code)');
-      await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'Sequence (1-letter code)');
+    await takeEditorScreenshot(page);
 
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
-      );
+    await closeErrorMessage(page);
 
-      await closeErrorMessage(page);
-
-      await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 100);
-    },
-  );
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 100);
+  });
 
   test('Saving ambiguous RNA bases (with mapping, alternatives) in Sequence format', async ({
     page,
@@ -489,51 +451,43 @@ test.describe('Import-Saving .seq Files', () => {
     await zoomWithMouseWheel(page, -100);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'Sequence (1-letter code)');
-    await takeEditorScreenshot(page);
-
-    await pressButton(page, 'Cancel');
+    await verifyFileExport(
+      page,
+      'Sequence/Ambiguous-Monomers/Ambiguous RNA Bases (alternatives).seq',
+      FileType.SEQ,
+    );
     await zoomWithMouseWheel(page, 100);
   });
 
-  test(
-    'Saving ambiguous RNA bases (with mapping, mixed) in Sequence format',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
+  test('Saving ambiguous RNA bases (with mapping, mixed) in Sequence format', async ({
+    page,
+  }) => {
+    /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.8 Verify saving ambiguous RNA bases (with mapping, mixed) in Sequence format (macro mode)
     Case: 1. Load ambiguous bases (that have mapping to library) from KET 
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
+             (Error should occure)
           4. Take screenshot to make sure export is correct
     */
-      await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
-        page,
-      );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Ambiguous RNA Bases (mixed).ket',
+      page,
+    );
 
-      await zoomWithMouseWheel(page, -100);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+    await zoomWithMouseWheel(page, -100);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'Sequence (1-letter code)');
-      await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'Sequence (1-letter code)');
+    await takeEditorScreenshot(page);
 
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
-      );
-
-      await closeErrorMessage(page);
-
-      await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 100);
-    },
-  );
+    await closeErrorMessage(page);
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 100);
+  });
 
   test('Saving ambiguous (common) bases (with mapping, alternatives) in Sequence format', async ({
     page,
@@ -553,51 +507,43 @@ test.describe('Import-Saving .seq Files', () => {
 
     await zoomWithMouseWheel(page, -200);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-    await selectTopPanelButton(TopPanelButton.Save, page);
-    await chooseFileFormat(page, 'Sequence (1-letter code)');
-    await takeEditorScreenshot(page);
-
-    await pressButton(page, 'Cancel');
+    await verifyFileExport(
+      page,
+      'Sequence/Ambiguous-Monomers/Ambiguous (common) Bases (alternatives).seq',
+      FileType.SEQ,
+    );
     await zoomWithMouseWheel(page, 200);
   });
 
-  test(
-    'Saving ambiguous (common) bases (with mapping, mixed) in Sequence format',
-    { tag: ['@IncorrectResultBecauseOfBug'] },
-    async ({ page }) => {
-      /*
+  test('Saving ambiguous (common) bases (with mapping, mixed) in Sequence format', async ({
+    page,
+  }) => {
+    /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.10 Verify saving ambiguous (common) bases (with mapping, mixed) in Sequence format (macro mode)
     Case: 1. Load ambiguous bases (that have mapping to library) from KET 
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
+             (Error should occure)
           4. Take screenshot to make sure export is correct
     */
-      await openFileAndAddToCanvasAsNewProjectMacro(
-        'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
-        page,
-      );
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Ambiguous-monomers/Ambiguous (common) Bases (mixed).ket',
+      page,
+    );
 
-      await zoomWithMouseWheel(page, -200);
-      await moveMouseAway(page);
-      await takeEditorScreenshot(page);
+    await zoomWithMouseWheel(page, -200);
+    await moveMouseAway(page);
+    await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
-      await chooseFileFormat(page, 'Sequence (1-letter code)');
-      await takeEditorScreenshot(page);
+    await selectTopPanelButton(TopPanelButton.Save, page);
+    await chooseFileFormat(page, 'Sequence (1-letter code)');
+    await takeEditorScreenshot(page);
 
-      test.fixme(
-        true,
-        `That test fails because of https://github.com/epam/Indigo/issues/2435 issue.`,
-      );
-
-      await closeErrorMessage(page);
-
-      await pressButton(page, 'Cancel');
-      await zoomWithMouseWheel(page, 200);
-    },
-  );
+    await closeErrorMessage(page);
+    await pressButton(page, 'Cancel');
+    await zoomWithMouseWheel(page, 200);
+  });
 });
 
 test.describe('Import correct Sequence file: ', () => {
@@ -618,8 +564,7 @@ test.describe('Import correct Sequence file: ', () => {
       SequenceFileName:
         'Sequence/Ambiguous-Monomers/Ambiguous (common) Bases.seq',
       SequenceType: 'DNA',
-      shouldFail: true,
-      issueNumber: 'wrong labels screenshots',
+      shouldFail: false,
     },
     {
       // Test task: https://github.com/epam/ketcher/issues/5558
@@ -627,24 +572,21 @@ test.describe('Import correct Sequence file: ', () => {
       SequenceFileName:
         'Sequence/Ambiguous-Monomers/Ambiguous (common) Bases.seq',
       SequenceType: 'RNA',
-      shouldFail: true,
-      issueNumber: "can't load in rc2",
+      shouldFail: false,
     },
     {
       // Test task: https://github.com/epam/ketcher/issues/5558
       SequenceDescription: '3. Ambiguous DNA Bases',
       SequenceFileName: 'Sequence/Ambiguous-Monomers/Ambiguous DNA Bases.seq',
       SequenceType: 'DNA',
-      shouldFail: true,
-      issueNumber: 'wrong labels screenshots',
+      shouldFail: false,
     },
     {
       // Test task: https://github.com/epam/ketcher/issues/5558
       SequenceDescription: '4. Ambiguous RNA Bases',
       SequenceFileName: 'Sequence/Ambiguous-Monomers/Ambiguous RNA Bases.seq',
       SequenceType: 'RNA',
-      shouldFail: true,
-      issueNumber: 'wrong labels screenshots',
+      shouldFail: false,
     },
     {
       // Test task: https://github.com/epam/ketcher/issues/5558
@@ -652,8 +594,7 @@ test.describe('Import correct Sequence file: ', () => {
       SequenceFileName:
         'Sequence/Ambiguous-Monomers/Peptides (that have mapping to library).seq',
       SequenceType: 'Peptide',
-      shouldFail: true,
-      issueNumber: 'wrong labels screenshots',
+      shouldFail: false,
     },
   ];
 
@@ -664,11 +605,7 @@ test.describe('Import correct Sequence file: ', () => {
       Case: 1. Load Sequence file 
             2. Take screenshot to make sure import works correct
       */
-      // Test should be skipped if related bug exists
-      test.fixme(
-        correctSequenceFile.shouldFail === true,
-        `That test fails because of ${correctSequenceFile.issueNumber} issue.`,
-      );
+      if (correctSequenceFile.pageReloadNeeded) await pageReload(page);
 
       await openFileAndAddToCanvasAsNewProjectMacro(
         correctSequenceFile.SequenceFileName,
@@ -747,11 +684,9 @@ for (const correctSequence of correctSequences) {
      * Case: 1. Load Sequence file
      *       2. Take screenshot to make sure import works correct
      */
-    // Test should be skipped if related bug exists
-    test.fixme(
-      correctSequence.shouldFail === true,
-      `That test fails because of ${correctSequence.issueNumber} issue.`,
-    );
+    if (correctSequence.pageReloadNeeded) {
+      await pageReload(page);
+    }
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -825,11 +760,9 @@ for (const incorrectSequence of incorrectSequences) {
      * Case: 1. Load Sequence file
      *       2. Take screenshot to make sure error message is correct
      */
-    // Test should be skipped if related bug exists
-    test.fixme(
-      incorrectSequence.shouldFail === true,
-      `That test fails because of ${incorrectSequence.issueNumber} issue.`,
-    );
+    if (incorrectSequence.pageReloadNeeded) {
+      await pageReload(page);
+    }
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -877,8 +810,7 @@ const sequencesToExport: ISequenceString[] = [
     sequenceDescription: 'Three letters peptide codes - part 1',
     sequenceString: 'AlaAsxCysAspGluPheGlyHisIle',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription:
@@ -886,8 +818,7 @@ const sequencesToExport: ISequenceString[] = [
     sequenceDescription: 'Three letters peptide codes - part 2',
     sequenceString: 'XleLysLeuMetAsnPylProGlnArg',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription:
@@ -895,8 +826,7 @@ const sequencesToExport: ISequenceString[] = [
     sequenceDescription: 'Three letters peptide codes - part 3',
     sequenceString: 'SerThrSecValTrpXaaTyrGlx',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
 ];
 
@@ -918,11 +848,7 @@ for (const sequenceToExport of sequencesToExport) {
       2. Compare export result with source sequence string
   */
     test.setTimeout(35000);
-    // Test should be skipped if related bug exists
-    test.fixme(
-      sequenceToExport.shouldFail === true,
-      `That test fails because of ${sequenceToExport.issueNumber} issue.`,
-    );
+    if (sequenceToExport.pageReloadNeeded) await pageReload(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -956,8 +882,7 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     sequenceString:
       'not applicable - export of anmbiguous petide to sequence is impossible',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription:
@@ -967,8 +892,7 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     sequenceString:
       'not applicable - export of anmbiguous petide to sequence is impossible',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription:
@@ -978,8 +902,7 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     sequenceString:
       'not applicable - export on pure peptide sequences to sequence is impossible',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription:
@@ -989,8 +912,8 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     sequenceString:
       'not applicable - export on pure peptide sequences to sequence is impossible',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    // todo clean this too
+    shouldFail: false,
   },
   {
     testCaseDescription:
@@ -1000,8 +923,7 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     sequenceString:
       'not applicable - export on pure peptide sequences to sequence is impossible',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription:
@@ -1011,8 +933,7 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     sequenceString:
       'not applicable - export on pure peptide sequences to sequence is impossible',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
 ];
 
@@ -1031,11 +952,7 @@ for (const sequenceToExport of nonStandardAmbiguousPeptides) {
      *     For non pure peptide chains: "Convert error! Error during sequence type recognition(RNA, DNA or Peptide)"
      */
     test.setTimeout(35000);
-    // Test should be skipped if related bug exists
-    test.fixme(
-      sequenceToExport.shouldFail === true,
-      `That test fails because of ${sequenceToExport.issueNumber} issue.`,
-    );
+    if (sequenceToExport.pageReloadNeeded) await pageReload(page);
 
     if (sequenceToExport.HELMString) {
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -1062,10 +979,9 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'PEPTIDE1{A.[1Nal].[2Nal].[3Pal].[4Pal].[Abu].[Ala-al]}|PEPTIDE2{[D-2Pal].[D-2Nal].[D-1Nal].[Cya].[Cha].[bAla].[Ala-ol]}|PEPTIDE3' +
       '{[D-OAla].[D-2Thi].[D-3Pal].[D-Abu].[D-Cha]}|PEPTIDE4{[DAlaol].[dA]}|PEPTIDE5{[L-OAla].[Dha]}|PEPTIDE6{[meA].[NMebAl].[Thi].[Tza]}$$$$V2.0',
     sequenceString:
-      'AlaAlaAlaAlaAlaAlaAla AlaAlaAlaAlaAlaAlaAla AlaAlaAlaAlaAla AlaAla AlaAla AlaAlaAlaAla ',
+      'AlaAlaAlaAlaAlaAlaAla AlaAlaAlaAlaAlaAlaAla AlaAlaAlaAlaAla AlaAla AlaAla AlaAlaAlaAla',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1074,8 +990,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'PEPTIDE1{C.[Cys_Bn].[Cys_Me]}|PEPTIDE2{[DACys].[dC].[Edc].[Hcy].[meC]}$$$$V2.0',
     sequenceString: 'CysCysCys CysCysCysCysCys',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1083,8 +998,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString: 'PEPTIDE1{D.[AspOMe].[D*].[dD].[dD]}$$$$V2.0',
     sequenceString: 'AspAspAspAspAsp',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1092,8 +1006,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString: 'PEPTIDE1{E.[D-gGlu].[dE].[gGlu].[Gla].[meE]}$$$$V2.0',
     sequenceString: 'GluGluGluGluGluGlu',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1106,8 +1019,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     sequenceString:
       'PhePhePhePhePhe PhePhePhePhePhePhePhe PhePhePhePhePhePhe PhePhePhePhePhePhe PhePhePhePhePhePhePhe Phe',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1119,8 +1031,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     sequenceString:
       'GlyGlyGlyGlyGly GlyGly GlyGly GlyGly GlyGlyGlyGlyGlyGly GlyGly Gly',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1129,8 +1040,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'PEPTIDE1{H.[dH].[DHis1B].[Hhs].[His1Bn].[His1Me].[His3Me].[meH]}$$$$V2.0',
     sequenceString: 'HisHisHisHisHisHisHisHis',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1139,8 +1049,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'PEPTIDE1{I.[aIle].[D-aIle].[dI].[DxiIle].[meI].[xiIle]}$$$$V2.0',
     sequenceString: 'IleIleIleIleIleIleIle',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1149,8 +1058,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'PEPTIDE1{K.[Aad].[D-Orn].[DALys].[dK].[Dpm].[Hyl5xi].[Lys_Ac].[Lys-al]}|PEPTIDE2{[LysBoc].[LysiPr].[LysMe3].[meK].[Orn].[Lys-ol]}$$$$V2.0',
     sequenceString: 'LysLysLysLysLysLysLysLysLys LysLysLysLysLysLys',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1159,8 +1067,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'PEPTIDE1{L.[Ar5c].[D-Nle]}|PEPTIDE2{[DALeu].[dL].[Leu-al]}|PEPTIDE3{[OLeu].[Leu-ol]}|PEPTIDE4{[meL].[Nle].[tLeu]}$$$$V2.0',
     sequenceString: 'LeuLeuLeu LeuLeuLeu LeuLeuLeu Leu',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1168,8 +1075,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString: 'PEPTIDE1{M.[dM].[DMetSO].[meM].[Met_O].[Met_O2]}$$$$V2.0',
     sequenceString: 'MetMetMetMetMetMet',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1177,8 +1083,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString: 'PEPTIDE1{N.[Asp-al]}|PEPTIDE2{[dN].[meN]}$$$$V2.0',
     sequenceString: 'AsnAsn AsnAsn',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1186,8 +1091,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString: 'PEPTIDE1{O.[dO].[meO]}$$$$V2.0',
     sequenceString: 'PylPylPyl',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1197,8 +1101,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       '|PEPTIDE3{[Mhp].[Pro-al]}|PEPTIDE4{[Thz].[xiHyp].[Pro-ol]}$$$$V2.0',
     sequenceString: 'ProProProProProProProProPro ProPro ProPro ProProPro',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1206,8 +1109,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString: 'PEPTIDE1{Q.[dQ].[meQ]}$$$$V2.0',
     sequenceString: 'GlnGlnGln',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1216,8 +1118,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'PEPTIDE1{R.[Arg-al]}|PEPTIDE2{[Cit].[D-Cit].[D-hArg].[DhArgE].[dR].[Har].[hArg].[LhArgE].[meR]}$$$$V2.0',
     sequenceString: 'ArgArg ArgArgArgArgArgArgArgArgArg',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1226,8 +1127,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'PEPTIDE1{S.[D-Dap].[Dap].[dS].[DSerBn].[DSertB].[Hse].[meS].[Ser_Bn].[SerPO3].[SertBu]}$$$$V2.0',
     sequenceString: 'SerSerSerSerSerSerSerSerSerSerSer',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1236,8 +1136,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'PEPTIDE1{T.[aThr].[D-aThr].[dT].[dThrol]}|PEPTIDE2{[meT].[Thr-ol]}|PEPTIDE3{[ThrPO3].[xiThr]}$$$$V2.0',
     sequenceString: 'ThrThrThrThrThr ThrThr ThrThr',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1245,8 +1144,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString: 'PEPTIDE1{U.[dU].[meU]}$$$$V2.0',
     sequenceString: 'SecSecSec',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1255,8 +1153,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'PEPTIDE1{V.[D-Nva].[D-Pen].[DaMeAb].[dV].[Iva]}|PEPTIDE2{[D-OVal].[meV].[Nva].[Pen]}|PEPTIDE3{[L-OVal].[Val-ol]}|PEPTIDE4{[Val3OH]}$$$$V2.0',
     sequenceString: 'ValValValValValVal ValValValVal ValVal Val',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1265,8 +1162,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'PEPTIDE1{W.[DTrp2M].[DTrpFo].[dW].[Kyn].[meW].[Trp_Me].[Trp5OH].[TrpOme]}$$$$V2.0',
     sequenceString: 'TrpTrpTrpTrpTrpTrpTrpTrpTrp',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1282,12 +1178,11 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'PEPTIDE23{[NMe23A].[Oic3aR].[Oic3aS]}|PEPTIDE24{[NMe24A].[NMe2Ab].[NMe4Ab]}|PEPTIDE25{[OBn-].[pnT].[pnG]}|' +
       'PEPTIDE26{[OMe-].[Oic].[Pip]}|PEPTIDE27{[Tos-].[Tic].[Sta]}$$$$V2.0',
     sequenceString:
-      'Xun XunXunXun XunXunXun XunXunXun XunXunXun XunXunXun XunXunXun XunXunXun XunXunXun XunXunXun ' +
-      'XunXunXun XunXunXun XunXunXun XunXunXun XunXunXun XunXunXun XunXunXun XunXunXun XunXunXun ' +
-      'XunXunXun XunXunXun XunXunXun XunXunXun XunXunXun XunXunXun XunXunXun XunXunXun',
+      'Xaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa ' +
+      'XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa ' +
+      'XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '11. Verify natural analogue conversion on export',
@@ -1298,19 +1193,17 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     sequenceString:
       'TyrTyrTyrTyr TyrTyr TyrTyrTyrTyrTyrTyrTyrTyr TyrTyrTyrTyrTyrTyrTyrTyrTyr',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription:
       '12. Verify specific export format for "Any amino acid"',
-    sequenceDescription: '(X) as "Xun',
+    sequenceDescription: '(X) as "Xaa',
     HELMString:
       'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
-    sequenceString: 'Xun',
+    sequenceString: 'Xaa',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription: '13. Verify export format for ambiguous amino acids',
@@ -1318,8 +1211,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString: 'PEPTIDE1{(D,N).(L,I).(E,Q)}$$$$V2.0',
     sequenceString: 'AsxXleGlx',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
   {
     testCaseDescription:
@@ -1330,8 +1222,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     sequenceString:
       'Ala CysAsp GluPheGly HisIleLysLeu MetAsnPylProGln ArgSerThrSecValTrp',
     sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5972',
+    shouldFail: false,
   },
 ];
 
@@ -1348,11 +1239,7 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
      *     2. Compare export result with source sequence string
      */
     test.setTimeout(35000);
-    // Test should be skipped if related bug exists
-    test.fixme(
-      sequenceToExport.shouldFail === true,
-      `That test fails because of ${sequenceToExport.issueNumber} issue.`,
-    );
+    if (sequenceToExport.pageReloadNeeded) await pageReload(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

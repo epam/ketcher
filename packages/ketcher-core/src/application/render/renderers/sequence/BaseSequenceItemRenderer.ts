@@ -166,6 +166,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           0,
         ),
       )
+      .attr('data-isAntisense', this.isAntisenseNode)
+      .attr('data-nodeIndexOverall', this.nodeIndexOverall)
       .attr('transition', 'transform 0.2s')
       .attr(
         'transform',
@@ -411,6 +413,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       (this.isSequenceEditInRnaBuilderModeTurnedOn &&
         !this.node.monomer.selected) ||
       (!this.isSyncEditMode &&
+        this.hasAntisenseInChain &&
         ((this.isAntisenseNode && !this.isAntisenseEditMode) ||
           (!this.isAntisenseNode && this.isAntisenseEditMode)))
     ) {

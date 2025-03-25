@@ -121,6 +121,14 @@ export class SequenceMode extends BaseMode {
     return this._isSyncEditMode;
   }
 
+  private get needToEditSense() {
+    return this.isSyncEditMode || !this.isAntisenseEditMode;
+  }
+
+  private get needToEditAntisense() {
+    return this.isSyncEditMode || this.isAntisenseEditMode;
+  }
+
   private turnOnAntisenseEditMode() {
     this._isAntisenseEditMode = true;
     this.initialize(false, false, false);
@@ -146,6 +154,11 @@ export class SequenceMode extends BaseMode {
     this.initialize(false, false, false);
   }
 
+  public resetEditMode() {
+    this.turnOffAntisenseEditMode();
+    this.turnOffSyncEditMode();
+  }
+
   public initialize(
     needScroll = true,
     needRemoveSelection = true,
@@ -163,6 +176,8 @@ export class SequenceMode extends BaseMode {
           editor.canvas.width.baseVal.value,
           true,
           false,
+          true,
+          !this.isEditMode,
         )
       : new Command();
     const zoom = ZoomTool.instance;
@@ -219,7 +234,7 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
 
     this.isEditMode = false;
-    this.initialize(false, true, false);
+    this.initialize(false, true, true);
     editor.events.toggleSequenceEditMode.dispatch(false);
   }
 
@@ -688,7 +703,10 @@ export class SequenceMode extends BaseMode {
       addPhosphateIfNeeded &&
       firstNodeToConnect instanceof Nucleoside &&
       (secondNodeToConnect instanceof Nucleotide ||
-        secondNodeToConnect instanceof Nucleoside)
+        secondNodeToConnect instanceof Nucleoside ||
+        (secondNodeToConnect instanceof MonomerSequenceNode &&
+          secondNodeToConnect.monomer instanceof Phosphate &&
+          secondNodeToConnect.monomer.hydrogenBonds.length))
     ) {
       modelChanges.merge(
         this.bondNodesThroughNewPhosphate(
@@ -773,7 +791,7 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.previousNodeInSameChain;
     const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
 
-    if (previousTwoStrandedNodeInSameChain?.senseNode) {
+    if (this.needToEditSense && previousTwoStrandedNodeInSameChain?.senseNode) {
       this.deleteBondToNextNodeInChain(
         previousTwoStrandedNodeInSameChain.senseNode instanceof
           BackBoneSequenceNode
@@ -781,19 +799,19 @@ export class SequenceMode extends BaseMode {
           : previousTwoStrandedNodeInSameChain?.senseNode,
         modelChanges,
       );
+
+      if (previousTwoStrandedNodeInSameChain?.senseNode instanceof Nucleotide) {
+        modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+      }
     }
 
-    if (currentTwoStrandedNode?.antisenseNode) {
+    if (this.needToEditAntisense && currentTwoStrandedNode?.antisenseNode) {
       this.deleteBondToNextNodeInChain(
         currentTwoStrandedNode.antisenseNode instanceof BackBoneSequenceNode
           ? currentTwoStrandedNode.antisenseNode.secondConnectedNode
           : currentTwoStrandedNode.antisenseNode,
         modelChanges,
       );
-    }
-
-    if (previousTwoStrandedNodeInSameChain?.senseNode instanceof Nucleotide) {
-      modelChanges.addOperation(SequenceRenderer.moveCaretForward());
     }
 
     modelChanges.addOperation(new ReinitializeModeOperation());
@@ -1078,22 +1096,36 @@ export class SequenceMode extends BaseMode {
           : SequenceRenderer.caretPosition;
       const selections = SequenceRenderer.selections;
       const modelChanges = new Command();
-      const needToEditSense = this.isSyncEditMode || !this.isAntisenseEditMode;
-      const needToEditAntisense =
-        this.isSyncEditMode || this.isAntisenseEditMode;
       let nodesToDelete: TwoStrandedNodesSelection;
 
       if (selections.length) {
-        modelChanges.merge(this.deleteSelectedDrawingEntities());
         nodesToDelete = selections;
-        if (needToEditSense) {
+
+        const senseNodesToDelete = nodesToDelete.filter((selectionRange) =>
+          selectionRange.every(
+            (nodeSelection) => nodeSelection.node.senseNode?.monomer.selected,
+          ),
+        );
+        const antisenseNodesToDelete = nodesToDelete.filter((selectionRange) =>
+          selectionRange.every(
+            (nodeSelection) =>
+              nodeSelection.node.antisenseNode?.monomer.selected,
+          ),
+        );
+
+        modelChanges.merge(this.deleteSelectedDrawingEntities());
+
+        if (this.needToEditSense) {
           modelChanges.merge(
-            this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.SENSE),
+            this.handleNodesDeletion(senseNodesToDelete, STRAND_TYPE.SENSE),
           );
         }
-        if (needToEditAntisense) {
+        if (this.needToEditAntisense) {
           modelChanges.merge(
-            this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.ANTISENSE),
+            this.handleNodesDeletion(
+              antisenseNodesToDelete,
+              STRAND_TYPE.ANTISENSE,
+            ),
           );
         }
       } else if (nodeToDelete) {
@@ -1106,7 +1138,7 @@ export class SequenceMode extends BaseMode {
           ],
         ];
 
-        if (needToEditSense && nodeToDelete.senseNode) {
+        if (this.needToEditSense && nodeToDelete.senseNode) {
           if (!(nodeToDelete.senseNode instanceof BackBoneSequenceNode)) {
             nodeToDelete.senseNode.monomers.forEach((monomer) => {
               modelChanges.merge(
@@ -1121,7 +1153,7 @@ export class SequenceMode extends BaseMode {
         }
 
         if (
-          needToEditAntisense &&
+          this.needToEditAntisense &&
           nodeToDelete.antisenseNode &&
           !(nodeToDelete.antisenseNode instanceof EmptySequenceNode)
         ) {
@@ -1361,14 +1393,10 @@ export class SequenceMode extends BaseMode {
               )) ||
             undefined;
           let senseNodeToConnect = currentTwoStrandedNode?.senseNode;
-          const needToEditSense =
-            this.isSyncEditMode || !this.isAntisenseEditMode;
-          const needToEditAntisense =
-            this.isSyncEditMode || this.isAntisenseEditMode;
           const isDnaEnteringMode =
             editor.sequenceTypeEnterMode === SequenceType.DNA;
 
-          if (needToEditSense) {
+          if (this.needToEditSense) {
             const insertNewSequenceItemResult = this.insertNewSequenceItem(
               editor,
               this.isAntisenseEditMode
@@ -1391,7 +1419,7 @@ export class SequenceMode extends BaseMode {
           }
 
           if (
-            needToEditAntisense &&
+            this.needToEditAntisense &&
             (this.isSyncEditMode
               ? previousTwoStrandedNodeInSameChain?.antisenseNode ||
                 currentTwoStrandedNode?.antisenseNode
@@ -1425,14 +1453,13 @@ export class SequenceMode extends BaseMode {
             if (
               this.isSyncEditMode &&
               antisenseNodeCreationResult &&
-              senseNodeToConnect
+              senseNodeToConnect &&
+              (senseNodeToConnect instanceof Nucleotide ||
+                senseNodeToConnect instanceof Nucleoside)
             ) {
               modelChanges.merge(
                 editor.drawingEntitiesManager.createPolymerBond(
-                  senseNodeToConnect instanceof Nucleotide ||
-                    senseNodeToConnect instanceof Nucleoside
-                    ? senseNodeToConnect?.rnaBase
-                    : senseNodeToConnect.monomer,
+                  senseNodeToConnect?.rnaBase,
                   antisenseNodeCreationResult.node instanceof Nucleotide ||
                     antisenseNodeCreationResult.node instanceof Nucleoside
                     ? antisenseNodeCreationResult.node?.rnaBase
@@ -2418,13 +2445,6 @@ export class SequenceMode extends BaseMode {
       SequenceRenderer.previousNodeInSameChain;
 
     if (
-      nextNodeToConnect instanceof MonomerSequenceNode &&
-      nextNodeToConnect.monomer instanceof Phosphate
-    ) {
-      return;
-    }
-
-    if (
       nextNodeToConnect instanceof EmptySequenceNode &&
       previousNodeToConnect
     ) {
@@ -2480,6 +2500,9 @@ export class SequenceMode extends BaseMode {
           currentTwoStrandedNode instanceof BackBoneSequenceNode
             ? currentTwoStrandedNode.firstConnectedNode
             : undefined,
+          true,
+          true,
+          false,
         ),
       );
       return { modelChanges, node: newPhosphateNode };

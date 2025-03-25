@@ -178,7 +178,7 @@ const modifiedMonomers: string[] = [
   'PEPTIDE1{[DAPhg4].[Pro-ol]}|PEPTIDE2{[DALeu].[Leu-ol]}|PEPTIDE3{[OLeu].[-OtBu]}|' +
     'PEPTIDE4{[meP].[Pro-al]}|PEPTIDE5{[D-OVal].[dThrol]}|PEPTIDE6{[L-OVal].[-Et]}|' +
     'PEPTIDE7{[Ac-].[-Bn]}|PEPTIDE8{[Bua-].[-OEt]}|PEPTIDE9{[Cbz-].[-Ph]}|' +
-    'PEPTIDE10{[Bn-].[Am-]}|PEPTIDE11{[DANcy].[Leu-al]}$$$$V2.0',
+    'PEPTIDE10{[Bn-].[-Am]}|PEPTIDE11{[DANcy].[Leu-al]}$$$$V2.0',
 
   'PEPTIDE1{[fmoc-].[Thr-ol]}|PEPTIDE2{[DADip].[Val-ol]}|PEPTIDE3{[Glc].[-Me]}|' +
     'PEPTIDE4{[Boc-].[Aib-ol]}|PEPTIDE5{[Bz-]}|PEPTIDE6{[DAChg].[DADab]}|PEPTIDE7{[NHBn-].[Gly-ol]}|' +

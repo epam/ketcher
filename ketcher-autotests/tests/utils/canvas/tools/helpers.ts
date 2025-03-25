@@ -70,7 +70,7 @@ export async function selectSingleBondTool(page: Page) {
     .nth(1);
   await bondToolDropdown.click();
 
-  const bondToolButton = page.getByTestId(MacroBondTool.SINGLE);
+  const bondToolButton = page.getByTestId(MacroBondTool.SINGLE).first();
   await bondToolButton.click();
 }
 
@@ -153,6 +153,10 @@ export async function switchSequenceEnteringButtonType(
   sequenceEnteringType: SequenceType,
 ) {
   await page.getByTestId(`${sequenceEnteringType}Btn`).click();
+}
+
+export async function switchSyncMode(page: Page) {
+  await page.getByTestId('sync_sequence_edit_mode').first().click();
 }
 
 export async function selectFlexLayoutModeTool(page: Page) {
@@ -367,7 +371,20 @@ export async function openSettings(page: Page) {
   });
 }
 
-export async function bondsSettings(page: Page) {
+export async function openStereochemistrySettingsSection(page: Page) {
+  await page.getByText('Stereochemistry', { exact: true }).click();
+}
+
+export async function switchIgnoreTheChiralFlag(page: Page) {
+  await page
+    .locator('label')
+    .filter({ hasText: 'Ignore the chiral flag' })
+    .getByTestId('undefined-input-span')
+    .locator('span')
+    .click();
+}
+
+export async function openBondsSettingsSection(page: Page) {
   await page.getByText('Bonds', { exact: true }).click();
 }
 
@@ -388,6 +405,15 @@ export async function setBondLengthValue(page: Page, value: string) {
     .getByRole('textbox')
     .first()
     .fill(value);
+}
+
+export async function getBondLengthValue(page: Page): Promise<string | null> {
+  return await page
+    .locator('fieldset')
+    .filter({ hasText: 'Aromatic Bonds as circleBond' })
+    .getByRole('textbox')
+    .first()
+    .inputValue();
 }
 
 export async function setBondThicknessOptionUnit(page: Page, unitName: string) {

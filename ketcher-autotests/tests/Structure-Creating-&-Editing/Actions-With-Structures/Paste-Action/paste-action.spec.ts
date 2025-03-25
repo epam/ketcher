@@ -40,8 +40,6 @@ test.describe('Paste Tool', () => {
     2. Copy by CTRL+C
     3. Open Paste from Canvas tool and paste by CTRL+V
     4. Check that the structure of file is MOL
-    For now test working not as expected, because of the issue https://github.com/epam/ketcher/issues/6411
-    After fixing the issue, the test should be updated.
     */
     await drawBenzeneRing(page);
 

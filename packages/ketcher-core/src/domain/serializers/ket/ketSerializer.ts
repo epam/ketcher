@@ -1023,6 +1023,14 @@ export class KetSerializer implements Serializer<Struct> {
     monomersLibrary.root.templates.forEach((templateRef) => {
       const template = monomersLibrary[templateRef.$ref];
 
+      if (!template) {
+        KetcherLogger.error(
+          `There is a ref for monomer template ${templateRef.$ref}, but template definition is not found`,
+        );
+
+        return;
+      }
+
       switch (template.type) {
         case KetTemplateType.MONOMER_TEMPLATE: {
           library.push(

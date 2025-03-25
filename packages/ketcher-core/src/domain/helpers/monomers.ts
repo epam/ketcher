@@ -289,3 +289,11 @@ export function isRnaBaseOrAmbiguousRnaBase(
       monomer.monomerClass === KetMonomerClass.Base)
   );
 }
+
+export function isRnaBaseApplicableForAntisense(monomer?: BaseMonomer) {
+  return (
+    monomer instanceof UnsplitNucleotide ||
+    (isRnaBaseOrAmbiguousRnaBase(monomer) &&
+      Boolean(getSugarFromRnaBase(monomer)))
+  );
+}

@@ -34,6 +34,7 @@ import {
   hasOnlyDeoxyriboseSugars,
   hasOnlyRiboseSugars,
   isAntisenseCreationDisabled,
+  isAntisenseOptionVisible,
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { useState } from 'react';
 import { IconName } from 'ketcher-react';
@@ -49,6 +50,8 @@ export function TopMenuComponent() {
     selectIsSequenceEditInRNABuilderMode,
   );
   const [selectedEntities, setSelectedEntities] = useState<BaseMonomer[]>([]);
+  const [needOpenByMenuItemClick, setNeedOpenByMenuItemClick] =
+    useState<boolean>(false);
   const [antisenseActiveOption, setAntisenseActiveOption] =
     useState<IconName>();
   const activeMenuItems = [activeTool];
@@ -59,12 +62,14 @@ export function TopMenuComponent() {
       selectedEntities.length &&
       !isAntisenseCreationDisabled(selectedEntities)
     ) {
+      setNeedOpenByMenuItemClick(false);
       if (hasOnlyDeoxyriboseSugars(selectedEntities)) {
         setAntisenseActiveOption('antisenseDnaStrand');
       } else if (hasOnlyRiboseSugars(selectedEntities)) {
         setAntisenseActiveOption('antisenseRnaStrand');
       } else {
-        setAntisenseActiveOption('reset');
+        setAntisenseActiveOption('antisenseStrand');
+        setNeedOpenByMenuItemClick(true);
       }
     }
   });
@@ -125,9 +130,10 @@ export function TopMenuComponent() {
         <Menu.Submenu
           disabled={
             !selectedEntities?.length ||
+            !isAntisenseOptionVisible(selectedEntities) ||
             isAntisenseCreationDisabled(selectedEntities)
           }
-          needOpenByMenuItemClick={false}
+          needOpenByMenuItemClick={needOpenByMenuItemClick}
           vertical={true}
           layoutModeButton={true}
           generalTitle="Create Antisense Strand"
@@ -138,6 +144,7 @@ export function TopMenuComponent() {
             title={`Create RNA Antisense Strand (${shortcuts.createRnaAntisenseStrand})`}
             disabled={
               !selectedEntities?.length ||
+              !isAntisenseOptionVisible(selectedEntities) ||
               isAntisenseCreationDisabled(selectedEntities)
             }
             testId="antisenseRnaStrand"
@@ -148,6 +155,7 @@ export function TopMenuComponent() {
             title={`Create DNA Antisense Strand (${shortcuts.createDnaAntisenseStrand})`}
             disabled={
               !selectedEntities?.length ||
+              !isAntisenseOptionVisible(selectedEntities) ||
               isAntisenseCreationDisabled(selectedEntities)
             }
             testId="antisenseDnaStrand"

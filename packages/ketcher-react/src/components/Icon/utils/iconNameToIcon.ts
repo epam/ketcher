@@ -467,6 +467,7 @@ export const iconNameToIcon = {
   'no-highlight-cross': CrossIcon,
   arrowsUpDown: ArrowsUpDownIcon,
   plus: PlusIcon,
+  antisenseStrand: AntisenseStrandIcon,
   antisenseRnaStrand: AntisenseStrandIcon,
   antisenseDnaStrand: AntisenseStrandIcon,
 } as const;

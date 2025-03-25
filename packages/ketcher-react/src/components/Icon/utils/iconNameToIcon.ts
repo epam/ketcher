@@ -463,6 +463,7 @@ export const iconNameToIcon = {
   'sequence-layout-mode': SequenceLayoutIcon,
   questionMark: QuestionMark,
   'no-highlight-cross': CrossIcon,
+  antisenseStrand: AntisenseStrandIcon,
   antisenseRnaStrand: AntisenseStrandIcon,
   antisenseDnaStrand: AntisenseStrandIcon,
 } as const;

@@ -17,7 +17,6 @@
 import styled from '@emotion/styled';
 import { Accordion, Button } from 'ketcher-react';
 import { Tab } from '@mui/material';
-import { ScrollableFadingContainer } from 'components/shared';
 
 export const RnaAccordionContainer = styled.div`
   display: flex;
@@ -36,24 +35,23 @@ export const StyledAccordionWrapper = styled.div`
   min-height: 32px;
 `;
 
-export const DetailsContainer = styled.div`
+export const DetailsContainer = styled.div<{ compact?: boolean }>`
   position: relative;
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 8px;
   justify-content: start;
-  padding: 8px;
+  padding: ${({ compact }) => (compact ? '4px' : '8px')};
   overflow: auto;
 `;
 
-export const CompactDetailsContainer = styled(ScrollableFadingContainer)`
+export const RnaTabContent = styled.div`
   height: 100%;
-  position: relative;
   background-color: #f7f9fa;
   border-radius: 4px;
   margin: 4px 8px;
-  overflow: auto;
+  padding: 4px;
 
   &.first-tab {
     border-radius: 0 4px 4px 4px;
@@ -62,6 +60,13 @@ export const CompactDetailsContainer = styled(ScrollableFadingContainer)`
   &.last-tab {
     border-radius: 4px 0 4px 4px;
   }
+`;
+
+export const CompactDetailsContainer = styled.div`
+  height: 100%;
+  background-color: ${({ theme }) => theme.ketcher.color.tab.content};
+  border-radius: 2px;
+  overflow: auto;
 `;
 
 export const StyledButton = styled(Button)`
@@ -126,7 +131,7 @@ export const RnaTab = styled(Tab)<{ selected?: boolean }>`
   font-size: 10px;
   border-radius: 4px;
   background-color: white;
-  opacity: 1;
+  opacity: ${({ selected }) => (selected ? 1 : 0.6)};
   text-transform: none;
 
   &:hover {
@@ -136,8 +141,7 @@ export const RnaTab = styled(Tab)<{ selected?: boolean }>`
   > svg {
     height: 16px;
     width: 16px;
-    color: ${({ selected, theme }) =>
-      selected ? theme.ketcher.color.button.primary.active : '#b4b9d6'};
+    color: #b4b9d6;
 
     &.MuiTab-iconWrapper {
       margin: 0;

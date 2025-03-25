@@ -1,12 +1,13 @@
 import { memo } from 'react';
 import {
-  CompactDetailsContainer,
+  RnaTabContent,
   DetailsContainer,
   DisabledArea,
   RnaTab,
   RnaTabsContainer,
   RnaTabWrapper,
   StyledButton,
+  CompactDetailsContainer,
 } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/styles';
 import {
   selectAmbiguousMonomersInCategory,
@@ -92,7 +93,7 @@ const RnaElementsTabsView = ({
         );
         const details =
           groupName === RnaBuilderPresetsItem.Presets ? (
-            <DetailsContainer>
+            <DetailsContainer compact>
               <StyledButton onClick={onNewPresetClick}>New Preset</StyledButton>
               <RnaPresetGroup
                 duplicatePreset={duplicatePreset}
@@ -102,7 +103,7 @@ const RnaElementsTabsView = ({
               {isEditMode && !isActivePresetNewAndEmpty && <DisabledArea />}
             </DetailsContainer>
           ) : (
-            <DetailsContainer>
+            <DetailsContainer compact>
               <>
                 {groups.map(({ groupItems, groupTitle }) => (
                   <MonomerGroup
@@ -134,15 +135,15 @@ const RnaElementsTabsView = ({
           activeRnaBuilderItem === MonomerGroups.NUCLEOTIDES;
 
         return (
-          <CompactDetailsContainer
+          <RnaTabContent
             className={clsx(
               firstTabSelected && 'first-tab',
               lastTabSelected && 'last-tab',
             )}
             key={groupName}
           >
-            {details}
-          </CompactDetailsContainer>
+            <CompactDetailsContainer>{details}</CompactDetailsContainer>
+          </RnaTabContent>
         );
       })}
     </>

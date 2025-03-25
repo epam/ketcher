@@ -61,11 +61,11 @@ export const MonomerLibraryToggle = styled.button`
   border: none;
   border-radius: 4px 0 0 4px;
   cursor: pointer;
-  background-color: ${({ theme }) => theme.ketcher.color.button.primary.active};
+  background-color: #e2e5e9;
   text-transform: none;
   font-weight: ${({ theme }) => theme.ketcher.font.weight.regular};
   font-size: ${({ theme }) => theme.ketcher.font.size.regular};
-  color: ${({ theme }) => theme.ketcher.color.button.text.primary};
+  color: ${({ theme }) => theme.ketcher.color.text.secondary};
 `;
 
 export const MonomerLibrarySearchIcon = styled(Icon)`

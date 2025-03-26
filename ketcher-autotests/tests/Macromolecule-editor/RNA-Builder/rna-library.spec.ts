@@ -38,7 +38,7 @@ import {
   showLibrary,
 } from '@utils';
 import {
-  expandCollapseRnaBuilder,
+  toggleRnaBuilderAccordion,
   pressAddToPresetsButton,
   pressNewPresetButton,
   pressSaveButton,
@@ -231,7 +231,7 @@ test.describe('RNA Library', () => {
     Test case: #2748, #2751 - RNA Builder. Accordion component
     Description: After click on arrow RNA Builder expanded.
     */
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await takeMonomerLibraryScreenshot(page);
 
     // Reset to default state
@@ -357,11 +357,11 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section.
     */
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
     await pressAddToPresetsButton(page);
     await selectCustomPreset(page, '25R(A)Test-6-Ph_A_25R_Test-6-Ph');
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await takePresetsScreenshot(page);
   });
 
@@ -374,16 +374,16 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
     await pressAddToPresetsButton(page);
     await selectCustomPreset(page, '25R(A)Test-6-Ph_A_25R_Test-6-Ph');
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await takePresetsScreenshot(page);
 
     await reloadPageAndConfigureInitialState(page);
     await selectCustomPreset(page, '25R(A)Test-6-Ph_A_25R_Test-6-Ph');
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await takePresetsScreenshot(page);
   });
 
@@ -396,15 +396,15 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
     await pressAddToPresetsButton(page);
     await selectCustomPreset(page, '25R(A)Test-6-Ph_A_25R_Test-6-Ph');
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await takePresetsScreenshot(page);
 
     await reloadPageAndConfigureInitialState(page);
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
     await pressAddToPresetsButton(page);
     await takeEditorScreenshot(page);
@@ -419,7 +419,7 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Sugars._3A6, Bases.baA, Phosphates.bP]);
     await pressAddToPresetsButton(page);
     await selectCustomPreset(page, '3A6(baA)bP_baA_3A6_bP');
@@ -438,7 +438,7 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Bases.baA, Phosphates.bP]);
     await selectSugarSlot(page);
     await selectMonomer(page, Sugars._3SS6);
@@ -455,11 +455,11 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Sugars._25R, Bases.A]);
     await pressAddToPresetsButton(page);
     await selectCustomPreset(page, '25R(A)_A_25R_.');
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await takePresetsScreenshot(page);
   });
 
@@ -472,11 +472,11 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Sugars._25R, Phosphates.bP]);
     await pressAddToPresetsButton(page);
     await selectCustomPreset(page, '25R()bP_._25R_bP');
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await takePresetsScreenshot(page);
   });
 
@@ -489,7 +489,7 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Bases.A, Phosphates.bP]);
     await selectBaseSlot(page);
     await takeRNABuilderScreenshot(page);
@@ -504,7 +504,7 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
     await pressAddToPresetsButton(page);
     await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
@@ -519,7 +519,7 @@ test.describe('RNA Library', () => {
 
     // To avoid unstable test execution
     // Allows see a right preset in a viewport
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await takePresetsScreenshot(page);
   });
 
@@ -532,7 +532,7 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
     await pressAddToPresetsButton(page);
     await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
@@ -542,7 +542,7 @@ test.describe('RNA Library', () => {
     await pressSaveButton(page);
     // To avoid unstable test execution
     // Allows see a right preset in a veiwport
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await page.getByTestId('25R(A)Test-6-Ph_Copy_A_25R_Test-6-Ph').click({
       button: 'right',
     });
@@ -564,7 +564,7 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await page.getByTestId(Presets.A.testId).click({
       button: 'right',
     });
@@ -572,7 +572,7 @@ test.describe('RNA Library', () => {
     await page.getByTestId('cancel-btn').click();
     // To avoid unstable test execution
     // Allows see a right preset in a veiwport
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await takePresetsScreenshot(page);
   });
 
@@ -589,7 +589,7 @@ test.describe('RNA Library', () => {
       await clearLocalStorage(page);
       await reloadPageAndConfigureInitialState(page);
 
-      await expandCollapseRnaBuilder(page);
+      await toggleRnaBuilderAccordion(page);
       await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
       await pressAddToPresetsButton(page);
       await page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph').click({
@@ -609,7 +609,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: Custom presets added to Presets section and can be renamed.
     */
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Sugars._25R, Bases.baA, Phosphates.bP]);
     await pressAddToPresetsButton(page);
     await page.getByTestId('25R(baA)bP_baA_25R_bP').click({
@@ -631,7 +631,7 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectSugarSlot(page);
     await selectMonomer(page, Sugars._3A6);
     await moveMouseAway(page);
@@ -651,7 +651,7 @@ test.describe('RNA Library', () => {
     Test case: #2759 - Edit RNA mode
     Description: RNA name added.
     */
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectSugarSlot(page);
     await selectMonomer(page, Sugars._25R);
     // To avoid unstable test execution
@@ -690,7 +690,7 @@ test.describe('RNA Library', () => {
       },
     ];
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     for (const monomer of monomers) {
       await selectMonomer(page, monomer.name);
       await page
@@ -711,7 +711,7 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Sugars._3A6, Bases.baA]);
     await pressAddToPresetsButton(page);
     await selectCustomPreset(page, '3A6(baA)_baA_3A6_.');
@@ -729,7 +729,7 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Sugars._3A6, Phosphates.bP]);
     await pressAddToPresetsButton(page);
     await selectCustomPreset(page, '3A6()bP_._3A6_bP');
@@ -747,7 +747,7 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Bases.baA, Phosphates.bP]);
     await selectBaseSlot(page);
     await takeRNABuilderScreenshot(page);
@@ -1013,7 +1013,7 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomer(page, Sugars._12ddR);
     await selectBaseSlot(page);
     await takePresetsScreenshot(page);
@@ -1178,7 +1178,7 @@ test.describe('RNA Library', () => {
     Test case: https://github.com/epam/ketcher/issues/3816
     Description: It is not possible to create preset if Sugar is without R3 connection point.
     */
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectBaseSlot(page);
     await selectMonomer(page, Bases.baA);
     await selectSugarSlot(page);
@@ -1259,10 +1259,10 @@ test.describe('RNA Library', () => {
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await selectMonomers(page, [Sugars._25R, Bases.A, Phosphates.Test_6_Ph]);
     await pressAddToPresetsButton(page);
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
 
     const customPreset = page.getByTestId('25R(A)Test-6-Ph_A_25R_Test-6-Ph');
     await customPreset.hover();

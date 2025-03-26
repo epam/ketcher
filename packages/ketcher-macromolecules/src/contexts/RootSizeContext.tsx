@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { debounce } from 'lodash';
 
 export const RootSizeContext = createContext({ width: 0, height: 0 });
 
@@ -22,19 +23,25 @@ export const RootSizeProvider = ({ children, rootRef }: Props) => {
       return;
     }
 
+    console.log('handle resize');
+
     const { width, height } = rootRef.current.getBoundingClientRect();
     setSize({ width, height });
   }, [rootRef]);
 
-  useEffect(() => {
-    handleResize();
+  const debouncedHandleResize = useCallback(debounce(handleResize, 100), [
+    handleResize,
+  ]);
 
-    window.addEventListener('resize', handleResize);
+  useEffect(() => {
+    debouncedHandleResize();
+
+    window.addEventListener('resize', debouncedHandleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', debouncedHandleResize);
     };
-  }, [handleResize]);
+  }, [debouncedHandleResize]);
 
   return (
     <RootSizeContext.Provider value={size}>{children}</RootSizeContext.Provider>

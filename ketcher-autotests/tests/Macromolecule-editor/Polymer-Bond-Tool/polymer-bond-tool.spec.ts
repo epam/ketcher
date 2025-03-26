@@ -495,7 +495,6 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     Test case: #4905
     Description: Changes made in the "Edit Connection Points" dialog are saved when the structure is saved to a KET file and can be loaded.
     */
-  await pageReload(page);
   const bondLine = await getConnectionLine(page);
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
   await openEditConnectionPointsMenu(page, bondLine);
@@ -733,7 +732,6 @@ test('Edit long bonds connections by Edit attachment point menu', async () => {
     6. Click on Reconnect
     7. Take screenshot
     */
-  await pageReload(page);
   const firstMonomer = getMonomerLocator(page, Peptides.C);
   const secondMonomer = getMonomerLocator(page, Peptides.dC);
   await openFileAndAddToCanvasMacro(
@@ -771,7 +769,6 @@ test('Delete long bonds and perform Undo/Redo actions', async () => {
     6. Perform Redo action
     7. Take screenshot
     */
-  await pageReload(page);
   const firstMonomer = getMonomerLocator(page, Peptides.C);
   const secondMonomer = getMonomerLocator(page, Peptides.dC);
   await openFileAndAddToCanvasMacro(
@@ -807,7 +804,6 @@ test('Delete monomer in structure with long bonds and perform Undo/Redo actions'
     6. Perform Redo action
     7. Take screenshot
     */
-  await pageReload(page);
   const firstMonomer = getMonomerLocator(page, Peptides.C);
   const secondMonomer = getMonomerLocator(page, Peptides.dC);
   await openFileAndAddToCanvasMacro(
@@ -840,7 +836,6 @@ test('Copy structure with long bonds and paste on canvas', async () => {
     3. Paste structure
     4. Take screenshot
     */
-  await pageReload(page);
   await openFileAndAddToCanvasMacro(
     'KET/five-peptides-connected-by-r2-r1-expected.ket',
     page,
@@ -911,7 +906,6 @@ connectionVariants2.forEach(({ from, to }) => {
       4. Switch to Sequence mode
       5. Take another screenshot
     */
-    await pageReload(page);
     await selectSnakeLayoutModeTool(page);
     const firstMonomer = getMonomerLocator(page, Peptides.C);
     const secondMonomer = getMonomerLocator(page, Peptides.dC);
@@ -982,7 +976,6 @@ test('Save and Open structure with long bonds to/from MOL V3000', async () => {
     4. Open saved MOL V3000
     5. Take screenshot
     */
-  await pageReload(page);
   const firstMonomer = getMonomerLocator(page, Peptides.C);
   const secondMonomer = getMonomerLocator(page, Peptides.dC);
   await openFileAndAddToCanvasMacro(
@@ -1023,7 +1016,6 @@ test('Connection R3-R3 not overlap each other when connected on one structure', 
     We have a bug https://github.com/epam/ketcher/issues/6459
     After fix we should update snapshot.
     */
-  await pageReload(page);
   const firstMonomer = getMonomerLocator(page, Peptides.C);
   const secondMonomer = getMonomerLocator(page, Peptides.Hcy);
   const fourthMonomer = getMonomerLocator(page, Peptides.meC);
@@ -1097,7 +1089,6 @@ test('Check that magnetic areas (radial rays) exist only for monomers connected 
     2. Hover over the bond and move it
     3. Take screenshot
     */
-  await pageReload(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
     'KET/two-peptides-connected-by-hydrogen-bond.ket',
     page,
@@ -1134,7 +1125,6 @@ test('Check that If the user holds down CRTL (⌘/Command for MacOS) while movin
     2. Hover over the bond and move it with pressed CTRL
     3. Take screenshot
     */
-  await pageReload(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
     'KET/two-peptides-connected-by-hydrogen-bond.ket',
     page,
@@ -1203,7 +1193,6 @@ test('Check the existance of magnetic area for snapping to an angle or closest r
     2. Hover over the bond and move it
     3. Take screenshot
     */
-  await pageReload(page);
   await selectFlexLayoutModeTool(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
     'KET/three-monomer-connected-by-bond.ket',
@@ -1244,7 +1233,6 @@ test('Long bond not turns into a direct bond when moving the second monomer', as
     We have a bug https://github.com/epam/ketcher/issues/6458
     After fix we should update snapshot.
     */
-  await pageReload(page);
   const firstMonomer = getMonomerLocator(page, Peptides.C);
   const secondMonomer = getMonomerLocator(page, Peptides.Hcy);
   const fifthMonomer = getMonomerLocator(page, Peptides.dC);

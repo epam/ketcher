@@ -325,6 +325,7 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
   );
   await page.getByText('Paste from clipboard').click();
+  await page.getByTestId('dropdown-select').waitFor({ state: 'visible' });
   if (structureFormat !== MacroFileType.Ket) {
     await page.getByRole('combobox').click();
     await page.getByText(structureType).click();

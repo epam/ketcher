@@ -3612,15 +3612,15 @@ for (const sequence of sequences) {
 }
 
 for (const sequence of sequences) {
-  test(`Case 35-${sequence.Id}. Delete second symbol of sense chain at ${sequence.SequenceName} Backspace key`, async () => {
+  test(`Case 35-${sequence.Id}. Delete second symbol of antisense chain at ${sequence.SequenceName} Backspace key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 35
-     * Description: User can delete monomer (of every type) on second position in sense chain of sequence (of every configuration) in edit mode
+     * Description: User can delete monomer (of every type) on second position in antisense chain of sequence (of every configuration) in edit mode
      * Scenario:
      * 1. Clear canvas
      * 2. Load sequence from HELM
-     * 3. Switch sequence to edit mode and move cursor to the third position of sense chain
-     * 4. Press Backspace keyboard key to delete second symbol of sense chain in seqience
+     * 3. Switch sequence to edit mode and move cursor to the third position of antisense chain
+     * 4. Press Backspace keyboard key to delete second symbol of antisense chain in seqience
      * 5. Take screenshot to validate that monomer was deleted in Sequence mode
      * 6. Switch to Flex mode
      * 7. Take screenshot to validate that monomer was deleted in Flex mode canvas
@@ -3661,15 +3661,15 @@ for (const sequence of sequences) {
 }
 
 for (const sequence of sequences) {
-  test(`Case 16-${sequence.Id}. Delete third symbol of sense chain at ${sequence.SequenceName} Backspace key`, async () => {
+  test(`Case 36-${sequence.Id}. Delete third symbol of antisense chain at ${sequence.SequenceName} Backspace key`, async () => {
     /*
-     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 16
-     * Description: User can delete monomer (of every type) on third position in sense chain of sequence (of every configuration) in edit mode
+     * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 36
+     * Description: User can delete monomer (of every type) on third position in antisense chain of sequence (of every configuration) in edit mode
      * Scenario:
      * 1. Clear canvas
      * 2. Load sequence from HELM
-     * 3. Switch sequence to edit mode and move cursor to the forth position of sense chain
-     * 4. Press Backspace keyboard key to delete third symbol of sense chain in seqience
+     * 3. Switch sequence to edit mode and move cursor to the forth position of antisense chain
+     * 4. Press Backspace keyboard key to delete third symbol of antisense chain in seqience
      * 5. Take screenshot to validate that monomer was deleted in Sequence mode
      * 6. Switch to Flex mode
      * 7. Take screenshot to validate that monomer was deleted in Flex mode canvas
@@ -3685,7 +3685,7 @@ for (const sequence of sequences) {
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
       position: !sequence.Rotation ? 4 : 8,
-      senseOrAntisense: SequenceChainType.Sense,
+      senseOrAntisense: SequenceChainType.Antisense,
       syncEditMode: false,
     });
 

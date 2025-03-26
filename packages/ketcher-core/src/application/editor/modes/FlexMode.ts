@@ -20,7 +20,10 @@ export class FlexMode extends BaseMode {
 
     editor.renderersContainer.update(modelChanges);
 
-    if (this.previousMode === 'sequence-layout-mode') {
+    if (
+      this.previousMode === 'sequence-layout-mode' &&
+      editor.drawingEntitiesManager.hasMonomers
+    ) {
       editor.scrollToTopLeftCorner();
     }
 

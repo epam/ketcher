@@ -3233,6 +3233,7 @@ for (const monomer of monomersToAdd) {
       });
       await clickInTheMiddleOfTheScreen(page);
 
+      await page.keyboard.press('Shift');
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
@@ -3434,7 +3435,7 @@ for (const sequence of sequences) {
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
       position: 1,
-      senseOrAntisense: SequenceChainType.Sense,
+      senseOrAntisense: SequenceChainType.Antisense,
       syncEditMode: false,
     });
 

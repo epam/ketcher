@@ -31,7 +31,7 @@ export const StyledButton = styled('button', {
   alignItems: 'center',
   border: '0',
   borderRadius: style.border.radius.regular,
-  padding: '1px',
+  padding: '2px',
   minHeight: '28px',
   minWidth: '28px',
   cursor: 'pointer',

@@ -54,7 +54,7 @@ import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
-import { expandCollapseRnaBuilder } from '@utils/macromolecules/rnaBuilder';
+import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
 import {
   clickOnSequenceSymbol,
   doubleClickOnSequenceSymbol,
@@ -486,7 +486,7 @@ test.describe('Sequence edit mode', () => {
     Description: System show full set of IDT aliases at preview tooltip.
     */
     await goToRNATab(page);
-    await expandCollapseRnaBuilder(page);
+    await toggleRnaBuilderAccordion(page);
     await page.getByTestId(Presets.dR_U_P.testId).hover();
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);

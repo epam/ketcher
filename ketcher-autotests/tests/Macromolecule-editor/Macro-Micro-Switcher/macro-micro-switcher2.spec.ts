@@ -51,6 +51,7 @@ import {
   selectSequenceLayoutModeTool,
   takeTopToolbarScreenshot,
   selectSequenceTypeMode,
+  hideLibrary,
 } from '@utils';
 
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
@@ -107,7 +108,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       */
     test.slow();
     await addToFavoritesMonomers(page);
-    await page.getByText('Hide').click();
+    await hideLibrary(page);
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
     await goToFavoritesTab(page);

@@ -34,6 +34,8 @@ import {
   addMonomerToFavorites,
   removeMonomerFromFavorites,
   selectCustomPreset,
+  hideLibrary,
+  showLibrary,
 } from '@utils';
 import {
   expandCollapseRnaBuilder,
@@ -1277,10 +1279,10 @@ test.describe('RNA Library', () => {
      *  Case 16:
      *    Check that after hiding library panel that there is no residual strip remains (which concealing content on the canvas)
      */
-    await page.getByText('Hide').click();
+    await hideLibrary(page);
     await takePageScreenshot(page);
 
-    await page.getByText('Show Library').click();
+    await showLibrary(page);
     await takePageScreenshot(page);
   });
 

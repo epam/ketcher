@@ -123,6 +123,7 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
         <MonomerLibraryToggle
           title="Hide library"
           onClick={toggleLibraryVisibility}
+          data-testid="hide-monomer-library"
         >
           <Icon name="arrows-right" />
         </MonomerLibraryToggle>

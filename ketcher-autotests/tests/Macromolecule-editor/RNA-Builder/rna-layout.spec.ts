@@ -23,7 +23,7 @@ test.describe('RNA layout', () => {
   });
 
   test('Each panel is collapsed', async ({ page }) => {
-    await page.getByText('RNA Builder').locator('button').click();
+    await toggleRnaBuilderAccordion(page);
     await page.getByTestId('summary-Presets').click();
     await takePageScreenshot(page);
   });

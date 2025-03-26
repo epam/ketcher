@@ -39,7 +39,10 @@ interface Props {
 
 const MonomerLibraryToggle = ({ onClick }: Props) => {
   return (
-    <StyledMonomerLibraryToggle onClick={onClick}>
+    <StyledMonomerLibraryToggle
+      onClick={onClick}
+      data-testid="show-monomer-library"
+    >
       <span className="icon">
         <Icon name="arrows-left" />
       </span>

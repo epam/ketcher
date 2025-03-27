@@ -1,6 +1,8 @@
+/* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
 import { Peptides } from '@constants/monomers/Peptides';
+import { Sugars } from '@constants/monomers/Sugars';
 import { Page, test } from '@playwright/test';
 import {
   selectClearCanvasTool,
@@ -17,6 +19,7 @@ import {
   MonomerType,
   moveMouseAway,
   selectSaveTool,
+  openFileAndAddToCanvasAsNewProjectMacro,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import {
@@ -27,9 +30,11 @@ import {
 import {
   createDNAAntisenseChain,
   createRNAAntisenseChain,
+  deleteHydrogenBond,
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
+import { doubleClickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 
@@ -378,5 +383,123 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+  });
+
+  test('Case 11: Warning message when deleting all hydrogen bonds between two chains', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/ketcher/issues/6615
+     * Description: Warning message when deleting all hydrogen bonds between two chains.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Select all nucleotides and call context menu
+     * 4. Click Create DNA antisense stand option
+     * 5. Take a screenshot.
+     */
+    await selectSequenceLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,14:pair-2:pair|RNA1,RNA2,11:pair-5:pair|RNA1,RNA2,8:pair-8:pair|RNA1,RNA2,5:pair-11:pair|RNA1,RNA2,2:pair-14:pair$$$V2.0',
+    );
+    await selectAllStructuresOnCanvas(page);
+    const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await deleteHydrogenBond(page, anySymbolA);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 12: System adds both sense and antisense chain nucleosids in SYNC mode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/ketcher/issues/6606
+     * Description: System adds both sense and antisense chain nucleosids in SYNC mode.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Switch to edit mode and try to add nucleotide (RNA or DNA - C in my case) to the last position
+     * 4. Take a screenshot.
+     */
+    await selectSequenceLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(A)P.R(A)}|RNA2{P.R(U)}$RNA1,RNA2,2:pair-3:pair|RNA1,RNA2,8:pair-1:pair$$$V2.0',
+    );
+    await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 2 });
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.type('C');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 13: System can add nucleotide between phosphate and nucleotide in antisence chain', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/ketcher/issues/6531
+     * Description: System can add nucleotide between phosphate and nucleotide in antisence chain.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Switch to edit mode and try to add nucleotide (RNA or DNA, C in my case) between @ and U
+     * 4. Take a screenshot.
+     */
+    await selectSequenceLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'CHEM1{[4aPEGMal]}|RNA1{R(U)P}|CHEM2{[4aPEGMal]}|CHEM3{[4aPEGMal]}|RNA2{R(A)P}|RNA3{P}$RNA1,CHEM2,3:R2-1:R1|CHEM3,CHEM2,1:pair-1:pair|CHEM1,RNA1,1:R2-1:R1|RNA2,RNA3,3:R2-1:R1|RNA2,CHEM3,1:R1-1:R2|CHEM1,RNA3,1:pair-1:pair|RNA1,RNA2,2:pair-2:pair$$$V2.0',
+    );
+    await doubleClickOnSequenceSymbol(page, 'U', { nthNumber: 0 });
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.type('C');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 14: Snapping not wipes monomer labels in some cases', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/ketcher/issues/6621
+     * Description: Snapping not wipes monomer labels in some cases.
+     * Scenario:
+     * 1. Go to Macro - Flex mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Grab central sugar and move it around whole structure petals
+     * 4. Take a screenshot.
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Bugs/Snapping wipes monomer labels in some cases.ket',
+      page,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await getMonomerLocator(page, Sugars.R).first().click();
+    await page.mouse.down();
+    const coords = [
+      [750, 250],
+      [587, 100],
+      [365, 150],
+      [300, 550],
+      [750, 600],
+    ];
+    for (let i = 0; i < coords.length; i++) {
+      const [x, y] = coords[i];
+      await page.mouse.move(x, y);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+    }
   });
 });

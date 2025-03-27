@@ -182,6 +182,16 @@ export async function createDNAAntisenseChain(page: Page, monomer: Locator) {
   await createAntisenseStrandOption.click();
 }
 
+export async function deleteHydrogenBond(page: Page, monomer: Locator) {
+  await monomer.click({ button: 'right', force: true });
+
+  const deleteHydrogenBondOption = page
+    .getByTestId('delete_hydrogen_bond')
+    .first();
+
+  await deleteHydrogenBondOption.click();
+}
+
 export function getSequenceMonomerLocator(
   page: Page,
   options: MonomerLocatorOptions,

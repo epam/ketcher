@@ -574,6 +574,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await selectRing(RingButton.Benzene, page);
       await clickInTheMiddleOfTheScreen(page);
       await selectTopPanelButton(TopPanelButton.ThreeD, page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         maxDiffPixelRatio: 0.05,
       });

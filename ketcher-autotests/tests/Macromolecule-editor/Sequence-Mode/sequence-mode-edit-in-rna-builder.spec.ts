@@ -23,6 +23,7 @@ import {
 } from '@utils/macromolecules';
 import { SUGAR } from '@constants/testIdConstants';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
+import { modifyInRnaBuilder, getSymbolLocator,} from '@utils/macromolecules/monomer';
 import { pressSaveButton } from '@utils/macromolecules/rnaBuilder';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Phosphates } from '@constants/monomers/Phosphates';
@@ -38,15 +39,10 @@ test.describe('Sequence mode edit in RNA Builder', () => {
   });
 
   test('Select one nucleotide and modify sugar', async ({ page }) => {
-    await clickOnSequenceSymbol(page, 'T');
-    await clickOnSequenceSymbol(page, 'T', { button: 'right' });
-    await waitForMonomerPreview(page);
+    const symbolT = getSymbolLocator(page, { symbolAlias: 'T' }).first();
+    await symbolT.click();
+    await modifyInRnaBuilder(page, symbolT);
 
-    // should see correct context menu title and available 'modify_in_rna_builder' button
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-    });
-    await page.getByTestId('modify_in_rna_builder').click();
     // should see uploaded nucleotide data to RNA Builder and disabled "Update" button
     // should see disabled top bar's selectors
     // should see disabled top undo/redo/open buttons
@@ -78,12 +74,9 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     const endX = 400;
     const endY = 200;
     await selectRectangleArea(page, startX, startY, endX, endY);
-    await clickOnSequenceSymbol(page, 'T', { button: 'right', nthNumber: 2 });
-    await waitForMonomerPreview(page);
+    const symbolT = getSymbolLocator(page, { symbolAlias: 'T' }).nth(2);
+    await modifyInRnaBuilder(page, symbolT);
 
-    // should see correct context menu title and available 'modify_in_rna_builder' button
-    await takeEditorScreenshot(page);
-    await page.getByTestId('modify_in_rna_builder').click();
     // should see uploaded nucleotide (nucleoside + phosphate) data to RNA Builder and disabled "Update" button
     await takeRNABuilderScreenshot(page);
     // Update Sugar and Phosphate
@@ -103,12 +96,9 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     const endX = 320;
     const endY = 200;
     await selectRectangleArea(page, startX, startY, endX, endY);
-    await clickOnSequenceSymbol(page, 'T', { button: 'right', nthNumber: 2 });
-    await waitForMonomerPreview(page);
+    const symbolT = getSymbolLocator(page, { symbolAlias: 'T' }).nth(2);
+    await modifyInRnaBuilder(page, symbolT);
 
-    // should see correct context menu title and available 'modify_in_rna_builder' button
-    await takeEditorScreenshot(page);
-    await page.getByTestId('modify_in_rna_builder').click();
     // should see uploaded data to RNA Builder and disabled "Update" button
     await takeRNABuilderScreenshot(page);
     // Update Sugar and Phosphate
@@ -122,9 +112,9 @@ test.describe('Sequence mode edit in RNA Builder', () => {
   });
 
   test('Select one nucleotide and cancel modification', async ({ page }) => {
-    await clickOnSequenceSymbol(page, 'T');
-    await clickOnSequenceSymbol(page, 'T', { button: 'right' });
-    await page.getByTestId('modify_in_rna_builder').click();
+    const symbolT = getSymbolLocator(page, { symbolAlias: 'T' }).first();
+    await symbolT.click();
+    await modifyInRnaBuilder(page, symbolT);
     await selectMonomer(page, Sugars._25R);
     // should see updated sugar, updated title of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
@@ -143,11 +133,8 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     const endY = 200;
     await selectRectangleArea(page, startX, startY, endX, endY);
     await takeEditorScreenshot(page);
-    await clickOnSequenceSymbol(page, 'T', { button: 'right' });
-    await waitForMonomerPreview(page);
-    // should see correct context menu title and available 'modify_in_rna_builder' button
-    await takeEditorScreenshot(page);
-    await page.getByTestId('modify_in_rna_builder').click();
+    const symbolT = getSymbolLocator(page, { symbolAlias: 'T' }).first();
+    await modifyInRnaBuilder(page, symbolT);
     // should see uploaded nucleotides data to RNA Builder and disabled "Update" button
     await takeRNABuilderScreenshot(page);
     await selectMonomers(page, [Sugars._25R, Phosphates.bP]);
@@ -194,9 +181,9 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await startNewSequence(page);
     await enterSequence(page, 'acgtu');
     await page.keyboard.press('Escape');
-    await clickOnSequenceSymbol(page, 'G');
-    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
-    await page.getByTestId('modify_in_rna_builder').click();
+    const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
+    await symbolG.click();
+    await modifyInRnaBuilder(page, symbolG);
     await takePageScreenshot(page);
   });
 
@@ -210,9 +197,9 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await startNewSequence(page);
     await enterSequence(page, 'acgtu');
     await page.keyboard.press('Escape');
-    await clickOnSequenceSymbol(page, 'G');
-    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
-    await page.getByTestId('modify_in_rna_builder').click();
+    const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
+    await symbolG.click();
+    await modifyInRnaBuilder(page, symbolG);
     await page.getByTestId('summary-Sugars').click();
     await takePresetsScreenshot(page);
   });
@@ -228,11 +215,11 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await enterSequence(page, 'acgtu');
     await page.keyboard.press('Escape');
     await page.keyboard.down('Shift');
-    await clickOnSequenceSymbol(page, 'C');
-    await clickOnSequenceSymbol(page, 'G');
+    await getSymbolLocator(page, { symbolAlias: 'C' }).first().click();
+    const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
+    await symbolG.click();
     await page.keyboard.up('Shift');
-    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
-    await page.getByTestId('modify_in_rna_builder').click();
+    await modifyInRnaBuilder(page, symbolG);
     await takeRNABuilderScreenshot(page);
   });
 
@@ -246,9 +233,9 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await startNewSequence(page);
     await enterSequence(page, 'acgtu');
     await page.keyboard.press('Escape');
-    await clickOnSequenceSymbol(page, 'G');
-    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
-    await page.getByTestId('modify_in_rna_builder').click();
+    const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
+    await symbolG.click();
+    await modifyInRnaBuilder(page, symbolG);
     await selectMonomers(page, [Sugars._3A6, Bases.dabA, Phosphates.sP_]);
     await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
   });
@@ -260,11 +247,11 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     */
     await openFileAndAddToCanvasMacro('KET/acgp-nucleoside.ket', page);
     await page.keyboard.down('Shift');
-    await clickOnSequenceSymbol(page, 'G');
-    await clickOnSequenceSymbol(page, 'p');
+    const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
+    await symbolG.click();
+    await getSymbolLocator(page, { symbolAlias: 'p' }).first().click();
     await page.keyboard.up('Shift');
-    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
-    await page.getByTestId('modify_in_rna_builder').click();
+    await modifyInRnaBuilder(page, symbolG);
     await selectMonomers(page, [Sugars._3A6, Bases.dabA, Phosphates.sP_]);
     await moveMouseAway(page);
     await pressSaveButton(page);
@@ -279,11 +266,9 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: "Phosphate" field is empty when single nucleoside is selected.
     */
     await openFileAndAddToCanvasMacro('KET/acgp-nucleoside.ket', page);
-    await page.keyboard.down('Shift');
-    await clickOnSequenceSymbol(page, 'G');
-    await page.keyboard.up('Shift');
-    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
-    await page.getByTestId('modify_in_rna_builder').click();
+    const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
+    await symbolG.click();
+    await modifyInRnaBuilder(page, symbolG);
     await takeRNABuilderScreenshot(page);
   });
 
@@ -295,11 +280,9 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: Nucleoside converted to Nucleotide after added Phosphate in RNA Builder.
     */
     await openFileAndAddToCanvasMacro('KET/acgp-nucleoside.ket', page);
-    await page.keyboard.down('Shift');
-    await clickOnSequenceSymbol(page, 'G');
-    await page.keyboard.up('Shift');
-    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
-    await page.getByTestId('modify_in_rna_builder').click();
+    const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
+    await symbolG.click();
+    await modifyInRnaBuilder(page, symbolG);
     await selectMonomer(page, Phosphates.sP_);
     await pressSaveButton(page);
     await takeEditorScreenshot(page);
@@ -317,13 +300,13 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     */
     await openFileAndAddToCanvasMacro('KET/agtcu.ket', page);
     await page.keyboard.down('Shift');
-    await clickOnSequenceSymbol(page, 'G');
-    await clickOnSequenceSymbol(page, 'T');
-    await clickOnSequenceSymbol(page, 'C');
-    await clickOnSequenceSymbol(page, 'U');
+    const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
+    await symbolG.click();
+    await getSymbolLocator(page, { symbolAlias: 'T' }).first().click();
+    await getSymbolLocator(page, { symbolAlias: 'C' }).first().click();
+    await getSymbolLocator(page, { symbolAlias: 'U' }).first().click();
     await page.keyboard.up('Shift');
-    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
-    await page.getByTestId('modify_in_rna_builder').click();
+    await modifyInRnaBuilder(page, symbolG);
     await takeRNABuilderScreenshot(page);
     await selectMonomer(page, Phosphates.sP_);
     await pressSaveButton(page);
@@ -363,13 +346,13 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
       page,
     );
     await page.keyboard.down('Shift');
-    await clickOnSequenceSymbol(page, 'A');
-    await clickOnSequenceSymbol(page, 'A', { nthNumber: 6 });
-    await clickOnSequenceSymbol(page, 'A', { nthNumber: 12 });
-    await clickOnSequenceSymbol(page, 'A', { nthNumber: 18 });
+    const symbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
+    await symbolA.click();
+    await getSymbolLocator(page, { symbolAlias: 'A' }).nth(6).click();
+    await getSymbolLocator(page, { symbolAlias: 'A' }).nth(12).click();
+    await getSymbolLocator(page, { symbolAlias: 'A' }).nth(18).click();
     await page.keyboard.up('Shift');
-    await clickOnSequenceSymbol(page, 'A', { button: 'right' });
-    await page.getByTestId('modify_in_rna_builder').click();
+    await modifyInRnaBuilder(page, symbolA);
     await takeRNABuilderScreenshot(page);
     await takeEditorScreenshot(page);
   });

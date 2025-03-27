@@ -286,7 +286,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         (nodeIndex === subChain.nodes.length - 2 &&
           subChain.nodes[subChain.nodes.length - 1].monomer instanceof
             Phosphate) ||
-        (nodeIndex + 1) % this.nthSeparationInRow === 0
+        this.isNthNodeInChain
       ) {
         numberToDisplay = nodeIndex + 1;
       }
@@ -357,7 +357,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       !this.isBeginningOfChain &&
       // display for first and last in subchain (except last MonomerSequenceNode)
       // for second last in subchain if last is MonomerSequenceNode (ex. Phosphate)
-      // for every nth node in row (10th) in subchain (ignoring linker nodes)
+      // for every nth node in row (10th) in chain
       (this.isBeginningOfSubChain ||
         this.isLastInSubChain ||
         this.isFirstNodeInSubChainAfterLinker ||
@@ -372,7 +372,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
             ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
               antisenseNodeIndex === this.chain.length - 1
             : this.LinkerNodeRightBeforeOrRightAfterCurrentNode ||
-              this.isNthNodeInSubChain ||
+              this.isNthNodeInChain ||
               this.isLastMonomerInChain)))
     );
   }
@@ -422,8 +422,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     });
   }
 
-  private get isNthNodeInSubChain() {
-    return !!this.NthNodeInSubChainValue;
+  private get isNthNodeInChain() {
+    return (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0;
   }
 
   private get LinkerNodeRightBeforeOrRightAfterCurrentNode() {
@@ -440,38 +440,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
           subChain.nodes[nodeIndex + 1] instanceof LinkerSequenceNode)
       );
     });
-  }
-
-  private get NthNodeInSubChainValue() {
-    let nthNumber;
-    this.twoStrandedNode.chain.subChains.find((subChain) => {
-      if (!this.isSubChainNode(this.node)) return false;
-
-      const nodeIndex = subChain.nodes.indexOf(this.node);
-      if (nodeIndex === -1) return false;
-
-      // Linker node can be in the subchain before the current node
-      // in this case we need to ignore it:
-      // 1         6   8   10        15
-      // A A A A A A @ A A A A A A A Ap
-      const linkerNodeIndex = subChain.nodes.findIndex(
-        (node) => node instanceof LinkerSequenceNode,
-      );
-      let nthNumberAfterLinker;
-      if (linkerNodeIndex !== -1 && linkerNodeIndex < nodeIndex) {
-        nthNumberAfterLinker = this.getNodeIndexIgnoringLinkerNodesInSubChain();
-        if (nthNumberAfterLinker % this.nthSeparationInRow !== 0) return false;
-        nthNumber = nthNumberAfterLinker;
-      } else if (linkerNodeIndex === -1) {
-        if ((nodeIndex + 1) % this.nthSeparationInRow === 0) {
-          nthNumber = nodeIndex + 1;
-        }
-      }
-
-      return null;
-    });
-
-    return nthNumber;
   }
 
   public showCaret() {

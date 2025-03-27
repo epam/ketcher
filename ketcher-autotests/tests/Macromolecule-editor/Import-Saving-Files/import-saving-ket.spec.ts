@@ -156,6 +156,7 @@ test.describe('Import-Saving .ket Files', () => {
     Description: The monomer name is present in the preview after opening the saved file.
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
+    await pageReload(page);
     await selectMonomer(page, Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/monomer-expected.ket', FileType.KET);
@@ -163,9 +164,7 @@ test.describe('Import-Saving .ket Files', () => {
     await openFileAndAddToCanvasMacro('KET/monomer-expected.ket', page);
     await getMonomerLocator(page, Peptides.bAla).hover();
     await waitForMonomerPreview(page);
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await takeEditorScreenshot(page);
   });
 
   test('Check that after loading from a file and then pressing undo, it does not break the selection/moving functionality', async () => {

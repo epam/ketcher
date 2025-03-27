@@ -590,7 +590,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
-    await page.locator('.css-1kbfai8').click();
+    await page.locator('.css-kp5gpq').click();
   });
 
   test('Check the pop-up window appear in fullscreen mode after clicking the “Open/Save” button', async () => {
@@ -606,7 +606,7 @@ test.describe('Macro-Micro-Switcher', () => {
         );
       }
     });
-    await page.locator('.css-1kbfai8').click();
+    await page.locator('.css-kp5gpq').click();
     await selectOpenFileTool(page);
     await takeEditorScreenshot(page);
     await page.getByTitle('Close window').click();

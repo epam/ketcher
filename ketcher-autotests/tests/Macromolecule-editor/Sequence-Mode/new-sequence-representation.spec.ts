@@ -3726,7 +3726,7 @@ test(`Case 39. Check if a line break (enter) is added in SYNC mode ON, both back
   });
 });
 
-test(`Case 40. Check if a line break (enter) is added in SYNC mode Off to sence chain, sense chains should be broken`, async () => {
+test(`Case 40. Check if a line break (enter) is added in SYNC mode Off to sense chain, sense chains should be broken`, async () => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 40
    * Description: Check if a line break (enter) is added in SYNC mode Off to sence chain, sense chains should be broken ( Requirement: 2.2 )
@@ -3758,7 +3758,7 @@ test(`Case 40. Check if a line break (enter) is added in SYNC mode Off to sence 
   });
 });
 
-test(`Case 41. Check if a line break (enter) is added in SYNC mode Off to sence chain, antisense chains should be broken`, async () => {
+test(`Case 41. Check if a line break (enter) is added in SYNC mode Off to sense chain, antisense chains should be broken`, async () => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 41
    * Description: Check if a line break (enter) is added in SYNC mode Off to sence chain, sense chains should be broken ( Requirement: 2.2 )

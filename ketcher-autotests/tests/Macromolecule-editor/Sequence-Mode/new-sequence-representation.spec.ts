@@ -1317,99 +1317,10 @@ interface IFailedTestSequenceReplaceMonomer {
 const FailedTestNewSequenceRepresentation: IFailedTestSequenceReplaceMonomer[] =
   [
     // {
-    //   // Phosphate is missing for antisense chain if present #6427
-    //   TestNameContains: ['Case 1-'],
-    //   SequenceId: [45, 46],
-    //   BugsInTests: ['https://github.com/epam/ketcher/issues/6427'],
-    // },
-    // {
-    //   // Unable to add monomer to sence/antisence chain before phosphate if it stands on first position #6528
-    //   TestNameContains: ['Case 1-'],
-    //   SequenceId: [
-    //     60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 123, 124, 125, 126, 127, 128,
-    //     129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142,
-    //     143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153, 154, 155, 156,
-    //     157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170,
-    //     171, 186, 187, 210, 211, 212, 213, 214, 215, 216, 217, 219, 220, 221,
-    //     222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235,
-    //     236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 269,
-    //     270, 271, 272,
-    //   ],
-    //   BugsInTests: ['https://github.com/epam/ketcher/issues/6528'],
-    // },
-    // {
-    //   // Adding RNA/DNA nucleotide before CHEM causes adding nucleoside #6529
-    //   TestNameContains: ['Case 1-'],
-    //   SequenceId: [
-    //     50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 70, 71, 72, 73, 74, 75, 76, 77,
-    //     78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,
-    //     96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110,
-    //     111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124,
-    //     125, 126, 127, 128, 129, 130, 131, 132, 153, 154, 155, 156, 157, 158,
-    //     159, 160, 161, 162, 184, 185, 188, 189, 190, 191, 192, 193, 194, 195,
-    //     196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209,
-    //     232, 233, 234, 235, 236, 237, 238, 239, 265, 266, 267, 268,
-    //   ],
-    //   MonomerId: [1],
-    //   BugsInTests: ['https://github.com/epam/ketcher/issues/6529'],
-    // },
-    // {
-    //   // Adding RNA/DNA nucleotide before CHEM causes adding nucleoside #6529
-    //   TestNameContains: ['Case 2-'],
-    //   SequenceId: [
-    //     9, 10, 11, 12, 13, 14, 15, 16, 24, 25, 26, 27, 28, 29, 30, 31, 32, 36,
-    //     37, 43, 44, 50, 51, 52, 53, 54, 55, 60, 61, 62, 63, 64, 65, 80, 81, 82,
-    //     81, 82, 83, 84, 95, 96, 97, 98, 99, 104, 105, 106, 109, 143, 144, 146,
-    //     148, 150, 180, 182, 183, 184, 185, 186, 187, 198, 210, 229, 231, 257,
-    //     259, 262, 264, 267, 268, 271, 272,
-    //   ],
-    //   MonomerId: [1],
-    //   BugsInTests: ['https://github.com/epam/ketcher/issues/6529'],
-    // },
-    // {
-    //   // System shows unnecessary - symbol opposite to peptide #6475
-    //   TestNameContains: ['Case 1-'],
-    //   SequenceId: [
-    //     172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 183, 184, 185, 188,
-    //   ],
-    //   MonomerId: [2],
-    //   BugsInTests: ['https://github.com/epam/ketcher/issues/6475'],
-    // },
-    // {
-    //   // Adding nucleotide between nucleotide and - symbol causes appearence of separated phosphate on the canvas #6530
-    //   TestNameContains: ['Case 2-'],
-    //   SequenceId: [45, 46],
-    //   MonomerId: [1],
-    //   BugsInTests: ['https://github.com/epam/ketcher/issues/6530'],
-    // },
-    // {
-    //   // System can't add nucleotide between phosphate and nucleotide in antisence chain #6531
-    //   TestNameContains: ['Case 2-'],
-    //   SequenceId: [
-    //     125, 128, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 144, 145,
-    //     146, 153, 154, 156, 157, 158, 159, 160, 161, 163, 164, 165, 166, 167,
-    //     168, 169, 170, 210,
-    //   ],
-    //   MonomerId: [1],
-    //   BugsInTests: ['https://github.com/epam/ketcher/issues/6531'],
-    // },
-    // {
-    //   // Adding sense/antisence to layout causes exception: process is not defined #6532
-    //   TestNameContains: ['Case 2-'],
-    //   SequenceId: [
-    //     210, 212, 213, 215, 217, 219, 220, 221, 222, 223, 224, 225, 226, 227,
-    //     228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239, 240, 241,
-    //     242, 243, 244, 245, 246, 247, 248,
-    //   ],
-    //   MonomerId: [1],
-    //   BugsInTests: ['https://github.com/epam/ketcher/issues/6532'],
-    // },
-    // {
-    //   // System doesn't establishes r2-r1 connection with phosphate at the end of antisense chain if nucleotide added to the end #6536
-    //   TestNameContains: ['Case 4-'],
-    //   SequenceId: [35, 37, 41, 42, 44, 46, 49, 57, 59, 67, 69, 103, 106],
-    //   MonomerId: [1],
-    //   BugsInTests: ['https://github.com/epam/ketcher/issues/6536'],
+    //   // Adding monomet to first from the left position of antisense chain works wrong and causes exception:
+    //   //Uncaught TypeError: Cannot read properties of undefined (reading 'chain') #6775
+    //   TestNameContains: ['Case 27-'],
+    //   BugsInTests: ['https://github.com/epam/ketcher/issues/6775'],
     // },
   ];
 
@@ -3709,3 +3620,172 @@ for (const sequence of sequences) {
     await checkForKnownBugs(sequence);
   });
 }
+
+test(`Case 37. Verify that above and bellow the chains where the caret is placed there are two triangles that indicate that changes occur in both strands`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 37
+   * Description: Verify that above and bellow the chains where the caret is placed there are two triangles that indicate that changes occur in both strands ( Requirement: 2.1 )
+   * Scenario:
+   * 1. Clear canvas
+   * 2. Load sequence from HELM
+   * 3. Switch sequence to edit mode (SYNC is ON) and move cursor to the middle of sense chain
+   * 4. Take screenshot to validate presence of triangles
+   */
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
+  );
+  await selectSequenceLayoutModeTool(page);
+
+  await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+    position: 2,
+    senseOrAntisense: SequenceChainType.Sense,
+    syncEditMode: true,
+  });
+
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 38. Check that up and down arrows on the keyboard allow the user to switch between adding the typed symbol to one or the other chain - caret for the first or caret for the second chain indicate it`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 38
+   * Description: Check that up and down arrows on the keyboard allow the user to switch between adding the typed symbol
+   *              to one or the other chain - caret for the first or caret for the second chain indicate it ( Requirement: 2.1 )
+   * Scenario:
+   * 1. Clear canvas
+   * 2. Load sequence from HELM
+   * 3. Switch sequence to edit mode (SYNC is OFF) and move cursor to the middle of sense chain
+   * 4. Take screenshot to validate cursor position in sense chain
+   * 5. Press down arrow on the keyboard
+   * 6. Take screenshot to validate cursor position in antisense chain
+   * 7. Press up arrow on the keyboard
+   */
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
+  );
+  await selectSequenceLayoutModeTool(page);
+
+  await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+    position: 2,
+    senseOrAntisense: SequenceChainType.Sense,
+    syncEditMode: true,
+  });
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+
+  await page.keyboard.press('ArrowDown');
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+
+  await page.keyboard.press('ArrowUp');
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 39. Check if a line break (enter) is added in SYNC mode ON, both backbone chains should be broken`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 39
+   * Description: Check if a line break (enter) is added in SYNC mode ON, both backbone chains should be broken ( Requirement: 2.2 )
+   * Scenario:
+   * 1. Clear canvas
+   * 2. Load sequence from HELM
+   * 3. Switch sequence to edit mode (SYNC is ON) and move cursor to the middle of sense chain
+   * 4. Press Enter on the keyboard
+   * 5. Click in the middle of the screen to exit edit mode
+   * 6. Take screenshot to validate both backbone chains are broken
+   */
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
+  );
+  await selectSequenceLayoutModeTool(page);
+
+  await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+    position: 2,
+    senseOrAntisense: SequenceChainType.Sense,
+    syncEditMode: true,
+  });
+  await page.keyboard.press('Enter');
+  await clickInTheMiddleOfTheScreen(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 40. Check if a line break (enter) is added in SYNC mode Off to sence chain, sense chains should be broken`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 40
+   * Description: Check if a line break (enter) is added in SYNC mode Off to sence chain, sense chains should be broken ( Requirement: 2.2 )
+   * Scenario:
+   * 1. Clear canvas
+   * 2. Load sequence from HELM
+   * 3. Switch sequence to edit mode (SYNC is OFF) and move cursor to the middle of sense chain
+   * 4. Press Enter on the keyboard
+   * 5. Click in the middle of the screen to exit edit mode
+   * 6. Take screenshot to validate sence chains is broken
+   */
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
+  );
+  await selectSequenceLayoutModeTool(page);
+
+  await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+    position: 2,
+    senseOrAntisense: SequenceChainType.Sense,
+    syncEditMode: true,
+  });
+  await page.keyboard.press('Enter');
+  await clickInTheMiddleOfTheScreen(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Case 41. Check if a line break (enter) is added in SYNC mode Off to sence chain, antisense chains should be broken`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 40
+   * Description: Check if a line break (enter) is added in SYNC mode Off to sence chain, sense chains should be broken ( Requirement: 2.2 )
+   * Scenario:
+   * 1. Clear canvas
+   * 2. Load sequence from HELM
+   * 3. Switch sequence to edit mode (SYNC is OFF) and move cursor to the middle of sense chain
+   * 4. Press Enter on the keyboard
+   * 5. Click in the middle of the screen to exit edit mode
+   * 6. Take screenshot to validate sence chains is broken
+   */
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
+  );
+  await selectSequenceLayoutModeTool(page);
+
+  await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+    position: 2,
+    senseOrAntisense: SequenceChainType.Antisense,
+    syncEditMode: true,
+  });
+  await page.keyboard.press('Enter');
+  await clickInTheMiddleOfTheScreen(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});

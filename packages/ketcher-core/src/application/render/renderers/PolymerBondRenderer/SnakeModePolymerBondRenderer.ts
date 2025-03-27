@@ -1,3 +1,4 @@
+import { SnakeMode } from 'application/editor';
 import { editorEvents } from 'application/editor/editorEvents';
 import { CoreEditor } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
@@ -5,6 +6,7 @@ import {
   BaseMonomerRenderer,
   BaseSequenceItemRenderer,
 } from 'application/render';
+import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import { SVGPathDAttributeUtil } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtil';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
@@ -17,25 +19,24 @@ import {
 } from 'domain/entities/canvas-matrix/Connection';
 import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
+import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { getSugarFromRnaBase } from 'domain/helpers/monomers';
+import { isNumber } from 'lodash';
 import { BaseRenderer } from '../BaseRenderer';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { SnakeMode } from 'application/editor';
 import {
   CORNER_LENGTH,
   DOUBLE_CORNER_LENGTH,
   generateBend,
   generateCornerFromBottomToRight,
-  generateCornerFromLeftToTop,
   generateCornerFromLeftToBottom,
-  generateCornerFromRightToTop,
+  generateCornerFromLeftToTop,
   generateCornerFromRightToBottom,
+  generateCornerFromRightToTop,
   generateCornerFromTopToLeft,
   generateCornerFromTopToRight,
   SMOOTH_CORNER_SIZE,
 } from './helpers';
-import { isNumber } from 'lodash';
 
 enum LineDirection {
   Horizontal = 'Horizontal',
@@ -97,10 +98,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     return this.rootBBox?.height || 0;
   }
 
-  private get scaledPosition(): {
-    readonly endPosition: Vec2;
-    readonly startPosition: Vec2;
-  } {
+  private get scaledPosition(): PolymerBondRendererStartAndEndPositions {
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
     const startPositionInPixels = Coordinates.modelToCanvas(

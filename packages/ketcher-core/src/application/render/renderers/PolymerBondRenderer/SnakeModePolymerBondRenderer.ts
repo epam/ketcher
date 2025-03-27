@@ -292,7 +292,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       pathPart +=
         SVGPathDAttributeUtil.generateVerticalAbsoluteLine(absoluteLineY) + ' ';
     }
-    pathPart += generateBend(cos, sin, cos, 1);
+    pathPart += generateBend(cos, sin, cos, 1) + ' ';
 
     return {
       pathPart,
@@ -365,7 +365,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
             absoluteLineY,
           ) + ' ';
       }
-      pathDAttributeValue += generateBend(0, -1, cos, -1);
+      pathDAttributeValue += generateBend(0, -1, cos, -1) + ' ';
     } else {
       {
         const absoluteLineY =
@@ -383,7 +383,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         !isSecondCellEmpty &&
         !isTwoNeighborRowsConnection
       ) {
-        pathDAttributeValue += generateBend(0, 1, cos, 1);
+        pathDAttributeValue += generateBend(0, 1, cos, 1) + ' ';
       }
     }
 
@@ -457,10 +457,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
                 absoluteLineY,
               ) + ' ';
           }
-          pathDAttributeValue += generateBend(0, sin, cos, 1);
+          pathDAttributeValue += generateBend(0, sin, cos, 1) + ' ';
         }
         pathDAttributeValue += `H ${endPosition.x - SMOOTH_CORNER_SIZE * cos} `;
-        pathDAttributeValue += generateBend(cos, 0, cos, 1);
+        pathDAttributeValue += generateBend(cos, 0, cos, 1) + ' ';
         return;
       }
 

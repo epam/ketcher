@@ -1,3 +1,5 @@
+import { SVGPathDAttributeUtil } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtil';
+
 export const SMOOTH_CORNER_SIZE = 5;
 
 export const generateBend = (
@@ -7,9 +9,12 @@ export const generateBend = (
   dy: number,
 ): string => {
   const size = SMOOTH_CORNER_SIZE;
-  const controlPoint = `${size * dx1},${size * dy1}`;
-  const endPoint = `${size * dx},${size * dy}`;
-  return `q ${controlPoint} ${endPoint} `;
+  return SVGPathDAttributeUtil.generateQuadraticRelativeCurve(
+    size * dx1,
+    size * dy1,
+    size * dx,
+    size * dy,
+  );
 };
 
 export const CORNER_LENGTH = 4;

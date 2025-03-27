@@ -3709,12 +3709,12 @@ test(`Case 39. Check if a line break (enter) is added in SYNC mode ON, both back
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
+    'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,11:pair-2:pair$$$V2.0',
   );
   await selectSequenceLayoutModeTool(page);
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
-    position: 2,
+    position: 3,
     senseOrAntisense: SequenceChainType.Sense,
     syncEditMode: true,
   });
@@ -3741,12 +3741,12 @@ test(`Case 40. Check if a line break (enter) is added in SYNC mode Off to sence 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
+    'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,11:pair-2:pair$$$V2.0',
   );
   await selectSequenceLayoutModeTool(page);
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
-    position: 2,
+    position: 3,
     senseOrAntisense: SequenceChainType.Sense,
     syncEditMode: true,
   });
@@ -3760,7 +3760,7 @@ test(`Case 40. Check if a line break (enter) is added in SYNC mode Off to sence 
 
 test(`Case 41. Check if a line break (enter) is added in SYNC mode Off to sence chain, antisense chains should be broken`, async () => {
   /*
-   * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 40
+   * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 41
    * Description: Check if a line break (enter) is added in SYNC mode Off to sence chain, sense chains should be broken ( Requirement: 2.2 )
    * Scenario:
    * 1. Clear canvas
@@ -3773,12 +3773,12 @@ test(`Case 41. Check if a line break (enter) is added in SYNC mode Off to sence 
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
-    'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
+    'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,11:pair-2:pair$$$V2.0',
   );
   await selectSequenceLayoutModeTool(page);
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
-    position: 2,
+    position: 3,
     senseOrAntisense: SequenceChainType.Antisense,
     syncEditMode: true,
   });

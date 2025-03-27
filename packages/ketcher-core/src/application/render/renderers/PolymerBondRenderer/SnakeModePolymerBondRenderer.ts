@@ -5,6 +5,7 @@ import {
   BaseMonomerRenderer,
   BaseSequenceItemRenderer,
 } from 'application/render';
+import { SVGPathDAttributeUtil } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtil';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
 import { BaseMonomer, Vec2 } from 'domain/entities';
@@ -282,8 +283,17 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         cos * (maxXOffset + 1) * 3 +
         (maxYOffset + 1) * 3;
     }
-    let pathPart = horizontal ? 'H ' : 'V ';
-    pathPart += `${endOfPathPart - SMOOTH_CORNER_SIZE * cos} `;
+    let pathPart = '';
+    if (horizontal) {
+      const absoluteLineX = endOfPathPart - SMOOTH_CORNER_SIZE * cos;
+      pathPart +=
+        SVGPathDAttributeUtil.generateHorizontalAbsoluteLine(absoluteLineX) +
+        ' ';
+    } else {
+      const absoluteLineY = endOfPathPart - SMOOTH_CORNER_SIZE * cos;
+      pathPart +=
+        SVGPathDAttributeUtil.generateVerticalAbsoluteLine(absoluteLineY) + ' ';
+    }
     pathPart += generateBend(cos, sin, cos, 1);
 
     return {
@@ -329,7 +339,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       startPosition.x >= (this.sideConnectionBondTurnPoint || endPosition.x)
         ? 180
         : 0;
-    let pathDAttributeValue = `M ${startPosition.x},${startPosition.y} `;
+    let pathDAttributeValue =
+      SVGPathDAttributeUtil.generateMoveTo(startPosition.x, startPosition.y) +
+      ' ';
 
     const cos = Math.cos((xDirection * Math.PI) / 180);
 
@@ -344,18 +356,30 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     const isSecondCellEmpty = cells[1].node === null;
 
     if (areCellsOnSameRow) {
-      pathDAttributeValue += `L ${startPosition.x},${
-        startPosition.y -
-        BOND_END_LENGTH -
-        horizontalPartIntersectionsOffset * 3
-      } `;
+      {
+        const absoluteLineY =
+          startPosition.y -
+          BOND_END_LENGTH -
+          horizontalPartIntersectionsOffset * 3;
+        pathDAttributeValue +=
+          SVGPathDAttributeUtil.generateAbsoluteLine(
+            startPosition.x,
+            absoluteLineY,
+          ) + ' ';
+      }
       pathDAttributeValue += generateBend(0, -1, cos, -1);
     } else {
-      pathDAttributeValue += `L ${startPosition.x},${
-        startPosition.y +
-        BOND_END_LENGTH +
-        horizontalPartIntersectionsOffset * 3
-      } `;
+      {
+        const absoluteLineY =
+          startPosition.y +
+          BOND_END_LENGTH +
+          horizontalPartIntersectionsOffset * 3;
+        pathDAttributeValue +=
+          SVGPathDAttributeUtil.generateAbsoluteLine(
+            startPosition.x,
+            absoluteLineY,
+          ) + ' ';
+      }
       if (
         !isStraightVerticalConnection &&
         !isSecondCellEmpty &&
@@ -420,16 +444,21 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         const cos = Math.cos((_xDirection * Math.PI) / 180);
 
         if (!areCellsOnSameRow) {
-          pathDAttributeValue += `V ${
-            endPosition.y -
-            CELL_HEIGHT / 2 -
-            SMOOTH_CORNER_SIZE -
-            sin * (cellConnection.yOffset || 0) * 3 -
-            (isTwoNeighborRowsConnection
-              ? maxHorizontalOffset - cellConnection.xOffset
-              : cellConnection.xOffset) *
-              3
-          } `;
+          {
+            const absoluteLineY =
+              endPosition.y -
+              CELL_HEIGHT / 2 -
+              SMOOTH_CORNER_SIZE -
+              sin * (cellConnection.yOffset || 0) * 3 -
+              (isTwoNeighborRowsConnection
+                ? maxHorizontalOffset - cellConnection.xOffset
+                : cellConnection.xOffset) *
+                3;
+            pathDAttributeValue +=
+              SVGPathDAttributeUtil.generateVerticalAbsoluteLine(
+                absoluteLineY,
+              ) + ' ';
+          }
           pathDAttributeValue += generateBend(0, sin, cos, 1);
         }
         pathDAttributeValue += `H ${endPosition.x - SMOOTH_CORNER_SIZE * cos} `;
@@ -469,7 +498,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
       previousConnection = cellConnection;
     });
 
-    pathDAttributeValue += `L ${endPosition.x},${endPosition.y} `;
+    pathDAttributeValue +=
+      SVGPathDAttributeUtil.generateAbsoluteLine(endPosition.x, endPosition.y) +
+      ' ';
 
     this.bodyElement = rootElement
       .append('path')
@@ -795,7 +826,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     startPosition?: Vec2,
   ): void {
     const start = startPosition
-      ? `M ${Math.round(startPosition.x)},${Math.round(startPosition.y)}`
+      ? SVGPathDAttributeUtil.generateMoveTo(
+          Math.round(startPosition.x),
+          Math.round(startPosition.y),
+        )
       : this.path;
     const line =
       lineDirection === LineDirection.Horizontal
@@ -805,10 +839,14 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   private addRandomLine(startPosition: Vec2, endPosition: Vec2): void {
-    const start = `M ${Math.round(startPosition.x)},${Math.round(
-      startPosition.y,
-    )}`;
-    const line = `L ${Math.round(endPosition.x)},${Math.round(endPosition.y)}`;
+    const start = SVGPathDAttributeUtil.generateMoveTo(
+      Math.round(startPosition.x),
+      Math.round(startPosition.y),
+    );
+    const line = SVGPathDAttributeUtil.generateAbsoluteLine(
+      Math.round(endPosition.x),
+      Math.round(endPosition.y),
+    );
     this.path = `${start} ${line}`;
   }
 

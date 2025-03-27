@@ -23,8 +23,6 @@ export const RootSizeProvider = ({ children, rootRef }: Props) => {
       return;
     }
 
-    console.log('handle resize');
-
     const { width, height } = rootRef.current.getBoundingClientRect();
     setSize({ width, height });
   }, [rootRef]);

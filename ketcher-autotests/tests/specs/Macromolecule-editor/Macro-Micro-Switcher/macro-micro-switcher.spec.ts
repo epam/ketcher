@@ -570,6 +570,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await turnOnMacromoleculesEditor(page);
       await selectMonomer(page, Peptides.bAla);
       await clickInTheMiddleOfTheScreen(page);
+      await moveMouseAway(page);
       await turnOnMicromoleculesEditor(page);
       await selectRing(RingButton.Benzene, page);
       await clickInTheMiddleOfTheScreen(page);

@@ -1510,7 +1510,7 @@ export class SequenceMode extends BaseMode {
     };
   }
 
-  private deleteSelection() {
+  public deleteSelection() {
     const selections = SequenceRenderer.selections;
 
     if (selections.length > 1) {

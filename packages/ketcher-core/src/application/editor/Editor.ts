@@ -324,20 +324,19 @@ export class CoreEditor {
         event.clientX <= canvasBoundingClientRect.right &&
         event.clientY >= canvasBoundingClientRect.top &&
         event.clientY <= canvasBoundingClientRect.bottom;
+      const sequenceSelections = SequenceRenderer.selections.map(
+        (selectionRange) =>
+          selectionRange.map((twoStrandedNodeSelection) => {
+            return {
+              ...twoStrandedNodeSelection,
+              node: twoStrandedNodeSelection.node.senseNode,
+              twoStrandedNode: twoStrandedNodeSelection.node,
+            };
+          }),
+      ) as NodesSelection;
 
       if (eventData instanceof BaseSequenceItemRenderer) {
-        this.events.rightClickSequence.dispatch([
-          event,
-          SequenceRenderer.selections.map((selectionRange) =>
-            selectionRange.map((twoStrandedNodeSelection) => {
-              return {
-                ...twoStrandedNodeSelection,
-                node: twoStrandedNodeSelection.node.senseNode,
-                twoStrandedNode: twoStrandedNodeSelection.node,
-              };
-            }),
-          ) as NodesSelection,
-        ]);
+        this.events.rightClickSequence.dispatch([event, sequenceSelections]);
       } else if (
         eventData instanceof FlexModePolymerBondRenderer ||
         (eventData instanceof SnakeModePolymerBondRenderer &&
@@ -356,7 +355,7 @@ export class CoreEditor {
             .map(([, drawingEntity]) => drawingEntity as BaseMonomer),
         ]);
       } else if (isClickOnCanvas) {
-        this.events.rightClickCanvas.dispatch(event);
+        this.events.rightClickCanvas.dispatch([event, sequenceSelections]);
       }
 
       return false;
@@ -416,7 +415,16 @@ export class CoreEditor {
     this.events.copySelectedStructure.add(() => {
       this.mode.onCopy();
     });
+    this.events.pasteFromClipboard.add(() => {
+      this.mode.onPaste();
+    });
     this.events.deleteSelectedStructure.add(() => {
+      if (this.mode instanceof SequenceMode) {
+        this.mode.deleteSelection();
+
+        return;
+      }
+
       const command = new Command();
       const history = new EditorHistory(this);
 

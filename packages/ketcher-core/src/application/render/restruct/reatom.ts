@@ -312,7 +312,7 @@ class ReAtom extends ReObject {
         const path = render.paper
           .text(position.x, position.y, sgroup.data.name)
           .attr({
-            'font-weight': 700,
+            'font-weight': '700',
             'font-size': options.fontszInPx,
             'font-family': fontFamily,
           });

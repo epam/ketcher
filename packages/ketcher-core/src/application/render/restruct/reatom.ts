@@ -406,6 +406,26 @@ class ReAtom extends ReObject {
     let isHydrogen;
     let label;
     let index: any = null;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const isAttachmentAtom = this.a.isAp;
+
+    if (isAttachmentAtom) {
+      const backgroundSize = options.fontszInPx * 2;
+
+      const background = render.paper
+        .rect(
+          ps.x - backgroundSize / 2,
+          ps.y - backgroundSize / 2,
+          backgroundSize,
+          backgroundSize,
+          10,
+        )
+        .attr({ fill: 'gold' })
+        .attr({ stroke: 'darkgrey' });
+
+      restruct.addReObjectPath(LayerMap.data, this.visel, background, ps, true);
+    }
 
     if (this.showLabel) {
       const data = buildLabel(this, render.paper, ps, options, aid, sgroup);
@@ -416,15 +436,6 @@ class ReAtom extends ReObject {
       implh = Math.floor(this.a.implicitH);
       isHydrogen = label.text === 'H';
 
-      if (label.background) {
-        restruct.addReObjectPath(
-          LayerMap.data,
-          this.visel,
-          label.background,
-          ps,
-          true,
-        );
-      }
       restruct.addReObjectPath(LayerMap.data, this.visel, label.path, ps, true);
     }
 
@@ -1111,6 +1122,7 @@ function buildLabel(
       .attr({ fill })
       .attr({ stroke });
   }
+
   if (tooltip) {
     addTooltip(label.path.node, tooltip);
   }

@@ -227,6 +227,24 @@ export class CoreEditor {
     // if (monomersLibraryUpdate) {
     //   this.updateMonomersLibrary(monomersLibraryUpdate);
     // }
+    this.monomersLibrary.forEach((monomer) => {
+      monomer.struct?.atoms.forEach((atom, aid) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        atom.isAp = monomer.attachmentPoints?.find((ap) => {
+          return ap.attachmentAtom === aid;
+        });
+      });
+    });
+    this.monomersLibraryOld.forEach((monomer) => {
+      monomer.struct?.atoms.forEach((atom, aid) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        atom.isAp = monomer.attachmentPoints?.find((ap) => {
+          return ap.attachmentAtom === aid;
+        });
+      });
+    });
     this.subscribeEvents();
     this.renderersContainer = new RenderersManager({ theme });
     this.drawingEntitiesManager = new DrawingEntitiesManager();

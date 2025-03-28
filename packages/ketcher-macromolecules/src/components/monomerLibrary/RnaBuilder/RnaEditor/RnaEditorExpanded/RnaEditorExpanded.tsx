@@ -246,6 +246,11 @@ export const RnaEditorExpanded = ({
       recalculateRnaBuilderValidations({ rnaPreset: newPreset, isEditMode }),
     );
 
+    /*
+     * setTimeout is needed here to wait for the selected group to be switched first (in tab or accordion view)
+     * Then scroll to the selected item in the library will be possible, otherwise it won't be present in the DOM
+     * Perhaps not the best approach, consider refactoring
+     */
     setTimeout(() => scrollToActiveItemInLibrary(selectedGroup), 0);
   };
 

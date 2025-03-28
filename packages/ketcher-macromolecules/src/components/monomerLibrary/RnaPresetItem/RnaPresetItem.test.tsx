@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { RnaPresetItem } from './RnaPresetItem';
+import RnaPresetItem from './RnaPresetItem';
 import { IRnaPreset } from 'components/monomerLibrary/RnaBuilder/types';
 
 describe('Test Rna Preset Item component', () => {

@@ -19,7 +19,6 @@ import { Icon } from 'ketcher-react';
 
 export const GroupBlockContainer = styled.div<{
   selected?: boolean;
-  empty?: boolean;
   isEditMode?: boolean;
 }>((props) => ({
   height: '40px',
@@ -39,7 +38,7 @@ export const GroupBlockContainer = styled.div<{
   boxShadow: props.isEditMode ? props.theme.ketcher.shadow.regular : 'none',
   padding: '5px 10px',
   color: props.selected ? 'white' : 'black',
-  gap: '14px',
+  gap: '8px',
   cursor: 'pointer',
   outlineOffset: '1px',
   boxSizing: 'border-box',
@@ -76,40 +75,101 @@ export const GroupBlockContainer = styled.div<{
   },
 }));
 
-export const TextContainer = styled.div({
-  display: 'flex',
-  flexDirection: 'column',
-});
+export const TextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
-export const GroupName = styled.span((props) => ({
-  fontSize: props.theme.ketcher.font.size.small,
-}));
+export const GroupName = styled.span<{ selected?: boolean }>`
+  font-size: ${({ theme }) => theme.ketcher.font.size.small};
+  color: ${({ selected, theme }) =>
+    selected
+      ? theme.ketcher.color.background.primary
+      : theme.ketcher.color.text.light};
+  opacity: ${({ selected }) => (selected ? 0.4 : 1)};
+`;
 
-export const MonomerName = styled.span<{ selected?: boolean; empty: boolean }>(
-  (props) => ({
-    marginTop: '1px',
-    fontSize: props.theme.ketcher.font.size.medium,
-    color: props.selected
-      ? 'white'
-      : props.empty
-      ? props.theme.ketcher.color.text.lightgrey
-      : props.theme.ketcher.color.text.primary,
-  }),
-);
+export const MonomerName = styled.span<{ selected?: boolean; empty: boolean }>`
+  margin-top: 1px;
+  font-size: ${({ theme }) => theme.ketcher.font.size.medium};
+  color: ${({ selected, empty, theme }) =>
+    selected
+      ? theme.ketcher.color.button.text.primary
+      : empty
+      ? '#b4b9d6'
+      : theme.ketcher.color.text.primary};
+  opacity: ${({ selected, empty }) => (selected && empty ? 0.4 : 1)};
+`;
+
+export const GroupIconContainer = styled.div`
+  position: relative;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 export const GroupIcon = styled(Icon)<{
   selected?: boolean;
   empty?: boolean;
-  name?: string;
-}>((props) => ({
-  color: props.empty
-    ? 'transparent'
-    : props.selected
-    ? props.theme.ketcher.color.background.primary
-    : props.theme.ketcher.color.icon.grey,
-  stroke: props.selected
-    ? props.theme.ketcher.color.background.primary
-    : props.theme.ketcher.color.icon.grey,
-  paddingRight:
-    props.name === 'sugar' ? '5px' : props.name === 'phosphate' ? '1px' : 0,
-}));
+}>`
+  fill: ${({ selected, empty, theme }) =>
+    empty
+      ? 'none'
+      : selected
+      ? theme.ketcher.color.background.primary
+      : theme.ketcher.color.icon.grey};
+  color: ${({ selected, theme }) =>
+    selected
+      ? theme.ketcher.color.background.primary
+      : theme.ketcher.color.icon.grey};
+`;
+
+export const CompactGroupBlockContainer = styled.div<{
+  selected?: boolean;
+  isEditMode?: boolean;
+}>`
+  position: relative;
+  width: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px 0 rgba(180, 185, 214, 0.6);
+  cursor: pointer;
+  background-color: ${({ selected, theme }) =>
+    selected
+      ? theme.ketcher.color.button.primary.active
+      : theme.ketcher.color.background.primary};
+
+  &:hover {
+    outline: ${({ theme }) => theme.ketcher.outline.selected.small};
+  }
+`;
+
+export const CompactGroupConnection = styled.div`
+  position: absolute;
+  top: -35%;
+  left: 50%;
+  height: 15px;
+  width: 2px;
+  background-color: ${({ theme }) => theme.ketcher.outline.color};
+`;
+
+export const CompactGroupText = styled.p<{
+  selected?: boolean;
+  empty?: boolean;
+}>`
+  margin: 0;
+  font-size: ${({ theme }) => theme.ketcher.font.size.small};
+  font-weight: ${({ theme }) => theme.ketcher.font.weight.regular};
+  color: ${({ selected, empty, theme }) =>
+    selected
+      ? theme.ketcher.color.button.text.primary
+      : empty
+      ? '#b4b9d6'
+      : theme.ketcher.color.text.primary};
+  opacity: ${({ selected, empty }) => (selected && empty ? 0.4 : 1)};
+`;

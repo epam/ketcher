@@ -23,7 +23,10 @@ import {
 } from '@utils/macromolecules';
 import { SUGAR } from '@constants/testIdConstants';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
-import { modifyInRnaBuilder, getSymbolLocator,} from '@utils/macromolecules/monomer';
+import {
+  modifyInRnaBuilder,
+  getSymbolLocator,
+} from '@utils/macromolecules/monomer';
 import { pressSaveButton } from '@utils/macromolecules/rnaBuilder';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Phosphates } from '@constants/monomers/Phosphates';

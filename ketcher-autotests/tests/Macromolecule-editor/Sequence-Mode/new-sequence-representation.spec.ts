@@ -1316,12 +1316,12 @@ interface IFailedTestSequenceReplaceMonomer {
 
 const FailedTestNewSequenceRepresentation: IFailedTestSequenceReplaceMonomer[] =
   [
-    // {
-    //   // Adding monomet to first from the left position of antisense chain works wrong and causes exception:
-    //   //Uncaught TypeError: Cannot read properties of undefined (reading 'chain') #6775
-    //   TestNameContains: ['Case 27-'],
-    //   BugsInTests: ['https://github.com/epam/ketcher/issues/6775'],
-    // },
+    {
+      // Adding monomet to first from the left position of antisense chain works wrong and causes exception:
+      // Uncaught TypeError: Cannot read properties of undefined (reading 'chain') #6775
+      TestNameContains: ['Case 27-'],
+      BugsInTests: ['https://github.com/epam/ketcher/issues/6775'],
+    },
   ];
 
 function filterBugsInTests(
@@ -2602,6 +2602,7 @@ for (const monomer of monomersToAdd) {
        * 3. Switch sequence to edit mode (Sync mode OFF) and move cursor to the first position of sense chain
        * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
        * 5. Press keyboard key to add monomer to the first position of sense chain
+       * 5. Load same sequence again to be able to compare result and sourse sequence
        * 6. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
        * 7. Take screenshot to validate that monomer was added in Sequence mode
        * 8. Switch to Flex mode
@@ -2657,6 +2658,7 @@ for (const monomer of monomersToAdd) {
        * 3. Switch sequence to edit mode and move cursor to the second position of sense chain
        * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
        * 5. Press keyboard key to add monomer to the second position of sense chain
+       * 5. Load same sequence again to be able to compare result and sourse sequence
        * 6. Take screenshot to validate that monomer was added in Sequence mode
        * 6. Switch to Flex mode
        * 7. Take screenshot to validate that monomer was added in Flex mode canvas
@@ -2709,6 +2711,7 @@ for (const monomer of monomersToAdd) {
        * 3. Switch sequence to edit mode and move cursor to the third position of sense chain
        * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
        * 5. Press keyboard key to add monomer to the third position of sense chain
+       * 5. Load same sequence again to be able to compare result and sourse sequence
        * 6. Take screenshot to validate that monomer was added in Sequence mode
        * 6. Switch to Flex mode
        * 7. Take screenshot to validate that monomer was added in Flex mode canvas
@@ -2761,6 +2764,7 @@ for (const monomer of monomersToAdd) {
        * 3. Switch sequence to edit mode and move cursor to the last position of sencse chain
        * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
        * 5. Press keyboard key to add monomer to the last position of sencse chain
+       * 5. Load same sequence again to be able to compare result and sourse sequence
        * 6. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
        * 7. Take screenshot to validate that monomer was added in Sequence mode
        * 8. Switch to Flex mode
@@ -2865,6 +2869,7 @@ for (const sequence of sequences) {
      * 2. Load sequence from HELM
      * 3. Switch sequence to edit mode and move cursor to the second position of sense chain
      * 4. Press Delete keyboard key to delete second symbol of sense chain in seqience
+     * 5. Load same sequence again to be able to compare result and sourse sequence
      * 5. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
      * 6. Take screenshot to validate that monomer was deleted in Sequence mode
      * 7. Switch to Flex mode
@@ -2916,6 +2921,7 @@ for (const sequence of sequences) {
      * 2. Load sequence from HELM
      * 3. Switch sequence to edit mode and move cursor to the third position of sense chain
      * 4. Press Delete keyboard key to delete third symbol of sense chain in seqience
+     * 5. Load same sequence again to be able to compare result and sourse sequence
      * 6. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
      * 7. Take screenshot to validate that monomer was deleted in Sequence mode
      * 8. Switch to Flex mode
@@ -2967,6 +2973,7 @@ for (const sequence of sequences) {
      * 2. Load sequence from HELM
      * 3. Switch sequence to edit mode and move cursor to the second position of sense chain
      * 4. Press Backspace keyboard key to delete first symbol of sense chain in seqience
+     * 5. Load same sequence again to be able to compare result and sourse sequence
      * 5. Take screenshot to validate that monomer was deleted in Sequence mode
      * 6. Switch to Flex mode
      * 7. Take screenshot to validate that monomer was deleted in Flex mode canvas
@@ -3016,6 +3023,7 @@ for (const sequence of sequences) {
      * 2. Load sequence from HELM
      * 3. Switch sequence to edit mode and move cursor to the third position of sense chain
      * 4. Press Backspace keyboard key to delete second symbol of sense chain in seqience
+     * 5. Load same sequence again to be able to compare result and sourse sequence
      * 5. Take screenshot to validate that monomer was deleted in Sequence mode
      * 6. Switch to Flex mode
      * 7. Take screenshot to validate that monomer was deleted in Flex mode canvas
@@ -3065,6 +3073,7 @@ for (const sequence of sequences) {
      * 2. Load sequence from HELM
      * 3. Switch sequence to edit mode and move cursor to the forth position of sense chain
      * 4. Press Backspace keyboard key to delete third symbol of sense chain in seqience
+     * 5. Load same sequence again to be able to compare result and sourse sequence
      * 5. Take screenshot to validate that monomer was deleted in Sequence mode
      * 6. Switch to Flex mode
      * 7. Take screenshot to validate that monomer was deleted in Flex mode canvas
@@ -3117,6 +3126,7 @@ for (const monomer of monomersToAdd) {
        * 3. Switch sequence to edit mode (Sync mode OFF) and move cursor to the first position of antisense chain
        * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
        * 5. Press keyboard key to add monomer to the first position of antisense chain
+       * 5. Load same sequence again to be able to compare result and sourse sequence
        * 6. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
        * 7. Take screenshot to validate that monomer was added in Sequence mode
        * 8. Switch to Flex mode
@@ -3173,6 +3183,7 @@ for (const monomer of monomersToAdd) {
        * 3. Switch sequence to edit mode and move cursor to the second position of antisense chain
        * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
        * 5. Press keyboard key to add monomer to the second position of antisense chain
+       * 5. Load same sequence again to be able to compare result and sourse sequence
        * 6. Take screenshot to validate that monomer was added in Sequence mode
        * 6. Switch to Flex mode
        * 7. Take screenshot to validate that monomer was added in Flex mode canvas
@@ -3225,6 +3236,7 @@ for (const monomer of monomersToAdd) {
        * 3. Switch sequence to edit mode and move cursor to the third position of antisense chain
        * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
        * 5. Press keyboard key to add monomer to the third position of antisense chain
+       * 5. Load same sequence again to be able to compare result and sourse sequence
        * 6. Take screenshot to validate that monomer was added in Sequence mode
        * 6. Switch to Flex mode
        * 7. Take screenshot to validate that monomer was added in Flex mode canvas
@@ -3277,6 +3289,7 @@ for (const monomer of monomersToAdd) {
        * 3. Switch sequence to edit mode and move cursor to the last position of antisencse chain
        * 4. Select monomer type (using switcher on the top - RNA/DNA/Peptide)
        * 5. Press keyboard key to add monomer to the last position of antisencse chain
+       * 5. Load same sequence again to be able to compare result and sourse sequence
        * 6. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
        * 7. Take screenshot to validate that monomer was added in Sequence mode
        * 8. Switch to Flex mode
@@ -3330,6 +3343,7 @@ for (const sequence of sequences) {
      * 2. Load sequence from HELM
      * 3. Switch sequence to edit mode and move cursor to the first position of antisense chain
      * 4. Press Delete keyboard key to delete first symbol of antisense chain in seqience
+     * 5. Load same sequence again to be able to compare result and sourse sequence
      * 5. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
      * 6. Take screenshot to validate that monomer was deleted in Sequence mode
      * 7. Switch to Flex mode
@@ -3381,6 +3395,7 @@ for (const sequence of sequences) {
      * 2. Load sequence from HELM
      * 3. Switch sequence to edit mode and move cursor to the second position of antisense chain
      * 4. Press Delete keyboard key to delete second symbol of antisense chain in seqience
+     * 5. Load same sequence again to be able to compare result and sourse sequence
      * 5. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
      * 6. Take screenshot to validate that monomer was deleted in Sequence mode
      * 7. Switch to Flex mode
@@ -3432,6 +3447,7 @@ for (const sequence of sequences) {
      * 2. Load sequence from HELM
      * 3. Switch sequence to edit mode and move cursor to the third position of antisense chain
      * 4. Press Delete keyboard key to delete third symbol of antisense chain in seqience
+     * 5. Load same sequence again to be able to compare result and sourse sequence
      * 6. Add on the canvas source sequence from HELM to be able easily compare consition after and before adding monomer
      * 7. Take screenshot to validate that monomer was deleted in Sequence mode
      * 8. Switch to Flex mode
@@ -3483,6 +3499,7 @@ for (const sequence of sequences) {
      * 2. Load sequence from HELM
      * 3. Switch sequence to edit mode and move cursor to the second position of antisense chain
      * 4. Press Backspace keyboard key to delete first symbol of antisense chain in seqience
+     * 5. Load same sequence again to be able to compare result and sourse sequence
      * 5. Take screenshot to validate that monomer was deleted in Sequence mode
      * 6. Switch to Flex mode
      * 7. Take screenshot to validate that monomer was deleted in Flex mode canvas
@@ -3532,6 +3549,7 @@ for (const sequence of sequences) {
      * 2. Load sequence from HELM
      * 3. Switch sequence to edit mode and move cursor to the third position of antisense chain
      * 4. Press Backspace keyboard key to delete second symbol of antisense chain in seqience
+     * 5. Load same sequence again to be able to compare result and sourse sequence
      * 5. Take screenshot to validate that monomer was deleted in Sequence mode
      * 6. Switch to Flex mode
      * 7. Take screenshot to validate that monomer was deleted in Flex mode canvas
@@ -3581,6 +3599,7 @@ for (const sequence of sequences) {
      * 2. Load sequence from HELM
      * 3. Switch sequence to edit mode and move cursor to the forth position of antisense chain
      * 4. Press Backspace keyboard key to delete third symbol of antisense chain in seqience
+     * 5. Load same sequence again to be able to compare result and sourse sequence
      * 5. Take screenshot to validate that monomer was deleted in Sequence mode
      * 6. Switch to Flex mode
      * 7. Take screenshot to validate that monomer was deleted in Flex mode canvas

@@ -438,7 +438,6 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
    * 2. Take screenshot to witness initial state
    * 3. Delete every bond one by one and take screenshot after each deletion
    */
-  await pageReload(page);
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
     page,
@@ -465,7 +464,9 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
   for (const bond of bondsToDelete) {
     const bondLocator = await getBondLocator(page, bond);
     await bondLocator.first().click({ force: true });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   }
 });
 
@@ -595,7 +596,6 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
    * 3. Grab every bond and move it to the new position
    * 4. Take screenshot to witness new molecule's state
    */
-  await pageReload(page);
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
     page,
@@ -625,7 +625,10 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
     await bondLocator.first().hover({ force: true });
     await dragMouseTo(400, 400, page);
     await moveMouseAway(page);
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   }
 });
 

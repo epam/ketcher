@@ -97,6 +97,11 @@ export async function openLayoutModeMenu(page: Page) {
   await modeSelectorButton.click();
 }
 
+export async function selectHandTool(page: Page) {
+  const handToolButton = page.getByTestId('hand-tool');
+  await handToolButton.click();
+}
+
 export async function hideLibrary(page: Page) {
   const hideLibraryLink = page.getByText('Hide');
   const isVisible = await hideLibraryLink.isVisible();
@@ -153,6 +158,10 @@ export async function switchSequenceEnteringButtonType(
   sequenceEnteringType: SequenceType,
 ) {
   await page.getByTestId(`${sequenceEnteringType}Btn`).click();
+}
+
+export async function switchSyncMode(page: Page) {
+  await page.getByTestId('sync_sequence_edit_mode').first().click();
 }
 
 export async function selectFlexLayoutModeTool(page: Page) {

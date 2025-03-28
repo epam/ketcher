@@ -1,6 +1,7 @@
 import { ChainsCollection } from 'domain/entities/monomer-chains/ChainsCollection';
 import {
   BaseMonomer,
+  Chain,
   LinkerSequenceNode,
   Nucleoside,
   Nucleotide,
@@ -10,6 +11,8 @@ import {
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { isNumber } from 'lodash';
+import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
+import { CoreEditor } from 'application/editor';
 
 export interface SnakeLayoutNode {
   monomers: BaseMonomer[];
@@ -18,6 +21,7 @@ export interface SnakeLayoutNode {
 export interface TwoStrandedSnakeLayoutNode {
   senseNode?: SnakeLayoutNode;
   antisenseNode?: SnakeLayoutNode;
+  chain: Chain;
 }
 
 export class SnakeLayoutModel {
@@ -31,8 +35,11 @@ export class SnakeLayoutModel {
     this.fillNodes(chainsCollection);
   }
 
-  private addNode(snakeLayoutNode: SnakeLayoutNode) {
-    const twoStrandedSnakeLayoutNode = { senseNode: snakeLayoutNode };
+  private addNode(snakeLayoutNode: SnakeLayoutNode, chain) {
+    const twoStrandedSnakeLayoutNode: TwoStrandedSnakeLayoutNode = {
+      senseNode: snakeLayoutNode,
+      chain,
+    };
 
     this.nodes.push(twoStrandedSnakeLayoutNode);
 
@@ -87,7 +94,7 @@ export class SnakeLayoutModel {
         const snakeLayoutNodes = this.getSnakeLayoutNodesFromChainNode(node);
 
         snakeLayoutNodes.forEach((snakeLayoutNode) => {
-          this.addNode(snakeLayoutNode);
+          this.addNode(snakeLayoutNode, chain);
         });
       });
     });
@@ -96,6 +103,7 @@ export class SnakeLayoutModel {
   private fillAntisenseNodes(chainsCollection: ChainsCollection) {
     const handledChainNodes = new Set<SubChainNode>();
     const monomerToChain = chainsCollection.monomerToChain;
+    const editor = CoreEditor.provideEditorInstance();
 
     chainsCollection.chains.forEach((chain) => {
       if (!chain.isAntisense) {
@@ -125,7 +133,17 @@ export class SnakeLayoutModel {
                   (foundMonomersConnectedHydrogenBonds, hydrogenBond) => {
                     const monomerConnectedByHydrogenBond =
                       hydrogenBond.getAnotherMonomer(monomer);
-                    return monomerConnectedByHydrogenBond
+
+                    return monomerConnectedByHydrogenBond &&
+                      ((isRnaBaseApplicableForAntisense(
+                        monomerConnectedByHydrogenBond,
+                      ) &&
+                        isRnaBaseApplicableForAntisense(monomer)) ||
+                        editor.drawingEntitiesManager.antisenseMonomerToSenseChain.get(
+                          monomer,
+                        )?.firstMonomer ===
+                          monomerToChain.get(monomerConnectedByHydrogenBond)
+                            ?.firstMonomer)
                       ? [
                           ...foundMonomersConnectedHydrogenBonds,
                           monomerConnectedByHydrogenBond,
@@ -205,6 +223,7 @@ export class SnakeLayoutModel {
                 if (currentTwoStrandedSnakeLayoutNodeIndex < 0) {
                   this.nodes.unshift({
                     antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
+                    chain: lastTwoStrandedNodeWithHydrogenBond.chain,
                   });
                 } else {
                   this.nodes.splice(
@@ -212,6 +231,7 @@ export class SnakeLayoutModel {
                     0,
                     {
                       antisenseNode: currentNodeBeforeHydrogenConnectionToBase,
+                      chain: lastTwoStrandedNodeWithHydrogenBond.chain,
                     },
                   );
                 }
@@ -280,10 +300,12 @@ export class SnakeLayoutModel {
           ) {
             this.nodes.splice(currentTwoStrandedSnakeLayoutNodeIndex, 0, {
               antisenseNode: currentAntisenseSnakeLayoutNode,
+              chain: lastTwoStrandedNodeWithHydrogenBond.chain,
             });
           } else {
             this.nodes.push({
               antisenseNode: currentAntisenseSnakeLayoutNode,
+              chain: lastTwoStrandedNodeWithHydrogenBond.chain,
             });
           }
         }

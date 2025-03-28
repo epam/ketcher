@@ -179,7 +179,9 @@ export class SequenceMode extends BaseMode {
           true,
           !this.isEditMode,
         )
-      : new Command();
+      : editor.drawingEntitiesManager.recalculateAntisenseChains(
+          !this.isEditMode,
+        );
     const zoom = ZoomTool.instance;
 
     editor.renderersContainer.update(modelChanges);

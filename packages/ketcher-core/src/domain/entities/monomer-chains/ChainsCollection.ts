@@ -16,8 +16,8 @@ import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
   getRnaBaseFromSugar,
-  getSugarFromRnaBase,
   isMonomerConnectedToR2RnaBase,
+  isRnaBaseApplicableForAntisense,
   isRnaBaseOrAmbiguousRnaBase,
 } from 'domain/helpers/monomers';
 import { BaseSubChain } from 'domain/entities/monomer-chains/BaseSubChain';
@@ -420,7 +420,7 @@ export class ChainsCollection {
     }
   }
 
-  private getComplimentaryChainIfNucleotide(
+  public getComplimentaryChainIfNucleotide(
     node: SubChainNode,
     monomerToChain: Map<BaseMonomer, Chain>,
     monomerToNode: Map<BaseMonomer, SubChainNode>,
@@ -436,18 +436,15 @@ export class ChainsCollection {
       const complimentaryChainOrUndefined =
         complimentaryMonomer && monomerToChain.get(complimentaryMonomer);
 
-      const isRnaMonomer =
-        isRnaBaseOrAmbiguousRnaBase(monomer) &&
-        Boolean(getSugarFromRnaBase(monomer));
-      const isRnaComplimentaryMonomer =
-        isRnaBaseOrAmbiguousRnaBase(complimentaryMonomer) &&
-        Boolean(getSugarFromRnaBase(complimentaryMonomer));
+      if (!complimentaryNodeOrUndefined || !complimentaryChainOrUndefined) {
+        continue;
+      }
 
-      if (
-        !complimentaryNodeOrUndefined ||
-        !complimentaryChainOrUndefined ||
-        !(isRnaMonomer || isRnaComplimentaryMonomer)
-      ) {
+      const isRnaMonomer = isRnaBaseApplicableForAntisense(monomer);
+      const isRnaComplimentaryMonomer =
+        isRnaBaseApplicableForAntisense(complimentaryMonomer);
+
+      if (!isRnaMonomer || !isRnaComplimentaryMonomer) {
         continue;
       }
 
@@ -551,9 +548,10 @@ export class ChainsCollection {
 
     while (chains.length) {
       const { group, chain } = chains.pop() as GrouppedChain;
+      const chainNodes = chain.nodes;
 
-      chain.forEachNode(({ node }) => {
-        const { complimentaryChain } =
+      chain.forEachNode(({ node, nodeIndex }) => {
+        const { complimentaryChain, complimentaryNode } =
           this.getComplimentaryChainIfNucleotide(
             node,
             monomerToChain,
@@ -562,13 +560,52 @@ export class ChainsCollection {
 
         if (
           !complimentaryChain ||
+          !complimentaryNode ||
           handledChains.has(complimentaryChain) ||
           cycledComplimentaryChains.has(complimentaryChain)
         ) {
           return;
         }
 
+        // find h-bonds intersections for complimentary chain
+        const complimentaryChainNodes = complimentaryChain.nodes;
+        const firstComplimentaryNodeIndex =
+          complimentaryChainNodes.indexOf(complimentaryNode);
+        let hasIntersection = false;
+
+        for (
+          let i = firstComplimentaryNodeIndex;
+          i < complimentaryChainNodes.length;
+          i++
+        ) {
+          const potentialNextComplimentaryNode = complimentaryChainNodes[i];
+          const {
+            complimentaryNode: nextComplimentaryNode,
+            complimentaryChain: nextComplimentaryNodeChain,
+          } =
+            this.getComplimentaryChainIfNucleotide(
+              potentialNextComplimentaryNode,
+              monomerToChain,
+              monomerToNode,
+            ) ?? {};
+
+          if (
+            nextComplimentaryNode &&
+            nextComplimentaryNodeChain === chain &&
+            chainNodes.indexOf(nextComplimentaryNode) > nodeIndex
+          ) {
+            hasIntersection = true;
+
+            break;
+          }
+        }
+
         handledChains.add(complimentaryChain);
+
+        if (hasIntersection) {
+          return;
+        }
+
         const el = { chain: complimentaryChain, group: Number(!group) };
         chains.push(el);
         res.push(el);

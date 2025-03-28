@@ -46,7 +46,7 @@
     "typedoc": "typedoc"
   },
   "dependencies": {
-    "@babel/runtime": "^7.17.9",
+    "@babel/runtime": "^7.26.10",
     "assert": "^2.0.0",
     "d3": "^7.8.5",
     "file-saver": "^2.0.5",

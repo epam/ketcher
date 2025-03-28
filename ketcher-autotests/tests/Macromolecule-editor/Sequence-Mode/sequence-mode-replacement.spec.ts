@@ -1968,8 +1968,6 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
-  await pageReload(page);
-
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectSequenceLayoutModeTool(page);
   await clickOnSequenceSymbolByIndex(
@@ -1984,7 +1982,10 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
   await expect(fullDialogMessage).toBeVisible();
 
   pressCancelInConfirmYourActionDialog(page);
-  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
 
   await checkForKnownBugs(
     replaceMonomer,
@@ -2022,8 +2023,6 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
     MonomerDescription: 'peptide (Cys_Bn)',
   };
 
-  await pageReload(page);
-
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectSequenceLayoutModeTool(page);
   await page.keyboard.down('Shift');
@@ -2048,7 +2047,10 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
   await expect(fullDialogMessage).toBeVisible();
 
   pressCancelInConfirmYourActionDialog(page);
-  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
 
   await checkForKnownBugs(
     replaceMonomer,

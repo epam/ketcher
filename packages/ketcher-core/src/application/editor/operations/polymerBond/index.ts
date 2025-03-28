@@ -19,6 +19,7 @@ import { RenderersManager } from 'application/render/renderers/RenderersManager'
 import { Operation } from 'domain/entities/Operation';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { HydrogenBond } from 'domain/entities';
+import { LayoutMode } from 'application/editor';
 
 export class PolymerBondAddOperation implements Operation {
   public polymerBond;
@@ -136,7 +137,7 @@ export class SelectLayoutModeOperation implements Operation {
   constructor(
     public _onExecute: () => void,
     public _onInvert: () => void,
-    public mode,
+    public mode: LayoutMode,
     public prevMode,
   ) {
     this.onExecute = _onExecute;

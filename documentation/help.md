@@ -449,23 +449,24 @@ When option _Ignore the chiral flag_ is _true_ it will affect opening of MDL V20
 
 **Ketcher Macromolecules Mode** consists of the following elements:
 
-<img src=images/Macro-Canvas-3.0..png width = "1000"/>
+<img src=images/Macro-canvas-3.2..png width = "1000"/>
 
 You can use the buttons on the main toolbar:
 
-<img src=images/Macro-Toolbar-3.0..png width = "1000"/>
+<img src=images/Macro-Toolbar-3.2..png width = "1000"/>
 
 - **Clear Canvas** (1) button to clear the drawing area;
 - **Open…** (2) and **Save As…** (3) buttons to import a drawing from a molecular file or save it to a supported molecular file format;
 - **Undo** (4) / **Redo** (5) to manage the last actions taken on the canvas;
-- **Macromolecules modes switcher** (6) to change the macromolecules view to **sequence layout mode** (1), **snake layout mode** (2), or **flex layout mode** (3);
+- **Sync/Non-sync switcher** (6) (available only in sequence layout mode) to change the editing style for double stranded nucleic-acid sequences;
+- **Macromolecules modes switcher** (7) to change the macromolecules view to **sequence layout mode** (1), **snake layout mode** (2), or **flex layout mode** (3);
 
 <img src=images/Macromolecules-Mode-Switcher-3.0..png width = "50"/>
 
-- **Sequence mode typing type switcher** (7) (available only in sequence layout mode) to change the way Ketcher interprets keyboard input (A can be a DNA nucleotide, and RNA nucleotide, or an amino acid);
-- **Molecules/Macromolecules switcher** (8) to change between Ketcher's modes. Current mode always has a tick mark next to it. Clicking on the mode without a tick mark leads to it;
-- **Fullscreen mode** (9) button allows to initiate displaying Ketcher window in the fullscreen mode;
-- **Zoom panel** (10) displays the current zoom percentage.
+- **Sequence mode typing type switcher** (8) (available only in sequence layout mode) to change the way Ketcher interprets keyboard input (A can be a DNA nucleotide, and RNA nucleotide, or an amino acid);
+- **Molecules/Macromolecules switcher** (9) to change between Ketcher's modes. Current mode always has a tick mark next to it. Clicking on the mode without a tick mark leads to it;
+- **Fullscreen mode** (10) button allows to initiate displaying Ketcher window in the fullscreen mode;
+- **Zoom panel** (11) displays the current zoom percentage.
 
 The left toolbar consists of the following elements:
 
@@ -519,7 +520,7 @@ Clicking on _Sugar_, _Base_, or _Phosphate_ will open appropriate sections of th
 
 <img src=images/Create-Preset-2-3.0..png width = "200"/>
 
-Name of the preset can be changed form the default form that is made up from symbols of the components in the format sugar(base)phosphate.
+Name of the preset can be changed from the default form that is made up from symbols of the components in the format sugar(base)phosphate.
 
 Clicking on _Add to Presets_ will save the preset and add it to the Presets section on the library:
 
@@ -529,7 +530,7 @@ Clicking on _Add to Presets_ will save the preset and add it to the Presets sect
 
 Right clicking on selected presets in sequence mode gives the option to _Modify in RNA Builder..._
 
-<img src=images/Modify-in-RNA-Builder-3.0..png width = "200"/>
+<img src=images/Modify-in-RNA-Builder-3.2..png width = "200"/>
 <img src=images/Modify-in-RNA-Builder-2-3.0..png width = "200"/>
 
 Clicking on _Sugar_, _Base_, or _Phosphate_ will again open appropriate sections of the library so that selected nucleotides can be conveniently modified.
@@ -539,7 +540,7 @@ After choosing needed replacement(s), click on _Update_ and (in case of modifyin
 <img src=images/Modify-in-RNA-Builder-3-3.0..png width = "200"/>
 <img src=images/Modify-in-RNA-Builder-4-3.0..png width = "250"/>
 
-### RNA Builder
+### Adding custom monomers to the library
 
 New monomers can be added and already existing ones replaced using an API function (see [README.md](https://github.com/epam/ketcher/blob/6247-update-the-help-document/README.md))
 
@@ -565,7 +566,7 @@ Based on the typing type switcher appropriate entities are added to the canvas w
 
 Backbone connections (R1-R2) are established automatically within one sequence. For example, R1 of an amino acid is the hydrogen of the amino group, and R2 is the hydroxyl of a carboxyl group, thus making an R1-R2 connection a peptide bond.
 
-In addition to typing and pasting text formats who always result in natural monomers, other formats can also be pasted and monomers can be added by clicking on their library cards - this allows the user to add modified monomers to the canvas.
+In addition to typing and pasting text or formats who always result in natural monomers, other formats can also be pasted and monomers can be added by clicking on their library cards - this allows the user to add modified monomers to the canvas.
 
 Already existing monomers can also be replaced by selecting them and clicking on a library card, or modified in RNA builder by choosing _Modify in RNA Builder..._ from the right-click drop-down menu (see above).
 
@@ -639,18 +640,11 @@ Covalent bonds can be **eddited** by choosing _Edit Connection Points..._ from t
 
 #### Hydrogen bonds
 
-Hydrogen bonds can only be **created** between monomer centers at they do not require attachment points. 
+Hydrogen bonds can only be **created** between monomer centers as they do not require attachment points. 
 
 <img src=images/H-Bond-3.0..gif width = "150"/>
 
 Bond preview and _Edit Connection Points..._ dialog are not available for hydrogen bonds.
-
-#### Creating antisense chains
-
-When a chain is selected an option to _Create Antisense Strand_ exists in the right-click drop-down menu. An RNA antisense strand is added with the bases connected via hydrogen bonds:
-
-<img src=images/AS-chains-3.0..png width = "650"/>
-<img src=images/AS-chains-2-3.0..png width = "575"/>
 
 ### Snake and flex modes differences
 
@@ -660,6 +654,72 @@ There are two differences between snake and flex modes:
 <img src=images/Snake-Flex-Diff-3.0..png width = "500"/>
 
 2. **Automatic layout upon entrance of the mode** - every time snake mode is entered, monomers on canvas get layouted; when flex mode is entered, no layout is applied.
+
+### Custom chain geometry
+
+#### Monomer snapping
+
+In flex layout mode, monomers connected via bonds can be snapped in relation to each other every thirty degrees with an additional snapping area at one bond lenght:
+
+<img src=images/Snapp-To-Angle-3.2..gif width = "500"/>
+
+In snake mode the snapping is available every ninety degrees. 
+
+Holding `Crtl` (for Windows) or `Command` (for MacOS) while moving the monomer will disable the snapping.
+
+## Creating antisense chains
+
+Antisense chains can be created in all layout modes from a right-click drop-down menu after the desired sense chain is selected. Options _Create Antisense RNA Strand_ and _Create Antisense DNA Strand_ are available. After choosing the antisense chain type from the right-click drop-down menu it is added bellow the sense chain with all hydrogen bonds already established.
+
+Creation of an RNA antisense strand in sequence layout mode:
+
+<img src=images/Create-AS-In-Sequence-1-3.2..png width = "400"/>
+<img src=images/Create-AS-In-Sequence-2-3.2..png width = "150"/>
+
+Creation of a DNA antisense strand in flex layout mode:
+
+<img src=images/Create-AS-In-Flex-1-3.2..png width = "400"/>
+<img src=images/Create-AS-In-Flex-2-3.2..png width = "300"/>
+
+### Working with antisense chains in sequence layout mode
+
+In sequence layout mode, a new symbol can be encountered when dealing with double-stranded sequences - a minus/line represents a bond connecting monomers on both sides of the line. That way non-linear double-stranded sequences can be represented, like in the following example of a buldge loop.
+
+In flex layout mode:
+
+<img src=images/Buldge-Loop-In-Flex-3.2.png width = "400"/>
+
+In sequence layout mode:
+
+<img src=images/Buldge-Loop-In-Sequence-3.2..png width = "200"/>
+
+Hydrogen bond establishment/deletion is available in the right-click drop-down menu. When deleting, all hydrogen bonds that the selected monomers participate in will be removed:
+
+<img src=images/Delete-H-Bonds-1-3.2..png width = "250"/>
+<img src=images/Delete-H-Bonds-2-3.2..png width = "175"/>
+
+When establishing, hydrogen bonds will be established with the monomers represented on the other side of the double-stranded sequence:
+
+<img src=images/Establish-H-Bonds-1-3.2..png width = "250"/>
+<img src=images/Establish-H-Bonds-2-3.2..png width = "175"/>
+
+Depending on if the sync/non-sync toggle on the main toolbar is on or off, editing of the double-stranded sequence will happen differently.
+
+When the toggle is on
+
+<img src=images/Sync-Toggle-On-3.2..png width = "50"/>
+
+changes made to one side of the squence impact the other, like in the example bellow when C is added to one side of the sequence, then to another, and afterwards both of them get deleted:
+
+<img src=images/Sync-Editing-3.2..gif width = "200"/>
+
+When the toggle is off
+
+<img src=images/Sync-Toggle-Off-3.2..png width = "50"/>
+
+changes on one side of the double-stranded sequence do not impact the chemistry of the other, as seen in the following example repeating the actions from the previous example:
+
+<img src=images/Non-Sync-Editing-3.2..gif width = "200"/>
 
 ## Macromolecules and molecules mode integration
 

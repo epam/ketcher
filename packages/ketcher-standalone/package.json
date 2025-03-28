@@ -41,7 +41,7 @@
     "prettier:write": "prettier --write \"./**/*.{js,ts,json}\""
   },
   "dependencies": {
-    "@babel/runtime": "^7.17.9",
+    "@babel/runtime": "^7.26.10",
     "indigo-ketcher": "1.30.0-rc.1",
     "ketcher-core": "*"
   },

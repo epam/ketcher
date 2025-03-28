@@ -460,11 +460,12 @@ test.describe('Import correct HELM sequence: ', () => {
         2. Take screenshot of the canvas to compare it with example
     */
       test.setTimeout(35000);
-      if (correctHELMString.pageReloadNeeded) await pageReload(page);
 
       await loadHELMFromClipboard(page, correctHELMString.HELMString);
 
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
 
       // Test should be skipped if related bug exists
       test.fixme(
@@ -897,10 +898,11 @@ test.describe('Import incorrect HELM sequence: ', () => {
         3. Take screenshot to compare it with example
       */
       test.setTimeout(20000);
-      if (incorrectHELMString.pageReloadNeeded) await pageReload(page);
 
       await loadHELMFromClipboard(page, incorrectHELMString.HELMString);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
 
       // if Error Message is not found - that means that error message didn't appear.
       // That shoul be considered as bug in that case

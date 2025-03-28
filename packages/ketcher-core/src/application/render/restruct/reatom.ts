@@ -553,10 +553,11 @@ class ReAtom extends ReObject {
         // use dom element to change color of stereo label which is the first element
         // of just created text
         // text -> tspan
+        const node = aamPath.node.childNodes[0] as unknown as HTMLElement;
         const color = getStereoAtomColor(render.options, stereoLabel);
-        aamPath.node.childNodes[0].setAttribute('fill', color);
+        node.setAttribute('fill', color);
         const opacity = getStereoAtomOpacity(render.options, stereoLabel);
-        aamPath.node.childNodes[0].setAttribute('fill-opacity', opacity);
+        node.setAttribute('fill-opacity', opacity.toString());
       }
       const aamBox = util.relBox(aamPath.getBBox());
       draw.recenterText(aamPath, aamBox);

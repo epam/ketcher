@@ -179,7 +179,6 @@ class ClipArea extends Component {
         ref={this.textAreaRef}
         className={clsx(CLIP_AREA_BASE_CLASS, classes.cliparea)}
         contentEditable
-        autoFocus // eslint-disable-line jsx-a11y/no-autofocus
         suppressContentEditableWarning={true}
       />
     );

@@ -14,6 +14,7 @@ import {
   getSdf,
   getSmarts,
   getSequence,
+  getSmiles,
 } from '@utils/formats';
 import { selectSaveTool } from '@utils/canvas';
 import { pressButton } from '@utils/clicks';
@@ -23,6 +24,7 @@ export enum FileType {
   KET = 'ket',
   CDX = 'cdx',
   CDXML = 'cdxml',
+  SMILES = 'smi',
   SMARTS = 'smarts',
   MOL = 'mol',
   RXN = 'rxn',
@@ -42,6 +44,7 @@ const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.KET]: getKet,
   [FileType.CDX]: getCdx,
   [FileType.CDXML]: getCdxml,
+  [FileType.SMILES]: getSmiles,
   [FileType.SMARTS]: getSmarts,
   [FileType.MOL]: getMolfile,
   [FileType.RXN]: getRxn,

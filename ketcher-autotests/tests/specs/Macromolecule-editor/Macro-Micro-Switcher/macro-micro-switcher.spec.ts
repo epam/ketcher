@@ -528,6 +528,7 @@ test.describe('Macro-Micro-Switcher', () => {
 
       await selectMonomer(page, Peptides.A);
       await clickInTheMiddleOfTheScreen(page);
+      await moveMouseAway(page);
       await turnOnMicromoleculesEditor(page);
       await waitForSpinnerFinishedWork(
         page,
@@ -546,6 +547,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await selectMonomer(page, Chem.Test_6_Ch);
     await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
     await turnOnMicromoleculesEditor(page);
     await page.getByText('Test-6-Ch').click({ button: 'right' });
     await waitForMonomerPreviewMicro(page);
@@ -598,6 +600,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await selectMonomer(page, Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
     await page.locator('.css-kp5gpq').click();

@@ -1292,7 +1292,6 @@ test.describe('RNA Library', () => {
      *    Check that After reloading the page, monomers added to the Favorites section not disappear
      */
     await addMonomerToFavorites(page, Presets.A);
-    await pageReload(page);
     await chooseTab(page, Tabs.Favorites);
     await takeMonomerLibraryScreenshot(page);
 

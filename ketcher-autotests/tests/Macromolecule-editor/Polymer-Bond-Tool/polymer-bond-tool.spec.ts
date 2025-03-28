@@ -229,7 +229,6 @@ test('Select monomers and pass a bond', async () => {
       Description: The system shall unable user to create more
       than 1 bond between the first and the second monomer
       */
-  await pageReload(page);
 
   const peptide1 = await addSingleMonomerToCanvas(
     page,
@@ -510,6 +509,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
   });
 });
 
@@ -784,11 +784,11 @@ test('Delete long bonds and perform Undo/Redo actions', async () => {
   );
   await selectEraseTool(page);
   await page.mouse.click(517, 364);
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
   await pressUndoButton(page);
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
   await pressRedoButton(page);
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 });
 
 test('Delete monomer in structure with long bonds and perform Undo/Redo actions', async () => {
@@ -819,11 +819,11 @@ test('Delete monomer in structure with long bonds and perform Undo/Redo actions'
   );
   await selectEraseTool(page);
   await firstMonomer.click();
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
   await pressUndoButton(page);
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
   await pressRedoButton(page);
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 });
 
 test('Copy structure with long bonds and paste on canvas', async () => {
@@ -868,7 +868,6 @@ connectionVariants.forEach(({ from, to }) => {
       4. Switch to Sequence mode
       5. Take another screenshot
     */
-    await pageReload(page);
     const firstMonomer = getMonomerLocator(page, Peptides.C);
     const secondMonomer = getMonomerLocator(page, Peptides.dC);
     await openFileAndAddToCanvasMacro(
@@ -882,9 +881,14 @@ connectionVariants.forEach(({ from, to }) => {
       from,
       to,
     );
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectSequenceLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 });
 
@@ -920,9 +924,14 @@ connectionVariants2.forEach(({ from, to }) => {
       from,
       to,
     );
-    await takeEditorScreenshot(page, { hideMonomerPreview: true });
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectSequenceLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 });
 
@@ -937,7 +946,6 @@ test('Save and Open structure with long bonds to/from KET', async () => {
     4. Open saved KET
     5. Take screenshot
     */
-  await pageReload(page);
   const firstMonomer = getMonomerLocator(page, Peptides.C);
   const secondMonomer = getMonomerLocator(page, Peptides.dC);
   await openFileAndAddToCanvasMacro(
@@ -962,6 +970,7 @@ test('Save and Open structure with long bonds to/from KET', async () => {
   );
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
   });
 });
 
@@ -1001,6 +1010,7 @@ test('Save and Open structure with long bonds to/from MOL V3000', async () => {
   );
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
   });
 });
 
@@ -1040,6 +1050,7 @@ test('Connection R3-R3 not overlap each other when connected on one structure', 
   );
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
   });
 });
 
@@ -1260,8 +1271,6 @@ interface KETPath {
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
   issueNumber?: string;
-  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-  pageReloadNeeded?: boolean;
 }
 
 const ambiguousMonomers: KETPath[] = [
@@ -1276,7 +1285,6 @@ const ambiguousMonomers: KETPath[] = [
   {
     testDescription: '3. Ambiguous Sugar',
     KETFile: 'KET/Ambiguous-monomers-bonds/ketcherSugar.ket',
-    pageReloadNeeded: true,
   },
   {
     testDescription: '4. Ambiguous Sugar Weighted',
@@ -1285,7 +1293,6 @@ const ambiguousMonomers: KETPath[] = [
   {
     testDescription: '5. Ambiguous Base',
     KETFile: 'KET/Ambiguous-monomers-bonds/ketcherBase.ket',
-    pageReloadNeeded: true,
   },
   {
     testDescription: '6. Ambiguous Base Weighted',
@@ -1294,7 +1301,6 @@ const ambiguousMonomers: KETPath[] = [
   {
     testDescription: '7. Ambiguous Phosphate',
     KETFile: 'KET/Ambiguous-monomers-bonds/ketcherPhosphate.ket',
-    pageReloadNeeded: true,
   },
   {
     testDescription: '8. Ambiguous Phosphate Weighted',
@@ -1313,7 +1319,6 @@ const ambiguousMonomers: KETPath[] = [
   {
     testDescription: '11. Ambiguous Peptide',
     KETFile: 'KET/Ambiguous-monomers-bonds/ketcherPeptide.ket',
-    pageReloadNeeded: true,
   },
   {
     testDescription: '12. Ambiguous Peptide Weighted',
@@ -1345,7 +1350,6 @@ test.describe('Verify "Select/Edit Connection Points" dialogues for ambiguous mo
       5. Take screenshot 
       6. Verify all tooltips corresponds to monomer types 
       */
-      if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
       await openFileAndAddToCanvasMacro(ambiguousMonomer.KETFile, page);
       await moveMouseAway(page);
       const bondLine = await getConnectionLine(page);
@@ -1353,7 +1357,9 @@ test.describe('Verify "Select/Edit Connection Points" dialogues for ambiguous mo
       await delay(1);
       await takeEditorScreenshot(page);
       await openEditConnectionPointsMenu(page, bondLine);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
       await pressButton(page, 'Cancel');
     });
   }

@@ -39,7 +39,12 @@ import {
   goToFavoritesTab,
   goToPeptidesTab,
 } from '@utils/macromolecules/library';
-import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
+import {
+  modifyInRnaBuilder,
+  getSymbolLocator,
+  getMonomerLocator,
+  moveMonomer,
+} from '@utils/macromolecules/monomer';
 import {
   pressSaveButton,
   selectBaseSlot,
@@ -612,9 +617,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A,C,G,T)P.R(A)}$$$$V2.0',
     );
-    await clickOnSequenceSymbol(page, 'N', { nthNumber: 0 });
-    await clickOnSequenceSymbol(page, 'N', { nthNumber: 0, button: 'right' });
-    await page.getByTestId('modify_in_rna_builder').click();
+    const symbolN = getSymbolLocator(page, { symbolAlias: 'N' }).first();
+    await symbolN.click();
+    await modifyInRnaBuilder(page, symbolN);
     await selectBaseSlot(page);
     await page.getByTestId('4ime6A___N6-[2-(4-Imidazoyl)ethyl]adenine').click();
     await pressSaveButton(page);

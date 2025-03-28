@@ -575,6 +575,10 @@ class SGroupTool implements Tool {
 
           result && editor.update(result.action);
           editor.selection(null);
+
+          const newStruct = editor.struct().clone();
+          newStruct.setImplicitHydrogen();
+          editor.struct(newStruct);
         }
       })
       .catch((e) => {

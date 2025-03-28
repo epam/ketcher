@@ -78,7 +78,7 @@ async function expandMonomer(page: Page, locatorText: string) {
   });
 }
 
-test.describe('Ketcher bugs in 3.1.0', () => {
+test.describe('Ketcher bugs in 3.2.0', () => {
   test.beforeAll(async ({ browser }) => {
     const context = await browser.newContext();
     page = await context.newPage();
@@ -910,6 +910,28 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await clickOnCanvas(page, 500, 500);
     await setZoomInputValue(page, '60');
     await resetCurrentTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 30: Able to load ambiguous RNA and ambiguous DNA monomers with same name from HELM', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/Indigo/issues/2826
+     * Description: Able to load ambiguous RNA and ambiguous DNA monomers with same name from HELM.
+     * Scenario:
+     * 1. Go to Macro - Flex mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Take a screenshot.
+     */
+    await turnOnMacromoleculesEditor(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[dR](A,C,G,T)P.[dR](A,G,T)P.[dR](A,T)P}|RNA2{R(A,C,G,U)P.R(A,C,U)P.R(A,U)[Ssp]}|RNA3{[RSpabC](A,U)P}$RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair|RNA2,RNA1,2:pair-8:pair$$$V2.0',
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

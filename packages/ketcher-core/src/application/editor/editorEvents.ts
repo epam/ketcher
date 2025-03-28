@@ -59,6 +59,7 @@ export interface IEditorEvents {
   updateMonomersLibrary: Subscription;
   createAntisenseChain: Subscription;
   copySelectedStructure: Subscription;
+  pasteFromClipboard: Subscription;
   deleteSelectedStructure: Subscription;
 }
 
@@ -119,6 +120,7 @@ export function resetEditorEvents() {
     updateMonomersLibrary: new Subscription(),
     createAntisenseChain: new Subscription(),
     copySelectedStructure: new Subscription(),
+    pasteFromClipboard: new Subscription(),
     deleteSelectedStructure: new Subscription(),
   };
 }

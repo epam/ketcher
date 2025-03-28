@@ -53,6 +53,9 @@ export enum SequenceItemContextMenuNames {
   deleteHydrogenBond = 'delete_hydrogen_bond',
   editSequence = 'edit_sequence',
   startNewSequence = 'start_new_sequence',
+  copy = 'copy',
+  paste = 'paste',
+  delete = 'delete',
 }
 
 export const SequenceItemContextMenu = ({
@@ -85,6 +88,17 @@ export const SequenceItemContextMenu = ({
           !menuProps?.isSelectedAtLeastOneNucleoelement
         );
       },
+    },
+    {
+      name: SequenceItemContextMenuNames.copy,
+      title: 'Copy',
+      disabled: selectedMonomers?.length === 0,
+    },
+    {
+      name: SequenceItemContextMenuNames.paste,
+      title: 'Paste',
+      disabled: false,
+      separator: true,
     },
     {
       name: SequenceItemContextMenuNames.createRnaAntisenseStrand,
@@ -158,6 +172,7 @@ export const SequenceItemContextMenu = ({
     {
       name: SequenceItemContextMenuNames.deleteHydrogenBond,
       title: 'Delete Hydrogen Bonds',
+      separator: true,
       disabled: ({
         props,
       }: {
@@ -178,6 +193,11 @@ export const SequenceItemContextMenu = ({
       }) => {
         return !props?.sequenceItemRenderer;
       },
+    },
+    {
+      name: SequenceItemContextMenuNames.delete,
+      title: 'Delete',
+      disabled: selectedMonomers?.length === 0,
     },
   ];
 
@@ -327,6 +347,15 @@ export const SequenceItemContextMenu = ({
         }
         break;
       }
+      case 'copy':
+        editor.events.copySelectedStructure.dispatch();
+        break;
+      case 'paste':
+        editor.events.pasteFromClipboard.dispatch();
+        break;
+      case 'delete':
+        editor.events.deleteSelectedStructure.dispatch();
+        break;
       default:
         break;
     }

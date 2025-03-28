@@ -66,6 +66,7 @@ import { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
 import { initializeMode, parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
+import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -609,14 +610,28 @@ export class CoreEditor {
       | LayoutMode
       | { mode: LayoutMode; mergeWithLatestHistoryCommand: boolean },
   ) {
+    const command = new Command();
     const mode = typeof data === 'object' ? data.mode : data;
     const ModeConstructor = modesMap[mode];
     assert(ModeConstructor);
     const history = new EditorHistory(this);
     const hasModeChanged = this.mode.modeName !== mode;
+    const isLastCommandTurnOnSnakeMode =
+      history.previousCommand?.operations.find((operation) => {
+        return (
+          operation instanceof SelectLayoutModeOperation &&
+          operation.mode === 'snake-layout-mode' &&
+          operation.prevMode !== 'snake-layout-mode'
+        );
+      });
+
+    if (isLastCommandTurnOnSnakeMode) {
+      history.undo();
+    }
+
     this.mode.destroy();
     this.mode = new ModeConstructor(this.mode.modeName);
-    const command = this.mode.initialize(true, false, !hasModeChanged);
+    command.merge(this.mode.initialize(true, false, !hasModeChanged));
     history.update(
       command,
       typeof data === 'object' ? data?.mergeWithLatestHistoryCommand : false,

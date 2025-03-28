@@ -20,8 +20,24 @@ import {
   moveMouseAway,
   selectSaveTool,
   openFileAndAddToCanvasAsNewProjectMacro,
+  setMolecule,
+  FILE_TEST_DATA,
+  resetZoomLevelToDefault,
+  selectSaveFileFormat,
+  FileFormatOption,
+  setZoomInputValue,
+  resetCurrentTool,
+  clickOnCanvas,
 } from '@utils';
-import { waitForPageInit } from '@utils/common';
+import {
+  waitForPageInit,
+  waitForRender,
+  waitForSpinnerFinishedWork,
+} from '@utils/common';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 import {
   chooseFileFormat,
   turnOnMacromoleculesEditor,
@@ -34,7 +50,10 @@ import {
   getMonomerLocator,
   getSymbolLocator,
 } from '@utils/macromolecules/monomer';
-import { doubleClickOnSequenceSymbol } from '@utils/macromolecules/sequence';
+import {
+  doubleClickOnSequenceSymbol,
+  switchToPeptideMode,
+} from '@utils/macromolecules/sequence';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 
@@ -43,6 +62,20 @@ let page: Page;
 async function openSaveToHELMDialog(page: Page) {
   await selectSaveTool(page);
   await chooseFileFormat(page, 'HELM');
+}
+
+async function callContexMenu(page: Page, locatorText: string) {
+  const canvasLocator = page.getByTestId('ketcher-canvas');
+  await canvasLocator.getByText(locatorText, { exact: true }).click({
+    button: 'right',
+  });
+}
+
+async function expandMonomer(page: Page, locatorText: string) {
+  await callContexMenu(page, locatorText);
+  await waitForRender(page, async () => {
+    await page.getByText('Expand monomer').click();
+  });
 }
 
 test.describe('Ketcher bugs in 3.1.0', () => {
@@ -55,6 +88,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
 
   test.afterEach(async ({ context: _ }, testInfo) => {
     await selectClearCanvasTool(page);
+    await resetZoomLevelToDefault(page);
     await processResetToDefaultState(testInfo, page);
   });
 
@@ -282,6 +316,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,11:pair-2:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair$$$V2.0',
     );
+    await switchSyncMode(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -501,5 +536,383 @@ test.describe('Ketcher bugs in 3.1.0', () => {
         hideMacromoleculeEditorScrollBars: true,
       });
     }
+  });
+
+  test('Case 15: Adding nucleotide to first position at sense/antisense chain', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/ketcher/issues/6554
+     * Description: Adding nucleotide to first position at sense/antisense chain.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Switch to edit mode and try to add nucleotide (RNA or DNA - C in my case) to the first position
+     * 4. Take a screenshot.
+     */
+    await selectSequenceLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
+    );
+    await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 0 });
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.type('C');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 16: New sequence not appears gray after clearing the canvas in non-sync mode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/ketcher/issues/6632
+     * Description: New sequence not appears gray after clearing the canvas in non-sync mode.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Switch to the antisense chain
+     * 4. Notice that the sense chain becomes grayed out
+     * 5. Click Clear Canvas
+     * 6. Start typing a new sequence
+     * 7. Take a screenshot.
+     */
+    await selectSequenceLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
+    );
+    await switchSyncMode(page);
+    await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 0 });
+    await page.keyboard.press('ArrowDown');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectClearCanvasTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.keyboard.type('AAAAA');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 17: Sync mode not causes incorrect letter input after adding a monomer in non-sync mode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/ketcher/issues/6631
+     * Description: Sync mode not causes incorrect letter input after adding a monomer in non-sync mode.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Disable sync mode and add monomer "U" in the antisense chain.
+     * 4. Notice that the antisense strand flips during editing.
+     * 5. Enable sync mode and click Clear Canvas.
+     * 6. Try to type "A" or "U" on the keyboard.
+     * 7. Take a screenshot.
+     */
+    await selectSequenceLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,11:pair-2:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair$$$V2.0',
+    );
+    await switchSyncMode(page);
+    await doubleClickOnSequenceSymbol(page, 'U', { nthNumber: 2 });
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.type('U');
+    await switchSyncMode(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectClearCanvasTool(page);
+    await page.keyboard.type('AAAAA');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 18: System add same thing in antisense chain but not connect it with H-bond if it is not nucleotide/nucleoside', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/ketcher/issues/6539
+     * Description: System add same thing in antisense chain but not connect it with H-bond if it is not nucleotide/nucleoside.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Switch to edit mode and try to add peptide (E in my case) between two As
+     * 4. Take a screenshot.
+     */
+    await selectSequenceLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
+    );
+    await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 1 });
+    await page.keyboard.press('ArrowLeft');
+    await switchToPeptideMode(page);
+    await page.keyboard.type('E');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 19: Adding nucleotide between nucleotide and - symbol not causes appearence of separated phosphate on the canvas', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/ketcher/issues/6530
+     * Description: Adding nucleotide between nucleotide and - symbol not causes appearence of separated phosphate on the canvas.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Load from HELM
+     * 3. Switch to edit mode and try to add nucleotide (RNA or DNA - C in my case) before first U and - symbol
+     * 4. Take a screenshot.
+     */
+    await selectSequenceLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)}|RNA2{R(U)P.R(U)}|RNA3{R(A)}$RNA1,RNA2,2:pair-2:pair|RNA2,RNA3,5:pair-2:pair$$$V2.0',
+    );
+    await doubleClickOnSequenceSymbol(page, 'U', { nthNumber: 0 });
+    await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowLeft');
+    await page.keyboard.type('C');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 20: API setMolecule not moves molecule off-canvas on second call', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/ketcher/issues/6608
+     * Description: API setMolecule not moves molecule off-canvas on second call.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Make setMolecule call with coordinates (10, 10) twice
+     * 3. Take a screenshot.
+     */
+    await turnOnMicromoleculesEditor(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.moleculeWithSpecificCoordinates,
+          { x: 10, y: 10 },
+        ),
+    );
+    await takeEditorScreenshot(page);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () =>
+        await setMolecule(
+          page,
+          FILE_TEST_DATA.moleculeWithSpecificCoordinates,
+          { x: 10, y: 10 },
+        ),
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 21: R Group logic condition is not wrong if loaded from MOL', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/Indigo/issues/2699
+     * Description: R Group logic condition is not wrong if loaded from MOL.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from MOL
+     * 3. Take a screenshot.
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/Bugs/markush.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 22: R Group logic condition is not wrong if loaded from complex structure MOL', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/Indigo/issues/2699
+     * Description: R Group logic condition is not wrong if loaded from MOL.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from MOL
+     * 3. Take a screenshot.
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/Bugs/complex-r-group-structure.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 23: System not losts one stereo label if load from MOL', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/Indigo/issues/2704
+     * Description: System not losts one stereo label if load from MOL.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from MOL
+     * 3. Take a screenshot.
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/Bugs/two-stereostructures.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 24: Export molecule which contains atom with five neighbors and stereo-bond not cause error', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/Indigo/issues/2702
+     * Description: Export molecule which contains atom with five neighbors and stereo-bond not cause error and can be saved to MOL V2000.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from KET
+     * 3. Save to MOL V2000
+     * 4. Take a screenshot.
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/Unable to save canvas to MOL - system throws an error.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V2000/Bugs/Unable to save canvas to MOL - system throws an error-expected.mol',
+      FileType.MOL,
+      'v2000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/Bugs/Unable to save canvas to MOL - system throws an error-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 25: Atom Query feature export: System not lost MOST "Substitution count" values', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/Indigo/issues/2707
+     * Description: Atom Query feature export: System not lost MOST "Substitution count" values.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from KET
+     * 3. Take a screenshot.
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/Substitution count.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 26: Export to SMILES works if loaded from MOL', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/Indigo/issues/2708
+     * Description: Export to SMILES works if loaded from MOL.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from MOL
+     * 3. Save to SMILES
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V2000/Bugs/different-features.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'SMILES/Bugs/different-features-expected.smi',
+      FileType.SMILES,
+    );
+  });
+
+  test('Case 27: Elliptical arrows can be saved to the png', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/Indigo/issues/2513
+     * Description: Elliptical arrows can be saved to the png.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from KET
+     * 3. Save to PNG
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/Elliptical arrows can be saved to the png.ket',
+      page,
+    );
+    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 28: Image not missing stereochemistry information when using abbreviations', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/Indigo/issues/2741
+     * Description: SVG Image not missing stereochemistry information when using abbreviations.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from CDXML
+     * 3. Save to SVG
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/Bugs/stereochemistry.cdxml',
+      page,
+    );
+    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 29: Correct R1 attachment atom for natural Ribose (R) in the library', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6764
+     * Bug: https://github.com/epam/ketcher/issues/6750
+     * Description: Correct R1 attachment atom for natural Ribose (R) in the library.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode (clean canvas)
+     * 2. Type AA (RNA typing type)
+     * 3. Go to small molecules and expand the ribose monomers
+     * 4. Take a screenshot.
+     */
+    await selectSequenceLayoutModeTool(page);
+    await page.keyboard.type('AA');
+    await turnOnMicromoleculesEditor(page);
+    await selectAllStructuresOnCanvas(page);
+    await expandMonomer(page, 'P');
+    await clickOnCanvas(page, 500, 500);
+    await setZoomInputValue(page, '60');
+    await resetCurrentTool(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 });

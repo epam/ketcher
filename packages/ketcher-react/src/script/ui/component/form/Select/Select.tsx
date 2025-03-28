@@ -17,10 +17,11 @@
 import MuiSelect, { SelectChangeEvent } from '@mui/material/Select';
 import Divider from '@mui/material/Divider';
 import MenuItem from '@mui/material/MenuItem';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import styles from './Select.module.less';
 import { Icon } from 'components';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 
 export interface Option {
   value: string;
@@ -42,6 +43,15 @@ interface Props {
 const ChevronIcon = ({ className }) => (
   <Icon name="chevron" className={clsx(className, styles.chevronIcon)} />
 );
+
+const isFullScreen = () => {
+  return !!(
+    document.fullscreenElement ||
+    document.mozFullScreenElement ||
+    document.webkitFullscreenElement ||
+    document.msFullscreenElement
+  );
+};
 
 const Select = ({
   className,
@@ -68,14 +78,23 @@ const Select = ({
     onChange(event.target.value);
   };
 
+  const selectRef = useRef<HTMLDivElement>(null);
   return (
     <MuiSelect
+      ref={selectRef}
       className={clsx(styles.selectContainer, className)}
       value={currentValue?.value ?? ''}
       onChange={handleChange}
       multiple={multiple}
       disabled={disabled}
-      MenuProps={{ className: styles.dropdownList }}
+      MenuProps={{
+        className: styles.dropdownList,
+        container: isFullScreen()
+          ? () =>
+              selectRef.current?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR) ??
+              document.body
+          : undefined,
+      }}
       IconComponent={ChevronIcon}
       data-testid={testId}
     >

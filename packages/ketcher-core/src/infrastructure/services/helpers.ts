@@ -23,6 +23,6 @@ export function getLabelRenderModeForIndigo() {
   return (
     renderModeMapping[
       ketcherProvider.getKetcher()?.editor.options().showHydrogenLabels
-    ] || IndigoShowHydrogenLabelsMode.OFF
+    ] || IndigoShowHydrogenLabelsMode.TERMINAL_HETERO
   );
 }

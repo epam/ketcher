@@ -21,11 +21,6 @@ import {
   turnSyncEditModeOff,
   turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
-import {
-  switchToDNAMode,
-  switchToPeptideMode,
-  switchToRNAMode,
-} from '@utils/macromolecules/sequence';
 
 let page: Page;
 
@@ -53,19 +48,6 @@ interface IMonomerToAdd {
   Type: SequenceModeType;
   Letter: string;
 }
-
-const monomersToAdd: IMonomerToAdd[] = [
-  {
-    Id: 1,
-    Type: SequenceModeType.RNA,
-    Letter: 'C',
-  },
-  {
-    Id: 2,
-    Type: SequenceModeType.Peptide,
-    Letter: 'E',
-  },
-];
 
 interface ISequence {
   Id: number;
@@ -141,23 +123,6 @@ async function checkForKnownBugs(sequence: ISequence, monomer?: IMonomerToAdd) {
       addAnnotation(`MonomerId: ${monomer.Id}`);
     }
     test.info().fixme();
-  }
-}
-
-async function selectSequenceMode(page: Page, sequenceMode: SequenceModeType) {
-  switch (sequenceMode) {
-    case SequenceModeType.RNA:
-      await switchToRNAMode(page);
-      break;
-    case SequenceModeType.DNA:
-      await switchToDNAMode(page);
-      break;
-    case SequenceModeType.Peptide:
-      await switchToPeptideMode(page);
-      break;
-    default:
-      await switchToRNAMode(page);
-      break;
   }
 }
 

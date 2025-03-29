@@ -15,7 +15,6 @@ import {
   selectMacroBond,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
-  MonomerType,
   selectAllStructuresOnCanvas,
   addMonomerToCenterOfCanvas,
   copyToClipboardByKeyboard,
@@ -59,7 +58,11 @@ import {
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
-import { modifyInRnaBuilder, getSymbolLocator, getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  modifyInRnaBuilder,
+  getSymbolLocator,
+  getMonomerLocator,
+} from '@utils/macromolecules/monomer';
 import {
   clickOnSequenceSymbol,
   hoverOnSequenceSymbol,

@@ -1785,7 +1785,7 @@ for (const monomer of monomersToAdd) {
   }
 }
 
-for (const sequence of sequences) {
+for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
   test(`Case 5-${sequence.Id}. Delete first symbol at ${sequence.SequenceName} with Delete key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 5
@@ -1880,8 +1880,23 @@ for (const sequence of sequences) {
     await checkForKnownBugs(sequence);
   });
 }
-
-for (const sequence of sequences) {
+const excludeNonUniquePairsOfSecondAndThirdSymbolsIds = [
+  50, 51, 52, 53, 54, 56, 57, 58, 60, 61, 62, 65, 69, 73, 74, 75, 76, 77, 78,
+  79, 80, 82, 84, 85, 86, 87, 88, 89, 90, 91, 93, 94, 95, 96, 97, 98, 99, 100,
+  101, 102, 103, 104, 106, 107, 110, 111, 114, 115, 116, 117, 118, 119, 120,
+  121, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136,
+  137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151,
+  152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166,
+  167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177, 179, 180, 181, 182,
+  183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197,
+  198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 209, 210, 211, 212, 213,
+  214, 216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229,
+];
+const uniquePairsOfSecondAndThirdSymbols = sequences.filter(
+  (sequence) =>
+    !excludeNonUniquePairsOfSecondAndThirdSymbolsIds.includes(sequence.Id),
+);
+for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
   test(`Case 7-${sequence.Id}. Delete third symbol at ${sequence.SequenceName} with Delete key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 7
@@ -1931,7 +1946,7 @@ for (const sequence of sequences) {
   });
 }
 
-for (const sequence of sequences) {
+for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
   test(`Case 8-${sequence.Id}. Delete first symbol at ${sequence.SequenceName} Backspace key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 8
@@ -2023,7 +2038,7 @@ for (const sequence of sequences) {
   });
 }
 
-for (const sequence of sequences) {
+for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
   test(`Case 10-${sequence.Id}. Delete third symbol at ${sequence.SequenceName} Backspace key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 7
@@ -2975,7 +2990,7 @@ for (const monomer of monomersToAdd) {
   }
 }
 
-for (const sequence of sequences) {
+for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
   test(`Case 21-${sequence.Id}. Delete first symbol of sense chain at ${sequence.SequenceName} with Delete key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 11
@@ -3078,7 +3093,7 @@ for (const sequence of sequences) {
   });
 }
 
-for (const sequence of sequences) {
+for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
   test(`Case 23-${sequence.Id}. Delete third symbol of sense chain at ${sequence.SequenceName} with Delete key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 13
@@ -3130,7 +3145,7 @@ for (const sequence of sequences) {
   });
 }
 
-for (const sequence of sequences) {
+for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
   test(`Case 24-${sequence.Id}. Delete first symbol of sense chain at ${sequence.SequenceName} Backspace key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 14
@@ -3230,7 +3245,7 @@ for (const sequence of sequences) {
   });
 }
 
-for (const sequence of sequences) {
+for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
   test(`Case 26-${sequence.Id}. Delete third symbol of sense chain at ${sequence.SequenceName} Backspace key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 16
@@ -3500,7 +3515,7 @@ for (const monomer of monomersToAdd) {
   }
 }
 
-for (const sequence of sequences) {
+for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
   test(`Case 31-${sequence.Id}. Delete first symbol of antisense chain at ${sequence.SequenceName} with Delete key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 21
@@ -3604,7 +3619,7 @@ for (const sequence of sequences) {
   });
 }
 
-for (const sequence of sequences) {
+for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
   test(`Case 33-${sequence.Id}. Delete third symbol of antisense chain at ${sequence.SequenceName} with Delete key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 23
@@ -3656,7 +3671,7 @@ for (const sequence of sequences) {
   });
 }
 
-for (const sequence of sequences) {
+for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
   test(`Case 34-${sequence.Id}. Delete first symbol of antisense chain at ${sequence.SequenceName} Backspace key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 24
@@ -3756,7 +3771,7 @@ for (const sequence of sequences) {
   });
 }
 
-for (const sequence of sequences) {
+for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
   test(`Case 36-${sequence.Id}. Delete third symbol of antisense chain at ${sequence.SequenceName} Backspace key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 36

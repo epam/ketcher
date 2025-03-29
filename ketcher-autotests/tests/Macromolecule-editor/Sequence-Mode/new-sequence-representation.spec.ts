@@ -89,6 +89,14 @@ const dash: IMonomerToAdd[] = [
   },
 ];
 
+const enter: IMonomerToAdd[] = [
+  {
+    Id: 4,
+    Type: SequenceModeType.Enter,
+    Letter: 'Enter',
+  },
+];
+
 interface ISequence {
   Id: number;
   HELM?: string;
@@ -1598,7 +1606,13 @@ const uniquePairsOfFirstAndSecondSymbols = sequences.filter(
   (sequence) =>
     !excludeNonUniquePairsOfFirstAndSecondSymbolsIds.includes(sequence.Id),
 );
-for (const monomer of monomersToAdd) {
+
+const monomersToAddWithEnter = [
+  ...Object.values(monomersToAdd),
+  ...Object.values(enter),
+];
+
+for (const monomer of monomersToAddWithEnter) {
   for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     test(`Case 2-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to second position`, async () => {
       /*
@@ -1667,7 +1681,7 @@ const excludeNonWithDashSecondPairsIds = [
 const secondSymbolPairsWithDash = sequences.filter(
   (sequence) => !excludeNonWithDashSecondPairsIds.includes(sequence.Id),
 );
-for (const monomer of monomersToAdd) {
+for (const monomer of monomersToAddWithEnter) {
   for (const sequence of secondSymbolPairsWithDash) {
     test(`Case 3-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to third position`, async () => {
       /*
@@ -2824,11 +2838,12 @@ for (const monomer of monomersToAdd) {
     });
   }
 }
-const monomersToAddWithDash = [
+const monomersToAddWithDashAndEnter = [
   ...Object.values(monomersToAdd),
   ...Object.values(dash),
+  ...Object.values(enter),
 ];
-for (const monomer of monomersToAddWithDash) {
+for (const monomer of monomersToAddWithDashAndEnter) {
   for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     test(`Case 18-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to second position of sence chain`, async () => {
       /*
@@ -2881,7 +2896,7 @@ for (const monomer of monomersToAddWithDash) {
   }
 }
 
-for (const monomer of monomersToAddWithDash) {
+for (const monomer of monomersToAddWithDashAndEnter) {
   for (const sequence of secondSymbolPairsWithDash) {
     test(`Case 19-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to third position of sense chain`, async () => {
       /*
@@ -3353,7 +3368,7 @@ for (const monomer of monomersToAdd) {
   }
 }
 
-for (const monomer of monomersToAddWithDash) {
+for (const monomer of monomersToAddWithDashAndEnter) {
   for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     test(`Case 28-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to second position of antisence chain`, async () => {
       /*
@@ -3406,7 +3421,7 @@ for (const monomer of monomersToAddWithDash) {
   }
 }
 
-for (const monomer of monomersToAddWithDash) {
+for (const monomer of monomersToAddWithDashAndEnter) {
   for (const sequence of secondSymbolPairsWithDash) {
     test(`Case 29-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to third position of antisense chain`, async () => {
       /*

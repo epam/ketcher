@@ -42,6 +42,8 @@ export const Bases = {
     testId: 'nC6n8A___6-Aminohexyl-8-aminoadenine',
   } as Monomer,
   meA: { alias: 'meA', testId: 'meA___N6-methyladenine' } as Monomer,
+  U: { alias: 'U', testId: 'U___Uracil' } as Monomer,
+  T: { alias: 'T', testId: 'T___Thymine' } as Monomer,
   DNA_N: {
     alias: 'DNA_N',
     testId: '_A___Adenine_C___Cytosine_G___Guanine_T___Thymine',

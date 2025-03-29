@@ -3,6 +3,7 @@ import { Monomer } from '@utils/types';
 export const Sugars = {
   R: { alias: 'R', testId: 'R___Ribose' } as Monomer,
   dR: { alias: 'dR', testId: 'dR___Deoxy-Ribose' } as Monomer,
+  fR: { alias: 'fR', testId: "fR___2'-Flu0ro-Ribose" } as Monomer,
   FMOE: {
     alias: 'FMOE',
     testId: "FMOE___2'-O-Tris-trifluoromethoxyethyl ribose",

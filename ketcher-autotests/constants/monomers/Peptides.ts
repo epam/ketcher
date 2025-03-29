@@ -42,6 +42,7 @@ export const Peptides = {
     testId: 'D-Hyp___trans-4-hydroxy-D-proline',
   } as Monomer,
   D_OAla: { alias: 'D-OAla', testId: 'D-OAla___D-Lactic acid' } as Monomer,
+  E: { alias: 'E', testId: 'E___Glutamic acid' } as Monomer,
   Edc: { alias: 'Edc', testId: 'Edc___S-ethylthiocysteine' } as Monomer,
   F: { alias: 'F', testId: 'F___Phenylalanine-ethylthiocysteine' } as Monomer,
   K: { alias: 'K', testId: 'K___Lysine' } as Monomer,

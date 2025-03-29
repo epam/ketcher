@@ -1,41 +1,27 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Bases } from '@constants/monomers/Bases';
-import { Page, test, expect } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  MacroBondType,
   MacroFileType,
-  MonomerType,
-  openFileAndAddToCanvasMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
-  selectAllStructuresOnCanvas,
   selectClearCanvasTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
-  selectSnakeLayoutModeTool,
   SequenceChainType,
   SequenceModeType,
-  SymbolType,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import {
-  getMonomerLocator,
   getSymbolLocator,
   turnSyncEditModeOff,
   turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
 import {
-  bondTwoMonomers,
-  getBondLocator,
-} from '@utils/macromolecules/polymerBond';
-import {
-  pressYesInConfirmYourActionDialog,
   switchToDNAMode,
   switchToPeptideMode,
   switchToRNAMode,
@@ -491,7 +477,7 @@ for (const sequence of sequencesForAddingDash) {
 
 test(`Case 44. Check that a line can not be added if at any of the four positions around the caret there is a gap - just like when the user enters some unsupported symbol - nothing happens`, async () => {
   /*
-   * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 43
+   * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 44
    * Description: Check that a line can not be added if at any of the four positions around the caret there is a gap - just like when the user enters some unsupported symbol - nothing happens ( Requirement: 2.3 )
    * Scenario:
    * 1. Clear canvas
@@ -558,5 +544,39 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     await page.keyboard.press('Minus');
   });
   await clickInTheMiddleOfTheScreen(page);
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+});
+
+test(`Case 45. Verify that when editing only one side of the sense/antisense duplex (as shown in the mockups), the unedited chain is correctly grayed out/dimmed`, async () => {
+  /*
+   * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 45
+   * Description: Verify that when editing only one side of the sense/antisense duplex (as shown in the mockups), the unedited chain is correctly grayed out/dimmed. ( Requirement: 3.1 )
+   * Scenario:
+   * 1. Clear canvas
+   * 2. Load sequence from HELM
+   * 3. Switch sequence to edit mode (SYNC is OFF) and move cursor to the sense chain
+   * 4. Take screenshot to validate that antisense chain is dimmed
+   * 5. Press ArrowDown keyboard key to move cursor to the antisense chain
+   * 6. Take screenshot to validate that sense chain is dimmed
+   */
+  await pasteFromClipboardAndAddToMacromoleculesCanvas(
+    page,
+    MacroFileType.HELM,
+    'RNA1{R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
+  );
+  await selectSequenceLayoutModeTool(page);
+  await turnSyncEditModeOff(page);
+
+  await turnIntoEditModeAndPlaceCursorToThePosition(page, {
+    position: 2,
+    senseOrAntisense: SequenceChainType.Sense,
+    syncEditMode: false,
+  });
+  await takeEditorScreenshot(page, { hideMonomerPreview: true });
+
+  await waitForRender(page, async () => {
+    await page.keyboard.press('ArrowDown');
+  });
+
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });

@@ -104,6 +104,74 @@ type MonomerLocatorOptions = {
   | Monomer
 );
 
+/**
+ * This function returns locator for monomer in the macromolecule editor.
+ * It can be used to find monomers by their alias, type, or ID. It also allows for additional options such as number of attachment points, R values, and hydrogen connection number.
+ * It can be used to find monomers by specisic monomer enums, such as Bases, Sugars, and Peptides.
+ * It is useful for automating tests and interactions with the macromolecule editor in Ketcher.
+ * @param {Page} page - The Playwright page instance where the monomer is located.
+ * @param {MonomerLocatorOptions} options - Options for locating the monomer.
+ * @returns {Locator} - The locator for the specified monomer.
+ * @example
+ * const { test, expect } = require('@playwright/test');
+ * const { getMonomerLocator } = require('./path/to/your/module');
+ * const { Page } = require('playwright');
+ *
+ * test('should locate a monomer by alias', async ({ page }) => {
+ *   const locator = getMonomerLocator(page, { monomerAlias: 'A' });
+ *   await expect(locator).toBeVisible();
+ * });
+ *
+ * test('should locate a monomer by type', async ({ page }) => {
+ *   const locator = getMonomerLocator(page, { monomerType: MonomerType.AminoAcid });
+ *   await expect(locator).toBeVisible();
+ * });
+ *
+ * test('should locate a monomer by ID', async ({ page }) => {
+ *   const locator = getMonomerLocator(page, { monomerId: 123 });
+ *   await expect(locator).toBeVisible();
+ * });
+ *
+ * test('should locate a monomer with specific options', async ({ page }) => {
+ *   const locator = getMonomerLocator(page, {
+ *     monomerAlias: 'A',
+ *     numberOfAttachmentPoints: '2',
+ *     rValues: [true, false],
+ *     hydrogenConnectionNumber: '1',
+ *   });
+ *   await expect(locator).toBeVisible();
+ * });
+ *
+ * test('should take a screenshot of the monomer', async ({ page }) => {
+ *   const locator = getMonomerLocator(page, { monomerAlias: 'A' });
+ *   await expect(locator).toHaveScreenshot();
+ * });
+ *
+ * test('should take a screenshot of the monomer with specific options', async ({ page }) => {
+ *   const locator = getMonomerLocator(page, {
+ *     monomerAlias: 'A',
+ *     numberOfAttachmentPoints: '2',
+ *     rValues: [true, false],
+ *     hydrogenConnectionNumber: '1',
+ *   });
+ *   await expect(locator).toHaveScreenshot();
+ *
+ * test('should take a screenshot of the monomer from Bases', async ({ page }) => {
+ *  const locator = getMonomerLocator(page, Bases.A);
+ *  await expect(locator).toHaveScreenshot();
+ * });
+ *
+ * test('should take a screenshot of the monomer from Sugars and with specific options', async ({ page }) => {
+ *  const locator = getMonomerLocator(page, { monomerAlias: Bases.A });
+ *  await expect(locator).toHaveScreenshot();
+ * });
+ *  const locator = getMonomerLocator(page, {
+ *   ...Sugars.fR,
+ *   rValues: [true, true, true],
+ * });
+ * await expect(locator).toHaveScreenshot();
+ **/
+
 export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
   const attributes: { [key: string]: string } = {};
 

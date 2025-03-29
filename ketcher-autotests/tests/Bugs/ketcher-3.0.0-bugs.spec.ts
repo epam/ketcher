@@ -254,10 +254,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'RNA1{R(A)P}$$$$V2.0',
     );
     await selectMacroBond(page, MacroBondTool.SINGLE);
-    const baseLocator = getMonomerLocator(page, {
-      monomerAlias: 'A',
-      monomerType: MonomerType.Base,
-    }).first();
+    const baseLocator = getMonomerLocator(page, Bases.A).first();
     await baseLocator.hover({ force: true });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

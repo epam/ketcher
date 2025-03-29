@@ -162,14 +162,11 @@ type MonomerLocatorOptions = {
  * });
  *
  * test('should take a screenshot of the monomer from Sugars and with specific options', async ({ page }) => {
- *  const locator = getMonomerLocator(page, { monomerAlias: Bases.A });
- *  await expect(locator).toHaveScreenshot();
- * });
- *  const locator = getMonomerLocator(page, {
- *   ...Sugars.fR,
- *   rValues: [true, true, true],
- * });
- * await expect(locator).toHaveScreenshot();
+ *   const locator = getMonomerLocator(page, {
+ *     ...Sugars.fR,
+ *     rValues: [true, true, true],
+ *   });
+ *   await expect(locator).toHaveScreenshot();
  **/
 
 export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {

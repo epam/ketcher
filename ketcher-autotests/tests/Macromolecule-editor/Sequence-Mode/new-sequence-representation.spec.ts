@@ -1527,7 +1527,7 @@ const excludeNonUniqueFirstSymbolPairsIds = [
   175, 176, 177, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191,
   193, 194, 195, 196, 197, 198, 199, 201, 202, 203, 204, 205, 206, 207, 210,
   211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225, 227,
-  228, 229,
+  228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238,
 ];
 const uniqueFirstSymbolPairs = sequences.filter(
   (sequence) => !excludeNonUniqueFirstSymbolPairsIds.includes(sequence.Id),
@@ -1591,7 +1591,8 @@ const excludeNonUniquePairsOfFirstAndSecondSymbolsIds = [
   127, 128, 129, 130, 134, 135, 136, 137, 138, 139, 152, 153, 154, 155, 156,
   157, 158, 163, 165, 166, 167, 168, 171, 172, 173, 174, 175, 176, 180, 181,
   182, 183, 184, 185, 186, 187, 188, 193, 194, 195, 196, 197, 198, 201, 202,
-  203, 204, 205, 206, 210, 211, 212, 213, 214, 215, 216, 223, 227,
+  203, 204, 205, 206, 210, 211, 212, 213, 214, 215, 216, 223, 227, 230, 231,
+  232, 233, 234, 235, 236, 237, 238,
 ];
 const uniquePairsOfFirstAndSecondSymbols = sequences.filter(
   (sequence) =>
@@ -1602,7 +1603,8 @@ for (const monomer of monomersToAdd) {
     test(`Case 2-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to second position`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 2
-       * Description: User can add monomer (of every type) to second position in sequence (of every configuration) in edit mode (SYNC mode is ON)
+       * Description: User can add monomer (of every type) to second position in sequence (of every configuration)
+       *              in edit mode (SYNC mode is ON)
        * Scenario:
        * 1. Clear canvas
        * 2. Load sequence from HELM
@@ -1659,7 +1661,8 @@ const excludeNonWithDashSecondPairsIds = [
   169, 170, 171, 172, 173, 174, 175, 176, 177, 179, 180, 181, 182, 183, 184,
   185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199,
   200, 201, 202, 203, 204, 205, 206, 207, 209, 210, 211, 212, 213, 214, 215,
-  216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229,
+  216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230,
+  231, 232, 233, 234, 235, 236, 237, 238,
 ];
 const secondSymbolPairsWithDash = sequences.filter(
   (sequence) => !excludeNonWithDashSecondPairsIds.includes(sequence.Id),
@@ -1669,7 +1672,8 @@ for (const monomer of monomersToAdd) {
     test(`Case 3-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to third position`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 3
-       * Description: User can add monomer (of every type) to third position in sequence (of every configuration) in edit mode (SYNC mode is ON)
+       * Description: User can add monomer (of every type) to third position in sequence (of every configuration)
+       *              in edit mode (SYNC mode is ON)
        * Scenario:
        * 1. Clear canvas
        * 2. Load sequence from HELM
@@ -1734,7 +1738,8 @@ for (const monomer of monomersToAdd) {
     test(`Case 4-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to last position`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 4
-       * Description: User can add monomer (of every type) to last position in sequence (of every configuration) in edit mode (SYNC mode is ON)
+       * Description: User can add monomer (of every type) to last position in sequence (of every configuration)
+       *              in edit mode (SYNC mode is ON)
        * Scenario:
        * 1. Clear canvas
        * 2. Load sequence from HELM
@@ -1784,7 +1789,8 @@ for (const sequence of sequences) {
   test(`Case 5-${sequence.Id}. Delete first symbol at ${sequence.SequenceName} with Delete key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 5
-     * Description: User can delete monomer (of every type) on first position in sequence (of every configuration) in edit mode (SYNC mode is ON)
+     * Description: User can delete monomer (of every type) on first position in sequence (of every configuration)
+     *              in edit mode (SYNC mode is ON)
      * Scenario:
      * 1. Clear canvas
      * 2. Load sequence from HELM
@@ -1831,7 +1837,8 @@ for (const sequence of sequences) {
   test(`Case 6-${sequence.Id}. Delete second symbol at ${sequence.SequenceName} with Delete key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 6
-     * Description: User can delete monomer (of every type) on second position in sequence (of every configuration) in edit mode (SYNC mode is ON)
+     * Description: User can delete monomer (of every type) on second position in sequence (of every configuration)
+     *              in edit mode (SYNC mode is ON)
      * Scenario:
      * 1. Clear canvas
      * 2. Load sequence from HELM
@@ -1878,7 +1885,8 @@ for (const sequence of sequences) {
   test(`Case 7-${sequence.Id}. Delete third symbol at ${sequence.SequenceName} with Delete key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 7
-     * Description: User can delete monomer (of every type) on third position in sequence (of every configuration) in edit mode (SYNC mode is ON)
+     * Description: User can delete monomer (of every type) on third position in sequence (of every configuration)
+     *              in edit mode (SYNC mode is ON)
      * Scenario:
      * 1. Clear canvas
      * 2. Load sequence from HELM
@@ -1927,7 +1935,8 @@ for (const sequence of sequences) {
   test(`Case 8-${sequence.Id}. Delete first symbol at ${sequence.SequenceName} Backspace key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 8
-     * Description: User can delete monomer (of every type) on first position in sequence (of every configuration) in edit mode (SYNC mode is ON)
+     * Description: User can delete monomer (of every type) on first position in sequence (of every configuration)
+     *              in edit mode (SYNC mode is ON)
      * Scenario:
      * 1. Clear canvas
      * 2. Load sequence from HELM
@@ -1972,7 +1981,8 @@ for (const sequence of sequences) {
   test(`Case 9-${sequence.Id}. Delete second symbol at ${sequence.SequenceName} Backspace key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 9
-     * Description: User can delete monomer (of every type) on second position in sequence (of every configuration) in edit mode (SYNC mode is ON)
+     * Description: User can delete monomer (of every type) on second position in sequence (of every configuration)
+     *              in edit mode (SYNC mode is ON)
      * Scenario:
      * 1. Clear canvas
      * 2. Load sequence from HELM
@@ -2017,7 +2027,8 @@ for (const sequence of sequences) {
   test(`Case 10-${sequence.Id}. Delete third symbol at ${sequence.SequenceName} Backspace key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 7
-     * Description: User can delete monomer (of every type) on third position in sequence (of every configuration) in edit mode (SYNC mode is ON)
+     * Description: User can delete monomer (of every type) on third position in sequence (of every configuration)
+     *              in edit mode (SYNC mode is ON)
      * Scenario:
      * 1. Clear canvas
      * 2. Load sequence from HELM
@@ -2038,8 +2049,6 @@ for (const sequence of sequences) {
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, {
       position: !sequence.Rotation ? 4 : 8,
-      senseOrAntisense: SequenceChainType.Antisense,
-      syncEditMode: false,
     });
 
     await waitForRender(page, async () => {

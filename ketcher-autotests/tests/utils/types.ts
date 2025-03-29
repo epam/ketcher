@@ -31,6 +31,11 @@ export enum SequenceModeType {
   RNA = 'RNA',
   DNA = 'DNA',
   Peptide = 'Peptide',
+  CHEM = 'CHEM',
+  Phosphate = 'Phosphate',
+  Unknown = 'Unknown',
+  Dash = 'Dash',
+  Gap = 'Gap',
 }
 
 export enum SequenceChainType {

@@ -81,6 +81,14 @@ const monomersToAdd: IMonomerToAdd[] = [
   },
 ];
 
+const dash: IMonomerToAdd[] = [
+  {
+    Id: 3,
+    Type: SequenceModeType.Dash,
+    Letter: '-',
+  },
+];
+
 interface ISequence {
   Id: number;
   HELM?: string;
@@ -823,16 +831,16 @@ const sequences: ISequence[] = [
     SequenceName: '(pA)(AO)(A---A)',
     HELM: 'RNA1{P.R(A)P.R(A)}|RNA2{R(U)P}|RNA3{R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,6:pair-2:pair|RNA2,CHEM1,3:R2-1:R1|CHEM1,RNA3,1:R2-1:R1$$$V2.0',
   },
-  // {
-  //   Id: 149,
-  //   SequenceName: '(AO)(A---A)(A---A)',
-  //   HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P}|CHEM1{[4aPEGMal]}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,5:pair-5:pair|RNA2,CHEM1,6:R2-1:R1$$$V2.0',
-  // },
-  // {
-  //   Id: 150,
-  //   SequenceName: '(AO)(A---A)(O---A)',
-  //   HELM: 'RNA1{R(A)P.R(A)P}|RNA2{R(U)P.R(U)P}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA2,5:pair-5:pair|RNA2,CHEM1,6:R2-1:R1|RNA1,CHEM2,6:R2-1:R1|CHEM2,RNA2,1:pair-2:pair$$$V2.0',
-  // },
+  {
+    Id: 149,
+    SequenceName: '(AO)(A---A)(A---A)',
+    HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P}|CHEM1{[4aPEGMal]}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,5:pair-5:pair|RNA2,CHEM1,6:R2-1:R1$$$V2.0',
+  },
+  {
+    Id: 150,
+    SequenceName: '(AO)(A---A)(O---A)',
+    HELM: 'RNA1{R(A)P.R(A)P}|RNA2{R(U)P.R(U)P}|CHEM1{[4aPEGMal]}|CHEM2{[4aPEGMal]}$RNA1,RNA2,5:pair-5:pair|RNA2,CHEM1,6:R2-1:R1|RNA1,CHEM2,6:R2-1:R1|CHEM2,RNA2,1:pair-2:pair$$$V2.0',
+  },
   {
     Id: 151,
     SequenceName: '(AO)(A---A)(A---O)',
@@ -1305,6 +1313,86 @@ const sequences: ISequence[] = [
     SequenceName: '(pb)(AO)(A---A)',
     HELM: 'RNA1{P.R(A)P.R(A)}|RNA2{R(U)P}|CHEM1{[4aPEGMal]}$RNA1,RNA2,6:pair-2:pair|CHEM1,RNA2,1:R1-3:R2$$$V2.0',
   },
+  {
+    Id: 230,
+    SequenceName: '(A---A)(E---A)(p---A)',
+    HELM: 'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)P.R(U)}|PEPTIDE1{E}$RNA1,RNA3,2:pair-8:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-5:pair|RNA2,RNA3,1:pair-2:pair$$$V2.0',
+    Rotation: true,
+    LeftAnchoredHELM:
+      'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)P.R(U)}|PEPTIDE1{E}|PEPTIDE2{D.D.D.D}$RNA1,RNA3,2:pair-8:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-5:pair|RNA2,RNA3,1:pair-2:pair|PEPTIDE2,RNA1,4:R2-1:R1$$$V2.0',
+    RightAnchoredHELM:
+      'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)P.R(U)}|PEPTIDE1{E}|PEPTIDE2{D.D.D.D}$RNA1,RNA3,2:pair-8:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-5:pair|RNA2,RNA3,1:pair-2:pair|RNA2,PEPTIDE2,1:R2-1:R1$$$V2.0',
+  },
+  {
+    Id: 231,
+    SequenceName: '(A---A)(E---A)(p---O)',
+    HELM: 'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)}|PEPTIDE1{E}|CHEM1{[4aPEGMal]}$RNA1,RNA3,2:pair-5:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-2:pair|CHEM1,RNA3,1:R2-1:R1|RNA2,CHEM1,1:pair-1:pair$$$V2.0',
+    Rotation: true,
+    LeftAnchoredHELM:
+      'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)}|PEPTIDE1{E}|CHEM1{[4aPEGMal]}|PEPTIDE2{D.D.D.D}$RNA1,RNA3,2:pair-5:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-2:pair|CHEM1,RNA3,1:R2-1:R1|RNA2,CHEM1,1:pair-1:pair|PEPTIDE2,RNA1,4:R2-1:R1$$$V2.0',
+    RightAnchoredHELM:
+      'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)}|PEPTIDE1{E}|CHEM1{[4aPEGMal]}|PEPTIDE2{D.D.D.D}$RNA1,RNA3,2:pair-5:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-2:pair|CHEM1,RNA3,1:R2-1:R1|RNA2,CHEM1,1:pair-1:pair|RNA2,PEPTIDE2,1:R2-1:R1$$$V2.0',
+  },
+  {
+    Id: 232,
+    SequenceName: '(A---A)(E---A)(p---p)',
+    HELM: 'RNA1{R(A)P}|RNA2{P}|RNA3{P.R(U)P.R(U)}|PEPTIDE1{E}$RNA1,RNA3,2:pair-6:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-3:pair|RNA2,RNA3,1:pair-1:pair$$$V2.0',
+    Rotation: true,
+    LeftAnchoredHELM:
+      'RNA1{R(A)P}|RNA2{P}|RNA3{P.R(U)P.R(U)}|PEPTIDE1{E}|PEPTIDE2{D.D.D.D}$RNA1,RNA3,2:pair-6:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-3:pair|PEPTIDE2,RNA1,4:R2-1:R1|RNA2,RNA3,1:pair-1:pair$$$V2.0',
+    RightAnchoredHELM:
+      'RNA1{R(A)P}|RNA2{P}|RNA3{P.R(U)P.R(U)}|PEPTIDE1{E}|PEPTIDE2{D.D.D.D}$RNA1,RNA3,2:pair-6:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-3:pair|RNA2,RNA3,1:pair-1:pair|RNA2,PEPTIDE2,1:R2-1:R1$$$V2.0',
+  },
+  {
+    Id: 233,
+    SequenceName: '(A---A)(E---A)(pA)',
+    HELM: 'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)P.R(U)}|PEPTIDE1{E}$RNA1,RNA3,2:pair-8:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-5:pair$$$V2.0',
+    Rotation: true,
+    LeftAnchoredHELM:
+      'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)P.R(U)}|PEPTIDE1{E}|PEPTIDE2{D.D.D.D}$RNA1,RNA3,2:pair-8:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-5:pair|PEPTIDE2,RNA1,4:R2-1:R1$$$V2.0',
+    RightAnchoredHELM:
+      'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)P.R(U)}|PEPTIDE1{E}|PEPTIDE2{D.D.D.D}$RNA1,RNA3,2:pair-8:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-5:pair|RNA2,PEPTIDE2,1:R2-1:R1$$$V2.0',
+  },
+  {
+    Id: 234,
+    SequenceName: '(A---A)(E---A)(pO)',
+    HELM: 'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)}|PEPTIDE1{E}|CHEM1{[4aPEGMal]}$RNA1,RNA3,2:pair-5:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-2:pair|CHEM1,RNA3,1:R2-1:R1$$$V2.0',
+    Rotation: true,
+    LeftAnchoredHELM:
+      'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)}|PEPTIDE1{E}|CHEM1{[4aPEGMal]}|PEPTIDE2{D.D.D.D}$RNA1,RNA3,2:pair-5:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-2:pair|CHEM1,RNA3,1:R2-1:R1|PEPTIDE2,RNA1,4:R2-1:R1$$$V2.0',
+    RightAnchoredHELM:
+      'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)}|PEPTIDE1{E}|CHEM1{[4aPEGMal]}|PEPTIDE2{D.D.D.D}$RNA1,RNA3,2:pair-5:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-2:pair|CHEM1,RNA3,1:R2-1:R1|RNA2,PEPTIDE2,1:R2-1:R1$$$V2.0',
+  },
+  {
+    Id: 235,
+    SequenceName: '(A---A)(A---A)(Ap)',
+    HELM: 'RNA1{R(A)P.R(A)P.R(A)}|RNA2{P.R(U)P.R(U)}$RNA1,RNA2,5:pair-3:pair|RNA1,RNA2,2:pair-6:pair|RNA1,RNA2,8:pair-1:pair$$$V2.0',
+  },
+  {
+    Id: 236,
+    SequenceName: '(A---A)(A---A)(Op)',
+    HELM: 'RNA1{R(A)P.R(A)P}|RNA2{P.R(U)P.R(U)}|CHEM1{[4aPEGMal]}$RNA1,RNA2,5:pair-3:pair|RNA1,RNA2,2:pair-6:pair|RNA1,CHEM1,6:R2-1:R1|CHEM1,RNA2,1:pair-1:pair$$$V2.0',
+  },
+  {
+    Id: 237,
+    SequenceName: '(A---A)(E---A)(pp)',
+    HELM: 'RNA1{R(A)P}|RNA2{P}|RNA3{P.R(U)P.R(U)}|PEPTIDE1{E}$RNA1,RNA3,2:pair-6:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-3:pair$$$V2.0',
+    Rotation: true,
+    LeftAnchoredHELM:
+      'RNA1{R(A)P}|RNA2{P}|RNA3{P.R(U)P.R(U)}|PEPTIDE1{E}|PEPTIDE2{D.D.D.D}$RNA1,RNA3,2:pair-6:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-3:pair|PEPTIDE2,RNA1,4:R2-1:R1$$$V2.0',
+    RightAnchoredHELM:
+      'RNA1{R(A)P}|RNA2{P}|RNA3{P.R(U)P.R(U)}|PEPTIDE1{E}|PEPTIDE2{D.D.D.D}$RNA1,RNA3,2:pair-6:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-3:pair|RNA2,PEPTIDE2,1:R2-1:R1$$$V2.0',
+  },
+  {
+    Id: 238,
+    SequenceName: '(A---A)(E---A)(pb)',
+    HELM: 'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)}|PEPTIDE1{E}$RNA1,RNA3,2:pair-5:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-2:pair$$$V2.0',
+    Rotation: true,
+    LeftAnchoredHELM:
+      'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)}|PEPTIDE1{E}|PEPTIDE2{D.D.D.D}$RNA1,RNA3,2:pair-5:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-2:pair|PEPTIDE2,RNA1,4:R2-1:R1$$$V2.0',
+    RightAnchoredHELM:
+      'RNA1{R(A)P}|RNA2{P}|RNA3{R(U)P.R(U)}|PEPTIDE1{E}|PEPTIDE2{D.D.D.D}$RNA1,RNA3,2:pair-5:pair|RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,RNA3,1:pair-2:pair|RNA2,PEPTIDE2,1:R2-1:R1$$$V2.0',
+  },
 ];
 
 interface IFailedTestSequenceReplaceMonomer {
@@ -1427,12 +1515,29 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
   }
 }
 
+const excludeNonUniqueFirstSymbolPairsIds = [
+  2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+  23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 38, 39, 40, 41, 42, 43, 44, 47,
+  51, 53, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 69, 70, 74, 75, 76,
+  77, 78, 79, 80, 82, 85, 86, 87, 88, 89, 90, 91, 93, 95, 96, 97, 98, 99, 100,
+  101, 102, 103, 104, 106, 107, 110, 111, 115, 116, 117, 118, 119, 120, 121,
+  123, 125, 126, 127, 128, 129, 130, 131, 132, 134, 135, 136, 137, 138, 139,
+  140, 141, 142, 143, 144, 146, 148, 150, 151, 152, 153, 154, 155, 156, 157,
+  158, 159, 160, 161, 163, 164, 165, 166, 167, 168, 169, 171, 172, 173, 174,
+  175, 176, 177, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191,
+  193, 194, 195, 196, 197, 198, 199, 201, 202, 203, 204, 205, 206, 207, 210,
+  211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225, 227,
+  228, 229,
+];
+const uniqueFirstSymbolPairs = sequences.filter(
+  (sequence) => !excludeNonUniqueFirstSymbolPairsIds.includes(sequence.Id),
+);
 for (const monomer of monomersToAdd) {
-  for (const sequence of sequences) {
+  for (const sequence of uniqueFirstSymbolPairs) {
     test(`Case 1-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to first position`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 1
-       * Description: User can add monomer (of every type) to first position in sequence (of every configuration) in edit mode
+       * Description: User can add monomer (of every type) to first position in sequence (of every configuration) in edit mode (SYNC mode is ON)
        * Scenario:
        * 1. Clear canvas
        * 2. Load sequence from HELM
@@ -1478,12 +1583,26 @@ for (const monomer of monomersToAdd) {
   }
 }
 
+const excludeNonUniquePairsOfFirstAndSecondSymbolsIds = [
+  2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 15, 16, 18, 19, 20, 21, 22, 23, 24, 24,
+  25, 26, 27, 28, 29, 31, 32, 33, 33, 39, 40, 41, 42, 43, 43, 44, 55, 56, 57,
+  58, 59, 60, 61, 62, 63, 74, 75, 76, 77, 78, 79, 85, 86, 87, 88, 89, 90, 95,
+  96, 97, 98, 99, 100, 101, 102, 103, 115, 116, 117, 118, 119, 120, 125, 126,
+  127, 128, 129, 130, 134, 135, 136, 137, 138, 139, 152, 153, 154, 155, 156,
+  157, 158, 163, 165, 166, 167, 168, 171, 172, 173, 174, 175, 176, 180, 181,
+  182, 183, 184, 185, 186, 187, 188, 193, 194, 195, 196, 197, 198, 201, 202,
+  203, 204, 205, 206, 210, 211, 212, 213, 214, 215, 216, 223, 227,
+];
+const uniquePairsOfFirstAndSecondSymbols = sequences.filter(
+  (sequence) =>
+    !excludeNonUniquePairsOfFirstAndSecondSymbolsIds.includes(sequence.Id),
+);
 for (const monomer of monomersToAdd) {
-  for (const sequence of sequences) {
+  for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     test(`Case 2-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to second position`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 2
-       * Description: User can add monomer (of every type) to second position in sequence (of every configuration) in edit mode
+       * Description: User can add monomer (of every type) to second position in sequence (of every configuration) in edit mode (SYNC mode is ON)
        * Scenario:
        * 1. Clear canvas
        * 2. Load sequence from HELM
@@ -1526,12 +1645,31 @@ for (const monomer of monomersToAdd) {
   }
 }
 
+// Adding monomer to third position in sequence make sense only if second sense/antisense pair contains dash
+// Otherwise it would be duplacate check with adding monomer to second position
+const excludeNonWithDashSecondPairsIds = [
+  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+  23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 50, 51, 52, 53, 54, 55, 56, 57,
+  58, 59, 60, 61, 62, 63, 64, 65, 66, 69, 73, 74, 75, 76, 77, 78, 79, 80, 82,
+  84, 85, 86, 87, 88, 89, 90, 91, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,
+  103, 104, 106, 107, 110, 111, 114, 115, 116, 117, 118, 119, 120, 121, 123,
+  124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138,
+  139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150, 151, 152, 153,
+  154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168,
+  169, 170, 171, 172, 173, 174, 175, 176, 177, 179, 180, 181, 182, 183, 184,
+  185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 198, 199,
+  200, 201, 202, 203, 204, 205, 206, 207, 209, 210, 211, 212, 213, 214, 215,
+  216, 217, 218, 219, 220, 221, 222, 223, 224, 225, 226, 227, 228, 229,
+];
+const secondSymbolPairsWithDash = sequences.filter(
+  (sequence) => !excludeNonWithDashSecondPairsIds.includes(sequence.Id),
+);
 for (const monomer of monomersToAdd) {
-  for (const sequence of sequences) {
+  for (const sequence of secondSymbolPairsWithDash) {
     test(`Case 3-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to third position`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 3
-       * Description: User can add monomer (of every type) to third position in sequence (of every configuration) in edit mode
+       * Description: User can add monomer (of every type) to third position in sequence (of every configuration) in edit mode (SYNC mode is ON)
        * Scenario:
        * 1. Clear canvas
        * 2. Load sequence from HELM
@@ -1574,12 +1712,29 @@ for (const monomer of monomersToAdd) {
   }
 }
 
+const excludeNonUniqueLastSymbolPairsIds = [
+  2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+  23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 38, 39, 40, 41, 42, 43, 44, 47,
+  51, 53, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 69, 70, 74, 75, 76,
+  77, 78, 79, 80, 82, 85, 86, 87, 88, 89, 90, 91, 93, 95, 96, 97, 98, 99, 100,
+  101, 102, 103, 104, 106, 107, 110, 111, 115, 116, 117, 118, 119, 120, 121,
+  123, 125, 126, 127, 128, 129, 130, 131, 132, 134, 135, 136, 137, 138, 139,
+  140, 141, 142, 143, 144, 146, 148, 150, 151, 152, 153, 154, 155, 156, 157,
+  158, 159, 160, 161, 163, 164, 165, 166, 167, 168, 169, 171, 172, 173, 174,
+  175, 176, 177, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191,
+  193, 194, 195, 196, 197, 198, 199, 201, 202, 203, 204, 205, 206, 207, 210,
+  211, 212, 213, 214, 215, 216, 217, 218, 219, 220, 221, 223, 224, 225, 227,
+  228, 229,
+];
+const uniqueLastSymbolPairs = sequences.filter(
+  (sequence) => !excludeNonUniqueLastSymbolPairsIds.includes(sequence.Id),
+);
 for (const monomer of monomersToAdd) {
-  for (const sequence of sequences) {
+  for (const sequence of uniqueLastSymbolPairs) {
     test(`Case 4-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to last position`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 4
-       * Description: User can add monomer (of every type) to last position in sequence (of every configuration) in edit mode
+       * Description: User can add monomer (of every type) to last position in sequence (of every configuration) in edit mode (SYNC mode is ON)
        * Scenario:
        * 1. Clear canvas
        * 2. Load sequence from HELM
@@ -1629,7 +1784,7 @@ for (const sequence of sequences) {
   test(`Case 5-${sequence.Id}. Delete first symbol at ${sequence.SequenceName} with Delete key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 5
-     * Description: User can delete monomer (of every type) on first position in sequence (of every configuration) in edit mode
+     * Description: User can delete monomer (of every type) on first position in sequence (of every configuration) in edit mode (SYNC mode is ON)
      * Scenario:
      * 1. Clear canvas
      * 2. Load sequence from HELM
@@ -1676,7 +1831,7 @@ for (const sequence of sequences) {
   test(`Case 6-${sequence.Id}. Delete second symbol at ${sequence.SequenceName} with Delete key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 6
-     * Description: User can delete monomer (of every type) on second position in sequence (of every configuration) in edit mode
+     * Description: User can delete monomer (of every type) on second position in sequence (of every configuration) in edit mode (SYNC mode is ON)
      * Scenario:
      * 1. Clear canvas
      * 2. Load sequence from HELM
@@ -1723,7 +1878,7 @@ for (const sequence of sequences) {
   test(`Case 7-${sequence.Id}. Delete third symbol at ${sequence.SequenceName} with Delete key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 7
-     * Description: User can delete monomer (of every type) on third position in sequence (of every configuration) in edit mode
+     * Description: User can delete monomer (of every type) on third position in sequence (of every configuration) in edit mode (SYNC mode is ON)
      * Scenario:
      * 1. Clear canvas
      * 2. Load sequence from HELM
@@ -1772,7 +1927,7 @@ for (const sequence of sequences) {
   test(`Case 8-${sequence.Id}. Delete first symbol at ${sequence.SequenceName} Backspace key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 8
-     * Description: User can delete monomer (of every type) on first position in sequence (of every configuration) in edit mode
+     * Description: User can delete monomer (of every type) on first position in sequence (of every configuration) in edit mode (SYNC mode is ON)
      * Scenario:
      * 1. Clear canvas
      * 2. Load sequence from HELM
@@ -1817,7 +1972,7 @@ for (const sequence of sequences) {
   test(`Case 9-${sequence.Id}. Delete second symbol at ${sequence.SequenceName} Backspace key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 9
-     * Description: User can delete monomer (of every type) on second position in sequence (of every configuration) in edit mode
+     * Description: User can delete monomer (of every type) on second position in sequence (of every configuration) in edit mode (SYNC mode is ON)
      * Scenario:
      * 1. Clear canvas
      * 2. Load sequence from HELM
@@ -1862,7 +2017,7 @@ for (const sequence of sequences) {
   test(`Case 10-${sequence.Id}. Delete third symbol at ${sequence.SequenceName} Backspace key`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6517 - Test case 7
-     * Description: User can delete monomer (of every type) on third position in sequence (of every configuration) in edit mode
+     * Description: User can delete monomer (of every type) on third position in sequence (of every configuration) in edit mode (SYNC mode is ON)
      * Scenario:
      * 1. Clear canvas
      * 2. Load sequence from HELM
@@ -2591,7 +2746,7 @@ test(`Case 16. Check that when all H-bonds are deleted, the chain(s) that used t
 });
 
 for (const monomer of monomersToAdd) {
-  for (const sequence of sequences) {
+  for (const sequence of uniqueFirstSymbolPairs) {
     test(`Case 17-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to first position of sence chain`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 7
@@ -2645,9 +2800,12 @@ for (const monomer of monomersToAdd) {
     });
   }
 }
-
-for (const monomer of monomersToAdd) {
-  for (const sequence of sequences) {
+const monomersToAddWithDash = [
+  ...Object.values(monomersToAdd),
+  ...Object.values(dash),
+];
+for (const monomer of monomersToAddWithDash) {
+  for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     test(`Case 18-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to second position of sence chain`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 8
@@ -2699,8 +2857,8 @@ for (const monomer of monomersToAdd) {
   }
 }
 
-for (const monomer of monomersToAdd) {
-  for (const sequence of sequences) {
+for (const monomer of monomersToAddWithDash) {
+  for (const sequence of secondSymbolPairsWithDash) {
     test(`Case 19-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to third position of sense chain`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 9
@@ -2753,7 +2911,7 @@ for (const monomer of monomersToAdd) {
 }
 
 for (const monomer of monomersToAdd) {
-  for (const sequence of sequences) {
+  for (const sequence of uniqueLastSymbolPairs) {
     test(`Case 20-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to last position of sense chain`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 10
@@ -3115,7 +3273,7 @@ for (const sequence of sequences) {
 }
 
 for (const monomer of monomersToAdd) {
-  for (const sequence of sequences) {
+  for (const sequence of uniqueFirstSymbolPairs) {
     test(`Case 27-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to first position of antisence chain`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 17
@@ -3171,8 +3329,8 @@ for (const monomer of monomersToAdd) {
   }
 }
 
-for (const monomer of monomersToAdd) {
-  for (const sequence of sequences) {
+for (const monomer of monomersToAddWithDash) {
+  for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
     test(`Case 28-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to second position of antisence chain`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 18
@@ -3224,8 +3382,8 @@ for (const monomer of monomersToAdd) {
   }
 }
 
-for (const monomer of monomersToAdd) {
-  for (const sequence of sequences) {
+for (const monomer of monomersToAddWithDash) {
+  for (const sequence of secondSymbolPairsWithDash) {
     test(`Case 29-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to third position of antisense chain`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 19
@@ -3278,7 +3436,7 @@ for (const monomer of monomersToAdd) {
 }
 
 for (const monomer of monomersToAdd) {
-  for (const sequence of sequences) {
+  for (const sequence of uniqueLastSymbolPairs) {
     test(`Case 30-${sequence.Id}-${monomer.Id}. Add ${monomer.Type} (${monomer.Letter}) to ${sequence.SequenceName} to last position of antisense chain`, async () => {
       /*
        * Test case: https://github.com/epam/ketcher/issues/6722 - Test case 20

@@ -16,8 +16,10 @@
 import { type IconName } from 'ketcher-react';
 import { useMenuContext } from '../../../hooks/useMenuContext';
 import { useCallback } from 'react';
+import styled from '@emotion/styled';
 import { StyledIconButton } from './styles';
 import { blurActiveElement } from 'helpers/canvas';
+import { Button } from '@mui/material';
 
 type MenuItemProp = {
   itemId: IconName;
@@ -25,7 +27,19 @@ type MenuItemProp = {
   testId?: string;
   disabled?: boolean;
   onClick?: () => void;
+  type?: 'icon-button' | 'button';
 };
+const MenuButton = styled(Button)`
+  display: flex;
+  justify-content: space-between;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  padding: 7px 8px;
+  text-transform: none;
+  color: #333333;
+  width: max-content;
+`;
 
 const MenuItem = ({
   itemId,
@@ -33,6 +47,7 @@ const MenuItem = ({
   disabled,
   testId,
   onClick,
+  type = 'icon-button',
 }: MenuItemProp) => {
   const { isActive, activate } = useMenuContext();
 
@@ -49,15 +64,23 @@ const MenuItem = ({
   const activeClass = isActiveItem ? ' active' : '';
 
   return (
-    <StyledIconButton
-      title={title}
-      className={itemId + activeClass}
-      isActive={isActiveItem}
-      onClick={onClickCallback}
-      iconName={itemId}
-      testId={testId}
-      disabled={disabled}
-    />
+    <>
+      {type === 'icon-button' ? (
+        <StyledIconButton
+          title={title}
+          className={itemId + activeClass}
+          isActive={isActiveItem}
+          onClick={onClickCallback}
+          iconName={itemId}
+          testId={testId}
+          disabled={disabled}
+        />
+      ) : (
+        <MenuButton title={title} onClick={onClickCallback} disabled={disabled}>
+          {title}
+        </MenuButton>
+      )}
+    </>
   );
 };
 

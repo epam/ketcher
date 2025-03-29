@@ -229,6 +229,7 @@ import QuestionMark from '../../../assets/icons/files/questionMark.svg';
 import Nucleotide from '../../../assets/icons/files/nucleotide.svg';
 import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
 import CrossIcon from '../../../assets/icons/files/cross.svg';
+import AntisenseStrandIcon from '../../../assets/icons/files/antisense-strand.svg';
 
 export const iconNameToIcon = {
   α,
@@ -462,4 +463,7 @@ export const iconNameToIcon = {
   'sequence-layout-mode': SequenceLayoutIcon,
   questionMark: QuestionMark,
   'no-highlight-cross': CrossIcon,
+  antisenseStrand: AntisenseStrandIcon,
+  antisenseRnaStrand: AntisenseStrandIcon,
+  antisenseDnaStrand: AntisenseStrandIcon,
 } as const;

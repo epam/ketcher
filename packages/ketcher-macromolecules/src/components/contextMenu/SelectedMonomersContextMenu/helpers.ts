@@ -5,6 +5,7 @@ import {
   getSugarFromRnaBase,
   isRnaBaseOrAmbiguousRnaBase,
   KetAmbiguousMonomerTemplateSubType,
+  RNA_DNA_NON_MODIFIED_PART,
   RNABase,
   Sugar,
 } from 'ketcher-core';
@@ -108,4 +109,18 @@ export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
       (selectedMonomer instanceof Sugar && getRnaBaseFromSugar(selectedMonomer))
     );
   });
+};
+export const hasOnlyDeoxyriboseSugars = (selectedMonomers: BaseMonomer[]) => {
+  return selectedMonomers?.every((selectedMonomer: BaseMonomer) =>
+    selectedMonomer instanceof Sugar
+      ? selectedMonomer.label === RNA_DNA_NON_MODIFIED_PART.SUGAR_DNA
+      : true,
+  );
+};
+export const hasOnlyRiboseSugars = (selectedMonomers: BaseMonomer[]) => {
+  return selectedMonomers?.every((selectedMonomer: BaseMonomer) =>
+    selectedMonomer instanceof Sugar
+      ? selectedMonomer.label === RNA_DNA_NON_MODIFIED_PART.SUGAR_RNA
+      : true,
+  );
 };

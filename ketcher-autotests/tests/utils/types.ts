@@ -36,7 +36,7 @@ export enum SequenceModeType {
   Unknown = 'Unknown',
   Dash = 'Dash',
   Gap = 'Gap',
-  Enter = 'Enter',
+  Enter = 'Sequence/chain breaker',
 }
 
 export enum SequenceChainType {

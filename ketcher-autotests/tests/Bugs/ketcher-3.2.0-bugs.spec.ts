@@ -1,7 +1,9 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
+import { Bases } from '@constants/monomers/Bases';
 import { Peptides } from '@constants/monomers/Peptides';
+import { Phosphates } from '@constants/monomers/Phosphates';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Page, test } from '@playwright/test';
 import {
@@ -16,7 +18,6 @@ import {
   selectSequenceLayoutModeTool,
   switchSyncMode,
   SequenceType,
-  MonomerType,
   moveMouseAway,
   selectSaveTool,
   openFileAndAddToCanvasAsNewProjectMacro,
@@ -358,22 +359,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    const phosphateP = getMonomerLocator(page, {
-      monomerAlias: 'P',
-      monomerType: MonomerType.Phosphate,
-    }).first();
-    const sugarR = getMonomerLocator(page, {
-      monomerAlias: 'R',
-      monomerType: MonomerType.Sugar,
-    }).nth(1);
-    const phosphatebP = getMonomerLocator(page, {
-      monomerAlias: 'bP',
-      monomerType: MonomerType.Phosphate,
-    }).first();
-    const baseA = getMonomerLocator(page, {
-      monomerAlias: 'A',
-      monomerType: MonomerType.Base,
-    }).nth(1);
+    const phosphateP = getMonomerLocator(page, Phosphates.P).first();
+    const sugarR = getMonomerLocator(page, Sugars.R).nth(1);
+    const phosphatebP = getMonomerLocator(page, Phosphates.bP).first();
+    const baseA = getMonomerLocator(page, Bases.A).nth(1);
 
     await page.keyboard.down('Shift');
     await phosphateP.click();

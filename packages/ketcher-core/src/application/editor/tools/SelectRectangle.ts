@@ -329,8 +329,8 @@ class SelectRectangle implements BaseTool {
   }
 
   static calculateDistanceSnap(cursorPosition: Vec2, monomer: BaseMonomer) {
-    const [firstSideMonomer, secondSideMonomer] = monomer.covalentBonds.map(
-      (bond) => bond.getAnotherEntity(monomer),
+    const [firstSideMonomer, secondSideMonomer] = monomer.polymerBonds.map(
+      (bond) => bond.getAnotherMonomer(monomer),
     );
 
     if (firstSideMonomer && secondSideMonomer) {
@@ -368,7 +368,7 @@ class SelectRectangle implements BaseTool {
           isDistanceSnapped: true,
           distanceSnapPosition,
         };
-      } else if (alignment === 'vertical') {
+      } else {
         const deltaX1 = Math.abs(cursorPosition.x - firstSideMonomer.center.x);
         const deltaX2 = Math.abs(cursorPosition.x - secondSideMonomer.center.x);
 
@@ -386,7 +386,81 @@ class SelectRectangle implements BaseTool {
         };
       }
     } else {
-      return { isDistanceSnapped: false };
+      const monomerForSnapping = firstSideMonomer ?? secondSideMonomer;
+      if (!monomerForSnapping) {
+        return { isDistanceSnapped: false };
+      }
+
+      const [monomerForAlignment] = monomerForSnapping.polymerBonds
+        .filter((bond) => bond.isBackBoneChainConnection)
+        .map((bond) => bond.getAnotherMonomer(monomerForSnapping))
+        .filter((connectedMonomer) => connectedMonomer !== monomer);
+
+      if (!monomerForAlignment) {
+        return { isDistanceSnapped: false };
+      }
+
+      const verticalDiff = Math.abs(
+        monomerForSnapping.center.y - monomerForAlignment.center.y,
+      );
+      const horizontalDiff = Math.abs(
+        monomerForSnapping.center.x - monomerForAlignment.center.x,
+      );
+
+      let alignment: 'horizontal' | 'vertical' | undefined;
+      if (verticalDiff < 0.75 && horizontalDiff >= 0.75) {
+        alignment = 'horizontal';
+      } else if (horizontalDiff < 0.75 && verticalDiff >= 0.75) {
+        alignment = 'vertical';
+      }
+
+      if (!alignment) {
+        return { isDistanceSnapped: false };
+      }
+
+      if (alignment === 'horizontal') {
+        const delta = Math.abs(cursorPosition.y - monomerForSnapping.center.y);
+        if (delta >= 0.75) {
+          return { isDistanceSnapped: false };
+        }
+
+        const distanceToSnap = Math.abs(
+          monomerForSnapping.center.x - monomerForAlignment.center.x,
+        );
+        const angle = vectorUtils.calcAngle(
+          cursorPosition,
+          monomerForSnapping.center,
+        );
+        const distanceSnapPosition = new Vec2(
+          monomerForSnapping.center.x + distanceToSnap * -Math.cos(angle),
+          cursorPosition.y,
+        );
+        return {
+          isDistanceSnapped: true,
+          distanceSnapPosition,
+        };
+      } else {
+        const delta = Math.abs(cursorPosition.x - monomerForSnapping.center.x);
+        if (delta >= 0.75) {
+          return { isDistanceSnapped: false };
+        }
+
+        const distanceToSnap = Math.abs(
+          monomerForSnapping.center.y - monomerForAlignment.center.y,
+        );
+        const angle = vectorUtils.calcAngle(
+          cursorPosition,
+          monomerForSnapping.center,
+        );
+        const distanceSnapPosition = new Vec2(
+          cursorPosition.x,
+          monomerForSnapping.center.y + distanceToSnap * -Math.sin(angle),
+        );
+        return {
+          isDistanceSnapped: true,
+          distanceSnapPosition,
+        };
+      }
     }
   }
 

@@ -11,7 +11,6 @@ import {
   waitForRender,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { getMonomerType } from '@utils/mappers/monomerMapper';
 
 export async function moveMonomer(
   page: Page,
@@ -176,7 +175,8 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
 
   if ('testId' in options) {
     attributes['data-monomeralias'] = options.alias;
-    attributes['data-monomertype'] = getMonomerType(options);
+    attributes['data-monomertype'] = options.monomerType;
+    // getMonomerType(options);
   } else {
     const { monomerAlias, monomerType, monomerId } = options;
     if (monomerAlias) attributes['data-monomeralias'] = monomerAlias;

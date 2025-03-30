@@ -25,6 +25,7 @@ export enum MacroBondType {
 export interface Monomer {
   alias: string;
   testId: string;
+  monomerType: MonomerType;
 }
 
 export enum SequenceModeType {

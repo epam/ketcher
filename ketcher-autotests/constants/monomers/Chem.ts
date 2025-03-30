@@ -1,7 +1,7 @@
 import { MonomerType } from '@utils/types';
 import { createMonomerGroup } from './common';
 
-export const Chem = createMonomerGroup(MonomerType.Sugar, {
+export const Chem = createMonomerGroup(MonomerType.CHEM, {
   _4aPEGMal: {
     alias: '4aPEGMal',
     testId: '4aPEGMal___4-Arm PEG-Maleimide',

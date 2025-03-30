@@ -1,7 +1,7 @@
 import { MonomerType } from '@utils/types';
 import { createMonomerGroup } from './common';
 
-export const Phosphates = createMonomerGroup(MonomerType.Sugar, {
+export const Phosphates = createMonomerGroup(MonomerType.Phosphate, {
   Test_6_Ph: {
     alias: 'Test-6-Ph',
     testId: 'Test-6-Ph___Test-6-AP-Phosphate',

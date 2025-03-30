@@ -1,7 +1,7 @@
 import { MonomerType } from '@utils/types';
 import { createMonomerGroup } from './common';
 
-export const Nucleotides = createMonomerGroup(MonomerType.Sugar, {
+export const Nucleotides = createMonomerGroup(MonomerType.Nucleotide, {
   _2_damdA: {
     alias: '2-damdA',
     testId: '2-damdA___2,6-Diaminopurine',

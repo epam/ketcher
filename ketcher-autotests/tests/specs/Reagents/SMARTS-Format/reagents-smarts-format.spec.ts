@@ -1,4 +1,5 @@
 import { Page, test } from '@playwright/test';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectTopPanelButton,
   TopPanelButton,
@@ -10,7 +11,6 @@ import {
   waitForLoad,
   waitForPageInit,
   moveMouseAway,
-  selectOpenFileTool,
 } from '@utils';
 import {
   verifyFileExport,

@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   TopPanelButton,
   openFileAndAddToCanvasMacro,
@@ -20,7 +21,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
   TypeDropdownOptions,
-  selectOpenFileTool,
 } from '@utils';
 import { closeErrorMessage } from '@utils/common/helpers';
 import {

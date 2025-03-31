@@ -16,11 +16,11 @@ import {
   SequenceType,
   MacroFileType,
   PeptideType,
-  selectOpenFileTool,
 } from '@utils';
 
 import { MolfileFormat } from 'ketcher-core';
 import { getSmiles, getInchi } from '@utils/formats';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
 export async function readFileContents(filePath: string) {
   const resolvedFilePath = path.resolve(process.cwd(), filePath);

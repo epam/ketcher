@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   takeEditorScreenshot,
   selectRing,
@@ -31,7 +32,6 @@ import {
   moveMouseAway,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectOpenFileTool,
 } from '@utils';
 import {
   pressRedoButton,

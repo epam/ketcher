@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   TopPanelButton,
-  selectOpenFileTool,
   selectTopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,

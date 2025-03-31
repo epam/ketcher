@@ -1,4 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   resetCurrentTool,
   takeTopToolbarScreenshot,
@@ -14,7 +15,6 @@ import {
   drawBenzeneRing,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
-  selectOpenFileTool,
 } from '@utils';
 import {
   pressUndoButton,

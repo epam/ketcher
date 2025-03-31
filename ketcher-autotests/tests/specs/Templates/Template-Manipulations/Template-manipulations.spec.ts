@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { test } from '@playwright/test';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   takeEditorScreenshot,
   selectAtomInToolbar,
@@ -50,7 +51,6 @@ import {
   selectUndoByKeyboard,
   selectZoomOutTool,
   waitForElementInCanvas,
-  selectOpenFileTool,
 } from '@utils';
 
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';

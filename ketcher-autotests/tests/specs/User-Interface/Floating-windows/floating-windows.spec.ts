@@ -1,4 +1,5 @@
 import { Page, test } from '@playwright/test';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   takeEditorScreenshot,
   selectTopPanelButton,
@@ -13,7 +14,6 @@ import {
   pasteFromClipboard,
   pasteFromClipboardAndAddToCanvas,
   waitForLoad,
-  selectOpenFileTool,
 } from '@utils';
 
 async function openFileViaClipboard(filename: string, page: Page) {

@@ -1,4 +1,5 @@
 import { Page, test } from '@playwright/test';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectTopPanelButton,
   TopPanelButton,
@@ -9,7 +10,6 @@ import {
   FILE_TEST_DATA,
   waitForLoad,
   waitForPageInit,
-  selectOpenFileTool,
 } from '@utils';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 

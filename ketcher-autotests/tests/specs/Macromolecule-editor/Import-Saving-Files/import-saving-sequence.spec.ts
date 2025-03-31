@@ -20,7 +20,6 @@ import {
   PeptideType,
   MacroFileType,
   selectSaveTool,
-  selectOpenFileTool,
 } from '@utils';
 import {
   FileType,
@@ -31,6 +30,7 @@ import {
   turnOnMacromoleculesEditor,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);

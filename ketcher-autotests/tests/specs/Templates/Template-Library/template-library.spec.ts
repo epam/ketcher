@@ -14,7 +14,6 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { STRUCTURE_LIBRARY_BUTTON_TEST_ID } from '../templates.costants';
 
 async function setDisplayStereoFlagsSettingToOn(page: Page) {
   await openSettings(page);
@@ -52,7 +51,7 @@ async function placePhenylalanineMustard(page: Page, x: number, y: number) {
 }
 
 async function openStructureLibrary(page: Page) {
-  await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();
+  await page.getByTestId('template-lib').click();
 }
 
 async function openFunctionalGroup(page: Page) {

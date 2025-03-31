@@ -15,11 +15,11 @@
  ***************************************************************************/
 import { EmptyFunction } from 'helpers';
 import { useAppDispatch } from 'hooks';
-import { useState } from 'react';
+import { useCallback, MouseEvent } from 'react';
 import { getMonomerUniqueKey, toggleMonomerFavorites } from 'state/library';
 import { Card, CardTitle, NumberCircle } from './styles';
 import { IMonomerItemProps } from './types';
-import { MONOMER_TYPES } from '../../../constants';
+import { FavoriteStarSymbol, MONOMER_TYPES } from '../../../constants';
 import useDisabledForSequenceMode from 'components/monomerLibrary/monomerLibraryItem/hooks/useDisabledForSequenceMode';
 import { isAmbiguousMonomerLibraryItem, MonomerItemType } from 'ketcher-core';
 
@@ -32,7 +32,6 @@ const MonomerItem = ({
   disabled,
   onClick = EmptyFunction,
 }: IMonomerItemProps) => {
-  const [favorite, setFavorite] = useState(item.favorite);
   const dispatch = useAppDispatch();
   const isDisabled =
     useDisabledForSequenceMode(item as MonomerItemType, groupName) || disabled;
@@ -46,6 +45,15 @@ const MonomerItem = ({
   const monomerItem = isAmbiguousMonomerLibraryItem(item)
     ? undefined
     : (item as MonomerItemType);
+
+  const addFavorite = useCallback(
+    (event: MouseEvent) => {
+      event.stopPropagation();
+      dispatch(toggleMonomerFavorites(item));
+    },
+    [dispatch, item],
+  );
+
   return (
     <Card
       selected={isSelected}
@@ -62,14 +70,10 @@ const MonomerItem = ({
       <CardTitle>{item.label}</CardTitle>
       {!isDisabled && (
         <div
-          onClick={(event) => {
-            event.stopPropagation();
-            setFavorite(!favorite);
-            dispatch(toggleMonomerFavorites(item));
-          }}
-          className={`star ${favorite ? 'visible' : ''}`}
+          onClick={addFavorite}
+          className={`star ${item.favorite ? 'visible' : ''}`}
         >
-          ★
+          {FavoriteStarSymbol}
         </div>
       )}
       {isAmbiguousMonomerLibraryItem(item) && (

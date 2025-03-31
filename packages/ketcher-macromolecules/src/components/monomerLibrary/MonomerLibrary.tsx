@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { ChangeEvent, useEffect, useRef } from 'react';
+
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Tabs } from 'components/shared/Tabs';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { setSearchFilter } from 'state/library';
-import { Icon } from 'ketcher-react';
 import { IRnaPreset } from './RnaBuilder/types';
 import {
   selectAllPresets,
@@ -31,13 +31,19 @@ import {
   MonomerLibraryContainer,
   MonomerLibraryHeader,
   MonomerLibraryInput,
-  MonomerLibrarySearch,
-  MonomerLibraryTitle,
+  MonomerLibraryInputContainer,
+  MonomerLibrarySearchIcon,
+  MonomerLibraryToggle,
 } from './styles';
+import { Icon } from 'ketcher-react';
 
 const COPY = '_Copy';
 
-const MonomerLibrary = () => {
+type Props = {
+  toggleLibraryVisibility: VoidFunction;
+};
+
+const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
   const presetsRef = useRef<IRnaPreset[]>([]);
   const dispatch = useAppDispatch();
 
@@ -49,63 +55,80 @@ const MonomerLibrary = () => {
     presetsRef.current = presets;
     return true;
   });
-  const filterResults = (event: ChangeEvent<HTMLInputElement>) => {
-    dispatch(setSearchFilter(event.target.value));
-  };
 
-  const duplicatePreset = (preset?: IRnaPreset) => {
-    let name = `${preset?.name}${COPY}`;
-    let presetWithSameName: IRnaPreset | undefined;
+  const filterResults = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      dispatch(setSearchFilter(event.target.value));
+    },
+    [dispatch],
+  );
 
-    do {
-      presetWithSameName = presetsRef.current.find(
-        (preset) => preset.name === name,
-      );
-      if (presetWithSameName) name += COPY;
-    } while (presetWithSameName);
+  const duplicatePreset = useCallback(
+    (preset?: IRnaPreset) => {
+      let name = `${preset?.name}${COPY}`;
+      let presetWithSameName: IRnaPreset | undefined;
 
-    if (presetWithSameName) {
-      dispatch(setUniqueNameError(name));
-      return;
-    }
+      do {
+        presetWithSameName = presetsRef.current.find(
+          (preset) => preset.name === name,
+        );
+        if (presetWithSameName) name += COPY;
+      } while (presetWithSameName);
 
-    const nameToSet = presetWithSameName ? `${name}_Copy` : name;
-    const duplicatedPreset = {
-      ...preset,
-      name: nameToSet,
-      nameInList: nameToSet,
-      default: false,
-      favorite: false,
-    };
-    dispatch(setActivePreset(duplicatedPreset));
-    dispatch(setIsEditMode(true));
-    scrollToSelectedPreset(preset?.name);
-  };
+      if (presetWithSameName) {
+        dispatch(setUniqueNameError(name));
+        return;
+      }
 
-  const editPreset = (preset: IRnaPreset) => {
-    dispatch(setActivePreset(preset));
-    dispatch(setIsEditMode(true));
-  };
+      const nameToSet = presetWithSameName ? `${name}${COPY}` : name;
+      const duplicatedPreset = {
+        ...preset,
+        name: nameToSet,
+        nameInList: nameToSet,
+        default: false,
+        favorite: false,
+      };
+      dispatch(setActivePreset(duplicatedPreset));
+      dispatch(setIsEditMode(true));
+      scrollToSelectedPreset(preset?.name);
+    },
+    [dispatch],
+  );
+
+  const editPreset = useCallback(
+    (preset: IRnaPreset) => {
+      dispatch(setActivePreset(preset));
+      dispatch(setIsEditMode(true));
+    },
+    [dispatch],
+  );
+
+  const tabs = useMemo(
+    () => tabsContent(duplicatePreset, editPreset),
+    [duplicatePreset, editPreset],
+  );
 
   return (
     <MonomerLibraryContainer data-testid="monomer-library">
       <MonomerLibraryHeader>
-        <MonomerLibraryTitle>Library</MonomerLibraryTitle>
-        <MonomerLibrarySearch>
-          <div>
-            <span>
-              <Icon name="search" />
-            </span>
-            <MonomerLibraryInput
-              type="search"
-              data-testid="monomer-library-input"
-              onChange={filterResults}
-              placeholder="Search by name..."
-            />
-          </div>
-        </MonomerLibrarySearch>
+        <MonomerLibraryInputContainer>
+          <MonomerLibrarySearchIcon name="search" />
+          <MonomerLibraryInput
+            type="search"
+            data-testid="monomer-library-input"
+            onChange={filterResults}
+            placeholder="Search by name..."
+          />
+        </MonomerLibraryInputContainer>
+        <MonomerLibraryToggle
+          title="Hide library"
+          onClick={toggleLibraryVisibility}
+          data-testid="hide-monomer-library"
+        >
+          <Icon name="arrows-right" />
+        </MonomerLibraryToggle>
       </MonomerLibraryHeader>
-      <Tabs tabs={tabsContent(duplicatePreset, editPreset)} />
+      <Tabs tabs={tabs} />
     </MonomerLibraryContainer>
   );
 };

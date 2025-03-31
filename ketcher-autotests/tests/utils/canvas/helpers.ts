@@ -168,7 +168,10 @@ export async function takeElementScreenshot(
   },
 ) {
   if (options?.hideMonomerPreview) {
-    await page.keyboard.press('Shift');
+    await page.evaluate(() => {
+      window.dispatchEvent(new Event('hidePreview'));
+    });
+    await page.getByTestId('polymer-library-preview').isHidden();
   }
 
   const element = page.getByTestId(elementId).first();

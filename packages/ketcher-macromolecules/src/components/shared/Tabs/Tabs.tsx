@@ -14,123 +14,42 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Tabs, Tab } from '@mui/material';
-import { ReactElement } from 'react';
-import Box from '@mui/material/Box';
-import styled from '@emotion/styled';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   selectCurrentTabIndex,
   setSelectedTabIndex,
 } from 'state/library/librarySlice';
+import TabPanel from './TabPanel';
+import { StyledTab, StyledTabs, TabPanelContent } from './Tabs.styles';
+import { memo, useCallback } from 'react';
+import { TabsData } from './Tabs.types';
 
-interface TabPanelProps {
-  index: number;
-  value: number;
-  children: JSX.Element | Array<JSX.Element>;
-}
-
-const TabPanelDiv = styled.div(() => ({
-  backgroundColor: '#eef2f5',
-  flexGrow: 1,
-  overflowY: 'auto',
-}));
-
-const TabPanelBox = styled(Box)({
-  height: '100%',
-  width: '100%',
-  alignItems: 'start',
-});
-
-function TabPanel({ children, value, index }: TabPanelProps) {
-  return (
-    <TabPanelDiv role="tabpanel" hidden={value !== index} id={index.toString()}>
-      {value === index && <TabPanelBox>{children}</TabPanelBox>}
-    </TabPanelDiv>
-  );
-}
-
-function a11yProps(index: number) {
+const a11yProps = (index: number) => {
   return {
     id: `simple-tab-${index}`,
     'aria-controls': `simple-tabpanel-${index}`,
   };
-}
+};
 
-function CustomTabs(props): ReactElement {
+type Props = {
+  tabs: TabsData;
+};
+
+const Tabs = (props: Props) => {
   const dispatch = useAppDispatch();
   const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
+
   const { tabs } = props;
   const tabPanel = tabs[selectedTabIndex];
   const Component = tabPanel?.component;
   const componentProps = tabPanel?.props;
 
-  const handleChange = (_event, newTabIndex) => {
-    dispatch(setSelectedTabIndex(newTabIndex));
-  };
-
-  const StyledTabs = styled(Tabs)({
-    height: 24,
-    minHeight: 24,
-    listStyleType: 'none',
-    margin: 0,
-    padding: 0,
-
-    '& .MuiTabs-indicator': {
-      display: 'none',
+  const handleChange = useCallback(
+    (_event, newTabIndex) => {
+      dispatch(setSelectedTabIndex(newTabIndex));
     },
-  });
-
-  const StyledTab = styled(Tab)(({ theme }) => ({
-    minHeight: 24,
-    minWidth: 0,
-    height: 1,
-    padding: 0,
-    fontSize: theme.ketcher.font.size.regular,
-    textTransform: 'none',
-    cursor: 'pointer',
-    textAlign: 'center',
-    backgroundColor: theme.ketcher.color.tab.regular,
-    color: theme.ketcher.color.text.light,
-    listStyleType: 'none',
-    margin: 0,
-    flex: '1 1 auto',
-    border: `1px solid transparent`,
-    borderBottom: `1px solid ${theme.ketcher.color.border.primary}`,
-    borderRadius: '4px 4px 0 0',
-
-    '&:first-of-type': {
-      borderLeftColor: 'transparent !important',
-      borderRadius: '0 4px 0 0 ',
-    },
-
-    '&:last-of-type': {
-      borderRightColor: 'transparent !important',
-      borderRadius: '4px 0 0 0',
-    },
-
-    '&:hover': {
-      backgroundColor: theme.ketcher.color.tab.regular,
-      color: theme.ketcher.color.text.primary,
-      border: `1px solid ${theme.ketcher.color.border.primary}`,
-    },
-
-    '&.Mui-selected': {
-      backgroundColor: theme.ketcher.color.tab.active,
-      color: theme.ketcher.color.text.primary,
-      border: `1px solid ${theme.ketcher.color.border.primary}`,
-      borderBottom: '1px solid transparent',
-    },
-  }));
-
-  const TabPanelContent = styled.div`
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    width: 100%;
-    height: 100%;
-  `;
+    [dispatch],
+  );
 
   return (
     <>
@@ -138,6 +57,7 @@ function CustomTabs(props): ReactElement {
         {tabs.map((tabPanel, index) => (
           <StyledTab
             label={tabPanel.caption}
+            title={tabPanel.tooltip}
             key={index}
             data-testid={tabPanel.testId}
             {...a11yProps(index)}
@@ -153,6 +73,6 @@ function CustomTabs(props): ReactElement {
       )}
     </>
   );
-}
+};
 
-export { CustomTabs as Tabs };
+export default memo(Tabs);

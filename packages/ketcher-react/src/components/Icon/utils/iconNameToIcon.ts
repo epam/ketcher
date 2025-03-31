@@ -229,6 +229,8 @@ import QuestionMark from '../../../assets/icons/files/questionMark.svg';
 import Nucleotide from '../../../assets/icons/files/nucleotide.svg';
 import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
 import CrossIcon from '../../../assets/icons/files/cross.svg';
+import PlusIcon from '../../../assets/icons/files/plus.svg';
+import ArrowsUpDownIcon from '../../../assets/icons/files/arrows-up-down.svg';
 
 export const iconNameToIcon = {
   α,
@@ -462,4 +464,6 @@ export const iconNameToIcon = {
   'sequence-layout-mode': SequenceLayoutIcon,
   questionMark: QuestionMark,
   'no-highlight-cross': CrossIcon,
+  arrowsUpDown: ArrowsUpDownIcon,
+  plus: PlusIcon,
 } as const;

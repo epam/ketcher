@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { useAppSelector } from 'hooks';
 import { selectShowPreview } from 'state/common';
 import MonomerPreview from './components/MonomerPreview/MonomerPreview';
@@ -24,11 +25,12 @@ import { useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { ZoomTool } from 'ketcher-core';
 
-const PreviewContainer = styled.div(() => ({
-  display: 'inline-block',
-  position: 'absolute',
-  background: 'white',
-}));
+const PreviewContainer = styled.div`
+  display: inline-block;
+  position: absolute;
+  background: ${({ theme }) => theme.ketcher.color.background.primary};
+  z-index: ${({ theme }) => theme.ketcher.zIndex.overlay};
+`;
 
 export const Preview = () => {
   const preview = useAppSelector(selectShowPreview);

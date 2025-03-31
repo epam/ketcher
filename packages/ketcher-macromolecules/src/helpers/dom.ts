@@ -1,4 +1,4 @@
-export const scrollToElement = (selector) => {
+export const scrollToElement = (selector: string) => {
   const element = document.body.querySelector(selector);
-  element?.scrollIntoView({ behavior: 'smooth' });
+  element?.scrollIntoView();
 };

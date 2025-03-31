@@ -65,6 +65,8 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     // should see updated nucleotide in chain
     // should see nondisabled top bar's selectors
     // should see nondisabled top undo/redo/open buttons
+
+    await moveMouseAway(page);
     await takePageScreenshot(page);
   });
 
@@ -87,6 +89,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     // should see updated sugar and phosphate, updated title of preset and nondisabled "Update" button
     await takeRNABuilderScreenshot(page, { hideMonomerPreview: true });
     await pressSaveButton(page);
+    await moveMouseAway(page);
     await takePageScreenshot(page);
   });
 

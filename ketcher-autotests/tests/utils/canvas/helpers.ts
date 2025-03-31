@@ -168,7 +168,9 @@ export async function takeElementScreenshot(
   },
 ) {
   if (options?.hideMonomerPreview) {
-    await page.keyboard.press('Shift');
+    await page.evaluate(() => {
+      window.dispatchEvent(new Event('hidePreview'));
+    });
   }
 
   const element = page.getByTestId(elementId).first();

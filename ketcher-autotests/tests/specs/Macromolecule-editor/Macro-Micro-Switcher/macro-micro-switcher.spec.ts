@@ -2147,29 +2147,26 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Validate that it is possible to save micro-macro connection to ket file',
-    async () => {
-      /*
+  test('Validate that it is possible to save micro-macro connection to ket file', async () => {
+    /*
     Test case: #4532
     Description: It is possible to save micro-macro connection to ket file.
     */
-      await openFileAndAddToCanvasAsNewProject(
-        'KET/micro-macro-structure.ket',
-        page,
-      );
-      await verifyFileExport(
-        page,
-        'KET/micro-macro-structure-expected.ket',
-        FileType.KET,
-      );
-      await openFileAndAddToCanvasAsNewProject(
-        'KET/micro-macro-structure-expected.ket',
-        page,
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/micro-macro-structure.ket',
+      page,
+    );
+    await verifyFileExport(
+      page,
+      'KET/micro-macro-structure-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/micro-macro-structure-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test(
     'Validate that it is possible to save micro-macro connection to mol v2000 file',

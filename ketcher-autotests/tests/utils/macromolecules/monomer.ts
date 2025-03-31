@@ -11,7 +11,6 @@ import {
   waitForRender,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { getMonomerType } from '@utils/mappers/monomerMapper';
 
 export async function moveMonomer(
   page: Page,
@@ -94,6 +93,7 @@ export function getMonomerLocatorById(page: Page, id: number | string) {
 type MonomerLocatorOptions = {
   numberOfAttachmentPoints?: string;
   rValues?: boolean[];
+  hydrogenConnectionNumber?: string | number;
 } & (
   | {
       monomerAlias?: string;
@@ -103,6 +103,71 @@ type MonomerLocatorOptions = {
   | Monomer
 );
 
+/**
+ * This function returns locator for monomer in the macromolecule editor.
+ * It can be used to find monomers by their alias, type, or ID. It also allows for additional options such as number of attachment points, R values, and hydrogen connection number.
+ * It can be used to find monomers by specisic monomer enums, such as Bases, Sugars, and Peptides.
+ * It is useful for automating tests and interactions with the macromolecule editor in Ketcher.
+ * @param {Page} page - The Playwright page instance where the monomer is located.
+ * @param {MonomerLocatorOptions} options - Options for locating the monomer.
+ * @returns {Locator} - The locator for the specified monomer.
+ * @example
+ * const { test, expect } = require('@playwright/test');
+ * const { getMonomerLocator } = require('./path/to/your/module');
+ * const { Page } = require('playwright');
+ *
+ * test('should locate a monomer by alias', async ({ page }) => {
+ *   const locator = getMonomerLocator(page, { monomerAlias: 'A' });
+ *   await expect(locator).toBeVisible();
+ * });
+ *
+ * test('should locate a monomer by type', async ({ page }) => {
+ *   const locator = getMonomerLocator(page, { monomerType: MonomerType.AminoAcid });
+ *   await expect(locator).toBeVisible();
+ * });
+ *
+ * test('should locate a monomer by ID', async ({ page }) => {
+ *   const locator = getMonomerLocator(page, { monomerId: 123 });
+ *   await expect(locator).toBeVisible();
+ * });
+ *
+ * test('should locate a monomer with specific options', async ({ page }) => {
+ *   const locator = getMonomerLocator(page, {
+ *     monomerAlias: 'A',
+ *     numberOfAttachmentPoints: '2',
+ *     rValues: [true, false],
+ *     hydrogenConnectionNumber: '1',
+ *   });
+ *   await expect(locator).toBeVisible();
+ * });
+ *
+ * test('should take a screenshot of the monomer', async ({ page }) => {
+ *   const locator = getMonomerLocator(page, { monomerAlias: 'A' });
+ *   await expect(locator).toHaveScreenshot();
+ * });
+ *
+ * test('should take a screenshot of the monomer with specific options', async ({ page }) => {
+ *   const locator = getMonomerLocator(page, {
+ *     monomerAlias: 'A',
+ *     numberOfAttachmentPoints: '2',
+ *     rValues: [true, false],
+ *     hydrogenConnectionNumber: '1',
+ *   });
+ *   await expect(locator).toHaveScreenshot();
+ *
+ * test('should take a screenshot of the monomer from Bases', async ({ page }) => {
+ *  const locator = getMonomerLocator(page, Bases.A);
+ *  await expect(locator).toHaveScreenshot();
+ * });
+ *
+ * test('should take a screenshot of the monomer from Sugars and with specific options', async ({ page }) => {
+ *   const locator = getMonomerLocator(page, {
+ *     ...Sugars.fR,
+ *     rValues: [true, true, true],
+ *   });
+ *   await expect(locator).toHaveScreenshot();
+ **/
+
 export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
   const attributes: { [key: string]: string } = {};
 
@@ -110,7 +175,8 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
 
   if ('testId' in options) {
     attributes['data-monomeralias'] = options.alias;
-    attributes['data-monomertype'] = getMonomerType(options);
+    attributes['data-monomertype'] = options.monomerType;
+    // getMonomerType(options);
   } else {
     const { monomerAlias, monomerType, monomerId } = options;
     if (monomerAlias) attributes['data-monomeralias'] = monomerAlias;
@@ -118,10 +184,19 @@ export function getMonomerLocator(page: Page, options: MonomerLocatorOptions) {
     if (monomerId) attributes['data-monomerid'] = String(monomerId);
   }
 
-  const { numberOfAttachmentPoints, rValues } = options;
+  const { numberOfAttachmentPoints, rValues, hydrogenConnectionNumber } =
+    options;
 
   if (numberOfAttachmentPoints) {
     attributes['data-number-of-attachment-points'] = numberOfAttachmentPoints;
+  }
+
+  if (
+    Object.prototype.hasOwnProperty.call(options, 'hydrogenConnectionNumber')
+  ) {
+    attributes['data-hydrogen-connection-number'] = String(
+      hydrogenConnectionNumber,
+    );
   }
 
   if (rValues) {
@@ -187,43 +262,20 @@ export async function createDNAAntisenseChain(page: Page, monomer: Locator) {
   await createAntisenseStrandOption.click();
 }
 
-export function getSequenceMonomerLocator(
-  page: Page,
-  options: MonomerLocatorOptions,
-) {
-  const attributes: { [key: string]: string } = {};
-
-  attributes['data-testid'] = 'monomer';
-
-  if ('testId' in options) {
-    attributes['data-monomeralias'] = options.alias;
-    attributes['data-monomertype'] = getMonomerType(options);
-  } else {
-    const { monomerAlias, monomerType, monomerId } = options;
-    if (monomerAlias) attributes['data-monomeralias'] = monomerAlias;
-    if (monomerType) attributes['data-monomertype'] = monomerType;
-    if (monomerId) attributes['data-monomerid'] = String(monomerId);
+export async function turnSyncEditModeOn(page: Page) {
+  const syncButton = page.getByTestId('sync_sequence_edit_mode').first();
+  const editMode = await syncButton.getAttribute('data-isactive');
+  if (editMode === 'false') {
+    await syncButton.click();
   }
+}
 
-  const { numberOfAttachmentPoints, rValues } = options;
-
-  if (numberOfAttachmentPoints) {
-    attributes['data-number-of-attachment-points'] = numberOfAttachmentPoints;
+export async function turnSyncEditModeOff(page: Page) {
+  const syncButton = page.getByTestId('sync_sequence_edit_mode').first();
+  const editMode = await syncButton.getAttribute('data-isactive');
+  if (editMode === 'true') {
+    await syncButton.click();
   }
-
-  if (rValues) {
-    rValues.forEach((value, index) => {
-      attributes[`data-R${index + 1}`] = `${value}`;
-    });
-  }
-
-  const attributeSelectors = Object.entries(attributes)
-    .map(([key, value]) => `[${key}="${value}"]`)
-    .join('');
-
-  const locator = page.locator(attributeSelectors);
-
-  return locator;
 }
 
 type SymbolLocatorOptions = {

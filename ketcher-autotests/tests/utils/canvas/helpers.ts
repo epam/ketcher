@@ -171,6 +171,7 @@ export async function takeElementScreenshot(
     await page.evaluate(() => {
       window.dispatchEvent(new Event('hidePreview'));
     });
+    await page.getByTestId('polymer-library-preview').isHidden();
   }
 
   const element = page.getByTestId(elementId).first();

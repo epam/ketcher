@@ -22,6 +22,7 @@ import {
   BaseMonomer,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   NodeSelection,
+  NodesSelection,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -213,12 +214,15 @@ function Editor({
         });
       },
     );
-    editor?.events.rightClickCanvas.add((event) => {
-      showSequenceContextMenu({
-        event,
-        props: {},
-      });
-    });
+    editor?.events.rightClickCanvas.add(
+      ([event, selections]: [TriggerEvent, NodesSelection]) => {
+        setSelections(selections);
+        showSequenceContextMenu({
+          event,
+          props: {},
+        });
+      },
+    );
   }, [editor]);
 
   useEffect(() => {

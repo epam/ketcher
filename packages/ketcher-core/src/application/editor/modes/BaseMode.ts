@@ -10,6 +10,7 @@ import {
   getStructStringFromClipboardData,
   initHotKeys,
   isClipboardAPIAvailable,
+  KetcherLogger,
   keyNorm,
   legacyCopy,
   legacyPaste,
@@ -166,8 +167,8 @@ export abstract class BaseMode {
     }
   }
 
-  async onPaste(event: ClipboardEvent) {
-    if (this.checkIfTargetIsInput(event)) {
+  async onPaste(event?: ClipboardEvent) {
+    if (event && this.checkIfTargetIsInput(event)) {
       return;
     }
     const editor = CoreEditor.provideEditorInstance();
@@ -191,7 +192,7 @@ export abstract class BaseMode {
 
         editor.zoomToStructuresIfNeeded();
       });
-    } else {
+    } else if (event) {
       const clipboardData = legacyPaste(event.clipboardData, ['text/plain']);
       this.pasteFromClipboard(clipboardData);
       event.preventDefault();
@@ -201,6 +202,10 @@ export abstract class BaseMode {
       }
 
       editor.zoomToStructuresIfNeeded();
+    } else {
+      KetcherLogger.warn(
+        'Cannot paste because Clipboard API is not available and paste event does not contain clipboardData',
+      );
     }
   }
 

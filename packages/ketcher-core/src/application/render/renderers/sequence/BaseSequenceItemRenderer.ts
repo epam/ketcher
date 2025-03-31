@@ -248,7 +248,19 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
         .slice(0, nodeIndexInSubChain)
         .filter((node) => node instanceof LinkerSequenceNode).length;
 
-      nodeIndex = nodeIndexInSubChain + 1 - linkerNodesBeforeCurrent;
+      const phosphateNodesBeforeCurrent = subChain.nodes
+        .slice(0, nodeIndexInSubChain)
+        .filter(
+          (node) =>
+            !(node instanceof LinkerSequenceNode) &&
+            node.monomer instanceof Phosphate,
+        ).length;
+
+      nodeIndex =
+        nodeIndexInSubChain +
+        1 -
+        linkerNodesBeforeCurrent -
+        phosphateNodesBeforeCurrent;
       return true;
     });
 
@@ -274,8 +286,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       const linkerNodeIndex = subChain.nodes.findIndex(
         (node) => node instanceof LinkerSequenceNode,
       );
-      if (linkerNodeIndex !== -1) {
-        if (linkerNodeIndex < nodeIndex) {
+      const phosphateNodeIndex = subChain.nodes.findIndex(
+        ({ monomer }) => monomer instanceof Phosphate,
+      );
+      if (linkerNodeIndex !== -1 || phosphateNodeIndex !== -1) {
+        if (linkerNodeIndex < nodeIndex || phosphateNodeIndex < nodeIndex) {
           numberToDisplay = this.getNodeIndexIgnoringLinkerNodesInSubChain();
         } else {
           numberToDisplay = nodeIndex + 1;

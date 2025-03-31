@@ -22,7 +22,7 @@ import {
   TypeDropdownOptions,
   selectOpenFileTool,
 } from '@utils';
-import { closeErrorMessage, pageReload } from '@utils/common/helpers';
+import { closeErrorMessage } from '@utils/common/helpers';
 import {
   turnOnMacromoleculesEditor,
   waitForMonomerPreview,
@@ -269,17 +269,20 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     test.slow();
 
-    await pageReload(page);
     await selectOpenFileTool(page);
 
     const filename = 'FASTA/fasta-rna-musculus-rearranged.fasta';
     await openFile(filename, page);
     await selectOptionInDropdown(filename, page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await pressButton(page, 'Add to Canvas');
     await selectTopPanelButton(TopPanelButton.Save, page);
     await chooseFileFormat(page, 'FASTA');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   // Fail while performance issue on Indigo side
@@ -746,8 +749,6 @@ test.describe('Import correct FASTA file: ', () => {
     shouldFail?: boolean;
     // issueNumber is mandatory if shouldFail === true
     issueNumber?: string;
-    // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-    pageReloadNeeded?: boolean;
   }
 
   const correctFASTAFiles: IFASTAFile[] = [
@@ -797,7 +798,7 @@ test.describe('Import correct FASTA file: ', () => {
       Case: 1. Load FASTA file 
             2. Take screenshot to make sure import works correct
       */
-      if (correctFASTAFile.pageReloadNeeded) await pageReload(page);
+
       // Test should be skipped if related bug exists
       test.fixme(
         correctFASTAFile.shouldFail === true,
@@ -810,7 +811,9 @@ test.describe('Import correct FASTA file: ', () => {
         correctFASTAFile.FASTAType,
       );
 
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
     });
   }
 });

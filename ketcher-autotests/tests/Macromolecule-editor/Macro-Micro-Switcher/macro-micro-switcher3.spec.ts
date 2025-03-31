@@ -27,7 +27,6 @@ import {
   setZoomInputValue,
   resetCurrentTool,
 } from '@utils';
-import { pageReload } from '@utils/common/helpers';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -319,7 +318,6 @@ const movableExpandedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
     monomerLocatorText: 'D',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '2. Sugar UNA (from library)',
@@ -370,10 +368,6 @@ test.describe('Move in expanded state on Micro canvas: ', () => {
        *       3. Grab it and move it to the top left corner
        *       6. Take screenshot to witness final position
        */
-      if (movableExpandedMonomer.pageReloadNeeded) {
-        await pageReload(page);
-        await turnOnMicromoleculesEditor(page);
-      }
       await openFileAndAddToCanvasAsNewProject(
         movableExpandedMonomer.KETFile,
         page,
@@ -384,7 +378,9 @@ test.describe('Move in expanded state on Micro canvas: ', () => {
 
       await moveExpandedMonomerOnMicro(page, 200, 200);
       await moveMouseToTheMiddleOfTheScreen(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
 
       // Test should be skipped if related bug exists
       test.fixme(
@@ -414,10 +410,6 @@ test.describe('Move expanded monomer on Micro and Undo: ', () => {
        *       7. Press Undo button
        *       8. Take screenshot to witness initial position
        */
-      if (movableExpandedMonomer.pageReloadNeeded) {
-        await pageReload(page);
-        await turnOnMicromoleculesEditor(page);
-      }
       await openFileAndAddToCanvasAsNewProject(
         movableExpandedMonomer.KETFile,
         page,
@@ -431,7 +423,9 @@ test.describe('Move expanded monomer on Micro and Undo: ', () => {
       await takeEditorScreenshot(page);
 
       await pressUndoButton(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
 
       // Test should be skipped if related bug exists
       test.fixme(
@@ -664,7 +658,6 @@ test(`Verify that expanding multiple monomers works in a left-to-right order wit
    *       3. Expand all monomers from  chain (from right to left)
    *       4. Take screenshot to witness final position
    */
-  await pageReload(page);
   await turnOnMicromoleculesEditor(page);
 
   await openFileAndAddToCanvasAsNewProject(
@@ -680,7 +673,7 @@ test(`Verify that expanding multiple monomers works in a left-to-right order wit
   await expandMonomer(page, '5hMedC');
   await expandMonomer(page, 'gly');
   await expandMonomer(page, 'oC64m5');
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
@@ -699,7 +692,6 @@ test(`Verify that expanding multiple monomers works in a top-to-bottom order wit
    *       3. Expand all monomers from chain (from top to bottom)
    *       4. Take screenshot to witness final position
    */
-  await pageReload(page);
   await turnOnMicromoleculesEditor(page);
 
   await openFileAndAddToCanvasAsNewProject(
@@ -715,7 +707,7 @@ test(`Verify that expanding multiple monomers works in a top-to-bottom order wit
   await expandMonomer(page, 'A');
   await expandMonomer(page, 'Mal');
   await expandMonomer(page, '12ddR');
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
@@ -734,7 +726,6 @@ test(`Verify that expanding monomers with big mircomolecule ring structures in t
    *       3. Expand all monomers from chain (from right to left)
    *       4. Take screenshot to witness final position
    */
-  await pageReload(page);
   await turnOnMicromoleculesEditor(page);
 
   await openFileAndAddToCanvasAsNewProject(
@@ -748,7 +739,7 @@ test(`Verify that expanding monomers with big mircomolecule ring structures in t
   await expandMonomer(page, 'A');
   await expandMonomer(page, 'Mal');
   await expandMonomer(page, '12ddR');
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 
   test.fixme(
     // eslint-disable-next-line no-self-compare
@@ -785,7 +776,6 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
    *           3.4 Press Cancel in appeared Abbriviation dialog
    *           3.5 Undo changes to collapse momomer back
    */
-  await pageReload(page);
   await turnOnMicromoleculesEditor(page);
 
   await openFileAndAddToCanvasAsNewProject(
@@ -798,7 +788,9 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
     await expandMonomer(page, monomer.name);
     await selectEraseTool(page);
     await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await pressCancelAtEditAbbreviationDialog(page);
     await pressUndoButton(page);
   }
@@ -918,7 +910,6 @@ test(
      *           3.8 Take screenshot to witness monomer got collapsed
      */
     test.slow();
-    await pageReload(page);
     await turnOnMicromoleculesEditor(page);
 
     await openFileAndAddToCanvasAsNewProject(
@@ -926,20 +917,28 @@ test(
       page,
     );
     // Pic 1
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
 
     for (const monomer of monomers) {
       await expandMonomer(page, monomer.name);
       await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
       await selectEraseTool(page);
       // Pic 2, 5, 8, 11, 14, 17
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
       await pressUndoButton(page);
       // Pic 3, 6, 9, 12, 15, 18
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
       await pressUndoButton(page);
       // Pic 4, 6, 10, 13, 16, 19
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
     }
   },
 );

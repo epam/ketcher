@@ -61,8 +61,6 @@ interface IMonomer {
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
   issueNumber?: string;
-  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-  pageReloadNeeded?: boolean;
 }
 
 /*

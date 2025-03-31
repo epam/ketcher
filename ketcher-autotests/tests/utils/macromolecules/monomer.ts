@@ -172,6 +172,11 @@ export async function createRNAAntisenseChain(page: Page, monomer: Locator) {
   await createAntisenseStrandOption.click();
 }
 
+export async function modifyInRnaBuilder(page: Page, symbolLocator: Locator) {
+  await symbolLocator.click({ button: 'right' });
+  await page.getByTestId('modify_in_rna_builder').click();
+}
+
 export async function createDNAAntisenseChain(page: Page, monomer: Locator) {
   await monomer.click({ button: 'right', force: true });
 

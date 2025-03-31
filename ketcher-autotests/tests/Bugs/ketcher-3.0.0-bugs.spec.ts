@@ -59,7 +59,7 @@ import {
   turnOnMicromoleculesEditor,
 } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { modifyInRnaBuilder, getSymbolLocator, getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   clickOnSequenceSymbol,
   hoverOnSequenceSymbol,
@@ -285,9 +285,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'RNA1{R(U)P.R(U)P.R(U)}$$$$V2.0',
     );
     await selectAllStructuresOnCanvas(page);
-    await clickOnSequenceSymbol(page, 'U');
-    await clickOnSequenceSymbol(page, 'U', { button: 'right' });
-    await page.getByTestId('modify_in_rna_builder').click();
+    const symbolU = getSymbolLocator(page, { symbolAlias: 'U' }).first();
+    await symbolU.click();
+    await modifyInRnaBuilder(page, symbolU);
     await page.keyboard.press('Enter');
     await page.keyboard.type('AAA');
     await takeEditorScreenshot(page, {

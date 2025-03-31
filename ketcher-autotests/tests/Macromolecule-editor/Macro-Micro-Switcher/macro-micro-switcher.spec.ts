@@ -265,7 +265,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Macromolecule structures in micromode are represented as S-Groups with bonds
     */
-    await pageReload(page);
     await turnOnMacromoleculesEditor(page);
     await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
@@ -273,7 +272,9 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await turnOnMicromoleculesEditor(page);
     await page.getByText('Edc').hover();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test.skip(
@@ -301,7 +302,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: After hiding Library in Macro mode 'Show Library' button is visible.
     */
-    await pageReload(page);
     await page.getByText('Hide').click();
     await takePageScreenshot(page);
     expect(page.getByText('Show Library')).toBeVisible();
@@ -314,7 +314,9 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V2000/glutamine.mol', page);
     await turnOnMicromoleculesEditor(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Check that the Ket-structure opened from the file in Macro mode is visible in Micro mode', async () => {
@@ -322,11 +324,12 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure opened from the file in Macro mode is visible on Micro mode when
     */
-    await pageReload(page);
     await turnOnMacromoleculesEditor(page);
     await openFileAndAddToCanvasMacro('KET/stereo-and-structure.ket', page);
     await turnOnMicromoleculesEditor(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Create a sequence of monomers in macro mode then switch to micro mode select the entire structure and move it to a new position', async () => {
@@ -355,7 +358,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Abbreviation of monomer expanded without errors.
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3659
     */
-    await pageReload(page);
     await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
       page,
@@ -363,7 +365,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMicromoleculesEditor(page);
     await page.getByText('A6OH').click({ button: 'right' });
     await waitForMonomerPreviewMicro(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Add monomers in macro mode then switch to micro mode and check that it can not be moved', async () => {
@@ -394,7 +398,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Zoom In/Zoom Out/ Reset Zoom Tools work after switching to Macro mode
     */
-    await pageReload(page);
 
     const numberOfPressZoomIn = 5;
     const numberOfPressZoomOut = 8;
@@ -413,7 +416,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
     await selectZoomReset(page);
     await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Check that Zoom In/Zoom Out/ Reset Zoom Tools work (Mouse scroll) after switching to Macro mode', async () => {
@@ -444,7 +449,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Zoomed In/Out structure from Macro mode become standart 100% when switch to Micro mode and again to Macro mode
     */
-    await pageReload(page);
     const numberOfPressZoomIn = 5;
     await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
@@ -458,7 +462,9 @@ test.describe('Macro-Micro-Switcher', () => {
     await zoomWithMouseWheel(page, 250);
 
     await turnOnMacromoleculesEditor(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Add to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs then switch to Micro mode and back', async () => {
@@ -467,7 +473,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Added to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs 
     when switching from Macro mode to Micro mode and back to Macro is saved
     */
-    await pageReload(page);
 
     await addToFavoritesMonomers(page);
     await turnOnMicromoleculesEditor(page);
@@ -481,7 +486,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Ket-structure pasted from the clipboard in Macro mode is visible in Micro mode
     */
-    await pageReload(page);
     await pasteFromClipboard(
       page,
       FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
@@ -496,7 +500,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure pasted from the clipboard in Macro mode  is visible in Micro mode
     */
-    await pageReload(page);
 
     await pasteFromClipboard(
       page,
@@ -505,7 +508,9 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   const tests = [
@@ -519,7 +524,6 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/3712
       Description: Pressing Layout or Clean Up button not erase all macromolecules from canvas
       */
-      await pageReload(page);
 
       await selectMonomer(page, Peptides.A);
       await clickInTheMiddleOfTheScreen(page);
@@ -528,7 +532,9 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
         async () => await selectTopPanelButton(testInfo.button, page),
       );
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
     });
   }
 
@@ -537,13 +543,14 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Remove abbreviation restricted for CHEMs in micro mode.
     */
-    await pageReload(page);
     await selectMonomer(page, Chem.Test_6_Ch);
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
     await page.getByText('Test-6-Ch').click({ button: 'right' });
     await waitForMonomerPreviewMicro(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test(
@@ -876,12 +883,13 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#3902
     Description: Structure is in left upper corner of canvas
     */
-    await pageReload(page);
     await turnOnMicromoleculesEditor(page);
     await openFileAndAddToCanvas('KET/peptides-connected-with-bonds.ket', page);
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test.skip(
@@ -1642,7 +1650,9 @@ test.describe('Macro-Micro-Switcher', () => {
     );
 
     await openCdxFile(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await pageReload(page);
   });
 
@@ -2274,8 +2284,6 @@ interface IMonomer {
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
   issueNumber?: string;
-  // set pageReloadNeeded to true if you need to restart ketcher before test (f.ex. to restart font renderer)
-  pageReloadNeeded?: boolean;
 }
 
 const expandableMonomers: IMonomer[] = [
@@ -2663,49 +2671,42 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
     monomerLocatorText: 'D',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '2. Sugar UNA (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
     monomerLocatorText: 'UNA',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '3. Base hU (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
     monomerLocatorText: 'hU',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '4. Phosphate bnn (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
     monomerLocatorText: 'bnn',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
     monomerLocatorText: '5hMedC',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '6. CHEM 4aPEGMal (from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
     monomerLocatorText: '4aPEGMal',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '7. Peptide X (ambiguouse, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/1. Peptide X (ambiguouse, alternatives, from library).ket',
     monomerLocatorText: 'X',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription:
@@ -2713,14 +2714,12 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/2. Peptide A+C+D+E+F+G+H+I+K+L+M+N+O+P+Q+R+S+T+U+V+W+Y (ambiguouse, mixed).ket',
     monomerLocatorText: '%',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '9. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/3. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed).ket',
     monomerLocatorText: '%',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription:
@@ -2728,21 +2727,18 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/4. Peptide G,H,I,K,L,M,N,O,P (ambiguous, alternatives).ket',
     monomerLocatorText: '%',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '11. Sugar UNA, SGNA, RGNA (ambiguous, alternatives)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/5. Sugar UNA, SGNA, RGNA (ambiguous, alternatives).ket',
     monomerLocatorText: '%',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '12. Sugar UNA, SGNA, RGNA (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/6. Sugar UNA, SGNA, RGNA (ambiguous, mixed).ket',
     monomerLocatorText: '%',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription:
@@ -2750,7 +2746,6 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/7. DNA base N (ambiguous, alternatives, from library).ket',
     monomerLocatorText: 'N',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription:
@@ -2758,28 +2753,24 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/8. RNA base N (ambiguous, alternatives, from library).ket',
     monomerLocatorText: 'N',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '15. Base M (ambiguous, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/9. Base M (ambiguous, alternatives, from library).ket',
     monomerLocatorText: 'M',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '16. DNA base A+C+G+T (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/10. DNA base A+C+G+T (ambiguous, mixed).ket',
     monomerLocatorText: '%',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '17. RNA base A+C+G+U (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/11. RNA base A+C+G+U (ambiguous, mixed).ket',
     monomerLocatorText: '%',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '18. Base A+C (ambiguous, mixed)',
@@ -2792,35 +2783,30 @@ const movableCollapsedMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/13. Phosphate bnn,cmp,nen (ambiguous, alternatives).ket',
     monomerLocatorText: '%',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '20. Phosphate bnn+cmp+nen (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/14. Phosphate bnn+cmp+nen (ambiguous, mixed).ket',
     monomerLocatorText: '%',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '21. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/15. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives).ket',
     monomerLocatorText: '%',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '22. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/16. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed).ket',
     monomerLocatorText: '%',
-    pageReloadNeeded: true,
   },
   {
     monomerDescription: '23. Unknown nucleotide',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/17. Unknown nucleotide.ket',
     monomerLocatorText: 'Unknown',
-    pageReloadNeeded: true,
   },
 ];
 
@@ -2840,10 +2826,6 @@ test.describe('Move in collepsed state on Micro canvas: ', () => {
        *       3. Grab it and move it to the top left corner
        *       6. Take screenshot to witness final position
        */
-      if (movableCollapsedMonomer.pageReloadNeeded) {
-        await pageReload(page);
-        await turnOnMicromoleculesEditor(page);
-      }
 
       await openFileAndAddToCanvasAsNewProject(
         movableCollapsedMonomer.KETFile,
@@ -2859,7 +2841,9 @@ test.describe('Move in collepsed state on Micro canvas: ', () => {
 
       await moveMonomerOnMicro(page, monomerLocator, 100, 100);
       await moveMouseToTheMiddleOfTheScreen(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
 
       // Test should be skipped if related bug exists
       test.fixme(
@@ -2875,9 +2859,8 @@ test('Switch to Macro mode, verify that user cant open reactions from RDF RXN V2
   Test case: https://github.com/epam/Indigo/issues/2102
   Description: In Macro mode, user can't open reactions from RDF RXN V2000/V3000 - error message is displayed. 
   */
-  await pageReload(page);
   await selectOpenTool(page);
   await openFile('RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf', page);
   await pressButton(page, 'Open as New');
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 });

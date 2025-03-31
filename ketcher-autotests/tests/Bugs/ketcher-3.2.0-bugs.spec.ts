@@ -16,7 +16,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
-  switchSyncMode,
   SequenceType,
   moveMouseAway,
   selectSaveTool,
@@ -50,6 +49,8 @@ import {
   deleteHydrogenBond,
   getMonomerLocator,
   getSymbolLocator,
+  turnSyncEditModeOff,
+  turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
 import {
   doubleClickOnSequenceSymbol,
@@ -286,7 +287,6 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await switchSyncMode(page);
     await getSymbolLocator(page, { symbolAlias: 'U' }).nth(2).dblclick();
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Delete');
@@ -317,12 +317,11 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,11:pair-2:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair$$$V2.0',
     );
-    await switchSyncMode(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await switchSyncMode(page);
+    await turnSyncEditModeOff(page);
     await getSymbolLocator(page, { symbolAlias: 'U' }).nth(1).dblclick();
     await page.keyboard.press('ArrowDown');
     await page.keyboard.type('UU');
@@ -573,7 +572,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
     );
-    await switchSyncMode(page);
+    await turnSyncEditModeOff(page);
     await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 0 });
     await page.keyboard.press('ArrowDown');
     await takeEditorScreenshot(page, {
@@ -612,12 +611,12 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,11:pair-2:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair$$$V2.0',
     );
-    await switchSyncMode(page);
+    await turnSyncEditModeOff(page);
     await doubleClickOnSequenceSymbol(page, 'U', { nthNumber: 2 });
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.type('U');
-    await switchSyncMode(page);
+    await turnSyncEditModeOn(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

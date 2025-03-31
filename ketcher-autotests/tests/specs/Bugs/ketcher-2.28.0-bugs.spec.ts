@@ -7,6 +7,7 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Page, test, expect } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   addMonomerToCenterOfCanvas,
   AtomButton,
@@ -30,7 +31,6 @@ import {
   selectAllStructuresOnCanvas,
   selectAtomInToolbar,
   selectCanvasArea,
-  selectClearCanvasTool,
   selectEraseTool,
   selectFlexLayoutModeTool,
   selectFunctionalGroups,

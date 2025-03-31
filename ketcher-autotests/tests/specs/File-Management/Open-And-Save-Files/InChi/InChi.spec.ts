@@ -1,5 +1,9 @@
 import { test, expect, Page } from '@playwright/test';
 import {
+  selectOpenFileTool,
+  selectClearCanvasTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFromFileViaClipboard,
@@ -14,8 +18,6 @@ import {
   nonEmptyString,
   copyToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProject,
-  selectOpenFileTool,
-  selectClearCanvasTool,
 } from '@utils';
 import {
   FileType,

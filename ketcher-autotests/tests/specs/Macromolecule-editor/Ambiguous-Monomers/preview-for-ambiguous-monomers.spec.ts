@@ -13,10 +13,10 @@ import {
   selectFlexLayoutModeTool,
   waitForSpinnerFinishedWork,
   selectSequenceLayoutModeTool,
-  selectClearCanvasTool,
   delay,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 let sharedContext: BrowserContext;

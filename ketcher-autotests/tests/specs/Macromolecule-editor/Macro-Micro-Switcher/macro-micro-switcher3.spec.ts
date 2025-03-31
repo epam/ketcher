@@ -13,7 +13,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   selectEraseTool,
   openFileAndAddToCanvasAsNewProject,
-  selectClearCanvasTool,
   waitForPageInit,
   moveOnBond,
   BondType,
@@ -32,6 +31,7 @@ import {
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);

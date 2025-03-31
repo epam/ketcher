@@ -8,7 +8,6 @@ import {
 import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectClearCanvasTool,
   waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -46,6 +45,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Sugars } from '@constants/monomers/Sugars';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 

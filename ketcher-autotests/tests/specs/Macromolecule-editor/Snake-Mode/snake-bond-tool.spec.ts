@@ -3,6 +3,7 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Page, test, expect, BrowserContext, chromium } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   addSingleMonomerToCanvas,
   addRnaPresetOnCanvas,
@@ -21,7 +22,6 @@ import {
   moveMouseAway,
   scrollDown,
   scrollUp,
-  selectClearCanvasTool,
   waitForIndigoToLoad,
   waitForKetcherInit,
   selectAllStructuresOnCanvas,

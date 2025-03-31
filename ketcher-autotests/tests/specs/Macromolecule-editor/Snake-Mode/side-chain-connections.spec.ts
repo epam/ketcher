@@ -1,4 +1,5 @@
 import { Page, test, expect, BrowserContext, chromium } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
@@ -16,7 +17,6 @@ import {
   saveToFile,
   receiveFileComparisonData,
   getMolfile,
-  selectClearCanvasTool,
   waitForIndigoToLoad,
   waitForKetcherInit,
   hideLibrary,

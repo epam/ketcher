@@ -1,9 +1,9 @@
 /* eslint-disable no-magic-numbers */
 import { test, Page } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
-  selectClearCanvasTool,
   selectRectangleSelectionTool,
   takeEditorScreenshot,
   waitForPageInit,

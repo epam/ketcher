@@ -18,7 +18,6 @@ import {
   selectMacroBond,
   selectZoomInTool,
   selectZoomOutTool,
-  selectClearCanvasTool,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
@@ -37,6 +36,7 @@ import { Chem } from '@constants/monomers/Chem';
 import { Bases } from '@constants/monomers/Bases';
 import { Sugars } from '@constants/monomers/Sugars';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {

@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -19,7 +20,6 @@ import {
   selectZoomOutTool,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  selectClearCanvasTool,
 } from '@utils';
 import {
   enterSequence,

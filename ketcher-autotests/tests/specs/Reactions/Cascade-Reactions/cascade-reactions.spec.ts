@@ -2,9 +2,12 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   takeEditorScreenshot,
   waitForPageInit,
-  selectClearCanvasTool,
   openFileAndAddToCanvasAsNewProject,
   selectTopPanelButton,
   TopPanelButton,
@@ -29,7 +32,6 @@ import {
   selectRectangleSelectionTool,
   waitForRender,
   selectLayoutTool,
-  selectOpenFileTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {

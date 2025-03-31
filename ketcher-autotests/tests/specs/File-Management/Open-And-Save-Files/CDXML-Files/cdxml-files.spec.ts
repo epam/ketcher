@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   AtomButton,
   clickInTheMiddleOfTheScreen,
@@ -18,7 +19,6 @@ import {
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
   selectAllStructuresOnCanvas,
-  selectClearCanvasTool,
   selectLayoutTool,
   setHashSpacingOptionUnit,
   setHashSpacingValue,

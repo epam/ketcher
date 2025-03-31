@@ -11,6 +11,10 @@ import {
   Locator,
 } from '@playwright/test';
 import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   takeEditorScreenshot,
   addSingleMonomerToCanvas,
   clickInTheMiddleOfTheScreen,
@@ -28,12 +32,10 @@ import {
   moveMouseAway,
   waitForKetcherInit,
   waitForIndigoToLoad,
-  selectClearCanvasTool,
   selectOptionInTypeDropdown2,
   clickOnCanvas,
   selectMacroBond,
   selectMonomer,
-  selectOpenFileTool,
   selectSequenceLayoutModeTool,
   selectEraseTool,
   selectAllStructuresOnCanvas,

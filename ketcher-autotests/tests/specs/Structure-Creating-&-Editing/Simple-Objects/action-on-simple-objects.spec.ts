@@ -21,13 +21,13 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
-  selectClearCanvasTool,
 } from '@utils';
 import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;

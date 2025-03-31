@@ -27,7 +27,6 @@ import {
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
   selectCleanTool,
-  selectClearCanvasTool,
   selectDearomatizeTool,
   selectDropdownTool,
   selectEraseTool,
@@ -46,7 +45,6 @@ import {
   selectZoomOutTool,
   selectZoomReset,
   selectZoomInTool,
-  selectOpenFileTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -63,6 +61,10 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+import {
+  selectOpenFileTool,
+  selectClearCanvasTool,
+} from '@tests/pages/common/TopLeftToolbar';
 
 async function saveToTemplates(page: Page) {
   await pressButton(page, 'Save to Templates');

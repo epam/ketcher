@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   ArrowTool,
   copyAndPaste,
@@ -32,7 +33,6 @@ import {
   clickOnCanvas,
   selectCleanTool,
   selectLayoutTool,
-  selectClearCanvasTool,
 } from '@utils';
 import { pageReloadMicro } from '@utils/common/helpers';
 import {

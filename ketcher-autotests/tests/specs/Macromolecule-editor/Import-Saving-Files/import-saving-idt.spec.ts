@@ -6,6 +6,10 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { chromium, expect, Page, test } from '@playwright/test';
 import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   chooseFileFormat,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -21,12 +25,10 @@ import {
   pressButton,
   resetZoomLevelToDefault,
   selectAllStructuresOnCanvas,
-  selectClearCanvasTool,
   selectEraseTool,
   selectMacroBond,
   selectMacromoleculesPanelButton,
   selectMonomer,
-  selectOpenFileTool,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   selectTopPanelButton,

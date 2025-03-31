@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page, chromium, expect, test } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
-  selectClearCanvasTool,
   waitForKetcherInit,
   waitForIndigoToLoad,
   openStructurePasteFromClipboard,

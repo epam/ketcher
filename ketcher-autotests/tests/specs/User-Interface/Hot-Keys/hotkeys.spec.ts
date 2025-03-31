@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectNestedTool,
   SelectTool,
@@ -34,7 +35,6 @@ import {
   selectAromatizeTool,
   selectDearomatizeTool,
   selectAddRemoveExplicitHydrogens,
-  selectClearCanvasTool,
 } from '@utils';
 
 test.describe('Hot keys', () => {

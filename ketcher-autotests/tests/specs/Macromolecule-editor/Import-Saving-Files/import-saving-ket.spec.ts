@@ -3,6 +3,10 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';
 import { test, expect, Page } from '@playwright/test';
 import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   moveMouseAway,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
@@ -13,7 +17,6 @@ import {
   selectSnakeLayoutModeTool,
   turnOnMicromoleculesEditor,
   clickInTheMiddleOfTheScreen,
-  selectClearCanvasTool,
   clickUndo,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProjectMacro,
@@ -21,7 +24,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   selectZoomOutTool,
   selectMonomer,
-  selectOpenFileTool,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {

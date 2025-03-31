@@ -27,7 +27,6 @@ import {
   takeTopToolbarScreenshot,
   selectSnakeLayoutModeTool,
   selectSequenceLayoutModeTool,
-  selectClearCanvasTool,
   clickOnCanvas,
   selectMacroBond,
   selectMonomers,
@@ -72,6 +71,7 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;

@@ -1,4 +1,5 @@
 import { Page, test } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import { STRUCTURE_LIBRARY_BUTTON_TEST_ID } from '@tests/Templates/templates.costants';
 import {
   clickInTheMiddleOfTheScreen,
@@ -20,7 +21,6 @@ import {
   getEditorScreenshot,
   clickOnCanvas,
   selectCleanTool,
-  selectClearCanvasTool,
 } from '@utils';
 
 const CANVAS_CLICK_X = 300;

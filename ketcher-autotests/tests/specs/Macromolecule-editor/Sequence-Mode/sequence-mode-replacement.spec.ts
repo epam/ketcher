@@ -15,7 +15,6 @@ import {
   receiveFileComparisonData,
   resetZoomLevelToDefault,
   saveToFile,
-  selectClearCanvasTool,
   selectCustomPreset,
   selectFlexLayoutModeTool,
   selectMonomer,
@@ -55,6 +54,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 let sharedContext: BrowserContext;

@@ -1,5 +1,6 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { Locator, test, Page, chromium } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   addSingleMonomerToCanvas,
   selectRectangleArea,
@@ -7,7 +8,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   moveMouseToTheMiddleOfTheScreen,
-  selectClearCanvasTool,
   clickInTheMiddleOfTheScreen,
   moveMouseAway,
   selectMacroBond,

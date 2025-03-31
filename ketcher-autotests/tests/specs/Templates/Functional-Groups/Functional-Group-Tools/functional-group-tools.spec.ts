@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectTopPanelButton,
   TopPanelButton,
@@ -35,7 +36,6 @@ import {
   selectDearomatizeTool,
   selectCleanTool,
   selectLayoutTool,
-  selectClearCanvasTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';

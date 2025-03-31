@@ -10,7 +10,6 @@ import {
   waitForKetcherInit,
   openStructurePasteFromClipboard,
   waitForSpinnerFinishedWork,
-  selectClearCanvasTool,
   selectSaveTool,
   pressButton,
 } from '@utils';
@@ -19,6 +18,7 @@ import {
   closeOpenStructure,
   pageReload,
 } from '@utils/common/helpers';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 let sharedContext: BrowserContext;

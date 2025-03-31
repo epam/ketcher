@@ -1,4 +1,5 @@
 import { Page, test } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectFunctionalGroups,
   FunctionalGroups,
@@ -32,7 +33,6 @@ import {
   moveOnAtom,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectClearCanvasTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 let point: { x: number; y: number };

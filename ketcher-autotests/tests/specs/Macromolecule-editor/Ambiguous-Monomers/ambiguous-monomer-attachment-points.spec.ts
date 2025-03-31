@@ -11,11 +11,11 @@ import {
   waitForKetcherInit,
   openStructurePasteFromClipboard,
   waitForSpinnerFinishedWork,
-  selectClearCanvasTool,
   selectMacroBond,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 let sharedContext: BrowserContext;

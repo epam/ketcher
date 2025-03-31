@@ -2,12 +2,12 @@ import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectClearCanvasTool,
   waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   selectSnakeLayoutModeTool,
 } from '@utils';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 

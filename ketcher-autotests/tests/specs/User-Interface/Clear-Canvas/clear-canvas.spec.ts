@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   pressButton,
   takeEditorScreenshot,
@@ -8,7 +9,6 @@ import {
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   waitForRender,
-  selectClearCanvasTool,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/addTextBoxToCanvas';
 import {

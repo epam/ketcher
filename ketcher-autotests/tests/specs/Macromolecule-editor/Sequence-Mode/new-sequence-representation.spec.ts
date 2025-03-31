@@ -2,6 +2,7 @@
 /* eslint-disable no-magic-numbers */
 import { Bases } from '@constants/monomers/Bases';
 import { Page, test, expect } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   MacroBondType,
@@ -11,7 +12,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
   selectAllStructuresOnCanvas,
-  selectClearCanvasTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,

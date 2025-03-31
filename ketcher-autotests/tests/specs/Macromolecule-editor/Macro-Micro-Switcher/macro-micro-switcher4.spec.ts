@@ -12,7 +12,6 @@ import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
-  selectClearCanvasTool,
   waitForPageInit,
   selectEraseTool,
   TopPanelButton,
@@ -44,6 +43,7 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 

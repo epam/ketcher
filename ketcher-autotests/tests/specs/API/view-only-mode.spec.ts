@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   waitForPageInit,
   takePageScreenshot,
@@ -25,7 +26,6 @@ import {
   selectAllStructuresOnCanvas,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
-  selectOpenFileTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { waitForOpenButtonEnabled } from '@utils/common/loaders/waitForElementState';

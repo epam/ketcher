@@ -8,6 +8,10 @@ import { Sugars } from '@constants/monomers/Sugars';
 import { FAVORITES_TAB } from '@constants/testIdConstants';
 import { Page, expect, test } from '@playwright/test';
 import {
+  selectOpenFileTool,
+  selectClearCanvasTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   AtomButton,
   FILE_TEST_DATA,
   FunctionalGroups,
@@ -38,7 +42,6 @@ import {
   selectAromatizeTool,
   selectAtomInToolbar,
   selectCleanTool,
-  selectClearCanvasTool,
   selectDearomatizeTool,
   selectDropdownTool,
   selectEraseTool,
@@ -47,7 +50,6 @@ import {
   selectLeftPanelButton,
   selectMacroBond,
   selectMonomer,
-  selectOpenFileTool,
   selectOpenTool,
   selectOptionInDropdown,
   selectRing,

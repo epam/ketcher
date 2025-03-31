@@ -1,4 +1,5 @@
 import { expect, Page, test } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -23,7 +24,6 @@ import {
   resetCurrentTool,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectClearCanvasTool,
   selectLayoutTool,
 } from '@utils';
 import {

@@ -1,5 +1,9 @@
 import { Page, expect, test } from '@playwright/test';
 import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   selectTopPanelButton,
   TopPanelButton,
   takeEditorScreenshot,
@@ -16,8 +20,6 @@ import {
   receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
-  selectOpenFileTool,
-  selectClearCanvasTool,
 } from '@utils';
 import {
   clickOnFileFormatDropdown,

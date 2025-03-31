@@ -8,6 +8,7 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Page, test } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
@@ -19,7 +20,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
-  selectClearCanvasTool,
   selectEraseTool,
   selectFlexLayoutModeTool,
   selectMacroBond,

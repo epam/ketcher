@@ -1,4 +1,5 @@
 import { Page, test } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   TopPanelButton,
   openFileAndAddToCanvasMacro,
@@ -11,7 +12,6 @@ import {
   selectSequenceLayoutModeTool,
   switchSequenceEnteringButtonType,
   SequenceType,
-  selectClearCanvasTool,
   pressButton,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@utils/macromolecules';

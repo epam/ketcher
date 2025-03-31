@@ -5,7 +5,6 @@ import { Sugars } from '@constants/monomers/Sugars';
 import { Page, chromium, expect, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectClearCanvasTool,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   waitForKetcherInit,
@@ -42,6 +41,7 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Bases } from '@constants/monomers/Bases';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;

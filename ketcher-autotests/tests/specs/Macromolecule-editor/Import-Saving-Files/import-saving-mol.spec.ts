@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page, chromium } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   TopPanelButton,
   clickInTheMiddleOfTheScreen,
@@ -19,7 +20,6 @@ import {
   pressButton,
   selectSnakeLayoutModeTool,
   turnOnMicromoleculesEditor,
-  selectClearCanvasTool,
   delay,
   selectFlexLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,

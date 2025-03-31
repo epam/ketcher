@@ -1,9 +1,9 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { test, expect } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   addSingleMonomerToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  selectClearCanvasTool,
   selectMacroBond,
   selectPartOfMolecules,
   takeEditorScreenshot,

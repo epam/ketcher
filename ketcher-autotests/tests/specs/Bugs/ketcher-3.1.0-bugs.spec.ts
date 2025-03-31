@@ -2,8 +2,8 @@
 /* eslint-disable no-magic-numbers */
 import { Peptides } from '@constants/monomers/Peptides';
 import { Page, test } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
-  selectClearCanvasTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePageScreenshot,

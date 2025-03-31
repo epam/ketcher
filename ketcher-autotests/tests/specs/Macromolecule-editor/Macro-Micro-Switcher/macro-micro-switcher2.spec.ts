@@ -23,7 +23,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   selectDropdownTool,
   clickInTheMiddleOfTheScreen,
-  selectClearCanvasTool,
   selectMacroBond,
   moveMouseAway,
   selectRingButton,
@@ -312,7 +311,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await selectEraseTool(page);
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -332,7 +331,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await selectEraseTool(page);
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -954,7 +953,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
     );
     await turnOnMacromoleculesEditor(page, false, false);
-    await selectClearCanvasTool(page);
+    await selectEraseTool(page);
     await pressUndoButton(page);
     await takePageScreenshot(page);
     await pressRedoButton(page);

@@ -30,7 +30,6 @@ import {
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
   selectCleanTool,
-  selectClearCanvasTool,
   selectDearomatizeTool,
   selectEraseTool,
   selectLayoutTool,
@@ -47,7 +46,6 @@ import {
   waitForPageInit,
   waitForRender,
   waitForSpinnerFinishedWork,
-  selectOpenFileTool,
 } from '@utils';
 import {
   clearLocalStorage,
@@ -63,6 +61,10 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@utils/macromolecules/topToolBar';
+import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+} from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Image files', () => {
   let page: Page;

@@ -1,8 +1,8 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect, Locator } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   takeEditorScreenshot,
-  selectClearCanvasTool,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,

@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
+import { Bases } from '@constants/monomers/Bases';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
+import { Sugars } from '@constants/monomers/Sugars';
 import { Page, test, expect } from '@playwright/test';
 import {
   addMonomerToCenterOfCanvas,
@@ -12,7 +16,6 @@ import {
   getBondLengthValue,
   MacroBondType,
   MacroFileType,
-  MonomerType,
   openBondsSettingsSection,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
@@ -460,18 +463,12 @@ test(`Case 16: Lets get back to U (instead of T) for the complementary base of A
     'RNA1{R(A)P}$$$$V2.0',
   );
 
-  const baseA = getMonomerLocator(page, {
-    monomerAlias: 'A',
-    monomerType: MonomerType.Base,
-  }).first();
+  const baseA = getMonomerLocator(page, Bases.A).first();
 
   await selectAllStructuresOnCanvas(page);
   await createRNAAntisenseChain(page, baseA);
 
-  const baseU = getMonomerLocator(page, {
-    monomerAlias: 'U',
-    monomerType: MonomerType.Base,
-  }).first();
+  const baseU = getMonomerLocator(page, Bases.U).first();
   await expect(baseU).toHaveCount(1);
 });
 
@@ -494,26 +491,11 @@ test(`Case 17: Create Antisense Strand doesn't work in some cases`, async () => 
     'RNA1{[dR](G)[bP]}|RNA2{R(T)P}|PEPTIDE1{D}|PEPTIDE2{E}$PEPTIDE1,RNA2,1:R2-1:R1|PEPTIDE1,PEPTIDE2,1:R3-1:R3|RNA1,PEPTIDE1,3:R2-1:R1$$$V2.0',
   );
 
-  const peptideE = getMonomerLocator(page, {
-    monomerAlias: 'E',
-    monomerType: MonomerType.Peptide,
-  }).first();
-  const peptideD = getMonomerLocator(page, {
-    monomerAlias: 'D',
-    monomerType: MonomerType.Peptide,
-  }).first();
-  const sugarR = getMonomerLocator(page, {
-    monomerAlias: 'R',
-    monomerType: MonomerType.Sugar,
-  }).first();
-  const baseT = getMonomerLocator(page, {
-    monomerAlias: 'T',
-    monomerType: MonomerType.Base,
-  }).first();
-  const phosphateP = getMonomerLocator(page, {
-    monomerAlias: 'P',
-    monomerType: MonomerType.Phosphate,
-  }).first();
+  const peptideE = getMonomerLocator(page, Peptides.E).first();
+  const peptideD = getMonomerLocator(page, Peptides.D).first();
+  const sugarR = getMonomerLocator(page, Sugars.R).first();
+  const baseT = getMonomerLocator(page, Bases.T).first();
+  const phosphateP = getMonomerLocator(page, Phosphates.P).first();
 
   await page.keyboard.down('Shift');
   await peptideE.click();
@@ -552,10 +534,7 @@ test(`Case 18: System creates antisense chain only for top chain if many of chai
 
   await selectCanvasArea(page, { x: 420, y: 75 }, { x: 600, y: 400 });
 
-  const baseT = getMonomerLocator(page, {
-    monomerAlias: 'T',
-    monomerType: MonomerType.Base,
-  }).first();
+  const baseT = getMonomerLocator(page, Bases.T).first();
 
   await createRNAAntisenseChain(page, baseT);
 
@@ -592,13 +571,12 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
   await hydrogenBond.click({ force: true });
 
   const leftEndSugarfR = getMonomerLocator(page, {
-    monomerAlias: 'fR',
-    monomerType: MonomerType.Sugar,
+    ...Sugars.fR,
     rValues: [true, true, true],
   });
+
   const rightEndSugarR = getMonomerLocator(page, {
-    monomerAlias: 'R',
-    monomerType: MonomerType.Sugar,
+    ...Sugars.R,
     rValues: [false, true, true],
   });
 
@@ -628,30 +606,12 @@ test(`Case 20: Antisense creation works wrong in case of partial selection`, asy
     'RNA1{[dR](A)P.R(A)P}|PEPTIDE1{A.C.D.E.F}$PEPTIDE1,RNA1,5:R2-1:R1$$$V2.0',
   );
 
-  const peptideA = getMonomerLocator(page, {
-    monomerAlias: 'A',
-    monomerType: MonomerType.Peptide,
-  }).first();
-  const peptideC = getMonomerLocator(page, {
-    monomerAlias: 'C',
-    monomerType: MonomerType.Peptide,
-  }).first();
-  const peptideD = getMonomerLocator(page, {
-    monomerAlias: 'D',
-    monomerType: MonomerType.Peptide,
-  }).first();
-  const peptideE = getMonomerLocator(page, {
-    monomerAlias: 'E',
-    monomerType: MonomerType.Peptide,
-  }).first();
-  const peptideF = getMonomerLocator(page, {
-    monomerAlias: 'F',
-    monomerType: MonomerType.Peptide,
-  }).first();
-  const sugarR = getMonomerLocator(page, {
-    monomerAlias: 'R',
-    monomerType: MonomerType.Sugar,
-  }).first();
+  const peptideA = getMonomerLocator(page, Peptides.A).first();
+  const peptideC = getMonomerLocator(page, Peptides.C).first();
+  const peptideD = getMonomerLocator(page, Peptides.D).first();
+  const peptideE = getMonomerLocator(page, Peptides.E).first();
+  const peptideF = getMonomerLocator(page, Peptides.F).first();
+  const sugarR = getMonomerLocator(page, Sugars.R).first();
 
   await page.keyboard.down('Shift');
   await peptideA.click();
@@ -849,10 +809,7 @@ test(`Case 31: Unable to create antisense chains for ambiguous monomers from the
 
   await selectAllStructuresOnCanvas(page);
 
-  const sugarR = getMonomerLocator(page, {
-    monomerAlias: 'R',
-    monomerType: MonomerType.Sugar,
-  }).first();
+  const sugarR = getMonomerLocator(page, Sugars.R).first();
   await createRNAAntisenseChain(page, sugarR);
 
   await takeEditorScreenshot(page, {

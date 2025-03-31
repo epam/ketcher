@@ -13,7 +13,6 @@ import {
   waitForRender,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectOpenFileTool,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import {
@@ -24,6 +23,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
 async function openFromFileViaTextBox(filename: string, page: Page) {
   const fileText = await readFileContents(filename);

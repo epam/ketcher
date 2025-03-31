@@ -73,32 +73,35 @@ export class DistanceSnapView extends TransientView {
         transientLayer
           .append('line')
           .attr('x1', monomerPositionInPixels.x)
-          .attr('y1', alignerPositionInPixels.y - 5)
+          .attr('y1', alignerPositionInPixels.y - 3)
           .attr('x2', monomerPositionInPixels.x)
-          .attr('y2', alignerPositionInPixels.y + 5)
+          .attr('y2', alignerPositionInPixels.y + 3)
           .attr('stroke', '#365CFF')
-          .attr('stroke-width', 0.5);
+          .attr('stroke-width', 0.5)
+          .style('opacity', 0.75);
         if (nextMonomerPositionInPixels) {
           transientLayer
             .append('line')
-            .attr('x1', monomerPositionInPixels.x)
+            .attr('x1', monomerPositionInPixels.x + 3)
             .attr('y1', alignerPositionInPixels.y)
-            .attr('x2', nextMonomerPositionInPixels.x)
+            .attr('x2', nextMonomerPositionInPixels.x - 3)
             .attr('y2', alignerPositionInPixels.y)
             .attr('stroke', '#365CFF')
-            .attr('stroke-width', 1)
-            .attr('marker-end', 'url(#arrow-marker-arc)');
+            .attr('stroke-width', 0.5)
+            .attr('marker-end', 'url(#arrow-marker-arc)')
+            .style('opacity', 0.75);
         }
         if (previousMonomerPositionInPixels) {
           transientLayer
             .append('line')
-            .attr('x1', monomerPositionInPixels.x)
+            .attr('x1', monomerPositionInPixels.x - 3)
             .attr('y1', alignerPositionInPixels.y)
-            .attr('x2', previousMonomerPositionInPixels.x)
+            .attr('x2', previousMonomerPositionInPixels.x + 3)
             .attr('y2', alignerPositionInPixels.y)
             .attr('stroke', '#365CFF')
-            .attr('stroke-width', 1)
-            .attr('marker-end', 'url(#arrow-marker-arc)');
+            .attr('stroke-width', 0.5)
+            .attr('marker-end', 'url(#arrow-marker-arc)')
+            .style('opacity', 0.75);
         }
       } else {
         transientLayer

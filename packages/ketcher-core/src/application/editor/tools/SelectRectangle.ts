@@ -258,6 +258,7 @@ class SelectRectangle implements BaseTool {
     cursorPosition: Vec2,
     connectedPosition: Vec2,
     snapAngle: number,
+    snappedDistance?: number,
   ) {
     const angle = vectorUtils.calcAngle(cursorPosition, connectedPosition);
     const angleInDegrees = ((angle * 180) / Math.PI + 360) % 360;
@@ -281,7 +282,8 @@ class SelectRectangle implements BaseTool {
     }
 
     const snappedAngleRad = (snappedAngle * Math.PI) / 180;
-    const distance = Vec2.diff(cursorPosition, connectedPosition).length();
+    const distance =
+      snappedDistance ?? Vec2.diff(cursorPosition, connectedPosition).length();
     const angleSnapPosition = new Vec2(
       connectedPosition.x - distance * Math.cos(snappedAngleRad),
       connectedPosition.y - distance * Math.sin(snappedAngleRad),
@@ -468,6 +470,7 @@ class SelectRectangle implements BaseTool {
 
         return {
           isDistanceSnapped: true,
+          snapDistance,
           distanceSnapPosition,
           alignment,
           alignedMonomers: [
@@ -508,6 +511,7 @@ class SelectRectangle implements BaseTool {
 
         return {
           isDistanceSnapped: true,
+          snapDistance,
           distanceSnapPosition,
           alignment,
           alignedMonomers: [
@@ -570,6 +574,7 @@ class SelectRectangle implements BaseTool {
         );
         return {
           isDistanceSnapped: true,
+          snapDistance,
           distanceSnapPosition,
           alignment,
           alignedMonomers: [...alignedMonomers, ...additionalAlignedMonomers],
@@ -597,6 +602,7 @@ class SelectRectangle implements BaseTool {
         );
         return {
           isDistanceSnapped: true,
+          snapDistance,
           distanceSnapPosition,
           alignment,
           alignedMonomers: [...alignedMonomers, ...additionalAlignedMonomers],
@@ -649,6 +655,7 @@ class SelectRectangle implements BaseTool {
     const {
       isDistanceSnapped,
       distanceSnapPosition,
+      snapDistance,
       alignment,
       alignedMonomers,
     } = SelectRectangle.calculateDistanceSnap(
@@ -661,6 +668,7 @@ class SelectRectangle implements BaseTool {
         cursorPositionInAngstroms,
         connectedMonomer.position,
         this.editor.mode.modeName === 'snake-layout-mode' ? 90 : 30,
+        snapDistance,
       );
 
     const { isBondLengthSnapped, bondLengthSnapPosition } =
@@ -671,14 +679,11 @@ class SelectRectangle implements BaseTool {
       );
 
     let snapPosition: Vec2 | undefined;
-    // if (isAngleSnapped && isBondLengthSnapped) {
-    //   snapPosition = bondLengthSnapPosition;
-    // } else if (isAngleSnapped) {
-    //   snapPosition = angleSnapPosition;
-    // } else if (isBondLengthSnapped) {
-    //   snapPosition = bondLengthSnapPosition;
-    // }
-    if (isDistanceSnapped) {
+    if (isBondLengthSnapped) {
+      snapPosition = bondLengthSnapPosition;
+    } else if (isAngleSnapped) {
+      snapPosition = angleSnapPosition;
+    } else if (distanceSnapPosition) {
       snapPosition = distanceSnapPosition;
     }
 
@@ -691,10 +696,10 @@ class SelectRectangle implements BaseTool {
       if (distanceToSnapPosition < 0.375) {
         return {
           snapPosition: snapPosition.sub(selectedMonomer.position),
-          isAngleSnapped: false,
+          isAngleSnapped,
           bond: shortestMonomerBond,
           connectedMonomer,
-          isBondLengthSnapped: false,
+          isBondLengthSnapped,
           isDistanceSnapped,
           alignment,
           alignedMonomers,

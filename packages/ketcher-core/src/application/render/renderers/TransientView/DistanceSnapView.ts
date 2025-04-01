@@ -116,33 +116,36 @@ export class DistanceSnapView extends TransientView {
           .style('opacity', 0.75);
         transientLayer
           .append('line')
-          .attr('x1', alignerPositionInPixels.x - 5)
+          .attr('x1', alignerPositionInPixels.x - 3)
           .attr('y1', monomerPositionInPixels.y)
-          .attr('x2', alignerPositionInPixels.x + 5)
+          .attr('x2', alignerPositionInPixels.x + 3)
           .attr('y2', monomerPositionInPixels.y)
           .attr('stroke', '#365CFF')
-          .attr('stroke-width', 0.5);
+          .attr('stroke-width', 0.5)
+          .style('opacity', 0.75);
         if (nextMonomerPositionInPixels) {
           transientLayer
             .append('line')
             .attr('x1', alignerPositionInPixels.x)
-            .attr('y1', monomerPositionInPixels.y)
+            .attr('y1', monomerPositionInPixels.y + 3)
             .attr('x2', alignerPositionInPixels.x)
-            .attr('y2', nextMonomerPositionInPixels.y)
+            .attr('y2', nextMonomerPositionInPixels.y - 3)
             .attr('stroke', '#365CFF')
-            .attr('stroke-width', 1)
-            .attr('marker-end', 'url(#arrow-marker-arc)');
+            .attr('stroke-width', 0.5)
+            .attr('marker-end', 'url(#arrow-marker-arc)')
+            .style('opacity', 0.75);
         }
         if (previousMonomerPositionInPixels) {
           transientLayer
             .append('line')
             .attr('x1', alignerPositionInPixels.x)
-            .attr('y1', monomerPositionInPixels.y)
+            .attr('y1', monomerPositionInPixels.y - 3)
             .attr('x2', alignerPositionInPixels.x)
-            .attr('y2', previousMonomerPositionInPixels.y)
+            .attr('y2', previousMonomerPositionInPixels.y + 3)
             .attr('stroke', '#365CFF')
-            .attr('stroke-width', 1)
-            .attr('marker-end', 'url(#arrow-marker-arc)');
+            .attr('stroke-width', 0.5)
+            .attr('marker-end', 'url(#arrow-marker-arc)')
+            .style('opacity', 0.75);
         }
       }
 

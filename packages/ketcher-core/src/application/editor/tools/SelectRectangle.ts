@@ -445,14 +445,19 @@ class SelectRectangle implements BaseTool {
           return { isDistanceSnapped: false };
         }
 
+        const distanceToMonomerForSnapping = Math.abs(
+          cursorPosition.x - firstSideMonomer.center.x,
+        );
+        const snapDistance =
+          Math.abs(firstSideMonomer.center.x - secondSideMonomer.center.x) / 2;
+        if (Math.abs(distanceToMonomerForSnapping - snapDistance) >= 0.375) {
+          return { isDistanceSnapped: false };
+        }
+
         const midPoint =
           (firstSideMonomer.center.x + secondSideMonomer.center.x) / 2;
         const distanceSnapPosition = new Vec2(midPoint, cursorPosition.y);
 
-        const snapDistance = Math.abs(
-          firstSideMonomer.center.x - secondSideMonomer.center.x,
-        );
-        // TODO: For snapping in between additional monomers are not gathered for some reason
         const additionalAlignedMonomersFromOneSide =
           SelectRectangle.findRemainingAlignedMonomers(
             firstSideMonomer,
@@ -487,13 +492,19 @@ class SelectRectangle implements BaseTool {
           return { isDistanceSnapped: false };
         }
 
+        const distanceToMonomerForSnapping = Math.abs(
+          cursorPosition.y - firstSideMonomer.center.y,
+        );
+        const snapDistance =
+          Math.abs(firstSideMonomer.center.y - secondSideMonomer.center.y) / 2;
+        if (Math.abs(distanceToMonomerForSnapping - snapDistance) >= 0.375) {
+          return { isDistanceSnapped: false };
+        }
+
         const midPoint =
           (firstSideMonomer.center.y + secondSideMonomer.center.y) / 2;
         const distanceSnapPosition = new Vec2(cursorPosition.x, midPoint);
 
-        const snapDistance = Math.abs(
-          firstSideMonomer.center.y - secondSideMonomer.center.y,
-        );
         const additionalAlignedMonomersFromOneSide =
           SelectRectangle.findRemainingAlignedMonomers(
             firstSideMonomer,
@@ -560,6 +571,19 @@ class SelectRectangle implements BaseTool {
         const snapDistance = Math.abs(
           monomerForSnapping.center.x - monomerForAlignment.center.x,
         );
+        const distanceToMonomerForSnapping = Math.abs(
+          cursorPosition.x - monomerForSnapping.center.x,
+        );
+        if (Math.abs(distanceToMonomerForSnapping - snapDistance) >= 0.375) {
+          return { isDistanceSnapped: false };
+        }
+
+        const sign = Math.sign(monomerForSnapping.center.x - cursorPosition.x);
+        const distanceSnapPosition = new Vec2(
+          monomerForSnapping.center.x - sign * snapDistance,
+          cursorPosition.y,
+        );
+
         const additionalAlignedMonomers =
           SelectRectangle.findRemainingAlignedMonomers(
             monomerForAlignment,
@@ -567,11 +591,7 @@ class SelectRectangle implements BaseTool {
             alignment,
             snapDistance,
           );
-        const sign = Math.sign(monomerForSnapping.center.x - cursorPosition.x);
-        const distanceSnapPosition = new Vec2(
-          monomerForSnapping.center.x - sign * snapDistance,
-          cursorPosition.y,
-        );
+
         return {
           isDistanceSnapped: true,
           snapDistance,
@@ -588,6 +608,19 @@ class SelectRectangle implements BaseTool {
         const snapDistance = Math.abs(
           monomerForSnapping.center.y - monomerForAlignment.center.y,
         );
+        const distanceToMonomerForSnapping = Math.abs(
+          cursorPosition.y - monomerForSnapping.center.y,
+        );
+        if (Math.abs(distanceToMonomerForSnapping - snapDistance) >= 0.375) {
+          return { isDistanceSnapped: false };
+        }
+
+        const sign = Math.sign(monomerForSnapping.center.y - cursorPosition.y);
+        const distanceSnapPosition = new Vec2(
+          cursorPosition.x,
+          monomerForSnapping.center.y - sign * snapDistance,
+        );
+
         const additionalAlignedMonomers =
           SelectRectangle.findRemainingAlignedMonomers(
             monomerForAlignment,
@@ -595,11 +628,7 @@ class SelectRectangle implements BaseTool {
             alignment,
             snapDistance,
           );
-        const sign = Math.sign(monomerForSnapping.center.y - cursorPosition.y);
-        const distanceSnapPosition = new Vec2(
-          cursorPosition.x,
-          monomerForSnapping.center.y - sign * snapDistance,
-        );
+
         return {
           isDistanceSnapped: true,
           snapDistance,
@@ -687,13 +716,18 @@ class SelectRectangle implements BaseTool {
       snapPosition = distanceSnapPosition;
     }
 
+    const onlyOneSnappingIsApplied =
+      [isBondLengthSnapped, isAngleSnapped, isDistanceSnapped].filter(
+        (value) => value,
+      ).length === 1;
+
     if (snapPosition) {
       const distanceToSnapPosition = Vec2.diff(
         cursorPositionInAngstroms,
         snapPosition,
       ).length();
 
-      if (distanceToSnapPosition < 0.375) {
+      if (distanceToSnapPosition < (onlyOneSnappingIsApplied ? 0.375 : 0.55)) {
         return {
           snapPosition: snapPosition.sub(selectedMonomer.position),
           isAngleSnapped,

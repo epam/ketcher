@@ -695,7 +695,6 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 1. Go to Macro - Sequence mode (clean canvas)
      * 2. Copy and paste directly onto the canvas sequence GATYLIK
      * 3. Take a screenshot
-     * It’s not working properly now. After the release of Ketcher 3.2.0-rc.2, the screenshot should be updated
      */
     await selectSequenceLayoutModeTool(page);
     await switchToPeptideMode(page);

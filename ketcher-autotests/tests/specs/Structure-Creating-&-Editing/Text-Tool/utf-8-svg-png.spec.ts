@@ -1,7 +1,6 @@
 import { test } from '@playwright/test';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,

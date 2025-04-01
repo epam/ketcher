@@ -4,7 +4,6 @@ import {
   AtomButton,
   FILE_TEST_DATA,
   RingButton,
-  TopPanelButton,
   clickInTheMiddleOfTheScreen,
   drawBenzeneRing,
   openFileAndAddToCanvas,
@@ -17,7 +16,6 @@ import {
   selectAtomInToolbar,
   selectOptionByText,
   selectRingButton,
-  selectTopPanelButton,
   takeEditorScreenshot,
   waitForIndigoToLoad,
   waitForPageInit,
@@ -33,6 +31,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 
 const RING_OFFSET = 150;
 const ARROW_OFFSET = 20;

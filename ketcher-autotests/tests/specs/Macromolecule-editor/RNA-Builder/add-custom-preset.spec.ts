@@ -3,6 +3,7 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Sugars } from '@constants/monomers/Sugars';
 import { BUTTON__ADD_TO_PRESETS, RNA_TAB } from '@constants/testIdConstants';
 import { Page, test } from '@playwright/test';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   moveMouseToTheMiddleOfTheScreen,
   selectCustomPreset,

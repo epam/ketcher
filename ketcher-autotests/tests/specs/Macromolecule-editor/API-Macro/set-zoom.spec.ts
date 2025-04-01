@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   waitForPageInit,
   takeEditorScreenshot,

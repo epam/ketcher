@@ -3,6 +3,7 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { FAVORITES_TAB } from '@constants/testIdConstants';
 import { expect, test } from '@playwright/test';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   addMonomersToFavorites,
   addMonomerToFavorites,

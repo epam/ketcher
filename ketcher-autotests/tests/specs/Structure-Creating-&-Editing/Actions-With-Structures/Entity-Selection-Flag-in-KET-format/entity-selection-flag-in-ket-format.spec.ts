@@ -1,13 +1,12 @@
 /* eslint-disable no-inline-comments */
 import { test, expect } from '@playwright/test';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
   takeEditorScreenshot,
   saveToFile,
-  selectTopPanelButton,
-  TopPanelButton,
   clickOnFileFormatDropdown,
   pressButton,
   receiveFileComparisonData,

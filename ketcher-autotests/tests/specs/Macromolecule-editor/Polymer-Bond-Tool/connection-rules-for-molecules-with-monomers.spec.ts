@@ -3,6 +3,10 @@ import { Chem } from '@constants/monomers/Chem';
 import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
 import {
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   addSingleMonomerToCanvas,
   BondType,
   clickOnAtom,

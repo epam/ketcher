@@ -1,5 +1,6 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   addMonomerToFavorites,
   clickInTheMiddleOfTheScreen,

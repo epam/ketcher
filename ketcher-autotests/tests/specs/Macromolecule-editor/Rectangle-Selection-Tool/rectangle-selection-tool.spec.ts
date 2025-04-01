@@ -25,6 +25,7 @@ import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   pressRedoButton,
   pressUndoButton,
+  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Chem } from '@constants/monomers/Chem';

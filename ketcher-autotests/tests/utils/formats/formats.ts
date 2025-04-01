@@ -1,8 +1,7 @@
 import { Page, expect } from '@playwright/test';
-import { TopPanelButton } from '@utils/selectors';
 import { MolfileFormat, Struct, SupportedModes } from 'ketcher-core';
 import { clickOnFileFormatDropdown } from './clicks';
-import { selectTopPanelButton } from '@utils/canvas/tools/helpers';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 
 export async function getKet(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getKet());

@@ -6,8 +6,6 @@ import {
   FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
   pasteFromClipboardAndAddToCanvas,
-  selectTopPanelButton,
-  TopPanelButton,
   moveMouseAway,
 } from '@utils';
 import { clickOnFileFormatDropdown } from '@utils/formats';
@@ -15,6 +13,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 
 async function saveFileAsCmlFormat(page: Page) {
   await selectSaveTool(page);

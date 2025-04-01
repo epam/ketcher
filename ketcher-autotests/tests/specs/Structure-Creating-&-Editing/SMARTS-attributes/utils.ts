@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import { TopPanelButton, selectTopPanelButton } from '@utils';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 
 type queryNumberValues =
   | '0'

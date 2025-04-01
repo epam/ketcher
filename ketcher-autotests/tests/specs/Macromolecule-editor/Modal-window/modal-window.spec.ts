@@ -1,5 +1,6 @@
 import { Chem } from '@constants/monomers/Chem';
 import { Locator, test } from '@playwright/test';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   addSingleMonomerToCanvas,
   selectMacroBond,

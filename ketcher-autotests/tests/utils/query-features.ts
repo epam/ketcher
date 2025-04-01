@@ -1,5 +1,6 @@
 import { Page, expect } from '@playwright/test';
-import { BondTypeName, TopPanelButton, selectTopPanelButton } from '@utils';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import { BondTypeName } from '@utils';
 
 type queryNumberValues =
   | '0'

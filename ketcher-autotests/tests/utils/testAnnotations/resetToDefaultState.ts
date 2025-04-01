@@ -1,4 +1,8 @@
 import { Page, test, TestInfo } from '@playwright/test';
+import {
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { selectFlexLayoutModeTool } from '@utils/canvas';
 import { chooseTab, Tabs } from '@utils/macromolecules';
 

@@ -36,7 +36,7 @@ import {
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   SequenceRenderer,
 } from 'application/render';
-import { vectorUtils } from 'application/editor';
+import { MonomersAlignment, vectorUtils } from 'application/editor';
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -45,9 +45,12 @@ type EmptySnapResult = {
 type SnapResult = {
   snapPosition: Vec2;
   isAngleSnapped: boolean;
-  isDistanceSnapped: boolean;
   connectedMonomer: BaseMonomer;
   bond: PolymerBond | HydrogenBond;
+  isBondLengthSnapped: boolean;
+  isDistanceSnapped: boolean;
+  alignment: MonomersAlignment | undefined;
+  alignedMonomers: BaseMonomer[] | undefined;
 };
 
 class SelectRectangle implements BaseTool {
@@ -255,6 +258,7 @@ class SelectRectangle implements BaseTool {
     cursorPosition: Vec2,
     connectedPosition: Vec2,
     snapAngle: number,
+    snappedDistance?: number,
   ) {
     const angle = vectorUtils.calcAngle(cursorPosition, connectedPosition);
     const angleInDegrees = ((angle * 180) / Math.PI + 360) % 360;
@@ -278,10 +282,11 @@ class SelectRectangle implements BaseTool {
     }
 
     const snappedAngleRad = (snappedAngle * Math.PI) / 180;
-    const distance = Vec2.diff(cursorPosition, connectedPosition).length();
+    const distance =
+      snappedDistance ?? Vec2.diff(cursorPosition, connectedPosition).length();
     const angleSnapPosition = new Vec2(
-      connectedPosition.x + distance * -Math.cos(snappedAngleRad),
-      connectedPosition.y + distance * -Math.sin(snappedAngleRad),
+      connectedPosition.x - distance * Math.cos(snappedAngleRad),
+      connectedPosition.y - distance * Math.sin(snappedAngleRad),
     );
 
     return {
@@ -291,7 +296,7 @@ class SelectRectangle implements BaseTool {
     };
   }
 
-  static calculateDistanceSnap(
+  static calculateBondLengthSnap(
     cursorPosition: Vec2,
     connectedPosition: Vec2,
     snappedAngle: number | undefined,
@@ -301,11 +306,11 @@ class SelectRectangle implements BaseTool {
       connectedPosition,
     ).length();
     const standardBondLength = 1.5;
-    const isDistanceSnapped =
+    const isBondLengthSnapped =
       Math.abs(currentDistance - standardBondLength) < 0.375;
 
-    if (!isDistanceSnapped) {
-      return { isDistanceSnapped };
+    if (!isBondLengthSnapped) {
+      return { isBondLengthSnapped };
     }
 
     const editor = CoreEditor.provideEditorInstance();
@@ -321,11 +326,318 @@ class SelectRectangle implements BaseTool {
         vectorUtils.calcAngle(cursorPosition, connectedPosition);
     }
 
-    const distanceSnapPosition = new Vec2(
+    const bondLengthSnapPosition = new Vec2(
       connectedPosition.x + standardBondLength * -Math.cos(angle),
       connectedPosition.y + standardBondLength * -Math.sin(angle),
     );
-    return { isDistanceSnapped, distanceSnapPosition };
+    return { isBondLengthSnapped, bondLengthSnapPosition };
+  }
+
+  static determineAlignment(
+    firstPosition: Vec2,
+    secondPosition: Vec2,
+  ): MonomersAlignment | null {
+    const verticalDiff = Math.abs(firstPosition.y - secondPosition.y);
+    const horizontalDiff = Math.abs(firstPosition.x - secondPosition.x);
+
+    if (verticalDiff < 0.75 && horizontalDiff >= 0.75) {
+      return 'horizontal';
+    } else if (horizontalDiff < 0.75 && verticalDiff >= 0.75) {
+      return 'vertical';
+    }
+
+    return null;
+  }
+
+  static checkMonomersAlignment(
+    firstMonomer: BaseMonomer,
+    secondMonomer: BaseMonomer,
+    snapAlignment: MonomersAlignment,
+    distance: number,
+  ) {
+    const alignment = SelectRectangle.determineAlignment(
+      firstMonomer.center,
+      secondMonomer.center,
+    );
+
+    if (alignment !== snapAlignment) {
+      return false;
+    }
+
+    const distanceBetweenMonomers =
+      alignment === 'horizontal'
+        ? Math.abs(firstMonomer.center.x - secondMonomer.center.x)
+        : Math.abs(firstMonomer.center.y - secondMonomer.center.y);
+
+    return Math.abs(distanceBetweenMonomers - distance) < 0.0001;
+  }
+
+  static getNextMonomer(
+    currentMonomer: BaseMonomer,
+    visitedMonomers: Set<number>,
+  ) {
+    return currentMonomer.polymerBonds
+      .filter((bond) => bond.isBackBoneChainConnection)
+      .map((bond) => bond.getAnotherMonomer(currentMonomer))
+      .filter((monomer) => monomer && !visitedMonomers.has(monomer.id))[0];
+  }
+
+  static findRemainingAlignedMonomers(
+    startingMonomer: BaseMonomer,
+    initialState: BaseMonomer[],
+    alignment: MonomersAlignment,
+    distance: number,
+  ) {
+    const visitedMonomers = new Set(initialState.map((monomer) => monomer.id));
+    let currentMonomer = startingMonomer;
+    let nextMonomer = SelectRectangle.getNextMonomer(
+      startingMonomer,
+      visitedMonomers,
+    );
+
+    const remainingAlignedMonomers: BaseMonomer[] = [];
+
+    while (nextMonomer) {
+      const nextMonomerIsAligned = SelectRectangle.checkMonomersAlignment(
+        currentMonomer,
+        nextMonomer,
+        alignment,
+        distance,
+      );
+
+      if (nextMonomerIsAligned) {
+        visitedMonomers.add(currentMonomer.id);
+        remainingAlignedMonomers.push(nextMonomer);
+        currentMonomer = nextMonomer;
+        nextMonomer = SelectRectangle.getNextMonomer(
+          currentMonomer,
+          visitedMonomers,
+        );
+      } else {
+        break;
+      }
+    }
+
+    return remainingAlignedMonomers;
+  }
+
+  static calculateDistanceSnap(cursorPosition: Vec2, monomer: BaseMonomer) {
+    const [firstSideMonomer, secondSideMonomer] = monomer.polymerBonds.map(
+      (bond) => bond.getAnotherMonomer(monomer),
+    );
+
+    if (firstSideMonomer && secondSideMonomer) {
+      const alignment = SelectRectangle.determineAlignment(
+        firstSideMonomer.center,
+        secondSideMonomer.center,
+      );
+      if (!alignment) {
+        return { isDistanceSnapped: false };
+      }
+
+      const alignedMonomers = [monomer, firstSideMonomer, secondSideMonomer];
+
+      if (alignment === 'horizontal') {
+        const deltaY1 = Math.abs(cursorPosition.y - firstSideMonomer.center.y);
+        const deltaY2 = Math.abs(cursorPosition.y - secondSideMonomer.center.y);
+
+        if (deltaY1 >= 0.75 || deltaY2 >= 0.75) {
+          return { isDistanceSnapped: false };
+        }
+
+        const distanceToMonomerForSnapping = Math.abs(
+          cursorPosition.x - firstSideMonomer.center.x,
+        );
+        const snapDistance =
+          Math.abs(firstSideMonomer.center.x - secondSideMonomer.center.x) / 2;
+        if (Math.abs(distanceToMonomerForSnapping - snapDistance) >= 0.375) {
+          return { isDistanceSnapped: false };
+        }
+
+        const midPoint =
+          (firstSideMonomer.center.x + secondSideMonomer.center.x) / 2;
+        const distanceSnapPosition = new Vec2(midPoint, cursorPosition.y);
+
+        const additionalAlignedMonomersFromOneSide =
+          SelectRectangle.findRemainingAlignedMonomers(
+            firstSideMonomer,
+            alignedMonomers,
+            alignment,
+            snapDistance,
+          );
+        const additionalAlignedMonomersFromOtherSide =
+          SelectRectangle.findRemainingAlignedMonomers(
+            secondSideMonomer,
+            alignedMonomers,
+            alignment,
+            snapDistance,
+          );
+
+        return {
+          isDistanceSnapped: true,
+          snapDistance,
+          distanceSnapPosition,
+          alignment,
+          alignedMonomers: [
+            ...alignedMonomers,
+            ...additionalAlignedMonomersFromOneSide,
+            ...additionalAlignedMonomersFromOtherSide,
+          ],
+        };
+      } else {
+        const deltaX1 = Math.abs(cursorPosition.x - firstSideMonomer.center.x);
+        const deltaX2 = Math.abs(cursorPosition.x - secondSideMonomer.center.x);
+
+        if (deltaX1 >= 0.75 || deltaX2 >= 0.75) {
+          return { isDistanceSnapped: false };
+        }
+
+        const distanceToMonomerForSnapping = Math.abs(
+          cursorPosition.y - firstSideMonomer.center.y,
+        );
+        const snapDistance =
+          Math.abs(firstSideMonomer.center.y - secondSideMonomer.center.y) / 2;
+        if (Math.abs(distanceToMonomerForSnapping - snapDistance) >= 0.375) {
+          return { isDistanceSnapped: false };
+        }
+
+        const midPoint =
+          (firstSideMonomer.center.y + secondSideMonomer.center.y) / 2;
+        const distanceSnapPosition = new Vec2(cursorPosition.x, midPoint);
+
+        const additionalAlignedMonomersFromOneSide =
+          SelectRectangle.findRemainingAlignedMonomers(
+            firstSideMonomer,
+            alignedMonomers,
+            alignment,
+            snapDistance,
+          );
+        const additionalAlignedMonomersFromOtherSide =
+          SelectRectangle.findRemainingAlignedMonomers(
+            secondSideMonomer,
+            alignedMonomers,
+            alignment,
+            snapDistance,
+          );
+
+        return {
+          isDistanceSnapped: true,
+          snapDistance,
+          distanceSnapPosition,
+          alignment,
+          alignedMonomers: [
+            ...alignedMonomers,
+            ...additionalAlignedMonomersFromOneSide,
+            ...additionalAlignedMonomersFromOtherSide,
+          ],
+        };
+      }
+    } else {
+      const monomerForSnapping = firstSideMonomer ?? secondSideMonomer;
+      if (!monomerForSnapping) {
+        return { isDistanceSnapped: false };
+      }
+
+      const visitedMonomers = new Set([monomer.id]);
+      const monomerForAlignment = SelectRectangle.getNextMonomer(
+        monomerForSnapping,
+        visitedMonomers,
+      );
+
+      if (!monomerForAlignment) {
+        return { isDistanceSnapped: false };
+      }
+
+      const alignment = SelectRectangle.determineAlignment(
+        monomerForSnapping.center,
+        monomerForAlignment.center,
+      );
+      if (!alignment) {
+        return { isDistanceSnapped: false };
+      }
+
+      const alignedMonomers = [
+        monomer,
+        monomerForSnapping,
+        monomerForAlignment,
+      ];
+
+      if (alignment === 'horizontal') {
+        const delta = Math.abs(cursorPosition.y - monomerForSnapping.center.y);
+        if (delta >= 0.75) {
+          return { isDistanceSnapped: false };
+        }
+
+        const snapDistance = Math.abs(
+          monomerForSnapping.center.x - monomerForAlignment.center.x,
+        );
+        const distanceToMonomerForSnapping = Math.abs(
+          cursorPosition.x - monomerForSnapping.center.x,
+        );
+        if (Math.abs(distanceToMonomerForSnapping - snapDistance) >= 0.375) {
+          return { isDistanceSnapped: false };
+        }
+
+        const sign = Math.sign(monomerForSnapping.center.x - cursorPosition.x);
+        const distanceSnapPosition = new Vec2(
+          monomerForSnapping.center.x - sign * snapDistance,
+          cursorPosition.y,
+        );
+
+        const additionalAlignedMonomers =
+          SelectRectangle.findRemainingAlignedMonomers(
+            monomerForAlignment,
+            alignedMonomers,
+            alignment,
+            snapDistance,
+          );
+
+        return {
+          isDistanceSnapped: true,
+          snapDistance,
+          distanceSnapPosition,
+          alignment,
+          alignedMonomers: [...alignedMonomers, ...additionalAlignedMonomers],
+        };
+      } else {
+        const delta = Math.abs(cursorPosition.x - monomerForSnapping.center.x);
+        if (delta >= 0.75) {
+          return { isDistanceSnapped: false };
+        }
+
+        const snapDistance = Math.abs(
+          monomerForSnapping.center.y - monomerForAlignment.center.y,
+        );
+        const distanceToMonomerForSnapping = Math.abs(
+          cursorPosition.y - monomerForSnapping.center.y,
+        );
+        if (Math.abs(distanceToMonomerForSnapping - snapDistance) >= 0.375) {
+          return { isDistanceSnapped: false };
+        }
+
+        const sign = Math.sign(monomerForSnapping.center.y - cursorPosition.y);
+        const distanceSnapPosition = new Vec2(
+          cursorPosition.x,
+          monomerForSnapping.center.y - sign * snapDistance,
+        );
+
+        const additionalAlignedMonomers =
+          SelectRectangle.findRemainingAlignedMonomers(
+            monomerForAlignment,
+            alignedMonomers,
+            alignment,
+            snapDistance,
+          );
+
+        return {
+          isDistanceSnapped: true,
+          snapDistance,
+          distanceSnapPosition,
+          alignment,
+          alignedMonomers: [...alignedMonomers, ...additionalAlignedMonomers],
+        };
+      }
+    }
   }
 
   private tryToSnap(event: MouseEvent): EmptySnapResult | SnapResult {
@@ -361,52 +673,72 @@ class SelectRectangle implements BaseTool {
 
     const connectedMonomer =
       shortestMonomerBond.getAnotherMonomer(selectedMonomer);
+    if (!connectedMonomer) {
+      return emptyResult;
+    }
+
     const cursorPositionInAngstroms = Coordinates.canvasToModel(
       this.editor.lastCursorPositionOfCanvas,
     );
 
-    if (connectedMonomer) {
-      const { isAngleSnapped, angleSnapPosition, snappedAngleRad } =
-        SelectRectangle.calculateAngleSnap(
-          cursorPositionInAngstroms,
-          connectedMonomer.position,
-          this.editor.mode.modeName === 'snake-layout-mode' ? 90 : 30,
-        );
+    const {
+      isDistanceSnapped,
+      distanceSnapPosition,
+      snapDistance,
+      alignment,
+      alignedMonomers,
+    } = SelectRectangle.calculateDistanceSnap(
+      cursorPositionInAngstroms,
+      selectedMonomer,
+    );
 
-      const { isDistanceSnapped, distanceSnapPosition } =
-        SelectRectangle.calculateDistanceSnap(
-          cursorPositionInAngstroms,
-          connectedMonomer.position,
-          snappedAngleRad,
-        );
+    const { isAngleSnapped, angleSnapPosition, snappedAngleRad } =
+      SelectRectangle.calculateAngleSnap(
+        cursorPositionInAngstroms,
+        connectedMonomer.position,
+        this.editor.mode.modeName === 'snake-layout-mode' ? 90 : 30,
+        snapDistance,
+      );
 
-      let snapPosition: Vec2 | undefined;
-      if (isAngleSnapped && isDistanceSnapped) {
-        snapPosition = distanceSnapPosition;
-      } else if (isAngleSnapped) {
-        snapPosition = angleSnapPosition;
-      } else if (isDistanceSnapped) {
-        snapPosition = distanceSnapPosition;
+    const { isBondLengthSnapped, bondLengthSnapPosition } =
+      SelectRectangle.calculateBondLengthSnap(
+        cursorPositionInAngstroms,
+        connectedMonomer.position,
+        snappedAngleRad,
+      );
+
+    let snapPosition: Vec2 | undefined;
+    if (isBondLengthSnapped) {
+      snapPosition = bondLengthSnapPosition;
+    } else if (isAngleSnapped) {
+      snapPosition = angleSnapPosition;
+    } else if (distanceSnapPosition) {
+      snapPosition = distanceSnapPosition;
+    }
+
+    const onlyOneSnappingIsApplied =
+      [isBondLengthSnapped, isAngleSnapped, isDistanceSnapped].filter(
+        (value) => value,
+      ).length === 1;
+
+    if (snapPosition) {
+      const distanceToSnapPosition = Vec2.diff(
+        cursorPositionInAngstroms,
+        snapPosition,
+      ).length();
+
+      if (distanceToSnapPosition < (onlyOneSnappingIsApplied ? 0.375 : 0.55)) {
+        return {
+          snapPosition: snapPosition.sub(selectedMonomer.position),
+          isAngleSnapped,
+          bond: shortestMonomerBond,
+          connectedMonomer,
+          isBondLengthSnapped,
+          isDistanceSnapped,
+          alignment,
+          alignedMonomers,
+        };
       }
-
-      if (snapPosition) {
-        const distanceToSnapPosition = Vec2.diff(
-          cursorPositionInAngstroms,
-          snapPosition,
-        ).length();
-
-        if (distanceToSnapPosition < 0.375) {
-          return {
-            snapPosition: snapPosition.sub(selectedMonomer.position),
-            isAngleSnapped,
-            isDistanceSnapped,
-            connectedMonomer,
-            bond: shortestMonomerBond,
-          };
-        }
-      }
-
-      return emptyResult;
     }
 
     return emptyResult;
@@ -429,20 +761,34 @@ class SelectRectangle implements BaseTool {
         ),
       );
 
-      const { isAngleSnapped, isDistanceSnapped, connectedMonomer, bond } =
-        snapResult;
+      const {
+        isAngleSnapped,
+        connectedMonomer,
+        bond,
+        isBondLengthSnapped,
+        isDistanceSnapped,
+        alignment,
+        alignedMonomers,
+      } = snapResult;
 
       isAngleSnapped
         ? this.editor.transientDrawingView.showAngleSnap({
             connectedMonomer,
             polymerBond: bond,
-            isDistanceSnapped,
+            isBondLengthSnapped,
           })
         : this.editor.transientDrawingView.hideAngleSnap();
 
-      isDistanceSnapped
+      isBondLengthSnapped
         ? this.editor.transientDrawingView.showBondSnap(bond)
         : this.editor.transientDrawingView.hideBondSnap();
+
+      isDistanceSnapped
+        ? this.editor.transientDrawingView.showDistanceSnap({
+            alignment,
+            alignedMonomers,
+          })
+        : this.editor.transientDrawingView.hideDistanceSnap();
     } else {
       modelChanges.merge(
         this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
@@ -459,6 +805,7 @@ class SelectRectangle implements BaseTool {
 
       this.editor.transientDrawingView.hideBondSnap();
       this.editor.transientDrawingView.hideAngleSnap();
+      this.editor.transientDrawingView.hideDistanceSnap();
     }
 
     this.mousePositionAfterMove = this.editor.lastCursorPositionOfCanvas;
@@ -473,8 +820,6 @@ class SelectRectangle implements BaseTool {
   mouseup(event) {
     const renderer = event.target.__data__;
     if (this.moveStarted && renderer?.drawingEntity?.selected) {
-      this.moveStarted = false;
-
       if (
         Vec2.diff(
           this.mousePositionAfterMove,
@@ -497,6 +842,7 @@ class SelectRectangle implements BaseTool {
       this.history.update(modelChanges);
     }
 
+    this.moveStarted = false;
     this.editor.transientDrawingView.clear();
   }
 

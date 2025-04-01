@@ -7,7 +7,7 @@ import { arc } from 'd3';
 export type AngleSnapViewParams = {
   connectedMonomer: BaseMonomer;
   polymerBond: PolymerBond | HydrogenBond;
-  isDistanceSnapped: boolean;
+  isBondLengthSnapped: boolean;
 };
 
 const minimalAngleDifference = (a: number, b: number) => {
@@ -32,7 +32,7 @@ export class AngleSnapView extends TransientView {
     transientLayer: D3SvgElementSelection<SVGGElement, void>,
     params: AngleSnapViewParams,
   ) {
-    const { connectedMonomer, polymerBond, isDistanceSnapped } = params;
+    const { connectedMonomer, polymerBond, isBondLengthSnapped } = params;
 
     const connectedPosition = connectedMonomer.position;
     const movingMonomer =
@@ -61,7 +61,7 @@ export class AngleSnapView extends TransientView {
       .attr('stroke-dasharray', '4')
       .style('opacity', 0.75);
 
-    if (!isDistanceSnapped) {
+    if (!isBondLengthSnapped) {
       transientLayer
         .append('line')
         .attr('x1', connectedPositionInPixels.x)

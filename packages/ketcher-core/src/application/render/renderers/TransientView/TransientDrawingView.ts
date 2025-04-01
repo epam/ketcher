@@ -6,6 +6,7 @@ import { HydrogenBond, PolymerBond } from 'domain/entities';
 import { BondSnapView } from './BondSnapView';
 import { AngleSnapView, AngleSnapViewParams } from './AngleSnapView';
 import { BaseMonomerRenderer } from 'application/render';
+import { DistanceSnapView, DistanceSnapViewParams } from './DistanceSnapView';
 
 type ViewData<P> = {
   show: (layer: D3SvgElementSelection<SVGGElement, void>, params: P) => void;
@@ -105,6 +106,17 @@ export class TransientDrawingView {
 
   public hideAngleSnap() {
     this.removeView(AngleSnapView.viewName);
+  }
+
+  public showDistanceSnap(params: DistanceSnapViewParams) {
+    this.addView(DistanceSnapView.viewName, {
+      show: DistanceSnapView.show,
+      params,
+    });
+  }
+
+  public hideDistanceSnap() {
+    this.removeView(DistanceSnapView.viewName);
   }
 
   public clear() {

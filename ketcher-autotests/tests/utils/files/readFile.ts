@@ -6,7 +6,6 @@ import {
   MacromoleculesTopPanelButton,
   pressButton,
   clickInTheMiddleOfTheScreen,
-  waitForLoad,
   delay,
   takeEditorScreenshot,
   clickOnTheCanvas,
@@ -18,9 +17,10 @@ import {
   PeptideType,
   selectOpenFileTool,
 } from '@utils';
+import { waitForLoad } from '@utils/common';
+import { getSmiles, getInchi } from '@utils/formats';
 
 import { MolfileFormat } from 'ketcher-core';
-import { getSmiles, getInchi } from '@utils/formats';
 
 export async function readFileContents(filePath: string) {
   const resolvedFilePath = path.resolve(process.cwd(), filePath);

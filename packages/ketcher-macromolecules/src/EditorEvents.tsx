@@ -180,6 +180,10 @@ export const EditorEvents = () => {
 
   const handleOpenPreview = useCallback(
     (e) => {
+      if (e.buttons === 1) {
+        return;
+      }
+
       const polymerBond = e.target.__data__?.polymerBond;
 
       if (

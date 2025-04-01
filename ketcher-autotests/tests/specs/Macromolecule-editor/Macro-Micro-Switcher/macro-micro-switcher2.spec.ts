@@ -882,6 +882,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
+
     await page.keyboard.press('Control+Alt+D');
     await takePageScreenshot(page);
     await page.keyboard.press('Control+Alt+P');

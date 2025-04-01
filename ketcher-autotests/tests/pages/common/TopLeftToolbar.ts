@@ -7,7 +7,7 @@ import {
 import { type Page, expect } from '@playwright/test';
 import { selectFlexLayoutModeTool, takePageScreenshot } from '@utils/canvas';
 import { clickOnCanvas } from '@utils/clicks';
-import { waitForRender } from '@utils/common';
+import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 
 export const topLeftToolbarLocators = (page: Page) => ({
@@ -62,7 +62,10 @@ export async function selectOpenFileTool(page: Page) {
 }
 
 export async function selectSaveTool(page: Page) {
-  topLeftToolbarLocators(page).saveButton.click();
+  await waitForSpinnerFinishedWork(
+    page,
+    async () => await topLeftToolbarLocators(page).saveButton.click(),
+  );
 }
 
 export async function pressUndoButton(page: Page) {
@@ -94,10 +97,14 @@ export async function turnOnMacromoleculesEditor(
 
   if (options.enableFlexMode) {
     await selectFlexLayoutModeTool(page);
-  }
-
-  if (options.goToPeptides) {
+  } else if (options.goToPeptides) {
     await goToPeptidesTab(page);
+  } else {
+    // waiting appearance of empty seqeunce in edit mode appearence
+    // (otherwise - keyboard shortcuts doesn't work)
+    await page.getByTestId(`sequence-item`).first().waitFor({
+      state: 'attached',
+    });
   }
 
   await page.evaluate(() => {

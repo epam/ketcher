@@ -304,6 +304,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: After hiding Library in Macro mode 'Show Library' button is visible.
     */
+    await turnOnMacromoleculesEditor(page);
     await hideLibrary(page);
     await takePageScreenshot(page);
     expect(page.getByTestId('show-monomer-library')).toBeVisible();

@@ -7,7 +7,6 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   openFileAndAddToCanvasMacro,
-  takeEditorScreenshot,
   waitForPageInit,
   saveToFile,
   openFile,
@@ -23,6 +22,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
   TypeDropdownOptions,
+  takeEditorScreenshot,
 } from '@utils';
 import { closeErrorMessage } from '@utils/common/helpers';
 import {

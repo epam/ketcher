@@ -165,7 +165,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       await page.keyboard.type(sequence);
       await page.keyboard.press('Enter');
     }
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Case 2: Switching from Sequence mode to Flex mode and back not shifts visible area of canvas beyond visible frame', async () => {

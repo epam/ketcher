@@ -5,7 +5,6 @@ import { Page, expect } from '@playwright/test';
 import {
   pressButton,
   clickInTheMiddleOfTheScreen,
-  waitForLoad,
   delay,
   takeEditorScreenshot,
   clickOnTheCanvas,
@@ -15,9 +14,10 @@ import {
   MacroFileType,
   PeptideType,
 } from '@utils';
+import { waitForLoad } from '@utils/common';
+import { getSmiles, getInchi } from '@utils/formats';
 
 import { MolfileFormat } from 'ketcher-core';
-import { getSmiles, getInchi } from '@utils/formats';
 import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
 export async function readFileContents(filePath: string) {

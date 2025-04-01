@@ -42,6 +42,7 @@ export interface Editor {
   subscribe: (eventName: string, handler: (data?: any) => any) => any;
   unsubscribe: (eventName: string, subscriber: any) => void;
   selection: (arg?: EditorSelection | 'all' | null) => EditorSelection | null;
+  clearHistoryStack: () => any;
   undo: () => void;
   redo: () => void;
   clear: () => void;

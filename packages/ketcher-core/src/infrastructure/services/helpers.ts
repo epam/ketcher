@@ -22,7 +22,7 @@ export function getLabelRenderModeForIndigo() {
 
   return (
     renderModeMapping[
-      ketcherProvider.getKetcher().editor.options().showHydrogenLabels
-    ] || IndigoShowHydrogenLabelsMode.OFF
+      ketcherProvider.getKetcher()?.editor.options().showHydrogenLabels
+    ] || IndigoShowHydrogenLabelsMode.TERMINAL_HETERO
   );
 }

@@ -155,6 +155,7 @@ export type OutputFormatType = 'png' | 'svg';
 export interface GenerateImageOptions extends StructServiceOptions {
   outputFormat: OutputFormatType;
   backgroundColor?: string;
+  stereoStyle?: 'ext' | 'old' | 'none;';
 }
 
 export interface StructService {

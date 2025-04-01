@@ -5,7 +5,6 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { Page, test } from '@playwright/test';
 import {
-  selectClearCanvasTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
@@ -37,8 +36,6 @@ import {
   selectCalculateTool,
   selectAddRemoveExplicitHydrogens,
   clickOnCanvas,
-  selectTopPanelButton,
-  TopPanelButton,
   setMolecule,
   FILE_TEST_DATA,
   moveMouseAway,
@@ -52,11 +49,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  chooseFileFormat,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@utils/macromolecules';
+import { chooseFileFormat } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   modifyInRnaBuilder,
@@ -69,7 +62,13 @@ import {
   switchToDNAMode,
   switchToPeptideMode,
 } from '@utils/macromolecules/sequence';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  pressUndoButton,
+  selectClearCanvasTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 
 let page: Page;
@@ -731,7 +730,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D}$$$$V2.0',
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'Sequence (3-letter code)');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Save');
@@ -836,7 +835,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
 
     await createAntisenseStrandOption.click();
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'HELM');
     await takeEditorScreenshot(page);
   });

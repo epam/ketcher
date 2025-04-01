@@ -7,7 +7,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+
 import { Monomer } from '@utils/types';
 
 interface IAmbiguousMonomerName {

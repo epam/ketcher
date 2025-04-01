@@ -6,11 +6,18 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { chromium, expect, Page, test } from '@playwright/test';
 import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  pressUndoButton,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   chooseFileFormat,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   copyToClipboardByKeyboard,
-  MacromoleculesTopPanelButton,
   moveMouseAway,
   openFile,
   openFileAndAddToCanvasAsNewProject,
@@ -21,18 +28,13 @@ import {
   pressButton,
   resetZoomLevelToDefault,
   selectAllStructuresOnCanvas,
-  selectClearCanvasTool,
   selectEraseTool,
   selectMacroBond,
-  selectMacromoleculesPanelButton,
   selectMonomer,
-  selectOpenFileTool,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
-  selectTopPanelButton,
   takeEditorScreenshot,
   takePolymerEditorScreenshot,
-  TopPanelButton,
   waitForLoad,
   waitForPageInit,
   waitForRender,
@@ -52,8 +54,6 @@ import {
   chooseTab,
   enterSequence,
   Tabs,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
   waitForMonomerPreview,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
@@ -65,7 +65,6 @@ import {
   togglePhosphatesAccordion,
 } from '@utils/macromolecules/rnaBuilder';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 import {
   markResetToDefaultState,
   processResetToDefaultState,
@@ -78,10 +77,7 @@ async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   fillStructure: string,
   needToWait = true,
 ) {
-  await selectMacromoleculesPanelButton(
-    MacromoleculesTopPanelButton.Open,
-    page,
-  );
+  await selectOpenFileTool(page);
   await page.getByText('Paste from clipboard').click();
   if (!(structureFormat === 'Ket')) {
     await page.getByRole('combobox').click();
@@ -165,7 +161,7 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/#4495
     Description: Option "IDT" to dropdown File format of modal window Save Structure is exist.
     */
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
 
     const fileFormatComboBox = page
       .getByTestId('dropdown-select')
@@ -198,7 +194,7 @@ test.describe('Import-Saving .idt Files', () => {
     */
     await selectMonomer(page, Peptides._1Nal);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page);
   });
@@ -206,7 +202,7 @@ test.describe('Import-Saving .idt Files', () => {
   // Fail while performance issue on Indigo side
   // test('Import incorrect data', async ({ page }) => {
   //   const randomText = '!+%45#asjfnsalkfl';
-  //   await selectTopPanelButton(TopPanelButton.Open, page);
+  //   await selectOpenFileTool(page);
   //   await page.getByTestId('paste-from-clipboard-button').click();
   //   await page.getByTestId('open-structure-textarea').fill(randomText);
   //   await chooseFileFormat(page, 'IDT');
@@ -301,7 +297,7 @@ test.describe('Import-Saving .idt Files', () => {
   // test('Check that system does not let uploading corrupted .idt file', async ({
   //   page,
   // }) => {
-  //   await selectTopPanelButton(TopPanelButton.Open, page);
+  //   await selectOpenFileTool(page);
   //
   //   const filename = 'IDT/idt-corrupted.idt';
   //   await openFile(filename, page);
@@ -605,7 +601,7 @@ test.describe('Import-Saving .idt Files', () => {
     */
     // Reload needed as monomer IDs increment in prior tests, affecting screenshots
     await openFileAndAddToCanvasMacro('KET/5formD-form5C-cm.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -999,7 +995,7 @@ test.describe('Import-Saving .idt Files', () => {
         'IDT',
         `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
       );
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, format as 'FASTA' | 'Sequence');
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -1610,7 +1606,7 @@ test.describe('Ambiguous monomers: ', () => {
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page);
 
@@ -1637,7 +1633,7 @@ test.describe('Ambiguous monomers: ', () => {
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -1667,7 +1663,7 @@ test.describe('Ambiguous monomers: ', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page);
 
@@ -1695,7 +1691,7 @@ test.describe('Ambiguous monomers: ', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -1725,7 +1721,7 @@ test.describe('Ambiguous monomers: ', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page);
 
@@ -1785,7 +1781,7 @@ test.describe('Ambiguous monomers: ', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page);
 
@@ -1841,7 +1837,7 @@ test.describe('Ambiguous monomers: ', () => {
     );
     await zoomWithMouseWheel(page, -200);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page);
     await closeErrorMessage(page);
@@ -1897,7 +1893,7 @@ test.describe('Ambiguous monomers: ', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -1929,7 +1925,7 @@ test.describe('Ambiguous monomers: ', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'IDT');
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,

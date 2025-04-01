@@ -39,7 +39,7 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+} from '@tests/pages/common/TopLeftToolbar';
 import { Monomer } from '@utils/types';
 
 export async function drawBenzeneRing(page: Page) {
@@ -543,13 +543,6 @@ export async function selectLayoutTool(page: Page) {
   await waitForSpinnerFinishedWork(
     page,
     async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-  );
-}
-
-export async function selectOpenFileTool(page: Page) {
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await selectTopPanelButton(TopPanelButton.Open, page),
   );
 }
 

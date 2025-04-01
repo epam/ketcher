@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
@@ -12,7 +13,6 @@ import {
   selectRing,
   RingButton,
   clickOnCanvas,
-  selectOpenFileTool,
 } from '@utils';
 import { TopPanelButton } from '@utils/selectors';
 

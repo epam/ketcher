@@ -311,7 +311,7 @@ test.describe('4. User can save and than restore selection for:', () => {
       await takeEditorScreenshot(page);
       // replace this block of code with ketFielExpected = await getKet(page);
       // once https://github.com/epam/ketcher/issues/4238 will be fixed
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await clickOnFileFormatDropdown(page);
       await page.getByTestId('Ket Format-option').click();
       const ketFileExpected = page

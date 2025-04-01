@@ -1,11 +1,10 @@
 import { test, expect } from '@playwright/test';
 import {
-  TopPanelButton,
   selectOpenFileTool,
-  selectTopPanelButton,
-  takeEditorScreenshot,
-  waitForPageInit,
-} from '@utils';
+  selectSaveTool,
+  topLeftToolbarLocators,
+} from '@tests/pages/common/TopLeftToolbar';
+import { takeEditorScreenshot, waitForPageInit } from '@utils';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 
 test.describe('Open Ketcher', () => {
@@ -15,7 +14,7 @@ test.describe('Open Ketcher', () => {
 
   test('Open button tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-1833
-    const button = page.getByTestId('open-file-button');
+    const button = topLeftToolbarLocators(page).openButton;
     await expect(button).toHaveAttribute('title', 'Open... (Ctrl+O)');
   });
 
@@ -27,13 +26,13 @@ test.describe('Open Ketcher', () => {
 
   test('Save button tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-1842
-    const button = page.getByTestId('save-file-button');
+    const button = topLeftToolbarLocators(page).saveButton;
     await expect(button).toHaveAttribute('title', 'Save as... (Ctrl+S)');
   });
 
   test('Save button UI', async ({ page }) => {
     // Test case: EPMLSOPKET-1843
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await takeEditorScreenshot(page, {
       masks: [page.getByTestId('mol-preview-area-text')],
     });
@@ -59,7 +58,7 @@ test.describe('Open Ketcher', () => {
   ];
   for (const fileFormat of fileFormats) {
     test(`dropdown options check_${fileFormat}`, async ({ page }) => {
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await clickOnFileFormatDropdown(page);
       const option = page.getByTestId(fileFormat);
       await expect(option).toBeVisible();

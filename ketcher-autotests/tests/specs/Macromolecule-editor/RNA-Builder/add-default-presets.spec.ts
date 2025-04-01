@@ -1,7 +1,4 @@
-import {
-  turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { test } from '@playwright/test';
 import {
   selectMonomer,

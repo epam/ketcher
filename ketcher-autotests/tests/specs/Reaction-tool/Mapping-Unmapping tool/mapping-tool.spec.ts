@@ -20,7 +20,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Mapping Tools', () => {
   test.beforeEach(async ({ page }) => {

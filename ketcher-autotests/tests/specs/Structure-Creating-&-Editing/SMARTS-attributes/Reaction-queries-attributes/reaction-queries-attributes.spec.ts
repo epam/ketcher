@@ -25,9 +25,9 @@ import {
   waitForLoad,
   waitForPageInit,
   clickOnCanvas,
-  selectOpenFileTool,
 } from '@utils';
 import { checkSmartsValue } from '../utils';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
 async function drawStructureWithArrowOpenAngle(page: Page) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);

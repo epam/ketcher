@@ -4,12 +4,7 @@
 Tests below moved here from macro-micro-switcher since they are designed to be executed in isolated environment 
 and can't be executed in "clear canvas way"
 */
-import {
-  chooseFileFormat,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { chooseFileFormat, waitForMonomerPreview } from '@utils/macromolecules';
 import { test, Page } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
@@ -23,7 +18,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   selectDropdownTool,
   clickInTheMiddleOfTheScreen,
-  selectClearCanvasTool,
   selectMacroBond,
   moveMouseAway,
   selectRingButton,
@@ -31,13 +25,10 @@ import {
   selectSaveFileFormat,
   FileFormatOption,
   moveMouseToTheMiddleOfTheScreen,
-  selectSaveTool,
   clickOnCanvas,
   pasteFromClipboardByKeyboard,
   copyToClipboardByIcon,
   addMonomersToFavorites,
-  selectTopPanelButton,
-  TopPanelButton,
   setZoomInputValue,
   resetCurrentTool,
   selectAllStructuresOnCanvas,
@@ -64,7 +55,11 @@ import { goToFavoritesTab } from '@utils/macromolecules/library';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Chem } from '@constants/monomers/Chem';
@@ -524,7 +519,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/single-atom-properties.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'SVG Document');
     await takeEditorScreenshot(page);
   });

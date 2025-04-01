@@ -19,7 +19,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
-  selectClearCanvasTool,
   selectEraseTool,
   selectFlexLayoutModeTool,
   selectMacroBond,
@@ -42,11 +41,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  enterSequence,
-  turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { enterSequence, waitForMonomerPreview } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   createDNAAntisenseChain,
@@ -65,7 +60,9 @@ import {
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await selectMacroBond(page, MacroBondTool.SINGLE);

@@ -1,6 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test, Page } from '@playwright/test';
 import {
+  selectClearCanvasTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   drawBenzeneRing,
@@ -9,8 +13,6 @@ import {
   selectNestedTool,
   ArrowTool,
   clickOnTheCanvas,
-  selectTopPanelButton,
-  TopPanelButton,
   RgroupTool,
   pressButton,
   selectLeftPanelButton,
@@ -31,7 +33,6 @@ import {
   setHashSpacingValue,
   setHashSpacingOptionUnit,
   openBondsSettingsSection,
-  selectClearCanvasTool,
 } from '@utils';
 
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
@@ -41,7 +42,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   const textareaSelector = 'textarea[class^="Save-module_previewArea"]';
   const textareaElement = await page.$(textareaSelector);
   const textareaText = await textareaElement?.textContent();
@@ -86,7 +87,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await page.getByRole('button', { name: 'Apply' }).click();
     await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
     await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     const saveButtonOne = page.getByRole('button', {
       name: 'Save',
       exact: true,
@@ -101,7 +102,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       { primary: true },
       'Apply',
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     const saveButtonTwo = page.getByRole('button', {
       name: 'Save',
       exact: true,
@@ -114,7 +115,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await clickOnCanvas(page, x, y);
     await page.getByRole('button', { name: 'R22' }).click();
     await page.getByRole('button', { name: 'Apply' }).click();
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     const saveButtonThree = page.getByRole('button', {
       name: 'Save',
       exact: true,

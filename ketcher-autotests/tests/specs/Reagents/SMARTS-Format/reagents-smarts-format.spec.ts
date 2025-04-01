@@ -1,7 +1,9 @@
 import { Page, test } from '@playwright/test';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
+  selectOpenFileTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   clickInTheMiddleOfTheScreen,
   pressButton,
   takeEditorScreenshot,
@@ -10,7 +12,6 @@ import {
   waitForLoad,
   waitForPageInit,
   moveMouseAway,
-  selectOpenFileTool,
 } from '@utils';
 import {
   verifyFileExport,
@@ -19,14 +20,14 @@ import {
 import { clickOnFileFormatDropdown } from '@utils/formats';
 
 async function saveSmarts(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
 
 async function previewSmarts(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
 }

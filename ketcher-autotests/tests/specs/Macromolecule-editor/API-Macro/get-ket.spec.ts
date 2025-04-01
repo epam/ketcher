@@ -4,7 +4,6 @@ import {
   openFileAndAddToCanvasMacro,
   readFileContents,
   waitForPageInit,
-  turnOnMacromoleculesEditor,
   getKet,
   saveToFile,
   layout,

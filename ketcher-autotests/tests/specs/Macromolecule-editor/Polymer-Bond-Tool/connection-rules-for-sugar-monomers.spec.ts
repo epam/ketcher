@@ -1,8 +1,11 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect, Locator } from '@playwright/test';
 import {
-  takeEditorScreenshot,
   selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
+  takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
@@ -10,7 +13,7 @@ import {
   waitForPageInit,
   MonomerType,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,

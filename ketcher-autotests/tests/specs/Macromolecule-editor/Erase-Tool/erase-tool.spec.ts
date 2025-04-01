@@ -18,16 +18,15 @@ import {
   selectMacroBond,
   selectZoomInTool,
   selectZoomOutTool,
-  selectClearCanvasTool,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import {
-  hideMonomerPreview,
-  turnOnMacromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { hideMonomerPreview, zoomWithMouseWheel } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  pressUndoButton,
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
   verifyFileExport,

@@ -3,7 +3,6 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { Page, test } from '@playwright/test';
 import {
-  selectClearCanvasTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePageScreenshot,
@@ -32,10 +31,6 @@ import {
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@utils/macromolecules';
-import {
   goToFavoritesTab,
   goToPeptidesTab,
 } from '@utils/macromolecules/library';
@@ -54,7 +49,12 @@ import {
   doubleClickOnSequenceSymbol,
   switchToPeptideMode,
 } from '@utils/macromolecules/sequence';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  pressUndoButton,
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 
 let page: Page;

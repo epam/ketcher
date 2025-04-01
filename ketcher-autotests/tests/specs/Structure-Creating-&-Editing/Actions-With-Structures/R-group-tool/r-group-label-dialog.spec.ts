@@ -33,7 +33,7 @@ import { getSmiles } from '@utils/formats';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+} from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {

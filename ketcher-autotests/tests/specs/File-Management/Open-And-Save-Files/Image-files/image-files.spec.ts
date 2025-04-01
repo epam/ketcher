@@ -2,6 +2,13 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@playwright/test';
 import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  pressUndoButton,
+  pressRedoButton,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   applyAutoMapMode,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -30,7 +37,6 @@ import {
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
   selectCleanTool,
-  selectClearCanvasTool,
   selectDearomatizeTool,
   selectEraseTool,
   selectLayoutTool,
@@ -47,7 +53,6 @@ import {
   waitForPageInit,
   waitForRender,
   waitForSpinnerFinishedWork,
-  selectOpenFileTool,
 } from '@utils';
 import {
   clearLocalStorage,
@@ -59,10 +64,6 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { openStructureLibrary } from '@utils/templates';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
 
 test.describe('Image files', () => {
   let page: Page;
@@ -929,7 +930,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await expect(page.getByText('Save to Templates')).toBeDisabled();
     await takeEditorScreenshot(page, {
       masks: [page.getByTestId('mol-preview-area-text')],
@@ -2076,7 +2077,7 @@ test.describe('Image files', () => {
         await openFile(testCase.file, page);
       } else if (testCase.action === 'save') {
         await openFileAndAddToCanvas(testCase.file, page);
-        await selectTopPanelButton(TopPanelButton.Save, page);
+        await selectSaveTool(page);
         await clickOnFileFormatDropdown(page);
 
         if (testCase.dropdownOption) {

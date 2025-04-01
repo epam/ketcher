@@ -3,6 +3,10 @@
 import { Bases } from '@constants/monomers/Bases';
 import { Page, test, expect } from '@playwright/test';
 import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   clickInTheMiddleOfTheScreen,
   MacroBondType,
   MacroFileType,
@@ -11,7 +15,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
   selectAllStructuresOnCanvas,
-  selectClearCanvasTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
@@ -23,7 +26,7 @@ import {
   waitForRender,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+
 import {
   getMonomerLocator,
   getSymbolLocator,

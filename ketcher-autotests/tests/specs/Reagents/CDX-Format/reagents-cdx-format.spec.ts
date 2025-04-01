@@ -16,7 +16,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 
 async function saveFileAsCdxFormat(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'CDX', exact: true }).click();
 }

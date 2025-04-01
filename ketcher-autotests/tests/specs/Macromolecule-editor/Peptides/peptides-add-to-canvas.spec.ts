@@ -9,7 +9,6 @@ import {
 } from '@utils';
 import {
   hideMonomerPreview,
-  turnOnMacromoleculesEditor,
   waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';

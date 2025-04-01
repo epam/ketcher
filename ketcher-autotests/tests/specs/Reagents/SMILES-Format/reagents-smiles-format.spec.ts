@@ -19,20 +19,20 @@ import {
 } from '@utils/formats';
 
 async function getPreviewForSmiles(page: Page, smileType: string) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: smileType }).click();
 }
 
 async function saveDaylightSmiles(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Daylight SMILES' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
 
 async function saveExtendedSmiles(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'Extended SMILES' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();

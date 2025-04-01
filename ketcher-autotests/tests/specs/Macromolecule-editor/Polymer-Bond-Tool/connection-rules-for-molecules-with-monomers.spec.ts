@@ -10,8 +10,6 @@ import {
   drawBenzeneRing,
   openFileAndAddToCanvasAsNewProject,
   takeEditorScreenshot,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
   waitForPageInit,
 } from '@utils';
 import { addSuperatomAttachmentPoint } from '@utils/canvas/atoms/superatomAttachmentPoints';

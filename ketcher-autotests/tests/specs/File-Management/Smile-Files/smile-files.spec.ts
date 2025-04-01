@@ -1,7 +1,10 @@
 import { Page, expect, test } from '@playwright/test';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   readFileContents,
@@ -16,8 +19,6 @@ import {
   receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
-  selectOpenFileTool,
-  selectClearCanvasTool,
 } from '@utils';
 import {
   clickOnFileFormatDropdown,
@@ -26,7 +27,7 @@ import {
 } from '@utils/formats';
 
 async function getPreviewForSmiles(page: Page, smileType: string) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: smileType }).click();
   const previewInput = page.getByTestId('smiles-preview-area-text');

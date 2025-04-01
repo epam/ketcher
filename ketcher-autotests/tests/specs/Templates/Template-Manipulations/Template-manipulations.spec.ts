@@ -7,7 +7,6 @@ import {
   clickInTheMiddleOfTheScreen,
   selectRing,
   RingButton,
-  TopPanelButton,
   dragMouseTo,
   pressButton,
   drawBenzeneRing,
@@ -26,7 +25,6 @@ import {
   clickOnBond,
   BondType,
   takePageScreenshot,
-  selectAction,
   moveOnBond,
   moveMouseToTheMiddleOfTheScreen,
   getRightAtomByAttributes,
@@ -50,7 +48,6 @@ import {
   selectUndoByKeyboard,
   selectZoomOutTool,
   waitForElementInCanvas,
-  selectOpenFileTool,
 } from '@utils';
 
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -61,7 +58,9 @@ import {
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+  selectOpenFileTool,
+} from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -254,7 +253,7 @@ test.describe('Template Manupulations', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('erase').click();
     await page.getByTestId('canvas').getByText('S').first().click();
-    await selectAction(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Template Library' }).click();
     await takeEditorScreenshot(page);
@@ -532,7 +531,7 @@ test.describe('Open Ketcher', () => {
     await moveOnAtom(page, 'C', 1);
     await moveOnAtom(page, 'C', 0);
     await takePageScreenshot(page);
-    await selectAction(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
   });
 
   test('The different templates are attached to the atoms of existing benzene-2', async ({
@@ -555,7 +554,7 @@ test.describe('Open Ketcher', () => {
     await waitForElementInCanvas(page, 'A=Test');
 
     await takePageScreenshot(page);
-    await selectAction(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
   });
 
   test('The different templates are attached to the atoms of existing benzene-3', async ({

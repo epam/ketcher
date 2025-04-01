@@ -1,10 +1,13 @@
 import { test, expect, Page } from '@playwright/test';
 import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFromFileViaClipboard,
-  selectTopPanelButton,
-  TopPanelButton,
   pressButton,
   selectOptionByText,
   openFileAndAddToCanvas,
@@ -14,8 +17,6 @@ import {
   nonEmptyString,
   copyToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProject,
-  selectOpenFileTool,
-  selectClearCanvasTool,
 } from '@utils';
 import {
   FileType,
@@ -390,7 +391,7 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChi for structure
      */
     await openFileAndAddToCanvas('KET/nonone-chain-structure.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     const inChistring = await page
@@ -431,7 +432,7 @@ test.describe('Open and Save InChI file', () => {
       'KET/cyclohexane-connecting-arrow-with-benzene.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'InChI', exact: true }).click();
     const convertErrorMessage = await page
@@ -448,7 +449,7 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChi string for Sgroup
      */
     await openFileAndAddToCanvas('KET/chain-with-s-group.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
     await page.getByTestId('warnings-tab').click();
@@ -467,7 +468,7 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChI String - Alias
      */
     await openFileAndAddToCanvas('KET/chain-with-alias.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await page.getByTestId('filename-input').fill('Alias');
     await clickOnFileFormatDropdown(page);
     await selectInChiOption(page);
@@ -505,7 +506,7 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChI String - Pseudoatom
      */
     await openFileAndAddToCanvas('KET/chain-with-generic-group.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'InChI', exact: true }).click();
     const convertErrorMessage = await page
@@ -524,7 +525,7 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChI String for invalid atom symbol or special symbol
      */
     await openFileAndAddToCanvas('KET/chain-with-generic-group.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'InChI', exact: true }).click();
     const convertErrorMessage = await page
@@ -556,7 +557,7 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChi string for Rgroup
      */
     await openFileAndAddToCanvas('KET/structure-with-R-Group.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'InChI', exact: true }).click();
     const convertErrorMessage = await page

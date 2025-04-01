@@ -12,7 +12,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { scrollSettingBar } from '@utils/scrollSettingBar';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 
 async function openStructureLibrary(page: Page) {
   await page.getByTestId('template-lib').click();

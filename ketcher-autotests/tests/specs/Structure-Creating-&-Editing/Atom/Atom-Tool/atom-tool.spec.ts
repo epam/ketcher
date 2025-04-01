@@ -36,7 +36,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 
 const X_DELTA_ONE = 100;
 

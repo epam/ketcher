@@ -17,7 +17,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 
 async function saveFileAsCmlFormat(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'CML' }).click();
 }

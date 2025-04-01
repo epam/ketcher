@@ -2,11 +2,14 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   clickInTheMiddleOfTheScreen,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
-  selectClearCanvasTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   SequenceChainType,
@@ -15,7 +18,7 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+
 import {
   getSymbolLocator,
   turnSyncEditModeOff,

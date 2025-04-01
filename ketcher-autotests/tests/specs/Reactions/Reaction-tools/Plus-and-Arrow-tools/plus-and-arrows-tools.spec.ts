@@ -8,7 +8,6 @@ import {
   screenshotBetweenUndoRedo,
   selectLeftPanelButton,
   selectNestedTool,
-  selectTopPanelButton,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   clickOnTheCanvas,
@@ -19,7 +18,6 @@ import {
   INPUT_DELAY,
   getControlModifier,
   LeftPanelButton,
-  TopPanelButton,
   Point,
   waitForPageInit,
   waitForRender,
@@ -32,13 +30,14 @@ import {
   clickOnCanvas,
   selectCleanTool,
   selectLayoutTool,
-  selectClearCanvasTool,
 } from '@utils';
 import { pageReloadMicro } from '@utils/common/helpers';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 
 const xOffsetFromCenter = -35;
 const idToTitle: {
@@ -482,13 +481,13 @@ test.describe('Plus and Arrows tools ', () => {
 
     await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await page.getByRole('button', { name: 'Cancel', exact: true }).click();
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
     const offsetFromCenter = -35;
     await clickOnTheCanvas(page, offsetFromCenter, 0);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   });
 

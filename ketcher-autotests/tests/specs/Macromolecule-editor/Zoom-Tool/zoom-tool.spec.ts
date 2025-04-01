@@ -1,13 +1,16 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { Locator, test, Page, chromium } from '@playwright/test';
 import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   addSingleMonomerToCanvas,
   selectRectangleArea,
   selectRectangleSelectionTool,
   takeEditorScreenshot,
   waitForPageInit,
   moveMouseToTheMiddleOfTheScreen,
-  selectClearCanvasTool,
   clickInTheMiddleOfTheScreen,
   moveMouseAway,
   selectMacroBond,
@@ -27,7 +30,6 @@ import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
 import {
   zoomWithMouseWheel,
-  turnOnMacromoleculesEditor,
   waitForMonomerPreview,
 } from '@utils/macromolecules';
 

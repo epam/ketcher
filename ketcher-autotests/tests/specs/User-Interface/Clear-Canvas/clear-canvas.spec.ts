@@ -8,13 +8,14 @@ import {
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   waitForRender,
-  selectClearCanvasTool,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/addTextBoxToCanvas';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+  topLeftToolbarLocators,
+} from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Clear canvas', () => {
   test.beforeEach(async ({ page }) => {
@@ -24,7 +25,7 @@ test.describe('Clear canvas', () => {
   test('Clear Canvas - checking button tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-1702
     await selectClearCanvasTool(page);
-    const button = page.getByTestId('clear-canvas');
+    const button = topLeftToolbarLocators(page).clearCanvasButton;
     await expect(button).toHaveAttribute('title', 'Clear Canvas (Ctrl+Del)');
     await takeEditorScreenshot(page);
   });

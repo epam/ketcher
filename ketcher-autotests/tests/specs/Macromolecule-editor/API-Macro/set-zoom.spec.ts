@@ -3,7 +3,6 @@ import { test } from '@playwright/test';
 import {
   waitForPageInit,
   takeEditorScreenshot,
-  turnOnMacromoleculesEditor,
   openFileAndAddToCanvasMacro,
   setZoom,
   clickInTheMiddleOfTheScreen,

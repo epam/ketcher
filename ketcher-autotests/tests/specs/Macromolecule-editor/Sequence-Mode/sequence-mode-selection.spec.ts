@@ -1,6 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
+  pressUndoButton,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
@@ -9,7 +13,6 @@ import {
   scrollDown,
   selectRectangleArea,
   selectFlexLayoutModeTool,
-  clickUndo,
   selectRectangleSelectionTool,
   selectPartOfMolecules,
   clickInTheMiddleOfTheScreen,
@@ -19,10 +22,7 @@ import {
   selectZoomOutTool,
   moveMouseAway,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   getSequenceSymbolLocator,
   selectSequenceRangeInEditMode,
@@ -128,7 +128,7 @@ test.describe('Sequence mode selection for edit mode', () => {
     await page.keyboard.press('Backspace');
     await takeEditorScreenshot(page);
 
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Escape');

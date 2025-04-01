@@ -5,10 +5,7 @@ import {
   selectMacroBond,
   takeEditorScreenshot,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 

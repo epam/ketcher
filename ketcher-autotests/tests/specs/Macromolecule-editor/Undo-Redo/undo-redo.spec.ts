@@ -8,8 +8,6 @@ import { Locator, test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   clickInTheMiddleOfTheScreen,
-  clickRedo,
-  clickUndo,
   dragMouseTo,
   hideMonomerPreview,
   moveMouseAway,
@@ -18,7 +16,6 @@ import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePageScreenshot,
-  turnOnMacromoleculesEditor,
   waitForPageInit,
   selectMonomer,
   clickOnTheCanvas,
@@ -45,7 +42,8 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Undo Redo', () => {
@@ -81,23 +79,23 @@ test.describe('Undo Redo', () => {
     */
 
     // check that history pointer stops on last operation
-    await clickRedo(page);
-    await clickRedo(page);
+    await pressRedoButton(page);
+    await pressRedoButton(page);
 
     // check undo
-    await clickUndo(page);
-    await clickUndo(page);
+    await pressUndoButton(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
 
     // check that history pointer stops on first operation
-    await clickUndo(page);
-    await clickUndo(page);
-    await clickUndo(page);
-    await clickUndo(page);
-    await clickUndo(page);
+    await pressUndoButton(page);
+    await pressUndoButton(page);
+    await pressUndoButton(page);
+    await pressUndoButton(page);
+    await pressUndoButton(page);
 
     // check redo
-    await clickRedo(page);
+    await pressRedoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -107,7 +105,7 @@ test.describe('Undo Redo', () => {
     */
 
     await selectSnakeLayoutModeTool(page);
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -119,10 +117,10 @@ test.describe('Undo Redo', () => {
     await moveMonomer(page, peptide1, 500, 500);
     await moveMonomer(page, peptide2, 600, 600);
     await moveMonomer(page, peptide2, 400, 400);
-    await clickUndo(page);
-    await clickUndo(page);
+    await pressUndoButton(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await clickRedo(page);
+    await pressRedoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -135,7 +133,7 @@ test.describe('Undo Redo', () => {
       'KET/peptide-enumeration-one-two-three.ket',
       page,
     );
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
 
     const startX = 10;

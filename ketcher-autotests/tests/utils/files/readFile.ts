@@ -3,24 +3,22 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Page, expect } from '@playwright/test';
 import {
-  MacromoleculesTopPanelButton,
   pressButton,
   clickInTheMiddleOfTheScreen,
   waitForLoad,
   delay,
   takeEditorScreenshot,
   clickOnTheCanvas,
-  selectMacromoleculesPanelButton,
   selectImageTool,
   clickOnCanvas,
   SequenceType,
   MacroFileType,
   PeptideType,
-  selectOpenFileTool,
 } from '@utils';
 
 import { MolfileFormat } from 'ketcher-core';
 import { getSmiles, getInchi } from '@utils/formats';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
 export async function readFileContents(filePath: string) {
   const resolvedFilePath = path.resolve(process.cwd(), filePath);
@@ -333,10 +331,7 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
     structureType = structureFormat;
   }
 
-  await selectMacromoleculesPanelButton(
-    MacromoleculesTopPanelButton.Open,
-    page,
-  );
+  await selectOpenFileTool(page);
   await page.getByText('Paste from clipboard').click();
 
   if (structureFormat !== MacroFileType.Ket) {

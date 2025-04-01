@@ -19,7 +19,7 @@ test.describe('Open UTF-8 and save as SVG and PNG', () => {
     Description: A file with UTF-8 encoding opens and, when saved in a SVG preview, contains all characters
   */
     await openFileAndAddToCanvas('KET/utf-8-svg-png.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'SVG Document' }).click();
 
@@ -33,7 +33,7 @@ test.describe('Open UTF-8 and save as SVG and PNG', () => {
   */
     await openFileAndAddToCanvas('KET/utf-8-svg-png.ket', page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'PNG Image' }).click();
 

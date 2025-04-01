@@ -16,11 +16,7 @@ import {
   selectMonomer,
   selectMonomers,
 } from '@utils';
-import {
-  enterSequence,
-  turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { enterSequence, waitForMonomerPreview } from '@utils/macromolecules';
 import { SUGAR } from '@constants/testIdConstants';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import {

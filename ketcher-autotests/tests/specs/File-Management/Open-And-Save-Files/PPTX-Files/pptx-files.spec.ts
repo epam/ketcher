@@ -1,11 +1,11 @@
 import { test } from '@playwright/test';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   waitForPageInit,
   openFile,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
   pressButton,
-  selectOpenFileTool,
 } from '@utils';
 /* eslint-disable no-magic-numbers */
 test.describe('PPTX files', () => {

@@ -1,9 +1,9 @@
 /* eslint-disable no-magic-numbers */
 import { Page, chromium, test } from '@playwright/test';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
-  selectClearCanvasTool,
   waitForPageInit,
   resetZoomLevelToDefault,
   selectAddRemoveExplicitHydrogens,

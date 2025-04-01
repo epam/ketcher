@@ -9,17 +9,14 @@ import {
   LeftPanelButton,
   moveMouseToTheMiddleOfTheScreen,
   RingButton,
-  selectAction,
   selectAtom,
   selectRing,
   selectTool,
   takeEditorScreenshot,
-  TopPanelButton,
   DELAY_IN_SECONDS,
   selectNestedTool,
   BondTool,
   clickOnTheCanvas,
-  selectTopPanelButton,
   openFileAndAddToCanvas,
   selectLeftPanelButton,
   pressButton,
@@ -63,7 +60,9 @@ import { DropdownToolIds } from '@utils/clicks/types';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 const buttonIdToTitle: {
   [key: string]: string;
 } = {
@@ -97,7 +96,7 @@ test.describe(`Bond tool:`, () => {
   });
 
   test.beforeEach(async () => {
-    await selectAction(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
   });
 
   test.afterAll(async () => {
@@ -130,7 +129,7 @@ test.describe(`Bond tool:`, () => {
 
       expect(countBonds).toEqual(drawnBonds);
 
-      await selectAction(TopPanelButton.Clear, page);
+      await selectClearCanvasTool(page);
 
       await selectRing(RingButton.Benzene, page);
       await clickInTheMiddleOfTheScreen(page);
@@ -166,7 +165,7 @@ test.describe(`Bond tool:`, () => {
 
       expect(sizeWithRingAndBond).toEqual(drawnBondsWithRing);
       await takeEditorScreenshot(page);
-      await selectAction(TopPanelButton.Clear, page);
+      await selectClearCanvasTool(page);
     });
 
     test(`click on an existing bond using ${bondToolKey}`, async () => {
@@ -183,7 +182,7 @@ test.describe(`Bond tool:`, () => {
       point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
       await clickOnCanvas(page, point.x, point.y);
 
-      await selectAction(TopPanelButton.Clear, page);
+      await selectClearCanvasTool(page);
 
       await selectRing(RingButton.Benzene, page);
       await clickInTheMiddleOfTheScreen(page);
@@ -199,7 +198,7 @@ test.describe(`Bond tool:`, () => {
       });
       await clickOnCanvas(page, singleBond.x, singleBond.y);
       await takeEditorScreenshot(page);
-      await selectAction(TopPanelButton.Clear, page);
+      await selectClearCanvasTool(page);
     });
 
     test(`Undo/Redo ${bondToolKey} creation`, async () => {
@@ -274,7 +273,7 @@ test.describe(`Bond tool:`, () => {
       });
       expect(editedChainRedoTwice).toEqual(chainSizeAfterMultipleEditing);
       await takeEditorScreenshot(page);
-      await selectAction(TopPanelButton.Clear, page);
+      await selectClearCanvasTool(page);
     });
 
     test(`Check highlight absence after ${bondToolKey} Bond creation`, async () => {
@@ -284,7 +283,7 @@ test.describe(`Bond tool:`, () => {
       await selectNestedTool(page, BondTool[bondToolKey]);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
-      await selectAction(TopPanelButton.Clear, page);
+      await selectClearCanvasTool(page);
     });
 
     test.describe('Saving and rendering', () => {
@@ -296,7 +295,7 @@ test.describe(`Bond tool:`, () => {
         await selectDropdownTool(page, 'bonds', BondTool[bondToolKey][1]);
         await clickOnTheCanvas(page, -200, 0);
         await clickInTheMiddleOfTheScreen(page);
-        await selectTopPanelButton(TopPanelButton.Save, page);
+        await selectSaveTool(page);
         await page.getByRole('button', { name: 'Save', exact: true }).click();
       });
 
@@ -330,7 +329,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
   });
 
   test.beforeEach(async () => {
-    await selectAction(TopPanelButton.Clear, page);
+    await selectClearCanvasTool(page);
   });
 
   test.afterAll(async () => {

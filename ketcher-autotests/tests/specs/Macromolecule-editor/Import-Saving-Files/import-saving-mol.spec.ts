@@ -1,13 +1,18 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page, chromium } from '@playwright/test';
 import {
-  TopPanelButton,
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
   openFromFileViaClipboard,
   readFileContents,
-  selectTopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
   getMolfile,
@@ -18,8 +23,6 @@ import {
   selectOptionInDropdown,
   pressButton,
   selectSnakeLayoutModeTool,
-  turnOnMicromoleculesEditor,
-  selectClearCanvasTool,
   delay,
   selectFlexLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
@@ -28,11 +31,7 @@ import {
   selectZoomOutTool,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import {
-  chooseFileFormat,
-  turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { chooseFileFormat, waitForMonomerPreview } from '@utils/macromolecules';
 
 function removeNotComparableData(file: string) {
   return file
@@ -87,7 +86,7 @@ test.describe('Import-Saving .mol Files', () => {
   });
 
   test('Import monomers and chem with clipboard', async () => {
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await openFromFileViaClipboard(
       'tests/test-data/Molfiles-V3000/monomers-and-chem.mol',
       page,
@@ -98,7 +97,7 @@ test.describe('Import-Saving .mol Files', () => {
 
   test('Import incorrect data', async () => {
     const randomText = 'asjfnsalkfl';
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
     await page.getByTestId('paste-from-clipboard-button').click();
     await page.getByTestId('open-structure-textarea').fill(randomText);
     await page.getByTestId('add-to-canvas-button').click();
@@ -114,7 +113,7 @@ test.describe('Import-Saving .mol Files', () => {
 
   test('Export monomers and chem', async () => {
     await openFileAndAddToCanvasMacro('KET/monomers-and-chem.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'MDL Molfile V3000');
     await page
       .getByTestId('dropdown-select')
@@ -324,7 +323,7 @@ test.describe('Import-Saving .mol Files', () => {
     IMPORTANT: Test fails because of the bug - https://github.com/epam/ketcher/issues/5382
     */
       test.setTimeout(20);
-      await selectTopPanelButton(TopPanelButton.Open, page);
+      await selectOpenFileTool(page);
       await openFile('Molfiles-V2000/empty-file.mol', page);
       await expect(page.getByText('Add to Canvas')).toBeDisabled();
 
@@ -342,7 +341,7 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: System does not let uploading corrupted .mol file
     */
-    await selectTopPanelButton(TopPanelButton.Open, page);
+    await selectOpenFileTool(page);
 
     const filename = 'Molfiles-V3000/corrupted-file.mol';
     await openFile(filename, page);

@@ -11,10 +11,7 @@ import {
   takeMonomerLibraryScreenshot,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
-import {
-  turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   pressAddToPresetsButton,

@@ -1,5 +1,9 @@
 import { Page, test } from '@playwright/test';
 import {
+  selectClearCanvasTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   selectFunctionalGroups,
   FunctionalGroups,
   selectLeftPanelButton,
@@ -9,8 +13,6 @@ import {
   resetCurrentTool,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  TopPanelButton,
-  selectTopPanelButton,
   pasteFromClipboardAndAddToCanvas,
   selectAtomInToolbar,
   AtomButton,
@@ -32,7 +34,6 @@ import {
   moveOnAtom,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectClearCanvasTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 let point: { x: number; y: number };
@@ -45,7 +46,7 @@ const MAX_BOND_LENGTH = 50;
 const anyAtom = 3;
 
 async function saveToTemplates(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await page.getByRole('button', { name: 'Save to Templates' }).click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My Template');

@@ -4,10 +4,15 @@ import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Page, test, expect, BrowserContext, chromium } from '@playwright/test';
 import {
+  pressRedoButton,
+  pressUndoButton,
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   addSingleMonomerToCanvas,
   addRnaPresetOnCanvas,
-  clickRedo,
-  clickUndo,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   addBondedMonomersToCanvas,
@@ -21,7 +26,6 @@ import {
   moveMouseAway,
   scrollDown,
   scrollUp,
-  selectClearCanvasTool,
   waitForIndigoToLoad,
   waitForKetcherInit,
   selectAllStructuresOnCanvas,
@@ -30,11 +34,7 @@ import {
   resetZoomLevelToDefault,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -185,12 +185,12 @@ test.describe('Snake Bond Tool', () => {
     await selectSnakeLayoutModeTool(page);
     await expect(snakeModeButton).toHaveClass(/active/);
 
-    await clickUndo(page);
+    await pressUndoButton(page);
     await waitForRender(page);
     await expect(snakeModeButton).not.toBeVisible();
     await expect(flexModeButton).toHaveClass(/active/);
 
-    await clickRedo(page);
+    await pressRedoButton(page);
     await waitForRender(page);
     await expect(flexModeButton).not.toBeVisible();
     await expect(snakeModeButton).toHaveClass(/active/);

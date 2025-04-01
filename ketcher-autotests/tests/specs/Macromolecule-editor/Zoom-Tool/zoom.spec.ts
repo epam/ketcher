@@ -4,6 +4,10 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { Page, test, expect } from '@playwright/test';
 import {
+  selectOpenFileTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
@@ -29,10 +33,7 @@ import {
   selectMonomer,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import {
-  turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   connectMonomersWithBonds,
   getMonomerLocator,
@@ -390,7 +391,7 @@ test.describe('Zoom Tool', () => {
     Paste from Clipboard window not change their position and not overlap each other.
     After fix bug https://github.com/epam/ketcher/issues/4174 need to update snapshot.
     */
-    await page.getByTestId('open-button').click();
+    await selectOpenFileTool(page);
     await page.getByTestId('paste-from-clipboard-button').click();
     await browser.newContext({ deviceScaleFactor: 2.5 });
     await page.setViewportSize({ width: 435, height: 291 });
@@ -402,8 +403,7 @@ test.describe('Zoom Tool', () => {
     Test case: Zoom Tool
     Description: When zoomed out to 25%, buttons and toolbars have the correct appearance
     */
-    await page.getByTestId('open-button').click();
-    await page.getByTestId('paste-from-clipboard-button').click();
+    await openStructurePasteFromClipboard(page);
     await browser.newContext({ deviceScaleFactor: 0.2 });
     await page.setViewportSize({ width: 4358, height: 2918 });
     await takePageScreenshot(page);

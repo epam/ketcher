@@ -2,7 +2,6 @@ import { test } from '@playwright/test';
 import {
   readFileContents,
   waitForPageInit,
-  turnOnMacromoleculesEditor,
   setMolecule,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,

@@ -2,7 +2,6 @@
 import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectClearCanvasTool,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
@@ -22,16 +21,15 @@ import {
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { DropdownToolIds } from '@utils/clicks/types';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 test.setTimeout(400000);

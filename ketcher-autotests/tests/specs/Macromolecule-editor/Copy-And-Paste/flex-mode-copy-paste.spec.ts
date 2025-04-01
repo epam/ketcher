@@ -1,17 +1,20 @@
 import { Chem } from '@constants/monomers/Chem';
 import { test } from '@playwright/test';
 import {
+  pressUndoButton,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
   zoomWithMouseWheel,
   selectRectangleArea,
-  clickUndo,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   moveMouseAway,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 const startX = 300;
@@ -38,7 +41,7 @@ test.describe('Flex mode copy&paste', () => {
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -58,7 +61,7 @@ test.describe('Flex mode copy&paste', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await clickUndo(page);
+    await pressUndoButton(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });

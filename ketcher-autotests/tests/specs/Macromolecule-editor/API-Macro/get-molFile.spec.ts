@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
-  turnOnMacromoleculesEditor,
   saveToFile,
   getMolfile,
   receiveFileComparisonData,

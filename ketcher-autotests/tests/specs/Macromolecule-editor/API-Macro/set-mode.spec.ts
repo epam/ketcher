@@ -1,7 +1,6 @@
 import { test } from '@playwright/test';
 import {
   waitForPageInit,
-  turnOnMacromoleculesEditor,
   openFileAndAddToCanvasMacro,
   setMode,
   takePageScreenshot,

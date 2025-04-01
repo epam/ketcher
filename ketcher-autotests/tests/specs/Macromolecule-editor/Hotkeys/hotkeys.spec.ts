@@ -1,4 +1,3 @@
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,

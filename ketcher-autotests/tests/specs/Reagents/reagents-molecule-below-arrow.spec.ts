@@ -50,7 +50,7 @@ test.describe('Reagents molecule below arrow', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'SVG Document' }).click();
     await takeEditorScreenshot(page);
@@ -66,7 +66,7 @@ test.describe('Reagents molecule below arrow', () => {
       page,
     );
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'PNG Image' }).click();
     await takeEditorScreenshot(page);

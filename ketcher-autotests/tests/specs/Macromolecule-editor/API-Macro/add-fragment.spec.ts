@@ -3,7 +3,6 @@ import { Page, test } from '@playwright/test';
 import {
   readFileContents,
   waitForPageInit,
-  turnOnMacromoleculesEditor,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
   addFragment,

@@ -1,4 +1,3 @@
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { test, expect } from '@playwright/test';
 import {
   selectSequenceLayoutModeTool,

@@ -1,24 +1,23 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { test, expect } from '@playwright/test';
 import {
+  selectClearCanvasTool,
+  pressRedoButton,
+  pressUndoButton,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   addSingleMonomerToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  selectClearCanvasTool,
   selectMacroBond,
   selectPartOfMolecules,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@utils/macromolecules';
+import {} from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Clear Canvas Tool', () => {

@@ -70,9 +70,9 @@ export function TopMenuComponent() {
           itemId="open"
           title="Open..."
           disabled={isDisabled}
-          testId="open-button"
+          testId="open-file-button"
         />
-        <Menu.Item itemId="save" title="Save as..." testId="save-button" />
+        <Menu.Item itemId="save" title="Save as..." testId="save-file-button" />
       </Menu.Group>
       <Menu.Group isHorizontal={true}>
         <Menu.Item

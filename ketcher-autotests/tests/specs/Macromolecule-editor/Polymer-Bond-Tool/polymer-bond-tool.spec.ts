@@ -28,12 +28,10 @@ import {
   moveMouseAway,
   waitForKetcherInit,
   waitForIndigoToLoad,
-  selectClearCanvasTool,
   selectOptionInTypeDropdown2,
   clickOnCanvas,
   selectMacroBond,
   selectMonomer,
-  selectOpenFileTool,
   selectSequenceLayoutModeTool,
   selectEraseTool,
   selectAllStructuresOnCanvas,
@@ -48,7 +46,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+
 import {
   connectMonomersWithBonds,
   getMonomerLocator,
@@ -61,7 +59,10 @@ import {
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -573,7 +574,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     'Peptide',
   );
 
-  // await selectTopPanelButton(TopPanelButton.Open, page);
+  // await selectOpenFileTool(page);
   // await openFile('Sequence/two-peptides-connected-expected.seq', page);
   // await selectOptionInTypeDropdown('Peptide', page);
   // await pressButton(page, 'Open as New');

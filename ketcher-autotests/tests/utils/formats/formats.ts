@@ -234,7 +234,7 @@ export async function selectSaveFileFormat(
   page: Page,
   formatOption: FileFormatOption,
 ) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByTestId(formatOption).click();
 }

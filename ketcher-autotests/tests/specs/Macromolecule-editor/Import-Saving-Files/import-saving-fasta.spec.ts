@@ -1,9 +1,12 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import {
-  TopPanelButton,
+  selectOpenFileTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   openFileAndAddToCanvasMacro,
-  selectTopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
   saveToFile,
@@ -20,11 +23,9 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
   TypeDropdownOptions,
-  selectOpenFileTool,
 } from '@utils';
 import { closeErrorMessage } from '@utils/common/helpers';
 import {
-  turnOnMacromoleculesEditor,
   waitForMonomerPreview,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
@@ -105,7 +106,7 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Check that system does not let uploading corrupted .fasta file', async ({
   //   page,
   // }) => {
-  //   await selectTopPanelButton(TopPanelButton.Open, page);
+  //   await selectOpenFileTool(page);
   //
   //   const filename = 'FASTA/fasta-corrupted.fasta';
   //   await openFile(filename, page);
@@ -147,7 +148,7 @@ test.describe('Import-Saving .fasta Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'FASTA');
     await page
       .getByTestId('dropdown-select')
@@ -170,7 +171,7 @@ test.describe('Import-Saving .fasta Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'FASTA');
 
     await takeEditorScreenshot(page);
@@ -181,7 +182,7 @@ test.describe('Import-Saving .fasta Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'FASTA');
 
     await takeEditorScreenshot(page);
@@ -207,7 +208,7 @@ test.describe('Import-Saving .fasta Files', () => {
   //   test(`Import FASTA: Verify correct import of sequences with valid header and ${data.monomers} monomers`, async ({
   //     page,
   //   }) => {
-  //     await selectTopPanelButton(TopPanelButton.Open, page);
+  //     await selectOpenFileTool(page);
   //     await openFile(data.filename, page);
   //     await selectOptionInDropdown(data.filename, page);
   //
@@ -225,7 +226,7 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Import FASTA: Verify correct import of sequences with multi-line representation', async ({
   //   page,
   // }) => {
-  //   await selectTopPanelButton(TopPanelButton.Open, page);
+  //   await selectOpenFileTool(page);
   //
   //   const filename = 'FASTA/fasta-multiline-sequence.fasta';
   //   await openFile(filename, page);
@@ -239,7 +240,7 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Import FASTA: Verify error message if the first symbol is not ">"', async ({
   //   page,
   // }) => {
-  //   await selectTopPanelButton(TopPanelButton.Open, page);
+  //   await selectOpenFileTool(page);
   //
   //   const filename = 'FASTA/fasta-without-greater-than-symbol.fasta';
   //   await openFile(filename, page);
@@ -251,7 +252,7 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Import FASTA: Verify correct handling of "*" symbol for peptide sequences', async ({
   //   page,
   // }) => {
-  //   await selectTopPanelButton(TopPanelButton.Open, page);
+  //   await selectOpenFileTool(page);
   //
   //   const filename = 'FASTA/fasta-with-asterisk-separator.fasta';
   //   await openFile(filename, page);
@@ -278,7 +279,7 @@ test.describe('Import-Saving .fasta Files', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await pressButton(page, 'Add to Canvas');
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'FASTA');
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -289,7 +290,7 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Import FASTA: Verify ignoring "-" symbol during import', async ({
   //   page,
   // }) => {
-  //   await selectTopPanelButton(TopPanelButton.Open, page);
+  //   await selectOpenFileTool(page);
   //
   //   const filename = 'FASTA/fasta-with-dash-symbol.fasta';
   //   await openFile(filename, page);
@@ -324,7 +325,7 @@ test.describe('Import-Saving .fasta Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro('KET/dna-rna-separate.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'FASTA');
     await takeEditorScreenshot(page);
   });
@@ -336,7 +337,7 @@ test.describe('Import-Saving .fasta Files', () => {
       'KET/peptides-connected-with-bonds.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'FASTA');
     await takeEditorScreenshot(page);
   });
@@ -349,7 +350,7 @@ test.describe('Import-Saving .fasta Files', () => {
     After fix screenshot should be updated.
     */
       await openFileAndAddToCanvasMacro('KET/rna-sequence-and-chems.ket', page);
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'FASTA');
       await takeEditorScreenshot(page);
     },
@@ -365,7 +366,7 @@ test.describe('Import-Saving .fasta Files', () => {
     */
       await openFileAndAddToCanvasMacro('KET/peptides-chain-cycled.ket', page);
       await selectSequenceLayoutModeTool(page);
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'FASTA');
       await takeEditorScreenshot(page);
     },
@@ -426,7 +427,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'FASTA');
     await takeEditorScreenshot(page);
 
@@ -455,7 +456,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'FASTA');
       await takeEditorScreenshot(page);
 
@@ -492,7 +493,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'FASTA');
     await takeEditorScreenshot(page);
 
@@ -529,7 +530,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'FASTA');
       await takeEditorScreenshot(page);
 
@@ -565,7 +566,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'FASTA');
     await takeEditorScreenshot(page);
 
@@ -594,7 +595,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'FASTA');
       await takeEditorScreenshot(page);
 
@@ -630,7 +631,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'FASTA');
     await takeEditorScreenshot(page);
 
@@ -659,7 +660,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'FASTA');
       await takeEditorScreenshot(page);
 
@@ -694,7 +695,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await zoomWithMouseWheel(page, -200);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'FASTA');
     await takeEditorScreenshot(page);
 
@@ -723,7 +724,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'FASTA');
       await takeEditorScreenshot(page);
 

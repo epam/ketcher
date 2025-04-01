@@ -1,6 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
+  pressUndoButton,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
@@ -9,7 +13,6 @@ import {
   scrollDown,
   selectRectangleArea,
   moveMouseAway,
-  clickUndo,
   openPasteFromClipboard,
   readFileContents,
   startNewSequence,
@@ -19,11 +22,7 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
 } from '@utils';
-import {
-  enterSequence,
-  turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { enterSequence, waitForMonomerPreview } from '@utils/macromolecules';
 import {
   clickOnSequenceSymbol,
   getSequenceSymbolLocator,
@@ -68,7 +67,7 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -115,7 +114,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -147,8 +146,8 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
       await copyToClipboardByKeyboard(page);
       await takeEditorScreenshot(page);
 
-      await clickUndo(page);
-      await clickUndo(page);
+      await pressUndoButton(page);
+      await pressUndoButton(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -176,8 +175,8 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
   //   await pasteFromClipboardByKeyboard(page);
   //   await takeEditorScreenshot(page);
   //
-  //   await clickUndo(page);
-  //   await clickUndo(page);
+  //   await pressUndoButton(page);
+  //   await pressUndoButton(page);
   //   await takeEditorScreenshot(page);
   // });
 });

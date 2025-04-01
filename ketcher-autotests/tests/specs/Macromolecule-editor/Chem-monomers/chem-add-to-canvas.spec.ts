@@ -10,10 +10,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import {
-  hideMonomerPreview,
-  turnOnMacromoleculesEditor,
-} from '@utils/macromolecules';
+import { hideMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 /* 

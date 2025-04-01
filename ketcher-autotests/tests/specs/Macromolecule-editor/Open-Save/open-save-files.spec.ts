@@ -2,14 +2,16 @@
 import { Page, chromium, expect, test } from '@playwright/test';
 import {
   selectClearCanvasTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   waitForKetcherInit,
   waitForIndigoToLoad,
   openStructurePasteFromClipboard,
   openFileAndAddToCanvasAsNewProject,
-  selectSaveTool,
   resetZoomLevelToDefault,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 
 test.describe('Open/save file tests: ', () => {
   let page: Page;

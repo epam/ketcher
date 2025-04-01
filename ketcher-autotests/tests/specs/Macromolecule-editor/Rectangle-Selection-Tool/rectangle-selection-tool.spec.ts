@@ -18,14 +18,14 @@ import {
   selectMonomer,
   clickInTheMiddleOfTheScreen,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+} from '@tests/pages/common/TopLeftToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Chem } from '@constants/monomers/Chem';
 /* eslint-disable no-magic-numbers */

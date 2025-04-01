@@ -1,5 +1,4 @@
 import { Page, test } from '@playwright/test';
-import { STRUCTURE_LIBRARY_BUTTON_TEST_ID } from '@tests/Templates/templates.costants';
 import {
   clickInTheMiddleOfTheScreen,
   pressButton,
@@ -27,7 +26,7 @@ const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
 
 async function openStructureLibrary(page: Page) {
-  await page.getByTestId(STRUCTURE_LIBRARY_BUTTON_TEST_ID).click();
+  await page.getByTestId('template-lib').click();
 }
 
 async function saveToTemplates(page: Page, shouldSave = true) {

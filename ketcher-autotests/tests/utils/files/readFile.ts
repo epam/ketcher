@@ -16,6 +16,7 @@ import {
 } from '@utils';
 import { waitForLoad } from '@utils/common';
 import { getSmiles, getInchi } from '@utils/formats';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
 import { MolfileFormat } from 'ketcher-core';
 import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';

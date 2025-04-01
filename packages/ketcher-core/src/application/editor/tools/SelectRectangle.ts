@@ -820,8 +820,6 @@ class SelectRectangle implements BaseTool {
   mouseup(event) {
     const renderer = event.target.__data__;
     if (this.moveStarted && renderer?.drawingEntity?.selected) {
-      this.moveStarted = false;
-
       if (
         Vec2.diff(
           this.mousePositionAfterMove,
@@ -844,6 +842,7 @@ class SelectRectangle implements BaseTool {
       this.history.update(modelChanges);
     }
 
+    this.moveStarted = false;
     this.editor.transientDrawingView.clear();
   }
 

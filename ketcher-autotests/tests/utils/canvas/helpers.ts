@@ -13,18 +13,17 @@ import {
   pressButton,
 } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
+import { getControlModifier } from '@utils/keyboard';
 import {
-  selectMonomer,
   AtomButton,
   RingButton,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   TemplateLibrary,
-  selectRing,
-  waitForSpinnerFinishedWork,
-  getControlModifier,
   TopPanelButton,
-} from '..';
-import { waitForRender } from '@utils/common';
+  STRUCTURE_LIBRARY_BUTTON_NAME,
+  selectMonomer,
+  selectRing,
+} from '@utils/selectors';
+import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import {
   openSettings,
   selectAtomInToolbar,

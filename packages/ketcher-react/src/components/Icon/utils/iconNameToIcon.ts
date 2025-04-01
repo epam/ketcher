@@ -231,6 +231,7 @@ import { IMAGE_KEY, MULTITAIL_ARROW_TOOL_NAME } from 'ketcher-core';
 import CrossIcon from '../../../assets/icons/files/cross.svg';
 import PlusIcon from '../../../assets/icons/files/plus.svg';
 import ArrowsUpDownIcon from '../../../assets/icons/files/arrows-up-down.svg';
+import AntisenseStrandIcon from '../../../assets/icons/files/antisense-strand.svg';
 
 export const iconNameToIcon = {
   α,
@@ -466,4 +467,7 @@ export const iconNameToIcon = {
   'no-highlight-cross': CrossIcon,
   arrowsUpDown: ArrowsUpDownIcon,
   plus: PlusIcon,
+  antisenseStrand: AntisenseStrandIcon,
+  antisenseRnaStrand: AntisenseStrandIcon,
+  antisenseDnaStrand: AntisenseStrandIcon,
 } as const;

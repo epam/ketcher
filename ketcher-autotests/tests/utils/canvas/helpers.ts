@@ -209,11 +209,12 @@ export async function getCoordinatesOfTopMostCarbon(page: Page) {
 
 export async function takePageScreenshot(
   page: Page,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number; timeout?: number },
 ) {
   await expect(page).toHaveScreenshot({
     mask: options?.masks,
     maxDiffPixelRatio: options?.maxDiffPixelRatio,
+    timeout: options?.timeout,
   });
 }
 

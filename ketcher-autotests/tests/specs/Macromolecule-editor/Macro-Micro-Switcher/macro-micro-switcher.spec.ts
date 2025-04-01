@@ -530,6 +530,7 @@ test.describe('Macro-Micro-Switcher', () => {
 
       await selectMonomer(page, Peptides.A);
       await clickInTheMiddleOfTheScreen(page);
+      await moveMouseAway(page);
       await turnOnMicromoleculesEditor(page);
       await waitForSpinnerFinishedWork(
         page,
@@ -548,6 +549,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await selectMonomer(page, Chem.Test_6_Ch);
     await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
     await turnOnMicromoleculesEditor(page);
     await page.getByText('Test-6-Ch').click({ button: 'right' });
     await waitForMonomerPreviewMicro(page);
@@ -572,10 +574,12 @@ test.describe('Macro-Micro-Switcher', () => {
       await turnOnMacromoleculesEditor(page);
       await selectMonomer(page, Peptides.bAla);
       await clickInTheMiddleOfTheScreen(page);
+      await moveMouseAway(page);
       await turnOnMicromoleculesEditor(page);
       await selectRing(RingButton.Benzene, page);
       await clickInTheMiddleOfTheScreen(page);
       await selectTopPanelButton(TopPanelButton.ThreeD, page);
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         maxDiffPixelRatio: 0.05,
       });
@@ -598,9 +602,10 @@ test.describe('Macro-Micro-Switcher', () => {
     await turnOnMacromoleculesEditor(page);
     await selectMonomer(page, Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
-    await page.locator('.css-1kbfai8').click();
+    await page.locator('.css-kp5gpq').click();
   });
 
   test('Check the pop-up window appear in fullscreen mode after clicking the “Open/Save” button', async () => {
@@ -616,7 +621,7 @@ test.describe('Macro-Micro-Switcher', () => {
         );
       }
     });
-    await page.locator('.css-1kbfai8').click();
+    await page.locator('.css-kp5gpq').click();
     await selectOpenFileTool(page);
     await takeEditorScreenshot(page);
     await page.getByTitle('Close window').click();
@@ -2144,29 +2149,26 @@ test.describe('Macro-Micro-Switcher', () => {
     await takeEditorScreenshot(page);
   });
 
-  test.fail(
-    'Validate that it is possible to save micro-macro connection to ket file',
-    async () => {
-      /*
+  test('Validate that it is possible to save micro-macro connection to ket file', async () => {
+    /*
     Test case: #4532
     Description: It is possible to save micro-macro connection to ket file.
     */
-      await openFileAndAddToCanvasAsNewProject(
-        'KET/micro-macro-structure.ket',
-        page,
-      );
-      await verifyFileExport(
-        page,
-        'KET/micro-macro-structure-expected.ket',
-        FileType.KET,
-      );
-      await openFileAndAddToCanvasAsNewProject(
-        'KET/micro-macro-structure-expected.ket',
-        page,
-      );
-      await takeEditorScreenshot(page);
-    },
-  );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/micro-macro-structure.ket',
+      page,
+    );
+    await verifyFileExport(
+      page,
+      'KET/micro-macro-structure-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/micro-macro-structure-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
 
   test(
     'Validate that it is possible to save micro-macro connection to mol v2000 file',

@@ -411,6 +411,7 @@ export class CoreEditor {
     );
     this.events.createAntisenseChain.add((isDnaAntisense: boolean) => {
       this.onCreateAntisenseChain(isDnaAntisense);
+      this.drawingEntitiesManager.unselectAllDrawingEntities();
     });
     this.events.copySelectedStructure.add(() => {
       this.mode.onCopy();

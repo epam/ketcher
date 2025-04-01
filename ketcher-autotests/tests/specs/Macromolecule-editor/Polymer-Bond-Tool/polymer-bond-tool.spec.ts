@@ -263,7 +263,7 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
     */
   const x = 800;
   const y = 350;
-  await page.locator('.css-1kbfai8').click();
+  await page.locator('.css-kp5gpq').click();
   await selectMonomer(page, Peptides.bAla);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Peptides.Edc);
@@ -282,7 +282,7 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
     */
   const x = 800;
   const y = 350;
-  await page.locator('.css-1kbfai8').click();
+  await page.locator('.css-kp5gpq').click();
   await selectMonomer(page, Presets.MOE_A_P);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Presets.dR_U_P);
@@ -301,7 +301,7 @@ test('Check in full-screen mode it is possible to add a bond between a CHEM mono
     */
   const x = 800;
   const y = 350;
-  await page.locator('.css-1kbfai8').click();
+  await page.locator('.css-kp5gpq').click();
   await selectMonomer(page, Chem.A6OH);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Chem.Test_6_Ch);

@@ -136,7 +136,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       page,
     );
     await enableViewOnlyModeBySetOptions(page);
-    await takePageScreenshot(page);
+    await takePageScreenshot(page, { timeout: 10000 });
   });
 
   test('Turn on view-only mode, add to canvas different elements from file, verify that all editing tools are disabled in toolbars for elements', async ({

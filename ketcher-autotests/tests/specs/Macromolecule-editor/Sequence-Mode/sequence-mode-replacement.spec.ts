@@ -1806,6 +1806,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
+      await moveMouseAway(page);
 
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 

@@ -82,7 +82,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     const context = await browser.newContext();
     page = await context.newPage();
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
@@ -201,7 +204,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     );
     await clickOnAtom(page, 'C', 4, 'right');
     await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page, true, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -344,7 +350,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Hover over D-OAla monomer
      * 4. Take a screenshot
      */
-    await turnOnMacromoleculesEditor(page, true, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
     await goToPeptidesTab(page);
     await waitForRender(page, async () => {
       await page.getByTestId('D-OAla___D-Lactic acid').hover();

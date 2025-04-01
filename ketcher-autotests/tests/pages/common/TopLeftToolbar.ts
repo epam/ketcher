@@ -79,8 +79,10 @@ export async function pressRedoButton(page: Page) {
 
 export async function turnOnMacromoleculesEditor(
   page: Page,
-  enableFlexMode = true,
-  goToPeptides = true,
+  options: {
+    enableFlexMode?: boolean;
+    goToPeptides?: boolean;
+  } = { enableFlexMode: true, goToPeptides: true },
 ) {
   const ketcherModeSwitcherCombobox =
     topLeftToolbarLocators(page).ketcherModeSwitcherCombobox;
@@ -90,11 +92,11 @@ export async function turnOnMacromoleculesEditor(
   await page.getByTestId(MACROMOLECULES_MODE).click();
   expect(page.getByTestId(LAYOUT_TOGGLER)).toBeVisible();
 
-  if (enableFlexMode) {
+  if (options.enableFlexMode) {
     await selectFlexLayoutModeTool(page);
   }
 
-  if (goToPeptides) {
+  if (options.goToPeptides) {
     await goToPeptidesTab(page);
   }
 

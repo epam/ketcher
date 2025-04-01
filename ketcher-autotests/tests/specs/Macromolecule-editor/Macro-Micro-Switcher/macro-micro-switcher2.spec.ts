@@ -715,7 +715,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/benzene-ring-with-two-atoms.ket',
       page,
     );
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await takePageScreenshot(page);
   });
 
@@ -732,11 +735,17 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Switch to Micro mode
       4. Switch to Macromolecules mode
     */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectSnakeLayoutModeTool(page);
     await takePageScreenshot(page);
     await turnOnMicromoleculesEditor(page);
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await takePageScreenshot(page);
   });
 
@@ -751,7 +760,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       1. Switch to Macromolecules mode
       2. Verify that Sequence mode is opened
     */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await takePageScreenshot(page);
   });
 
@@ -766,7 +778,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Check the default tab in the library
       3. Default tab should be RNA
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await takeTopToolbarScreenshot(page);
   });
 
@@ -781,7 +796,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Change typing type to PEP
       3. Changing typing type to PEP switches the library tab to Peptide
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectSequenceTypeMode(page, 'PEPTIDE');
     await takePageScreenshot(page);
   });
@@ -798,7 +816,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Change typing type to RNA
       4. Changing typing type to RNA switches the library tab to RNA
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectSequenceTypeMode(page, 'PEPTIDE');
     await selectSequenceTypeMode(page, 'RNA');
     await takePageScreenshot(page);
@@ -815,7 +836,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Change typing type to DNA
       3. Changing typing type to DNA switches the library tab to RNA
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectSequenceTypeMode(page, 'DNA');
     await takePageScreenshot(page);
   });
@@ -832,7 +856,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Change typing type to RNA
       4. Changing typing type from RNA to DNA and viceversa does not affect the library tab
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectSequenceTypeMode(page, 'DNA');
     await takePageScreenshot(page);
     await selectSequenceTypeMode(page, 'RNA');
@@ -851,7 +878,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Press Ctrl+Alt+P for Peptides
       4. Press Ctrl+Alt+R for RNA
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await page.keyboard.press('Control+Alt+D');
     await takePageScreenshot(page);
     await page.keyboard.press('Control+Alt+P');
@@ -874,7 +904,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       5. Change typing type to PEP
       6. Start typing type PEP
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await page.keyboard.type('CCC');
     await selectSequenceTypeMode(page, 'DNA');
     await page.keyboard.type('CCC');
@@ -898,7 +931,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       6. Start typing type PEP
       7. Switch to Flex mode and back to Sequence mode
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await page.keyboard.type('CCC');
     await selectSequenceTypeMode(page, 'DNA');
     await page.keyboard.type('CCC');
@@ -925,11 +961,17 @@ test.describe('Macro-Micro-Switcher2', () => {
       4. Switch to Micro mode
       5. Switch to Macromolecules mode
     */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectFlexLayoutModeTool(page);
     await selectSequenceLayoutModeTool(page);
     await turnOnMicromoleculesEditor(page);
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await takePageScreenshot(page);
   });
 
@@ -949,7 +991,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/benzene-ring-with-two-atoms.ket',
       page,
     );
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectClearCanvasTool(page);
     await pressUndoButton(page);
     await takePageScreenshot(page);

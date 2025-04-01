@@ -125,7 +125,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     const context = await browser.newContext();
     page = await context.newPage();
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
@@ -431,7 +434,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Go to the Library - Peptide tab
      * 3. Click on A peptide
      */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectMonomer(page, Peptides.A);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, {
@@ -590,7 +596,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Switch to Sequence mode
      * 4. Take a screenshot
      */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/two sequences of bases (nC6n5U).ket',
@@ -633,7 +642,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Click on the center of double bond (e.g. between two black lines)
      * 4. Take a screenshot
      */
-    await turnOnMacromoleculesEditor(page, true, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/Entire element bounding box should be clickable, not only black dots.ket',
       page,
@@ -681,14 +693,20 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Take a screenshot
      */
     await pageReload(page);
-    await turnOnMacromoleculesEditor(page, true, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/ketcher - 2025-01-06T161755.116.ket',
       page,
     );
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page, true, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -708,7 +726,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Bugs/ketcher - 2025-01-06T160012.582.ket',
       page,
     );
-    await turnOnMacromoleculesEditor(page, true, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -724,7 +745,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Press Save button
      */
     test.slow();
-    await turnOnMacromoleculesEditor(page, true, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -776,7 +800,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Load RXN V3000 file with Super G and Super T monomers
      * 3. Take a screenshot
      */
-    await turnOnMacromoleculesEditor(page, true, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
     await openFileAndAddToCanvasAsNewProjectMacro(
       'Molfiles-V3000/Bugs/macromol.mol',
       page,
@@ -799,7 +826,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Load from HELM using paste from clipboard
      * 3. Take a screenshot
      */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectSnakeLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -925,7 +955,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Draw a cyclohexane
      * 6. Compare bond lengths
      */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectMonomer(page, Bases.A);
     await turnOnMicromoleculesEditor(page);
     await selectAllStructuresOnCanvas(page);

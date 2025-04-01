@@ -4,7 +4,7 @@ import {
   MACROMOLECULES_MODE,
   MOLECULES_MODE,
 } from '@constants/testIdConstants';
-import { type Page } from '@playwright/test';
+import { type Page, expect } from '@playwright/test';
 import { selectFlexLayoutModeTool, takePageScreenshot } from '@utils/canvas';
 import { clickOnCanvas } from '@utils/clicks';
 import { waitForRender } from '@utils/common';

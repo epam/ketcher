@@ -468,12 +468,19 @@ Object.values(monomers).forEach((leftMonomer) => {
      *              1. Clear canvas
      *              2. Load %leftMonomer% and %rigthMonomere% and put them on the canvas
      *              3. Establish single bond connection between %leftMonomer%(center) and %rightMonomer%(center)
-     *              4. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
-     *              5. Take screenshot to witness error message
+     *              4. Close error message (if appear): You have connected monomers with attachment points of the same group
+     *              5. Establish hydrogen connection between %leftMonomer%(center) and %rightMonomer%(center)
+     *              5. Validate error message
      */
     // eslint-disable-next-line max-len
     test(`4. Connect with hydrogen bond ${leftMonomer.monomerType}(${leftMonomer.alias}) and ${rightMonomer.monomerType}(${rightMonomer.alias}) already connected with single bond`, async () => {
       test.setTimeout(25000);
+
+      const errorTooltip = page.getByTestId('error-tooltip').first();
+      const errorTooltipCloseButton = page
+        .locator('#error-tooltip')
+        .getByRole('button')
+        .first();
 
       await loadTwoMonomers(page, leftMonomer, rightMonomer);
 
@@ -486,6 +493,12 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await chooseConnectionPointsInConnectionDialog(page, 'R1', 'R1');
 
+      if (await errorTooltip.isVisible()) {
+        // closing error message (if appear): You have connected monomers with attachment points of the same group
+        await errorTooltipCloseButton.click();
+        await errorTooltip.waitFor({ state: 'detached' });
+      }
+
       await bondTwoMonomersByCenterToCenter(
         page,
         leftMonomer,
@@ -493,11 +506,16 @@ Object.values(monomers).forEach((leftMonomer) => {
         MacroBondTool.HYDROGEN,
       );
 
-      await zoomWithMouseWheel(page, -600);
+      // Error message is wrong because of a bug!
+      // it should be "Unable to establish a hydrogen bond between two monomers connected with a single bond"
+      await expect(errorTooltip).toHaveText(
+        "There can't be more than 1 bond between the first and the second monomer",
+      );
 
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-      });
+      if (await errorTooltip.isVisible()) {
+        await errorTooltipCloseButton.click();
+        await errorTooltip.waitFor({ state: 'detached' });
+      }
 
       test.fixme(
         // eslint-disable-next-line no-self-compare

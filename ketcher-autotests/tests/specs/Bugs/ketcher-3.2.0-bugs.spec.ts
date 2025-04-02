@@ -20,7 +20,6 @@ import {
   moveMouseAway,
   selectSaveTool,
   openFileAndAddToCanvasAsNewProjectMacro,
-  setMolecule,
   FILE_TEST_DATA,
   resetZoomLevelToDefault,
   selectSaveFileFormat,
@@ -28,6 +27,7 @@ import {
   setZoomInputValue,
   resetCurrentTool,
   clickOnCanvas,
+  setMolecule,
 } from '@utils';
 import {
   waitForPageInit,

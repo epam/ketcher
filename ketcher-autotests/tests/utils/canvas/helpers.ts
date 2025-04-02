@@ -40,6 +40,7 @@ import {
   pressUndoButton,
 } from '@tests/pages/common/TopLeftToolbar';
 import { Monomer } from '@utils/types';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 export async function drawBenzeneRing(page: Page) {
   await selectRing(RingButton.Benzene, page);
@@ -336,19 +337,15 @@ export async function resetAllSettingsToDefault(page: Page) {
 
 export async function addSingleMonomerToCanvas(
   page: Page,
-  monomerType: Monomer,
+  monomer: Monomer,
   positionX: number,
   positionY: number,
   index: number,
 ) {
-  await page.getByTestId(monomerType.testId).click();
+  await page.getByTestId(monomer.testId).click();
   await clickOnCanvas(page, positionX, positionY);
   await hideMonomerPreview(page);
-  return page
-    .locator(
-      `//\*[name() = 'g' and ./\*[name()='text' and .='${monomerType.alias}']]`,
-    )
-    .nth(index);
+  return getMonomerLocator(page, monomer).nth(index);
 }
 
 export async function addBondedMonomersToCanvas(

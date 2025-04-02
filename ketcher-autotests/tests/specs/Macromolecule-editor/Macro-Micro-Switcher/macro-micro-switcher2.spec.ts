@@ -883,6 +883,11 @@ test.describe('Macro-Micro-Switcher2', () => {
       goToPeptides: false,
     });
 
+    // waiting appearance of empty seqeunce in edit mode appearence
+    // (otherwise - keyboard shortcuts doesn't work)
+    await page.getByTestId(`sequence-item`).first().waitFor({
+      state: 'attached',
+    });
     await page.keyboard.press('Control+Alt+D');
     await takePageScreenshot(page);
     await page.keyboard.press('Control+Alt+P');

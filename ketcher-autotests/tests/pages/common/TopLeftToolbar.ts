@@ -99,12 +99,6 @@ export async function turnOnMacromoleculesEditor(
     await selectFlexLayoutModeTool(page);
   } else if (options.goToPeptides) {
     await goToPeptidesTab(page);
-  } else {
-    // waiting appearance of empty seqeunce in edit mode appearence
-    // (otherwise - keyboard shortcuts doesn't work)
-    await page.getByTestId(`sequence-item`).first().waitFor({
-      state: 'attached',
-    });
   }
 
   await page.evaluate(() => {

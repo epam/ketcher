@@ -1,9 +1,5 @@
 import { Page, test } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   clickInTheMiddleOfTheScreen,
   pressButton,
   resetCurrentTool,
@@ -22,6 +18,10 @@ import {
   clickOnCanvas,
   selectCleanTool,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;

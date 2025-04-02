@@ -1,9 +1,5 @@
 import { Page, test } from '@playwright/test';
 import {
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   clickInTheMiddleOfTheScreen,
   pressButton,
   takeEditorScreenshot,
@@ -13,6 +9,10 @@ import {
   waitForPageInit,
   moveMouseAway,
 } from '@utils';
+import {
+  selectOpenFileTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
   verifyFileExport,

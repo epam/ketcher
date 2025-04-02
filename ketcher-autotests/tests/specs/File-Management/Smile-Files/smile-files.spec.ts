@@ -1,10 +1,5 @@
 import { Page, expect, test } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   readFileContents,
@@ -20,6 +15,11 @@ import {
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 import {
   clickOnFileFormatDropdown,
   getExtendedSmiles,

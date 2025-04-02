@@ -2,7 +2,6 @@ import { Page, test } from '@playwright/test';
 import { RNA_TAB } from '@constants/testIdConstants';
 import { waitForPageInit } from '@utils/common';
 import { takePageScreenshot } from '@utils';
-
 import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 

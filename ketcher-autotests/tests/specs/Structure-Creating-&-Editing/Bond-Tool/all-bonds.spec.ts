@@ -63,6 +63,7 @@ import {
   selectClearCanvasTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
+
 const buttonIdToTitle: {
   [key: string]: string;
 } = {

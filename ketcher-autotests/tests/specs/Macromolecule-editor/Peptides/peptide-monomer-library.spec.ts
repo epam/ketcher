@@ -3,7 +3,6 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { FAVORITES_TAB } from '@constants/testIdConstants';
 import { expect, test } from '@playwright/test';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   addMonomersToFavorites,
   addMonomerToFavorites,
@@ -22,6 +21,7 @@ import {
   takeMonomerLibraryScreenshot,
   waitForPageInit,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToPeptidesTab, goToTab } from '@utils/macromolecules/library';

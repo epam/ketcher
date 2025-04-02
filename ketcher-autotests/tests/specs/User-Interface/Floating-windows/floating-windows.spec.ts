@@ -1,5 +1,4 @@
 import { Page, test } from '@playwright/test';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   takeEditorScreenshot,
   selectTopPanelButton,
@@ -15,6 +14,7 @@ import {
   pasteFromClipboardAndAddToCanvas,
   waitForLoad,
 } from '@utils';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
 async function openFileViaClipboard(filename: string, page: Page) {
   const fileContent = await readFileContents(filename);

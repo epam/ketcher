@@ -1,11 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import {
-  selectOpenFileTool,
-  selectSaveTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
   saveToFile,
@@ -24,6 +19,11 @@ import {
   TypeDropdownOptions,
   takeEditorScreenshot,
 } from '@utils';
+import {
+  selectOpenFileTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { closeErrorMessage } from '@utils/common/helpers';
 import {
   waitForMonomerPreview,

@@ -1,6 +1,5 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   addSingleMonomerToCanvas,
   dragMouseTo,
@@ -10,6 +9,7 @@ import {
   moveMouseAway,
   selectMacroBond,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 

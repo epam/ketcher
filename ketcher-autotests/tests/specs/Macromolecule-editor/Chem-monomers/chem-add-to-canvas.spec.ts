@@ -1,6 +1,5 @@
 import { Chem } from '@constants/monomers/Chem';
 import { test } from '@playwright/test';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
@@ -10,6 +9,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { hideMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';

@@ -4,10 +4,6 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { Page, test, expect } from '@playwright/test';
 import {
-  selectOpenFileTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
@@ -32,6 +28,10 @@ import {
   selectZoomReset,
   selectMonomer,
 } from '@utils';
+import {
+  selectOpenFileTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {

@@ -1,16 +1,16 @@
 /* eslint-disable no-magic-numbers */
 import { test, Page } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   selectRectangleSelectionTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 
 test.beforeEach(async ({ page }) => {

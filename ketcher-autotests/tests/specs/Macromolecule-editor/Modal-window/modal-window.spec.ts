@@ -1,12 +1,12 @@
 import { Chem } from '@constants/monomers/Chem';
 import { Locator, test } from '@playwright/test';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   addSingleMonomerToCanvas,
   selectMacroBond,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 import { goToCHEMTab } from '@utils/macromolecules/library';

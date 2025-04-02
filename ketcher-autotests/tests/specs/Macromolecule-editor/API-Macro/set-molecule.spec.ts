@@ -1,5 +1,4 @@
 import { test } from '@playwright/test';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   readFileContents,
   waitForPageInit,
@@ -9,6 +8,7 @@ import {
   clickInTheMiddleOfTheScreen,
   selectZoomOutTool,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('setMolecule', () => {
   test.beforeEach(async ({ page }) => {

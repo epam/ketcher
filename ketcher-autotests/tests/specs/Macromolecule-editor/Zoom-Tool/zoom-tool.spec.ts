@@ -1,10 +1,6 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { Locator, test, Page, chromium } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   addSingleMonomerToCanvas,
   selectRectangleArea,
   selectRectangleSelectionTool,
@@ -26,6 +22,10 @@ import {
   selectZoomReset,
   selectZoomOutTool,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
 import {

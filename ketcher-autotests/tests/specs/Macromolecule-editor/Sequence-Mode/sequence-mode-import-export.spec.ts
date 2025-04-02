@@ -1,10 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, chromium, test, expect } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   MacromoleculesTopPanelButton,
   openStructurePasteFromClipboard,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -21,6 +17,10 @@ import {
   PeptideType,
   resetZoomLevelToDefault,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 
 let page: Page;

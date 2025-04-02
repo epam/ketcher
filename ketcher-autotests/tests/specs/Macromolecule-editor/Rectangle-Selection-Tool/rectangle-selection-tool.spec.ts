@@ -18,7 +18,6 @@ import {
   selectMonomer,
   clickInTheMiddleOfTheScreen,
 } from '@utils';
-
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';

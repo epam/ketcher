@@ -6,14 +6,6 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { chromium, expect, Page, test } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  selectOpenFileTool,
-  pressUndoButton,
-  selectSaveTool,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   chooseFileFormat,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -40,6 +32,14 @@ import {
   waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  pressUndoButton,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   closeErrorMessage,

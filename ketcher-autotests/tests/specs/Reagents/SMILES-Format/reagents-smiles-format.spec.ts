@@ -1,5 +1,4 @@
 import { Page, expect, test } from '@playwright/test';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -9,6 +8,7 @@ import {
   waitForPageInit,
   moveMouseAway,
 } from '@utils';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   getExtendedSmiles,
   getSmiles,

@@ -1,6 +1,5 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
@@ -14,6 +13,7 @@ import {
   RingButton,
   clickOnCanvas,
 } from '@utils';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import { TopPanelButton } from '@utils/selectors';
 
 test.describe('Paste Tool', () => {

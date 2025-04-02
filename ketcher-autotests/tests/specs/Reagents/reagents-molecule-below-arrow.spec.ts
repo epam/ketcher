@@ -1,10 +1,10 @@
 import { test } from '@playwright/test';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
 } from '@utils';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 
 test.describe('Reagents molecule below arrow', () => {

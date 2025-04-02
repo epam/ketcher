@@ -1,5 +1,4 @@
 import { Page } from '@playwright/test';
-
 import { waitForKetcherInit, waitForIndigoToLoad } from './loaders';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 

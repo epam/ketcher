@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { test, expect } from '@playwright/test';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   openFileAndAddToCanvasMacro,
   readFileContents,
@@ -14,6 +13,7 @@ import {
   clickInTheMiddleOfTheScreen,
   selectAllStructuresOnCanvas,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
   verifyFileExport,

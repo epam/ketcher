@@ -49,7 +49,6 @@ import {
   selectZoomOutTool,
   waitForElementInCanvas,
 } from '@utils';
-
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   FileType,

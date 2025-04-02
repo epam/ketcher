@@ -30,7 +30,6 @@ import {
   clickOnCanvas,
   ZoomInByKeyboard,
 } from '@utils';
-
 import { atomsNames } from '@utils/canvas/atoms/excludedAtoms';
 import {
   FileType,

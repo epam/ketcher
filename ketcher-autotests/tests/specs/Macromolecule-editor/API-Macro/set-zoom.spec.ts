@@ -1,6 +1,5 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   waitForPageInit,
   takeEditorScreenshot,
@@ -9,6 +8,7 @@ import {
   clickInTheMiddleOfTheScreen,
   selectZoomInTool,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('setZoom', () => {
   test.beforeEach(async ({ page }) => {

@@ -1,11 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
@@ -24,6 +19,11 @@ import {
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
 } from '@utils';
+import {
+  pressUndoButton,
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { enterSequence, waitForMonomerPreview } from '@utils/macromolecules';
 
 test.describe('Sequence Mode', () => {

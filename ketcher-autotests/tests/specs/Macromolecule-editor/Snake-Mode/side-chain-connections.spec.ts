@@ -1,12 +1,5 @@
 import { Page, test, expect, BrowserContext, chromium } from '@playwright/test';
 import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
@@ -30,6 +23,13 @@ import {
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
 } from '@utils';
+import {
+  pressUndoButton,
+  selectClearCanvasTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 

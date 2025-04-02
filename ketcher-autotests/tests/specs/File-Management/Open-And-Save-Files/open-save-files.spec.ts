@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { takeEditorScreenshot, waitForPageInit } from '@utils';
 import {
   selectOpenFileTool,
   selectSaveTool,
   topLeftToolbarLocators,
 } from '@tests/pages/common/TopLeftToolbar';
-import { takeEditorScreenshot, waitForPageInit } from '@utils';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 
 test.describe('Open Ketcher', () => {

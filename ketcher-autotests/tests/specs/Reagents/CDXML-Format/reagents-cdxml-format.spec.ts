@@ -1,9 +1,5 @@
 import { Page, test } from '@playwright/test';
 import {
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   clickInTheMiddleOfTheScreen,
   pressButton,
   takeEditorScreenshot,
@@ -12,6 +8,10 @@ import {
   waitForLoad,
   waitForPageInit,
 } from '@utils';
+import {
+  selectOpenFileTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 
 async function previewCDXML(page: Page) {

@@ -1,10 +1,6 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
 import {
-  pressUndoButton,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
@@ -15,6 +11,10 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
 } from '@utils';
+import {
+  pressUndoButton,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 

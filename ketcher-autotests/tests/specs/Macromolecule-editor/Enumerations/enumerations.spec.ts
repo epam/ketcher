@@ -3,10 +3,6 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';
 import { test } from '@playwright/test';
 import {
-  pressUndoButton,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
@@ -14,6 +10,10 @@ import {
   selectSnakeLayoutModeTool,
   selectRectangleSelectionTool,
 } from '@utils';
+import {
+  pressUndoButton,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 

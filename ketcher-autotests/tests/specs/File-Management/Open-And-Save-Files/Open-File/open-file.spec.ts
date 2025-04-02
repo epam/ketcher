@@ -1,5 +1,4 @@
 import { test } from '@playwright/test';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   openFile,
@@ -11,6 +10,7 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
 } from '@utils';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
 const X_OFFSET = 200;
 

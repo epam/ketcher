@@ -4,13 +4,6 @@ import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Page, test, expect, BrowserContext, chromium } from '@playwright/test';
 import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   addSingleMonomerToCanvas,
   addRnaPresetOnCanvas,
   selectSnakeLayoutModeTool,
@@ -33,6 +26,13 @@ import {
   selectMacroBond,
   resetZoomLevelToDefault,
 } from '@utils';
+import {
+  pressRedoButton,
+  pressUndoButton,
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';

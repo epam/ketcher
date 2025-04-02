@@ -1,5 +1,4 @@
 import { Page, test } from '@playwright/test';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   takeEditorScreenshot,
   openFile,
@@ -19,6 +18,7 @@ import {
   clickOnCanvas,
   selectLayoutTool,
 } from '@utils';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
 async function openFileWithShift(filename: string, page: Page) {
   await selectOpenFileTool(page);

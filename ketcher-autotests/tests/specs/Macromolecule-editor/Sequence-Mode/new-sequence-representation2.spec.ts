@@ -2,10 +2,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   clickInTheMiddleOfTheScreen,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -18,7 +14,10 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-
+import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import {
   getSymbolLocator,
   turnSyncEditModeOff,

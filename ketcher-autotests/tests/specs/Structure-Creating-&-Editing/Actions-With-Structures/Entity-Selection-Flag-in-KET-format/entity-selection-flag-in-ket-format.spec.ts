@@ -1,6 +1,5 @@
 /* eslint-disable no-inline-comments */
 import { test, expect } from '@playwright/test';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
@@ -12,6 +11,7 @@ import {
   receiveFileComparisonData,
   selectAllStructuresOnCanvas,
 } from '@utils';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('1. User can restore previously saved selection for:', () => {
   /*

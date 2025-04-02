@@ -1,10 +1,10 @@
 import { Page, test } from '@playwright/test';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
 } from '@utils';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 
 enum FileFormat {

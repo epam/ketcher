@@ -1,10 +1,10 @@
 import { Page, test, TestInfo } from '@playwright/test';
+import { selectFlexLayoutModeTool } from '@utils/canvas';
+import { chooseTab, Tabs } from '@utils/macromolecules';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
-import { selectFlexLayoutModeTool } from '@utils/canvas';
-import { chooseTab, Tabs } from '@utils/macromolecules';
 
 const resetStateTypes = {
   defaultLayout: async (page: Page) => {

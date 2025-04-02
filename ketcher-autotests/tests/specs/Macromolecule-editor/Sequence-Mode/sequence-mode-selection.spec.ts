@@ -1,10 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
-  pressUndoButton,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
@@ -22,6 +18,10 @@ import {
   selectZoomOutTool,
   moveMouseAway,
 } from '@utils';
+import {
+  pressUndoButton,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   getSequenceSymbolLocator,

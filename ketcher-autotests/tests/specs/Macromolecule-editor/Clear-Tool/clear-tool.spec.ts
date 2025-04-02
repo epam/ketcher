@@ -1,13 +1,6 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { test, expect } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  pressRedoButton,
-  pressUndoButton,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   addSingleMonomerToCanvas,
   openFileAndAddToCanvasAsNewProject,
   selectMacroBond,
@@ -15,6 +8,13 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  pressRedoButton,
+  pressUndoButton,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {} from '@utils/macromolecules';
 import { goToPeptidesTab } from '@utils/macromolecules/library';

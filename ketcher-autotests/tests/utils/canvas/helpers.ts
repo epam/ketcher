@@ -30,7 +30,6 @@ import {
   selectRectangleSelectionTool,
   selectTopPanelButton,
 } from './tools';
-
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';

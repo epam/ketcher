@@ -1,10 +1,5 @@
 import { Page, test } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  selectSaveTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
   waitForPageInit,
@@ -16,7 +11,11 @@ import {
   SequenceType,
   pressButton,
 } from '@utils';
-
+import {
+  selectClearCanvasTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import {
   markResetToDefaultState,
   processResetToDefaultState,

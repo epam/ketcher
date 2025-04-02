@@ -2,13 +2,6 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  selectOpenFileTool,
-  pressUndoButton,
-  pressRedoButton,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   applyAutoMapMode,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -54,6 +47,13 @@ import {
   waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  pressUndoButton,
+  pressRedoButton,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 import {
   clearLocalStorage,
   closeErrorAndInfoModals,

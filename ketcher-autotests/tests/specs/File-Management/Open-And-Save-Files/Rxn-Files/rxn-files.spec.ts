@@ -1,10 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test, Page } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   drawBenzeneRing,
@@ -34,7 +30,10 @@ import {
   setHashSpacingOptionUnit,
   openBondsSettingsSection,
 } from '@utils';
-
+import {
+  selectClearCanvasTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
   FileType,

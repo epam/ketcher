@@ -2,14 +2,14 @@
 
 exports[`Test Rna Preset Group component should render 1`] = `
 <div
-  class="css-1jn33hb"
+  class="css-106b1j9"
   data-testid="rna-preset-group"
 >
   <div
-    class="css-1i18rk1"
+    class="css-1a3tnc1"
   >
     <div
-      class="css-8a3dox"
+      class="css-1kk24wd"
       data-rna-preset-item-name="U"
       data-testid="U_U_R_P"
     >
@@ -17,7 +17,7 @@ exports[`Test Rna Preset Group component should render 1`] = `
         U
       </span>
       <svg
-        class="dots hidden css-x2ejol"
+        class="dots css-x2ejol"
         fill="none"
         height="16"
         viewBox="0 0 16 16"

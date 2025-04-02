@@ -21,23 +21,39 @@ export const RnaEditorExpandedContainer = styled.div((props) => ({
   display: 'flex',
   flexDirection: 'column',
   padding: '10px',
+  backgroundColor: '#F7F9FA',
+  borderRadius: '0 0 4px 4px',
+
   '&.rna-editor-expanded--sequence-edit-mode': {
     padding: '8px',
     paddingTop: '10px',
     border: `2px ${props.theme.ketcher.color.editMode.sequenceInRNABuilder} solid`,
     borderTop: 'none',
-    borderBottomRightRadius: '4px',
-    borderBottomLeftRadius: '4px',
   },
 }));
 
-export const GroupsContainer = styled.div({
-  marginTop: '16px',
-  width: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '8px',
-});
+export const CompactViewName = styled.input`
+  width: 100%;
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0 1px 2px 0 rgba(180, 185, 214, 0.6);
+
+  &:hover,
+  &:focus {
+    outline: ${({ theme }) => theme.ketcher.outline.selected.small};
+  }
+`;
+
+export const GroupsContainer = styled.div<{ compact?: boolean }>`
+  width: 100%;
+  display: flex;
+  flex-direction: ${({ compact }) => (compact ? 'row' : 'column')};
+  justify-content: ${({ compact }) =>
+    compact ? 'space-between' : 'flex-start'};
+  gap: 8px;
+  margin-top: 16px;
+`;
 
 export const ButtonsContainer = styled.div({
   marginTop: '16px',

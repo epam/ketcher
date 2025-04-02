@@ -82,6 +82,10 @@ export class EditorHistory {
     notifyRenderComplete();
   }
 
+  public get previousCommand() {
+    return this.historyStack[this.historyPointer - 1];
+  }
+
   destroy() {
     EditorHistory._instance = null;
   }

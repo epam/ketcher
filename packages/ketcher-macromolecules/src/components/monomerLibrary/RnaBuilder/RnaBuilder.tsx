@@ -14,10 +14,9 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { RnaAccordion } from './RnaAccordion';
 import { RnaEditor } from './RnaEditor';
 import { RnaBuilderContainer } from './styles';
-import { useAppDispatch, useAppSelector } from 'hooks';
+import { useAppDispatch, useAppSelector, useIsCompactView } from 'hooks';
 import {
   selectUniqueNameError,
   setUniqueNameError,
@@ -25,12 +24,16 @@ import {
   setInvalidPresetError,
 } from 'state/rna-builder';
 import { Modal } from 'components/shared/modal';
-import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaAccordion/styles';
+import { StyledButton } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/styles';
+import { RnaElements } from 'components/monomerLibrary/RnaBuilder/RnaElementsView/RnaElements';
 
 export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
   const dispatch = useAppDispatch();
   const uniqueNameError = useAppSelector(selectUniqueNameError);
   const invalidPresetError = useAppSelector(selectInvalidPresetError);
+
+  const isCompactView = useIsCompactView();
+
   const closeErrorModal = () => {
     if (uniqueNameError.length > 0) {
       dispatch(setUniqueNameError(''));
@@ -39,13 +42,15 @@ export const RnaBuilder = ({ libraryName, duplicatePreset, editPreset }) => {
       dispatch(setInvalidPresetError(''));
     }
   };
+
   return (
     <RnaBuilderContainer>
       <RnaEditor duplicatePreset={duplicatePreset} />
-      <RnaAccordion
+      <RnaElements
         libraryName={libraryName}
         duplicatePreset={duplicatePreset}
         editPreset={editPreset}
+        view={isCompactView ? 'tabs' : 'accordion'}
       />
       <Modal
         isOpen={!!uniqueNameError || !!invalidPresetError}

@@ -6,7 +6,6 @@ import {
   MacromoleculesTopPanelButton,
   pressButton,
   clickInTheMiddleOfTheScreen,
-  waitForLoad,
   delay,
   takeEditorScreenshot,
   clickOnTheCanvas,
@@ -18,9 +17,10 @@ import {
   PeptideType,
   selectOpenFileTool,
 } from '@utils';
+import { waitForLoad } from '@utils/common';
+import { getSmiles, getInchi } from '@utils/formats';
 
 import { MolfileFormat } from 'ketcher-core';
-import { getSmiles, getInchi } from '@utils/formats';
 
 export async function readFileContents(filePath: string) {
   const resolvedFilePath = path.resolve(process.cwd(), filePath);
@@ -257,6 +257,19 @@ export async function pasteFromClipboardAndOpenAsNewProject(
   }
 }
 
+async function contentTypeSelection(page: Page, contentType: MacroFileType) {
+  // waiting for type selection combobox to appear
+  await page.getByTestId('dropdown-select').waitFor({ state: 'visible' });
+  await page.getByTestId('dropdown-select').click();
+  // waiting for list of formats to appear
+  const listbox = page.getByRole('listbox');
+  await listbox.waitFor({ state: 'visible' });
+  await page.getByText(contentType).click();
+  // trying to retry click if the listbox is still visible after the click (e.g. click was not successful)
+  if (await listbox.isVisible()) {
+    await page.getByText(contentType).click();
+  }
+}
 /**
  *  Usage examples:
  *  1. pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -325,9 +338,9 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
   );
   await page.getByText('Paste from clipboard').click();
+
   if (structureFormat !== MacroFileType.Ket) {
-    await page.getByRole('combobox').click();
-    await page.getByText(structureType).click();
+    await contentTypeSelection(page, structureType);
   }
 
   if (
@@ -337,6 +350,7 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
     await page.getByTestId('dropdown-select-type').click();
     const lowCaseSequenceFormat = sequenceOrFastaType.toLowerCase();
     await page.locator(`[data-value=${lowCaseSequenceFormat}]`).click();
+
     if (
       sequenceOrFastaType === SequenceType.PEPTIDE &&
       peptideType === PeptideType.threeLetterCode

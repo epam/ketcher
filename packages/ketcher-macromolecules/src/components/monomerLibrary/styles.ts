@@ -14,71 +14,79 @@
  * limitations under the License.
  ***************************************************************************/
 import styled from '@emotion/styled';
-import { Input } from 'ketcher-react';
+import { Input, Icon } from 'ketcher-react';
 
 export const MONOMER_LIBRARY_WIDTH = '254px';
 
-export const MonomerLibraryInput = styled(Input)({
-  outline: 0,
-  ':hover': {
-    outline: 'none',
-  },
-});
+export const MonomerLibraryContainer = styled.div`
+  width: ${MONOMER_LIBRARY_WIDTH};
+  height: calc(100% - 16px);
+  display: flex;
+  flex-direction: column;
+  background-color: ${(props) => props.theme.ketcher.color.background.primary};
+  box-shadow: 0 2px 5px rgba(103, 104, 132, 0.15);
+  border-radius: 4px;
+`;
 
-export const MonomerLibraryContainer = styled.div(({ theme }) => ({
-  width: MONOMER_LIBRARY_WIDTH,
-  height: 'calc(100% - 16px)',
-  backgroundColor: theme.ketcher.color.background.primary,
-  boxShadow: '0px 2px 5px rgba(103, 104, 132, 0.15)',
-  display: 'flex',
-  flexDirection: 'column',
-  borderRadius: '4px',
-}));
+export const MonomerLibraryHeader = styled.div`
+  padding: 10px 0 10px 8px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
 
-export const MonomerLibraryTitle = styled.h3(({ theme }) => ({
-  margin: 0,
-  padding: 0,
-  fontSize: theme.ketcher.font.size.regular,
-  fontWeight: theme.ketcher.font.weight.regular,
-}));
+export const MonomerLibraryInputContainer = styled.div`
+  height: 24px;
+  display: flex;
+  flex-grow: 1;
+  gap: 4px;
+  align-items: center;
+  padding: 4px;
+  background-color: ${(props) =>
+    props.theme.ketcher.color.input.background.default};
+  border-radius: 4px;
 
-export const MonomerLibraryHeader = styled.div(() => ({
-  padding: '12px',
-  position: 'relative',
-}));
+  &:hover,
+  &:has(input:focus) {
+    outline: ${(props) => props.theme.ketcher.outline.selected.small};
+  }
+`;
 
-export const MonomerLibrarySearch = styled.div(({ theme }) => ({
-  padding: '12px 0',
+export const MonomerLibraryToggle = styled.button`
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  cursor: pointer;
+  background-color: #e2e5e9;
+  text-transform: none;
+  font-weight: ${({ theme }) => theme.ketcher.font.weight.regular};
+  font-size: ${({ theme }) => theme.ketcher.font.size.regular};
+  color: ${({ theme }) => theme.ketcher.color.text.secondary};
+`;
 
-  '& > div': {
-    background: theme.ketcher.color.input.background.default,
-    display: 'flex',
-    height: '24px',
-    flexDirection: 'row',
-    border: '1px solid transparent',
-    borderRadius: '4px',
-    padding: '0 4px',
+export const MonomerLibrarySearchIcon = styled(Icon)`
+  height: 16px;
+  width: 16px;
+  color: ${(props) => props.theme.ketcher.color.text.secondary};
+`;
 
-    '& > span': {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
+export const MonomerLibraryInput = styled(Input)`
+  flex-grow: 1;
+  padding: 0;
+  margin: 0;
+  background-color: transparent;
+  border: none;
+  outline: none;
 
-    '&:has(input:focus)': {
-      outline: `1px solid ${theme.ketcher.color.input.border.focus}`,
-    },
+  &:hover {
+    outline: none;
+  }
 
-    '& > input': {
-      background: 'transparent',
-      border: 'none',
-      padding: '0 0 0 8px',
-      margin: 0,
-      flex: 1,
-
-      '&:focus': {
-        outline: 'none',
-      },
-    },
-  },
-}));
+  &:focus {
+    outline: none;
+  }
+`;

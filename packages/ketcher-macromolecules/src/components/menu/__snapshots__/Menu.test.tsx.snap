@@ -12,7 +12,7 @@ Object {
           class="css-498x9x"
         >
           <button
-            class="open css-1odf3mo"
+            class="open css-1ceu922"
             title=""
           >
             <svg
@@ -34,7 +34,7 @@ Object {
           class="css-498x9x"
         >
           <button
-            class="erase css-1odf3mo"
+            class="erase css-1ceu922"
             title=""
           >
             <svg
@@ -58,7 +58,7 @@ Object {
               class="css-5su45f"
             >
               <button
-                class="select-lasso css-1odf3mo"
+                class="select-lasso css-1ceu922"
                 title=""
               >
                 <svg
@@ -80,7 +80,7 @@ Object {
                 </svg>
               </button>
               <svg
-                class="dropdown css-1e1sh25"
+                class="dropdown css-zoaulv"
                 height="1000"
                 viewBox="0 0 1000 1000"
                 width="1000"
@@ -99,7 +99,7 @@ Object {
               class="css-5su45f"
             >
               <button
-                class="shape-rectangle css-1odf3mo"
+                class="shape-rectangle css-1ceu922"
                 title=""
               >
                 <svg
@@ -117,7 +117,7 @@ Object {
                 </svg>
               </button>
               <svg
-                class="dropdown css-1e1sh25"
+                class="dropdown css-zoaulv"
                 height="1000"
                 viewBox="0 0 1000 1000"
                 width="1000"
@@ -136,7 +136,7 @@ Object {
               class="css-5su45f"
             >
               <button
-                class="transform-flip-h css-1odf3mo"
+                class="transform-flip-h css-1ceu922"
                 title=""
               >
                 <svg
@@ -154,7 +154,7 @@ Object {
                 </svg>
               </button>
               <svg
-                class="dropdown css-1e1sh25"
+                class="dropdown css-zoaulv"
                 height="1000"
                 viewBox="0 0 1000 1000"
                 width="1000"
@@ -178,7 +178,7 @@ Object {
         class="css-498x9x"
       >
         <button
-          class="open css-1odf3mo"
+          class="open css-1ceu922"
           title=""
         >
           <svg
@@ -200,7 +200,7 @@ Object {
         class="css-498x9x"
       >
         <button
-          class="erase css-1odf3mo"
+          class="erase css-1ceu922"
           title=""
         >
           <svg
@@ -224,7 +224,7 @@ Object {
             class="css-5su45f"
           >
             <button
-              class="select-lasso css-1odf3mo"
+              class="select-lasso css-1ceu922"
               title=""
             >
               <svg
@@ -246,7 +246,7 @@ Object {
               </svg>
             </button>
             <svg
-              class="dropdown css-1e1sh25"
+              class="dropdown css-zoaulv"
               height="1000"
               viewBox="0 0 1000 1000"
               width="1000"
@@ -265,7 +265,7 @@ Object {
             class="css-5su45f"
           >
             <button
-              class="shape-rectangle css-1odf3mo"
+              class="shape-rectangle css-1ceu922"
               title=""
             >
               <svg
@@ -283,7 +283,7 @@ Object {
               </svg>
             </button>
             <svg
-              class="dropdown css-1e1sh25"
+              class="dropdown css-zoaulv"
               height="1000"
               viewBox="0 0 1000 1000"
               width="1000"
@@ -302,7 +302,7 @@ Object {
             class="css-5su45f"
           >
             <button
-              class="transform-flip-h css-1odf3mo"
+              class="transform-flip-h css-1ceu922"
               title=""
             >
               <svg
@@ -320,7 +320,7 @@ Object {
               </svg>
             </button>
             <svg
-              class="dropdown css-1e1sh25"
+              class="dropdown css-zoaulv"
               height="1000"
               viewBox="0 0 1000 1000"
               width="1000"

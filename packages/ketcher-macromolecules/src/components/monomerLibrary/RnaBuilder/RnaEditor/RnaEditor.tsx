@@ -17,12 +17,7 @@
 import { useEffect, useState } from 'react';
 import { RnaEditorCollapsed } from './RnaEditorCollapsed';
 import { RnaEditorExpanded } from './RnaEditorExpanded';
-import {
-  ExpandButton,
-  ExpandIcon,
-  RnaEditorContainer,
-  StyledHeader,
-} from './styles';
+import { ExpandIcon, RnaEditorContainer, StyledHeader } from './styles';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   createNewPreset,
@@ -36,6 +31,7 @@ import {
 } from 'state/rna-builder';
 import { scrollToElement } from 'helpers/dom';
 import { selectIsSequenceEditInRNABuilderMode } from 'state/common';
+import clsx from 'clsx';
 
 export const scrollToSelectedPreset = (presetName) => {
   scrollToElement(`[data-rna-preset-item-name="${presetName}"]`);
@@ -83,22 +79,19 @@ export const RnaEditor = ({ duplicatePreset }) => {
   return (
     <RnaEditorContainer data-testid="rna-editor">
       <StyledHeader
-        className={
-          isSequenceEditInRNABuilderMode
-            ? 'styled-header--sequence-edit-mode'
-            : ''
-        }
+        className={clsx(
+          isSequenceEditInRNABuilderMode && 'styled-header--sequence-edit-mode',
+          expanded && 'styled-header--expanded',
+          activePreset?.name && 'styled-header--active-preset',
+        )}
+        onClick={expandEditor}
+        data-testid="rna-builder-expand-button"
       >
         RNA Builder
-        <ExpandButton
-          onClick={expandEditor}
-          data-testid="rna-builder-expand-button"
-        >
-          <ExpandIcon expanded={expanded} name="chevron" />
-        </ExpandButton>
+        <ExpandIcon expanded={expanded} name="chevron" />
       </StyledHeader>
-      {activePreset ? (
-        expanded ? (
+      {activePreset &&
+        (expanded ? (
           <RnaEditorExpanded
             isEditMode={isEditMode}
             onDuplicate={duplicatePreset}
@@ -108,10 +101,7 @@ export const RnaEditor = ({ duplicatePreset }) => {
             name={activePreset.name}
             fullName={activePresetFullName}
           />
-        )
-      ) : (
-        <></>
-      )}
+        ))}
     </RnaEditorContainer>
   );
 };

@@ -53,6 +53,7 @@ import {
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
 import {
   pressUndoButton,
+  selectClearCanvasTool,
   selectSaveTool,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -77,7 +78,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await turnOnMacromoleculesEditor(page);
-  await selectEraseTool(page);
+  await selectClearCanvasTool(page);
   await resetZoomLevelToDefault(page);
 });
 
@@ -311,7 +312,7 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
   await addMonomerToCenterOfCanvas(page, Presets.T);
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
-  await selectEraseTool(page);
+  await selectClearCanvasTool(page);
 
   await selectSequenceLayoutModeTool(page);
   await page.keyboard.press('U');

@@ -186,7 +186,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     const yArrowEnd = yArrowStart + yDelta20;
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
-    await savedFileInfoStartsWithRxn(page);
+    await savedFileInfoStartsWithRxn(page, true);
 
     await pressButton(page, 'Cancel');
     await selectClearCanvasTool(page);

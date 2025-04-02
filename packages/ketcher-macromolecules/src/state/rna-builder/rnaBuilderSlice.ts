@@ -62,6 +62,7 @@ interface IRnaBuilderState {
   presetsDefault: IRnaPreset[];
   presetsCustom: IRnaPreset[];
   activeRnaBuilderItem?: RnaBuilderItem | null;
+  activeMonomerKey: string | null;
   isEditMode: boolean;
   uniqueNameError: string;
   invalidPresetError: string;
@@ -82,6 +83,7 @@ const initialState: IRnaBuilderState = {
   presetsDefault: [],
   presetsCustom: [],
   activeRnaBuilderItem: null,
+  activeMonomerKey: null,
   isEditMode: false,
   uniqueNameError: '',
   invalidPresetError: '',
@@ -262,6 +264,10 @@ export const rnaBuilderSlice = createSlice({
       state.presetsDefault = [];
     },
 
+    setActiveMonomerKey: (state, action: PayloadAction<string>) => {
+      state.activeMonomerKey = action.payload;
+    },
+
     togglePresetFavorites: (state, action: PayloadAction<IRnaPreset>) => {
       // Find preset to update in default presets
       const presetIndex = state.presetsDefault.findIndex(
@@ -403,6 +409,9 @@ export const selectActivePresetForContextMenu = (state: RootState) => {
 export const selectPresetsInFavorites = (items: IRnaPreset[]) =>
   items.filter((item) => item.favorite);
 
+export const selectActiveMonomerKey = (state: RootState) =>
+  state.rnaBuilder.activeMonomerKey;
+
 // Return custom and default presets
 export const selectAllPresets = (
   state,
@@ -510,6 +519,7 @@ export const {
   setIsSequenceFirstsOnlyNucleoelementsSelected,
   setActivePresetName,
   setActiveRnaBuilderItem,
+  setActiveMonomerKey,
   recalculateRnaBuilderValidations,
   setActivePresetMonomerGroup,
   savePreset,

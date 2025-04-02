@@ -1,15 +1,16 @@
-import { Monomer } from '@utils/types';
+import { MonomerType } from '@utils/types';
+import { createMonomerGroup } from './common';
 
-export const Phosphates = {
+export const Phosphates = createMonomerGroup(MonomerType.Phosphate, {
   Test_6_Ph: {
     alias: 'Test-6-Ph',
     testId: 'Test-6-Ph___Test-6-AP-Phosphate',
-  } as Monomer,
-  P: { alias: 'P', testId: 'P___Phosphate' } as Monomer,
-  sP_: { alias: 'sP-', testId: 'sP-___Dihydrogen phosphorothioate' } as Monomer,
-  bP: { alias: 'bP', testId: 'bP___Boranophosphate' } as Monomer,
-  moen: { alias: 'moen', testId: 'moen___2-Methoxyethylamino' } as Monomer,
-  mn: { alias: 'mn', testId: 'mn___Methylamino' } as Monomer,
-  msp: { alias: 'msp', testId: 'msp___Methylphosphonothioic acid' } as Monomer,
-  ibun: { alias: 'ibun', testId: 'ibun___Isobutylamino' } as Monomer,
-};
+  },
+  P: { alias: 'P', testId: 'P___Phosphate' },
+  sP_: { alias: 'sP-', testId: 'sP-___Dihydrogen phosphorothioate' },
+  bP: { alias: 'bP', testId: 'bP___Boranophosphate' },
+  moen: { alias: 'moen', testId: 'moen___2-Methoxyethylamino' },
+  mn: { alias: 'mn', testId: 'mn___Methylamino' },
+  msp: { alias: 'msp', testId: 'msp___Methylphosphonothioic acid' },
+  ibun: { alias: 'ibun', testId: 'ibun___Isobutylamino' },
+});

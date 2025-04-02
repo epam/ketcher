@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import styled from '@emotion/styled';
 import { Icon } from 'ketcher-react';
 
@@ -58,12 +59,9 @@ export const PresetName = styled.p`
 `;
 
 export const PresetIcon = styled(Icon)`
-  color: ${(props) => props.theme.ketcher.color.icon.grey};
-  padding-right: ${(props) =>
-    props.name === 'sugar' ? '4px' : props.name === 'phosphate' ? '1px' : 0};
-  padding-left: ${(props) =>
-    props.name === 'base' ? '2px' : props.name === 'phosphate' ? '1px' : 0};
-  stroke: ${(props) => props.theme.ketcher.color.icon.grey};
-  height: ${(props) => (props.name === 'sugar' ? '12px' : '14px')};
-  width: ${(props) => (props.name === 'sugar' ? '12px' : '14px')};
+  height: 14px;
+  width: 14px;
+  margin-right: 4px;
+  color: ${({ theme }) => theme.ketcher.color.icon.grey};
+  stroke: ${({ theme }) => theme.ketcher.color.icon.grey};
 `;

@@ -103,15 +103,15 @@ export async function selectHandTool(page: Page) {
 }
 
 export async function hideLibrary(page: Page) {
-  const hideLibraryLink = page.getByText('Hide');
-  const isVisible = await hideLibraryLink.isVisible();
+  const hideLibraryButton = page.getByTestId('hide-monomer-library');
+  const isVisible = await hideLibraryButton.isVisible();
   if (isVisible) {
-    await hideLibraryLink.click();
+    await hideLibraryButton.click();
   }
 }
 
 export async function showLibrary(page: Page) {
-  const showLibraryButton = page.getByText('Show Library');
+  const showLibraryButton = page.getByTestId('show-monomer-library');
   const isVisible = await showLibraryButton.isVisible();
   if (isVisible) {
     await showLibraryButton.click();

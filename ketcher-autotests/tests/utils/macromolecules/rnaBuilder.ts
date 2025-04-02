@@ -126,11 +126,3 @@ export async function pressSaveButton(page: Page) {
   await moveMouseAway(page);
   await page.getByTestId('save-btn').click();
 }
-
-export async function expandCollapseRnaBuilder(page: Page) {
-  await page
-    .locator('div')
-    .filter({ hasText: /^RNA Builder$/ })
-    .getByRole('button')
-    .click();
-}

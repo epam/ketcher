@@ -72,3 +72,5 @@ export const LIBRARY_TAB_INDEX = {
   RNA: 2,
   CHEM: 3,
 } as const;
+
+export const FavoriteStarSymbol = '★' as const;

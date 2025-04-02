@@ -5,19 +5,21 @@ const StyledMonomerLibraryToggle = styled.div(({ theme }) => {
   return {
     margin: 0,
     fontSize: theme.ketcher.font.size.regular,
-    color: theme.ketcher.color.text.secondary,
     position: 'absolute',
+    top: '12px',
     cursor: 'pointer',
-    top: 'calc(8px + 12px)',
-    right: 'calc(4px + 12px)',
     visibility: 'visible',
     opacity: 1,
     whiteSpace: 'nowrap',
     display: 'flex',
+    alignItems: 'center',
     lineHeight: 1,
-    padding: '5px 8px',
-    borderRadius: '4px',
     userSelect: 'none',
+    backgroundColor: theme.ketcher.color.button.primary.active,
+    color: theme.ketcher.color.button.text.primary,
+    right: '12px',
+    padding: '10px 8px',
+    borderRadius: '4px',
 
     '& > span': {
       display: 'flex',
@@ -28,29 +30,23 @@ const StyledMonomerLibraryToggle = styled.div(({ theme }) => {
         marginRight: '2px',
       },
     },
-
-    '&.hidden': {
-      backgroundColor: theme.ketcher.color.button.primary.active,
-      color: theme.ketcher.color.button.text.primary,
-    },
   };
 });
 
 interface Props {
-  isHidden: boolean;
   onClick: () => void;
 }
 
-const MonomerLibraryToggle = ({ isHidden, onClick }: Props) => {
+const MonomerLibraryToggle = ({ onClick }: Props) => {
   return (
     <StyledMonomerLibraryToggle
-      className={isHidden ? 'hidden' : ''}
       onClick={onClick}
+      data-testid="show-monomer-library"
     >
       <span className="icon">
-        {isHidden ? <Icon name="arrows-left" /> : <Icon name="arrows-right" />}
+        <Icon name="arrows-left" />
       </span>
-      <span>{isHidden ? 'Show Library' : 'Hide'}</span>
+      Show Library
     </StyledMonomerLibraryToggle>
   );
 };

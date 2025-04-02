@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 import { Provider } from 'react-redux';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
 import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
@@ -22,6 +22,7 @@ import {
   BaseMonomer,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   NodeSelection,
+  NodesSelection,
 } from 'ketcher-core';
 import { store } from 'state';
 import {
@@ -93,6 +94,7 @@ import { PolymerBondContextMenu } from 'components/contextMenu/PolymerBondContex
 import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
+import { RootSizeProvider } from './contexts';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -129,13 +131,15 @@ function EditorContainer({
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
-        <EditorWrapper ref={rootElRef} className={EditorClassName}>
-          <Editor
-            theme={editorTheme}
-            togglerComponent={togglerComponent}
-            monomersLibraryUpdate={monomersLibraryUpdate}
-          />
-        </EditorWrapper>
+        <RootSizeProvider rootRef={rootElRef}>
+          <EditorWrapper ref={rootElRef} className={EditorClassName}>
+            <Editor
+              theme={editorTheme}
+              togglerComponent={togglerComponent}
+              monomersLibraryUpdate={monomersLibraryUpdate}
+            />
+          </EditorWrapper>
+        </RootSizeProvider>
       </ThemeProvider>
     </Provider>
   );
@@ -210,12 +214,15 @@ function Editor({
         });
       },
     );
-    editor?.events.rightClickCanvas.add((event) => {
-      showSequenceContextMenu({
-        event,
-        props: {},
-      });
-    });
+    editor?.events.rightClickCanvas.add(
+      ([event, selections]: [TriggerEvent, NodesSelection]) => {
+        setSelections(selections);
+        showSequenceContextMenu({
+          event,
+          props: {},
+        });
+      },
+    );
   }, [editor]);
 
   useEffect(() => {
@@ -228,6 +235,10 @@ function Editor({
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());
   };
+
+  const toggleLibraryVisibility = useCallback(() => {
+    setIsMonomerLibraryHidden((prev) => !prev);
+  }, []);
 
   return (
     <>
@@ -301,13 +312,12 @@ function Editor({
         </Layout.Main>
 
         <Layout.Right hide={isMonomerLibraryHidden}>
-          <MonomerLibrary />
+          <MonomerLibrary toggleLibraryVisibility={toggleLibraryVisibility} />
         </Layout.Right>
         <Layout.InsideRoot>
-          <MonomerLibraryToggle
-            isHidden={isMonomerLibraryHidden}
-            onClick={() => setIsMonomerLibraryHidden((prev) => !prev)}
-          />
+          {isMonomerLibraryHidden && (
+            <MonomerLibraryToggle onClick={toggleLibraryVisibility} />
+          )}
         </Layout.InsideRoot>
       </Layout>
       <Preview />

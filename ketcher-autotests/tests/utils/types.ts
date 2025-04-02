@@ -25,12 +25,24 @@ export enum MacroBondType {
 export interface Monomer {
   alias: string;
   testId: string;
+  monomerType: MonomerType;
 }
 
 export enum SequenceModeType {
   RNA = 'RNA',
   DNA = 'DNA',
   Peptide = 'Peptide',
+  CHEM = 'CHEM',
+  Phosphate = 'Phosphate',
+  Unknown = 'Unknown',
+  Dash = 'Dash',
+  Gap = 'Gap',
+  Enter = 'Sequence/chain breaker',
+}
+
+export enum SequenceChainType {
+  Sense = 'Sense',
+  Antisense = 'Antisense',
 }
 
 export enum SymbolType {

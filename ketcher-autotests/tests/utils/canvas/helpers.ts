@@ -13,18 +13,17 @@ import {
   pressButton,
 } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
+import { getControlModifier } from '@utils/keyboard';
 import {
-  selectMonomer,
   AtomButton,
   RingButton,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   TemplateLibrary,
-  selectRing,
-  waitForSpinnerFinishedWork,
-  getControlModifier,
   TopPanelButton,
-} from '..';
-import { waitForRender } from '@utils/common';
+  STRUCTURE_LIBRARY_BUTTON_NAME,
+  selectMonomer,
+  selectRing,
+} from '@utils/selectors';
+import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import {
   openSettings,
   selectAtomInToolbar,
@@ -168,7 +167,10 @@ export async function takeElementScreenshot(
   },
 ) {
   if (options?.hideMonomerPreview) {
-    await page.keyboard.press('Shift');
+    await page.evaluate(() => {
+      window.dispatchEvent(new Event('hidePreview'));
+    });
+    await page.getByTestId('polymer-library-preview').isHidden();
   }
 
   const element = page.getByTestId(elementId).first();
@@ -206,11 +208,12 @@ export async function getCoordinatesOfTopMostCarbon(page: Page) {
 
 export async function takePageScreenshot(
   page: Page,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+  options?: { masks?: Locator[]; maxDiffPixelRatio?: number; timeout?: number },
 ) {
   await expect(page).toHaveScreenshot({
     mask: options?.masks,
     maxDiffPixelRatio: options?.maxDiffPixelRatio,
+    timeout: options?.timeout,
   });
 }
 

@@ -31,13 +31,12 @@ export const Card = styled.div<{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 5px;
   font-size: ${({ theme }) => theme.ketcher.font.size.small};
   color: ${({ theme }) => theme.ketcher.color.text.primary};
   position: relative;
   overflow: hidden;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 5px 0 rgba(103, 104, 132, 0.149);
   margin: 0;
   user-select: none;
   border-color: #167782;

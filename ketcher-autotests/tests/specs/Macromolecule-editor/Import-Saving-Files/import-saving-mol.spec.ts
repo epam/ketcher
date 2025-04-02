@@ -1,13 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page, chromium } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  selectOpenFileTool,
-  selectSaveTool,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
@@ -30,6 +23,13 @@ import {
   resetZoomLevelToDefault,
   selectZoomOutTool,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { pageReload } from '@utils/common/helpers';
 import { chooseFileFormat, waitForMonomerPreview } from '@utils/macromolecules';
 

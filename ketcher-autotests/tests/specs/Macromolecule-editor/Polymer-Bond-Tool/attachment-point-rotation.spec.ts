@@ -11,7 +11,7 @@ import {
   selectMacroBond,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
 
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */

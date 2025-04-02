@@ -29,6 +29,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Chem } from '@constants/monomers/Chem';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
 /* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(
@@ -50,6 +51,7 @@ test.describe('Rectangle Selection Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
+    await goToPeptidesTab(page);
   });
   test('Select monomer and bonds and then erase', async ({ page }) => {
     /* 

@@ -36,12 +36,14 @@ import { Chem } from '@constants/monomers/Chem';
 import { Bases } from '@constants/monomers/Bases';
 import { Sugars } from '@constants/monomers/Sugars';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
+    await goToPeptidesTab(page);
   });
 
   test('Delete monomer bonded with another monomers', async ({ page }) => {

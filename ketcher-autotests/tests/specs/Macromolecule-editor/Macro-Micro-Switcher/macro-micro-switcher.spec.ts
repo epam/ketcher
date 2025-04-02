@@ -42,7 +42,6 @@ import {
   openPasteFromClipboard,
   pressButton,
   readFileContents,
-  selectAllStructuresOnCanvas,
   selectAromatizeTool,
   selectAtomInToolbar,
   selectCleanTool,
@@ -74,6 +73,7 @@ import {
   waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
   addSuperatomAttachmentPoint,
   removeSuperatomAttachmentPoint,

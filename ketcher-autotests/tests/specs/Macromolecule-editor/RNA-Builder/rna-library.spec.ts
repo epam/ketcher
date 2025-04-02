@@ -1043,12 +1043,21 @@ test.describe('RNA Library', () => {
       await page.keyboard.press('Escape');
       await toggleNucleotidesAccordion(page);
       await clickInTheMiddleOfTheScreen(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
       await dragMouseTo(x, y, page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
       await selectEraseTool(page);
       await clickOnCanvas(page, x, y);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
     });
   }
 

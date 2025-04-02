@@ -302,7 +302,10 @@ test.describe('Rectangle Selection Tool', () => {
     await selectRectangleSelectionTool(page);
     await getMonomerLocator(page, Chem.A6OH).click();
     await dragMouseTo(x, y, page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   const testCasesForChems = [

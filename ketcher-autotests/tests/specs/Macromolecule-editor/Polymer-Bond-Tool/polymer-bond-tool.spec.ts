@@ -880,6 +880,7 @@ connectionVariants.forEach(({ from, to }) => {
       'KET/five-peptides-connected-by-r2-r1.ket',
       page,
     );
+    await moveMouseAway(page);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,

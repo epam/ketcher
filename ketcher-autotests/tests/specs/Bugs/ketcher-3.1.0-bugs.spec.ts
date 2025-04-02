@@ -27,7 +27,6 @@ import {
   selectSequenceLayoutModeTool,
   pasteFromClipboard,
   openStructurePasteFromClipboard,
-  switchSyncMode,
 } from '@utils';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
@@ -44,6 +43,8 @@ import {
   getSymbolLocator,
   getMonomerLocator,
   moveMonomer,
+  turnSyncEditModeOff,
+  turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
 import {
   pressSaveButton,
@@ -462,7 +463,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P}|RNA2{R(U)P.R(U)}|PEPTIDE1{E.E}|RNA3{R(A)}$RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA3,2:R2-1:R1|RNA1,RNA2,2:pair-5:pair|RNA3,RNA2,2:pair-2:pair$$$V2.0',
     );
-    await switchSyncMode(page);
+    await turnSyncEditModeOff(page);
     await doubleClickOnSequenceSymbol(page, 'E', { nthNumber: 0 });
     await page.keyboard.press('Backspace');
     await takeEditorScreenshot(page, {
@@ -493,7 +494,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(G)}|RNA2{R(U)}|RNA3{R(C)}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA3,5:pair-2:pair$$$V2.0',
     );
-    await switchSyncMode(page);
+    await turnSyncEditModeOff(page);
     await doubleClickOnSequenceSymbol(page, 'G', { nthNumber: 0 });
     for (let i = 0; i < 2; i++) {
       await page.keyboard.press('ArrowLeft');
@@ -528,7 +529,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       MacroFileType.HELM,
       'RNA1{R(C)P.R(A)}|RNA2{R(U)}|RNA3{R(G)}$RNA2,RNA1,2:pair-5:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
     );
-    await switchSyncMode(page);
+    await turnSyncEditModeOn(page);
     await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 0 });
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('Backspace');

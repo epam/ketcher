@@ -160,10 +160,6 @@ export async function switchSequenceEnteringButtonType(
   await page.getByTestId(`${sequenceEnteringType}Btn`).click();
 }
 
-export async function switchSyncMode(page: Page) {
-  await page.getByTestId('sync_sequence_edit_mode').first().click();
-}
-
 export async function selectFlexLayoutModeTool(page: Page) {
   await openLayoutModeMenu(page);
   const flexModeButton = page.getByTestId('flex-layout-mode').first();

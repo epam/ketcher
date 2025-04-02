@@ -29,7 +29,6 @@ import {
   SequenceType,
   startNewSequence,
   switchSequenceEnteringButtonType,
-  switchSyncMode,
   takeEditorScreenshot,
   takePageScreenshot,
   typePeptideAlphabet,
@@ -53,6 +52,7 @@ import {
   createRNAAntisenseChain,
   getMonomerLocator,
   getSymbolLocator,
+  turnSyncEditModeOff,
 } from '@utils/macromolecules/monomer';
 import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
 import {
@@ -1494,7 +1494,7 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await switchSyncMode(page);
+    await turnSyncEditModeOff(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

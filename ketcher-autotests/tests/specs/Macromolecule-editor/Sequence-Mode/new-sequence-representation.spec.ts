@@ -3,10 +3,6 @@
 import { Bases } from '@constants/monomers/Bases';
 import { Page, test, expect } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   clickInTheMiddleOfTheScreen,
   MacroBondType,
   MacroFileType,
@@ -25,8 +21,11 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-
 import {
   getMonomerLocator,
   getSymbolLocator,

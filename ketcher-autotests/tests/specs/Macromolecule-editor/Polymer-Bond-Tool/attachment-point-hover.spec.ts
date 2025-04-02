@@ -8,13 +8,14 @@ import {
   selectMacroBond,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-
+import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 
 test.describe('Check attachment point hover', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
+    await goToPeptidesTab(page);
   });
 
   test('Move monomer bonded with another monomers and hover attachment points', async ({

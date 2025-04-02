@@ -5,7 +5,7 @@ import {
   MOLECULES_MODE,
 } from '@constants/testIdConstants';
 import { type Page, expect } from '@playwright/test';
-import { selectFlexLayoutModeTool, takePageScreenshot } from '@utils/canvas';
+import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { clickOnCanvas } from '@utils/clicks';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
@@ -50,11 +50,6 @@ export async function selectClearCanvasTool(page: Page, maxAttempts = 10) {
       await page.waitForTimeout(100);
     }
   }
-
-  await takePageScreenshot(page);
-  // throw new Error(
-  //   `Unable to click the 'Clear Canvas' button after ${maxAttempts} attempts.`,
-  // );
 }
 
 export async function selectOpenFileTool(page: Page) {

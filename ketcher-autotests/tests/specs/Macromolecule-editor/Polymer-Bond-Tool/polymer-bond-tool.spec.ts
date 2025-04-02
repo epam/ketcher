@@ -63,6 +63,7 @@ import {
   selectOpenFileTool,
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -139,6 +140,7 @@ test('Create bond between two peptides', async () => {
     Description: Polymer bond tool
     */
   // Choose peptide
+  await goToPeptidesTab(page);
   const peptide1 = await addSingleMonomerToCanvas(
     page,
     Peptides.Tza,
@@ -231,6 +233,7 @@ test('Select monomers and pass a bond', async () => {
       than 1 bond between the first and the second monomer
       */
 
+  await goToPeptidesTab(page);
   const peptide1 = await addSingleMonomerToCanvas(
     page,
     Peptides.Tza,

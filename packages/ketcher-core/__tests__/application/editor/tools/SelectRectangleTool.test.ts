@@ -99,7 +99,7 @@ describe('Select Rectangle Tool', () => {
       target: {
         __data__: polymerBond.renderer,
       },
-    };
+    } as MouseEvent;
     const selectRectangleTool = new SelectRectangle(
       new CoreEditor({
         theme: polymerEditorTheme,
@@ -172,7 +172,7 @@ describe('Select Rectangle Tool', () => {
       },
       pageX: initialPosition.x,
       pageY: initialPosition.y,
-    };
+    } as MouseEvent;
 
     editor.drawingEntitiesManager.selectDrawingEntity(peptide);
     selectRectangleTool.mousedown(event);

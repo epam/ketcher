@@ -21,11 +21,11 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProjectMacro,
-  selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   selectZoomOutTool,
   selectMonomer,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { pageReload } from '@utils/common/helpers';
 import {
   FileType,

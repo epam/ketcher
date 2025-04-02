@@ -48,6 +48,7 @@ import {
   clickOnSequenceSymbol,
   doubleClickOnSequenceSymbol,
   switchToPeptideMode,
+  switchToRNAMode,
 } from '@utils/macromolecules/sequence';
 import {
   pressUndoButton,
@@ -293,13 +294,20 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 4. Single click on the same symbol one more time (after shot pause)
      * 5. Take a screenshot
      */
+    await switchToRNAMode(page);
     await waitForRender(page, async () => {
       await page.keyboard.type('AAAAAAAAAAAA');
     });
     await clickOnCanvas(page, 400, 400);
-    await clickOnSequenceSymbol(page, 'A', { nthNumber: 11 });
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 11,
+    }).click();
     await delay(2);
-    await clickOnSequenceSymbol(page, 'A', { nthNumber: 11 });
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 11,
+    }).click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

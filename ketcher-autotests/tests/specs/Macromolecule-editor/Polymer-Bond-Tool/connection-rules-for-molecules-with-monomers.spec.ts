@@ -17,6 +17,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { addSuperatomAttachmentPoint } from '@utils/canvas/atoms/superatomAttachmentPoints';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 
@@ -41,6 +42,7 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await takeEditorScreenshot(page);
 
     await turnOnMacromoleculesEditor(page);
+    await goToPeptidesTab(page);
     const firstAlanine = await addSingleMonomerToCanvas(
       page,
       Peptides.A,

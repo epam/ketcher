@@ -1,17 +1,17 @@
 /* eslint-disable no-magic-numbers */
 import { Page, chromium, expect, test } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  selectSaveTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   waitForKetcherInit,
   waitForIndigoToLoad,
   openStructurePasteFromClipboard,
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Open/save file tests: ', () => {
   let page: Page;

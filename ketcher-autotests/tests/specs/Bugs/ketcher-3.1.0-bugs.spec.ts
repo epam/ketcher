@@ -39,13 +39,13 @@ import {
   getSymbolLocator,
   getMonomerLocator,
   moveMonomer,
+  turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
 import {
   pressSaveButton,
   selectBaseSlot,
 } from '@utils/macromolecules/rnaBuilder';
 import {
-  clickOnSequenceSymbol,
   doubleClickOnSequenceSymbol,
   switchToPeptideMode,
   switchToRNAMode,
@@ -545,7 +545,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       MacroFileType.HELM,
       'RNA1{R(C)P.R(A)}|RNA2{R(U)}|RNA3{R(G)}$RNA2,RNA1,2:pair-5:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
     );
-    await switchSyncMode(page);
+    await turnSyncEditModeOn(page);
     await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 0 });
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('Backspace');

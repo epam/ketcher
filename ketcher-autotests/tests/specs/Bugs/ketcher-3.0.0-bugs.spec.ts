@@ -61,6 +61,7 @@ import {
   hoverOnSequenceSymbol,
   switchToDNAMode,
   switchToPeptideMode,
+  switchToRNAMode,
 } from '@utils/macromolecules/sequence';
 import {
   pressUndoButton,
@@ -150,6 +151,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Add sequences to the canvas until they vertically fill the viewport (without using the scroll bar)
      * 3. Press the “Enter” key, and enter one more sequence by typing it manually
      */
+    await switchToRNAMode(page);
     const sequences = [
       'AAAA',
       'CCC',
@@ -460,6 +462,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Undo several times >> Enter several times.
      * 4. Take a screenshot
      */
+    await switchToRNAMode(page);
     await page.keyboard.type('AAATT');
     await switchToDNAMode(page);
     await page.keyboard.type('AAATT');
@@ -515,6 +518,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Press left on the keyboard.
      * 5. Take a screenshot
      */
+    await switchToRNAMode(page);
     await page.keyboard.type('AAATT');
     await page.keyboard.down('Shift');
     for (let i = 0; i < 3; i++) {

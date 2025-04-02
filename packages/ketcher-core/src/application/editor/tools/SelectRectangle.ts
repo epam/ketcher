@@ -162,7 +162,10 @@ class SelectRectangle implements BaseTool {
     }
   }
 
-  private startMoveIfNeeded(renderer: BaseRenderer) {
+  // TODO: This type is only to resolve the TS error below. Ideally restructure the if-else order so it won't be called for sequence item at all
+  private startMoveIfNeeded(
+    renderer: BaseRenderer | (BaseRenderer & BaseSequenceItemRenderer),
+  ) {
     if (this.editor.mode.modeName === 'sequence-layout-mode') {
       this.moveStarted = !(renderer instanceof BaseSequenceItemRenderer);
     } else {
@@ -170,10 +173,15 @@ class SelectRectangle implements BaseTool {
     }
   }
 
-  mousedown(event) {
+  mousedown(event: MouseEvent) {
     if (CoreEditor.provideEditorInstance().isSequenceAnyEditMode) return;
 
-    const renderer = event.target.__data__;
+    const renderer = event.target?.__data__;
+
+    if (!renderer) {
+      return;
+    }
+
     const drawingEntitiesToSelect: DrawingEntity[] = [];
     const ModKey = isMacOs ? event.metaKey : event.ctrlKey;
     const modelChanges = new Command();
@@ -817,33 +825,36 @@ class SelectRectangle implements BaseTool {
     });
   }
 
-  mouseup(event) {
-    const renderer = event.target.__data__;
-    if (this.moveStarted && renderer?.drawingEntity?.selected) {
-      if (
-        Vec2.diff(
-          this.mousePositionAfterMove,
-          this.mousePositionBeforeMove,
-        ).length() === 0
-      ) {
-        return;
-      }
+  mouseup(event: MouseEvent) {
+    const renderer = event.target?.__data__;
 
-      const modelChanges =
-        this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
-          new Vec2(0, 0),
-          Coordinates.canvasToModel(
-            new Vec2(
-              this.mousePositionAfterMove.x - this.mousePositionBeforeMove.x,
-              this.mousePositionAfterMove.y - this.mousePositionBeforeMove.y,
+    try {
+      if (this.moveStarted && renderer?.drawingEntity?.selected) {
+        if (
+          Vec2.diff(
+            this.mousePositionAfterMove,
+            this.mousePositionBeforeMove,
+          ).length() === 0
+        ) {
+          return;
+        }
+
+        const modelChanges =
+          this.editor.drawingEntitiesManager.moveSelectedDrawingEntities(
+            new Vec2(0, 0),
+            Coordinates.canvasToModel(
+              new Vec2(
+                this.mousePositionAfterMove.x - this.mousePositionBeforeMove.x,
+                this.mousePositionAfterMove.y - this.mousePositionBeforeMove.y,
+              ),
             ),
-          ),
-        );
-      this.history.update(modelChanges);
+          );
+        this.history.update(modelChanges);
+      }
+    } finally {
+      this.moveStarted = false;
+      this.editor.transientDrawingView.clear();
     }
-
-    this.moveStarted = false;
-    this.editor.transientDrawingView.clear();
   }
 
   mouseOverDrawingEntity(event) {

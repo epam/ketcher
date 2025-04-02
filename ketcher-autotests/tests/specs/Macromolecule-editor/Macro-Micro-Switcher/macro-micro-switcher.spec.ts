@@ -8,14 +8,6 @@ import { Sugars } from '@constants/monomers/Sugars';
 import { FAVORITES_TAB } from '@constants/testIdConstants';
 import { Page, expect, test } from '@playwright/test';
 import {
-  selectClearCanvasTool,
-  selectOpenFileTool,
-  pressUndoButton,
-  selectSaveTool,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   AtomButton,
   FILE_TEST_DATA,
   FunctionalGroups,
@@ -73,6 +65,14 @@ import {
   waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  pressUndoButton,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
   addSuperatomAttachmentPoint,

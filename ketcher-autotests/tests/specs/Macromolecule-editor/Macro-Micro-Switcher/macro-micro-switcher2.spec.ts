@@ -66,6 +66,11 @@ import { Chem } from '@constants/monomers/Chem';
 import { Bases } from '@constants/monomers/Bases';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  switchToDNAMode,
+  switchToPeptideMode,
+  switchToRNAMode,
+} from '@utils/macromolecules/sequence';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [
@@ -634,6 +639,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await turnOnMacromoleculesEditor(page);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
+    await clickOnCanvas(page, 800, 100);
     await pasteFromClipboardByKeyboard(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -914,10 +920,11 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
+    await switchToRNAMode(page);
     await page.keyboard.type('CCC');
-    await selectSequenceTypeMode(page, 'DNA');
+    await switchToDNAMode(page);
     await page.keyboard.type('CCC');
-    await selectSequenceTypeMode(page, 'PEPTIDE');
+    await switchToPeptideMode(page);
     await page.keyboard.type('CCC');
     await takePageScreenshot(page);
   });
@@ -941,10 +948,11 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
+    // await switchToRNAMode(page);
     await page.keyboard.type('CCC');
-    await selectSequenceTypeMode(page, 'DNA');
+    await switchToDNAMode(page);
     await page.keyboard.type('CCC');
-    await selectSequenceTypeMode(page, 'PEPTIDE');
+    await switchToPeptideMode(page);
     await page.keyboard.type('CCC');
     await takePageScreenshot(page);
     await selectFlexLayoutModeTool(page);

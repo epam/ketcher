@@ -94,6 +94,10 @@ export async function turnOnMacromoleculesEditor(
     await selectFlexLayoutModeTool(page);
   } else if (options.goToPeptides) {
     await goToPeptidesTab(page);
+  } else {
+    // Dirty hack
+    // waiting Library to load
+    await page.getByTestId('summary-Nucleotides').waitFor({ state: 'visible' });
   }
 
   await page.evaluate(() => {

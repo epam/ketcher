@@ -118,6 +118,7 @@ test.describe('Snake Bond Tool', () => {
     */
 
     await selectSnakeLayoutModeTool(page);
+    await goToPeptidesTab(page);
     const [, peptide2] = await addBondedMonomersToCanvas(
       page,
       Peptides.Tza,

@@ -32,7 +32,7 @@ import {
   getControlModifier,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { goToRNATab } from '@utils/macromolecules/library';
+import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
 import {
   connectMonomersWithBonds,
   getMonomerLocator,
@@ -53,6 +53,7 @@ test.describe('Undo Redo', () => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
 
+    await goToPeptidesTab(page);
     peptide1 = await addSingleMonomerToCanvas(page, Peptides.Tza, 300, 300, 0);
     peptide2 = await addSingleMonomerToCanvas(page, Peptides.Tza, 400, 300, 1);
     const peptide3 = await addSingleMonomerToCanvas(

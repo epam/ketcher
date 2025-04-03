@@ -38,6 +38,7 @@ import {
   connectMonomersWithBonds,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
+import { goToRNATab } from '@utils/macromolecules/library';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
@@ -114,6 +115,7 @@ test.describe('Zoom Tool', () => {
     Test case: Zoom Tool
     Description: Minimum value for zoom out is 20% and maximum value for zoom in is 400%
     */
+    await goToRNATab(page);
     await openFileAndAddToCanvasMacro(
       'KET/peptides-connected-with-bonds.ket',
       page,
@@ -391,6 +393,7 @@ test.describe('Zoom Tool', () => {
     Paste from Clipboard window not change their position and not overlap each other.
     After fix bug https://github.com/epam/ketcher/issues/4174 need to update snapshot.
     */
+    await goToRNATab(page);
     await selectOpenFileTool(page);
     await page.getByTestId('paste-from-clipboard-button').click();
     await browser.newContext({ deviceScaleFactor: 2.5 });
@@ -403,6 +406,7 @@ test.describe('Zoom Tool', () => {
     Test case: Zoom Tool
     Description: When zoomed out to 25%, buttons and toolbars have the correct appearance
     */
+    await goToRNATab(page);
     await openStructurePasteFromClipboard(page);
     await browser.newContext({ deviceScaleFactor: 0.2 });
     await page.setViewportSize({ width: 4358, height: 2918 });
@@ -414,6 +418,7 @@ test.describe('Zoom Tool', () => {
     Test case: https://github.com/epam/ketcher/issues/4422 - Case 29
     Description: When zoomed to maximum, buttons in Paste from Clipboard window not change their position and not overlap each other
     */
+    await goToRNATab(page);
     await openStructurePasteFromClipboard(page);
     await browser.newContext({ deviceScaleFactor: 4 });
     await page.setViewportSize({ width: 435, height: 291 });

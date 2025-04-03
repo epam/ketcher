@@ -64,7 +64,6 @@ import {
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
-import { FlexMode } from 'ketcher-core';
 
 let page: Page;
 let sharedContext: BrowserContext;

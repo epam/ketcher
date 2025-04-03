@@ -3,7 +3,6 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { Page, test } from '@playwright/test';
 import {
-  selectClearCanvasTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePageScreenshot,
@@ -32,10 +31,6 @@ import {
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@utils/macromolecules';
-import {
   goToFavoritesTab,
   goToPeptidesTab,
 } from '@utils/macromolecules/library';
@@ -44,17 +39,23 @@ import {
   getSymbolLocator,
   getMonomerLocator,
   moveMonomer,
+  turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
 import {
   pressSaveButton,
   selectBaseSlot,
 } from '@utils/macromolecules/rnaBuilder';
 import {
-  clickOnSequenceSymbol,
   doubleClickOnSequenceSymbol,
   switchToPeptideMode,
+  switchToRNAMode,
 } from '@utils/macromolecules/sequence';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  pressUndoButton,
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 
 let page: Page;
@@ -82,7 +83,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     const context = await browser.newContext();
     page = await context.newPage();
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
@@ -201,7 +205,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     );
     await clickOnAtom(page, 'C', 4, 'right');
     await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page, true, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -287,13 +294,20 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 4. Single click on the same symbol one more time (after shot pause)
      * 5. Take a screenshot
      */
+    await switchToRNAMode(page);
     await waitForRender(page, async () => {
       await page.keyboard.type('AAAAAAAAAAAA');
     });
     await clickOnCanvas(page, 400, 400);
-    await clickOnSequenceSymbol(page, 'A', { nthNumber: 11 });
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 11,
+    }).click();
     await delay(2);
-    await clickOnSequenceSymbol(page, 'A', { nthNumber: 11 });
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 11,
+    }).click();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -344,7 +358,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Hover over D-OAla monomer
      * 4. Take a screenshot
      */
-    await turnOnMacromoleculesEditor(page, true, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: true,
+      goToPeptides: false,
+    });
     await goToPeptidesTab(page);
     await waitForRender(page, async () => {
       await page.getByTestId('D-OAla___D-Lactic acid').hover();
@@ -528,7 +545,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       MacroFileType.HELM,
       'RNA1{R(C)P.R(A)}|RNA2{R(U)}|RNA3{R(G)}$RNA2,RNA1,2:pair-5:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
     );
-    await switchSyncMode(page);
+    await turnSyncEditModeOn(page);
     await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 0 });
     await page.keyboard.press('ArrowLeft');
     await page.keyboard.press('Backspace');

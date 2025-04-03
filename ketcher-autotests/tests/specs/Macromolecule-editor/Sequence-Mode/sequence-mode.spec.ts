@@ -9,7 +9,6 @@ import {
   scrollDown,
   selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
-  clickUndo,
   startNewSequence,
   moveMouseAway,
   switchSequenceEnteringButtonType,
@@ -19,13 +18,13 @@ import {
   selectZoomOutTool,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  selectClearCanvasTool,
 } from '@utils';
 import {
-  enterSequence,
+  pressUndoButton,
+  selectClearCanvasTool,
   turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+} from '@tests/pages/common/TopLeftToolbar';
+import { enterSequence, waitForMonomerPreview } from '@utils/macromolecules';
 
 test.describe('Sequence Mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -184,7 +183,7 @@ test.describe('Sequence Mode', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await selectSequenceLayoutModeTool(page);
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 

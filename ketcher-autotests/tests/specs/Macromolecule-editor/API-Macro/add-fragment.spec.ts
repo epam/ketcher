@@ -3,7 +3,6 @@ import { Page, test } from '@playwright/test';
 import {
   readFileContents,
   waitForPageInit,
-  turnOnMacromoleculesEditor,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
   addFragment,
@@ -13,6 +12,7 @@ import {
   clickInTheMiddleOfTheScreen,
   selectZoomOutTool,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 const fileName = 'KET/alanine-monomers-bonded.ket';

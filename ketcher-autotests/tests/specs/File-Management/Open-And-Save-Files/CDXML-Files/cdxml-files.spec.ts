@@ -18,7 +18,6 @@ import {
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
   selectAllStructuresOnCanvas,
-  selectClearCanvasTool,
   selectLayoutTool,
   setHashSpacingOptionUnit,
   setHashSpacingValue,
@@ -28,7 +27,10 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  pressUndoButton,
+  selectClearCanvasTool,
+} from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {

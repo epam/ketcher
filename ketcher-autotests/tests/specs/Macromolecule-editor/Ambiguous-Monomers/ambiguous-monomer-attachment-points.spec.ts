@@ -1,9 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import {
-  chooseFileFormat,
-  turnOnMacromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { chooseFileFormat, zoomWithMouseWheel } from '@utils/macromolecules';
 import { Page, test, BrowserContext, chromium } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -11,11 +7,14 @@ import {
   waitForKetcherInit,
   openStructurePasteFromClipboard,
   waitForSpinnerFinishedWork,
-  selectClearCanvasTool,
   selectMacroBond,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 let sharedContext: BrowserContext;

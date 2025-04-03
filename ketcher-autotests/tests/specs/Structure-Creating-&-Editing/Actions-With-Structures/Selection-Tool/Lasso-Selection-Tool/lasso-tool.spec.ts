@@ -22,7 +22,7 @@ import { getBondByIndex } from '@utils/canvas/bonds';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+} from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Lasso Selection tool', () => {
   test.beforeEach(async ({ page }) => {

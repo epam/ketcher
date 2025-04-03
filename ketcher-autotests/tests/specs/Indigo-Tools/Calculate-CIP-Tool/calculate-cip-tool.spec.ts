@@ -34,7 +34,7 @@ import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile } from '@utils/formats';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
   verifyFileExport,

@@ -1,7 +1,6 @@
 import { test } from '@playwright/test';
 import {
   waitForPageInit,
-  turnOnMacromoleculesEditor,
   openFileAndAddToCanvasMacro,
   setMode,
   takePageScreenshot,
@@ -10,6 +9,7 @@ import {
   setZoom,
   moveMouseAway,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('setMode', () => {
   test.beforeEach(async ({ page }) => {

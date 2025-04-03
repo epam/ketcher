@@ -8,10 +8,13 @@ import {
   openFileAndAddToCanvasMacro,
   selectEraseTool,
   selectSnakeLayoutModeTool,
-  clickUndo,
   selectRectangleSelectionTool,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  pressUndoButton,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 test.describe('Enumerations', () => {
@@ -106,7 +109,7 @@ test.describe('Enumerations', () => {
     await selectRectangleSelectionTool(page);
     await selectEraseTool(page);
     await getMonomerLocator(page, Bases.baA).click();
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -212,7 +215,7 @@ test.describe('Enumerations', () => {
 
     const pressCount = 3;
     for (let i = 0; i < pressCount; i++) {
-      await clickUndo(page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
   });
@@ -235,7 +238,7 @@ test.describe('Enumerations', () => {
     await takeEditorScreenshot(page);
     const pressCount = 2;
     for (let i = 0; i < pressCount; i++) {
-      await clickUndo(page);
+      await pressUndoButton(page);
     }
     await takeEditorScreenshot(page);
   });

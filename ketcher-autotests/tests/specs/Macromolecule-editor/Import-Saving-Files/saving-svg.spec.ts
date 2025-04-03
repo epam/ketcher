@@ -1,8 +1,6 @@
 import { Page, test } from '@playwright/test';
 import {
-  TopPanelButton,
   openFileAndAddToCanvasMacro,
-  selectTopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
   chooseFileFormat,
@@ -11,10 +9,13 @@ import {
   selectSequenceLayoutModeTool,
   switchSequenceEnteringButtonType,
   SequenceType,
-  selectClearCanvasTool,
   pressButton,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  selectClearCanvasTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import {
   markResetToDefaultState,
   processResetToDefaultState,
@@ -48,7 +49,7 @@ test.describe('Saving in .svg files', () => {
     const endY = 450;
     await selectRectangleArea(page, startX, startY, endX, endY);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'SVG Document');
     // Should clean up dynamic svg elements (selections...) in drawn structure
     await takeEditorScreenshot(page);
@@ -164,7 +165,7 @@ test.describe('Saving in .svg files', () => {
 
       await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'SVG Document');
 
       await takeEditorScreenshot(page, {
@@ -208,7 +209,7 @@ test.describe('Saving in .svg files', () => {
       await openFileAndAddToCanvasMacro(filename, page);
       await selectSnakeLayoutModeTool(page);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'SVG Document');
       await takeEditorScreenshot(page);
     });
@@ -248,7 +249,7 @@ test.describe('Saving in .svg files', () => {
       await selectSequenceLayoutModeTool(page);
       await switchSequenceEnteringButtonType(page, SequenceType.RNA);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'SVG Document');
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -293,7 +294,7 @@ test.describe('Saving in .svg files', () => {
       await selectSequenceLayoutModeTool(page);
       await switchSequenceEnteringButtonType(page, SequenceType.DNA);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'SVG Document');
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -337,7 +338,7 @@ test.describe('Saving in .svg files', () => {
       await selectSequenceLayoutModeTool(page);
       await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'SVG Document');
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -376,7 +377,7 @@ test.describe('Saving in .svg files', () => {
     test(`Export to SVG: Verify it is possible to export ${description} to SVG`, async () => {
       await openFileAndAddToCanvasMacro(filename, page);
       await takeEditorScreenshot(page);
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'SVG Document');
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,

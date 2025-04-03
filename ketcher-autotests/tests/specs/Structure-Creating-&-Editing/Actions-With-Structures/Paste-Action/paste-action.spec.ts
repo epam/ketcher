@@ -12,8 +12,8 @@ import {
   selectRing,
   RingButton,
   clickOnCanvas,
-  selectOpenFileTool,
 } from '@utils';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import { TopPanelButton } from '@utils/selectors';
 
 test.describe('Paste Tool', () => {

@@ -18,7 +18,7 @@ import {
   selectLayoutTool,
 } from '@utils';
 import { getMolfile } from '@utils/formats/formats';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Indigo Tools - Clean Tools', () => {
   test.beforeEach(async ({ page }) => {

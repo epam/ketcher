@@ -3,15 +3,15 @@ import { test, Page } from '@playwright/test';
 import {
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
-  selectClearCanvasTool,
   selectRectangleSelectionTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import {
+  selectClearCanvasTool,
   turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+} from '@tests/pages/common/TopLeftToolbar';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);

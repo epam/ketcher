@@ -10,6 +10,7 @@ import {
   SubChainNode,
   BackBoneSequenceNode,
   isTwoStrandedNodeRestrictedForHydrogenBondCreation,
+  AmbiguousMonomer,
 } from 'ketcher-core';
 import { getCountOfNucleoelements } from 'helpers/countNucleoelents';
 
@@ -34,6 +35,10 @@ const generateLabeledNodes = (
         baseLabel: node?.rnaBase?.label,
         sugarLabel: node?.sugar?.label,
         phosphateLabel: node?.phosphate?.label,
+        rnaBaseMonomerItem:
+          node.rnaBase instanceof AmbiguousMonomer
+            ? node.rnaBase.variantMonomerItem
+            : node.rnaBase.monomerItem,
         hasR1Connection,
         nodeIndexOverall,
         hasAntisense,
@@ -43,6 +48,10 @@ const generateLabeledNodes = (
         type: Entities.Nucleoside,
         baseLabel: node?.rnaBase?.label,
         sugarLabel: node?.sugar?.label,
+        rnaBaseMonomerItem:
+          node.rnaBase instanceof AmbiguousMonomer
+            ? node.rnaBase.variantMonomerItem
+            : node.rnaBase.monomerItem,
         isNucleosideConnectedAndSelectedWithPhosphate,
         hasR1Connection,
         nodeIndexOverall,

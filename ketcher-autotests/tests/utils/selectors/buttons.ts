@@ -58,14 +58,9 @@ export type Atoms = Exclude<
 >;
 
 export enum TopPanelButton {
-  Clear = 'Clear',
-  Open = 'Open...',
-  Save = 'Save',
   Copy = 'Copy',
   Paste = 'Paste',
   Cut = 'Cut',
-  Undo = 'Undo',
-  Redo = 'Redo',
   Aromatize = 'Aromatize',
   Dearomatize = 'Dearomatize',
   Layout = 'Layout',

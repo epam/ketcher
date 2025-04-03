@@ -9,7 +9,7 @@ import {
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+} from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Track Changes', () => {
   test.beforeEach(async ({ page }) => {

@@ -9,8 +9,8 @@ import {
   waitForLoad,
   openFileAndAddToCanvas,
   waitForPageInit,
-  selectOpenFileTool,
 } from '@utils';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
 const X_OFFSET = 200;
 

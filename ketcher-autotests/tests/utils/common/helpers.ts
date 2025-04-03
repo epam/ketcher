@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { waitForKetcherInit, waitForIndigoToLoad } from './loaders';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export async function emptyFunction() {}

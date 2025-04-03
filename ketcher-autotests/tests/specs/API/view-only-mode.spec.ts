@@ -25,8 +25,11 @@ import {
   selectAllStructuresOnCanvas,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
-  selectOpenFileTool,
 } from '@utils';
+import {
+  selectOpenFileTool,
+  topLeftToolbarLocators,
+} from '@tests/pages/common/TopLeftToolbar';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { waitForOpenButtonEnabled } from '@utils/common/loaders/waitForElementState';
 import {
@@ -162,8 +165,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
-    await expect(page.getByTestId('open-file-button')).toBeEnabled();
-    await expect(page.getByTestId('save-file-button')).toBeEnabled();
+    await expect(topLeftToolbarLocators(page).openButton).toBeEnabled();
+    await expect(topLeftToolbarLocators(page).saveButton).toBeEnabled();
     await expect(page.getByTitle('Copy (Ctrl+C)')).toBeEnabled();
     await takeTopToolbarScreenshot(page);
   });

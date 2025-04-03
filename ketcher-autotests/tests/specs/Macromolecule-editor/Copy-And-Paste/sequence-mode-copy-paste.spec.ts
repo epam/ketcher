@@ -9,7 +9,6 @@ import {
   scrollDown,
   selectRectangleArea,
   moveMouseAway,
-  clickUndo,
   openPasteFromClipboard,
   readFileContents,
   startNewSequence,
@@ -20,10 +19,10 @@ import {
   selectAllStructuresOnCanvas,
 } from '@utils';
 import {
-  enterSequence,
+  pressUndoButton,
   turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+} from '@tests/pages/common/TopLeftToolbar';
+import { enterSequence, waitForMonomerPreview } from '@utils/macromolecules';
 import {
   clickOnSequenceSymbol,
   getSequenceSymbolLocator,
@@ -68,7 +67,7 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -115,7 +114,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -147,8 +146,8 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
       await copyToClipboardByKeyboard(page);
       await takeEditorScreenshot(page);
 
-      await clickUndo(page);
-      await clickUndo(page);
+      await pressUndoButton(page);
+      await pressUndoButton(page);
       await takeEditorScreenshot(page);
     },
   );
@@ -176,8 +175,8 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
   //   await pasteFromClipboardByKeyboard(page);
   //   await takeEditorScreenshot(page);
   //
-  //   await clickUndo(page);
-  //   await clickUndo(page);
+  //   await pressUndoButton(page);
+  //   await pressUndoButton(page);
   //   await takeEditorScreenshot(page);
   // });
 });

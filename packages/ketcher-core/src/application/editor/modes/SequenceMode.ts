@@ -306,11 +306,13 @@ export class SequenceMode extends BaseMode {
         );
       }
       if (labeledNucleoelement.baseLabel) {
-        baseMonomerItem = getRnaPartLibraryItem(
-          editor,
-          labeledNucleoelement.baseLabel,
-          KetMonomerClass.Base,
-        );
+        baseMonomerItem =
+          labeledNucleoelement.rnaBaseMonomerItem ||
+          getRnaPartLibraryItem(
+            editor,
+            labeledNucleoelement.baseLabel,
+            KetMonomerClass.Base,
+          );
       }
       if (labeledNucleoelement.phosphateLabel) {
         phosphateMonomerItem = getRnaPartLibraryItem(
@@ -338,19 +340,19 @@ export class SequenceMode extends BaseMode {
         // Update Base monomerItem object
         if (nodeToModify?.senseNode.rnaBase && baseMonomerItem) {
           if (
-            nodeToModify?.senseNode.rnaBase.monomerItem.isAmbiguous ===
+            nodeToModify?.senseNode.rnaBase.monomerItem.isAmbiguous ||
             baseMonomerItem.isAmbiguous
           ) {
             modelChanges.merge(
-              editor.drawingEntitiesManager.modifyMonomerItem(
+              replaceMonomer(
+                editor.drawingEntitiesManager,
                 nodeToModify?.senseNode.rnaBase,
                 baseMonomerItem,
               ),
             );
           } else {
             modelChanges.merge(
-              replaceMonomer(
-                editor.drawingEntitiesManager,
+              editor.drawingEntitiesManager.modifyMonomerItem(
                 nodeToModify?.senseNode.rnaBase,
                 baseMonomerItem,
               ),

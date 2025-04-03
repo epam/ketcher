@@ -1,10 +1,9 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectClearCanvasTool,
   waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -21,6 +20,10 @@ import {
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 

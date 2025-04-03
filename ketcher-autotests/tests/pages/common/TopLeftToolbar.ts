@@ -1,10 +1,16 @@
 /* eslint-disable no-magic-numbers */
-import { type Page } from '@playwright/test';
-import { takePageScreenshot } from '@utils/canvas';
+import {
+  LAYOUT_TOGGLER,
+  MACROMOLECULES_MODE,
+  MOLECULES_MODE,
+} from '@constants/testIdConstants';
+import { type Page, expect } from '@playwright/test';
+import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { clickOnCanvas } from '@utils/clicks';
-import { waitForSpinnerFinishedWork } from '@utils/common';
+import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
 
-export const toolbarLocators = (page: Page) => ({
+export const topLeftToolbarLocators = (page: Page) => ({
   clearCanvasButton: page.getByTestId('clear-canvas'),
   openButton: page.getByTestId('open-file-button'),
   saveButton: page.getByTestId('save-file-button'),
@@ -24,10 +30,9 @@ export const toolbarLocators = (page: Page) => ({
  * @param {Page} page - The Playwright page instance where the button is located.
  * @param {number} [maxAttempts=10] - The maximum number of retry attempts to click the button.
  * @throws {Error} Throws an error if the button cannot be clicked after the specified number of attempts.
- */
-
+ **/
 export async function selectClearCanvasTool(page: Page, maxAttempts = 10) {
-  const clearCanvasButton = toolbarLocators(page).clearCanvasButton;
+  const clearCanvasButton = topLeftToolbarLocators(page).clearCanvasButton;
   const closeWindowXButton = page.getByTestId('close-icon');
   let attempts = 0;
 
@@ -45,16 +50,69 @@ export async function selectClearCanvasTool(page: Page, maxAttempts = 10) {
       await page.waitForTimeout(100);
     }
   }
-
-  await takePageScreenshot(page);
-  // throw new Error(
-  //   `Unable to click the 'Clear Canvas' button after ${maxAttempts} attempts.`,
-  // );
 }
 
 export async function selectOpenFileTool(page: Page) {
+  await topLeftToolbarLocators(page).openButton.click();
+}
+
+export async function selectSaveTool(page: Page) {
   await waitForSpinnerFinishedWork(
     page,
-    async () => await toolbarLocators(page).openButton.click(),
+    async () => await topLeftToolbarLocators(page).saveButton.click(),
   );
+}
+
+export async function pressUndoButton(page: Page) {
+  await waitForRender(page, async () => {
+    await topLeftToolbarLocators(page).undoButton.click();
+  });
+}
+
+export async function pressRedoButton(page: Page) {
+  await waitForRender(page, async () => {
+    await topLeftToolbarLocators(page).redoButton.click();
+  });
+}
+
+export async function turnOnMacromoleculesEditor(
+  page: Page,
+  options: {
+    enableFlexMode?: boolean;
+    goToPeptides?: boolean;
+  } = { enableFlexMode: true, goToPeptides: true },
+) {
+  const ketcherModeSwitcherCombobox =
+    topLeftToolbarLocators(page).ketcherModeSwitcherCombobox;
+  expect(ketcherModeSwitcherCombobox).toBeVisible();
+  await ketcherModeSwitcherCombobox.click();
+  expect(page.getByTestId(MACROMOLECULES_MODE)).toBeVisible();
+  await page.getByTestId(MACROMOLECULES_MODE).click();
+  expect(page.getByTestId(LAYOUT_TOGGLER)).toBeVisible();
+
+  if (options.enableFlexMode) {
+    await selectFlexLayoutModeTool(page);
+  } else if (options.goToPeptides) {
+    await goToPeptidesTab(page);
+  } else {
+    // Dirty hack
+    // waiting Library to load
+    await page.getByTestId('summary-Nucleotides').waitFor({ state: 'visible' });
+  }
+
+  await page.evaluate(() => {
+    // Temporary solution to disable autozoom for the polymer editor in e2e tests
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    window._ketcher_isAutozoomDisabled = true;
+  });
+}
+
+export async function turnOnMicromoleculesEditor(page: Page) {
+  const ketcherModeSwitcherCombobox =
+    topLeftToolbarLocators(page).ketcherModeSwitcherCombobox;
+  expect(ketcherModeSwitcherCombobox).toBeVisible();
+  await ketcherModeSwitcherCombobox.click();
+  expect(page.getByTestId(MOLECULES_MODE)).toBeVisible();
+  await page.getByTestId(MOLECULES_MODE).click();
 }

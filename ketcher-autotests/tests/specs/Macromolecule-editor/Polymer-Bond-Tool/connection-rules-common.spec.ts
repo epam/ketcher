@@ -5,7 +5,6 @@ import { Sugars } from '@constants/monomers/Sugars';
 import { Page, chromium, expect, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectClearCanvasTool,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   waitForKetcherInit,
@@ -28,11 +27,7 @@ import {
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomersPointToPoint,
@@ -42,6 +37,11 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Bases } from '@constants/monomers/Bases';
+import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;

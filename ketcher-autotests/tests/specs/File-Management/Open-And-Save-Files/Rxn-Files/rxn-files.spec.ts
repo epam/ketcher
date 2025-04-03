@@ -9,8 +9,6 @@ import {
   selectNestedTool,
   ArrowTool,
   clickOnTheCanvas,
-  selectTopPanelButton,
-  TopPanelButton,
   RgroupTool,
   pressButton,
   selectLeftPanelButton,
@@ -31,9 +29,11 @@ import {
   setHashSpacingValue,
   setHashSpacingOptionUnit,
   openBondsSettingsSection,
-  selectClearCanvasTool,
 } from '@utils';
-
+import {
+  selectClearCanvasTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
   FileType,
@@ -41,7 +41,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   const textareaSelector = 'textarea[class^="Save-module_previewArea"]';
   const textareaElement = await page.$(textareaSelector);
   const textareaText = await textareaElement?.textContent();
@@ -86,7 +86,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await page.getByRole('button', { name: 'Apply' }).click();
     await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
     await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     const saveButtonOne = page.getByRole('button', {
       name: 'Save',
       exact: true,
@@ -101,7 +101,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       { primary: true },
       'Apply',
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     const saveButtonTwo = page.getByRole('button', {
       name: 'Save',
       exact: true,
@@ -114,7 +114,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await clickOnCanvas(page, x, y);
     await page.getByRole('button', { name: 'R22' }).click();
     await page.getByRole('button', { name: 'Apply' }).click();
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     const saveButtonThree = page.getByRole('button', {
       name: 'Save',
       exact: true,
@@ -185,7 +185,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     const yArrowEnd = yArrowStart + yDelta20;
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
-    await savedFileInfoStartsWithRxn(page);
+    await savedFileInfoStartsWithRxn(page, true);
 
     await pressButton(page, 'Cancel');
     await selectClearCanvasTool(page);

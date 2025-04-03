@@ -3,28 +3,29 @@ import { test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  selectClearCanvasTool,
   selectMacroBond,
   selectPartOfMolecules,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@utils/macromolecules';
-import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import {
+  selectClearCanvasTool,
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import {} from '@utils/macromolecules';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
+import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Clear Canvas Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
+    await goToPeptidesTab(page);
   });
 
   test('Clear canvas with monomer bonded with another monomers', async ({

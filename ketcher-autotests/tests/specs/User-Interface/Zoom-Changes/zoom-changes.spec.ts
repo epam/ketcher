@@ -14,12 +14,12 @@ import {
   drawBenzeneRing,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
-  selectOpenFileTool,
 } from '@utils';
 import {
   pressUndoButton,
   pressRedoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectOpenFileTool,
+} from '@tests/pages/common/TopLeftToolbar';
 import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
 
 async function checkZoomLevel(page: Page, zoomLevel: string) {

@@ -11,7 +11,7 @@ import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+} from '@tests/pages/common/TopLeftToolbar';
 
 export const COORDINATES_TO_PERFORM_ROTATION = {
   x: 20,

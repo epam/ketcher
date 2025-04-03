@@ -2,13 +2,13 @@ import { test } from '@playwright/test';
 import {
   readFileContents,
   waitForPageInit,
-  turnOnMacromoleculesEditor,
   setMolecule,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
   clickInTheMiddleOfTheScreen,
   selectZoomOutTool,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('setMolecule', () => {
   test.beforeEach(async ({ page }) => {

@@ -27,7 +27,6 @@ import {
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
   selectCleanTool,
-  selectClearCanvasTool,
   selectDearomatizeTool,
   selectDropdownTool,
   selectEraseTool,
@@ -46,7 +45,6 @@ import {
   selectZoomOutTool,
   selectZoomReset,
   selectZoomInTool,
-  selectOpenFileTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -62,7 +60,10 @@ import { openStructureLibrary } from '@utils/templates';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 
 async function saveToTemplates(page: Page) {
   await pressButton(page, 'Save to Templates');
@@ -491,7 +492,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await page.getByTestId('Ket Format-option').click();
     await takeEditorScreenshot(page);
@@ -982,7 +983,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickOnCanvas(page, 500, 600);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await expect(page.getByText('Save to Templates')).toBeDisabled();
     await takeEditorScreenshot(page, {
       masks: [page.getByTestId('rxn-preview-area-text')],
@@ -1000,7 +1001,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/three-different-multi-tail-arrows-with-elements.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await saveToTemplates(page);
     await selectClearCanvasTool(page);
 

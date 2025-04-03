@@ -6,8 +6,6 @@ import { Page, test, expect, BrowserContext, chromium } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   addRnaPresetOnCanvas,
-  clickRedo,
-  clickUndo,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   addBondedMonomersToCanvas,
@@ -21,7 +19,6 @@ import {
   moveMouseAway,
   scrollDown,
   scrollUp,
-  selectClearCanvasTool,
   waitForIndigoToLoad,
   waitForKetcherInit,
   selectAllStructuresOnCanvas,
@@ -29,18 +26,22 @@ import {
   selectMacroBond,
   resetZoomLevelToDefault,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
+  pressRedoButton,
+  pressUndoButton,
+  selectClearCanvasTool,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+} from '@tests/pages/common/TopLeftToolbar';
+import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */
 
 async function createBondedMonomers(page: Page) {
+  await goToPeptidesTab(page);
   const peptide1 = await addSingleMonomerToCanvas(
     page,
     Peptides.dU,
@@ -118,6 +119,7 @@ test.describe('Snake Bond Tool', () => {
     */
 
     await selectSnakeLayoutModeTool(page);
+    await goToPeptidesTab(page);
     const [, peptide2] = await addBondedMonomersToCanvas(
       page,
       Peptides.Tza,
@@ -177,6 +179,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Mode returns back/forth after undo/redo', async () => {
+    await goToPeptidesTab(page);
     const flexModeButton = page.getByTestId('flex-layout-mode');
     const snakeModeButton = page.getByTestId('snake-layout-mode');
     await createBondedMonomers(page);
@@ -185,12 +188,12 @@ test.describe('Snake Bond Tool', () => {
     await selectSnakeLayoutModeTool(page);
     await expect(snakeModeButton).toHaveClass(/active/);
 
-    await clickUndo(page);
+    await pressUndoButton(page);
     await waitForRender(page);
     await expect(snakeModeButton).not.toBeVisible();
     await expect(flexModeButton).toHaveClass(/active/);
 
-    await clickRedo(page);
+    await pressRedoButton(page);
     await waitForRender(page);
     await expect(flexModeButton).not.toBeVisible();
     await expect(snakeModeButton).toHaveClass(/active/);
@@ -335,6 +338,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake bond for mix chains with nucleotides and peptides', async () => {
+    await goToPeptidesTab(page);
     const [peptide1] = await addBondedMonomersToCanvas(
       page,
       Peptides.Tza,
@@ -544,6 +548,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake mode for single monomer and nucleoside', async () => {
+    await goToPeptidesTab(page);
     await addSingleMonomerToCanvas(page, Peptides.bAla, 300, 300, 0);
     await goToRNATab(page);
     await page.getByTestId('summary-Sugars').click();
@@ -581,10 +586,16 @@ test.describe('Snake Bond Tool', () => {
     const y = 350;
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(`KET/two-peptides-connected.ket`, page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await getMonomerLocator(page, Peptides.meE).hover();
     await dragMouseTo(x, y, page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('When monomers are too close under each other snake bond shape has straight connection', async () => {

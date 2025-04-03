@@ -1,10 +1,4 @@
-import {
-  chooseTab,
-  Tabs,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
 import { Page, test, expect } from '@playwright/test';
 import {
   addMonomerToCenterOfCanvas,
@@ -27,7 +21,6 @@ import {
   takeTopToolbarScreenshot,
   selectSnakeLayoutModeTool,
   selectSequenceLayoutModeTool,
-  selectClearCanvasTool,
   clickOnCanvas,
   selectMacroBond,
   selectMonomers,
@@ -59,10 +52,6 @@ import {
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
-import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
@@ -74,6 +63,13 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  pressRedoButton,
+  pressUndoButton,
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -1047,12 +1043,21 @@ test.describe('RNA Library', () => {
       await page.keyboard.press('Escape');
       await toggleNucleotidesAccordion(page);
       await clickInTheMiddleOfTheScreen(page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
       await dragMouseTo(x, y, page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
       await selectEraseTool(page);
       await clickOnCanvas(page, x, y);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
     });
   }
 

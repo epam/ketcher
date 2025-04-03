@@ -18,9 +18,6 @@ export function replaceMonomer(
   newMonomerItem: MonomerOrAmbiguousType,
 ): Command {
   const command = new Command();
-  // TODO: monomer.hydrogenBonds
-  const monomerId = monomer.id;
-
   const polymerBondInfoList: {
     id: number;
     firstMonomer: BaseMonomer;
@@ -86,11 +83,12 @@ export function replaceMonomer(
   }
 
   command.merge(drawingEntitiesManager.deleteMonomer(monomer, true));
+
   const newMonomer: BaseMonomer = drawingEntitiesManager.createMonomer(
     newMonomerItem,
     monomer.position,
   );
-  newMonomer.id = monomerId;
+
   command.merge(
     drawingEntitiesManager.addMonomer(
       new Proxy(newMonomerItem, {}) as MonomerItemType,
@@ -135,19 +133,3 @@ export function replaceMonomer(
 
   return command;
 }
-
-// declare module './DrawingEntitiesManager' {
-//   interface DrawingEntitiesManager {
-//     replaceMonomer(
-//       monomer: BaseMonomer,
-//       newMonomerItem: MonomerOrAmbiguousType,
-//     ): Command;
-//   }
-// }
-//
-// DrawingEntitiesManager.prototype.replaceMonomer = function (
-//   monomer: BaseMonomer,
-//   newMonomerItem: MonomerOrAmbiguousType,
-// ): Command {
-//   return replaceMonomer(this, monomer, newMonomerItem);
-// };

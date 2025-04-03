@@ -2,11 +2,11 @@ import { test, expect } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
-  turnOnMacromoleculesEditor,
   saveToFile,
   getMolfile,
   receiveFileComparisonData,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('getMolfile', () => {
   test.beforeEach(async ({ page }) => {

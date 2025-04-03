@@ -1,22 +1,13 @@
 /* eslint-disable no-self-compare */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import {
-  chooseFileFormat,
-  chooseTab,
-  Tabs,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@utils/macromolecules';
+import { chooseFileFormat, chooseTab, Tabs } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
-  selectClearCanvasTool,
   waitForPageInit,
   selectEraseTool,
-  TopPanelButton,
-  selectTopPanelButton,
   pressButton,
   selectAllStructuresOnCanvas,
   cutToClipboardByKeyboard,
@@ -43,7 +34,11 @@ import { closeErrorMessage, pageReload } from '@utils/common/helpers';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -290,7 +285,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   );
   await takeEditorScreenshot(page);
 
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await chooseFileFormat(page, 'Sequence (1-letter code)');
   await takeEditorScreenshot(page);
 
@@ -315,7 +310,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   );
   await takeEditorScreenshot(page);
 
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await chooseFileFormat(page, 'Sequence (3-letter code)');
   await takeEditorScreenshot(page);
 
@@ -345,7 +340,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   );
   await takeEditorScreenshot(page);
 
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await chooseFileFormat(page, 'IDT');
   await takeEditorScreenshot(page);
 

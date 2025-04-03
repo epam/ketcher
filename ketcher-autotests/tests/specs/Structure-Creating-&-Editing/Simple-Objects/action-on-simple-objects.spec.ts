@@ -13,17 +13,18 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   selectDropdownTool,
   copyAndPaste,
-  selectTopPanelButton,
-  TopPanelButton,
   pressButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   cutAndPaste,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
-  selectClearCanvasTool,
 } from '@utils';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  pressUndoButton,
+  selectClearCanvasTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
   verifyFileExport,
@@ -58,7 +59,7 @@ async function selectAndMoveSimpleObjects(page: Page) {
 }
 
 async function saveToTemplates(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await page.getByRole('button', { name: 'Save to Templates' }).click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My New Template');

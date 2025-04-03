@@ -4,12 +4,7 @@
 Tests below moved here from macro-micro-switcher since they are designed to be executed in isolated environment 
 and can't be executed in "clear canvas way"
 */
-import {
-  chooseFileFormat,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { chooseFileFormat, waitForMonomerPreview } from '@utils/macromolecules';
 import { test, Page } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
@@ -23,7 +18,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   selectDropdownTool,
   clickInTheMiddleOfTheScreen,
-  selectClearCanvasTool,
   selectMacroBond,
   moveMouseAway,
   selectRingButton,
@@ -31,13 +25,10 @@ import {
   selectSaveFileFormat,
   FileFormatOption,
   moveMouseToTheMiddleOfTheScreen,
-  selectSaveTool,
   clickOnCanvas,
   pasteFromClipboardByKeyboard,
   copyToClipboardByIcon,
   addMonomersToFavorites,
-  selectTopPanelButton,
-  TopPanelButton,
   setZoomInputValue,
   resetCurrentTool,
   selectAllStructuresOnCanvas,
@@ -53,7 +44,6 @@ import {
   selectSequenceTypeMode,
   hideLibrary,
 } from '@utils';
-
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -64,13 +54,22 @@ import { goToFavoritesTab } from '@utils/macromolecules/library';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Chem } from '@constants/monomers/Chem';
 import { Bases } from '@constants/monomers/Bases';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  switchToDNAMode,
+  switchToPeptideMode,
+  switchToRNAMode,
+} from '@utils/macromolecules/sequence';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [
@@ -524,7 +523,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/single-atom-properties.ket',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'SVG Document');
     await takeEditorScreenshot(page);
   });
@@ -639,6 +638,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await turnOnMacromoleculesEditor(page);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
+    await clickOnCanvas(page, 800, 100);
     await pasteFromClipboardByKeyboard(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -720,7 +720,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/benzene-ring-with-two-atoms.ket',
       page,
     );
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await takePageScreenshot(page);
   });
 
@@ -737,11 +740,17 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Switch to Micro mode
       4. Switch to Macromolecules mode
     */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectSnakeLayoutModeTool(page);
     await takePageScreenshot(page);
     await turnOnMicromoleculesEditor(page);
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await takePageScreenshot(page);
   });
 
@@ -756,7 +765,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       1. Switch to Macromolecules mode
       2. Verify that Sequence mode is opened
     */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await takePageScreenshot(page);
   });
 
@@ -771,7 +783,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Check the default tab in the library
       3. Default tab should be RNA
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await takeTopToolbarScreenshot(page);
   });
 
@@ -786,7 +801,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Change typing type to PEP
       3. Changing typing type to PEP switches the library tab to Peptide
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectSequenceTypeMode(page, 'PEPTIDE');
     await takePageScreenshot(page);
   });
@@ -803,7 +821,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Change typing type to RNA
       4. Changing typing type to RNA switches the library tab to RNA
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectSequenceTypeMode(page, 'PEPTIDE');
     await selectSequenceTypeMode(page, 'RNA');
     await takePageScreenshot(page);
@@ -820,7 +841,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Change typing type to DNA
       3. Changing typing type to DNA switches the library tab to RNA
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectSequenceTypeMode(page, 'DNA');
     await takePageScreenshot(page);
   });
@@ -837,7 +861,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Change typing type to RNA
       4. Changing typing type from RNA to DNA and viceversa does not affect the library tab
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectSequenceTypeMode(page, 'DNA');
     await takePageScreenshot(page);
     await selectSequenceTypeMode(page, 'RNA');
@@ -856,7 +883,16 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Press Ctrl+Alt+P for Peptides
       4. Press Ctrl+Alt+R for RNA
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
+
+    // waiting appearance of empty seqeunce in edit mode appearence
+    // (otherwise - keyboard shortcuts doesn't work)
+    await page.getByTestId(`sequence-item`).first().waitFor({
+      state: 'attached',
+    });
     await page.keyboard.press('Control+Alt+D');
     await takePageScreenshot(page);
     await page.keyboard.press('Control+Alt+P');
@@ -879,11 +915,15 @@ test.describe('Macro-Micro-Switcher2', () => {
       5. Change typing type to PEP
       6. Start typing type PEP
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
+    await switchToRNAMode(page);
     await page.keyboard.type('CCC');
-    await selectSequenceTypeMode(page, 'DNA');
+    await switchToDNAMode(page);
     await page.keyboard.type('CCC');
-    await selectSequenceTypeMode(page, 'PEPTIDE');
+    await switchToPeptideMode(page);
     await page.keyboard.type('CCC');
     await takePageScreenshot(page);
   });
@@ -903,11 +943,15 @@ test.describe('Macro-Micro-Switcher2', () => {
       6. Start typing type PEP
       7. Switch to Flex mode and back to Sequence mode
       */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
+    // await switchToRNAMode(page);
     await page.keyboard.type('CCC');
-    await selectSequenceTypeMode(page, 'DNA');
+    await switchToDNAMode(page);
     await page.keyboard.type('CCC');
-    await selectSequenceTypeMode(page, 'PEPTIDE');
+    await switchToPeptideMode(page);
     await page.keyboard.type('CCC');
     await takePageScreenshot(page);
     await selectFlexLayoutModeTool(page);
@@ -930,11 +974,17 @@ test.describe('Macro-Micro-Switcher2', () => {
       4. Switch to Micro mode
       5. Switch to Macromolecules mode
     */
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectFlexLayoutModeTool(page);
     await selectSequenceLayoutModeTool(page);
     await turnOnMicromoleculesEditor(page);
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await takePageScreenshot(page);
   });
 
@@ -954,7 +1004,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/benzene-ring-with-two-atoms.ket',
       page,
     );
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
     await selectClearCanvasTool(page);
     await pressUndoButton(page);
     await takePageScreenshot(page);

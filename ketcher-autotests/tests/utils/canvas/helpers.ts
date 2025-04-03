@@ -30,7 +30,6 @@ import {
   selectRectangleSelectionTool,
   selectTopPanelButton,
 } from './tools';
-
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';
@@ -38,8 +37,9 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+} from '@tests/pages/common/TopLeftToolbar';
 import { Monomer } from '@utils/types';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 export async function drawBenzeneRing(page: Page) {
   await selectRing(RingButton.Benzene, page);
@@ -163,6 +163,7 @@ export async function takeElementScreenshot(
   options?: {
     masks?: Locator[];
     maxDiffPixelRatio?: number;
+    maxDiffPixels?: number;
     hideMonomerPreview?: boolean;
   },
 ) {
@@ -252,6 +253,7 @@ export async function takeEditorScreenshot(
   options?: {
     masks?: Locator[];
     maxDiffPixelRatio?: number;
+    maxDiffPixels?: number;
     hideMonomerPreview?: boolean;
     hideMacromoleculeEditorScrollBars?: boolean;
   },
@@ -336,19 +338,15 @@ export async function resetAllSettingsToDefault(page: Page) {
 
 export async function addSingleMonomerToCanvas(
   page: Page,
-  monomerType: Monomer,
+  monomer: Monomer,
   positionX: number,
   positionY: number,
   index: number,
 ) {
-  await page.getByTestId(monomerType.testId).click();
+  await page.getByTestId(monomer.testId).click();
   await clickOnCanvas(page, positionX, positionY);
   await hideMonomerPreview(page);
-  return page
-    .locator(
-      `//\*[name() = 'g' and ./\*[name()='text' and .='${monomerType.alias}']]`,
-    )
-    .nth(index);
+  return getMonomerLocator(page, monomer).nth(index);
 }
 
 export async function addBondedMonomersToCanvas(
@@ -543,13 +541,6 @@ export async function selectLayoutTool(page: Page) {
   await waitForSpinnerFinishedWork(
     page,
     async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-  );
-}
-
-export async function selectOpenFileTool(page: Page) {
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await selectTopPanelButton(TopPanelButton.Open, page),
   );
 }
 

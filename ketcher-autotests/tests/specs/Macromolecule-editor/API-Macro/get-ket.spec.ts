@@ -4,7 +4,6 @@ import {
   openFileAndAddToCanvasMacro,
   readFileContents,
   waitForPageInit,
-  turnOnMacromoleculesEditor,
   getKet,
   saveToFile,
   layout,
@@ -14,6 +13,7 @@ import {
   clickInTheMiddleOfTheScreen,
   selectAllStructuresOnCanvas,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
   verifyFileExport,

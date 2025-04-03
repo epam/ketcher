@@ -35,14 +35,14 @@ import {
   selectDearomatizeTool,
   selectCleanTool,
   selectLayoutTool,
-  selectClearCanvasTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+} from '@tests/pages/common/TopLeftToolbar';
 
 const X_DELTA = 300;
 

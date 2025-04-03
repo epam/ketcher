@@ -7,12 +7,15 @@ import {
   zoomWithMouseWheel,
   scrollDown,
   selectRectangleArea,
-  clickUndo,
   selectSnakeLayoutModeTool,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import {
+  pressUndoButton,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 test.describe('Snake mode copy&paste', () => {
@@ -43,7 +46,7 @@ test.describe('Snake mode copy&paste', () => {
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -60,7 +63,7 @@ test.describe('Snake mode copy&paste', () => {
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 });

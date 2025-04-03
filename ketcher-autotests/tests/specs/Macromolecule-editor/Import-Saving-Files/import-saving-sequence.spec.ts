@@ -1,9 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@playwright/test';
 import {
-  TopPanelButton,
   openFileAndAddToCanvasMacro,
-  selectTopPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
   openFile,
@@ -19,18 +17,18 @@ import {
   SequenceType,
   PeptideType,
   MacroFileType,
-  selectSaveTool,
-  selectOpenFileTool,
 } from '@utils';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { closeErrorMessage } from '@utils/common/helpers';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import {
+  selectOpenFileTool,
+  selectSaveTool,
   turnOnMacromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+} from '@tests/pages/common/TopLeftToolbar';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
@@ -57,7 +55,7 @@ test.describe('Import-Saving .seq Files', () => {
   // Fail while performance issue on Indigo side
   // test('Import incorrect data', async ({ page }) => {
   //   const randomText = 'asjfnsalkfl';
-  //   await selectTopPanelButton(TopPanelButton.Open, page);
+  //   await selectOpenFileTool(page);
   //   await page.getByTestId('paste-from-clipboard-button').click();
   //   await page.getByTestId('open-structure-textarea').fill(randomText);
   //   await chooseFileFormat(page, 'Sequence');
@@ -155,7 +153,7 @@ test.describe('Import-Saving .seq Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'Sequence (1-letter code)');
     await page
       .getByTestId('dropdown-select')
@@ -176,7 +174,7 @@ test.describe('Import-Saving .seq Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'Sequence (1-letter code)');
 
     await takeEditorScreenshot(page);
@@ -187,7 +185,7 @@ test.describe('Import-Saving .seq Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'Sequence (1-letter code)');
 
     await takeEditorScreenshot(page);
@@ -282,7 +280,7 @@ test.describe('Import-Saving .seq Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'Sequence (1-letter code)');
 
       test.fixme(
@@ -320,7 +318,7 @@ test.describe('Import-Saving .seq Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'Sequence (1-letter code)');
       test.fixme(
         true,
@@ -358,7 +356,7 @@ test.describe('Import-Saving .seq Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await chooseFileFormat(page, 'Sequence (1-letter code)');
 
       test.fixme(
@@ -422,7 +420,7 @@ test.describe('Import-Saving .seq Files', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'Sequence (1-letter code)');
     await takeEditorScreenshot(page);
 
@@ -480,7 +478,7 @@ test.describe('Import-Saving .seq Files', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'Sequence (1-letter code)');
     await takeEditorScreenshot(page);
 
@@ -536,7 +534,7 @@ test.describe('Import-Saving .seq Files', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await chooseFileFormat(page, 'Sequence (1-letter code)');
     await takeEditorScreenshot(page);
 

@@ -21,7 +21,6 @@ import {
   clickOnAtom,
   clickOnCanvas,
   clickOnFileFormatDropdown,
-  clickUndo,
   dragMouseTo,
   drawBenzeneRing,
   getControlModifier,
@@ -35,11 +34,9 @@ import {
   openPasteFromClipboard,
   pressButton,
   readFileContents,
-  selectAllStructuresOnCanvas,
   selectAromatizeTool,
   selectAtomInToolbar,
   selectCleanTool,
-  selectClearCanvasTool,
   selectDearomatizeTool,
   selectDropdownTool,
   selectEraseTool,
@@ -48,8 +45,6 @@ import {
   selectLeftPanelButton,
   selectMacroBond,
   selectMonomer,
-  selectOpenFileTool,
-  selectOpenTool,
   selectOptionInDropdown,
   selectRing,
   selectSaltsAndSolvents,
@@ -71,6 +66,15 @@ import {
   waitForSpinnerFinishedWork,
 } from '@utils';
 import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  pressUndoButton,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import {
   addSuperatomAttachmentPoint,
   removeSuperatomAttachmentPoint,
 } from '@utils/canvas/atoms/superatomAttachmentPoints';
@@ -86,8 +90,6 @@ import {
   Tabs,
   chooseTab,
   enterSequence,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
   waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { goToRNATab, goToTab } from '@utils/macromolecules/library';
@@ -97,7 +99,6 @@ import {
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 
 const topLeftCorner = {
   x: -325,
@@ -200,7 +201,7 @@ enum FileFormat {
 }
 
 async function saveFileAsPngOrSvgFormat(page: Page, FileFormat: string) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: FileFormat }).click();
 }
@@ -303,6 +304,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: After hiding Library in Macro mode 'Show Library' button is visible.
     */
+    await turnOnMacromoleculesEditor(page);
     await hideLibrary(page);
     await takePageScreenshot(page);
     expect(page.getByTestId('show-monomer-library')).toBeVisible();
@@ -623,7 +625,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await selectOpenFileTool(page);
     await takeEditorScreenshot(page);
     await page.getByTitle('Close window').click();
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await takeEditorScreenshot(page);
   });
 });
@@ -1361,7 +1363,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const bondLine = page.locator('g[pointer-events="stroke"]').first();
       await bondLine.click();
       await takeEditorScreenshot(page);
-      await clickUndo(page);
+      await pressUndoButton(page);
       await takeEditorScreenshot(page);
     });
   }
@@ -1393,7 +1395,7 @@ test.describe('Macro-Micro-Switcher', () => {
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
     await bondLine.click();
     await takeEditorScreenshot(page);
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -2862,7 +2864,7 @@ test('Switch to Macro mode, verify that user cant open reactions from RDF RXN V2
   Test case: https://github.com/epam/Indigo/issues/2102
   Description: In Macro mode, user can't open reactions from RDF RXN V2000/V3000 - error message is displayed. 
   */
-  await selectOpenTool(page);
+  await selectOpenFileTool(page);
   await openFile('RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf', page);
   await pressButton(page, 'Open as New');
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });

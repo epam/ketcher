@@ -56,6 +56,7 @@ import {
   hoverOnSequenceSymbol,
   switchToDNAMode,
   switchToPeptideMode,
+  switchToRNAMode,
 } from '@utils/macromolecules/sequence';
 import {
   pressRedoButton,
@@ -462,6 +463,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
+    await switchToRNAMode(page);
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro('KET/rna-nucleotide-chem.ket', page);
 
@@ -508,6 +510,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4888
     Description: Hover mouse over any letter in sequence, cursor displayed as a arrow.
     */
+    await switchToRNAMode(page);
     await enterSequence(page, 'aaaaaaaaaa');
     await hoverOnSequenceSymbol(page, 'A', 0);
     await waitForMonomerPreview(page);

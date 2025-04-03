@@ -9,7 +9,6 @@ import {
   scrollDown,
   selectRectangleArea,
   selectFlexLayoutModeTool,
-  clickUndo,
   selectRectangleSelectionTool,
   selectPartOfMolecules,
   clickInTheMiddleOfTheScreen,
@@ -20,9 +19,10 @@ import {
   moveMouseAway,
 } from '@utils';
 import {
+  pressUndoButton,
   turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+} from '@tests/pages/common/TopLeftToolbar';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   getSequenceSymbolLocator,
   selectSequenceRangeInEditMode,
@@ -128,7 +128,7 @@ test.describe('Sequence mode selection for edit mode', () => {
     await page.keyboard.press('Backspace');
     await takeEditorScreenshot(page);
 
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Escape');

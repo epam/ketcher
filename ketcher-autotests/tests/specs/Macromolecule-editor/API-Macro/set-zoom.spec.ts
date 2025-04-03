@@ -3,12 +3,12 @@ import { test } from '@playwright/test';
 import {
   waitForPageInit,
   takeEditorScreenshot,
-  turnOnMacromoleculesEditor,
   openFileAndAddToCanvasMacro,
   setZoom,
   clickInTheMiddleOfTheScreen,
   selectZoomInTool,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('setZoom', () => {
   test.beforeEach(async ({ page }) => {

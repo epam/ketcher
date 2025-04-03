@@ -17,8 +17,8 @@ import {
   selectPartOfChain,
   clickOnCanvas,
   selectLayoutTool,
-  selectOpenFileTool,
 } from '@utils';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
 async function openFileWithShift(filename: string, page: Page) {
   await selectOpenFileTool(page);

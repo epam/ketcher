@@ -9,8 +9,10 @@ import {
   moveMouseAway,
   selectMacroBond,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
+
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */
 
@@ -18,6 +20,7 @@ test.describe('Check attachment point rotation', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
+    await goToPeptidesTab(page);
   });
 
   test('Select monomer and bonds and then hover monomer', async ({ page }) => {

@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   moveMouseToTheMiddleOfTheScreen,
-  selectClearCanvasTool,
   clickInTheMiddleOfTheScreen,
   moveMouseAway,
   selectMacroBond,
@@ -23,13 +22,17 @@ import {
   selectZoomReset,
   selectZoomOutTool,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
 import {
   zoomWithMouseWheel,
-  turnOnMacromoleculesEditor,
   waitForMonomerPreview,
 } from '@utils/macromolecules';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
 
 let page: Page;
 
@@ -74,6 +77,7 @@ test.describe('Zoom Tool', () => {
   test.beforeEach(async () => {
     // await waitForPageInit(page);
     // await turnOnMacromoleculesEditor(page);
+    await goToPeptidesTab(page);
     peptide = await addSingleMonomerToCanvas(
       page,
       Peptides.C,

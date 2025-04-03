@@ -1,8 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import {
-  chooseFileFormat,
-  turnOnMacromoleculesEditor,
-} from '@utils/macromolecules';
+import { chooseFileFormat } from '@utils/macromolecules';
 import { Page, test, BrowserContext, chromium, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -10,8 +7,6 @@ import {
   waitForKetcherInit,
   openStructurePasteFromClipboard,
   waitForSpinnerFinishedWork,
-  selectClearCanvasTool,
-  selectSaveTool,
   pressButton,
 } from '@utils';
 import {
@@ -19,6 +14,11 @@ import {
   closeOpenStructure,
   pageReload,
 } from '@utils/common/helpers';
+import {
+  selectClearCanvasTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 let sharedContext: BrowserContext;

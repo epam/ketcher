@@ -20,7 +20,7 @@ import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+} from '@tests/pages/common/TopLeftToolbar';
 
 async function selectStructureWithSelectionTool(page: Page) {
   const point = { x: 97, y: 79 };

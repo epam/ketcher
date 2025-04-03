@@ -28,12 +28,10 @@ import {
   moveMouseAway,
   waitForKetcherInit,
   waitForIndigoToLoad,
-  selectClearCanvasTool,
   selectOptionInTypeDropdown2,
   clickOnCanvas,
   selectMacroBond,
   selectMonomer,
-  selectOpenFileTool,
   selectSequenceLayoutModeTool,
   selectEraseTool,
   selectAllStructuresOnCanvas,
@@ -47,7 +45,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
+
 import {
   connectMonomersWithBonds,
   getMonomerLocator,
@@ -60,7 +58,11 @@ import {
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -137,6 +139,7 @@ test('Create bond between two peptides', async () => {
     Description: Polymer bond tool
     */
   // Choose peptide
+  await goToPeptidesTab(page);
   const peptide1 = await addSingleMonomerToCanvas(
     page,
     Peptides.Tza,
@@ -229,6 +232,7 @@ test('Select monomers and pass a bond', async () => {
       than 1 bond between the first and the second monomer
       */
 
+  await goToPeptidesTab(page);
   const peptide1 = await addSingleMonomerToCanvas(
     page,
     Peptides.Tza,
@@ -572,7 +576,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     'Peptide',
   );
 
-  // await selectTopPanelButton(TopPanelButton.Open, page);
+  // await selectOpenFileTool(page);
   // await openFile('Sequence/two-peptides-connected-expected.seq', page);
   // await selectOptionInTypeDropdown('Peptide', page);
   // await pressButton(page, 'Open as New');
@@ -861,18 +865,22 @@ connectionVariants.forEach(({ from, to }) => {
       Test case: https://github.com/epam/ketcher/issues/6167
       Description: Checks that a long bond between two peptides is placed above monomers in both Flex and Sequence modes.
       Steps:
-      1. Load a .ket file with five peptides
-      2. Connect first monomer and fifth monomer by the specified R-group pair
-      3. Take a screenshot
-      4. Switch to Sequence mode
-      5. Take another screenshot
+      1. Switch to Flex mode
+      2. Load a .ket file with five peptides
+      3. Connect first monomer and fifth monomer by the specified R-group pair
+      4. Take a screenshot
+      5. Switch to Sequence mode
+      6. Take another screenshot
     */
+    await selectFlexLayoutModeTool(page);
+
     const firstMonomer = getMonomerLocator(page, Peptides.C);
     const secondMonomer = getMonomerLocator(page, Peptides.dC);
     await openFileAndAddToCanvasMacro(
       'KET/five-peptides-connected-by-r2-r1.ket',
       page,
     );
+    await moveMouseAway(page);
     await bondTwoMonomersPointToPoint(
       page,
       firstMonomer,

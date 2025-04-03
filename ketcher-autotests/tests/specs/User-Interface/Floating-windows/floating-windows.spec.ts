@@ -13,8 +13,8 @@ import {
   pasteFromClipboard,
   pasteFromClipboardAndAddToCanvas,
   waitForLoad,
-  selectOpenFileTool,
 } from '@utils';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
 async function openFileViaClipboard(filename: string, page: Page) {
   const fileContent = await readFileContents(filename);

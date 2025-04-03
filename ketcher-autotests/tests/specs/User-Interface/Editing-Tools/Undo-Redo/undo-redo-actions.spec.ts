@@ -45,7 +45,7 @@ import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+} from '@tests/pages/common/TopLeftToolbar';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;

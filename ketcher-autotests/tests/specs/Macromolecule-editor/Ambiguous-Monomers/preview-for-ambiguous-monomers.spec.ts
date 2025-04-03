@@ -1,9 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import {
-  chooseFileFormat,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@utils/macromolecules';
+import { chooseFileFormat } from '@utils/macromolecules';
 import { Page, test, BrowserContext, chromium } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -13,10 +9,14 @@ import {
   selectFlexLayoutModeTool,
   waitForSpinnerFinishedWork,
   selectSequenceLayoutModeTool,
-  selectClearCanvasTool,
   delay,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
+import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 let sharedContext: BrowserContext;

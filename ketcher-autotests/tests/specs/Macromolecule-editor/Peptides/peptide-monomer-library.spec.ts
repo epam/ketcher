@@ -21,11 +21,9 @@ import {
   takeMonomerLibraryScreenshot,
   waitForPageInit,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import {
-  turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToPeptidesTab, goToTab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
@@ -278,10 +276,16 @@ test.describe('Peptide library testing', () => {
     await openFileAndAddToCanvasMacro('KET/stuck-peptides-connected.ket', page);
     await getMonomerLocator(page, Peptides.Nal).click();
     await selectMacroBond(page, MacroBondTool.SINGLE);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await selectRectangleSelectionTool(page);
     await getMonomerLocator(page, Peptides.Nal).hover();
     await dragMouseTo(x, y, page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 });

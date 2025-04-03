@@ -2,7 +2,6 @@
 import { Page, test, Locator } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectClearCanvasTool,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,
@@ -11,9 +10,9 @@ import {
   MonomerType,
 } from '@utils';
 import {
+  selectClearCanvasTool,
   turnOnMacromoleculesEditor,
-  // zoomWithMouseWheel,
-} from '@utils/macromolecules';
+} from '@tests/pages/common/TopLeftToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 

@@ -337,6 +337,7 @@ function Editor({
             {errorTooltipText}
           </StyledToastContent>
           <StyledIconButton
+            testId="error-tooltip-close"
             iconName="close"
             onClick={handleCloseErrorTooltip}
           ></StyledIconButton>

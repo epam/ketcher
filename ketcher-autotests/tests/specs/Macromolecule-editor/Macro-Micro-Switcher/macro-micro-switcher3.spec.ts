@@ -1,11 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import {
-  chooseTab,
-  Tabs,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@utils/macromolecules';
+import { chooseTab, Tabs } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
   dragMouseTo,
@@ -13,7 +8,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   selectEraseTool,
   openFileAndAddToCanvasAsNewProject,
-  selectClearCanvasTool,
   waitForPageInit,
   moveOnBond,
   BondType,
@@ -26,11 +20,15 @@ import {
   waitForRender,
   setZoomInputValue,
   resetCurrentTool,
+  resetZoomLevelToDefault,
 } from '@utils';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
@@ -83,6 +81,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await selectClearCanvasTool(page);
+  await resetZoomLevelToDefault(page);
 });
 
 test.afterAll(async ({ browser }) => {

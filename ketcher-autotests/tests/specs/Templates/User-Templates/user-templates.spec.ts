@@ -5,8 +5,6 @@ import {
   resetCurrentTool,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  TopPanelButton,
-  selectTopPanelButton,
   pasteFromClipboardAndAddToCanvas,
   TemplateLibrary,
   selectUserTemplatesAndPlaceInTheMiddle,
@@ -19,8 +17,11 @@ import {
   getEditorScreenshot,
   clickOnCanvas,
   selectCleanTool,
-  selectClearCanvasTool,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -30,7 +31,7 @@ async function openStructureLibrary(page: Page) {
 }
 
 async function saveToTemplates(page: Page, shouldSave = true) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await page.getByRole('button', { name: 'Save to Templates' }).click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My Template');
@@ -41,7 +42,7 @@ async function saveToTemplates(page: Page, shouldSave = true) {
 
 async function saveUserTemplate(page: Page) {
   await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickInTheMiddleOfTheScreen(page);
 }
 
@@ -69,7 +70,7 @@ test.describe('Click User Templates on canvas', () => {
       Description: spaces in Molecule name field validation
     */
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickInTheMiddleOfTheScreen(page);
     await pressButton(page, 'Save to Templates');
     await page.getByPlaceholder('template').click();
@@ -92,7 +93,7 @@ test.describe('Click User Templates on canvas', () => {
       TemplateLibrary.Naphtalene,
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await pressButton(page, 'Save to Templates');
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('to_delete');
@@ -117,7 +118,7 @@ test.describe('Click User Templates on canvas', () => {
       'Molfiles-V2000/create-template-with-simple-objects.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await pressButton(page, 'Save to Templates');
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('simple_object_template');
@@ -141,7 +142,7 @@ test.describe('Click User Templates on canvas', () => {
       'Rxn-V2000/create-template-with-reaction-arrow.rxn',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await pressButton(page, 'Save to Templates');
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('reaction_arrow_template');
@@ -216,7 +217,7 @@ test.describe('Create and Save Templates', () => {
       TemplateLibrary.Naphtalene,
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickInTheMiddleOfTheScreen(page);
     await pressButton(page, 'Save to Templates');
     await page.getByPlaceholder('template').click();
@@ -306,12 +307,12 @@ test.describe('Templates field lenght validations', () => {
       TemplateLibrary.Naphtalene,
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await pressButton(page, 'Save to Templates');
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('user_template_1');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await pressButton(page, 'Save to Templates');
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('user_template_1');

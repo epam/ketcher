@@ -23,7 +23,6 @@ import {
   resetCurrentTool,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectClearCanvasTool,
   selectLayoutTool,
 } from '@utils';
 import {
@@ -31,7 +30,10 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { getExtendedSmiles } from '@utils/formats';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  pressUndoButton,
+  selectClearCanvasTool,
+} from '@tests/pages/common/TopLeftToolbar';
 
 async function openRGroupModalForTopAtom(page: Page) {
   await selectRingButton(RingButton.Benzene, page);

@@ -16,9 +16,9 @@ import {
   getSequence,
   getSmiles,
 } from '@utils/formats';
-import { selectSaveTool } from '@utils/canvas';
 import { pressButton } from '@utils/clicks';
 import { chooseFileFormat } from '@utils/macromolecules';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 
 export enum FileType {
   KET = 'ket',

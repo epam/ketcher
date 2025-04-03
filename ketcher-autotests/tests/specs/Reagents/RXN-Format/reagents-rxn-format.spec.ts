@@ -1,7 +1,5 @@
 import { Page, test } from '@playwright/test';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
   clickInTheMiddleOfTheScreen,
   pressButton,
   takeEditorScreenshot,
@@ -10,8 +8,11 @@ import {
   waitForLoad,
   waitForPageInit,
   moveMouseAway,
-  selectOpenFileTool,
 } from '@utils';
+import {
+  selectOpenFileTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
   verifyFileExport,
@@ -19,7 +20,7 @@ import {
 import { clickOnFileFormatDropdown } from '@utils/formats';
 
 async function saveAsMdlRxnV3000(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'MDL Rxnfile V3000' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -93,7 +94,7 @@ test.describe('Reagents RXN format', () => {
       'v2000',
     );
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await page.getByRole('button', { name: 'Save', exact: true }).click();
   });
 

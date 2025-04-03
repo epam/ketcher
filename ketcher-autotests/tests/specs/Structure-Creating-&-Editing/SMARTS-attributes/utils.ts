@@ -1,5 +1,5 @@
 import { Page, expect } from '@playwright/test';
-import { TopPanelButton, selectTopPanelButton } from '@utils';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 
 type queryNumberValues =
   | '0'
@@ -158,7 +158,7 @@ export async function setReactionFlagExactChange(page: Page) {
 // Other
 
 export async function checkSmartsValue(page: Page, value: string) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await page.getByTestId('file-format-list').first().click();
   await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
   const smartsInput = page.getByTestId('smarts-preview-area-text');

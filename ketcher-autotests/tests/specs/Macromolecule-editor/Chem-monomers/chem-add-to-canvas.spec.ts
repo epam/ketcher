@@ -9,11 +9,9 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import {
-  hideMonomerPreview,
-  turnOnMacromoleculesEditor,
-} from '@utils/macromolecules';
+import { hideMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 /* 

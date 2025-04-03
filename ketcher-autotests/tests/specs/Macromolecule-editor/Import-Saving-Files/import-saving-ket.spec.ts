@@ -11,25 +11,27 @@ import {
   openFile,
   pressButton,
   selectSnakeLayoutModeTool,
-  turnOnMicromoleculesEditor,
   clickInTheMiddleOfTheScreen,
-  selectClearCanvasTool,
-  clickUndo,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProjectMacro,
-  selectAllStructuresOnCanvas,
   openFileAndAddToCanvasAsNewProject,
   selectZoomOutTool,
   selectMonomer,
-  selectOpenFileTool,
 } from '@utils';
+import {
+  pressUndoButton,
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { pageReload } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
-  turnOnMacromoleculesEditor,
   waitForMonomerPreview,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
@@ -182,7 +184,7 @@ test.describe('Import-Saving .ket Files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await clickUndo(page);
+    await pressUndoButton(page);
     await selectAllStructuresOnCanvas(page);
     await getMonomerLocator(page, { monomerAlias: 'Ph' }).first().hover();
     await dragMouseTo(400, 400, page);

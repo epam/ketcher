@@ -31,12 +31,12 @@ import {
   moveMouseAway,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectOpenFileTool,
 } from '@utils';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectOpenFileTool,
+} from '@tests/pages/common/TopLeftToolbar';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;

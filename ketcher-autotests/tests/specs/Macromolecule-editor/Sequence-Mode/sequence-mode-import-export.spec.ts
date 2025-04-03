@@ -4,7 +4,6 @@ import {
   MacromoleculesTopPanelButton,
   openStructurePasteFromClipboard,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  selectClearCanvasTool,
   selectFlexLayoutModeTool,
   selectMacromoleculesPanelButton,
   selectSequenceLayoutModeTool,
@@ -19,9 +18,10 @@ import {
   resetZoomLevelToDefault,
 } from '@utils';
 import {
+  selectClearCanvasTool,
   turnOnMacromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+} from '@tests/pages/common/TopLeftToolbar';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 
 let page: Page;
 

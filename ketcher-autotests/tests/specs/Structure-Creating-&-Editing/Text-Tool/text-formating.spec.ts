@@ -13,13 +13,13 @@ import {
   waitForRender,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectOpenFileTool,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectOpenFileTool,
+} from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
   verifyFileExport,

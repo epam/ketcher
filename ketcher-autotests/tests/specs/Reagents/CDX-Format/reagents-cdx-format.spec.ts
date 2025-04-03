@@ -6,17 +6,16 @@ import {
   pasteFromClipboardAndAddToCanvas,
   FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
-  selectTopPanelButton,
-  TopPanelButton,
 } from '@utils';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 
 async function saveFileAsCdxFormat(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'CDX', exact: true }).click();
 }

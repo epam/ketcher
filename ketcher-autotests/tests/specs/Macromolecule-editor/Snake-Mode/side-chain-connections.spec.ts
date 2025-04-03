@@ -7,16 +7,12 @@ import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   selectEraseTool,
-  clickUndo,
   selectRectangleSelectionTool,
   waitForRender,
-  selectTopPanelButton,
-  TopPanelButton,
   getKet,
   saveToFile,
   receiveFileComparisonData,
   getMolfile,
-  selectClearCanvasTool,
   waitForIndigoToLoad,
   waitForKetcherInit,
   hideLibrary,
@@ -27,12 +23,15 @@ import {
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
 } from '@utils';
-import { pageReload } from '@utils/common/helpers';
 import {
+  pressUndoButton,
+  selectClearCanvasTool,
+  selectSaveTool,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+} from '@tests/pages/common/TopLeftToolbar';
+import { pageReload } from '@utils/common/helpers';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -92,7 +91,7 @@ async function closeSaveStrutureDialog(page: Page) {
 }
 
 async function saveFileAsPngOrSvgFormat(page: Page, FileFormat: string) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: FileFormat }).click();
 }
@@ -1020,7 +1019,7 @@ test.describe('Side chain connections', () => {
     // await takeEditorScreenshot(page);
     await selectEraseTool(page);
     await takeEditorScreenshot(page);
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1048,7 +1047,7 @@ test.describe('Side chain connections', () => {
     await selectEraseTool(page);
     await takeEditorScreenshot(page);
 
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -1076,7 +1075,7 @@ test.describe('Side chain connections', () => {
     await selectEraseTool(page);
     await takeEditorScreenshot(page);
 
-    await clickUndo(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });

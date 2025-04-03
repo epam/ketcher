@@ -2,9 +2,9 @@ import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
-  turnOnMacromoleculesEditor,
   takeEditorScreenshot,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('getKet', () => {
   test.beforeEach(async ({ page }) => {

@@ -20,6 +20,7 @@ import {
   waitForRender,
   setZoomInputValue,
   resetCurrentTool,
+  resetZoomLevelToDefault,
 } from '@utils';
 import {
   pressRedoButton,
@@ -80,6 +81,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await selectClearCanvasTool(page);
+  await resetZoomLevelToDefault(page);
 });
 
 test.afterAll(async ({ browser }) => {

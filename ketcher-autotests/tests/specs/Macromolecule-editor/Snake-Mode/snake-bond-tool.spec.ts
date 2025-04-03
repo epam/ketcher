@@ -178,6 +178,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Mode returns back/forth after undo/redo', async () => {
+    await goToPeptidesTab(page);
     const flexModeButton = page.getByTestId('flex-layout-mode');
     const snakeModeButton = page.getByTestId('snake-layout-mode');
     await createBondedMonomers(page);
@@ -336,6 +337,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake bond for mix chains with nucleotides and peptides', async () => {
+    await goToPeptidesTab(page);
     const [peptide1] = await addBondedMonomersToCanvas(
       page,
       Peptides.Tza,
@@ -545,6 +547,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake mode for single monomer and nucleoside', async () => {
+    await goToPeptidesTab(page);
     await addSingleMonomerToCanvas(page, Peptides.bAla, 300, 300, 0);
     await goToRNATab(page);
     await page.getByTestId('summary-Sugars').click();

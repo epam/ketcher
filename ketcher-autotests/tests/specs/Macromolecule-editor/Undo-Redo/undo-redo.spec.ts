@@ -351,6 +351,7 @@ test.describe('Undo-Redo tests', () => {
     Test case: Undo-Redo tests
     Description: Pressing Undo/Redo toggle snake mode.
     */
+    await goToRNATab(page);
     await openFileAndAddToCanvasMacro(
       'KET/peptides-connected-with-bonds.ket',
       page,
@@ -410,6 +411,7 @@ test.describe('Undo-Redo tests', () => {
     Description: Undo and Redo buttons turn gray.
     The test is not working correctly because we have an unresolved bug. https://github.com/epam/ketcher/issues/3922
     */
+    await goToRNATab(page);
     await takePageScreenshot(page);
     await selectMonomer(page, Peptides.Edc);
     await clickInTheMiddleOfTheScreen(page);

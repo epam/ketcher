@@ -176,8 +176,8 @@ export class DrawingEntitiesManager {
       ...(this.monomers as Map<number, DrawingEntity>),
       ...(this.polymerBonds as Map<number, DrawingEntity>),
       ...(this.monomerToAtomBonds as Map<number, DrawingEntity>),
-      ...(this.bonds as Map<number, DrawingEntity>),
       ...(this.atoms as Map<number, DrawingEntity>),
+      ...(this.bonds as Map<number, DrawingEntity>),
     ];
   }
 

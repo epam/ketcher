@@ -386,8 +386,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
             this.counterNumber > 9 &&
             this.isNextSymbolEditing(editingNodeIndexOverall)
           )) &&
-          ((this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
-            antisenseNodeIndex === this.chain.length - 1 ||
+          (antisenseNodeIndex === this.chain.length - 1 ||
             this.LinkerNodeRightBeforeOrRightAfterCurrentNode ||
             this.isNthNodeInChain ||
             this.isLastMonomerInChain)))

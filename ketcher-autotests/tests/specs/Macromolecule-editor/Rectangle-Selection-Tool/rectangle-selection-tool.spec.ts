@@ -18,16 +18,17 @@ import {
   selectMonomer,
   clickInTheMiddleOfTheScreen,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Chem } from '@constants/monomers/Chem';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
 /* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(
@@ -49,6 +50,7 @@ test.describe('Rectangle Selection Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
     await turnOnMacromoleculesEditor(page);
+    await goToPeptidesTab(page);
   });
   test('Select monomer and bonds and then erase', async ({ page }) => {
     /* 
@@ -299,7 +301,10 @@ test.describe('Rectangle Selection Tool', () => {
     await selectRectangleSelectionTool(page);
     await getMonomerLocator(page, Chem.A6OH).click();
     await dragMouseTo(x, y, page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   const testCasesForChems = [

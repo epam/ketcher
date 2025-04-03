@@ -4,7 +4,6 @@ import {
   AtomButton,
   FILE_TEST_DATA,
   RingButton,
-  TopPanelButton,
   clickInTheMiddleOfTheScreen,
   drawBenzeneRing,
   openFileAndAddToCanvas,
@@ -17,7 +16,6 @@ import {
   selectAtomInToolbar,
   selectOptionByText,
   selectRingButton,
-  selectTopPanelButton,
   takeEditorScreenshot,
   waitForIndigoToLoad,
   waitForPageInit,
@@ -33,13 +31,14 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 
 const RING_OFFSET = 150;
 const ARROW_OFFSET = 20;
 const ARROW_LENGTH = 100;
 
 async function getPreviewForSmiles(page: Page, smileType: string) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: smileType }).click();
 }
@@ -180,7 +179,7 @@ test.describe('Save files', () => {
     */
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await page.getByText('MDL Molfile V2000').click();
   });
 
@@ -193,7 +192,7 @@ test.describe('Save files', () => {
       the atom or structure has no coordinates because they were not added to the canvas.
     */
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
 
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(
@@ -224,7 +223,7 @@ test.describe('Save files', () => {
     await waitForIndigoToLoad(page);
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await selectOptionByText(page, 'InChIKey');
     const inChistring = await page
@@ -334,7 +333,7 @@ test.describe('Open/Save/Paste files', () => {
       Description: File is shown in the preview
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'SVG Document' }).click();
     await takeEditorScreenshot(page);
@@ -346,7 +345,7 @@ test.describe('Open/Save/Paste files', () => {
       Description: File is shown in the preview
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'PNG Image' }).click();
     await takeEditorScreenshot(page);

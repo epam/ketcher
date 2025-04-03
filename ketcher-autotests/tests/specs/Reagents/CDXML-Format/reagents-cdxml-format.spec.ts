@@ -1,7 +1,5 @@
 import { Page, test } from '@playwright/test';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
   clickInTheMiddleOfTheScreen,
   pressButton,
   takeEditorScreenshot,
@@ -9,12 +7,15 @@ import {
   FILE_TEST_DATA,
   waitForLoad,
   waitForPageInit,
-  selectOpenFileTool,
 } from '@utils';
+import {
+  selectOpenFileTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 
 async function previewCDXML(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'CDXML' }).click();
 }
@@ -100,7 +101,7 @@ test.describe('Reagents CDXML format', () => {
       page,
     );
 
-    await selectTopPanelButton(TopPanelButton.Save, page);
+    await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
     await page.getByRole('option', { name: 'CDXML' }).click();
     await page.getByRole('button', { name: 'Save', exact: true }).click();

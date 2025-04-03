@@ -1,13 +1,8 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
-import {
-  clickOnCanvas,
-  MacroBondType,
-  MonomerType,
-  moveMouseAway,
-  selectMacroBond,
-} from '..';
+import { clickOnCanvas, MacroBondType, MonomerType, moveMouseAway } from '..';
+import { selectMacroBond } from '@utils/canvas/tools';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 export enum BondType {

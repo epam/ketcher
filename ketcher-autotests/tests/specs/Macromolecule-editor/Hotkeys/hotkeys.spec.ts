@@ -1,4 +1,3 @@
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
@@ -18,6 +17,7 @@ import {
   waitForRender,
   getControlModifier,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 test.describe('Hotkeys', () => {

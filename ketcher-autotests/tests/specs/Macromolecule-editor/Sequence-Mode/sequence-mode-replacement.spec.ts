@@ -15,7 +15,6 @@ import {
   receiveFileComparisonData,
   resetZoomLevelToDefault,
   saveToFile,
-  selectClearCanvasTool,
   selectCustomPreset,
   selectFlexLayoutModeTool,
   selectMonomer,
@@ -24,10 +23,7 @@ import {
   waitForIndigoToLoad,
   waitForKetcherInit,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@utils/macromolecules';
+import {} from '@utils/macromolecules';
 import { pageReload } from '@utils/common/helpers';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
@@ -43,7 +39,6 @@ import {
   pressCancelInConfirmYourActionDialog,
   pressYesInConfirmYourActionDialog,
 } from '@utils/macromolecules/sequence';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
@@ -55,6 +50,12 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import {
+  selectClearCanvasTool,
+  pressUndoButton,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 let sharedContext: BrowserContext;

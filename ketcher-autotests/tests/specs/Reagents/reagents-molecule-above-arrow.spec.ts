@@ -1,11 +1,10 @@
 import { Page, test } from '@playwright/test';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
 } from '@utils';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 
 enum FileFormat {
@@ -14,7 +13,7 @@ enum FileFormat {
 }
 
 async function saveFileAsPngOrSvgFormat(page: Page, FileFormat: string) {
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: FileFormat }).click();
 }

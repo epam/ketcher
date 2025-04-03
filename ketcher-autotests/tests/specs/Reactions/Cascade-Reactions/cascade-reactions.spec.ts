@@ -4,10 +4,7 @@ import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   waitForPageInit,
-  selectClearCanvasTool,
   openFileAndAddToCanvasAsNewProject,
-  selectTopPanelButton,
-  TopPanelButton,
   openFile,
   pressButton,
   openFileAndAddToCanvas,
@@ -29,14 +26,18 @@ import {
   selectRectangleSelectionTool,
   waitForRender,
   selectLayoutTool,
-  selectOpenFileTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  selectClearCanvasTool,
+  selectOpenFileTool,
+  pressUndoButton,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 import { addTextToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 
 async function addTail(page: Page, x: number, y: number) {
@@ -1697,7 +1698,7 @@ test.describe('Cascade Reactions', () => {
        * Description: Canvas is empty, click on Save as..., verify that ${format} option is placed under SDF V2000, SDF V3000
        * in a File format dropdown, empty canvas can't be saved to ${format}, error "Convert error! core: <molecule> is not a base reaction" is displayed.
        */
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await clickOnFileFormatDropdown(page);
       await page.getByTestId(`${format}-option`).click();
       await takeEditorScreenshot(page);

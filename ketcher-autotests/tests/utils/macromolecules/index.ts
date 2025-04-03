@@ -1,10 +1,6 @@
 /* eslint-disable no-magic-numbers */
-import { expect, Page } from '@playwright/test';
+import { Page } from '@playwright/test';
 import {
-  MACROMOLECULES_MODE,
-  MOLECULES_MODE,
-  POLYMER_TOGGLER,
-  LAYOUT_TOGGLER,
   RNA_TAB,
   PEPTIDES_TAB,
   FAVORITES_TAB,
@@ -12,44 +8,8 @@ import {
 } from '@constants/testIdConstants';
 import {
   moveMouseToTheMiddleOfTheScreen,
-  selectFlexLayoutModeTool,
   waitForSpinnerFinishedWork,
 } from '@utils';
-import { goToPeptidesTab } from './library';
-
-export async function turnOnMacromoleculesEditor(
-  page: Page,
-  enableFlexMode = true,
-  goToPeptides = true,
-) {
-  await expect(page.getByTestId(POLYMER_TOGGLER)).toBeVisible();
-  await page.getByTestId(POLYMER_TOGGLER).click();
-  await expect(page.getByTestId(MACROMOLECULES_MODE)).toBeVisible();
-  await page.getByTestId(MACROMOLECULES_MODE).click();
-  await expect(page.getByTestId(LAYOUT_TOGGLER)).toBeVisible();
-
-  if (enableFlexMode) {
-    await selectFlexLayoutModeTool(page);
-  }
-
-  if (goToPeptides) {
-    await goToPeptidesTab(page);
-  }
-
-  await page.evaluate(() => {
-    // Temporary solution to disable autozoom for the polymer editor in e2e tests
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    window._ketcher_isAutozoomDisabled = true;
-  });
-}
-
-export async function turnOnMicromoleculesEditor(page: Page) {
-  await expect(page.getByTestId(POLYMER_TOGGLER)).toBeVisible();
-  await page.getByTestId(POLYMER_TOGGLER).click();
-  await expect(page.getByTestId(MOLECULES_MODE)).toBeVisible();
-  await page.getByTestId(MOLECULES_MODE).click();
-}
 
 export async function waitForMonomerPreview(page: Page) {
   await page

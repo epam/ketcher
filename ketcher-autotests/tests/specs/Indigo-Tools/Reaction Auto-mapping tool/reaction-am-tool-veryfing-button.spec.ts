@@ -13,7 +13,7 @@ import {
   clickOnAtom,
   waitForSpinnerFinishedWork,
 } from '@utils';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Verifying buttons on reaction am tool dropdown', () => {
   test.beforeEach(async ({ page }) => {

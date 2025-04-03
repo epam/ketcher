@@ -16,11 +16,7 @@ import {
   selectMonomer,
   selectMonomers,
 } from '@utils';
-import {
-  enterSequence,
-  turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { enterSequence, waitForMonomerPreview } from '@utils/macromolecules';
 import { SUGAR } from '@constants/testIdConstants';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import {
@@ -31,6 +27,7 @@ import { pressSaveButton } from '@utils/macromolecules/rnaBuilder';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Bases } from '@constants/monomers/Bases';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Sequence mode edit in RNA Builder', () => {
   test.beforeEach(async ({ page }) => {

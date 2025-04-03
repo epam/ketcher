@@ -19,7 +19,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
-  selectClearCanvasTool,
   selectEraseTool,
   selectFlexLayoutModeTool,
   selectMacroBond,
@@ -42,11 +41,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  enterSequence,
-  turnOnMacromoleculesEditor,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { enterSequence, waitForMonomerPreview } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   createDNAAntisenseChain,
@@ -61,11 +56,14 @@ import {
   hoverOnSequenceSymbol,
   switchToDNAMode,
   switchToPeptideMode,
+  switchToRNAMode,
 } from '@utils/macromolecules/sequence';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await selectMacroBond(page, MacroBondTool.SINGLE);
@@ -465,6 +463,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4880
     Description: Attachment point on preview tooltip marked gray if an attachment point participates in a bond.
     */
+    await switchToRNAMode(page);
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro('KET/rna-nucleotide-chem.ket', page);
 
@@ -511,6 +510,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4888
     Description: Hover mouse over any letter in sequence, cursor displayed as a arrow.
     */
+    await switchToRNAMode(page);
     await enterSequence(page, 'aaaaaaaaaa');
     await hoverOnSequenceSymbol(page, 'A', 0);
     await waitForMonomerPreview(page);

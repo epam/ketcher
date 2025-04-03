@@ -18,12 +18,12 @@ import {
   selectTool,
   takeEditorScreenshot,
   waitForPageInit,
-  selectClearCanvasTool,
 } from '@utils';
 import {
   pressRedoButton,
   pressUndoButton,
-} from '@utils/macromolecules/topToolBar';
+  selectClearCanvasTool,
+} from '@tests/pages/common/TopLeftToolbar';
 
 async function checkTooltip(type: RingButton, page: Page) {
   const templateButton = page.getByRole('button', { name: type });

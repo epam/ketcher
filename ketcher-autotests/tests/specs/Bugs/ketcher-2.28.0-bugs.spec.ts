@@ -30,36 +30,34 @@ import {
   selectAllStructuresOnCanvas,
   selectAtomInToolbar,
   selectCanvasArea,
-  selectClearCanvasTool,
   selectEraseTool,
   selectFlexLayoutModeTool,
   selectFunctionalGroups,
   selectRingButton,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
-  selectTopPanelButton,
   setBondLengthValue,
   switchIgnoreTheChiralFlag,
   takeEditorScreenshot,
-  TopPanelButton,
   waitForPageInit,
 } from '@utils';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  chooseFileFormat,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-  zoomWithMouseWheel,
-} from '@utils/macromolecules';
+import { chooseFileFormat, zoomWithMouseWheel } from '@utils/macromolecules';
 import {
   createRNAAntisenseChain,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
+import {
+  pressUndoButton,
+  selectClearCanvasTool,
+  selectSaveTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 
 declare global {
@@ -243,7 +241,7 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
     'RNA1{[2-damdA].[5Br-dU].[5hMedC]}$$$$V2.0',
   );
 
-  await selectTopPanelButton(TopPanelButton.Save, page);
+  await selectSaveTool(page);
   await chooseFileFormat(page, 'SVG Document');
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

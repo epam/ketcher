@@ -6,13 +6,12 @@ import {
   moveMouseAway,
   takeEditorScreenshot,
   saveToFile,
-  selectTopPanelButton,
-  TopPanelButton,
   clickOnFileFormatDropdown,
   pressButton,
   receiveFileComparisonData,
   selectAllStructuresOnCanvas,
 } from '@utils';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('1. User can restore previously saved selection for:', () => {
   /*
@@ -311,7 +310,7 @@ test.describe('4. User can save and than restore selection for:', () => {
       await takeEditorScreenshot(page);
       // replace this block of code with ketFielExpected = await getKet(page);
       // once https://github.com/epam/ketcher/issues/4238 will be fixed
-      await selectTopPanelButton(TopPanelButton.Save, page);
+      await selectSaveTool(page);
       await clickOnFileFormatDropdown(page);
       await page.getByTestId('Ket Format-option').click();
       const ketFileExpected = page

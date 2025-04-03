@@ -5,8 +5,8 @@ import {
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
   pressButton,
-  selectOpenFileTool,
 } from '@utils';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 /* eslint-disable no-magic-numbers */
 test.describe('PPTX files', () => {
   test.beforeEach(async ({ page }) => {

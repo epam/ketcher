@@ -3,11 +3,11 @@ import { Page, chromium, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
-  selectClearCanvasTool,
   waitForPageInit,
   resetZoomLevelToDefault,
   selectAddRemoveExplicitHydrogens,
 } from '@utils';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 

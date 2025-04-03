@@ -11,7 +11,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
   selectAllStructuresOnCanvas,
-  selectClearCanvasTool,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
@@ -22,8 +21,11 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
+import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { turnOnMacromoleculesEditor } from '@utils/macromolecules';
 import {
   getMonomerLocator,
   getSymbolLocator,

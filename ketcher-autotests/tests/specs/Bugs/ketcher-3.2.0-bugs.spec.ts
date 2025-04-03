@@ -7,7 +7,6 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Page, test } from '@playwright/test';
 import {
-  selectClearCanvasTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -18,7 +17,6 @@ import {
   selectSequenceLayoutModeTool,
   SequenceType,
   moveMouseAway,
-  selectSaveTool,
   openFileAndAddToCanvasAsNewProjectMacro,
   FILE_TEST_DATA,
   resetZoomLevelToDefault,
@@ -29,6 +27,7 @@ import {
   clickOnCanvas,
   setMolecule,
 } from '@utils';
+import { chooseFileFormat } from '@utils/macromolecules';
 import {
   waitForPageInit,
   waitForRender,
@@ -39,10 +38,12 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
-  chooseFileFormat,
+  pressUndoButton,
+  selectClearCanvasTool,
+  selectSaveTool,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@utils/macromolecules';
+} from '@tests/pages/common/TopLeftToolbar';
 import {
   createDNAAntisenseChain,
   createRNAAntisenseChain,
@@ -56,7 +57,6 @@ import {
   doubleClickOnSequenceSymbol,
   switchToPeptideMode,
 } from '@utils/macromolecules/sequence';
-import { pressUndoButton } from '@utils/macromolecules/topToolBar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 
 let page: Page;
@@ -85,7 +85,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     const context = await browser.newContext();
     page = await context.newPage();
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page, false, false);
+    await turnOnMacromoleculesEditor(page, {
+      enableFlexMode: false,
+      goToPeptides: false,
+    });
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {

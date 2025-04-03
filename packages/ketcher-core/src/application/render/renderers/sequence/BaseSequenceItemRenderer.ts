@@ -14,6 +14,7 @@ import { ITwoStrandedChainItem } from 'domain/entities/monomer-chains/ChainsColl
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { SequenceMode } from 'application/editor';
+import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
@@ -270,9 +271,8 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   private get counterNumber() {
     const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
     const senseNodeIndex = this.twoStrandedNode?.senseNodeIndex;
-
     let numberToDisplay;
-    this.twoStrandedNode.chain.subChains.some((subChain) => {
+    const caclulateNumberToDisplay = (subChain) => {
       if (!this.isSubChainNode(this.node)) return false;
 
       const nodeIndex = subChain.nodes.indexOf(this.node);
@@ -287,14 +287,9 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       );
       if (linkerNodeIndex !== -1 || phosphateNodeIndex !== -1) {
         if (linkerNodeIndex < nodeIndex || phosphateNodeIndex < nodeIndex) {
-          numberToDisplay = this.isAntisenseNode
-            ? subChain.nodes.length -
-              this.getNodeIndexIgnoringLinkerNodesInSubChain()
-            : this.getNodeIndexIgnoringLinkerNodesInSubChain();
+          numberToDisplay = this.getNodeIndexIgnoringLinkerNodesInSubChain();
         } else {
-          numberToDisplay = this.isAntisenseNode
-            ? subChain.nodes.length - nodeIndex + 1
-            : nodeIndex + 1;
+          numberToDisplay = nodeIndex + 1;
         }
       } else if (
         nodeIndex === 0 ||
@@ -304,13 +299,13 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
             Phosphate) ||
         this.isNthNodeInChain
       ) {
-        numberToDisplay = this.isAntisenseNode
-          ? subChain.nodes.length - nodeIndex + 1
-          : nodeIndex + 1;
+        numberToDisplay = nodeIndex + 1;
       }
 
       return numberToDisplay !== undefined;
-    });
+    };
+
+    this.chain.subChains.some(caclulateNumberToDisplay);
 
     return isNumber(numberToDisplay)
       ? numberToDisplay
@@ -369,6 +364,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       // 1   3
       // A A A ?
       !(this.node.monomer instanceof UnresolvedMonomer) &&
+      !(this.node instanceof AmbiguousMonomerSequenceNode) &&
       // don't display counters for empty sequence node and backbone sequence node
       !(this.node instanceof EmptySequenceNode) &&
       !(this.node instanceof BackBoneSequenceNode) &&
@@ -390,12 +386,11 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
             this.counterNumber > 9 &&
             this.isNextSymbolEditing(editingNodeIndexOverall)
           )) &&
-          (this.isAntisenseNode && isNumber(antisenseNodeIndex)
-            ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
-              antisenseNodeIndex === this.chain.length - 1
-            : this.LinkerNodeRightBeforeOrRightAfterCurrentNode ||
-              this.isNthNodeInChain ||
-              this.isLastMonomerInChain)))
+          ((this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1 ||
+            antisenseNodeIndex === this.chain.length - 1 ||
+            this.LinkerNodeRightBeforeOrRightAfterCurrentNode ||
+            this.isNthNodeInChain ||
+            this.isLastMonomerInChain)))
     );
   }
 

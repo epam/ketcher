@@ -1,5 +1,4 @@
 import { test } from '@playwright/test';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   waitForPageInit,
   openFile,
@@ -7,6 +6,7 @@ import {
   waitForSpinnerFinishedWork,
   pressButton,
 } from '@utils';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 /* eslint-disable no-magic-numbers */
 test.describe('PPTX files', () => {
   test.beforeEach(async ({ page }) => {

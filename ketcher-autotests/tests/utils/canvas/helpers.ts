@@ -163,6 +163,7 @@ export async function takeElementScreenshot(
   options?: {
     masks?: Locator[];
     maxDiffPixelRatio?: number;
+    maxDiffPixels?: number;
     hideMonomerPreview?: boolean;
   },
 ) {
@@ -252,6 +253,7 @@ export async function takeEditorScreenshot(
   options?: {
     masks?: Locator[];
     maxDiffPixelRatio?: number;
+    maxDiffPixels?: number;
     hideMonomerPreview?: boolean;
     hideMacromoleculeEditorScrollBars?: boolean;
   },

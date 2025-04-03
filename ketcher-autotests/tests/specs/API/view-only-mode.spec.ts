@@ -1,10 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
 import {
-  selectOpenFileTool,
-  topLeftToolbarLocators,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   waitForPageInit,
   takePageScreenshot,
   openFileAndAddToCanvasAsNewProject,
@@ -30,6 +26,10 @@ import {
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
 } from '@utils';
+import {
+  selectOpenFileTool,
+  topLeftToolbarLocators,
+} from '@tests/pages/common/TopLeftToolbar';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { waitForOpenButtonEnabled } from '@utils/common/loaders/waitForElementState';
 import {

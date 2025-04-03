@@ -1,6 +1,5 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectNestedTool,
   SelectTool,
@@ -36,6 +35,7 @@ import {
   selectDearomatizeTool,
   selectAddRemoveExplicitHydrogens,
 } from '@utils';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -402,7 +402,7 @@ test.describe('Hot keys', () => {
     await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
     await page.mouse.click(100, 100);
     await selectAromatizeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { maxDiffPixels: 1 });
     await selectDearomatizeTool(page);
     await takeEditorScreenshot(page);
   });

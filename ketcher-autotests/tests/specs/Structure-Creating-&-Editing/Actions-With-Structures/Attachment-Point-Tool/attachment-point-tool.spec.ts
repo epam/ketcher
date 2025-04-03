@@ -34,7 +34,6 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@tests/pages/common/TopLeftToolbar';
-
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile, getSmiles } from '@utils/formats';

@@ -1,14 +1,13 @@
 import { Bases } from '@constants/monomers/Bases';
 import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   clickOnTheCanvas,
   selectMonomer,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import { Monomer } from '@utils/types';
 
 interface IAmbiguousMonomerName {

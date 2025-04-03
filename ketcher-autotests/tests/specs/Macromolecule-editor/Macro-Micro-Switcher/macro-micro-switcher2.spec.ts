@@ -44,7 +44,6 @@ import {
   selectSequenceTypeMode,
   hideLibrary,
 } from '@utils';
-
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {

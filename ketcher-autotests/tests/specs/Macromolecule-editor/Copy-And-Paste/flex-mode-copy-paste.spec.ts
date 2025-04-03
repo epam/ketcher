@@ -1,10 +1,6 @@
 import { Chem } from '@constants/monomers/Chem';
 import { test } from '@playwright/test';
 import {
-  pressUndoButton,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
@@ -14,7 +10,10 @@ import {
   pasteFromClipboardByKeyboard,
   moveMouseAway,
 } from '@utils';
-
+import {
+  pressUndoButton,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 const startX = 300;

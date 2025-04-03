@@ -1,5 +1,4 @@
 import { test } from '@playwright/test';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import {
   openFileAndAddToCanvasMacro,
   selectSequenceLayoutModeTool,
@@ -18,6 +17,7 @@ import {
   waitForRender,
   getControlModifier,
 } from '@utils';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 
 test.describe('Hotkeys', () => {

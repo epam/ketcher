@@ -64,6 +64,7 @@ import {
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
+import { FlexMode } from 'ketcher-core';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -868,12 +869,15 @@ connectionVariants.forEach(({ from, to }) => {
       Test case: https://github.com/epam/ketcher/issues/6167
       Description: Checks that a long bond between two peptides is placed above monomers in both Flex and Sequence modes.
       Steps:
-      1. Load a .ket file with five peptides
-      2. Connect first monomer and fifth monomer by the specified R-group pair
-      3. Take a screenshot
-      4. Switch to Sequence mode
-      5. Take another screenshot
+      1. Switch to Flex mode
+      2. Load a .ket file with five peptides
+      3. Connect first monomer and fifth monomer by the specified R-group pair
+      4. Take a screenshot
+      5. Switch to Sequence mode
+      6. Take another screenshot
     */
+    await selectFlexLayoutModeTool(page);
+
     const firstMonomer = getMonomerLocator(page, Peptides.C);
     const secondMonomer = getMonomerLocator(page, Peptides.dC);
     await openFileAndAddToCanvasMacro(

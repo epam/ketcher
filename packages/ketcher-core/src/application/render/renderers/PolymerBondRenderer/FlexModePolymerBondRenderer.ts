@@ -1,5 +1,6 @@
 import { editorEvents } from 'application/editor/editorEvents';
 import { Coordinates } from 'application/editor/shared/coordinates';
+import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
 import { Vec2 } from 'domain/entities';
@@ -48,10 +49,7 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
     return this.rootBBox?.height || 0;
   }
 
-  private get scaledPosition(): {
-    readonly endPosition: Vec2;
-    readonly startPosition: Vec2;
-  } {
+  private get scaledPosition(): PolymerBondRendererStartAndEndPositions {
     // we need to convert monomer coordinates(stored in angstroms) to pixels.
     // it needs to be done in view layer of application (like renderers)
     const startPositionInPixels = Coordinates.modelToCanvas(

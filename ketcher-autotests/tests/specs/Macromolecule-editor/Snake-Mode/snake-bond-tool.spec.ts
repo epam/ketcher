@@ -41,6 +41,7 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 /* eslint-disable no-magic-numbers */
 
 async function createBondedMonomers(page: Page) {
+  await goToPeptidesTab(page);
   const peptide1 = await addSingleMonomerToCanvas(
     page,
     Peptides.dU,

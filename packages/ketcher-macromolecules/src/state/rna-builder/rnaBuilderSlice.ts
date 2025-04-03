@@ -115,7 +115,7 @@ export const rnaBuilderSlice = createSlice({
       };
     },
     setSequenceSelection: (
-      state,
+      state: RootState,
       action: PayloadAction<LabeledNodesWithPositionInSequence[]>,
     ) => {
       state.sequenceSelection = [...action.payload];

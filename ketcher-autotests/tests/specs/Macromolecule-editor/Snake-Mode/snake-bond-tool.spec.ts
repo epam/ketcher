@@ -582,10 +582,16 @@ test.describe('Snake Bond Tool', () => {
     const y = 350;
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(`KET/two-peptides-connected.ket`, page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await getMonomerLocator(page, Peptides.meE).hover();
     await dragMouseTo(x, y, page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('When monomers are too close under each other snake bond shape has straight connection', async () => {

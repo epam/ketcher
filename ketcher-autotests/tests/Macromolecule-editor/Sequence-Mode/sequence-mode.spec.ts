@@ -715,7 +715,7 @@ test.describe('Sequence Mode', () => {
       '[Apm].[Aoda].[Cap].[Ac3c].[Ac6c].[Aca].[Aib].[D-Bmt].[D-Dab].[D-Dip].[D-Pip].[D-Tic].[Dab].[meV].' +
       '[Nva].[Pen].[dL].[ThrPO3].[xiThr].[dU].[meU].[D-Nva].[meT].[Dip].[Dsu].[dN].[meN].[dO].[meO].' +
       '[aHyp].[aMePro].[Aze].[D-aHyp].[D-Hyp].[D-Thz].[dP].[Pyr].[dH].[DHis1B].[Hhs].[His1Bn].[His1Me].' +
-      '[His3Me].[meH].[aIle].[D-aIle].[dI].[DxiIle].[meI].[xiIle].[Aad].[D-Orn].[DALys].[dK].[Dpm].' +
+      '[His3Me].[meH].[aIle].[D-aIle].[dI].[DxiIle].[meI].[xiIle].[Aad].[D-Orn].[dK].[Dpm].' +
       '[Hyl5xi].[Lys_Ac].[tLeu].[dM].[DMetSO].[meM].[Met_O].[Met_O2].[Phg].[meG].[GlycPr].[Phg].[meG].' +
       '[GlycPr].[Glyall].[TyrtBu].[TyrSO3].[TyrPO3].[TyrPh4].[TyrabD].[Tyr3OH].[Tyr3NO].[Tyr35d].' +
       '[Tyr26d].[Tyr_Me].[Tyr_Bn].[Tyr_3I].[nTyr].[meY].[dY].[DTyrMe].[DTyrEt].[NMe2Ab].[NMe4Ab].[Pqa].' +
@@ -729,7 +729,7 @@ test.describe('Sequence Mode', () => {
       '[DPhgol]}|PEPTIDE5{[DAPhg4].[Pro-ol]}|PEPTIDE6{[DALeu].[Leu-ol]}|PEPTIDE7{[OLeu].[-OtBu]}$$$$V2.0',
 
     'PEPTIDE1{[meP].[Pro-al]}|PEPTIDE2{[D-OVal].[dThrol]}|PEPTIDE3{[L-OVal].[-Et]}|PEPTIDE4{[Ac-].[-Bn]}|' +
-      'PEPTIDE5{[Bua-].[-OEt]}|PEPTIDE6{[Cbz-].[-Ph]}|PEPTIDE7{[Bn-].[Am-]}$$$$V2.0',
+      'PEPTIDE5{[Bua-].[-OEt]}|PEPTIDE6{[Cbz-].[-Ph]}|PEPTIDE7{[Bn-].[-Am]}$$$$V2.0',
 
     'PEPTIDE1{[DANcy].[Leu-al]}|PEPTIDE2{[fmoc-].[Thr-ol]}|PEPTIDE3{[DADip].[Val-ol]}|PEPTIDE4{[Glc].[-Me]}|' +
       'PEPTIDE5{[Boc-].[Aib-ol]}|PEPTIDE6{[Bz-]}|PEPTIDE7{[DAChg].[DADab]}$$$$V2.0',

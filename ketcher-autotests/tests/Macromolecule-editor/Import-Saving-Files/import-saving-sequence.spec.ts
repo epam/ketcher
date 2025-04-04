@@ -1279,7 +1279,7 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     testCaseDescription: '11. Verify natural analogue conversion on export',
     sequenceDescription: 'All peptides with no natulal analog - X',
     HELMString:
-      'PEPTIDE1{[Am-]}|PEPTIDE2{[Bn-].[Aoda].[-Bn]}|PEPTIDE3{[Boc-].[Apm].[-Et]}|PEPTIDE4{[Bua-].[App].[-Me]}|' +
+      'PEPTIDE1{[-Am]}|PEPTIDE2{[Bn-].[Aoda].[-Bn]}|PEPTIDE3{[Boc-].[Apm].[-Et]}|PEPTIDE4{[Bua-].[App].[-Me]}|' +
       'PEPTIDE5{[Et-].[Aib].[-NHBn]}|PEPTIDE6{[Ac6c].[D-Tic].[-NMe]}|PEPTIDE7{[Cbz-].[Ac3c].[-OBn]}|' +
       'PEPTIDE8{[Abu23D].[D-Pip].[-OEt]}|PEPTIDE9{[DANcy].[4Abz].[-OMe]}|PEPTIDE10{[Ac-].[2Abz].[-OtBu]}|' +
       'PEPTIDE11{[Mba].[3Abz].[-Ph]}|PEPTIDE12{[Aca].[Sta3xi].[-NHEt]}|PEPTIDE13{[Me-].[Bux].[Aib-ol]}|' +

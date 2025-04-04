@@ -163,7 +163,7 @@ const modifiedMonomers: string[] = [
     '[meO].[aHyp].[aMePro].[Aze]}$$$$V2.0',
 
   'PEPTIDE1{[D-aHyp].[D-Hyp].[D-Thz].[dP].[Pyr].[dH].[DHis1B].[Hhs].[His1Bn].[His1Me].[His3Me].' +
-    '[meH].[aIle].[D-aIle].[dI].[DxiIle].[meI].[xiIle].[Aad].[D-Orn].[DALys].[dK].[Dpm].[Hyl5xi].' +
+    '[meH].[aIle].[D-aIle].[dI].[DxiIle].[meI].[xiIle].[Aad].[D-Orn].[dK].[Dpm].[Hyl5xi].' +
     '[Lys_Ac].[tLeu].[dM].[DMetSO].[meM].[Met_O].[Met_O2].[Phg].[meG].[GlycPr].[Phg].[meG].[GlycPr].' +
     '[Glyall].[TyrtBu].[TyrSO3].[TyrPO3].[TyrPh4].[TyrabD].[Tyr3OH].[Tyr3NO].[Tyr35d].[Tyr26d].' +
     '[Tyr_Me].[Tyr_Bn].[Tyr_3I].[nTyr].[meY].[dY].[DTyrMe].[DTyrEt].[NMe2Ab].[NMe4Ab].[Pqa].[pnT].' +
@@ -178,7 +178,7 @@ const modifiedMonomers: string[] = [
   'PEPTIDE1{[DAPhg4].[Pro-ol]}|PEPTIDE2{[DALeu].[Leu-ol]}|PEPTIDE3{[OLeu].[-OtBu]}|' +
     'PEPTIDE4{[meP].[Pro-al]}|PEPTIDE5{[D-OVal].[dThrol]}|PEPTIDE6{[L-OVal].[-Et]}|' +
     'PEPTIDE7{[Ac-].[-Bn]}|PEPTIDE8{[Bua-].[-OEt]}|PEPTIDE9{[Cbz-].[-Ph]}|' +
-    'PEPTIDE10{[Bn-].[Am-]}|PEPTIDE11{[DANcy].[Leu-al]}$$$$V2.0',
+    'PEPTIDE10{[Bn-].[-Am]}|PEPTIDE11{[DANcy].[Leu-al]}$$$$V2.0',
 
   'PEPTIDE1{[fmoc-].[Thr-ol]}|PEPTIDE2{[DADip].[Val-ol]}|PEPTIDE3{[Glc].[-Me]}|' +
     'PEPTIDE4{[Boc-].[Aib-ol]}|PEPTIDE5{[Bz-]}|PEPTIDE6{[DAChg].[DADab]}|PEPTIDE7{[NHBn-].[Gly-ol]}|' +

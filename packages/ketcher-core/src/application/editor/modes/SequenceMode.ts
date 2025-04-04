@@ -895,6 +895,10 @@ export class SequenceMode extends BaseMode {
         potentialNodeInSameChainAfterSelection instanceof BackBoneSequenceNode
           ? potentialNodeInSameChainAfterSelection.secondConnectedNode
           : potentialNodeInSameChainAfterSelection;
+      const previouseNodeInBackbone =
+        strandType === STRAND_TYPE.SENSE
+          ? nodeBeforeSelection
+          : nodeAfterSelection;
 
       // Сase delete A (for sense) and empty node (for antisense) in sync mode:
       // G | A | G
@@ -932,10 +936,18 @@ export class SequenceMode extends BaseMode {
           backBoneSequenceNode.firstConnectedNode.lastMonomerInNode
             .attachmentPointsToBonds.R2;
 
-        if (polymerBondToDelete instanceof PolymerBond) {
+        if (!(polymerBondToDelete instanceof PolymerBond)) {
+          return;
+        }
+
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deletePolymerBond(polymerBondToDelete),
+        );
+
+        if (previouseNodeInBackbone instanceof Nucleotide) {
           modelChanges.merge(
-            editor.drawingEntitiesManager.deletePolymerBond(
-              polymerBondToDelete,
+            editor.drawingEntitiesManager.deleteMonomer(
+              previouseNodeInBackbone.lastMonomerInNode,
             ),
           );
         }

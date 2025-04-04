@@ -2575,6 +2575,7 @@ export class DrawingEntitiesManager {
     command.merge(
       this.modifyMonomerItem(monomer, {
         ...monomer.monomerItem,
+        isSense: false,
         isAntisense: true,
       }),
     );
@@ -2589,6 +2590,7 @@ export class DrawingEntitiesManager {
       this.modifyMonomerItem(monomer, {
         ...monomer.monomerItem,
         isSense: true,
+        isAntisense: false,
       }),
     );
 

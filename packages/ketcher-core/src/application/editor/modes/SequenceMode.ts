@@ -1316,7 +1316,11 @@ export class SequenceMode extends BaseMode {
           }
 
           SequenceRenderer.moveCaretUp();
-          this.turnOnAntisenseEditMode();
+
+          if (SequenceRenderer.currentEdittingNode?.antisenseNode) {
+            this.turnOnAntisenseEditMode();
+          }
+
           this.unselectAllEntities();
         },
       },

@@ -1415,11 +1415,12 @@ export class SequenceMode extends BaseMode {
           let senseNodeToConnect = currentTwoStrandedNode?.senseNode;
           const isDnaEnteringMode =
             editor.sequenceTypeEnterMode === SequenceType.DNA;
+          const isEnteringSymbolP = enteredSymbol.toUpperCase() === 'P';
 
           if (this.needToEditSense) {
             const insertNewSequenceItemResult = this.insertNewSequenceItem(
               editor,
-              this.isAntisenseEditMode
+              this.isAntisenseEditMode && !isEnteringSymbolP
                 ? DrawingEntitiesManager.getAntisenseBaseLabel(
                     enteredSymbol,
                     isDnaEnteringMode,
@@ -1456,7 +1457,8 @@ export class SequenceMode extends BaseMode {
               editor,
               this.isAntisenseEditMode ||
                 (editor.sequenceTypeEnterMode !== SequenceType.DNA &&
-                  editor.sequenceTypeEnterMode !== SequenceType.RNA)
+                  editor.sequenceTypeEnterMode !== SequenceType.RNA) ||
+                isEnteringSymbolP
                 ? enteredSymbol
                 : DrawingEntitiesManager.getAntisenseBaseLabel(
                     enteredSymbol,
@@ -2516,10 +2518,10 @@ export class SequenceMode extends BaseMode {
           newPhosphateNode,
           currentTwoStrandedNode instanceof BackBoneSequenceNode
             ? currentTwoStrandedNode.secondConnectedNode
-            : undefined,
+            : nextNodeToConnect,
           currentTwoStrandedNode instanceof BackBoneSequenceNode
             ? currentTwoStrandedNode.firstConnectedNode
-            : undefined,
+            : previousNodeToConnect,
           true,
           true,
           false,

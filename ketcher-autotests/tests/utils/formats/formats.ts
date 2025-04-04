@@ -102,10 +102,12 @@ export async function getSdf(
 export async function setMolecule(
   page: Page,
   structStr: string,
+  position?: { x: number; y: number },
 ): Promise<void> {
   return await page.evaluate(
-    (structStr) => window.ketcher.setMolecule(structStr),
-    structStr,
+    ({ structStr, position }) =>
+      window.ketcher.setMolecule(structStr, { position }),
+    { structStr, position },
   );
 }
 

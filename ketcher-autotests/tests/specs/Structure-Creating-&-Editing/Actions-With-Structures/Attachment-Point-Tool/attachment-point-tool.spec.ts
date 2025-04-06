@@ -23,7 +23,6 @@ import {
   setAttachmentPoints,
   AttachmentPoint,
   waitForPageInit,
-  waitForRender,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectCleanTool,
@@ -41,6 +40,11 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import {
+  selectAreaSelectionTool,
+  selectHandTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -594,7 +598,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     const coordinatesWithShift = point.y + yDelta;
@@ -625,7 +629,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectHandTool(page);
     await clickOnAtom(page, 'N', 0);
 
     await clickOnAtom(page, 'L#', 0);
@@ -651,7 +655,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectHandTool(page);
     point = await getAtomByIndex(page, { label: 'N' }, 0);
     await page.mouse.move(point.x, point.y);
     await page.keyboard.press('Delete');
@@ -885,9 +889,7 @@ test.describe('Attachment Point Tool', () => {
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
-    await waitForRender(page, async () => {
-      await pressUndoButton(page);
-    });
+    await pressUndoButton(page);
 
     await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });

@@ -1,9 +1,7 @@
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  LeftPanelButton,
   clickInTheMiddleOfTheScreen,
-  selectLeftPanelButton,
   openFileAndAddToCanvas,
   selectRingButton,
   RingButton,
@@ -21,6 +19,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
+import { selectHandTool } from '@tests/pages/common/CommonLeftToolbar';
 
 test.describe('Mapping Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -65,7 +64,7 @@ test.describe('Mapping Tools', () => {
   test('No Unmapping after the arrow deleting', async ({ page }) => {
     // EPMLSOPKET-1828
     await openFileAndAddToCanvas('Rxn-V2000/mapped-rection-benz.rxn', page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectHandTool(page);
     await clickInTheMiddleOfTheScreen(page);
   });
 

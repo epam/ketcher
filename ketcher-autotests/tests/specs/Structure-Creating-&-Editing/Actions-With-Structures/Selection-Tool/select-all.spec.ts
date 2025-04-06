@@ -5,13 +5,12 @@ import {
   cutAndPaste,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  LeftPanelButton,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   selectAllStructuresOnCanvas,
-  selectLeftPanelButton,
   takeEditorScreenshot,
 } from '@utils';
+import { selectHandTool } from '@tests/pages/common/CommonLeftToolbar';
 
 test.describe('Select all', () => {
   test.beforeEach(async ({ page }) => {
@@ -28,7 +27,7 @@ test.describe('Select all', () => {
 
     await openFileAndAddToCanvas('Molfiles-V2000/three-structures.mol', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.HandTool, page);
+    await selectHandTool(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(x + offset, y + offset, page);
@@ -71,7 +70,7 @@ test.describe('Select all', () => {
 
     await openFileAndAddToCanvas('Molfiles-V2000/three-structures.mol', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.HandTool, page);
+    await selectHandTool(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
   });

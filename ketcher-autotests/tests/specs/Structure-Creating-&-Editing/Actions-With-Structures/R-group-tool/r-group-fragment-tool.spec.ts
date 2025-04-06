@@ -11,15 +11,12 @@ import {
   openFileAndAddToCanvas,
   pressButton,
   clickOnAtom,
-  LeftPanelButton,
-  selectLeftPanelButton,
   receiveFileComparisonData,
   saveToFile,
   copyAndPaste,
   cutAndPaste,
   waitForPageInit,
   selectDropdownTool,
-  waitForRender,
   resetCurrentTool,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
@@ -34,6 +31,11 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
 } from '@tests/pages/common/TopLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import {
+  selectAreaSelectionTool,
+  selectHandTool,
+} from '@tests/pages/common/CommonLeftToolbar';
 
 async function openRGroupModalForTopAtom(page: Page) {
   await selectRingButton(RingButton.Benzene, page);
@@ -253,22 +255,18 @@ test.describe('Open Ketcher', () => {
       page,
     );
 
-    await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
+    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
     await page.getByText('R8').click();
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
 
-    await waitForRender(page, async () => {
-      await pressUndoButton(page);
-    });
+    await pressUndoButton(page);
 
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectHandTool(page);
     await page.getByText('R8').click();
     await takeEditorScreenshot(page);
 
-    await waitForRender(page, async () => {
-      await pressUndoButton(page);
-    });
+    await pressUndoButton(page);
 
     await selectAllStructuresOnCanvas(page);
     await selectClearCanvasTool(page);

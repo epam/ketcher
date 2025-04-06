@@ -40,12 +40,6 @@ export const MacroBondTool: { [key: string]: DropdownToolIds } = {
   HYDROGEN: 'hydrogen-bond',
 };
 
-export const SelectTool: toolType = {
-  RECTANGLE_SELECTION: [1, 'select-rectangle'],
-  LASSO_SELECTION: [2, 'select-lasso'],
-  FRAGMENT_SELECTION: [3, 'select-fragment'],
-};
-
 // Rotate tool do not change image after selecting
 export const RotateTool: toolType = {
   TRANSFORM_ROTATE: [1, 'transform-rotate'],

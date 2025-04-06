@@ -1,5 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test, Page } from '@playwright/test';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 import {
   BondType,
   clickOnCanvas,
@@ -439,7 +441,7 @@ test.describe('Bond Properties', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const offset = 100;
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await page.mouse.move(x - offset, y - offset);
     await dragMouseTo(x + offset, y + offset, page);
 
@@ -519,7 +521,7 @@ test.describe('Bond Properties', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(x, y + 30);
     dragMouseTo(x + 100, y + 100, page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
 
     await selectRingButton(RingButton.Benzene, page);
     await clickOnCanvas(page, x + 150, y + 150);

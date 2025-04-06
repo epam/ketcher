@@ -11,7 +11,6 @@ import {
   selectFlexLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   waitForRender,
-  selectEraseTool,
   selectAllStructuresOnCanvas,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -30,6 +29,10 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectEraseTool,
+  selectHandTool,
+} from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 test.setTimeout(400000);
@@ -846,9 +849,8 @@ const buttonIdToTitle: {
 };
 
 async function openBondToolDropDown(page: Page) {
-  const handToolButton = page.getByTestId('hand-tool');
   // to reset Bond tool state
-  await handToolButton.click();
+  await selectHandTool(page);
 
   const bondToolDropdown = page
     .getByTestId('bond-tool-submenu')

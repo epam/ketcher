@@ -6,7 +6,6 @@ import {
   dragMouseTo,
   takeEditorScreenshot,
   moveMouseToTheMiddleOfTheScreen,
-  selectEraseTool,
   openFileAndAddToCanvasAsNewProject,
   waitForPageInit,
   moveOnBond,
@@ -30,6 +29,7 @@ import {
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
+import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);

@@ -14,6 +14,7 @@ import {
 import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
 import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
+import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 function checkElementExists(element: RxnPlus | RxnArrow, errorMsg: string) {
   if (!element) {
     throw new Error(errorMsg);
@@ -28,7 +29,7 @@ test.describe('Erase Tool', () => {
       page,
     );
 
-    await page.getByTestId('erase').click();
+    await await selectEraseTool(page);
   });
 
   test('Erase atom and bond', async ({ page }) => {

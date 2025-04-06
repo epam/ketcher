@@ -3,7 +3,6 @@ import { test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   dragMouseTo,
-  selectRectangleSelectionTool,
   waitForPageInit,
   takeEditorScreenshot,
   moveMouseAway,
@@ -12,8 +11,9 @@ import {
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
-
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Check attachment point rotation', () => {
@@ -123,7 +123,7 @@ test.describe('Check attachment point rotation', () => {
     });
 
     // Move selected monomer
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await page.mouse.move(400, 400);
     await dragMouseTo(200, 400, page);
     await moveMouseAway(page);

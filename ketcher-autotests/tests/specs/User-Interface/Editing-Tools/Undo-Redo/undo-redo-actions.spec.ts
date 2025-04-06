@@ -46,6 +46,11 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectAreaSelectionTool,
+  selectHandTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -130,7 +135,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectHandTool(page);
 
     await clickOnAtom(page, 'C', 0);
 
@@ -164,7 +169,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
 
     await doubleClickOnAtom(page, 'C', 0);
     await fillAliasForAtom(page, '!@#$%123AbCd', 'Apply');
@@ -182,7 +187,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
 
     await doubleClickOnBond(page, BondType.SINGLE, 0);
     await selectBondProperties(page, 'Double', 'Ring', 'Center', 'Apply');

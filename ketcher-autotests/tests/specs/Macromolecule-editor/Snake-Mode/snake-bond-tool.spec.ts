@@ -13,7 +13,6 @@ import {
   waitForRender,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProject,
-  selectEraseTool,
   selectPartOfMolecules,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
@@ -38,6 +37,7 @@ import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 /* eslint-disable no-magic-numbers */
 
 async function createBondedMonomers(page: Page) {

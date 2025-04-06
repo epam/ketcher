@@ -24,10 +24,8 @@ import {
   pressButton,
   drawBenzeneRing,
   moveOnAtom,
-  selectRectangleSelection,
   clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
-  selectEraseTool,
   selectPartOfMolecules,
   selectAromatizeTool,
   selectDearomatizeTool,
@@ -71,6 +69,11 @@ import {
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 let page: Page;
 
@@ -398,7 +401,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      */
     await turnOnMicromoleculesEditor(page);
     await drawBenzeneRing(page);
-    await selectRectangleSelection(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnAtom(page, 'C', 0);
     await page.keyboard.press('O');
     await moveOnAtom(page, 'C', 1);

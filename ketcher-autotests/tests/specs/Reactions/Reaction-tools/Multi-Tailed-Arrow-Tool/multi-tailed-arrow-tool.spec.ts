@@ -8,7 +8,6 @@ import {
   cutAndPaste,
   cutToClipboardByKeyboard,
   dragMouseTo,
-  LeftPanelButton,
   moveMouseAway,
   moveOnAtom,
   openDropdown,
@@ -29,11 +28,8 @@ import {
   selectCleanTool,
   selectDearomatizeTool,
   selectDropdownTool,
-  selectEraseTool,
   selectLayoutTool,
-  selectLeftPanelButton,
   selectPartOfMolecules,
-  selectRectangleSelectionTool,
   selectRing,
   selectTopPanelButton,
   setZoomInputValue,
@@ -64,6 +60,12 @@ import {
   selectOpenFileTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+  selectHandTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 async function saveToTemplates(page: Page) {
   await pressButton(page, 'Save to Templates');
@@ -91,7 +93,7 @@ async function setupElementsAndModifyMultiTailArrow(page: Page) {
   await clickOnCanvas(page, 600, 400);
   await selectRing(RingButton.Benzene, page);
   await clickOnCanvas(page, 200, 400);
-  await selectRectangleSelectionTool(page);
+  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
   await clickOnCanvas(page, 600, 400);
   await page.getByTestId('head-resize').hover({ force: true });
   await dragMouseTo(800, 500, page);
@@ -550,7 +552,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await page.getByTestId('reaction-arrow-multitail').click();
     await takeLeftToolbarScreenshot(page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await takeLeftToolbarScreenshot(page);
   });
 
@@ -1047,7 +1049,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600);
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 400);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await addTail(page, 500, 600);
     await clickOnCanvas(page, 500, 600);
     await page.getByTestId('tails-0-resize').hover({ force: true });
@@ -1062,7 +1064,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTail(page, 500, 600);
     await takeEditorScreenshot(page);
     await removeTail(page, 'tails-1-move');
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectHandTool(page);
     /* Here we erase multi-tailed arrow */
     await clickOnCanvas(page, 500, 600);
     await takeEditorScreenshot(page);
@@ -1116,7 +1118,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 400, 400);
     await clickOnCanvas(page, 600, 600);
     await takeEditorScreenshot(page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 200, 200);
     await waitForRender(page, async () => {
       await hoverOverArrowSpine(page, 0);
@@ -1155,7 +1157,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 200, 200);
     await waitForRender(page, async () => {
       await hoverOverArrowSpine(page, 0);
@@ -1225,7 +1227,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 200, 200);
     await waitForRender(page, async () => {
       await hoverOverArrowSpine(page, 0);
@@ -1684,7 +1686,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600);
     await clickOnCanvas(page, 700, 500);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await addTail(page, 300, 400);
 
     await addTail(page, 500, 600);
@@ -1718,7 +1720,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 300, 400);
     await clickOnCanvas(page, 500, 600);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await addTail(page, 300, 400);
     await addTail(page, 300, 400);
     await addTail(page, 300, 400);
@@ -1759,7 +1761,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickOnCanvas(page, 300, 400);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await addTail(page, 300, 400);
     await addTail(page, 300, 400);
     await addTail(page, 300, 400);
@@ -1797,7 +1799,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickOnCanvas(page, 300, 400);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await addTail(page, 300, 400);
     await addTail(page, 300, 400);
     await addTail(page, 300, 400);
@@ -1837,7 +1839,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600);
     await clickOnCanvas(page, 700, 500);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await addTail(page, 300, 400);
 
     await addTail(page, 500, 600);
@@ -1878,7 +1880,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickOnCanvas(page, 300, 400);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await addTail(page, 300, 400);
     await addTail(page, 300, 400);
     await addTail(page, 300, 400);
@@ -1909,7 +1911,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickOnCanvas(page, 300, 400);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await addTail(page, 300, 400);
     await addTail(page, 300, 400);
     await addTail(page, 300, 400);
@@ -2246,7 +2248,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(900, 500, page);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await selectPartOfMolecules(page);
     await page.getByTestId('head-move').nth(1).hover({ force: true });
     await dragMouseTo(500, 600, page);
@@ -2481,7 +2483,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(900, 500, page);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await selectPartOfMolecules(page);
     await page.getByTestId('head-move').nth(1).hover({ force: true });
     await dragMouseTo(500, 600, page);
@@ -2528,7 +2530,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(900, 500, page);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await selectPartOfMolecules(page);
     await page.getByTestId('head-move').nth(1).hover({ force: true });
     await dragMouseTo(500, 600, page);
@@ -2571,7 +2573,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await page.getByTestId('head-resize').hover({ force: true });
     await dragMouseTo(900, 500, page);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await selectPartOfMolecules(page);
     await page.getByTestId('head-move').nth(1).hover({ force: true });
     await dragMouseTo(500, 600, page);
@@ -2733,7 +2735,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('topTail-move').hover({ force: true });
     await dragMouseTo(500, 200, page);
@@ -2862,7 +2864,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 600, 450);
     await takeEditorScreenshot(page);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(500, 200, page);
@@ -3120,7 +3122,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 600, 450);
     await takeEditorScreenshot(page);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(500, 200, page);
@@ -3167,7 +3169,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 600, 450);
     await takeEditorScreenshot(page);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(500, 200, page);
@@ -3209,7 +3211,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 600, 450);
     await takeEditorScreenshot(page);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickInTheMiddleOfTheScreen(page);
     await page.getByTestId('bottomTail-move').hover({ force: true });
     await dragMouseTo(500, 200, page);
@@ -3262,7 +3264,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(400, 300, page);
     await takeEditorScreenshot(page);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await waitForRender(page, async () => {
       await hoverOverArrowSpine(page);
     });
@@ -3360,7 +3362,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await addTails(page, 3);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -3393,7 +3395,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await addTails(page, 3);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -3428,7 +3430,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await addTails(page, 3);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);

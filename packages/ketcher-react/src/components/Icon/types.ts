@@ -29,4 +29,5 @@ export interface IIconProps {
   name: IconName;
   className?: string;
   onClick?: (e: MouseEvent) => void;
+  dataTestId?: string;
 }

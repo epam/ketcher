@@ -8,8 +8,6 @@ import {
   getAndCompareInchi,
   getAndCompareSmiles,
   BondType,
-  selectLeftPanelButton,
-  LeftPanelButton,
   selectRingButton,
   RingButton,
   clickInTheMiddleOfTheScreen,
@@ -39,6 +37,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { selectHandTool } from '@tests/pages/common/CommonLeftToolbar';
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -370,7 +369,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectHandTool(page);
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
     await clickOnCanvas(page, point.x, point.y);
 

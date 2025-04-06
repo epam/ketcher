@@ -33,7 +33,6 @@ import {
   selectMacroBond,
   selectMonomer,
   selectSequenceLayoutModeTool,
-  selectEraseTool,
   selectAllStructuresOnCanvas,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -63,6 +62,7 @@ import {
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
+import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 let sharedContext: BrowserContext;

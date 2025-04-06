@@ -25,6 +25,11 @@ import {
   selectOpenFileTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
+import {
+  commonLeftToolbarLocators,
+  selectAreaSelectionTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 /**
  * Selects an atom from Atom toolbar
@@ -63,7 +68,7 @@ export async function selectAtomInToolbar(atomName: AtomButton, page: Page) {
 }
 
 export async function selectSingleBondTool(page: Page) {
-  const handToolButton = page.getByTestId('hand-tool');
+  const handToolButton = commonLeftToolbarLocators(page).handToolButton;
   // to reset Bond tool state
   await handToolButton.click();
 
@@ -81,7 +86,7 @@ export async function selectMacroBond(
   page: Page,
   bondType: DropdownToolIds = MacroBondTool.SINGLE,
 ) {
-  const handToolButton = page.getByTestId('hand-tool');
+  const handToolButton = commonLeftToolbarLocators(page).handToolButton;
   // to reset Bond tool state
   await handToolButton.click();
 
@@ -98,11 +103,6 @@ export async function selectMacroBond(
 export async function openLayoutModeMenu(page: Page) {
   const modeSelectorButton = page.getByTestId('layout-mode');
   await modeSelectorButton.click();
-}
-
-export async function selectHandTool(page: Page) {
-  const handToolButton = page.getByTestId('hand-tool');
-  await handToolButton.click();
 }
 
 export async function hideLibrary(page: Page) {
@@ -171,20 +171,8 @@ export async function selectFlexLayoutModeTool(page: Page) {
   await flexModeButton.click();
 }
 
-export async function selectEraseTool(page: Page) {
-  const bondToolButton = page.getByTestId('erase');
-  await waitForRender(page, async () => {
-    await bondToolButton.click();
-  });
-}
-
 export async function selectImageTool(page: Page) {
   const bondToolButton = page.getByTestId('images');
-  await bondToolButton.click();
-}
-
-export async function selectRectangleSelectionTool(page: Page) {
-  const bondToolButton = page.getByTestId('select-rectangle');
   await bondToolButton.click();
 }
 
@@ -203,7 +191,7 @@ export async function selectRectangleArea(
   endX: number,
   endY: number,
 ) {
-  await selectRectangleSelectionTool(page);
+  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
   await page.mouse.move(startX, startY);
   await page.mouse.down();
   await page.mouse.move(endX, endY);

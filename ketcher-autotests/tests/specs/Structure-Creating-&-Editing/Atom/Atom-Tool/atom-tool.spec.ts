@@ -17,13 +17,10 @@ import {
   selectAtomsFromPeriodicTable,
   resetCurrentTool,
   moveOnAtom,
-  selectEraseTool,
   screenshotBetweenUndoRedo,
   selectPartOfMolecules,
   copyAndPaste,
   cutAndPaste,
-  selectLeftPanelButton,
-  LeftPanelButton,
   drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
   selectAllStructuresOnCanvas,
@@ -36,6 +33,12 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+  selectHandTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 const X_DELTA_ONE = 100;
 
@@ -224,9 +227,7 @@ test.describe('Atom Tool', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await waitForRender(page, async () => {
-      await page.getByTestId('erase').click();
-    });
+    await await selectEraseTool(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -309,7 +310,7 @@ test.describe('Atom Tool', () => {
     await selectAtomInToolbar(AtomButton.Bromine, page);
     await clickOnCanvas(page, bromineCoordinates.x, bromineCoordinates.y);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await page.mouse.move(bromineCoordinates.x, bromineCoordinates.y);
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -452,7 +453,7 @@ test.describe('Atom Tool', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectHandTool(page);
     await clickOnAtom(page, 'Br', numberOfAtom);
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
@@ -469,7 +470,7 @@ test.describe('Atom Tool', () => {
     */
     const numberOfAtom = 0;
     await openFileAndAddToCanvas('KET/three-bonded-atoms.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectHandTool(page);
     await clickOnAtom(page, 'N', numberOfAtom);
     await takeEditorScreenshot(page);
   });

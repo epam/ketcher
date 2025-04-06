@@ -11,7 +11,6 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  selectDropdownTool,
   copyAndPaste,
   pressButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
@@ -29,6 +28,8 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -117,7 +118,7 @@ test.describe('Action on simples objects', () => {
     await dragMouseTo(point1.x, point1.y, page);
     await drawBenzeneRing(page);
     await takeEditorScreenshot(page);
-    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
     await clickOnCanvas(page, point2.x, point2.y);
     await waitForRender(page, async () => {
       await dragMouseTo(point3.x, point3.y, page);

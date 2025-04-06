@@ -19,6 +19,7 @@ const shortcutAliasMap = {
   Escape: 'Esc',
   Delete: 'Del',
   Mod: isMacOs ? '⌘' : 'Ctrl',
+  Alt: isMacOs ? 'Option' : 'Alt',
 };
 
 export function shortcutStr(shortcut?: string | string[]) {
@@ -28,7 +29,7 @@ export function shortcutStr(shortcut?: string | string[]) {
 
   const shortcutKey = Array.isArray(shortcut) ? shortcut[0] : shortcut;
   return shortcutKey.replace(
-    /(\b[a-z]\b$|Mod|Escape|Delete)/g,
+    /(\b[a-z]\b$|Mod|Escape|Delete|Alt)/g,
     (key) => shortcutAliasMap[key] || key.toUpperCase(),
   );
 }

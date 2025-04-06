@@ -632,7 +632,8 @@ export class SequenceRenderer {
     let newCaretPosition = this.caretPosition;
     const symbolsBeforeCaretInCurrentRow = currentNodeIndexInRow;
     const lastUserDefinedCursorPositionInRow =
-      this.getNodeIndexInRowByGlobalIndex(this.lastUserDefinedCaretPosition);
+      this.getNodeIndexInRowByGlobalIndex(this.lastUserDefinedCaretPosition) ||
+      0;
 
     newCaretPosition -= symbolsBeforeCaretInCurrentRow;
     newCaretPosition -= Math.max(
@@ -655,7 +656,8 @@ export class SequenceRenderer {
 
     let newCaretPosition = this.caretPosition;
     const lastUserDefinedCursorPositionInRow =
-      this.getNodeIndexInRowByGlobalIndex(this.lastUserDefinedCaretPosition);
+      this.getNodeIndexInRowByGlobalIndex(this.lastUserDefinedCaretPosition) ||
+      0;
     const symbolsAfterCaretInCurrentRow =
       this.currentChainRow.length - currentNodeIndexInRow;
 

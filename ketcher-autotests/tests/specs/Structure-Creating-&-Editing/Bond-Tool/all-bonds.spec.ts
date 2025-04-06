@@ -60,6 +60,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectAreaSelectionTool,
+  selectEraseTool,
   selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
@@ -145,7 +146,7 @@ test.describe(`Bond tool:`, () => {
 
       expect(countBondsWithRing).toEqual(drawnBondsWithRing);
 
-      await selectHandTool(page);
+      await selectEraseTool(page);
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
       await clickOnCanvas(page, point.x, point.y);
@@ -383,7 +384,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await pressUndoButton(page);
         await pressUndoButton(page);
 
-        await selectHandTool(page);
+        await selectEraseTool(page);
         await clickInTheMiddleOfTheScreen(page);
 
         await pressUndoButton(page);

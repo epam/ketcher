@@ -15,10 +15,10 @@ import {
   pressButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   cutAndPaste,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
   pressUndoButton,
   selectClearCanvasTool,

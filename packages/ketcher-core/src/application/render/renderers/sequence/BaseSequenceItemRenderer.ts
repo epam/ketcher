@@ -343,8 +343,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
   }
 
   private needDisplayCounter(editingNodeIndexOverall?: number) {
-    const antisenseNodeIndex = this.twoStrandedNode?.antisenseNodeIndex;
-
     return (
       // don't display counters for @ LinkerSequenceNode (ex. CHEM)
       // for example, subChain:
@@ -378,7 +376,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       // for every nth node in row (10th) in chain
       (this.isBeginningOfSubChain ||
         this.isLastInSubChain ||
-        this.isFirstNodeInSubChainAfterLinker ||
+        this.isFirstNodeInSubChainAfterPhosphate ||
         this.isSecondLastNodeInSubChain ||
         ((!this.isSyncEditMode ||
           !this.hasAntisenseInChain ||
@@ -386,21 +384,19 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
             this.counterNumber > 9 &&
             this.isNextSymbolEditing(editingNodeIndexOverall)
           )) &&
-          (antisenseNodeIndex === this.chain.length - 1 ||
-            this.LinkerNodeRightBeforeOrRightAfterCurrentNode ||
-            this.isNthNodeInChain ||
-            this.isLastMonomerInChain)))
+          (this.isNthNodeInChain || this.isLastMonomerInChain)))
     );
   }
 
-  private get isFirstNodeInSubChainAfterLinker() {
+  private get isFirstNodeInSubChainAfterPhosphate() {
     return this.chain.subChains.some((subChain) => {
-      const linkerNodeIndex = subChain.nodes.findIndex(
-        (node) => node instanceof LinkerSequenceNode,
+      const phosphateNodeIndex = subChain.nodes.findIndex(
+        (node) => node.monomer instanceof Phosphate,
       );
       return (
-        linkerNodeIndex !== -1 &&
-        this.node === subChain.nodes[linkerNodeIndex + 1]
+        phosphateNodeIndex !== -1 &&
+        !(subChain.nodes[phosphateNodeIndex] instanceof LinkerSequenceNode) &&
+        this.node === subChain.nodes[phosphateNodeIndex + 1]
       );
     });
   }
@@ -442,22 +438,6 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return this.isAntisenseNode
       ? (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 1
       : (this.monomerIndexInChain + 1) % this.nthSeparationInRow === 0;
-  }
-
-  private get LinkerNodeRightBeforeOrRightAfterCurrentNode() {
-    return this.chain.subChains.some((subChain) => {
-      if (!this.isSubChainNode(this.node)) return false;
-
-      const nodeIndex = subChain.nodes.indexOf(this.node);
-      if (nodeIndex === -1) return false;
-
-      return (
-        (nodeIndex > 0 &&
-          subChain.nodes[nodeIndex - 1] instanceof LinkerSequenceNode) ||
-        (nodeIndex < subChain.nodes.length - 1 &&
-          subChain.nodes[nodeIndex + 1] instanceof LinkerSequenceNode)
-      );
-    });
   }
 
   public showCaret() {

@@ -17,7 +17,7 @@ import {
   selectAtomInToolbar,
   AtomButton,
   resetCurrentTool,
-  selectLeftPanelToolClickAndScreenshot,
+  selectLeftPanelToolClick,
   attachOnTopOfBenzeneBonds,
   clickOnAtom,
   STRUCTURE_LIBRARY_BUTTON_NAME,
@@ -43,6 +43,7 @@ import {
   selectClearCanvasTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
+  commonLeftToolbarLocators,
   selectAreaSelectionTool,
   selectEraseTool,
   selectHandTool,
@@ -659,47 +660,41 @@ test.describe('Templates - Functional Group Tools3', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     await selectHandTool(page);
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.RectangleSelection,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.Erase, page);
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.SingleBond,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.Chain, page);
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.ChargePlus,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.ChargeMinus,
-      page,
-    );
+    await commonLeftToolbarLocators(page).areaSelectionDropdownButton.click();
+    await takeEditorScreenshot(page);
 
-    await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.S_Group, page);
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.ReactionPlusTool,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.ArrowOpenAngleTool,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.ReactionMappingTool,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.R_GroupLabelTool,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(
-      LeftPanelButton.ShapeEllipse,
-      page,
-    );
-    await selectLeftPanelToolClickAndScreenshot(LeftPanelButton.AddText, page);
+    await commonLeftToolbarLocators(page).eraseButton.click();
+    await takeEditorScreenshot(page);
+
+    await selectLeftPanelToolClick(LeftPanelButton.SingleBond, page);
+    await takeEditorScreenshot(page);
+
+    await selectLeftPanelToolClick(LeftPanelButton.Chain, page);
+    await takeEditorScreenshot(page);
+
+    await selectLeftPanelToolClick(LeftPanelButton.ChargePlus, page);
+    await takeEditorScreenshot(page);
+
+    await selectLeftPanelToolClick(LeftPanelButton.ChargeMinus, page);
+    await takeEditorScreenshot(page);
+
+    await selectLeftPanelToolClick(LeftPanelButton.S_Group, page);
+    await takeEditorScreenshot(page);
+
+    await selectLeftPanelToolClick(LeftPanelButton.ReactionPlusTool, page);
+    await takeEditorScreenshot(page);
+
+    await selectLeftPanelToolClick(LeftPanelButton.ArrowOpenAngleTool, page);
+    await takeEditorScreenshot(page);
+
+    await selectLeftPanelToolClick(LeftPanelButton.ReactionMappingTool, page);
+    await takeEditorScreenshot(page);
+
+    await selectLeftPanelToolClick(LeftPanelButton.R_GroupLabelTool, page);
+    await selectLeftPanelToolClick(LeftPanelButton.ShapeEllipse, page);
+    await takeEditorScreenshot(page);
+
+    await selectLeftPanelToolClick(LeftPanelButton.AddText, page);
 
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page, 'right');

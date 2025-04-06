@@ -22,7 +22,10 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  commonLeftToolbarLocators,
+  selectAreaSelectionTool,
+} from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 test.describe('Right-click menu', () => {
@@ -142,7 +145,7 @@ test.describe('Right-click menu', () => {
     await page.getByRole('button', { name: 'aliphatic' }).click();
     await page.getByText('Unsaturated').first().click();
     await takeEditorScreenshot(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await commonLeftToolbarLocators(page).areaSelectionDropdownButton.click();
     await takeEditorScreenshot(page);
   });
 

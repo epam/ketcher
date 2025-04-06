@@ -21,7 +21,10 @@ import {
   drawBenzeneRing,
   selectAllStructuresOnCanvas,
 } from '@utils';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  commonLeftToolbarLocators,
+  selectAreaSelectionTool,
+} from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 test.describe('Selection tools', () => {
@@ -459,7 +462,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-10068
     Description: Selection palette should contain Rectangle Selection, Lasso Selection, Fragment Selection tools.
     */
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await commonLeftToolbarLocators(page).areaSelectionDropdownButton.click();
     await expect(page).toHaveScreenshot();
   });
 

@@ -78,9 +78,6 @@ export enum TopPanelButton {
 }
 
 export enum LeftPanelButton {
-  HandTool = 'Hand tool', // Done
-  RectangleSelection = 'Rectangle Selection', // Done
-  Erase = 'Erase', // Done
   SingleBond = 'Single Bond',
   Chain = 'Chain',
   Stereochemistry = 'Stereochemistry',

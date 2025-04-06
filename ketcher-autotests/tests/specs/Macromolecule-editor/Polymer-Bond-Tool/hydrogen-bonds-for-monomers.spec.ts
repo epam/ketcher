@@ -852,10 +852,7 @@ async function openBondToolDropDown(page: Page) {
   // to reset Bond tool state
   await selectHandTool(page);
 
-  const bondToolDropdown = page
-    .getByTestId('bond-tool-submenu')
-    .locator('path')
-    .nth(1);
+  const bondToolDropdown = page.getByTestId('bonds').locator('path').nth(1);
   await bondToolDropdown.click();
 }
 

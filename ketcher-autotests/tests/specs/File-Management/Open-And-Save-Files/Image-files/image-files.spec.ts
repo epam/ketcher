@@ -65,7 +65,6 @@ import { openStructureLibrary } from '@utils/templates';
 import {
   selectAreaSelectionTool,
   selectEraseTool,
-  selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
@@ -631,7 +630,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickOnCanvas(page, 200, 200);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -1143,7 +1142,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1169,7 +1168,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
     await takeEditorScreenshot(page);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1196,7 +1195,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
     await takeEditorScreenshot(page);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -2771,7 +2770,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.SVG);
@@ -2919,7 +2918,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.PNG);
@@ -3157,7 +3156,7 @@ test.describe('Image files', () => {
     await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.PNG);
@@ -3178,7 +3177,7 @@ test.describe('Image files', () => {
     await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.SVG);

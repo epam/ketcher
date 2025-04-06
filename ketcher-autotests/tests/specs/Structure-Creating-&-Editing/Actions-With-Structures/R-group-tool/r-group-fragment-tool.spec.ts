@@ -34,7 +34,7 @@ import {
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 import {
   selectAreaSelectionTool,
-  selectHandTool,
+  selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 
 async function openRGroupModalForTopAtom(page: Page) {
@@ -262,7 +262,7 @@ test.describe('Open Ketcher', () => {
 
     await pressUndoButton(page);
 
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await page.getByText('R8').click();
     await takeEditorScreenshot(page);
 

@@ -98,10 +98,7 @@ import {
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
-import {
-  selectEraseTool,
-  selectHandTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 
 const topLeftCorner = {
   x: -325,
@@ -954,7 +951,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await page.keyboard.press(`${modifier}+a`);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await takeEditorScreenshot(page);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
     await page.keyboard.press(`${modifier}+a`);
@@ -1038,7 +1035,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/chain-with-eight-attachment-points.ket',
       page,
     );
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await page.getByText('R2').click();
     await addSuperatomAttachmentPoint(page, 'C', 2);
     await takeEditorScreenshot(page);
@@ -1054,7 +1051,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/structure-with-two-attachment-points.ket',
       page,
     );
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await page.getByText('R2').click({ button: 'right' });
     await takeEditorScreenshot(page);
   });
@@ -1524,7 +1521,7 @@ test.describe('Macro-Micro-Switcher', () => {
       AP label disappear if we delete bond between AP label and atom (stand alone AP label is not possible)
     */
     await openFileAndAddToCanvas('KET/oxygen-on-attachment-point.ket', page);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickOnCanvas(page, 645, 318);
     await takeEditorScreenshot(page);
   });

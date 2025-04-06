@@ -67,10 +67,7 @@ import {
   switchToPeptideMode,
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
-import {
-  selectEraseTool,
-  selectHandTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [
@@ -259,7 +256,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await page.getByTestId('canvas').getByText('O').click();
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);

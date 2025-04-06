@@ -40,7 +40,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectAreaSelectionTool,
-  selectHandTool,
+  selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
@@ -175,7 +175,7 @@ test.describe('Plus and Arrows tools ', () => {
     await clickOnTheCanvas(page, -80, 0);
     await takeEditorScreenshot(page);
 
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickOnTheCanvas(page, -60, 0);
     await takeEditorScreenshot(page);
 
@@ -288,7 +288,7 @@ test.describe('Plus and Arrows tools ', () => {
       await takeEditorScreenshot(page);
       await pressUndoButton(page);
       await takeEditorScreenshot(page);
-      await selectHandTool(page);
+      await selectEraseTool(page);
       await page.mouse.move(point.x - 300, point.y - 100);
       await dragMouseTo(point.x - 140, point.y + 100, page);
     });
@@ -357,7 +357,7 @@ test.describe('Plus and Arrows tools ', () => {
       await takeEditorScreenshot(page);
       await pressUndoButton(page);
       await takeEditorScreenshot(page);
-      await selectHandTool(page);
+      await selectEraseTool(page);
       await page.mouse.move(point.x - 300, point.y - 100);
       await dragMouseTo(point.x - 140, point.y + 100, page);
     });
@@ -442,12 +442,12 @@ test.describe('Plus and Arrows tools ', () => {
     test('Click the equilibrium arrow with the Erase tool, Undo, Erase for part of reaction, Undo/Redo', async ({
       page,
     }) => {
-      await selectHandTool(page);
+      await selectEraseTool(page);
       await clickOnTheCanvas(page, -OFFSET_FROM_ARROW, 0);
       await takeEditorScreenshot(page);
       await pressUndoButton(page);
       await takeEditorScreenshot(page);
-      await selectHandTool(page);
+      await selectEraseTool(page);
       await page.mouse.move(point.x - 40, point.y - 300);
       await dragMouseTo(point.x + 400, point.y + 100, page);
       await moveMouseToTheMiddleOfTheScreen(page);
@@ -634,7 +634,7 @@ test.describe('Plus and Arrows tools ', () => {
       await clickOnTheCanvas(page, xOffsetFromCenter, 0);
       const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
       await page.mouse.move(x - 35, y - 1);
-      dragMouseTo(x - 25, y - 50, page);
+      await dragMouseTo(x - 25, y - 50, page);
       await saveStructureWithReaction(page);
       await saveStructureWithReaction(page, 'Ket Format');
     });

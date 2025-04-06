@@ -72,10 +72,7 @@ export async function selectSingleBondTool(page: Page) {
   // to reset Bond tool state
   await handToolButton.click();
 
-  const bondToolDropdown = page
-    .getByTestId('bond-tool-submenu')
-    .locator('path')
-    .nth(1);
+  const bondToolDropdown = page.getByTestId('bonds').locator('path').nth(1);
   await bondToolDropdown.click();
 
   const bondToolButton = page.getByTestId(MacroBondTool.SINGLE).first();
@@ -89,11 +86,7 @@ export async function selectMacroBond(
   const handToolButton = commonLeftToolbarLocators(page).handToolButton;
   // to reset Bond tool state
   await handToolButton.click();
-
-  const bondToolDropdown = page
-    .getByTestId('bond-tool-submenu')
-    .locator('path')
-    .nth(1);
+  const bondToolDropdown = page.getByTestId('bonds').locator('path').nth(1);
   await bondToolDropdown.click();
 
   const hydrogenBondButton = page.getByTestId(bondType).first();

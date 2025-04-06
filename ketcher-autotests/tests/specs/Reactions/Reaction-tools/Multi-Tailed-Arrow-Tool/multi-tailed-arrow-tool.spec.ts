@@ -63,7 +63,6 @@ import {
 import {
   selectAreaSelectionTool,
   selectEraseTool,
-  selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
@@ -1064,7 +1063,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await addTail(page, 500, 600);
     await takeEditorScreenshot(page);
     await removeTail(page, 'tails-1-move');
-    await selectHandTool(page);
+    await selectEraseTool(page);
     /* Here we erase multi-tailed arrow */
     await clickOnCanvas(page, 500, 600);
     await takeEditorScreenshot(page);

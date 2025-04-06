@@ -36,7 +36,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectAreaSelectionTool,
-  selectHandTool,
+  selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
@@ -120,7 +120,7 @@ test.describe('R-Group Label Tool', () => {
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
 
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await waitForRender(page, async () => {
       await page.getByText('R5').click();
     });

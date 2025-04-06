@@ -36,7 +36,6 @@ import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectAreaSelectionTool,
   selectEraseTool,
-  selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
@@ -453,7 +452,7 @@ test.describe('Atom Tool', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickOnAtom(page, 'Br', numberOfAtom);
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
@@ -470,7 +469,7 @@ test.describe('Atom Tool', () => {
     */
     const numberOfAtom = 0;
     await openFileAndAddToCanvas('KET/three-bonded-atoms.ket', page);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickOnAtom(page, 'N', numberOfAtom);
     await takeEditorScreenshot(page);
   });

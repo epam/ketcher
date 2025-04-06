@@ -38,7 +38,7 @@ import {
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   selectAreaSelectionTool,
-  selectHandTool,
+  selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 let point: { x: number; y: number };
@@ -369,7 +369,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });

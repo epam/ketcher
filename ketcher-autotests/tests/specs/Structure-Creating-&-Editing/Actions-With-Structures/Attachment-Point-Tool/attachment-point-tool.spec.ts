@@ -42,7 +42,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import {
   selectAreaSelectionTool,
-  selectHandTool,
+  selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
@@ -629,7 +629,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickOnAtom(page, 'N', 0);
 
     await clickOnAtom(page, 'L#', 0);
@@ -655,7 +655,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectHandTool(page);
+    await selectEraseTool(page);
     point = await getAtomByIndex(page, { label: 'N' }, 0);
     await page.mouse.move(point.x, point.y);
     await page.keyboard.press('Delete');

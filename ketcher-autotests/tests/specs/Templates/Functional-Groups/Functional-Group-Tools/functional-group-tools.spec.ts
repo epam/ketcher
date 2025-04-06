@@ -44,6 +44,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectAreaSelectionTool,
+  selectEraseTool,
   selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
@@ -382,7 +383,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await page.getByText('Boc').first().click();
 
     await resetCurrentTool(page);
@@ -390,7 +391,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await pressUndoButton(page);
     await page.getByText('Boc').first().click();
-    await selectHandTool(page);
+    await selectEraseTool(page);
 
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);

@@ -48,7 +48,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectAreaSelectionTool,
-  selectHandTool,
+  selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
@@ -135,7 +135,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectHandTool(page);
+    await selectEraseTool(page);
 
     await clickOnAtom(page, 'C', 0);
 

@@ -32,7 +32,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectHandTool } from '@tests/pages/common/CommonLeftToolbar';
+import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -204,7 +204,7 @@ test.describe('SRU Polymer tool', () => {
       Description: User is able to delete and undo/redo atom on structure with SRU polymer S-group.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
 

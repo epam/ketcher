@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
 import { Bases } from '@constants/monomers/Bases';
@@ -46,6 +47,7 @@ import { pageReload } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
+  verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
 import { chooseFileFormat } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
@@ -875,9 +877,10 @@ test.describe('Ketcher bugs in 3.0.0', () => {
 
     await createAntisenseStrandOption.click();
     await takeEditorScreenshot(page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, 'HELM');
-    await takeEditorScreenshot(page);
+    await verifyHELMExport(
+      page,
+      `RNA1{R(A,C,G,T)P.R(A,G,T)P.R(A,C,T)P.R(A,T)P}|RNA2{P.R(A,U)P.R(A,G,U)P.R(A,C,U)P.R(A,C,G,U)}$RNA1,RNA2,11:pair-3:pair|RNA1,RNA2,8:pair-6:pair|RNA1,RNA2,5:pair-9:pair|RNA1,RNA2,2:pair-12:pair$$$V2.0`,
+    );
   });
 
   test(`Case 29: Cursor position after adding preset in sequence mode not causes an incorrect sequence formation`, async () => {

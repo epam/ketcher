@@ -20,7 +20,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectAreaSelectionTool,
-  selectHandTool,
+  selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
@@ -77,7 +77,7 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST');
     await pressButton(page, 'Apply');
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await page.getByText('TEST').click();
     await performUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -196,7 +196,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Delete with Erase tool', async ({ page }) => {
     await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
-    await selectHandTool(page);
+    await selectEraseTool(page);
     await page.getByText('&&&').hover();
     await page.getByText('&&&').click();
     await performUndoRedo(page);

@@ -61,7 +61,6 @@ import {
 import {
   selectAreaSelectionTool,
   selectEraseTool,
-  selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 

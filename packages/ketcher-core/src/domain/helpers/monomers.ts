@@ -117,6 +117,10 @@ export function getNextMonomerInChain(
     : undefined;
 }
 
+export function hasBackboneConnection(monomer: BaseMonomer) {
+  return getNextMonomerInChain(monomer) || getPreviousMonomerInChain(monomer);
+}
+
 export function getRnaBaseFromSugar(monomer?: BaseMonomer) {
   if (!monomer || !(monomer instanceof Sugar)) return undefined;
   const r3PolymerBond = monomer.attachmentPointsToBonds.R3;

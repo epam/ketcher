@@ -16,6 +16,7 @@ import {
   getNextMonomerInChain,
   getPreviousMonomerInChain,
   getRnaBaseFromSugar,
+  hasBackboneConnection,
   isMonomerConnectedToR2RnaBase,
   isRnaBaseApplicableForAntisense,
   isRnaBaseOrAmbiguousRnaBase,
@@ -561,6 +562,8 @@ export class ChainsCollection {
         if (
           !complimentaryChain ||
           !complimentaryNode ||
+          !hasBackboneConnection(node.monomer) ||
+          !hasBackboneConnection(complimentaryNode.monomer) ||
           handledChains.has(complimentaryChain) ||
           cycledComplimentaryChains.has(complimentaryChain)
         ) {

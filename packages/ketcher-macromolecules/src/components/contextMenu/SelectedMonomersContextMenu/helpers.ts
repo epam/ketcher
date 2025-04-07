@@ -8,6 +8,9 @@ import {
   RNA_DNA_NON_MODIFIED_PART,
   RNABase,
   Sugar,
+  hasBackboneConnection,
+  getNextMonomerInChain,
+  getPreviousMonomerInChain,
 } from 'ketcher-core';
 
 const getMonomersCode = (monomers: BaseMonomer[]) => {
@@ -115,12 +118,25 @@ export const hasOnlyRiboseSugars = (selectedMonomers: BaseMonomer[]) => {
   );
 };
 
+function hasBackboneConnectionAndItSelected(monomer: BaseMonomer) {
+  return (
+    getNextMonomerInChain(monomer)?.selected ||
+    getPreviousMonomerInChain(monomer)?.selected
+  );
+}
+
 export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
   return selectedMonomers?.some((selectedMonomer) => {
+    const potentialSugar = getSugarFromRnaBase(selectedMonomer);
+    const potentialBase = getRnaBaseFromSugar(selectedMonomer);
+
     return (
       (selectedMonomer instanceof RNABase &&
-        getSugarFromRnaBase(selectedMonomer)) ||
-      (selectedMonomer instanceof Sugar && getRnaBaseFromSugar(selectedMonomer))
+        potentialSugar &&
+        hasBackboneConnectionAndItSelected(potentialSugar)) ||
+      (selectedMonomer instanceof Sugar &&
+        potentialBase &&
+        hasBackboneConnectionAndItSelected(selectedMonomer))
     );
   });
 };

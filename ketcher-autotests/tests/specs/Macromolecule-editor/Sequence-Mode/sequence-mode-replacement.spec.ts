@@ -2287,7 +2287,7 @@ test(`29. Verify saving and reopening a structure with replaced monomers in MOL 
 
   const expectedFile = await getMolfile(page, 'v3000');
   await saveToFile(
-    'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.mol',
+    'Common/Sequence-Mode-Replacement/replacement-expected.mol',
     expectedFile,
   );
 

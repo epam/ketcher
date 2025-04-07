@@ -1530,28 +1530,31 @@ export class SequenceMode extends BaseMode {
     };
   }
 
-  public deleteSelection() {
+  public deleteSelection(allowDeleteMultipleSelections = false) {
     const selections = SequenceRenderer.selections;
 
-    if (selections.length > 1) {
+    if (!allowDeleteMultipleSelections && selections.length > 1) {
       return false;
     }
 
-    if (selections.length === 1) {
-      const deletionModelChanges = this.deleteSelectedDrawingEntities();
-
-      deletionModelChanges.merge(
-        this.handleNodesDeletion(selections, STRAND_TYPE.SENSE),
-      );
-      deletionModelChanges.merge(
-        this.handleNodesDeletion(selections, STRAND_TYPE.ANTISENSE),
-      );
-      this.finishNodesDeletion(
-        deletionModelChanges,
-        SequenceRenderer.caretPosition,
-        selections[0][0].nodeIndexOverall,
-      );
+    if (selections.length === 0) {
+      return true;
     }
+
+    const deletionModelChanges = this.deleteSelectedDrawingEntities();
+
+    deletionModelChanges.merge(
+      this.handleNodesDeletion(selections, STRAND_TYPE.SENSE),
+    );
+    deletionModelChanges.merge(
+      this.handleNodesDeletion(selections, STRAND_TYPE.ANTISENSE),
+    );
+    this.finishNodesDeletion(
+      deletionModelChanges,
+      SequenceRenderer.caretPosition,
+      selections[0][0].nodeIndexOverall,
+    );
+
     return true;
   }
 

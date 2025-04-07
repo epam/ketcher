@@ -55,24 +55,26 @@ export class NewSequenceButton {
     this.rootElement
       .append('rect')
       .attr('x', '16')
-      .attr('y', '14')
+      .attr('y', '22')
       .attr('width', '595')
       .attr('height', '4')
       .attr('stroke', '#B4B9D6')
       .attr('stroke-width', '1')
-      .attr('fill', '#fff');
+      .attr('fill', '#fff')
+      .attr('pointer-events', 'none');
 
     this.bodyElement = this.rootElement
       .append('foreignObject')
       .attr('x', 0)
       .attr('y', 0)
-      .attr('height', '35')
-      .attr('width', '611');
+      .attr('height', '48')
+      .attr('width', '48');
 
     this.buttonElement = this.bodyElement.append<SVGElement>('xhtml:div').attr(
       'style',
       `
         width: 32px;
+        margin: 8px;
         padding:  8px;
         font-size: 12px;
         color: ${TEXT_COLOR};

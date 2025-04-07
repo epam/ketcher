@@ -1,4 +1,6 @@
 import { test } from '@playwright/test';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -24,7 +26,7 @@ test.describe('Bonds plus atoms selection ', () => {
       await selectButtonById(bond, page);
       await clickInTheMiddleOfTheScreen(page);
 
-      await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
 
       const point = await getBondByIndex(page, {}, 0);
       await clickOnCanvas(page, point.x, point.y);

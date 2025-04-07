@@ -34,6 +34,11 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -115,7 +120,7 @@ test.describe('R-Group Label Tool', () => {
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
 
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectEraseTool(page);
     await waitForRender(page, async () => {
       await page.getByText('R5').click();
     });
@@ -215,13 +220,9 @@ test.describe('R-Group Label Tool', () => {
     await pressButton(page, 'R7');
     await pressButton(page, 'R8');
     await pressButton(page, 'Apply');
-    await waitForRender(page, async () => {
-      await pressUndoButton(page);
-    });
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await pressRedoButton(page);
-    });
+    await pressRedoButton(page);
     await takeEditorScreenshot(page);
   });
 
@@ -295,7 +296,7 @@ test.describe('R-Group Label Tool', () => {
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await page.getByText('R5').click();
     await waitForRender(page, async () => {
       await page.keyboard.press('Delete');
@@ -311,7 +312,7 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 200;
     await openFileAndAddToCanvas('Molfiles-V2000/chain-r1.mol', page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await page.getByText('R1').click();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -347,7 +348,7 @@ test.describe('R-Group Label Tool', () => {
     await clickOnAtom(page, 'C', anyAtom);
     await pressButton(page, 'R8');
     await pressButton(page, 'Apply');
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await page.getByText('R8').click();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);

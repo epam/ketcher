@@ -17,7 +17,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   pressButton,
   selectLeftPanelButton,
-  takeEditorScreenshot,
 } from '@utils';
 import {
   MonomerLocationTabs,
@@ -353,13 +352,12 @@ export async function selectUserTemplatesAndPlaceInTheMiddle(
   Function for selecting tool from left panel, click right mouse in the middle of canvas and take
   screenshot
   */
-export async function selectLeftPanelToolClickAndScreenshot(
+export async function selectLeftPanelToolClick(
   leftbutton: LeftPanelButton,
   page: Page,
 ) {
   await selectLeftPanelButton(leftbutton, page);
   await clickInTheMiddleOfTheScreen(page, 'right');
-  await takeEditorScreenshot(page);
 }
 
 const COORDS_CLICK = {

@@ -6,9 +6,7 @@ import {
   dragMouseTo,
   openFileAndAddToCanvasMacro,
   pressButton,
-  selectEraseTool,
   selectMonomer,
-  selectRectangleSelectionTool,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
@@ -70,6 +68,11 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -420,7 +423,7 @@ test.describe('RNA Library', () => {
     await pressAddToPresetsButton(page);
     await selectCustomPreset(page, '3A6(baA)bP_baA_3A6_bP');
     await clickInTheMiddleOfTheScreen(page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await takeEditorScreenshot(page);
   });
 
@@ -712,7 +715,7 @@ test.describe('RNA Library', () => {
     await pressAddToPresetsButton(page);
     await selectCustomPreset(page, '3A6(baA)_baA_3A6_.');
     await clickInTheMiddleOfTheScreen(page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await takeEditorScreenshot(page);
   });
 
@@ -730,7 +733,7 @@ test.describe('RNA Library', () => {
     await pressAddToPresetsButton(page);
     await selectCustomPreset(page, '3A6()bP_._3A6_bP');
     await clickInTheMiddleOfTheScreen(page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await takeEditorScreenshot(page);
   });
 
@@ -886,7 +889,7 @@ test.describe('RNA Library', () => {
       await page.getByTestId(`summary-${molecule.type}`).click();
       await page.getByTestId(molecule.description.testId).click();
       await clickInTheMiddleOfTheScreen(page);
-      await selectRectangleSelectionTool(page);
+      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
       await clickInTheMiddleOfTheScreen(page);
       await dragMouseTo(anyPointX, anyPointY, page);
       await takeEditorScreenshot(page);
@@ -905,7 +908,7 @@ test.describe('RNA Library', () => {
       const anyPointX = 400;
       const anyPointY = 400;
       await drawThreeMonomersConnectedWithBonds(page);
-      await selectRectangleSelectionTool(page);
+      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
       await getMonomerLocator(page, monomer).click();
       await dragMouseTo(anyPointX, anyPointY, page);
       await moveMouseAway(page);

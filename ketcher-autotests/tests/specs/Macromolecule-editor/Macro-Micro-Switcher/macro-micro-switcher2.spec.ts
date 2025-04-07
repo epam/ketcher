@@ -13,8 +13,6 @@ import {
   takeMonomerLibraryScreenshot,
   waitForPageInit,
   selectSnakeLayoutModeTool,
-  selectLeftPanelButton,
-  LeftPanelButton,
   openFileAndAddToCanvasAsNewProject,
   selectDropdownTool,
   clickInTheMiddleOfTheScreen,
@@ -32,7 +30,6 @@ import {
   setZoomInputValue,
   resetCurrentTool,
   selectAllStructuresOnCanvas,
-  selectEraseTool,
   screenshotBetweenUndoRedo,
   screenshotBetweenUndoRedoInMacro,
   copyAndPaste,
@@ -70,6 +67,7 @@ import {
   switchToPeptideMode,
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
+import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [
@@ -258,7 +256,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectEraseTool(page);
     await page.getByTestId('canvas').getByText('O').click();
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
@@ -547,13 +545,22 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await setZoomInputValue(page, '50');
     await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await setZoomInputValue(page, '120');
     await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await setZoomInputValue(page, '150');
     await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify that the transition from macromolecules mode back to molecules mode does not alter the single atom properties', async ({

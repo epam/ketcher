@@ -20,7 +20,6 @@ import {
   pressButton,
   resetZoomLevelToDefault,
   selectAllStructuresOnCanvas,
-  selectEraseTool,
   selectMacroBond,
   selectMonomer,
   selectSequenceLayoutModeTool,
@@ -69,6 +68,7 @@ import {
   markResetToDefaultState,
   processResetToDefaultState,
 } from '@utils/testAnnotations/resetToDefaultState';
+import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 

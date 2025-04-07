@@ -51,11 +51,6 @@ import {
   getTopBondByAttributes,
 } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
-import {
-  SelectionType,
-  selectRectangleSelection,
-  selectSelection,
-} from '@utils/canvas/selectSelection';
 import { DropdownToolIds } from '@utils/clicks/types';
 import {
   pressRedoButton,
@@ -63,6 +58,11 @@ import {
   selectClearCanvasTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 const buttonIdToTitle: {
   [key: string]: string;
@@ -145,7 +145,7 @@ test.describe(`Bond tool:`, () => {
 
       expect(countBondsWithRing).toEqual(drawnBondsWithRing);
 
-      await selectTool(LeftPanelButton.Erase, page);
+      await selectEraseTool(page);
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
       await clickOnCanvas(page, point.x, point.y);
@@ -356,15 +356,13 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await selectNestedTool(page, BondTool[bondToolKey]);
         await clickInTheMiddleOfTheScreen(page);
 
-        await selectRectangleSelection(page);
+        await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
 
         await moveMouseToTheMiddleOfTheScreen(page);
         await dragMouseTo(point.x + DELTA_X, point.y, page);
-        await waitForRender(page, async () => {
-          await pressUndoButton(page);
-        });
+        await pressUndoButton(page);
 
-        await selectSelection(SelectionType.Rectangle, page);
+        await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
 
         point = await getLeftBondByAttributes(page, {
           reactingCenterStatus: 0,
@@ -376,35 +374,25 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await pasteFromClipboardByKeyboard(page);
 
         await clickOnCanvas(page, point.x + DELTA_X, point.y);
-        await waitForRender(page, async () => {
-          await pressUndoButton(page);
-        });
+        await pressUndoButton(page);
 
         await clickInTheMiddleOfTheScreen(page);
         await cutToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
         await clickOnCanvas(page, point.x + DELTA_X, point.y);
-        await waitForRender(page, async () => {
-          await pressUndoButton(page);
-        });
-        await waitForRender(page, async () => {
-          await pressUndoButton(page);
-        });
+        await pressUndoButton(page);
+        await pressUndoButton(page);
 
-        await selectTool(LeftPanelButton.Erase, page);
+        await selectEraseTool(page);
         await clickInTheMiddleOfTheScreen(page);
 
-        await waitForRender(page, async () => {
-          await pressUndoButton(page);
-        });
+        await pressUndoButton(page);
 
         await selectAtom(AtomButton.Oxygen, page);
         point = await getCoordinatesTopAtomOfBenzeneRing(page);
 
-        await waitForRender(page, async () => {
-          await clickOnCanvas(page, point.x, point.y);
-          await pressUndoButton(page);
-        });
+        await clickOnCanvas(page, point.x, point.y);
+        await pressUndoButton(page);
 
         await selectRing(RingButton.Cyclohexane, page);
         await clickOnCanvas(page, point.x, point.y);
@@ -560,7 +548,7 @@ test.describe('Bond Tool', () => {
     await waitForRender(page, async () => {
       await page.mouse.up();
     });
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     const point2 = await getAtomByIndex(page, { label: 'N' }, 0);
     await page.mouse.move(point2.x, point2.y);
     const coordinatesWithShift = point2.y + yDelta;
@@ -578,7 +566,7 @@ test.describe('Bond Tool', () => {
     const point = { x: -200, y: -200 };
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await openFileAndAddToCanvas('KET/ketcher-42.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnTheCanvas(page, point.x, point.y);
     await dragMouseTo(x + 50, y, page);
     await takeEditorScreenshot(page);

@@ -12,7 +12,6 @@ import {
   saveToFile,
   openFile,
   receiveFileComparisonData,
-  selectEraseTool,
   selectOptionInDropdown,
   pressButton,
   selectSnakeLayoutModeTool,
@@ -32,6 +31,11 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import { pageReload } from '@utils/common/helpers';
 import { chooseFileFormat, waitForMonomerPreview } from '@utils/macromolecules';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 function removeNotComparableData(file: string) {
   return file
@@ -183,7 +187,7 @@ test.describe('Import-Saving .mol Files', () => {
       'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
       page,
     );
-    await page.getByTestId('select-rectangle').click();
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await page.getByText('cdaC').locator('..').hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);

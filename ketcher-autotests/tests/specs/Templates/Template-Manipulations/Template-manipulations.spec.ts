@@ -60,6 +60,11 @@ import {
   selectClearCanvasTool,
   selectOpenFileTool,
 } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -189,8 +194,7 @@ test.describe('Template Manupulations', () => {
     */
       await selectAtomInToolbar(AtomButton.Fluorine, page);
       await clickInTheMiddleOfTheScreen(page);
-      await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-      await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
+      await selectAreaSelectionTool(page, SelectionToolType.Fragment);
       await page.getByTestId('canvas').getByText('F').first().click();
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
@@ -245,12 +249,12 @@ test.describe('Template Manupulations', () => {
     await selectAtom(AtomButton.Sulfur, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await page.getByTestId('erase').click();
+    await selectEraseTool(page);
     await page.getByTestId('canvas').getByText('S').first().click();
-    await page.getByTestId('select-rectangle').click();
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await selectAtom(AtomButton.Sulfur, page);
     await clickInTheMiddleOfTheScreen(page);
-    await page.getByTestId('erase').click();
+    await selectEraseTool(page);
     await page.getByTestId('canvas').getByText('S').first().click();
     await selectClearCanvasTool(page);
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
@@ -271,7 +275,7 @@ test.describe('Template Manupulations', () => {
     await page.getByLabel('Primary attachment point').check();
     await takeEditorScreenshot(page);
     await page.getByTestId('OK').click();
-    await page.getByTestId('select-rectangle').click();
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await page.getByText('S').first().click({
       button: 'right',
     });
@@ -629,7 +633,7 @@ test.describe('Open Ketcher', () => {
       const xOffsetFromCenter = 40;
       await selectRingButton(RingButton.Benzene, page);
       await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-      await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
       await takePageScreenshot(page);
 
       await selectAllStructuresOnCanvas(page);
@@ -660,9 +664,9 @@ test.describe('Open Ketcher', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnTheCanvas(page, xOffsetFromCenter, 0);
     await takePageScreenshot(page);
-    await page.getByTestId('select-rectangle').click();
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await takePageScreenshot(page);
-    await page.getByTestId('select-rectangle').click();
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);

@@ -13,10 +13,8 @@ import {
   openFileAndAddToCanvasMacro,
   removeMonomerFromFavorites,
   removeMonomersFromFavorites,
-  selectEraseTool,
   selectMacroBond,
   selectMonomer,
-  selectRectangleSelectionTool,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   waitForPageInit,
@@ -26,6 +24,11 @@ import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToPeptidesTab, goToTab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 test.describe('Peptide library testing', () => {
   test.beforeEach(async ({ page }) => {
@@ -168,7 +171,7 @@ test.describe('Peptide library testing', () => {
     */
     await selectMonomer(page, Peptides.Edc);
     await clickInTheMiddleOfTheScreen(page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await getMonomerLocator(page, Peptides.Edc).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -227,7 +230,7 @@ test.describe('Peptide library testing', () => {
     */
     await selectMonomer(page, Chem.SMPEG2);
     await clickInTheMiddleOfTheScreen(page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await getMonomerLocator(page, Chem.SMPEG2).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -280,7 +283,7 @@ test.describe('Peptide library testing', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await getMonomerLocator(page, Peptides.Nal).hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page, {

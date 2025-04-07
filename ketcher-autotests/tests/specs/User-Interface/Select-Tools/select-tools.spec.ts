@@ -3,18 +3,17 @@ import {
   clickInTheMiddleOfTheScreen,
   RingButton,
   selectRingButton,
-  selectTool,
-  LeftPanelButton,
   BondType,
   waitForPageInit,
   takeEditorScreenshot,
   drawBenzeneRing,
   clickOnAtom,
-  selectDropdownTool,
   openFileAndAddToCanvas,
   selectAllStructuresOnCanvas,
 } from '@utils';
 import { getBondByIndex } from '@utils/canvas/bonds';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 test.describe('Select tools tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -27,7 +26,7 @@ test.describe('Select tools tests', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectTool(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.move(point.x, point.y);
 
@@ -45,7 +44,7 @@ test.describe('Select tools tests', () => {
       Place two 'Benzene' on the canvas and drag one onto the other
     */
     await drawBenzeneRing(page);
-    await selectDropdownTool(page, 'select-rectangle', 'select-fragment');
+    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
     const atomWithQueryFeatures = 4;
     await clickOnAtom(page, 'C', atomWithQueryFeatures);
     await takeEditorScreenshot(page);

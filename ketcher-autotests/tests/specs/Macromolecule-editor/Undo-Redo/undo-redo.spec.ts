@@ -19,9 +19,7 @@ import {
   waitForPageInit,
   selectMonomer,
   clickOnTheCanvas,
-  selectRectangleSelectionTool,
   zoomWithMouseWheel,
-  selectEraseTool,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
@@ -44,6 +42,11 @@ import {
   pressUndoButton,
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Undo Redo', () => {
@@ -165,7 +168,7 @@ test.describe('Undo-Redo tests', () => {
     Description: Entities(Peptides, RNA, CHEM, Bonds) are deleted and then Undo and Redo actions.
     */
     await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
-    await page.getByTestId('erase').click();
+    await await selectEraseTool(page);
     const entitiesToDelete = [
       Peptides.D_aIle,
       Peptides.SertBu,
@@ -285,7 +288,7 @@ test.describe('Undo-Redo tests', () => {
     Description: Short key "Control + Z" and "Control+Y" are working.
     */
     await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
-    await page.getByTestId('erase').click();
+    await await selectEraseTool(page);
     const entitiesToDelete = [
       Peptides.SertBu,
       Peptides.TyrabD,
@@ -464,7 +467,7 @@ test.describe('Undo-Redo tests', () => {
     await selectMonomer(page, Peptides.X);
     await clickOnTheCanvas(page, 0, 0);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 
@@ -503,7 +506,7 @@ test.describe('Undo-Redo tests', () => {
     await selectMonomer(page, Bases.DNA_N);
     await clickOnTheCanvas(page, 0, 0);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 

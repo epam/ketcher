@@ -25,7 +25,7 @@ export {};
 
 // test('use selection tool', async ({ page }) => {
 //   await waitForPageInit(page);
-//   await selectNestedTool(page, SelectTool.LASSO_SELECTION);
+//   await selectAreaSelectionTool(page, SelectionToolType.Lasso);
 // });
 
 // test('use vertical rotate tool', async ({ page }) => {

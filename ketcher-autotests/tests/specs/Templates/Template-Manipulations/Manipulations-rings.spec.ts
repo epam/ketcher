@@ -12,10 +12,8 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   dragMouseTo,
-  LeftPanelButton,
   moveMouseAway,
   RingButton,
-  selectTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -24,6 +22,8 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
 } from '@tests/pages/common/TopLeftToolbar';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 async function checkTooltip(type: RingButton, page: Page) {
   const templateButton = page.getByRole('button', { name: type });
@@ -57,7 +57,7 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
     selectionRange + selectionRange,
   );
   point = await getLeftBondByAttributes(page, { reactingCenterStatus: 0 });
-  await selectTool(LeftPanelButton.RectangleSelection, page);
+  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
   await clickOnCanvas(page, point.x + selectionRange, point.y + selectionRange);
   await dragMouseTo(point.x - selectionRange, point.y - selectionRange, page);
 

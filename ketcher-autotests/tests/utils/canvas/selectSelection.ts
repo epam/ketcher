@@ -4,79 +4,12 @@ import { getControlModifier } from '@utils/keyboard';
 import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import { INPUT_DELAY } from '@utils/globals';
 import { moveMouseAway, waitForRender } from '..';
-
-export enum SelectionType {
-  Rectangle = 'Rectangle',
-  Lasso = 'Lasso',
-  Fragment = 'Fragment',
-}
-
-export async function selectSelection(type: SelectionType, page: Page) {
-  await page
-    .locator(
-      'div[class*="LeftToolbar-module_buttons"] button[title*="Selection"]',
-    )
-    .dblclick();
-
-  await page
-    .locator(`div[class^="ToolbarMultiToolItem"] button[title^="${type}"]`)
-    .first()
-    .click();
-}
-
-/**
- * Opens Selection toolbar and selects Rectangle Selection option
- * Usage: await selectRectangleSelection(page)
- **/
-export async function selectRectangleSelection(page: Page) {
-  await page
-    .locator(
-      'div[class*="LeftToolbar-module_buttons"] button[title*="Selection"]',
-    )
-    .dblclick();
-
-  await page
-    .locator(`div[class^="ToolbarMultiToolItem"] button[title^="Rectangle"]`)
-    // Select the second matched element (zero-based index)
-    .nth(1)
-    .click();
-}
-
-/**
- * Opens Selection toolbar and selects Lasso Selection option
- * Usage: await selectLassoSelection(page)
- **/
-export async function selectLassoSelection(page: Page) {
-  await page
-    .locator(
-      'div[class*="LeftToolbar-module_buttons"] button[title*="Selection"]',
-    )
-    .dblclick();
-
-  await page
-    .locator(`div[class^="ToolbarMultiToolItem"] button[title^="Lasso"]`)
-    .click();
-}
-
-/**
- * Opens Selection toolbar and selects Fragment Selection option
- * Usage: await selectFragmentSelection(page)
- **/
-export async function selectFragmentSelection(page: Page) {
-  await page
-    .locator(
-      'div[class*="LeftToolbar-module_buttons"] button[title*="Selection"]',
-    )
-    .dblclick();
-
-  await page
-    .locator(`div[class^="ToolbarMultiToolItem"] button[title^="Fragment"]`)
-    .click();
-}
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 export async function cutAndPaste(page: Page) {
   const modifier = getControlModifier();
-  await page.getByTestId('select-rectangle').first().click();
+  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
   await waitForRender(page, async () => {
@@ -92,7 +25,7 @@ export async function cutAndPaste(page: Page) {
 
 export async function copyAndPaste(page: Page) {
   const modifier = getControlModifier();
-  await page.getByTestId('select-rectangle').first().click();
+  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
   await moveMouseAway(page);

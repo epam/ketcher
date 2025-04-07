@@ -1,16 +1,13 @@
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectLeftPanelButton,
   waitForPageInit,
   pressButton,
-  LeftPanelButton,
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   selectRing,
   RingButton,
-  selectDropdownTool,
   waitForRender,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
@@ -21,6 +18,11 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 async function selectStructureWithSelectionTool(page: Page) {
   const point = { x: 97, y: 79 };
@@ -45,11 +47,9 @@ async function moveStructureToNewPosition(page: Page) {
 }
 
 async function performUndoRedo(page: Page) {
-  await waitForRender(page, async () => {
-    await pressUndoButton(page);
-    await pressRedoButton(page);
-    await pressUndoButton(page);
-  });
+  await pressUndoButton(page);
+  await pressRedoButton(page);
+  await pressUndoButton(page);
 }
 
 test.describe('Text tools test cases', () => {
@@ -77,7 +77,7 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST');
     await pressButton(page, 'Apply');
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectEraseTool(page);
     await page.getByText('TEST').click();
     await performUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -88,7 +88,7 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     await openFileAndAddToCanvas('KET/text-object-for-test.ket', page);
-    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
     await page.getByText('TEXT').hover();
     await page.getByText('TEXT').click();
     await page.keyboard.press('Delete');
@@ -196,7 +196,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Delete with Erase tool', async ({ page }) => {
     await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectEraseTool(page);
     await page.getByText('&&&').hover();
     await page.getByText('&&&').click();
     await performUndoRedo(page);
@@ -208,7 +208,7 @@ test.describe('Text tools test cases', () => {
   }) => {
     const text2 = 'Ketcher is a cool tool';
     await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
-    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
     await page.getByText(text2).hover();
     await page.getByText(text2).click();
     await page.keyboard.press('Delete');
@@ -225,7 +225,7 @@ test.describe('Text tools test cases', () => {
     await page.getByTestId('erase').click();
     await performUndoRedo(page);
     await takeEditorScreenshot(page);
-    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
     await selectStructureWithSelectionTool(page);
     await page.keyboard.press('Delete');
     await performUndoRedo(page);
@@ -291,7 +291,7 @@ test.describe('Text tools test cases', () => {
       await page.getByTestId('canvas').click({ position: { x, y } });
     });
     await takeEditorScreenshot(page);
-    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
     await selectStructureWithSelectionTool(page);
     await waitForRender(page, async () => {
       await moveStructureToNewPosition(page);

@@ -5,14 +5,12 @@ import {
   moveMouseAway,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
-  selectEraseTool,
   selectPartOfMolecules,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   waitForPageInit,
   selectMonomer,
   clickOnTheCanvas,
-  selectRectangleSelectionTool,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectMacroBond,
@@ -37,6 +35,11 @@ import { Bases } from '@constants/monomers/Bases';
 import { Sugars } from '@constants/monomers/Sugars';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {
@@ -428,7 +431,7 @@ test.describe('Erase Tool', () => {
     await selectMonomer(page, Peptides.X);
     await clickOnTheCanvas(page, 0, 0);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 
@@ -454,7 +457,7 @@ test.describe('Erase Tool', () => {
     await selectMonomer(page, Bases.DNA_N);
     await clickOnTheCanvas(page, 0, 0);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 
@@ -480,7 +483,7 @@ test.describe('Erase Tool', () => {
     await selectMonomer(page, Peptides.Z);
     await clickOnTheCanvas(page, 0, 0);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 
@@ -506,7 +509,7 @@ test.describe('Erase Tool', () => {
     await selectMonomer(page, Bases.RNA_N);
     await clickOnTheCanvas(page, 0, 0);
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 

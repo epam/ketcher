@@ -6,8 +6,6 @@ import {
   moveMouseAway,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
-  selectEraseTool,
-  selectRectangleSelectionTool,
   waitForRender,
   getKet,
   saveToFile,
@@ -32,6 +30,11 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -1038,7 +1041,7 @@ test.describe('Side chain connections', () => {
 
     // Selectiong ALL 60 available bonds
     const numberOfBondsToSelectAndDelete = 60;
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     for (let i = 0; i < numberOfBondsToSelectAndDelete; i = i + 1) {
       await page.keyboard.down('Shift');
       await clickNthConnectionLine(page, i);
@@ -1066,7 +1069,7 @@ test.describe('Side chain connections', () => {
 
     // Selecting ALL 53 available bonds
     const numberOfBondsToSelectAndDelete = 53;
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     for (let i = 0; i < numberOfBondsToSelectAndDelete; i = i + 1) {
       await page.keyboard.down('Shift');
       await clickNthConnectionLine(page, i);

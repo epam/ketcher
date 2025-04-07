@@ -8,7 +8,6 @@ import {
   RNA_DNA_NON_MODIFIED_PART,
   RNABase,
   Sugar,
-  hasBackboneConnection,
   getNextMonomerInChain,
   getPreviousMonomerInChain,
 } from 'ketcher-core';

@@ -16,7 +16,7 @@ import {
   selectMonomer,
   selectMonomers,
 } from '@utils';
-import { enterSequence, waitForMonomerPreview } from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { SUGAR } from '@constants/testIdConstants';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import {
@@ -28,6 +28,7 @@ import { Sugars } from '@constants/monomers/Sugars';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Bases } from '@constants/monomers/Bases';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { keyboardPressOnCanvas, keyboardTypeOnCanvas } from '@utils/keyboard/index';
 
 test.describe('Sequence mode edit in RNA Builder', () => {
   test.beforeEach(async ({ page }) => {
@@ -182,8 +183,8 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: RNA Builder switched to edit mode.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'acgtu');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'acgtu');
+    await keyboardPressOnCanvas(page, 'Escape');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
     await modifyInRnaBuilder(page, symbolG);
@@ -198,8 +199,8 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: Sugars that have no R2 or R3 are disabled.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'acgtu');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'acgtu');
+    await keyboardPressOnCanvas(page, 'Escape');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
     await modifyInRnaBuilder(page, symbolG);
@@ -215,8 +216,8 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: Number of selected nucleotides is indicated within RNA Builder interface when several monomers are selected.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'acgtu');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'acgtu');
+    await keyboardPressOnCanvas(page, 'Escape');
     await page.keyboard.down('Shift');
     await getSymbolLocator(page, { symbolAlias: 'C' }).first().click();
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
@@ -234,8 +235,8 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: Name of nucleotide consist of names selected Sugar, Base, Phosphates in RNA Builder.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'acgtu');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'acgtu');
+    await keyboardPressOnCanvas(page, 'Escape');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
     await modifyInRnaBuilder(page, symbolG);

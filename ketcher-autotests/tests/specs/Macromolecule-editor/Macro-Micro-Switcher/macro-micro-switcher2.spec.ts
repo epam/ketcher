@@ -545,13 +545,22 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await setZoomInputValue(page, '50');
     await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await setZoomInputValue(page, '120');
     await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
     await setZoomInputValue(page, '150');
     await resetCurrentTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Verify that the transition from macromolecules mode back to molecules mode does not alter the single atom properties', async ({

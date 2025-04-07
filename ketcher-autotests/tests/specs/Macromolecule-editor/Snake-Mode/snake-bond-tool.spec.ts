@@ -457,6 +457,10 @@ test.describe('Snake Bond Tool', () => {
 
   test('Create snake bond for chain with side chains', async () => {
     await goToRNATab(page);
+
+    if (await page.getByTestId(Presets.C.testId).isHidden()) {
+      await page.getByTestId('summary-Presets').click();
+    }
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
       Presets.C,

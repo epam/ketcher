@@ -307,7 +307,7 @@ const monomers: IMonomer[] = [
     monomerDescription: '24. Nucleoside - R(A)',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{R(A)}$$$$V2.0',
-    eligibleForAntisense: true,
+    eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorIndex: 0,
   },
@@ -339,7 +339,7 @@ const monomers: IMonomer[] = [
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{R(A,C,G,T)}$$$$V2.0',
     baseWithR3R1ConnectionPresent: true,
-    eligibleForAntisense: true,
+    eligibleForAntisense: false,
     monomerLocatorIndex: 0,
   },
   {
@@ -359,7 +359,7 @@ const monomers: IMonomer[] = [
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{R(A,C)}$$$$V2.0',
     baseWithR3R1ConnectionPresent: true,
-    eligibleForAntisense: true,
+    eligibleForAntisense: false,
     monomerLocatorIndex: 0,
   },
   {
@@ -992,7 +992,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
     contentType: MacroFileType.HELM,
     HELMString:
       'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
-    eligibleForAntisense: true,
+    eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorIndex: 0,
   },
@@ -1026,7 +1026,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
     contentType: MacroFileType.HELM,
     HELMString:
       'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
-    eligibleForAntisense: true,
+    eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorIndex: 0,
   },
@@ -1060,7 +1060,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
     contentType: MacroFileType.HELM,
     HELMString:
       'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
-    eligibleForAntisense: true,
+    eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorIndex: 0,
   },
@@ -1094,7 +1094,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
     contentType: MacroFileType.HELM,
     HELMString:
       'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
-    eligibleForAntisense: true,
+    eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorIndex: 0,
   },
@@ -1584,7 +1584,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
     contentType: MacroFileType.HELM,
     HELMString:
       'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
-    eligibleForAntisense: true,
+    eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorIndex: 0,
   },
@@ -1618,7 +1618,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
     contentType: MacroFileType.HELM,
     HELMString:
       'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
-    eligibleForAntisense: true,
+    eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorIndex: 0,
   },
@@ -1652,7 +1652,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
     contentType: MacroFileType.HELM,
     HELMString:
       'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
-    eligibleForAntisense: true,
+    eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorIndex: 0,
   },
@@ -1686,7 +1686,7 @@ const chainWithExtraBondToBase: IMonomer[] = [
     contentType: MacroFileType.HELM,
     HELMString:
       'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
-    eligibleForAntisense: true,
+    eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorIndex: 0,
   },

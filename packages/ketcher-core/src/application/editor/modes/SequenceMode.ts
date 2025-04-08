@@ -806,6 +806,11 @@ export class SequenceMode extends BaseMode {
 
       if (previousTwoStrandedNodeInSameChain?.senseNode instanceof Nucleotide) {
         modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deleteMonomer(
+            previousTwoStrandedNodeInSameChain.senseNode.lastMonomerInNode,
+          ),
+        );
       }
     }
 
@@ -816,6 +821,14 @@ export class SequenceMode extends BaseMode {
           : currentTwoStrandedNode.antisenseNode,
         modelChanges,
       );
+
+      if (currentTwoStrandedNode?.antisenseNode instanceof Nucleotide) {
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deleteMonomer(
+            currentTwoStrandedNode.antisenseNode.lastMonomerInNode,
+          ),
+        );
+      }
     }
 
     modelChanges.addOperation(new ReinitializeModeOperation());
@@ -909,12 +922,14 @@ export class SequenceMode extends BaseMode {
         ((selectionStartNode instanceof EmptySequenceNode &&
           !(
             selectionStartTwoStrandedNode.senseNode instanceof
-            BackBoneSequenceNode
+              BackBoneSequenceNode ||
+            selectionStartTwoStrandedNode.senseNode instanceof EmptySequenceNode
           )) ||
           (selectionEndNode instanceof EmptySequenceNode &&
             !(
               selectionEndTwoStrandedNode.senseNode instanceof
-              BackBoneSequenceNode
+                BackBoneSequenceNode ||
+              selectionEndTwoStrandedNode.senseNode instanceof EmptySequenceNode
             )))
       ) {
         return;
@@ -1006,7 +1021,8 @@ export class SequenceMode extends BaseMode {
 
         if (
           nodeBeforeSelection instanceof Nucleoside &&
-          nodeAfterSelection instanceof Nucleotide
+          (nodeAfterSelection instanceof Nucleotide ||
+            nodeAfterSelection instanceof Nucleoside)
         ) {
           modelChanges.merge(
             this.bondNodesThroughNewPhosphate(
@@ -1062,7 +1078,8 @@ export class SequenceMode extends BaseMode {
 
         if (
           nodeAfterSelection instanceof Nucleoside &&
-          nodeBeforeSelection instanceof Nucleotide
+          (nodeBeforeSelection instanceof Nucleotide ||
+            nodeBeforeSelection instanceof Nucleoside)
         ) {
           modelChanges.merge(
             this.bondNodesThroughNewPhosphate(
@@ -1093,8 +1110,10 @@ export class SequenceMode extends BaseMode {
     return (
       twoStrandedNode &&
       !(
-        twoStrandedNode.senseNode instanceof EmptySequenceNode &&
-        twoStrandedNode.antisenseNode instanceof EmptySequenceNode
+        (!twoStrandedNode.senseNode ||
+          twoStrandedNode.senseNode instanceof EmptySequenceNode) &&
+        (!twoStrandedNode.antisenseNode ||
+          twoStrandedNode.antisenseNode instanceof EmptySequenceNode)
       )
     );
   }
@@ -1168,16 +1187,14 @@ export class SequenceMode extends BaseMode {
           );
         }
 
-        if (
-          this.needToEditAntisense &&
-          nodeToDelete.antisenseNode &&
-          !(nodeToDelete.antisenseNode instanceof EmptySequenceNode)
-        ) {
-          nodeToDelete.antisenseNode?.monomers.forEach((monomer) => {
-            modelChanges.merge(
-              editor.drawingEntitiesManager.deleteMonomer(monomer),
-            );
-          });
+        if (this.needToEditAntisense && nodeToDelete.antisenseNode) {
+          if (!(nodeToDelete.antisenseNode instanceof EmptySequenceNode)) {
+            nodeToDelete.antisenseNode?.monomers.forEach((monomer) => {
+              modelChanges.merge(
+                editor.drawingEntitiesManager.deleteMonomer(monomer),
+              );
+            });
+          }
 
           modelChanges.merge(
             this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.ANTISENSE),
@@ -1222,13 +1239,16 @@ export class SequenceMode extends BaseMode {
           this.unselectAllEntities();
 
           if (
-            this.isNodeExistAndNonEmpty(SequenceRenderer.nextNodeInSameChain) &&
+            this.isNodeExistAndNonEmpty(SequenceRenderer.currentEdittingNode) &&
             this.isNodeExistAndNonEmpty(
               SequenceRenderer.previousNodeInSameChain,
             )
           ) {
             this.splitCurrentChain();
           } else {
+            if (this.isSyncEditMode) {
+              this.turnOffAntisenseEditMode();
+            }
             this.startNewSequence();
           }
         },

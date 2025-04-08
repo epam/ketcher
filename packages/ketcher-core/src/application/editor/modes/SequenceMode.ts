@@ -1164,6 +1164,9 @@ export class SequenceMode extends BaseMode {
           );
         }
       } else if (nodeToDelete) {
+        const previousNodeInSameChain =
+          SequenceRenderer.previousNodeInSameChain;
+
         nodesToDelete = [
           [
             {
@@ -1187,14 +1190,18 @@ export class SequenceMode extends BaseMode {
           );
         }
 
-        if (this.needToEditAntisense && nodeToDelete.antisenseNode) {
-          if (!(nodeToDelete.antisenseNode instanceof EmptySequenceNode)) {
-            nodeToDelete.antisenseNode?.monomers.forEach((monomer) => {
-              modelChanges.merge(
-                editor.drawingEntitiesManager.deleteMonomer(monomer),
-              );
-            });
-          }
+        if (
+          this.needToEditAntisense &&
+          nodeToDelete.antisenseNode &&
+          // Do not delete empty antisense node and connect prev and next nodes if delete empty node in one chain (no need to connect previous and current chains)
+          (!(nodeToDelete.antisenseNode instanceof EmptySequenceNode) ||
+            !previousNodeInSameChain)
+        ) {
+          nodeToDelete.antisenseNode?.monomers.forEach((monomer) => {
+            modelChanges.merge(
+              editor.drawingEntitiesManager.deleteMonomer(monomer),
+            );
+          });
 
           modelChanges.merge(
             this.handleNodesDeletion(nodesToDelete, STRAND_TYPE.ANTISENSE),

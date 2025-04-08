@@ -9,6 +9,7 @@ import {
   addPeptideOnCanvas,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
+  moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   removeMonomerFromFavorites,
@@ -282,6 +283,7 @@ test.describe('Peptide library testing', () => {
     await selectRectangleSelectionTool(page);
     await getMonomerLocator(page, Peptides.Nal).hover();
     await dragMouseTo(x, y, page);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 });

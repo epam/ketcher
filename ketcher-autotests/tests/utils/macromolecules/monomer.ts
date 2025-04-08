@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page, expect } from '@playwright/test';
 import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 import {
   dragMouseTo,
@@ -247,6 +247,36 @@ export async function createRNAAntisenseChain(page: Page, monomer: Locator) {
     .first();
 
   await createAntisenseStrandOption.click();
+}
+
+export async function createAntisenseStrandByButton(
+  page: Page,
+  chosenType?: 'RNA' | 'DNA',
+) {
+  const rnaButton = page.getByTestId('antisenseRnaStrand').first();
+  const dnaButton = page.getByTestId('antisenseDnaStrand').first();
+  if (await rnaButton.isVisible().catch(() => false)) {
+    await rnaButton.click();
+    return;
+  }
+  if (await dnaButton.isVisible().catch(() => false)) {
+    await dnaButton.click();
+    return;
+  }
+  const dropdownTrigger = page.getByRole('button', {
+    name: 'Create Antisense Strand',
+  });
+  await dropdownTrigger.click();
+  if (chosenType) {
+    const title =
+      chosenType === 'RNA'
+        ? 'Create RNA Antisense Strand (Shift+Alt+R)'
+        : 'Create DNA Antisense Strand (Shift+Alt+D)';
+
+    const dropdownOption = page.getByTitle(title);
+    await expect(dropdownOption).toBeVisible();
+    await dropdownOption.click();
+  }
 }
 
 export async function modifyInRnaBuilder(page: Page, symbolLocator: Locator) {

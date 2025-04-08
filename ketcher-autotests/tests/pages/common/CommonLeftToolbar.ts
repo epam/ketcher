@@ -1,6 +1,10 @@
 import { type Page } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
-import { SelectionToolType } from '../constants/selectionTool/Constants';
+import { SelectionToolType } from '../constants/areaSelectionTool/Constants';
+import {
+  MacroBondType,
+  MicroBondType,
+} from '../constants/bondSelectionTool/Constants';
 
 export const commonLeftToolbarLocators = (page: Page) => ({
   // LeftPanelButton.HandTool
@@ -12,9 +16,11 @@ export const commonLeftToolbarLocators = (page: Page) => ({
   eraseButton: page.getByTestId('erase'),
   // bonds-in-toolbar - micro
   // bonds-drop-down-button - macro
-
   // bond-tool-submenu - macro
-  bondSelector: page.getByTestId('undo'),
+  bondSelectionDropdownButton: page.getByTestId('bonds'),
+  bondSelectionDropdownExpandButton: page
+    .getByTestId('bonds-drop-down-button')
+    .getByTestId('dropdown-expand'),
 });
 
 export async function selectHandTool(page: Page) {
@@ -42,8 +48,18 @@ export async function selectAreaSelectionTool(
 }
 
 export async function selectEraseTool(page: Page) {
-  const bondToolButton = commonLeftToolbarLocators(page).eraseButton;
+  const eraseToolButton = commonLeftToolbarLocators(page).eraseButton;
   await waitForRender(page, async () => {
-    await bondToolButton.click();
+    await eraseToolButton.click();
   });
+}
+
+export async function bondSelectionTool(
+  page: Page,
+  bondType: MacroBondType | MicroBondType,
+) {
+  const bondSelectionDropdownExpandButton =
+    commonLeftToolbarLocators(page).bondSelectionDropdownExpandButton;
+  await bondSelectionDropdownExpandButton.click();
+  await page.getByTestId(bondType).first().click();
 }

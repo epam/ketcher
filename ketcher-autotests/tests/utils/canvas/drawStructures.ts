@@ -1,16 +1,13 @@
 import { Page } from '@playwright/test';
-import {
-  BondTypeName,
-  drawBenzeneRing,
-  getCoordinatesTopAtomOfBenzeneRing,
-  selectBond,
-} from '.';
+import { drawBenzeneRing, getCoordinatesTopAtomOfBenzeneRing } from '.';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   dragMouseTo,
 } from '@utils';
 import { ArrowTool, selectNestedTool } from './tools/selectNestedTool';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 export async function drawReactionWithTwoBenzeneRings(
   page: Page,
@@ -39,7 +36,7 @@ export async function drawReactionWithTwoBenzeneRings(
 }
 
 export async function drawStructure(page: Page) {
-  await selectBond(BondTypeName.Single, page);
+  await bondSelectionTool(page, MicroBondType.Single);
   await clickInTheMiddleOfTheScreen(page);
   await clickInTheMiddleOfTheScreen(page);
   await clickInTheMiddleOfTheScreen(page);

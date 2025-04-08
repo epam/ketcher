@@ -59,7 +59,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -1300,7 +1300,7 @@ test.describe('Atom Properties', () => {
     await selectAtomInToolbar(AtomButton.Phosphorus, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectBond(BondTypeName.Single, page);
+    await bondSelectionTool(page, MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

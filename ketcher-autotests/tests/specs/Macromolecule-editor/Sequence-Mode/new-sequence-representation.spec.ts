@@ -4,7 +4,6 @@ import { Bases } from '@constants/monomers/Bases';
 import { Page, test, expect } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  MacroBondType,
   MacroFileType,
   MonomerType,
   openFileAndAddToCanvasMacro,
@@ -25,7 +24,6 @@ import {
   selectClearCanvasTool,
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   getMonomerLocator,
   getSymbolLocator,
@@ -42,6 +40,7 @@ import {
   switchToPeptideMode,
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
 
@@ -2392,7 +2391,7 @@ async function setupSenseAndAntiSenseSequences(
     antisenseBase,
     undefined,
     undefined,
-    MacroBondTool.HYDROGEN,
+    MacroBondType.Hydrogen,
   );
 }
 

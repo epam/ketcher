@@ -2,11 +2,12 @@ import { editorEvents } from 'application/editor/editorEvents';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
+import { MonomerSize } from 'domain/constants';
 import { Vec2 } from 'domain/entities';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { PolymerBond } from 'domain/entities/PolymerBond';
-import { BaseRenderer } from '../BaseRenderer';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
+import { BaseRenderer } from '../BaseRenderer';
 import {
   generateCornerFromLeftToTop,
   generateCornerFromLeftToBottom,
@@ -255,8 +256,8 @@ export class FlexModePolymerBondRenderer extends BaseRenderer {
 
   private getExpandedBoundingBox(bbox) {
     const expansionFactor = this.polymerBond.isSideChainConnection
-      ? 0.65
-      : 0.75;
+      ? MonomerSize - 0.1
+      : MonomerSize;
     let { left, top, width, height } = bbox;
 
     if (width < height) {

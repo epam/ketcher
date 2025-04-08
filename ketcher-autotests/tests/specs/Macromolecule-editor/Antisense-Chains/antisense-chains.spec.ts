@@ -304,14 +304,6 @@ const monomers: IMonomer[] = [
     monomerLocatorIndex: 0,
   },
   {
-    monomerDescription: '24. Nucleoside - R(A)',
-    contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A)}$$$$V2.0',
-    eligibleForAntisense: false,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
-  },
-  {
     monomerDescription:
       '25. Nucleoside with ambuguous alternative sugar - ([25moe3],[5A6])(A)',
     contentType: MacroFileType.HELM,
@@ -335,15 +327,6 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription:
-      '27. Nucleoside with ambuguous alternative RNA base N - R(A,C,G,T)',
-    contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A,C,G,T)}$$$$V2.0',
-    baseWithR3R1ConnectionPresent: true,
-    eligibleForAntisense: false,
-    monomerLocatorIndex: 0,
-  },
-  {
-    monomerDescription:
       '28. Nucleoside with ambuguous alternative DNA base N - R(A,C,G,U)',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{R(A,C,G,U)}$$$$V2.0',
@@ -352,15 +335,6 @@ const monomers: IMonomer[] = [
     monomerLocatorIndex: 0,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6149',
-  },
-  {
-    monomerDescription:
-      '29. Nucleoside with ambuguous alternative base S - R(A,C)',
-    contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A,C)}$$$$V2.0',
-    baseWithR3R1ConnectionPresent: true,
-    eligibleForAntisense: false,
-    monomerLocatorIndex: 0,
   },
   {
     monomerDescription:

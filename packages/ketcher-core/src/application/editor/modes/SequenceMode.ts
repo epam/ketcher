@@ -1496,7 +1496,29 @@ export class SequenceMode extends BaseMode {
 
           modelChanges.addOperation(new ReinitializeModeOperation());
           editor.renderersContainer.update(modelChanges);
-          modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+
+          if (
+            // If user type symbol that becomes part of a linker then caret does not move
+            !(
+              isEnteringSymbolP &&
+              (this.needToEditSense
+                ? LinkerSequenceNode.isPartOfLinker(
+                    previousTwoStrandedNodeInSameChain?.senseNode?.monomer,
+                  ) ||
+                  LinkerSequenceNode.isPartOfLinker(
+                    currentTwoStrandedNode?.senseNode?.monomer,
+                  )
+                : LinkerSequenceNode.isPartOfLinker(
+                    previousTwoStrandedNodeInSameChain?.antisenseNode?.monomer,
+                  ) ||
+                  LinkerSequenceNode.isPartOfLinker(
+                    currentTwoStrandedNode?.antisenseNode?.monomer,
+                  ))
+            )
+          ) {
+            modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+          }
+
           history.update(modelChanges);
         },
       },

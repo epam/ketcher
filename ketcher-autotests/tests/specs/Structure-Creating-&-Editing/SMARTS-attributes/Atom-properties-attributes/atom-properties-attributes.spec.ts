@@ -1,10 +1,8 @@
 import { Page, test, expect } from '@playwright/test';
 import {
-  BondTypeName,
   clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
   pressButton,
-  selectBond,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
@@ -18,6 +16,8 @@ import {
   setRadical,
   setValence,
 } from '../utils';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 async function drawStructure(page: Page, numberOfClicks: number) {
   await bondSelectionTool(page, MicroBondType.Single);

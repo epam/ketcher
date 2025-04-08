@@ -9,8 +9,6 @@ import {
   AtomButton,
   pressButton,
   resetCurrentTool,
-  selectBond,
-  BondTypeName,
   selectLeftPanelButton,
   LeftPanelButton,
   copyAndPaste,
@@ -58,8 +56,12 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  bondSelectionTool,
+  selectAreaSelectionTool,
+} from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;

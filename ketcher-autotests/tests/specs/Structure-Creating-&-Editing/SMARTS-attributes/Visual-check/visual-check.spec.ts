@@ -1,12 +1,10 @@
 import { Page, test, expect } from '@playwright/test';
 import {
-  BondTypeName,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   doubleClickOnAtom,
   getAtomByIndex,
   pressButton,
-  selectBond,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
@@ -27,6 +25,8 @@ import {
   setCharge,
   setValence,
 } from '../utils';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 async function setListOfAtoms(page: Page, atomLabels: string[]) {
   await selectAtomType(page, 'List');

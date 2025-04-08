@@ -1,18 +1,18 @@
 import { Page, test } from '@playwright/test';
 import {
-  BondTypeName,
   checkSmartsValue,
   checkSmartsWarnings,
   clickInTheMiddleOfTheScreen,
   doubleClickOnAtom,
   pressButton,
-  selectBond,
   setReactionFlagExactChange,
   setReactionFlagInversion,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
 } from '@utils';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 const expectedSmarts = '[#6](-[#6])(-[#6])-[#6]';
 

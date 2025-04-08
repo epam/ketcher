@@ -14,7 +14,6 @@ import {
   copyToClipboardByKeyboard,
   FunctionalGroups,
   getBondLengthValue,
-  MacroBondType,
   MacroFileType,
   openBondsSettingsSection,
   openFileAndAddToCanvas,
@@ -59,6 +58,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 declare global {
   interface Window {

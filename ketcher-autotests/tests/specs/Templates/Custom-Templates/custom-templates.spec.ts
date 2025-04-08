@@ -14,10 +14,10 @@ import {
   clickOnTheCanvas,
   AtomButton,
   selectAtomInToolbar,
-  selectBond,
-  BondTypeName,
   clickOnAtom,
 } from '@utils';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {

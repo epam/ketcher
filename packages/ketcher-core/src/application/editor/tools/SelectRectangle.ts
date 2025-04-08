@@ -32,6 +32,11 @@ import {
   SequenceRenderer,
 } from 'application/render';
 import { MonomersAlignment, vectorUtils } from 'application/editor';
+import {
+  HalfMonomerSize,
+  MonomerSize,
+  StandardBondLength,
+} from 'domain/constants';
 
 type EmptySnapResult = {
   snapPosition: null;
@@ -307,9 +312,8 @@ class SelectRectangle implements BaseTool {
       cursorPosition,
       connectedPosition,
     ).length();
-    const standardBondLength = 1.5;
     const isBondLengthSnapped =
-      Math.abs(currentDistance - standardBondLength) < 0.375;
+      Math.abs(currentDistance - StandardBondLength) < HalfMonomerSize;
 
     if (!isBondLengthSnapped) {
       return { bondLengthSnapPosition: null };
@@ -329,8 +333,8 @@ class SelectRectangle implements BaseTool {
     }
 
     const bondLengthSnapPosition = new Vec2(
-      connectedPosition.x + standardBondLength * -Math.cos(angle),
-      connectedPosition.y + standardBondLength * -Math.sin(angle),
+      connectedPosition.x + StandardBondLength * -Math.cos(angle),
+      connectedPosition.y + StandardBondLength * -Math.sin(angle),
     );
     return { bondLengthSnapPosition };
   }
@@ -342,9 +346,9 @@ class SelectRectangle implements BaseTool {
     const verticalDiff = Math.abs(firstPosition.y - secondPosition.y);
     const horizontalDiff = Math.abs(firstPosition.x - secondPosition.x);
 
-    if (verticalDiff < 0.75 && horizontalDiff >= 0.75) {
+    if (verticalDiff < MonomerSize && horizontalDiff >= MonomerSize) {
       return 'horizontal';
-    } else if (horizontalDiff < 0.75 && verticalDiff >= 0.75) {
+    } else if (horizontalDiff < MonomerSize && verticalDiff >= MonomerSize) {
       return 'vertical';
     }
 
@@ -456,7 +460,7 @@ class SelectRectangle implements BaseTool {
     if (
       Math.abs(
         cursorPosition[secondaryAxis] - connectedMonomer.center[secondaryAxis],
-      ) >= 0.75
+      ) >= MonomerSize
     ) {
       return { distanceSnapPosition: null };
     }
@@ -468,7 +472,9 @@ class SelectRectangle implements BaseTool {
     const distanceToMonomerForSnapping = Math.abs(
       cursorPosition[primaryAxis] - connectedMonomer.center[primaryAxis],
     );
-    if (Math.abs(distanceToMonomerForSnapping - snapDistance) >= 0.375) {
+    if (
+      Math.abs(distanceToMonomerForSnapping - snapDistance) >= HalfMonomerSize
+    ) {
       return { distanceSnapPosition: null };
     }
 
@@ -521,7 +527,7 @@ class SelectRectangle implements BaseTool {
       cursorPosition[secondaryAxis] -
         secondConnectedMonomer.center[secondaryAxis],
     );
-    if (firstDelta >= 0.75 || secondDelta >= 0.75) {
+    if (firstDelta >= MonomerSize || secondDelta >= MonomerSize) {
       return { distanceSnapPosition: null };
     }
 
@@ -533,7 +539,9 @@ class SelectRectangle implements BaseTool {
         firstConnectedMonomer.center[primaryAxis] -
           secondConnectedMonomer.center[primaryAxis],
       ) / 2;
-    if (Math.abs(distanceToMonomerForSnapping - snapDistance) >= 0.375) {
+    if (
+      Math.abs(distanceToMonomerForSnapping - snapDistance) >= HalfMonomerSize
+    ) {
       return { distanceSnapPosition: null };
     }
 
@@ -698,12 +706,12 @@ class SelectRectangle implements BaseTool {
         snapPosition,
       ).length();
 
-      const value =
+      const thresholdValue =
         Boolean(distanceSnapPosition) && Boolean(angleSnapPosition)
-          ? 0.55
-          : 0.375;
+          ? HalfMonomerSize + 0.1
+          : HalfMonomerSize;
 
-      if (distanceToSnapPosition < value) {
+      if (distanceToSnapPosition < thresholdValue) {
         const showAngleSnapping = Boolean(angleSnapPosition);
         const showBondLengthSnapping = Boolean(bondLengthSnapPosition);
         const showDistanceSnapping =

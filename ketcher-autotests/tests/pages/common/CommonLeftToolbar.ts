@@ -7,17 +7,13 @@ import {
 } from '../constants/bondSelectionTool/Constants';
 
 export const commonLeftToolbarLocators = (page: Page) => ({
-  // LeftPanelButton.HandTool
   handToolButton: page.getByTestId('hand'),
   areaSelectionDropdownButton: page.getByTestId('select-rectangle'),
   areaSelectionDropdownExpandButton: page
     .getByTestId('select-drop-down-button')
     .getByTestId('dropdown-expand'),
   eraseButton: page.getByTestId('erase'),
-  // bonds-in-toolbar - micro
-  // bonds-drop-down-button - macro
-  // bond-tool-submenu - macro
-  bondSelectionDropdownButton: page.getByTestId('bonds'),
+  bondSelectionDropdownButton: page.getByTestId('bonds-drop-down-button'),
   bondSelectionDropdownExpandButton: page
     .getByTestId('bonds-drop-down-button')
     .getByTestId('dropdown-expand'),

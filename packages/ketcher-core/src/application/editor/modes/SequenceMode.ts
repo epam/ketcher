@@ -1415,6 +1415,8 @@ export class SequenceMode extends BaseMode {
           let senseNodeToConnect = currentTwoStrandedNode?.senseNode;
           const isDnaEnteringMode =
             editor.sequenceTypeEnterMode === SequenceType.DNA;
+          const isRnaEnteringMode =
+            editor.sequenceTypeEnterMode === SequenceType.RNA;
           const isEnteringSymbolP = enteredSymbol.toUpperCase() === 'P';
 
           if (this.needToEditSense) {
@@ -1499,6 +1501,7 @@ export class SequenceMode extends BaseMode {
 
           if (
             // If user type symbol that becomes part of a linker then caret does not move
+            !(isDnaEnteringMode || isRnaEnteringMode) ||
             !(
               isEnteringSymbolP &&
               (this.needToEditSense

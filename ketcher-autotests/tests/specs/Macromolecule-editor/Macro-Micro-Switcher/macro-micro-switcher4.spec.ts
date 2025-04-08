@@ -460,7 +460,7 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
   ];
 
   for (const bond of bondsToDelete) {
-    const bondLocator = await getBondLocator(page, bond);
+    const bondLocator = getBondLocator(page, bond);
     await bondLocator.first().click({ force: true });
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -505,7 +505,7 @@ test(`Verify that undo/redo functionality restores deleted bonds correctly in ma
   ];
 
   for (const bond of bondsToDelete) {
-    const bondLocator = await getBondLocator(page, bond);
+    const bondLocator = getBondLocator(page, bond);
     await bondLocator.first().click({ force: true });
   }
 
@@ -618,7 +618,7 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
   ];
 
   for (const bond of bondsToDrag) {
-    const bondLocator = await getBondLocator(page, bond);
+    const bondLocator = getBondLocator(page, bond);
     await selectAllStructuresOnCanvas(page);
     await bondLocator.first().hover({ force: true });
     await dragMouseTo(400, 400, page);
@@ -664,7 +664,7 @@ test(`Verify that selecting a bond highlights it properly, even in complex struc
   ];
 
   for (const bond of bondsToDrag) {
-    const bondLocator = await getBondLocator(page, bond);
+    const bondLocator = getBondLocator(page, bond);
     await bondLocator.first().click({ force: true });
     await takeEditorScreenshot(page);
   }

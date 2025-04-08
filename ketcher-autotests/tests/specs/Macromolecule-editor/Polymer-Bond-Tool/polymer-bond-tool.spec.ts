@@ -955,6 +955,7 @@ test('Save and Open structure with long bonds to/from KET', async () => {
     4. Open saved KET
     5. Take screenshot
     */
+  await selectFlexLayoutModeTool(page);
   const firstMonomer = getMonomerLocator(page, Peptides.C);
   const secondMonomer = getMonomerLocator(page, Peptides.dC);
   await openFileAndAddToCanvasMacro(

@@ -40,7 +40,10 @@ import {
   switchToPeptideMode,
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  MacroBondDataIds,
+  MacroBondType,
+} from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
 
@@ -2490,7 +2493,7 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
         await selectFlexLayoutModeTool(page);
 
         const hydrogenBondsAll = getBondLocator(page, {
-          bondType: MacroBondType.Hydrogen,
+          bondType: MacroBondDataIds.Hydrogen,
         });
 
         const basesWithHydrogenConnection = getMonomerLocator(page, {

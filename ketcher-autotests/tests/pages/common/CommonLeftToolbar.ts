@@ -54,6 +54,8 @@ export async function bondSelectionTool(
   page: Page,
   bondType: MacroBondType | MicroBondType,
 ) {
+  // Experimental fix
+  await selectHandTool(page);
   const bondSelectionDropdownExpandButton =
     commonLeftToolbarLocators(page).bondSelectionDropdownExpandButton;
   await bondSelectionDropdownExpandButton.click();

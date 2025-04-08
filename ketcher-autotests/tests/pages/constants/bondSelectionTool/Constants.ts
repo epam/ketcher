@@ -19,3 +19,8 @@ export enum MacroBondType {
   Single = 'single-bond',
   Hydrogen = 'hydrogen-bond',
 }
+
+export enum MacroBondDataIds {
+  Single = 'covalent',
+  Hydrogen = 'hydrogen',
+}

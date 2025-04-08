@@ -28,6 +28,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   bondSelectionTool,
+  commonLeftToolbarLocators,
   selectEraseTool,
   selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
@@ -847,14 +848,6 @@ const buttonIdToTitle: {
   [MacroBondType.Hydrogen]: 'Hydrogen Bond (2)',
 };
 
-async function openBondToolDropDown(page: Page) {
-  // to reset Bond tool state
-  await selectHandTool(page);
-
-  const bondToolDropdown = page.getByTestId('bonds').locator('path').nth(1);
-  await bondToolDropdown.click();
-}
-
 Object.entries(MacroBondType).forEach(([key, dataTestId]) => {
   /*
    *  Test task: https://github.com/epam/ketcher/issues/5984
@@ -865,7 +858,11 @@ Object.entries(MacroBondType).forEach(([key, dataTestId]) => {
    *        4. Validate bond button is active
    */
   test(`11. ${key} bond tool: verification`, async () => {
-    await openBondToolDropDown(page);
+    // to reset Bond tool state
+    await selectHandTool(page);
+    await commonLeftToolbarLocators(
+      page,
+    ).bondSelectionDropdownExpandButton.click();
 
     const button = page.getByTestId(dataTestId).first();
     await expect(button).toHaveAttribute('title', buttonIdToTitle[dataTestId]);

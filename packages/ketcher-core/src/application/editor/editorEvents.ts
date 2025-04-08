@@ -256,13 +256,13 @@ export const hotkeysConfiguration = {
     },
   },
   createRnaAntisenseStrand: {
-    shortcut: ['Mod+Shift+r'],
+    shortcut: ['Shift+Alt+r'],
     handler: (editor: CoreEditor) => {
       editor.events.createAntisenseChain.dispatch(false);
     },
   },
   createDnaAntisenseStrand: {
-    shortcut: ['Mod+Shift+d'],
+    shortcut: ['Shift+Alt+d'],
     handler: (editor: CoreEditor) => {
       editor.events.createAntisenseChain.dispatch(true);
     },

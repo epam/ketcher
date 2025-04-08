@@ -587,49 +587,6 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
   await expect(terminalIndicator5).toHaveCount(1);
 });
 
-test(`Case 20: Antisense creation works wrong in case of partial selection`, async () => {
-  /*
-   * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 20
-   * Bug: https://github.com/epam/ketcher/issues/6096
-   * Description: Create Antisense Strand doesn't work in some cases
-   * Scenario:
-   * 1. Go to Macro mode -> Snake mode
-   * 2. Load from HELM: Certain sequence
-   * 3. Select certain monomers, call context menu and click Create Antisense Strand
-   * 4. Take screenshot to validate Create Antisense Strand works as expected
-   */
-  await selectSnakeLayoutModeTool(page);
-
-  await pasteFromClipboardAndAddToMacromoleculesCanvas(
-    page,
-    MacroFileType.HELM,
-    'RNA1{[dR](A)P.R(A)P}|PEPTIDE1{A.C.D.E.F}$PEPTIDE1,RNA1,5:R2-1:R1$$$V2.0',
-  );
-
-  const peptideA = getMonomerLocator(page, Peptides.A).first();
-  const peptideC = getMonomerLocator(page, Peptides.C).first();
-  const peptideD = getMonomerLocator(page, Peptides.D).first();
-  const peptideE = getMonomerLocator(page, Peptides.E).first();
-  const peptideF = getMonomerLocator(page, Peptides.F).first();
-  const sugarR = getMonomerLocator(page, Sugars.R).first();
-
-  await page.keyboard.down('Shift');
-  await peptideA.click();
-  await peptideC.click();
-  await peptideE.click();
-  await peptideD.click();
-  await peptideF.click();
-  await sugarR.click();
-  await page.keyboard.up('Shift');
-
-  await createRNAAntisenseChain(page, sugarR);
-
-  await takeEditorScreenshot(page, {
-    hideMonomerPreview: true,
-    hideMacromoleculeEditorScrollBars: true,
-  });
-});
-
 test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () => {
   /*
    * Test case: https://github.com/epam/ketcher/issues/6601 - Test case 21

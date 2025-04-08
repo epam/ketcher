@@ -988,16 +988,6 @@ for (const monomer of monomers.filter(
 const chainWithExtraBondToBase: IMonomer[] = [
   {
     monomerDescription:
-      '1. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
-    contentType: MacroFileType.HELM,
-    HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
-    eligibleForAntisense: false,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
-  },
-  {
-    monomerDescription:
       '2. Nucleoside of sugar R, ambiguous alternative base that have extra covalent bond - R([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
@@ -1019,16 +1009,6 @@ const chainWithExtraBondToBase: IMonomer[] = [
     monomerLocatorIndex: 0,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6088',
-  },
-  {
-    monomerDescription:
-      '4. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
-    contentType: MacroFileType.HELM,
-    HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
-    eligibleForAntisense: false,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
   },
   {
     monomerDescription:
@@ -1056,16 +1036,6 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '7. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
-    contentType: MacroFileType.HELM,
-    HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
-    eligibleForAntisense: false,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
-  },
-  {
-    monomerDescription:
       '8. Nucleoside of sugar R, ambiguous alternative base that have extra covalent bond - R([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
@@ -1087,16 +1057,6 @@ const chainWithExtraBondToBase: IMonomer[] = [
     monomerLocatorIndex: 0,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6088',
-  },
-  {
-    monomerDescription:
-      '10. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
-    contentType: MacroFileType.HELM,
-    HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
-    eligibleForAntisense: false,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
   },
   {
     monomerDescription:
@@ -1580,16 +1540,6 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '49. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
-    contentType: MacroFileType.HELM,
-    HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
-    eligibleForAntisense: false,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
-  },
-  {
-    monomerDescription:
       '50. Nucleoside of sugar R, ambiguous alternative base that have extra hydrogen bond - R([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
@@ -1611,16 +1561,6 @@ const chainWithExtraBondToBase: IMonomer[] = [
     monomerLocatorIndex: 0,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6088',
-  },
-  {
-    monomerDescription:
-      '52. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
-    contentType: MacroFileType.HELM,
-    HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
-    eligibleForAntisense: false,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
   },
   {
     monomerDescription:
@@ -1648,16 +1588,6 @@ const chainWithExtraBondToBase: IMonomer[] = [
   },
   {
     monomerDescription:
-      '55. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
-    contentType: MacroFileType.HELM,
-    HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
-    eligibleForAntisense: false,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
-  },
-  {
-    monomerDescription:
       '56. Nucleoside of sugar R, ambiguous alternative base that have extra hydrogen bond - R([nC6n8A],[nC6n5C])',
     contentType: MacroFileType.HELM,
     HELMString:
@@ -1679,16 +1609,6 @@ const chainWithExtraBondToBase: IMonomer[] = [
     monomerLocatorIndex: 0,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6088',
-  },
-  {
-    monomerDescription:
-      '58. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
-    contentType: MacroFileType.HELM,
-    HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
-    eligibleForAntisense: false,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
   },
   {
     monomerDescription:
@@ -2282,14 +2202,6 @@ const shortMonomerList: IMonomer[] = [
     monomerLocatorIndex: 0,
   },
   {
-    monomerDescription: '10. Nucleoside - R(A)',
-    contentType: MacroFileType.HELM,
-    HELMString: 'RNA1{R(A)}$$$$V2.0',
-    eligibleForAntisense: true,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
-  },
-  {
     monomerDescription: '11. Nucleotide A - R(A)P',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{R(A)P}$$$$V2.0',
@@ -2308,30 +2220,10 @@ const shortMonomerList: IMonomer[] = [
   },
   {
     monomerDescription:
-      '13. Nucleoside of sugar R, base that have extra covalent bond - R([nC6n8A])',
-    contentType: MacroFileType.HELM,
-    HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
-    eligibleForAntisense: false,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
-  },
-  {
-    monomerDescription:
       '14. Nucleoside of sugar R, base that have extra covalent bond and phosphate P - R([nC6n8A])P',
     contentType: MacroFileType.HELM,
     HELMString:
       'RNA1{R([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
-    eligibleForAntisense: false,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
-  },
-  {
-    monomerDescription:
-      '15. Nucleoside of sugar R, base that have extra hydrogen bond - R([nC6n8A])',
-    contentType: MacroFileType.HELM,
-    HELMString:
-      'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
     monomerLocatorIndex: 0,

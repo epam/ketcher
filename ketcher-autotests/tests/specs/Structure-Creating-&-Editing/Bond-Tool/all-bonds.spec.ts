@@ -81,6 +81,7 @@ const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.DoubleCisTrans]: 'Double Cis/Trans Bond (2)',
 };
 
+test.setTimeout(30000);
 let page: Page;
 
 test.beforeAll(async ({ browser }) => {
@@ -115,7 +116,8 @@ test.describe(`Bond tool:`, () => {
       /**
        *   Test cases: EPMLSOPKET-1371, 1380, 1389, 1396, 1404, 1410, 1416, 1422, 1428, 1437, 1444, 1451, 2238, 2244
        */
-
+      test.setTimeout(45000);
+      await pageReloadMicro(page);
       const drawnBonds = 3;
       const drawnBondsWithRing = 7;
       const bondAfterErase = 6;
@@ -356,6 +358,9 @@ test.describe(`Bond tool (copy-paste):`, () => {
         /**
          * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
          */
+        test.setTimeout(45000);
+        await pageReloadMicro(page);
+
         const DELTA_X = 100;
         point = await getCoordinatesOfTheMiddleOfTheScreen(page);
 

@@ -51,22 +51,36 @@ export async function selectEraseTool(page: Page) {
   });
 }
 
-export async function bondSelectionTool(
-  page: Page,
-  bondType: MacroBondType | MicroBondType,
-) {
+export async function expandBondSelectionDropdown(page: Page) {
   const bondSelectionDropdownExpandButton =
     commonLeftToolbarLocators(page).bondSelectionDropdownExpandButton;
   await bondSelectionDropdownExpandButton.click({ force: true });
-
-  if (!page.getByTestId(bondType).first().isVisible()) {
-    // Workaround for the issue with the bond selection tool
-    // where the dropdown is not expanded
+  if (await bondSelectionDropdownExpandButton.isVisible()) {
+    // alternative way to open the dropdown
     await selectHandTool(page);
     const bondSelectionDropdownButton =
       commonLeftToolbarLocators(page).bondSelectionDropdownButton;
     await bondSelectionDropdownButton.click({ force: true });
     await bondSelectionDropdownButton.click({ force: true });
   }
-  await page.getByTestId(bondType).first().click({ force: true });
+}
+
+export async function bondSelectionTool(
+  page: Page,
+  bondType: MacroBondType | MicroBondType,
+) {
+  let attempts = 0;
+  const maxAttempts = 5;
+  const timeOut = 200;
+
+  while (attempts < maxAttempts) {
+    try {
+      await expandBondSelectionDropdown(page);
+      await page.getByTestId(bondType).first().click({ force: true });
+      return;
+    } catch (error) {
+      attempts++;
+      await page.waitForTimeout(timeOut);
+    }
+  }
 }

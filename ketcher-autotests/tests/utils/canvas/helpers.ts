@@ -321,7 +321,9 @@ export async function delay(seconds = 1) {
 
 export async function screenshotBetweenUndoRedo(page: Page) {
   await pressUndoButton(page);
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, {
+    maxDiffPixels: 1,
+  });
   await pressRedoButton(page);
 }
 

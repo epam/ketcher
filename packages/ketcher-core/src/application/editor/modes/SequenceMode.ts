@@ -1530,12 +1530,8 @@ export class SequenceMode extends BaseMode {
     };
   }
 
-  public deleteSelection(allowDeleteMultipleSelections = false) {
+  public deleteSelection() {
     const selections = SequenceRenderer.selections;
-
-    if (!allowDeleteMultipleSelections && selections.length > 1) {
-      return false;
-    }
 
     if (selections.length === 0) {
       return true;

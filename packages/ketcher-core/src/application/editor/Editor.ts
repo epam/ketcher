@@ -421,7 +421,7 @@ export class CoreEditor {
     });
     this.events.deleteSelectedStructure.add(() => {
       if (this.mode instanceof SequenceMode) {
-        this.mode.deleteSelection(true);
+        this.mode.deleteSelection();
 
         return;
       }

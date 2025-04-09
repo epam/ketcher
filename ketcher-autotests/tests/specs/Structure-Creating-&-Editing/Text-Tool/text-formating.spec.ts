@@ -188,10 +188,8 @@ test.describe('Text tools test cases', () => {
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await waitForRender(page, async () => {
-      await pressUndoButton(page);
-      await pressRedoButton(page);
-    });
+    await pressUndoButton(page);
+    await pressRedoButton(page);
     await takeEditorScreenshot(page);
   });
 

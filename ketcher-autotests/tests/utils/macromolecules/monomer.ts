@@ -1,16 +1,18 @@
 import { Locator, Page } from '@playwright/test';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 import {
   dragMouseTo,
-  LeftPanelButton,
   Monomer,
   MonomerType,
-  selectLeftPanelButton,
   selectMacroBond,
-  selectRectangleSelectionTool,
   SymbolType,
   waitForRender,
 } from '@utils';
 import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import {
+  selectAreaSelectionTool,
+  selectHandTool,
+} from '@tests/pages/common/CommonLeftToolbar';
 
 export async function moveMonomer(
   page: Page,
@@ -18,7 +20,7 @@ export async function moveMonomer(
   x: number,
   y: number,
 ) {
-  await selectRectangleSelectionTool(page);
+  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
   await monomer.click();
   await dragMouseTo(x, y, page);
 }
@@ -29,8 +31,8 @@ export async function moveMonomerOnMicro(
   x: number,
   y: number,
 ) {
-  await selectLeftPanelButton(LeftPanelButton.HandTool, page);
-  await selectRectangleSelectionTool(page);
+  await selectHandTool(page);
+  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
   await waitForRender(page, async () => {
     await monomer.click();
   });

@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -8,7 +10,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   LeftPanelButton,
-  selectDropdownTool,
   clickOnAtom,
   clickOnBond,
   BondType,
@@ -40,7 +41,7 @@ test.describe('Chain Tool verification', () => {
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(center.x + DELTA, center.y, page);
-    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
     await clickOnAtom(page, 'C', 0);
     await page.keyboard.press('n');
     await takeEditorScreenshot(page);
@@ -83,7 +84,7 @@ test.describe('Chain Tool verification', () => {
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(center.x + DELTA, center.y, page);
-    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'C', 0);
     await clickOnAtom(page, 'C', bondNumber);

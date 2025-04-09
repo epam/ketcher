@@ -1,3 +1,4 @@
+/* eslint-disable no-inline-comments */
 /**
  * Usage: await selectAtom(AtomButton.Carbon, page)
  * Select an atom from Atom toolbar
@@ -77,9 +78,6 @@ export enum TopPanelButton {
 }
 
 export enum LeftPanelButton {
-  HandTool = 'Hand tool',
-  RectangleSelection = 'Rectangle Selection',
-  Erase = 'Erase',
   SingleBond = 'Single Bond',
   Chain = 'Chain',
   Stereochemistry = 'Stereochemistry',

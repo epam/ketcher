@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 import {
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -7,8 +9,6 @@ import {
   clickInTheMiddleOfTheScreen,
   selectFunctionalGroups,
   resetCurrentTool,
-  selectLeftPanelButton,
-  LeftPanelButton,
   waitForPageInit,
   takeRightToolbarScreenshot,
   drawBenzeneRing,
@@ -58,8 +58,7 @@ test.describe('Open Ketcher', () => {
     await takeTopToolbarScreenshot(page);
     await resetCurrentTool(page);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
-    await page.getByTestId('select-lasso').click();
+    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);
   });

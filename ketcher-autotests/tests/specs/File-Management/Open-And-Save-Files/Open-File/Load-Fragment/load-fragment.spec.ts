@@ -1,4 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
+import { commonLeftToolbarLocators } from '@tests/pages/common/CommonLeftToolbar';
 import {
   AtomButton,
   clickInTheMiddleOfTheScreen,
@@ -56,7 +57,7 @@ async function moveElement(
   const pointXToMoveElement = x - xShiftForElement;
   const pointYToMoveElement = y - yShiftForElement;
 
-  await page.getByTestId('hand').click();
+  await commonLeftToolbarLocators(page).handToolButton.click();
   await moveOnAtom(page, atomLabel, atomNumber);
   await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
 }

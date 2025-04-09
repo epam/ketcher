@@ -28,6 +28,9 @@ async function templateFromLAminoAcidsCategory(page: Page) {
 
 async function applyIgnoreChiralFlag(page: Page) {
   await openSettings(page);
+  if (await page.getByTitle('Reset').isEnabled()) {
+    await page.getByTitle('Reset').click();
+  }
   await page.getByText('Stereochemistry', { exact: true }).click();
   await scrollSettingBar(page, 80);
   await page

@@ -2,6 +2,7 @@ import { Page, expect } from '@playwright/test';
 import { MolfileFormat, Struct, SupportedModes } from 'ketcher-core';
 import { clickOnFileFormatDropdown } from './clicks';
 import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import { commonLeftToolbarLocators } from '@tests/pages/common/CommonLeftToolbar';
 
 export async function getKet(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getKet());
@@ -189,7 +190,7 @@ export async function waitForViewOnlyModeState(
   isEnabled: boolean,
   timeout = 100000,
 ): Promise<void> {
-  const eraseButton = page.getByTestId('erase');
+  const eraseButton = commonLeftToolbarLocators(page).eraseButton;
 
   if (isEnabled) {
     await expect(eraseButton).toBeDisabled({ timeout });

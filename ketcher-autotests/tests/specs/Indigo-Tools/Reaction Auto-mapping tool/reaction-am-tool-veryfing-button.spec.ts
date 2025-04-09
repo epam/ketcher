@@ -14,6 +14,8 @@ import {
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 test.describe('Verifying buttons on reaction am tool dropdown', () => {
   test.beforeEach(async ({ page }) => {
@@ -86,7 +88,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
         await clickOnAtom(page, 'C', atomNumber1);
         await clickOnAtom(page, 'C', atomNumber2);
         await takeEditorScreenshot(page);
-        await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+        await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
         await applyAutoMapMode(page, mode, false);
       });
     }
@@ -94,7 +96,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
 
   test.describe('With autoMapping', () => {
     test.afterEach(async ({ page }) => {
-      await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
       await takeEditorScreenshot(page);
       await applyAutoMapMode(page, 'Discard');
       await pressUndoButton(page);

@@ -12,7 +12,6 @@ import {
   setZoomInputValue,
   resetCurrentTool,
   screenshotBetweenUndoRedo,
-  selectEraseTool,
   selectPartOfMolecules,
   selectAllStructuresOnCanvas,
   copyAndPaste,
@@ -23,7 +22,6 @@ import {
   clickOnCanvas,
   selectRing,
   RingButton,
-  selectRectangleSelectionTool,
   waitForRender,
   selectLayoutTool,
 } from '@utils';
@@ -39,6 +37,11 @@ import {
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { addTextToCanvas } from '@utils/selectors/addTextBoxToCanvas';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 async function addTail(page: Page, x: number, y: number) {
   await page.mouse.click(x, y, { button: 'right' });
@@ -1750,7 +1753,7 @@ test.describe('Cascade Reactions', () => {
           await clickOnCanvas(page, 500, 600);
           await selectRing(RingButton.Benzene, page);
           await clickOnCanvas(page, 200, 600);
-          await selectRectangleSelectionTool(page);
+          await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
           await addTail(page, 482, 464);
           await takeEditorScreenshot(page);
           await selectPartOfMolecules(page);

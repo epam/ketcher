@@ -589,7 +589,7 @@ export class SequenceMode extends BaseMode {
   private handlePeptideNodeAddition(
     enteredSymbol: string,
     newNodePosition: Vec2,
-    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode | null,
     previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
   ) {
     if (!peptideNaturalAnalogues.includes(enteredSymbol)) {
@@ -630,7 +630,7 @@ export class SequenceMode extends BaseMode {
   private handleRnaDnaNodeAddition(
     enteredSymbol: RnaDnaNaturalAnaloguesEnum | string,
     newNodePosition: Vec2,
-    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode | null,
     previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
   ) {
     if (!rnaDnaNaturalAnalogues.includes(enteredSymbol)) {
@@ -1415,11 +1415,14 @@ export class SequenceMode extends BaseMode {
           let senseNodeToConnect = currentTwoStrandedNode?.senseNode;
           const isDnaEnteringMode =
             editor.sequenceTypeEnterMode === SequenceType.DNA;
+          const isRnaEnteringMode =
+            editor.sequenceTypeEnterMode === SequenceType.RNA;
+          const isEnteringSymbolP = enteredSymbol.toUpperCase() === 'P';
 
           if (this.needToEditSense) {
             const insertNewSequenceItemResult = this.insertNewSequenceItem(
               editor,
-              this.isAntisenseEditMode
+              this.isAntisenseEditMode && !isEnteringSymbolP
                 ? DrawingEntitiesManager.getAntisenseBaseLabel(
                     enteredSymbol,
                     isDnaEnteringMode,
@@ -1456,13 +1459,14 @@ export class SequenceMode extends BaseMode {
               editor,
               this.isAntisenseEditMode ||
                 (editor.sequenceTypeEnterMode !== SequenceType.DNA &&
-                  editor.sequenceTypeEnterMode !== SequenceType.RNA)
+                  editor.sequenceTypeEnterMode !== SequenceType.RNA) ||
+                isEnteringSymbolP
                 ? enteredSymbol
                 : DrawingEntitiesManager.getAntisenseBaseLabel(
                     enteredSymbol,
                     isDnaEnteringMode,
                   ),
-              previousTwoStrandedNodeInSameChain?.antisenseNode,
+              previousTwoStrandedNodeInSameChain?.antisenseNode || null,
               currentTwoStrandedNode?.antisenseNode,
             );
 
@@ -1494,7 +1498,30 @@ export class SequenceMode extends BaseMode {
 
           modelChanges.addOperation(new ReinitializeModeOperation());
           editor.renderersContainer.update(modelChanges);
-          modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+
+          if (
+            // If user type symbol that becomes part of a linker then caret does not move
+            !(isDnaEnteringMode || isRnaEnteringMode) ||
+            !(
+              isEnteringSymbolP &&
+              (this.needToEditSense
+                ? LinkerSequenceNode.isPartOfLinker(
+                    previousTwoStrandedNodeInSameChain?.senseNode?.monomer,
+                  ) ||
+                  LinkerSequenceNode.isPartOfLinker(
+                    currentTwoStrandedNode?.senseNode?.monomer,
+                  )
+                : LinkerSequenceNode.isPartOfLinker(
+                    previousTwoStrandedNodeInSameChain?.antisenseNode?.monomer,
+                  ) ||
+                  LinkerSequenceNode.isPartOfLinker(
+                    currentTwoStrandedNode?.antisenseNode?.monomer,
+                  ))
+            )
+          ) {
+            modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+          }
+
           history.update(modelChanges);
         },
       },
@@ -2456,7 +2483,7 @@ export class SequenceMode extends BaseMode {
   private insertNewSequenceItem(
     editor: CoreEditor,
     enteredSymbol: string,
-    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode | null,
     previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
   ) {
     const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
@@ -2516,10 +2543,10 @@ export class SequenceMode extends BaseMode {
           newPhosphateNode,
           currentTwoStrandedNode instanceof BackBoneSequenceNode
             ? currentTwoStrandedNode.secondConnectedNode
-            : undefined,
+            : nextNodeToConnect,
           currentTwoStrandedNode instanceof BackBoneSequenceNode
             ? currentTwoStrandedNode.firstConnectedNode
-            : undefined,
+            : previousNodeToConnect,
           true,
           true,
           false,

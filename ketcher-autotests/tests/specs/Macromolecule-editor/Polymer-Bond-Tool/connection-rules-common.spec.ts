@@ -14,7 +14,6 @@ import {
   selectSnakeLayoutModeTool,
   selectRectangleArea,
   saveToFile,
-  selectEraseTool,
   getKet,
   receiveFileComparisonData,
   getMolfile,
@@ -42,6 +41,7 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;

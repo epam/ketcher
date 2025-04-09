@@ -36,6 +36,11 @@ import {
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { getAtomByIndex } from '@utils/canvas/atoms';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
@@ -364,7 +369,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectEraseTool(page);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -491,7 +496,7 @@ test.describe('Functional Groups', () => {
     await selectFunctionalGroups(FunctionalGroups.PhCOOH, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -506,7 +511,7 @@ test.describe('Functional Groups', () => {
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -521,7 +526,7 @@ test.describe('Functional Groups', () => {
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await page.getByText('me').first().hover();
     await takeEditorScreenshot(page);
   });
@@ -555,7 +560,7 @@ test.describe('Functional Groups', () => {
       await page.getByText('Expand Abbreviation').click();
     });
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     point = await getAtomByIndex(page, { label: 'S' }, 0);
     await page.mouse.move(point.x, point.y);
     await page.keyboard.press('n');
@@ -593,7 +598,7 @@ test.describe('Functional Groups', () => {
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.keyboard.press('Delete');
     await resetCurrentTool(page);
@@ -610,7 +615,7 @@ test.describe('Functional Groups', () => {
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.keyboard.press('Delete');
     await resetCurrentTool(page);
@@ -627,7 +632,7 @@ test.describe('Functional Groups', () => {
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.keyboard.press('n');
     await resetCurrentTool(page);
@@ -643,7 +648,7 @@ test.describe('Functional Groups', () => {
     */
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await moveMouseToTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
       await page.keyboard.press('o');

@@ -46,7 +46,7 @@ export function LeftMenuComponent() {
         <Menu.Item
           itemId="hand"
           title={`Hand Tool (${shortcuts.hand})`}
-          testId="hand-tool"
+          testId="hand"
         />
         <Menu.Item
           itemId="select-rectangle"
@@ -63,7 +63,7 @@ export function LeftMenuComponent() {
       <Menu.Group>
         <Menu.Submenu
           disabled={isSequenceMode}
-          testId="bond-tool-submenu"
+          testId="bonds"
           needOpenByMenuItemClick={false}
         >
           <Menu.Item

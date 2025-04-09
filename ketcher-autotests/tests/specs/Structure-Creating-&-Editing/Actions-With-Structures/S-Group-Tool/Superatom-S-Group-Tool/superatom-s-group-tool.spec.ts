@@ -29,6 +29,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 let point: { x: number; y: number };
 
 async function addNameToSuperatom(
@@ -147,7 +148,7 @@ test.describe('Superatom S-Group tool', () => {
       EDIT ABBREVIATION modal appears.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectEraseTool(page);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });

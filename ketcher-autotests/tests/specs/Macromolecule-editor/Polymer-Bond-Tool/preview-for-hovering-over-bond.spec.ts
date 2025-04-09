@@ -3,7 +3,6 @@ import { test, Page } from '@playwright/test';
 import {
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
-  selectRectangleSelectionTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -12,6 +11,8 @@ import {
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
@@ -44,7 +45,7 @@ const fileNames: string[] = [
 //             2. Take screenshot of the canvas to compare it with example
 //         */
 //   test.slow();
-//   await selectRectangleSelectionTool(page);
+//   await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
 
 //   for (const fileWithPairs of fileNames) {
 //     await openFileAndAddToCanvasAsNewProjectMacro(fileWithPairs, page);
@@ -83,7 +84,7 @@ test(
         Will require to update screens after fix
         */
     test.setTimeout(240000);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
 
     for (const fileWithPairs of fileNames) {
       await openFileAndAddToCanvasAsNewProjectMacro(fileWithPairs, page);
@@ -125,7 +126,7 @@ test(
         Will require to update screens after fix
         */
 
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
 
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Preview-For-Hovering-Over-Bond/BondPreviewToolTipPositions.ket',

@@ -50,7 +50,6 @@ export type AtomExtendedType =
 export type DropdownIds =
   | 'bonds'
   | 'rgroup-label'
-  | 'select-rectangle'
   | 'reaction-arrow-open-angle'
   | 'reaction-map'
   | 'shape-ellipse';
@@ -82,10 +81,6 @@ export type DropdownToolIds =
   | 'shape-ellipse'
   | 'shape-rectangle'
   | 'shape-line'
-  // select
-  | 'select-rectangle'
-  | 'select-lasso'
-  | 'select-fragment'
   // rotate
   | 'transform-rotate'
   | 'transform-flip-h'

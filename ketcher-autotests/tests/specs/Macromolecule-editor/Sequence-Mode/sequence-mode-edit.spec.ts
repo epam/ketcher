@@ -19,7 +19,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
-  selectEraseTool,
   selectFlexLayoutModeTool,
   selectMacroBond,
   selectMonomer,
@@ -64,6 +63,7 @@ import {
   selectClearCanvasTool,
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await selectMacroBond(page, MacroBondTool.SINGLE);

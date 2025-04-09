@@ -1,4 +1,6 @@
 import { Page, test } from '@playwright/test';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
 import {
   selectAllStructuresOnCanvas,
@@ -9,7 +11,6 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   openDropdown,
-  selectDropdownTool,
 } from '@utils/clicks';
 
 async function selectLineWithSelectionTool(page: Page) {
@@ -47,7 +48,7 @@ async function separetingAndMovingLines(page: Page) {
   await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
-  await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+  await selectAreaSelectionTool(page, SelectionToolType.Lasso);
   await selectLineWithSelectionTool(page);
   await clickOnCanvas(page, point4.x, point4.y);
   await dragMouseTo(point5.x, point5.y, page);
@@ -128,7 +129,7 @@ test.describe('draw and highlight line', () => {
     page,
   }) => {
     await setupLine(page);
-    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
     await selectLineWithSelectionTool(page);
     await takeEditorScreenshot(page);
     await moveLineToNewPosition(page);

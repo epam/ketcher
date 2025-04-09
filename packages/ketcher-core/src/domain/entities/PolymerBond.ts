@@ -11,6 +11,7 @@ import {
 import { AttachmentPointName } from 'domain/types';
 import { BaseMonomer } from './BaseMonomer';
 import { BaseBond } from 'domain/entities/BaseBond';
+import { HalfMonomerSize } from 'domain/constants';
 
 export type FlexOrSequenceOrSnakeModePolymerBondRenderer =
   | BackBoneBondSequenceRenderer
@@ -108,7 +109,7 @@ export class PolymerBond extends BaseBond {
 
     return (
       Math.abs(this.firstMonomer.position.y - this.secondMonomer.position.y) <
-      0.375
+      HalfMonomerSize
     );
   }
 
@@ -119,7 +120,7 @@ export class PolymerBond extends BaseBond {
 
     return (
       Math.abs(this.firstMonomer.position.x - this.secondMonomer.position.x) <
-      0.375
+      HalfMonomerSize
     );
   }
 }

@@ -7,7 +7,6 @@ import {
   RingButton,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/addTextBoxToCanvas';
 import {
@@ -46,11 +45,9 @@ test.describe('Clear canvas', () => {
     await takeEditorScreenshot(page);
     await selectClearCanvasTool(page);
     await clickInTheMiddleOfTheScreen(page);
-    await waitForRender(page, async () => {
-      await pressUndoButton(page);
-      await pressRedoButton(page);
-      await pressUndoButton(page);
-    });
+    await pressUndoButton(page);
+    await pressRedoButton(page);
+    await pressUndoButton(page);
     await takeEditorScreenshot(page);
   });
 

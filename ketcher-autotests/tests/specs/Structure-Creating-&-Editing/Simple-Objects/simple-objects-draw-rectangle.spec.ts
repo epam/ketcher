@@ -1,4 +1,6 @@
 import { Page, test } from '@playwright/test';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
 import {
   selectAllStructuresOnCanvas,
@@ -9,7 +11,6 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   openDropdown,
-  selectDropdownTool,
 } from '@utils/clicks';
 
 const rectangleWidth = 150;
@@ -70,7 +71,7 @@ async function separetingAndMovingRecatngles(page: Page) {
   await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
-  await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+  await selectAreaSelectionTool(page, SelectionToolType.Lasso);
   await createSomeStructure(page);
   await clickOnCanvas(page, point4.x, point4.y);
   await page.mouse.down();

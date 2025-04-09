@@ -1,5 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 import {
   DELAY_IN_SECONDS,
   clickInTheMiddleOfTheScreen,
@@ -7,7 +9,6 @@ import {
   clickOnCanvas,
   delay,
   selectAllStructuresOnCanvas,
-  selectRectangleSelectionTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -200,7 +201,7 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('bn');
     await page.keyboard.press('Enter');
     await clickOnAtom(page, 'C', atomC);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
   });

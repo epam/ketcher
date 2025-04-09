@@ -1,4 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
+import { commonLeftToolbarLocators } from '@tests/pages/common/CommonLeftToolbar';
 import {
   BondType,
   clickOnBond,
@@ -34,7 +35,7 @@ test.describe('Left toolbar UI tests', () => {
 
   test('left toolbar selection tool verification', async ({ page }) => {
     // Test case: EPMLSOPKET-4268
-    await openDropdown(page, 'select-rectangle');
+    await commonLeftToolbarLocators(page).areaSelectionDropdownButton.click();
     const selectionToolDropdownWidth = 200;
     await takeDropdownScreenshot(page, selectionToolDropdownWidth);
   });

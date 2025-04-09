@@ -31,10 +31,8 @@ import {
   selectAromatizeTool,
   selectCleanTool,
   selectDearomatizeTool,
-  selectEraseTool,
   selectLayoutTool,
   selectLeftPanelButton,
-  selectRectangleSelectionTool,
   selectRing,
   selectSaveFileFormat,
   selectTopPanelButton,
@@ -64,6 +62,11 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { openStructureLibrary } from '@utils/templates';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 test.describe('Image files', () => {
   let page: Page;
@@ -582,7 +585,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
@@ -604,7 +607,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -627,7 +630,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectEraseTool(page);
     await clickOnCanvas(page, 200, 200);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -840,7 +843,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await page.mouse.move(100, 100);
     await dragMouseTo(800, 800, page);
     await takeEditorScreenshot(page);
@@ -853,7 +856,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await page.keyboard.press('Shift+Tab');
     await selectWithLasso(page, 100, 100, [
       { x: 800, y: 800 },
@@ -889,7 +892,7 @@ test.describe('Image files', () => {
     await pageReloadMicro(page);
 
     await openImageAndAddToCanvas('Images/image-png.png', page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -993,7 +996,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
@@ -1021,7 +1024,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
@@ -1046,7 +1049,7 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
@@ -1079,7 +1082,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 200, 200);
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
@@ -1110,7 +1113,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 200, 200);
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
@@ -1139,7 +1142,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectEraseTool(page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1165,7 +1168,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
     await takeEditorScreenshot(page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectEraseTool(page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1192,7 +1195,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
     await takeEditorScreenshot(page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectEraseTool(page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -2705,7 +2708,7 @@ test.describe('Image files', () => {
     );
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
@@ -2733,7 +2736,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 200, 200);
 
     // Ensure the element is in view
@@ -2763,11 +2766,11 @@ test.describe('Image files', () => {
     );
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectEraseTool(page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.SVG);
@@ -2853,7 +2856,7 @@ test.describe('Image files', () => {
     );
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
@@ -2881,7 +2884,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 200, 200);
 
     // Ensure the element is in view
@@ -2911,11 +2914,11 @@ test.describe('Image files', () => {
     );
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectEraseTool(page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.PNG);
@@ -3054,7 +3057,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png-demo.png', page);
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await page.mouse.move(300, 300);
@@ -3075,7 +3078,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png-demo.png', page);
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await page.mouse.move(300, 300);
@@ -3098,7 +3101,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 300, 300);
 
     // Ensure the element is in view
@@ -3125,7 +3128,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickOnCanvas(page, 300, 300);
 
     // Ensure the element is in view
@@ -3150,10 +3153,10 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png-demo.png', page, 600, 500);
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectEraseTool(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.PNG);
@@ -3171,10 +3174,10 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png-demo.png', page, 600, 500);
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectLeftPanelButton(LeftPanelButton.Erase, page);
+    await selectEraseTool(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectSaveFileFormat(page, FileFormatOption.SVG);

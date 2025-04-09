@@ -6,16 +6,18 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasMacro,
-  selectEraseTool,
   selectSnakeLayoutModeTool,
-  selectRectangleSelectionTool,
 } from '@utils';
 import {
   pressUndoButton,
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
-
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 test.describe('Enumerations', () => {
   test.beforeEach(async ({ page }) => {
@@ -94,7 +96,7 @@ test.describe('Enumerations', () => {
     Description: Chain recalculated after deleting base.
     */
     await openFileAndAddToCanvasMacro('KET/sugar-phosphate-baA.ket', page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await selectEraseTool(page);
     await getMonomerLocator(page, Bases.baA).click();
     await takeEditorScreenshot(page);
@@ -106,7 +108,7 @@ test.describe('Enumerations', () => {
     Description: Chain recalculated after undoing base.
     */
     await openFileAndAddToCanvasMacro('KET/sugar-phosphate-baA.ket', page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await selectEraseTool(page);
     await getMonomerLocator(page, Bases.baA).click();
     await pressUndoButton(page);

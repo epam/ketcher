@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
   waitForPageInit,
-  selectEraseTool,
   pressButton,
   selectAllStructuresOnCanvas,
   cutToClipboardByKeyboard,
@@ -16,7 +15,6 @@ import {
   selectSnakeLayoutModeTool,
   selectSequenceLayoutModeTool,
   selectFlexLayoutModeTool,
-  selectRectangleSelectionTool,
   dragMouseTo,
   moveMouseAway,
 } from '@utils';
@@ -39,6 +37,11 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectAreaSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 let page: Page;
 
@@ -595,7 +598,7 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
     page,
   );
-  await selectRectangleSelectionTool(page);
+  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
 
   const bondsToDrag = [
     { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },
@@ -641,7 +644,7 @@ test(`Verify that selecting a bond highlights it properly, even in complex struc
     'KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket',
     page,
   );
-  await selectRectangleSelectionTool(page);
+  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
 
   const bondsToDrag = [
     { bondType: BondType.Single, bondStereo: BondStereo.None, bondId: 137 },

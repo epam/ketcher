@@ -13,7 +13,6 @@ import {
   waitForRender,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProject,
-  selectEraseTool,
   selectPartOfMolecules,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
@@ -38,6 +37,7 @@ import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 /* eslint-disable no-magic-numbers */
 
 async function createBondedMonomers(page: Page) {
@@ -437,17 +437,30 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, phosphate, sugarOfNucleoside);
     await bondTwoMonomers(page, sugarOfNucleoside, sugar);
 
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
 
     await selectFlexLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
 
     await selectSnakeLayoutModeTool(page);
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Create snake bond for chain with side chains', async () => {
     await goToRNATab(page);
+
+    if (await page.getByTestId(Presets.C.testId).isHidden()) {
+      await page.getByTestId('summary-Presets').click();
+    }
     const { phosphate } = await addRnaPresetOnCanvas(
       page,
       Presets.C,
@@ -538,7 +551,10 @@ test.describe('Snake Bond Tool', () => {
     await bondTwoMonomers(page, phosphate2, hcyPeptide, undefined, 'R1');
     await bondTwoMonomers(page, hcyPeptide1, balPeptide);
     await bondTwoMonomers(page, hcyPeptide1, balPeptide1, undefined, 'R1');
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
 
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page, {

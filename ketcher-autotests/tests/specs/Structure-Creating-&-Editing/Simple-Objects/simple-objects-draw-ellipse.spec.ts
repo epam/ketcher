@@ -1,4 +1,6 @@
 import { Page, test } from '@playwright/test';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 import {
   clickOnCanvas,
   LeftPanelButton,
@@ -14,7 +16,6 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  selectDropdownTool,
 } from '@utils/clicks';
 
 const ellipseWidth = 120;
@@ -55,7 +56,7 @@ async function separetingAndMovingEllipse(page: Page) {
   await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
-  await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+  await selectAreaSelectionTool(page, SelectionToolType.Lasso);
   await createSomeStructure(page);
   await clickOnCanvas(page, point4.x, point4.y);
   await page.mouse.down();
@@ -102,7 +103,7 @@ test.describe('Draw Ellipse', () => {
     await takeEditorScreenshot(page);
     await dragMouseTo(point1.x, point1.y, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectDropdownTool(page, 'select-rectangle', 'select-lasso');
+    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
     await createSomeStructure(page);
     await page.mouse.move(point2.x, point2.y);
     await page.mouse.down();

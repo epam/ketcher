@@ -9,7 +9,6 @@ import {
   scrollDown,
   selectRectangleArea,
   selectFlexLayoutModeTool,
-  selectRectangleSelectionTool,
   selectPartOfMolecules,
   clickInTheMiddleOfTheScreen,
   selectAllStructuresOnCanvas,
@@ -27,6 +26,8 @@ import {
   getSequenceSymbolLocator,
   selectSequenceRangeInEditMode,
 } from '@utils/macromolecules/sequence';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -164,7 +165,7 @@ test.describe('Sequence mode selection for view mode', () => {
     test(`Ensure that ${data.description}`, async ({ page }) => {
       await openFileAndAddToCanvasMacro(data.file, page);
       await selectSequenceLayoutModeTool(page);
-      await selectRectangleSelectionTool(page);
+      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
       await page
         .locator('g.drawn-structures')
         .locator('g', { has: page.locator('text="G"') })

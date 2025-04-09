@@ -58,6 +58,8 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -1522,7 +1524,7 @@ test.describe('Atom Properties', () => {
     */
     await selectElementFromExtendedTable(page, 'GH*', 'Add');
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.RectangleSelection, page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await page.getByText('GH*').first().dblclick();
     await takeEditorScreenshot(page);
   });

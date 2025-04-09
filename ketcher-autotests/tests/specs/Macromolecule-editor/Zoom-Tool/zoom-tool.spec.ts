@@ -3,7 +3,6 @@ import { Locator, test, Page, chromium } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   selectRectangleArea,
-  selectRectangleSelectionTool,
   takeEditorScreenshot,
   waitForPageInit,
   moveMouseToTheMiddleOfTheScreen,
@@ -33,6 +32,8 @@ import {
   waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 
 let page: Page;
 
@@ -220,7 +221,7 @@ test.describe('Zoom Tool', () => {
     const zoomInCount = 2;
     await selectZoomInTool(page, zoomInCount);
     await clickInTheMiddleOfTheScreen(page);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await selectRectangleArea(
       page,
       selectionStart.x,
@@ -259,7 +260,7 @@ test.describe('Zoom Tool', () => {
     const selectionStart = { x: 200, y: 200 };
     const selectionEnd = { x: 800, y: 800 };
     await zoomWithMouseWheel(page, ZOOM_STEP);
-    await selectRectangleSelectionTool(page);
+    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     await selectRectangleArea(
       page,
       selectionStart.x,

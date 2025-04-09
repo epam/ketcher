@@ -284,36 +284,32 @@ export abstract class BaseMonomer extends DrawingEntity {
     return [...this.covalentBonds, ...this.hydrogenBonds];
   }
 
-  public get shortestBond():
-    | PolymerBond
-    | HydrogenBond
-    | MonomerToAtomBond
-    | undefined {
-    if (this.bonds.length === 0) {
-      return;
-    }
-
-    return this.bonds.reduce((shortestBond, bond) => {
-      if (!shortestBond.secondEndEntity) {
-        return shortestBond;
+  public get bondsSortedByLength(): Array<
+    PolymerBond | HydrogenBond | MonomerToAtomBond
+  > {
+    const bonds = [...this.bonds];
+    return bonds.sort((firstBond, secondBond) => {
+      if (!firstBond.secondEndEntity || !secondBond.secondEndEntity) {
+        return 0;
       }
 
-      const shortestBondLength = Vec2.diff(
-        shortestBond.firstEndEntity.position,
-        shortestBond.secondEndEntity?.position,
+      const firstLength = Vec2.diff(
+        firstBond.firstEndEntity.position,
+        firstBond.secondEndEntity?.position,
+      ).length();
+      const secondLength = Vec2.diff(
+        secondBond.firstEndEntity.position,
+        secondBond.secondEndEntity?.position,
       ).length();
 
-      if (!bond.secondEndEntity) {
-        return shortestBond;
-      }
+      return firstLength - secondLength;
+    });
+  }
 
-      const bondLength = Vec2.diff(
-        bond.firstEndEntity.position,
-        bond.secondEndEntity?.position,
-      ).length();
-
-      return bondLength < shortestBondLength ? bond : shortestBond;
-    }, this.bonds[0]);
+  public get polymerBondsSortedByLength(): Array<PolymerBond | HydrogenBond> {
+    return this.bondsSortedByLength.filter(
+      (bond) => !(bond instanceof MonomerToAtomBond),
+    ) as Array<PolymerBond | HydrogenBond>;
   }
 
   public get hasBonds() {

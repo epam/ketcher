@@ -1,6 +1,7 @@
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import {
   getNextMonomerInChain,
+  getPreviousMonomerInChain,
   isValidNucleoside,
   isValidNucleotide,
 } from 'domain/helpers/monomers';
@@ -28,14 +29,7 @@ export class LinkerSequenceNode {
     const monomers = [this.firstMonomerInNode];
     const firstMonomer = this.firstMonomerInNode;
     let nextMonomer = getNextMonomerInChain(this.firstMonomerInNode);
-    while (
-      nextMonomer instanceof Chem ||
-      nextMonomer instanceof Phosphate ||
-      nextMonomer instanceof RNABase ||
-      (nextMonomer instanceof Sugar &&
-        !isValidNucleotide(nextMonomer) &&
-        !isValidNucleoside(nextMonomer))
-    ) {
+    while (LinkerSequenceNode.isValidPartForLinker(nextMonomer)) {
       monomers.push(nextMonomer);
       nextMonomer = getNextMonomerInChain(nextMonomer, firstMonomer);
     }
@@ -49,5 +43,33 @@ export class LinkerSequenceNode {
 
   public get modified() {
     return false;
+  }
+
+  public static isValidPartForLinker(
+    monomer?: BaseMonomer,
+  ): monomer is BaseMonomer {
+    return (
+      monomer instanceof Chem ||
+      monomer instanceof Phosphate ||
+      monomer instanceof RNABase ||
+      (monomer instanceof Sugar &&
+        !isValidNucleotide(monomer) &&
+        !isValidNucleoside(monomer))
+    );
+  }
+
+  public static isPartOfLinker(monomer?: BaseMonomer) {
+    if (!monomer) {
+      return false;
+    }
+
+    const previousMonomerInChain = getPreviousMonomerInChain(monomer);
+    const nextMonomerInChain = getNextMonomerInChain(monomer);
+
+    return (
+      LinkerSequenceNode.isValidPartForLinker(monomer) &&
+      (LinkerSequenceNode.isValidPartForLinker(previousMonomerInChain) ||
+        LinkerSequenceNode.isValidPartForLinker(nextMonomerInChain))
+    );
   }
 }

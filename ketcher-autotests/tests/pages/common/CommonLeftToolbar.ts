@@ -14,6 +14,7 @@ export const commonLeftToolbarLocators = (page: Page) => ({
     .getByTestId('dropdown-expand'),
   eraseButton: page.getByTestId('erase'),
   bondSelectionDropdownButton: page.getByTestId('bonds-drop-down-button'),
+  // test commenet
   bondSelectionDropdownExpandButton: page
     .getByTestId('bonds-drop-down-button')
     .getByTestId('dropdown-expand'),

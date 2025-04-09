@@ -405,7 +405,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
 
         await selectRing(RingButton.Cyclohexane, page);
         await clickOnCanvas(page, point.x, point.y, {
-          waitForRenderTimeOut: 1000,
+          waitForRenderTimeOut: 100,
         });
 
         await takeEditorScreenshot(page);

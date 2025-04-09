@@ -40,6 +40,7 @@ import {
   selectAromatizeTool,
   selectDearomatizeTool,
   delay,
+  takePageScreenshot,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -334,12 +335,15 @@ test.describe(`Bond tool (copy-paste):`, () => {
     await page.close();
   });
 
-  for (const bondToolKey of Object.keys(BondTool)) {
+  for (const bondType of Object.values(MicroBondType)) {
     let point: { x: number; y: number };
 
-    // TODO:
+    const bondTypeName = Object.entries(MicroBondType).find(
+      ([, enumValue]) => enumValue === bondType,
+    )?.[0];
+
     test(
-      `Manipulations with ${bondToolKey}`,
+      `Manipulations with ${bondTypeName}`,
       {
         tag: ['@FlakyTest'],
       },
@@ -350,7 +354,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         const DELTA_X = 100;
         point = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
-        await bondSelectionTool(page, BondTool[bondToolKey][1]);
+        await bondSelectionTool(page, bondType);
         await clickInTheMiddleOfTheScreen(page);
 
         await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
@@ -365,18 +369,24 @@ test.describe(`Bond tool (copy-paste):`, () => {
           reactingCenterStatus: 0,
         });
 
-        await clickOnCanvas(page, point.x, point.y);
+        await clickOnCanvas(page, point.x, point.y, {
+          waitForRenderTimeOut: 100,
+        });
 
         await copyToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
 
-        await clickOnCanvas(page, point.x + DELTA_X, point.y);
+        await clickOnCanvas(page, point.x + DELTA_X, point.y, {
+          waitForRenderTimeOut: 100,
+        });
         await pressUndoButton(page);
 
         await clickInTheMiddleOfTheScreen(page);
         await cutToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
-        await clickOnCanvas(page, point.x + DELTA_X, point.y);
+        await clickOnCanvas(page, point.x + DELTA_X, point.y, {
+          waitForRenderTimeOut: 100,
+        });
         await pressUndoButton(page);
         await pressUndoButton(page);
 
@@ -388,11 +398,15 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await selectAtom(AtomButton.Oxygen, page);
         point = await getCoordinatesTopAtomOfBenzeneRing(page);
 
-        await clickOnCanvas(page, point.x, point.y);
+        await clickOnCanvas(page, point.x, point.y, {
+          waitForRenderTimeOut: 100,
+        });
         await pressUndoButton(page);
 
         await selectRing(RingButton.Cyclohexane, page);
-        await clickOnCanvas(page, point.x, point.y);
+        await clickOnCanvas(page, point.x, point.y, {
+          waitForRenderTimeOut: 1000,
+        });
 
         await takeEditorScreenshot(page);
       },

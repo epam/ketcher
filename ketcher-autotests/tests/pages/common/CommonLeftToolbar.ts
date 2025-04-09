@@ -5,6 +5,7 @@ import {
   MacroBondType,
   MicroBondType,
 } from '../constants/bondSelectionTool/Constants';
+import { takePageScreenshot } from '@utils/canvas';
 
 export const commonLeftToolbarLocators = (page: Page) => ({
   handToolButton: page.getByTestId('hand'),
@@ -55,10 +56,18 @@ export async function bondSelectionTool(
   page: Page,
   bondType: MacroBondType | MicroBondType,
 ) {
-  // Experimental fix
-  await selectHandTool(page);
   const bondSelectionDropdownExpandButton =
     commonLeftToolbarLocators(page).bondSelectionDropdownExpandButton;
-  await bondSelectionDropdownExpandButton.click();
-  await page.getByTestId(bondType).first().click();
+  await bondSelectionDropdownExpandButton.click({ force: true });
+
+  if (!page.getByTestId(bondType).first().isVisible()) {
+    // Workaround for the issue with the bond selection tool
+    // where the dropdown is not expanded
+    await selectHandTool(page);
+    const bondSelectionDropdownButton =
+      commonLeftToolbarLocators(page).bondSelectionDropdownButton;
+    await bondSelectionDropdownButton.click({ force: true });
+    await bondSelectionDropdownButton.click({ force: true });
+  }
+  await page.getByTestId(bondType).first().click({ force: true });
 }

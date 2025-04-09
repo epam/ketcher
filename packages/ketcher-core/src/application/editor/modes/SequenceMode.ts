@@ -589,7 +589,7 @@ export class SequenceMode extends BaseMode {
   private handlePeptideNodeAddition(
     enteredSymbol: string,
     newNodePosition: Vec2,
-    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode | null,
     previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
   ) {
     if (!peptideNaturalAnalogues.includes(enteredSymbol)) {
@@ -630,7 +630,7 @@ export class SequenceMode extends BaseMode {
   private handleRnaDnaNodeAddition(
     enteredSymbol: RnaDnaNaturalAnaloguesEnum | string,
     newNodePosition: Vec2,
-    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode | null,
     previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
   ) {
     if (!rnaDnaNaturalAnalogues.includes(enteredSymbol)) {
@@ -1464,7 +1464,7 @@ export class SequenceMode extends BaseMode {
                     enteredSymbol,
                     isDnaEnteringMode,
                   ),
-              previousTwoStrandedNodeInSameChain?.antisenseNode,
+              previousTwoStrandedNodeInSameChain?.antisenseNode || null,
               currentTwoStrandedNode?.antisenseNode,
             );
 
@@ -2458,7 +2458,7 @@ export class SequenceMode extends BaseMode {
   private insertNewSequenceItem(
     editor: CoreEditor,
     enteredSymbol: string,
-    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode | null,
     previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
   ) {
     const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;

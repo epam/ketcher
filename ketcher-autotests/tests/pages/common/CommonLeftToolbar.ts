@@ -14,7 +14,6 @@ export const commonLeftToolbarLocators = (page: Page) => ({
     .getByTestId('dropdown-expand'),
   eraseButton: page.getByTestId('erase'),
   bondSelectionDropdownButton: page.getByTestId('bonds-drop-down-button'),
-  // test commenet
   bondSelectionDropdownExpandButton: page
     .getByTestId('bonds-drop-down-button')
     .getByTestId('dropdown-expand'),
@@ -54,14 +53,15 @@ export async function selectEraseTool(page: Page) {
 export async function expandBondSelectionDropdown(page: Page) {
   const bondSelectionDropdownExpandButton =
     commonLeftToolbarLocators(page).bondSelectionDropdownExpandButton;
-  await bondSelectionDropdownExpandButton.click({ force: true });
+  await selectHandTool(page);
+  const bondSelectionDropdownButton =
+    commonLeftToolbarLocators(page).bondSelectionDropdownButton;
+  await bondSelectionDropdownButton.click({ force: true });
+  await bondSelectionDropdownButton.click({ force: true });
+
   if (await bondSelectionDropdownExpandButton.isVisible()) {
     // alternative way to open the dropdown
-    await selectHandTool(page);
-    const bondSelectionDropdownButton =
-      commonLeftToolbarLocators(page).bondSelectionDropdownButton;
-    await bondSelectionDropdownButton.click({ force: true });
-    await bondSelectionDropdownButton.click({ force: true });
+    await bondSelectionDropdownExpandButton.click({ force: true });
   }
 }
 

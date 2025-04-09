@@ -316,7 +316,7 @@ test.describe(`Bond tool:`, () => {
 });
 
 test.describe(`Bond tool (copy-paste):`, () => {
-  test.describe.configure({ mode: 'serial' });
+  // test.describe.configure({ mode: 'serial' });
   let page: Page;
 
   test.beforeAll(async ({ browser }) => {

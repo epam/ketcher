@@ -35,7 +35,7 @@ import {
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
-test.setTimeout(400000);
+test.setTimeout(40000);
 test.describe.configure({ retries: 0 });
 
 test.beforeAll(async ({ browser }) => {
@@ -858,6 +858,7 @@ Object.entries(MacroBondType).forEach(([key, dataTestId]) => {
    *        4. Validate bond button is active
    */
   test(`11. ${key} bond tool: verification`, async () => {
+    test.setTimeout(25000);
     // to reset Bond tool state
     await selectHandTool(page);
     await commonLeftToolbarLocators(
@@ -867,6 +868,7 @@ Object.entries(MacroBondType).forEach(([key, dataTestId]) => {
     const button = page.getByTestId(dataTestId).first();
     await expect(button).toHaveAttribute('title', buttonIdToTitle[dataTestId]);
 
+    await selectHandTool(page);
     await bondSelectionTool(page, dataTestId);
     await expect(button).toHaveAttribute('class', /active/);
   });

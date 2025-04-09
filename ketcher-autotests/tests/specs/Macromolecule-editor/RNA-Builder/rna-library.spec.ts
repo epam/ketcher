@@ -1049,7 +1049,7 @@ test.describe('RNA Library', () => {
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
       await dragMouseTo(x, y, page);
-      await takeEditorScreenshot(page);
+      await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectEraseTool(page);
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);

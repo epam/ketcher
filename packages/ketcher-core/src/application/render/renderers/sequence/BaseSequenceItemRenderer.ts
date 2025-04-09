@@ -15,6 +15,7 @@ import { PolymerBond } from 'domain/entities/PolymerBond';
 import { Phosphate } from 'domain/entities/Phosphate';
 import { SequenceMode } from 'application/editor';
 import { AmbiguousMonomerSequenceNode } from 'domain/entities/AmbiguousMonomerSequenceNode';
+import { MONOMER_CONST } from 'domain/constants';
 
 const CHAIN_START_ARROW_SYMBOL_ID = 'sequence-start-arrow';
 
@@ -237,31 +238,48 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return Boolean(this.twoStrandedNode.antisenseNode);
   }
 
-  private getNodeIndexIgnoringLinkerNodesInSubChain() {
+  // Subchain is splitted by LinkerSequenceNode,
+  // each node coming after LinkerSequenceNode must start new number sequence:
+  // for example, subChain:
+  // 1   3   1     4
+  // A A A @ A A A A
+  private getNodeIndexInSubgroup() {
     let nodeIndex = 0;
 
     this.chain.subChains.some((subChain) => {
       if (!this.isSubChainNode(this.node)) return false;
+
       const nodeIndexInSubChain = subChain.nodes.indexOf(this.node);
       if (nodeIndexInSubChain === -1) return false;
 
-      const linkerNodesBeforeCurrent = subChain.nodes
-        .slice(0, nodeIndexInSubChain)
-        .filter((node) => node instanceof LinkerSequenceNode).length;
+      // Split subchain into arrays of non-linker nodes
+      const nonLinkerNodeGroups = subChain.nodes.reduce(
+        (groups, node) => {
+          if (
+            node instanceof LinkerSequenceNode ||
+            node.monomer instanceof Phosphate ||
+            this.checkIfNodeIsAmbiguousMonomerNotPeptide(node)
+          ) {
+            if (groups[groups.length - 1].length > 0) {
+              groups.push([]);
+            }
+          } else {
+            groups[groups.length - 1].push(node);
+          }
+          return groups;
+        },
+        [[]] as (SubChainNode | BackBoneSequenceNode)[][],
+      );
 
-      const phosphateNodesBeforeCurrent = subChain.nodes
-        .slice(0, nodeIndexInSubChain)
-        .filter(
-          (node) =>
-            !(node instanceof LinkerSequenceNode) &&
-            node.monomer instanceof Phosphate,
-        ).length;
+      // Find the group containing the current node
+      const currentGroup = nonLinkerNodeGroups.find((group) =>
+        group.includes(this.node),
+      );
 
-      nodeIndex =
-        nodeIndexInSubChain +
-        1 -
-        linkerNodesBeforeCurrent -
-        phosphateNodesBeforeCurrent;
+      if (!currentGroup) return false;
+
+      // Calculate the index within the group
+      nodeIndex = currentGroup.indexOf(this.node) + 1;
       return true;
     });
 
@@ -285,9 +303,20 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       const phosphateNodeIndex = subChain.nodes.findIndex(
         ({ monomer }) => monomer instanceof Phosphate,
       );
-      if (linkerNodeIndex !== -1 || phosphateNodeIndex !== -1) {
-        if (linkerNodeIndex < nodeIndex || phosphateNodeIndex < nodeIndex) {
-          numberToDisplay = this.getNodeIndexIgnoringLinkerNodesInSubChain();
+      const ambiguousMonomerNonPeptideNodeIndex = subChain.nodes.findIndex(
+        this.checkIfNodeIsAmbiguousMonomerNotPeptide,
+      );
+      if (
+        linkerNodeIndex !== -1 ||
+        phosphateNodeIndex !== -1 ||
+        ambiguousMonomerNonPeptideNodeIndex !== -1
+      ) {
+        if (
+          linkerNodeIndex < nodeIndex ||
+          phosphateNodeIndex < nodeIndex ||
+          ambiguousMonomerNonPeptideNodeIndex < nodeIndex
+        ) {
+          numberToDisplay = this.getNodeIndexInSubgroup();
         } else {
           numberToDisplay = nodeIndex + 1;
         }
@@ -344,28 +373,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   private needDisplayCounter(editingNodeIndexOverall?: number) {
     return (
-      // don't display counters for @ LinkerSequenceNode (ex. CHEM)
-      // for example, subChain:
-      // 1   3   1
-      // A A A @ A
-      // or (if Linker is phosphate)
-      // 1   3   4
-      // A A A @ A
-      !(this.node instanceof LinkerSequenceNode) &&
-      // don't display counters for Phosphate
-      // for example, subChain:
-      //  1   3
-      // pA A Ap
-      !(this.node.monomer instanceof Phosphate) &&
-      // don't display counters for Unknown monomer
-      // for example, subChain:
-      // 1   3
-      // A A A ?
-      !(this.node.monomer instanceof UnresolvedMonomer) &&
-      !(this.node instanceof AmbiguousMonomerSequenceNode) &&
-      // don't display counters for empty sequence node and backbone sequence node
-      !(this.node instanceof EmptySequenceNode) &&
-      !(this.node instanceof BackBoneSequenceNode) &&
+      !this.inIgnoreList(this.node) &&
       // don't display counters for first node in chain even if it is last node
       // for example, chain:
       //     3   1     4
@@ -376,8 +384,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       // for every nth node in row (10th) in chain
       (this.isBeginningOfSubChain ||
         this.isLastInSubChain ||
-        this.isFirstNodeInSubChainAfterPhosphate ||
-        this.isSecondLastNodeInSubChain ||
+        this.currentNodeNearBreakingNode ||
         ((!this.isSyncEditMode ||
           !this.hasAntisenseInChain ||
           !(
@@ -388,48 +395,177 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     );
   }
 
-  private get isFirstNodeInSubChainAfterPhosphate() {
+  // in snake/flex layout mode is represented as % in hexagon
+  private checkIfNodeIsAmbiguousMonomerPeptide(node) {
+    return (
+      node instanceof AmbiguousMonomerSequenceNode &&
+      node.monomer.monomerClass === MONOMER_CONST.AMINO_ACID
+    );
+  }
+
+  // in snake/flex layout mode is represented as % in:
+  // rectangle, circle, diamond, rounded rectangle, etc. (not hexagon)
+  private checkIfNodeIsAmbiguousMonomerNotPeptide(node) {
+    return (
+      node instanceof AmbiguousMonomerSequenceNode &&
+      node.monomer.monomerClass !== MONOMER_CONST.AMINO_ACID
+    );
+  }
+
+  // returns true if it is first node in subchain after LinkerSequenceNode
+  private get currentNodeNearBreakingNode() {
     return this.chain.subChains.some((subChain) => {
-      const phosphateNodeIndex = subChain.nodes.findIndex(
-        (node) => node.monomer instanceof Phosphate,
-      );
+      if (
+        !this.isSubChainNode(this.node) ||
+        this.checkIfNodeIsAmbiguousMonomerPeptide(this.node)
+      )
+        return false;
+
+      const nodeIndex = subChain.nodes.indexOf(this.node);
+      if (nodeIndex === -1) return false;
+
       return (
-        phosphateNodeIndex !== -1 &&
-        !(subChain.nodes[phosphateNodeIndex] instanceof LinkerSequenceNode) &&
-        this.node === subChain.nodes[phosphateNodeIndex + 1]
+        (nodeIndex > 0 &&
+          subChain.nodes[nodeIndex - 1] instanceof LinkerSequenceNode) ||
+        (nodeIndex < subChain.nodes.length - 1 &&
+          subChain.nodes[nodeIndex + 1] instanceof LinkerSequenceNode) ||
+        (nodeIndex > 0 &&
+          this.checkIfNodeIsAmbiguousMonomerNotPeptide(
+            subChain.nodes[nodeIndex - 1],
+          )) ||
+        (nodeIndex < subChain.nodes.length - 1 &&
+          this.checkIfNodeIsAmbiguousMonomerNotPeptide(
+            subChain.nodes[nodeIndex + 1],
+          ))
       );
     });
   }
 
-  private get isBeginningOfChain() {
-    return !this.isAntisenseNode && this.monomerIndexInChain === 0;
+  private inIgnoreList(node: SubChainNode | BackBoneSequenceNode): boolean {
+    return (
+      // @ LinkerSequenceNode (ex. CHEM)
+      // for example, subChain:
+      // 1   3   1
+      // A A A @ A
+      // or (if Linker is phosphate)
+      // 1   3   4
+      // A A A @ A
+      node instanceof LinkerSequenceNode ||
+      // empty sequence node and backbone sequence node
+      node instanceof EmptySequenceNode ||
+      node instanceof BackBoneSequenceNode ||
+      // Ambiguous monomer not peptide
+      this.checkIfNodeIsAmbiguousMonomerNotPeptide(this.node) ||
+      // Phosphate
+      // for example, subChain:
+      //  1   3
+      // pA A Ap
+      node.monomer instanceof Phosphate ||
+      // (!(node instanceof LinkerSequenceNode) &&
+      //   node.monomer instanceof Phosphate) ||
+      // Unknown monomer
+      // for example, subChain:
+      // 1   3
+      // A A A ?
+      node.monomer instanceof UnresolvedMonomer
+    );
   }
 
+  // returns subchain with node
+  private get subChainWithNode() {
+    if (!this.isSubChainNode(this.node)) return null;
+
+    const subChain = this.chain.subChains.find((subChain) => {
+      if (!this.isSubChainNode(this.node)) return false;
+      return subChain.nodes.includes(this.node);
+    });
+
+    if (!subChain) return null;
+    return subChain;
+  }
+
+  // returns non-breaking sequence of ignored nodes before first node in subchain
+  private get ignoredNodesBeforeFirstNodeInSubChain():
+    | (SubChainNode | BackBoneSequenceNode)[] {
+    if (!this.isSubChainNode(this.node)) return [];
+
+    if (!this.subChainWithNode) return [];
+
+    const nodeIndex = this.subChainWithNode.nodes.indexOf(this.node);
+    if (nodeIndex === -1) return [];
+
+    const nodesBefore = this.subChainWithNode.nodes.slice(0, nodeIndex);
+    if (nodesBefore.some((node) => !this.inIgnoreList(node))) {
+      return [];
+    }
+
+    return nodesBefore;
+  }
+
+  private get hasOnlyIgnoredNodesBeforeNodeInSubChain() {
+    return !!this.ignoredNodesBeforeFirstNodeInSubChain.length;
+  }
+
+  // returns non-breaking sequence of ignored nodes after last non-ignored node in subchain
+  private get ignoredNodesAfterLastNodeInSubChain():
+    | (SubChainNode | BackBoneSequenceNode)[] {
+    if (!this.isSubChainNode(this.node)) return [];
+
+    if (!this.subChainWithNode) return [];
+
+    const nodeIndex = this.subChainWithNode.nodes.indexOf(this.node);
+    if (nodeIndex === -1) return [];
+
+    const nodesAfter = this.subChainWithNode.nodes.slice(nodeIndex + 1);
+    if (nodesAfter.some((node) => !this.inIgnoreList(node))) {
+      return [];
+    }
+
+    return nodesAfter;
+  }
+
+  private get hasOnlyIgnoredNodesAfterNodeInChain() {
+    return !!this.ignoredNodesAfterLastNodeInSubChain.length;
+  }
+
+  // returns true if node is not in ignore list and is first node in chain
+  // or has only ignored nodes before it in subchain
+  private get isBeginningOfChain() {
+    return (
+      this.isSubChainNode(this.node) &&
+      !this.inIgnoreList(this.node) &&
+      this.isNodeInFirstSubChain &&
+      this.isBeginningOfSubChain
+    );
+  }
+
+  private get isNodeInFirstSubChain(): boolean {
+    if (!this.isSubChainNode(this.node)) return false;
+    return this.chain.subChains[0].nodes.indexOf(this.node) !== -1;
+  }
+
+  // returns true if node is not in ignore list and is first node in subchain
+  // or has only ignored nodes before it in subchain
   private get isBeginningOfSubChain() {
     return this.chain.subChains.some((subChain) => {
       const firstNode = subChain.nodes[0];
-      return this.node === firstNode;
+      return (
+        !this.inIgnoreList(firstNode) &&
+        (firstNode === this.node ||
+          this.hasOnlyIgnoredNodesBeforeNodeInSubChain)
+      );
     });
   }
 
-  // returns true if it is lastNode, and last node monomer is not Phosphate
+  // returns true if node is not in ignore list and is last node in subchain
+  // or has only ignored nodes after it in subchain
   private get isLastInSubChain() {
     return this.chain.subChains.some((subChain) => {
       const lastNode = subChain.nodes[subChain.nodes.length - 1];
 
       return (
-        this.node === lastNode && !(this.node.monomer instanceof Phosphate)
-      );
-    });
-  }
-
-  // returns true if it is secondLastNode, and last node is not Phosphate
-  private get isSecondLastNodeInSubChain() {
-    return this.chain.subChains.some((subChain) => {
-      const lastNode = subChain.nodes[subChain.nodes.length - 1];
-      const secondLastNode = subChain.nodes[subChain.nodes.length - 2];
-      return (
-        this.node === secondLastNode && lastNode.monomer instanceof Phosphate
+        !this.inIgnoreList(this.node) &&
+        (this.node === lastNode || this.hasOnlyIgnoredNodesAfterNodeInChain)
       );
     });
   }

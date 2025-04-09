@@ -1585,25 +1585,24 @@ export class SequenceMode extends BaseMode {
   public deleteSelection() {
     const selections = SequenceRenderer.selections;
 
-    if (selections.length > 1) {
-      return false;
+    if (selections.length === 0) {
+      return true;
     }
 
-    if (selections.length === 1) {
-      const deletionModelChanges = this.deleteSelectedDrawingEntities();
+    const deletionModelChanges = this.deleteSelectedDrawingEntities();
 
-      deletionModelChanges.merge(
-        this.handleNodesDeletion(selections, STRAND_TYPE.SENSE),
-      );
-      deletionModelChanges.merge(
-        this.handleNodesDeletion(selections, STRAND_TYPE.ANTISENSE),
-      );
-      this.finishNodesDeletion(
-        deletionModelChanges,
-        SequenceRenderer.caretPosition,
-        selections[0][0].nodeIndexOverall,
-      );
-    }
+    deletionModelChanges.merge(
+      this.handleNodesDeletion(selections, STRAND_TYPE.SENSE),
+    );
+    deletionModelChanges.merge(
+      this.handleNodesDeletion(selections, STRAND_TYPE.ANTISENSE),
+    );
+    this.finishNodesDeletion(
+      deletionModelChanges,
+      SequenceRenderer.caretPosition,
+      selections[0][0].nodeIndexOverall,
+    );
+
     return true;
   }
 

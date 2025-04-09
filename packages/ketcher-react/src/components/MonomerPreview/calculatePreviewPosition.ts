@@ -17,6 +17,7 @@ import { AmbiguousMonomerType, PolymerBond, ZoomTool } from 'ketcher-core';
 import { preview } from './constants';
 import { PreviewStyle } from './AmbiguousMonomerPreview/types';
 import assert from 'assert';
+import { KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR } from 'src/constants';
 
 export const calculateMonomerPreviewTop = createCalculatePreviewTopFunction(
   preview.height,
@@ -30,21 +31,25 @@ function calculateTop(
   target: CalculatePreviewTopPayload,
   height: number,
 ): number {
-  const canvasWrapperBoundingClientRect = ZoomTool.instance?.canvasWrapper
-    .node()
-    ?.getBoundingClientRect();
-  const canvasWrapperTopOffset = canvasWrapperBoundingClientRect?.top || 0;
-  const canvasWrapperBottom = canvasWrapperBoundingClientRect?.bottom || 0;
-  const canvasWrapperHeight = canvasWrapperBoundingClientRect?.height || 0;
-  const topPreviewPosition =
-    target.top - preview.gap - height - preview.topPadding;
-  const bottomPreviewPosition = target.bottom + preview.gap;
+  const ketcherEditorRoot = document.querySelector(
+    KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
+  );
+  const ketcherEditorRootBoundingClientRect =
+    ketcherEditorRoot?.getBoundingClientRect();
+  const relativeTargetTop =
+    target.top - (ketcherEditorRootBoundingClientRect?.top || 0);
+  const relativeTargetBottom =
+    target.bottom - (ketcherEditorRootBoundingClientRect?.top || 0);
 
-  return target.top - canvasWrapperTopOffset >
-    height + preview.gap + preview.topPadding
+  const topPreviewPosition =
+    relativeTargetTop - preview.gap - height - preview.topPadding;
+  const bottomPreviewPosition = relativeTargetBottom + preview.gap;
+
+  return relativeTargetTop > height + preview.gap + preview.topPadding
     ? topPreviewPosition
-    : target.top + height > canvasWrapperBottom - canvasWrapperTopOffset &&
-      target.top > canvasWrapperHeight / 2
+    : target.top + height >
+        (ketcherEditorRootBoundingClientRect?.height || 0) &&
+      target.top > (ketcherEditorRootBoundingClientRect?.height || 0) / 2
     ? topPreviewPosition
     : bottomPreviewPosition;
 }

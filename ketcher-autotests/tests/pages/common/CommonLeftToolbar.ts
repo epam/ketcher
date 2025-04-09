@@ -5,7 +5,6 @@ import {
   MacroBondType,
   MicroBondType,
 } from '../constants/bondSelectionTool/Constants';
-import { takePageScreenshot } from '@utils/canvas';
 
 export const commonLeftToolbarLocators = (page: Page) => ({
   handToolButton: page.getByTestId('hand'),

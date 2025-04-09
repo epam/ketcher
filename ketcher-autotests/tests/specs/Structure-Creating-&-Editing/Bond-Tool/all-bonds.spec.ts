@@ -40,7 +40,6 @@ import {
   selectAromatizeTool,
   selectDearomatizeTool,
   delay,
-  takePageScreenshot,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {

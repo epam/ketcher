@@ -24,14 +24,14 @@ import {
 } from '@utils';
 import { chooseTab, Tabs } from '@utils/macromolecules';
 import { pageReload } from '@utils/common/helpers';
-import { goToRNATab } from '@utils/macromolecules/library';
-import {
-  pressAddToPresetsButton,
-  pressNewPresetButton,
-  selectBaseSlot,
-  selectPhosphateSlot,
-  selectSugarSlot,
-} from '@utils/macromolecules/rnaBuilder';
+// import { goToRNATab } from '@utils/macromolecules/library';
+// import {
+//   pressAddToPresetsButton,
+//   pressNewPresetButton,
+//   selectBaseSlot,
+//   selectPhosphateSlot,
+//   selectSugarSlot,
+// } from '@utils/macromolecules/rnaBuilder';
 import {
   clickOnSequenceSymbolByIndex,
   doubleClickOnSequenceSymbolByIndex,

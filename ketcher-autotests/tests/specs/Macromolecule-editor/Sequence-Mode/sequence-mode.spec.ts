@@ -20,7 +20,8 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   takeTopToolbarScreenshot,
   selectAllStructuresOnCanvas,
-  waitForRender,
+  keyboardTypeOnCanvas,
+  keyboardPressOnCanvas,
 } from '@utils';
 import {
   pressUndoButton,
@@ -440,7 +441,7 @@ test.describe('Sequence Mode', () => {
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
     await enterSequence(page, 'acg');
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
@@ -459,7 +460,7 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
     await selectZoomInTool(page, 2);
     await enterSequence(page, 'g');
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
   });
 
@@ -473,7 +474,7 @@ test.describe('Sequence Mode', () => {
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
     await enterSequence(page, 'cgatu');
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -489,13 +490,13 @@ test.describe('Sequence Mode', () => {
     await moveMouseAway(page);
     await startNewSequence(page);
     await enterSequence(page, 'acgtu');
-    await page.keyboard.press('Enter');
+    await keyboardPressOnCanvas(page, 'Enter');
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     await enterSequence(page, 'acgtu');
-    await page.keyboard.press('Enter');
+    await keyboardPressOnCanvas(page, 'Enter');
     await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     await enterSequence(page, 'acfrtp');
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -525,16 +526,16 @@ test.describe('Sequence Mode', () => {
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
     await enterSequence(page, 'cagtt');
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await page
       .locator('g.drawn-structures')
       .locator('g', { has: page.locator('text="G"') })
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await page.keyboard.press('ArrowLeft');
-    await page.keyboard.press('Delete');
-    await page.keyboard.press('Backspace');
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
+    await keyboardPressOnCanvas(page, 'Delete');
+    await keyboardPressOnCanvas(page, 'Backspace');
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
@@ -554,8 +555,8 @@ test.describe('Sequence Mode', () => {
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await page.keyboard.press('ArrowLeft');
-    await page.keyboard.press('Backspace');
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
+    await keyboardPressOnCanvas(page, 'Backspace');
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -592,9 +593,7 @@ test.describe('Sequence Mode', () => {
      */
     await selectSequenceLayoutModeTool(page);
     await takeTopToolbarScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
     await takeTopToolbarScreenshot(page);
   });
@@ -612,9 +611,7 @@ test.describe('Sequence Mode', () => {
      * 3. Click on the triangle on the right-bottom corner of the icon
      */
     await selectSequenceLayoutModeTool(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
     await clickOnTriangle(page);
     await takeEditorScreenshot(page, {
@@ -636,11 +633,9 @@ test.describe('Sequence Mode', () => {
      * 3. Press Shift+Alt+R (Shift+Option+R for MacOS) for "Create RNA Antisense Strand",
      */
     await selectSequenceLayoutModeTool(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Shift+Alt+R');
+    await keyboardPressOnCanvas(page, 'Shift+Alt+R');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -661,12 +656,10 @@ test.describe('Sequence Mode', () => {
      * 4. Press Shift+Alt+R (Shift+Option+R for MacOS) for "Create RNA Antisense Strand",
      */
     await selectSequenceLayoutModeTool(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectSnakeLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Shift+Alt+R');
+    await keyboardPressOnCanvas(page, 'Shift+Alt+R');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -686,11 +679,9 @@ test.describe('Sequence Mode', () => {
      * 3. Press Shift+Alt+D (Shift+Option+D for MacOS) for "Create DNA Antisense Strand",
      */
     await selectSequenceLayoutModeTool(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Shift+Alt+D');
+    await keyboardPressOnCanvas(page, 'Shift+Alt+D');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -711,12 +702,10 @@ test.describe('Sequence Mode', () => {
      * 4. Press Shift+Alt+D (Shift+Option+D for MacOS) for "Create DNA Antisense Strand",
      */
     await selectSequenceLayoutModeTool(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectSnakeLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Shift+Alt+D');
+    await keyboardPressOnCanvas(page, 'Shift+Alt+D');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -735,9 +724,7 @@ test.describe('Sequence Mode', () => {
      * 3. Click on button "Create Antisense Strand"
      */
     await selectSequenceLayoutModeTool(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
     await createAntisenseStrandByButton(page);
     await takeEditorScreenshot(page, {
@@ -759,9 +746,7 @@ test.describe('Sequence Mode', () => {
      * 4. Click on button "Create Antisense Strand"
      */
     await selectSequenceLayoutModeTool(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectSnakeLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
     await createAntisenseStrandByButton(page);
@@ -784,9 +769,7 @@ test.describe('Sequence Mode', () => {
      */
     await selectSequenceLayoutModeTool(page);
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
     await createAntisenseStrandByButton(page);
     await takeEditorScreenshot(page, {
@@ -809,9 +792,7 @@ test.describe('Sequence Mode', () => {
      */
     await selectSequenceLayoutModeTool(page);
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectSnakeLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
     await createAntisenseStrandByButton(page);
@@ -833,13 +814,9 @@ test.describe('Sequence Mode', () => {
      * 3. Click on button "Create Antisense Strand"
      */
     await selectSequenceLayoutModeTool(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
     await createAntisenseStrandByButton(page);
     await takeEditorScreenshot(page, {
@@ -861,13 +838,9 @@ test.describe('Sequence Mode', () => {
      * 4. Click on button "Create Antisense Strand"
      */
     await selectSequenceLayoutModeTool(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectSnakeLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
     await createAntisenseStrandByButton(page);
@@ -889,13 +862,9 @@ test.describe('Sequence Mode', () => {
      * 3. Click on button "Create Antisense Strand" and select "Create RNA Antisense Strand"
      */
     await selectSequenceLayoutModeTool(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
     await createAntisenseStrandByButton(page, 'RNA');
     await takeEditorScreenshot(page, {
@@ -916,13 +885,9 @@ test.describe('Sequence Mode', () => {
      * 3. Click on button "Create Antisense Strand" and select "Create DNA Antisense Strand"
      */
     await selectSequenceLayoutModeTool(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectAllStructuresOnCanvas(page);
     await createAntisenseStrandByButton(page, 'DNA');
     await takeEditorScreenshot(page, {
@@ -944,13 +909,9 @@ test.describe('Sequence Mode', () => {
      * 4. Click on button "Create Antisense Strand" and select "Create RNA Antisense Strand"
      */
     await selectSequenceLayoutModeTool(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectFlexLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
     await createAntisenseStrandByButton(page, 'RNA');
@@ -973,13 +934,9 @@ test.describe('Sequence Mode', () => {
      * 4. Click on button "Create Antisense Strand" and select "Create DNA Antisense Strand"
      */
     await selectSequenceLayoutModeTool(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('ACGTU');
-    });
+    await keyboardTypeOnCanvas(page, 'ACGTU');
     await selectFlexLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
     await createAntisenseStrandByButton(page, 'DNA');
@@ -1026,7 +983,7 @@ test.describe('Sequence Mode', () => {
       }
       await startNewSequence(page);
       await enterSequence(page, testCase.sequence);
-      await page.keyboard.press('Escape');
+      await keyboardPressOnCanvas(page, 'Escape');
       await page
         .locator('g.drawn-structures')
         .locator('g', { has: page.locator(`text="${testCase.hoverText}"`) })

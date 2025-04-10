@@ -58,9 +58,7 @@ export const SystemControls = ({
   className,
 }: SystemControlsProps) => {
   const { ketcherId } = useAppContext();
-  console.log('sys controls ketcherId', ketcherId);
   const onFullscreenCallback = useCallback(() => {
-    console.log('on fullscrneen callback', ketcherId);
     onFullscreen(ketcherId);
   }, [ketcherId]);
   return (

@@ -44,12 +44,10 @@ const getIfFullScreen = () => {
 };
 
 const toggleFullscreen = (ketcherId: string) => {
-  console.log('toggle ketcherId', ketcherId);
   const fullscreenElement: HTMLElement =
     document.querySelector(ketcherIdCssSelector(ketcherId)) ||
     document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
     document.documentElement;
-  console.log('fullScreenElement', fullscreenElement);
   getIfFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement);
 };
 

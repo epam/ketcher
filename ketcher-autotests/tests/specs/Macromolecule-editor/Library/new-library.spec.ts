@@ -1,10 +1,5 @@
 /* eslint-disable max-len */
 import { Page, expect, test } from '@playwright/test';
-import { waitForPageInit } from '@utils/common/loaders';
-import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
 import {
   delay,
   MacroFileType,
@@ -13,6 +8,12 @@ import {
   selectSequenceLayoutModeTool,
   takeMonomerLibraryScreenshot,
 } from '@utils/canvas';
+import { switchToRNAMode } from '@utils/macromolecules/sequence';
+import { waitForPageInit } from '@utils/common/loaders';
+import {
+  selectClearCanvasTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopLeftToolbar';
 import {
   selectBaseSlot,
   selectPhosphateSlot,
@@ -24,7 +25,6 @@ import {
   toggleRnaBuilder,
   toggleSugarsAccordion,
 } from '@utils/macromolecules/rnaBuilder';
-import { switchToRNAMode } from '@utils/macromolecules/sequence';
 import {
   FavoriteStarSymbol,
   goToCHEMTab,
@@ -40,7 +40,7 @@ import {
 let page: Page;
 
 async function configureInitialState(page: Page) {
-  await selectFlexLayoutModeTool(page);
+  await selectSequenceLayoutModeTool(page);
   await switchToRNAMode(page);
   await goToRNATab(page);
   await toggleNucleotidesAccordion(page);
@@ -91,23 +91,19 @@ test('2. Verify that Favorites tab title renamed to ★ and library cards modifi
   await expect(favoritesTab).toHaveText(FavoriteStarSymbol);
 });
 
-test(
-  '3. Check that tooltip preview for hovering over the ★ - "Favorites"',
-  { tag: ['@chromium-popup'] },
-  async () => {
-    /*
-     * Test task: https://github.com/epam/ketcher/issues/6909
-     * Description: Check that tooltip preview for hovering over the ★ - "Favorites"
-     * Case:
-     * 1. Open Ketcher and turn on Macromolecules editor
-     * 2. Check that tooltip preview for hovering over the ★ - "Favorites"
-     */
-    const tooltipText = await page
-      .getByTestId('FAVORITES-TAB')
-      .getAttribute('title');
-    expect(tooltipText).toBe('Favorites');
-  },
-);
+test('3. Check that tooltip preview for hovering over the ★ - "Favorites"', async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/6909
+   * Description: Check that tooltip preview for hovering over the ★ - "Favorites"
+   * Case:
+   * 1. Open Ketcher and turn on Macromolecules editor
+   * 2. Check that tooltip preview for hovering over the ★ - "Favorites"
+   */
+  const tooltipText = await page
+    .getByTestId('FAVORITES-TAB')
+    .getAttribute('title');
+  expect(tooltipText).toBe('Favorites');
+});
 
 test('4. Verify that Peptides and CHEM tabs only have the library cards modified', async () => {
   /*

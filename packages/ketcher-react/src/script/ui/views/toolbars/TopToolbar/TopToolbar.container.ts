@@ -19,7 +19,7 @@ import { TopToolbar } from './TopToolbar';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { onAction } from '../../../state';
-import action, { ActionFn, UiActionAction } from 'src/script/ui/action/index';
+import action, { ActionFn } from 'src/script/ui/action/index';
 import { generateMenuShortcuts } from 'ketcher-core';
 import { removeStructAction } from 'src/script/ui/state/shared';
 import { createSelector } from 'reselect';

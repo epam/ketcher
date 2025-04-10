@@ -28,7 +28,7 @@ import { createRoot, Root } from 'react-dom/client';
 import { Ketcher, StructService } from 'ketcher-core';
 import classes from './Editor.module.less';
 import clsx from 'clsx';
-import { useResizeObserver } from './hooks';
+import { useAppContext, useResizeObserver } from './hooks';
 import {
   ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,
@@ -58,6 +58,7 @@ function MicromoleculesEditor(props: EditorProps) {
   const { height, width } = useResizeObserver<HTMLDivElement>({
     ref: rootElRef,
   });
+  const { ketcherId } = useAppContext();
 
   useEffect(() => {
     ketcherBuilderRef.current?.reinitializeApi(
@@ -81,9 +82,9 @@ function MicromoleculesEditor(props: EditorProps) {
         ketcherBuilderRef.current = builder;
         setServerRef.current = setServer;
 
-        if (rootElRef.current) {
-          rootElRef.current.classList.add(`ketcher-id-${ketcherId}`);
-        }
+        // if (rootElRef.current) {
+        //   rootElRef.current.classList.add(`ketcher-id-${ketcherId}`);
+        // }
 
         if (typeof props.onInit === 'function' && ketcher) {
           props.onInit(ketcher);
@@ -114,11 +115,16 @@ function MicromoleculesEditor(props: EditorProps) {
   return (
     <div
       ref={rootElRef}
-      className={clsx(KETCHER_ROOT_NODE_CLASS_NAME, classes.editor, {
-        [classes.small]:
-          (height && height <= mediaSizes.smallHeight) ||
-          (width && width <= mediaSizes.smallWidth),
-      })}
+      className={clsx(
+        KETCHER_ROOT_NODE_CLASS_NAME,
+        `ketcher-id-${ketcherId}`,
+        classes.editor,
+        {
+          [classes.small]:
+            (height && height <= mediaSizes.smallHeight) ||
+            (width && width <= mediaSizes.smallWidth),
+        },
+      )}
     />
   );
 }

@@ -325,7 +325,7 @@ To add text to the canvas click the _Add text_ tool <img src=images/41_text_icon
 
 You can add templates (rings or other predefined structures) to the structure using the _Templates_ toolbar together with the _Custom Templates_ button located at the bottom:
 
-<img src=images/43_templates_toolbar.png width = "250"/>
+<img src=images/Templates-Toolbar-3.3..png width = "250"/>
 
 To add a ring to the molecule, select a ring from the toolbar and click inside the drawing area, or click on an atom or a bond in the molecule.
 

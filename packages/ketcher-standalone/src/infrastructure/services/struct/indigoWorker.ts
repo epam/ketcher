@@ -34,6 +34,7 @@ import {
   OutputMessage,
   IndigoStandalone,
   ExplicitHydrogensCommandData,
+  CalculateMacromoleculePropertiesCommandData,
 } from './indigoWorker.types';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -266,6 +267,18 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
           ),
         undefined,
         Command.ExplicitHydrogens,
+      );
+      break;
+    }
+
+    case Command.CalculateMacromoleculeProperties: {
+      const data: CalculateMacromoleculePropertiesCommandData =
+        message.data as CalculateMacromoleculePropertiesCommandData;
+      handle(
+        (indigo, indigoOptions) =>
+          indigo.calculateMacroProperties(data.struct, indigoOptions),
+        undefined,
+        Command.CalculateMacromoleculeProperties,
       );
       break;
     }

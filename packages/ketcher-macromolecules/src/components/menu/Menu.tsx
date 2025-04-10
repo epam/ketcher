@@ -28,7 +28,7 @@ const Group = ({
   const subComponents = React.Children.map(
     children as JSX.Element[],
     (child) => {
-      return child.type === MenuItem || child.type === SubMenu ? child : null;
+      return child;
     },
   );
 

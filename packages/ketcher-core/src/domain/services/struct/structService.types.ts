@@ -114,6 +114,10 @@ export interface ExplicitHydrogensData extends WithStruct, WithOutputFormat {
   mode?: 'auto' | 'fold' | 'unfold';
 }
 
+export type CalculateMacromoleculePropertiesData = WithStruct;
+
+export type CalculateMacromoleculePropertiesResult = WithStruct;
+
 export interface ExplicitHydrogensResult extends WithStruct, WithFormat {}
 
 export type CalculateProps =
@@ -205,5 +209,9 @@ export interface StructService {
     data: ExplicitHydrogensData,
     options?: StructServiceOptions,
   ) => Promise<ExplicitHydrogensResult>;
+  calculateMacromoleculeProperties: (
+    data: CalculateMacromoleculePropertiesData,
+    options?: StructServiceOptions,
+  ) => Promise<CalculateMacromoleculePropertiesResult>;
   destroy?: () => void;
 }

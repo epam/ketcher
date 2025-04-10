@@ -828,6 +828,42 @@ class IndigoService implements StructService {
     });
   }
 
+  calculateMacromoleculeProperties(
+    data: ExplicitHydrogensData,
+    options?: StructServiceOptions,
+  ): Promise<ExplicitHydrogensResult> {
+    const { struct } = data;
+
+    return new Promise((resolve, reject) => {
+      const action = ({ data }: OutputMessageWrapper) => {
+        const msg: OutputMessage<string> = data;
+        if (!msg.hasError) {
+          const result = {
+            struct: msg.payload,
+          };
+          resolve(result);
+        } else {
+          reject(msg.error);
+        }
+      };
+
+      const commandData: CalculateMacromoleculePropertiesData = {
+        struct,
+        options: this.getStandardServerOptions(options),
+      };
+
+      const inputMessage: InputMessage<CalculateMacromoleculePropertiesData> = {
+        type: Command.CalculateMacromoleculeProperties,
+        data: commandData,
+      };
+
+      this.EE.removeListener(WorkerEvent.ExplicitHydrogens, action);
+      this.EE.addListener(WorkerEvent.ExplicitHydrogens, action);
+
+      this.worker.postMessage(inputMessage);
+    });
+  }
+
   public destroy() {
     this.worker.terminate();
     this.worker.onmessage = null;

@@ -23,6 +23,7 @@ import {
   CalculateCipData,
   CalculateCipResult,
   CalculateData,
+  CalculateMacromoleculePropertiesData,
   CalculateResult,
   CheckData,
   CheckResult,
@@ -439,6 +440,19 @@ export class RemoteStructService implements StructService {
     return indigoCall(
       'POST',
       'indigo/convert_explicit_hydrogens',
+      this.apiPath,
+      this.defaultOptions,
+      this.customHeaders,
+    )(data, this.getStandardServerOptions(options));
+  }
+
+  calculateMacromoleculeProperties(
+    data: CalculateMacromoleculePropertiesData,
+    options?: StructServiceOptions,
+  ): Promise<ExplicitHydrogensResult> {
+    return indigoCall(
+      'POST',
+      'indigo/calculateMacroProperties',
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,

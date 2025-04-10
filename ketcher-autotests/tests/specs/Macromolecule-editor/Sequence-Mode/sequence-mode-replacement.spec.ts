@@ -56,6 +56,7 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -83,8 +84,8 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await page.keyboard.press('Escape');
-  await page.keyboard.press('Escape');
+  await keyboardPressOnCanvas(page, 'Escape');
+  await keyboardPressOnCanvas(page, 'Escape');
   await resetZoomLevelToDefault(page);
   await selectClearCanvasTool(page);
   await resetZoomLevelToDefault(page);

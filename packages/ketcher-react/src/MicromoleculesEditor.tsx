@@ -28,7 +28,7 @@ import { createRoot, Root } from 'react-dom/client';
 import { Ketcher, StructService } from 'ketcher-core';
 import classes from './Editor.module.less';
 import clsx from 'clsx';
-import { useAppContext, useResizeObserver } from './hooks';
+import { useResizeObserver } from './hooks';
 import {
   ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,

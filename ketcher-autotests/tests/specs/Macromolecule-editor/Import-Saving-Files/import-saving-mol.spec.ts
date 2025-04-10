@@ -32,10 +32,12 @@ import {
 import { pageReload } from '@utils/common/helpers';
 import { chooseFileFormat, waitForMonomerPreview } from '@utils/macromolecules';
 import {
+  bondSelectionTool,
   selectAreaSelectionTool,
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 function removeNotComparableData(file: string) {
   return file
@@ -767,7 +769,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
         `Molfiles-V3000/Base-Templates/${fileName}.mol`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await page.getByText('R1').locator('..').hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -828,7 +830,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
         `Molfiles-V3000/CHEM-Templates/${fileName}.mol`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await page.getByText('(R').locator('..').first().hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -889,7 +891,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
         `Molfiles-V3000/Peptide-Templates/${fileName}.mol`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await page.getByText('(R').locator('..').first().hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -951,7 +953,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
         `Molfiles-V3000/Phosphate-Templates/${fileName}.mol`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await page.getByText('(R').locator('..').first().hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -1012,7 +1014,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
         `Molfiles-V3000/Sugar-Templates/${fileName}.mol`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await page.getByText('(R').locator('..').first().hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);

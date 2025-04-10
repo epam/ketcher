@@ -2,15 +2,14 @@ import { Chem } from '@constants/monomers/Chem';
 import { Locator, test } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
-  selectMacroBond,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-
 import { goToCHEMTab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Modal window', () => {
@@ -37,7 +36,7 @@ test.describe('Modal window', () => {
     );
 
     // Select bond tool
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
   });
 
   test('"Connect" button is disabled', async ({ page }) => {
@@ -53,7 +52,7 @@ test.describe('Modal window', () => {
       peptide2,
       undefined,
       undefined,
-      MacroBondTool.SINGLE,
+      MacroBondType.Single,
       false,
       false,
     );
@@ -74,7 +73,7 @@ test.describe('Modal window', () => {
       peptide2,
       'R1',
       'R2',
-      MacroBondTool.SINGLE,
+      MacroBondType.Single,
       true,
       false,
     );

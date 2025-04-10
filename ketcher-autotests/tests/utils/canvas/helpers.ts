@@ -40,7 +40,7 @@ import {
 import { Monomer } from '@utils/types';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 export async function drawBenzeneRing(page: Page) {
   await selectRing(RingButton.Benzene, page);
@@ -321,7 +321,9 @@ export async function delay(seconds = 1) {
 
 export async function screenshotBetweenUndoRedo(page: Page) {
   await pressUndoButton(page);
-  await takeEditorScreenshot(page);
+  await takeEditorScreenshot(page, {
+    maxDiffPixels: 1,
+  });
   await pressRedoButton(page);
 }
 

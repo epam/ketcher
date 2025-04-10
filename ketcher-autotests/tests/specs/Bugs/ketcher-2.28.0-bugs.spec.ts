@@ -14,7 +14,6 @@ import {
   copyToClipboardByKeyboard,
   FunctionalGroups,
   getBondLengthValue,
-  MacroBondType,
   MacroFileType,
   openBondsSettingsSection,
   openFileAndAddToCanvas,
@@ -59,6 +58,11 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 declare global {
   interface Window {
@@ -176,7 +180,7 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
     );
   });
 
-  await page.keyboard.press('A');
+  await keyboardPressOnCanvas(page, 'A');
 
   const consoleMessage = await consoleMessagePromise;
 
@@ -315,10 +319,8 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
   await selectClearCanvasTool(page);
 
   await selectSequenceLayoutModeTool(page);
-  await page.keyboard.press('U');
-  await page.keyboard.press('U');
-  await page.keyboard.press('U');
-  await page.keyboard.press('ArrowDown');
+  await keyboardTypeOnCanvas(page, 'UUU');
+  await keyboardPressOnCanvas(page, 'ArrowDown');
   await pasteFromClipboardByKeyboard(page);
 
   await takeEditorScreenshot(page, {
@@ -562,7 +564,7 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
   );
 
   const hydrogenBond = getBondLocator(page, {
-    bondType: MacroBondType.Hydrogen,
+    bondType: MacroBondDataIds.Hydrogen,
   }).first();
 
   await selectEraseTool(page);
@@ -649,7 +651,7 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
   );
 
   const hydrogenBond = getBondLocator(page, {
-    bondType: MacroBondType.Hydrogen,
+    bondType: MacroBondDataIds.Hydrogen,
   }).first();
 
   await selectEraseTool(page);

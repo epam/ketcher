@@ -13,11 +13,9 @@ import {
   clickOnTheCanvas,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectMacroBond,
   selectZoomInTool,
   selectZoomOutTool,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { hideMonomerPreview, zoomWithMouseWheel } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import {
@@ -36,10 +34,12 @@ import { Sugars } from '@constants/monomers/Sugars';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import {
+  bondSelectionTool,
   selectAreaSelectionTool,
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {
@@ -86,7 +86,7 @@ test.describe('Erase Tool', () => {
     );
 
     // Select bond tool
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);

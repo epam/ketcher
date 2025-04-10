@@ -14,8 +14,6 @@ import {
   doubleClickOnAtom,
   doubleClickOnBond,
   BondType,
-  selectBond,
-  BondTypeName,
   moveOnAtom,
   dragMouseTo,
   screenshotBetweenUndoRedo,
@@ -29,7 +27,6 @@ import {
   AttachmentPoint,
   copyAndPaste,
   cutAndPaste,
-  BondTool,
   waitForPageInit,
   waitForRender,
   openSettings,
@@ -47,10 +44,12 @@ import {
   pressUndoButton,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
+  bondSelectionTool,
   selectAreaSelectionTool,
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -206,7 +205,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectBond(BondTypeName.Single, page);
+    await bondSelectionTool(page, MicroBondType.Single);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -222,7 +221,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectNestedTool(page, BondTool.DOUBLE);
+    await bondSelectionTool(page, MicroBondType.Double);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -238,7 +237,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectNestedTool(page, BondTool.TRIPPLE);
+    await bondSelectionTool(page, MicroBondType.Triple);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -275,7 +274,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectNestedTool(page, BondTool.UP);
+    await bondSelectionTool(page, MicroBondType.SingleUp);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -292,7 +291,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectNestedTool(page, BondTool.DOWN);
+    await bondSelectionTool(page, MicroBondType.SingleDown);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -311,7 +310,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectNestedTool(page, BondTool.UP_DOWN);
+    await bondSelectionTool(page, MicroBondType.SingleUpDown);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -330,7 +329,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectNestedTool(page, BondTool.CROSSED);
+    await bondSelectionTool(page, MicroBondType.DoubleCisTrans);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -347,7 +346,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectNestedTool(page, BondTool.ANY);
+    await bondSelectionTool(page, MicroBondType.Any);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -364,7 +363,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectNestedTool(page, BondTool.AROMATIC);
+    await bondSelectionTool(page, MicroBondType.Aromatic);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -383,7 +382,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectNestedTool(page, BondTool.SINGLE_DOUBLE);
+    await bondSelectionTool(page, MicroBondType.SingleDouble);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -402,7 +401,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectNestedTool(page, BondTool.SINGLE_AROMATIC);
+    await bondSelectionTool(page, MicroBondType.SingleAromatic);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -421,7 +420,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectNestedTool(page, BondTool.DOUBLE_AROMATIC);
+    await bondSelectionTool(page, MicroBondType.DoubleAromatic);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -738,7 +737,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectBond(BondTypeName.Single, page);
+    await bondSelectionTool(page, MicroBondType.Single);
     await clickOnAtom(page, 'C', 2);
     await page.getByTestId('canvas').hover();
     await takeEditorScreenshot(page);

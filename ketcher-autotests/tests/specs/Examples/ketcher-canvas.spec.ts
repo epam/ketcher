@@ -1,10 +1,8 @@
 /* eslint-disable no-magic-numbers */
-import { BondTypeName } from '@utils/canvas/selectBond';
 import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   AtomButton,
-  selectBond,
   dragMouseTo,
   drawBenzeneRing,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -13,10 +11,10 @@ import {
   takeEditorScreenshot,
   resetCurrentTool,
   clickOnAtom,
-  BondTool,
-  selectNestedTool,
   waitForPageInit,
 } from '@utils';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
   test.beforeEach(async ({ page }) => {
@@ -40,7 +38,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
   test('drawing benzene ring, then adding single bond', async ({ page }) => {
     await drawBenzeneRing(page);
 
-    await selectBond(BondTypeName.Single, page);
+    await bondSelectionTool(page, MicroBondType.Single);
 
     await clickOnAtom(page, 'C', 2);
     await resetCurrentTool(page);
@@ -52,7 +50,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
      *   Test case: EPMLSOPKET-1371
      */
 
-    await selectBond(BondTypeName.Single, page);
+    await bondSelectionTool(page, MicroBondType.Single);
 
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -63,7 +61,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
     /*
      *   Test case: EPMLSOPKET-1380
      */
-    await selectNestedTool(page, BondTool.DOUBLE);
+    await bondSelectionTool(page, MicroBondType.Double);
 
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);

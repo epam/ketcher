@@ -10,26 +10,21 @@ import {
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
-import { DropdownToolIds } from '@utils/clicks/types';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 import {
   AtomButton,
-  BondIds,
   LeftPanelButton,
   MacromoleculesLeftPanelButton,
   RingButton,
   TopPanelButton,
 } from '@utils/selectors';
-import { MacroBondTool } from './selectNestedTool/types';
 import {
   selectOpenFileTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import {
-  commonLeftToolbarLocators,
-  selectAreaSelectionTool,
-} from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 
 /**
  * Selects an atom from Atom toolbar
@@ -65,32 +60,6 @@ export async function selectAction(type: TopPanelButton, page: Page) {
 export async function selectAtomInToolbar(atomName: AtomButton, page: Page) {
   const atomButton = page.locator(`button[title*="${atomName}"]`);
   await atomButton.click();
-}
-
-export async function selectSingleBondTool(page: Page) {
-  const handToolButton = commonLeftToolbarLocators(page).handToolButton;
-  // to reset Bond tool state
-  await handToolButton.click();
-
-  const bondToolDropdown = page.getByTestId('bonds').locator('path').nth(1);
-  await bondToolDropdown.click();
-
-  const bondToolButton = page.getByTestId(MacroBondTool.SINGLE).first();
-  await bondToolButton.click();
-}
-
-export async function selectMacroBond(
-  page: Page,
-  bondType: DropdownToolIds = MacroBondTool.SINGLE,
-) {
-  const handToolButton = commonLeftToolbarLocators(page).handToolButton;
-  // to reset Bond tool state
-  await handToolButton.click();
-  const bondToolDropdown = page.getByTestId('bonds').locator('path').nth(1);
-  await bondToolDropdown.click();
-
-  const hydrogenBondButton = page.getByTestId(bondType).first();
-  await hydrogenBondButton.click();
 }
 
 export async function openLayoutModeMenu(page: Page) {
@@ -220,7 +189,7 @@ export async function selectMacromoleculesPanelButton(
   await topPanelButton.click();
 }
 
-export async function selectButtonById(buttonId: BondIds | 'OK', page: Page) {
+export async function selectButtonById(buttonId: 'OK', page: Page) {
   const element = page.getByTestId(buttonId);
   await element.click();
 }
@@ -235,15 +204,15 @@ export async function saveStructureWithReaction(page: Page, format?: string) {
 }
 
 export async function typeAllEnglishAlphabet(page: Page) {
-  await page.keyboard.type('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 }
 
 export async function typeRNADNAAlphabet(page: Page) {
-  await page.keyboard.type('ATGCU');
+  await keyboardTypeOnCanvas(page, 'ATGCU');
 }
 
 export async function typePeptideAlphabet(page: Page) {
-  await page.keyboard.type('ACDEFGHIKLMNPQRSTVWY');
+  await keyboardTypeOnCanvas(page, 'ACDEFGHIKLMNPQRSTVWY');
 }
 
 export async function setZoomInputValue(page: Page, value: string) {

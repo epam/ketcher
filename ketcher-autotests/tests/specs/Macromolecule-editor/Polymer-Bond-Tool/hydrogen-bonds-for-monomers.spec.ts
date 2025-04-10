@@ -16,10 +16,7 @@ import {
   pasteFromClipboardByKeyboard,
   selectSequenceLayoutModeTool,
   ZoomOutByKeyboard,
-  selectMacroBond,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { DropdownToolIds } from '@utils/clicks/types';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import {
@@ -30,12 +27,15 @@ import {
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
+  bondSelectionTool,
+  commonLeftToolbarLocators,
   selectEraseTool,
   selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
-test.setTimeout(400000);
+test.setTimeout(40000);
 test.describe.configure({ retries: 0 });
 
 test.beforeAll(async ({ browser }) => {
@@ -183,7 +183,7 @@ async function bondTwoMonomersByCenterToCenter(
   page: Page,
   leftMonomer: IMonomer,
   rightMonomer: IMonomer,
-  bondType?: DropdownToolIds,
+  bondType?: MacroBondType,
 ) {
   const canvasLocator = page.getByTestId('ketcher-canvas').first();
 
@@ -275,7 +275,7 @@ Object.values(monomers).forEach((leftMonomer) => {
         page,
         leftMonomer,
         rightMonomer,
-        MacroBondTool.HYDROGEN,
+        MacroBondType.Hydrogen,
       );
 
       await zoomWithMouseWheel(page, -600);
@@ -387,7 +387,7 @@ Object.values(monomersWithNoFreeConnectionPoint).forEach((leftMonomer) => {
         page,
         leftMonomer,
         rightMonomer,
-        MacroBondTool.HYDROGEN,
+        MacroBondType.Hydrogen,
       );
 
       await zoomWithMouseWheel(page, -600);
@@ -423,14 +423,14 @@ Object.values(monomers).forEach((leftMonomer) => {
         page,
         leftMonomer,
         rightMonomer,
-        MacroBondTool.HYDROGEN,
+        MacroBondType.Hydrogen,
       );
 
       await bondTwoMonomersByCenterToCenter(
         page,
         leftMonomer,
         rightMonomer,
-        MacroBondTool.HYDROGEN,
+        MacroBondType.Hydrogen,
       );
 
       await zoomWithMouseWheel(page, -600);
@@ -491,7 +491,7 @@ Object.values(monomers).forEach((leftMonomer) => {
         page,
         leftMonomer,
         rightMonomer,
-        MacroBondTool.SINGLE,
+        MacroBondType.Single,
       );
 
       await chooseConnectionPointsInConnectionDialog(page, 'R1', 'R1');
@@ -506,7 +506,7 @@ Object.values(monomers).forEach((leftMonomer) => {
         page,
         leftMonomer,
         rightMonomer,
-        MacroBondTool.HYDROGEN,
+        MacroBondType.Hydrogen,
       );
 
       // Error message is wrong because of a bug!
@@ -552,7 +552,7 @@ Object.values(monomers).forEach((leftMonomer) => {
         page,
         leftMonomer,
         rightMonomer,
-        MacroBondTool.HYDROGEN,
+        MacroBondType.Hydrogen,
       );
 
       await zoomWithMouseWheel(page, -600);
@@ -701,7 +701,7 @@ Object.values(monomers).forEach((leftMonomer) => {
         page,
         leftMonomer,
         rightMonomer,
-        MacroBondTool.HYDROGEN,
+        MacroBondType.Hydrogen,
       );
 
       await zoomWithMouseWheel(page, -600);
@@ -747,7 +747,7 @@ Object.values(monomers).forEach((leftMonomer) => {
         page,
         leftMonomer,
         rightMonomer,
-        MacroBondTool.HYDROGEN,
+        MacroBondType.Hydrogen,
       );
 
       await zoomWithMouseWheel(page, -600);
@@ -791,7 +791,7 @@ Object.values(monomers).forEach((leftMonomer) => {
         page,
         leftMonomer,
         rightMonomer,
-        MacroBondTool.HYDROGEN,
+        MacroBondType.Hydrogen,
       );
 
       await selectAllStructuresOnCanvas(page);
@@ -844,19 +844,11 @@ test(`10. Verify switch to flex/snake/sequence modes functionality of hydrogen b
 const buttonIdToTitle: {
   [key: string]: string;
 } = {
-  'single-bond': 'Single Bond (1)',
-  'hydrogen-bond': 'Hydrogen Bond (2)',
+  [MacroBondType.Single]: 'Single Bond (1)',
+  [MacroBondType.Hydrogen]: 'Hydrogen Bond (2)',
 };
 
-async function openBondToolDropDown(page: Page) {
-  // to reset Bond tool state
-  await selectHandTool(page);
-
-  const bondToolDropdown = page.getByTestId('bonds').locator('path').nth(1);
-  await bondToolDropdown.click();
-}
-
-Object.entries(MacroBondTool).forEach(([key, testId]) => {
+Object.entries(MacroBondType).forEach(([key, dataTestId]) => {
   /*
    *  Test task: https://github.com/epam/ketcher/issues/5984
    *  Description: Verify that hydrogen bond option located and can be selected from the bond menu in the sidebar
@@ -866,12 +858,18 @@ Object.entries(MacroBondTool).forEach(([key, testId]) => {
    *        4. Validate bond button is active
    */
   test(`11. ${key} bond tool: verification`, async () => {
-    await openBondToolDropDown(page);
+    test.setTimeout(25000);
+    // to reset Bond tool state
+    await selectHandTool(page);
+    await commonLeftToolbarLocators(
+      page,
+    ).bondSelectionDropdownExpandButton.click();
 
-    const button = page.getByTestId(testId).first();
-    await expect(button).toHaveAttribute('title', buttonIdToTitle[testId]);
+    const button = page.getByTestId(dataTestId).first();
+    await expect(button).toHaveAttribute('title', buttonIdToTitle[dataTestId]);
 
-    await selectMacroBond(page, testId);
+    await selectHandTool(page);
+    await bondSelectionTool(page, dataTestId);
     await expect(button).toHaveAttribute('class', /active/);
   });
 });
@@ -941,7 +939,7 @@ Object.values(monomers).forEach((leftMonomer) => {
         page,
         leftMonomer,
         rightMolecule,
-        MacroBondTool.HYDROGEN,
+        MacroBondType.Hydrogen,
       );
 
       await takeEditorScreenshot(page, {

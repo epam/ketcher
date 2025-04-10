@@ -2,7 +2,6 @@ import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  selectMacroBond,
   selectMonomer,
   takeEditorScreenshot,
   waitForPageInit,
@@ -11,9 +10,10 @@ import {
   hideMonomerPreview,
   waitForMonomerPreview,
 } from '@utils/macromolecules';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { Peptides } from '@constants/monomers/Peptides';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
@@ -39,7 +39,7 @@ test.describe('Peptide', () => {
     */
     await selectMonomer(page, Peptides.A);
     await clickInTheMiddleOfTheScreen(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await moveMouseToTheMiddleOfTheScreen(page);
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);

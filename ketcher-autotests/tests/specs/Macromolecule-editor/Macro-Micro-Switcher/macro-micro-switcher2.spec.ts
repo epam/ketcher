@@ -16,7 +16,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   selectDropdownTool,
   clickInTheMiddleOfTheScreen,
-  selectMacroBond,
   moveMouseAway,
   selectRingButton,
   RingButton,
@@ -41,7 +40,6 @@ import {
   selectSequenceTypeMode,
   hideLibrary,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
@@ -67,7 +65,15 @@ import {
   switchToPeptideMode,
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  bondSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [
@@ -260,7 +266,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await page.getByTestId('canvas').getByText('O').click();
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -900,11 +906,11 @@ test.describe('Macro-Micro-Switcher2', () => {
     await page.getByTestId(`sequence-item`).first().waitFor({
       state: 'attached',
     });
-    await page.keyboard.press('Control+Alt+D');
+    await keyboardPressOnCanvas(page, 'Control+Alt+D');
     await takePageScreenshot(page);
-    await page.keyboard.press('Control+Alt+P');
+    await keyboardPressOnCanvas(page, 'Control+Alt+P');
     await takePageScreenshot(page);
-    await page.keyboard.press('Control+Alt+R');
+    await keyboardPressOnCanvas(page, 'Control+Alt+R');
     await takePageScreenshot(page);
   });
 
@@ -927,11 +933,11 @@ test.describe('Macro-Micro-Switcher2', () => {
       goToPeptides: false,
     });
     await switchToRNAMode(page);
-    await page.keyboard.type('CCC');
+    await keyboardTypeOnCanvas(page, 'CCC');
     await switchToDNAMode(page);
-    await page.keyboard.type('CCC');
+    await keyboardTypeOnCanvas(page, 'CCC');
     await switchToPeptideMode(page);
-    await page.keyboard.type('CCC');
+    await keyboardTypeOnCanvas(page, 'CCC');
     await takePageScreenshot(page);
   });
 
@@ -955,11 +961,11 @@ test.describe('Macro-Micro-Switcher2', () => {
       goToPeptides: false,
     });
     // await switchToRNAMode(page);
-    await page.keyboard.type('CCC');
+    await keyboardTypeOnCanvas(page, 'CCC');
     await switchToDNAMode(page);
-    await page.keyboard.type('CCC');
+    await keyboardTypeOnCanvas(page, 'CCC');
     await switchToPeptideMode(page);
-    await page.keyboard.type('CCC');
+    await keyboardTypeOnCanvas(page, 'CCC');
     await takePageScreenshot(page);
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);

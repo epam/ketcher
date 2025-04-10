@@ -27,7 +27,8 @@ import {
   selectSequenceRangeInEditMode,
 } from '@utils/macromolecules/sequence';
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -84,7 +85,7 @@ test.describe('Sequence mode selection for edit mode', () => {
     await scrollDown(page, SCROLL_DOWN_VALUE);
     await getSequenceSymbolLocator(page, 'G').click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await page.keyboard.press('ArrowLeft');
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
   });
 
   test('Select letters with LClick+drag', async ({ page }) => {
@@ -104,7 +105,7 @@ test.describe('Sequence mode selection for edit mode', () => {
     const arrowCount = 10;
     await page.keyboard.down('Shift');
     for (let i = 0; i < arrowCount; i++) {
-      await page.keyboard.press('ArrowRight');
+      await keyboardPressOnCanvas(page, 'ArrowRight');
     }
     await page.keyboard.up('Shift');
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -121,18 +122,18 @@ test.describe('Sequence mode selection for edit mode', () => {
     const arrowCount = 10;
     await page.keyboard.down('Shift');
     for (let i = 0; i < arrowCount; i++) {
-      await page.keyboard.press('ArrowLeft');
+      await keyboardPressOnCanvas(page, 'ArrowLeft');
     }
     await page.keyboard.up('Shift');
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await page.keyboard.press('Backspace');
+    await keyboardPressOnCanvas(page, 'Backspace');
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
 
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
   });
 });
@@ -200,7 +201,7 @@ test.describe('Sequence mode selection for view mode', () => {
     await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
   });
 

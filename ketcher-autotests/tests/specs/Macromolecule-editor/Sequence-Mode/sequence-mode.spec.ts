@@ -24,7 +24,11 @@ import {
   selectClearCanvasTool,
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
-import { enterSequence, waitForMonomerPreview } from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 test.describe('Sequence Mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -430,8 +434,8 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
-    await enterSequence(page, 'acg');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'acg');
+    await keyboardPressOnCanvas(page, 'Escape');
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
@@ -446,11 +450,11 @@ test.describe('Sequence Mode', () => {
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
     await selectZoomOutTool(page, 3);
-    await enterSequence(page, 'ac');
+    await keyboardTypeOnCanvas(page, 'ac');
     await takeEditorScreenshot(page);
     await selectZoomInTool(page, 2);
-    await enterSequence(page, 'g');
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'g');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
   });
 
@@ -463,8 +467,8 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
-    await enterSequence(page, 'cgatu');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'cgatu');
+    await keyboardPressOnCanvas(page, 'Escape');
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -479,14 +483,14 @@ test.describe('Sequence Mode', () => {
     await selectSequenceLayoutModeTool(page);
     await moveMouseAway(page);
     await startNewSequence(page);
-    await enterSequence(page, 'acgtu');
-    await page.keyboard.press('Enter');
+    await keyboardTypeOnCanvas(page, 'acgtu');
+    await keyboardPressOnCanvas(page, 'Enter');
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
-    await enterSequence(page, 'acgtu');
-    await page.keyboard.press('Enter');
+    await keyboardTypeOnCanvas(page, 'acgtu');
+    await keyboardPressOnCanvas(page, 'Enter');
     await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
-    await enterSequence(page, 'acfrtp');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'acfrtp');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -501,7 +505,7 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
-    await enterSequence(page, 'cactt');
+    await keyboardTypeOnCanvas(page, 'cactt');
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -515,17 +519,17 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
-    await enterSequence(page, 'cagtt');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'cagtt');
+    await keyboardPressOnCanvas(page, 'Escape');
     await page
       .locator('g.drawn-structures')
       .locator('g', { has: page.locator('text="G"') })
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await page.keyboard.press('ArrowLeft');
-    await page.keyboard.press('Delete');
-    await page.keyboard.press('Backspace');
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
+    await keyboardPressOnCanvas(page, 'Delete');
+    await keyboardPressOnCanvas(page, 'Backspace');
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
@@ -545,8 +549,8 @@ test.describe('Sequence Mode', () => {
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await page.keyboard.press('ArrowLeft');
-    await page.keyboard.press('Backspace');
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
+    await keyboardPressOnCanvas(page, 'Backspace');
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -560,9 +564,9 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
-    await enterSequence(page, 'acgtu');
+    await keyboardTypeOnCanvas(page, 'acgtu');
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
-    await enterSequence(page, 'acgtu');
+    await keyboardTypeOnCanvas(page, 'acgtu');
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -604,8 +608,8 @@ test.describe('Sequence Mode', () => {
         await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
       }
       await startNewSequence(page);
-      await enterSequence(page, testCase.sequence);
-      await page.keyboard.press('Escape');
+      await keyboardTypeOnCanvas(page, testCase.sequence);
+      await keyboardPressOnCanvas(page, 'Escape');
       await page
         .locator('g.drawn-structures')
         .locator('g', { has: page.locator(`text="${testCase.hoverText}"`) })
@@ -704,7 +708,7 @@ test.describe('Sequence Mode', () => {
       '[Apm].[Aoda].[Cap].[Ac3c].[Ac6c].[Aca].[Aib].[D-Bmt].[D-Dab].[D-Dip].[D-Pip].[D-Tic].[Dab].[meV].' +
       '[Nva].[Pen].[dL].[ThrPO3].[xiThr].[dU].[meU].[D-Nva].[meT].[Dip].[Dsu].[dN].[meN].[dO].[meO].' +
       '[aHyp].[aMePro].[Aze].[D-aHyp].[D-Hyp].[D-Thz].[dP].[Pyr].[dH].[DHis1B].[Hhs].[His1Bn].[His1Me].' +
-      '[His3Me].[meH].[aIle].[D-aIle].[dI].[DxiIle].[meI].[xiIle].[Aad].[D-Orn].[DALys].[dK].[Dpm].' +
+      '[His3Me].[meH].[aIle].[D-aIle].[dI].[DxiIle].[meI].[xiIle].[Aad].[D-Orn].[dK].[Dpm].' +
       '[Hyl5xi].[Lys_Ac].[tLeu].[dM].[DMetSO].[meM].[Met_O].[Met_O2].[Phg].[meG].[GlycPr].[Phg].[meG].' +
       '[GlycPr].[Glyall].[TyrtBu].[TyrSO3].[TyrPO3].[TyrPh4].[TyrabD].[Tyr3OH].[Tyr3NO].[Tyr35d].' +
       '[Tyr26d].[Tyr_Me].[Tyr_Bn].[Tyr_3I].[nTyr].[meY].[dY].[DTyrMe].[DTyrEt].[NMe2Ab].[NMe4Ab].[Pqa].' +

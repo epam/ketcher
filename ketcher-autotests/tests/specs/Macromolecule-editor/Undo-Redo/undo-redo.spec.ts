@@ -24,12 +24,10 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectMacroBond,
   selectUndoByKeyboard,
   waitForRender,
   getControlModifier,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
 import {
   connectMonomersWithBonds,
@@ -43,10 +41,13 @@ import {
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
+  bondSelectionTool,
   selectAreaSelectionTool,
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Undo Redo', () => {
@@ -68,7 +69,7 @@ test.describe('Undo Redo', () => {
     );
 
     // Select bond tool
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -311,9 +312,7 @@ test.describe('Undo-Redo tests', () => {
 
     const modifier = getControlModifier();
     for (let i = 0; i < numberOfPress; i++) {
-      await waitForRender(page, async () => {
-        await page.keyboard.press(`${modifier}+KeyY`);
-      });
+      await keyboardPressOnCanvas(page, `${modifier}+KeyY`);
     }
     await takeEditorScreenshot(page);
   });

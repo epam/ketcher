@@ -23,3 +23,23 @@ export async function ZoomInByKeyboard(page: Page) {
     await page.keyboard.press('Control+=');
   });
 }
+
+export async function keyboardPressOnCanvas(
+  page: Page,
+  key: string,
+  options?: { delay?: number },
+) {
+  await waitForRender(page, async () => {
+    await page.keyboard.press(key, options);
+  });
+}
+
+export async function keyboardTypeOnCanvas(
+  page: Page,
+  text: string,
+  options?: { delay?: number },
+) {
+  for (const char of text) {
+    await keyboardPressOnCanvas(page, char, options);
+  }
+}

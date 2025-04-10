@@ -589,7 +589,7 @@ export class SequenceMode extends BaseMode {
   private handlePeptideNodeAddition(
     enteredSymbol: string,
     newNodePosition: Vec2,
-    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode | null,
     previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
   ) {
     if (!peptideNaturalAnalogues.includes(enteredSymbol)) {
@@ -630,7 +630,7 @@ export class SequenceMode extends BaseMode {
   private handleRnaDnaNodeAddition(
     enteredSymbol: RnaDnaNaturalAnaloguesEnum | string,
     newNodePosition: Vec2,
-    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode | null,
     previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
   ) {
     if (!rnaDnaNaturalAnalogues.includes(enteredSymbol)) {
@@ -806,6 +806,11 @@ export class SequenceMode extends BaseMode {
 
       if (previousTwoStrandedNodeInSameChain?.senseNode instanceof Nucleotide) {
         modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deleteMonomer(
+            previousTwoStrandedNodeInSameChain.senseNode.lastMonomerInNode,
+          ),
+        );
       }
     }
 
@@ -816,6 +821,14 @@ export class SequenceMode extends BaseMode {
           : currentTwoStrandedNode.antisenseNode,
         modelChanges,
       );
+
+      if (currentTwoStrandedNode?.antisenseNode instanceof Nucleotide) {
+        modelChanges.merge(
+          editor.drawingEntitiesManager.deleteMonomer(
+            currentTwoStrandedNode.antisenseNode.lastMonomerInNode,
+          ),
+        );
+      }
     }
 
     modelChanges.addOperation(new ReinitializeModeOperation());
@@ -909,12 +922,14 @@ export class SequenceMode extends BaseMode {
         ((selectionStartNode instanceof EmptySequenceNode &&
           !(
             selectionStartTwoStrandedNode.senseNode instanceof
-            BackBoneSequenceNode
+              BackBoneSequenceNode ||
+            selectionStartTwoStrandedNode.senseNode instanceof EmptySequenceNode
           )) ||
           (selectionEndNode instanceof EmptySequenceNode &&
             !(
               selectionEndTwoStrandedNode.senseNode instanceof
-              BackBoneSequenceNode
+                BackBoneSequenceNode ||
+              selectionEndTwoStrandedNode.senseNode instanceof EmptySequenceNode
             )))
       ) {
         return;
@@ -1006,7 +1021,8 @@ export class SequenceMode extends BaseMode {
 
         if (
           nodeBeforeSelection instanceof Nucleoside &&
-          nodeAfterSelection instanceof Nucleotide
+          (nodeAfterSelection instanceof Nucleotide ||
+            nodeAfterSelection instanceof Nucleoside)
         ) {
           modelChanges.merge(
             this.bondNodesThroughNewPhosphate(
@@ -1062,7 +1078,8 @@ export class SequenceMode extends BaseMode {
 
         if (
           nodeAfterSelection instanceof Nucleoside &&
-          nodeBeforeSelection instanceof Nucleotide
+          (nodeBeforeSelection instanceof Nucleotide ||
+            nodeBeforeSelection instanceof Nucleoside)
         ) {
           modelChanges.merge(
             this.bondNodesThroughNewPhosphate(
@@ -1093,8 +1110,10 @@ export class SequenceMode extends BaseMode {
     return (
       twoStrandedNode &&
       !(
-        twoStrandedNode.senseNode instanceof EmptySequenceNode &&
-        twoStrandedNode.antisenseNode instanceof EmptySequenceNode
+        (!twoStrandedNode.senseNode ||
+          twoStrandedNode.senseNode instanceof EmptySequenceNode) &&
+        (!twoStrandedNode.antisenseNode ||
+          twoStrandedNode.antisenseNode instanceof EmptySequenceNode)
       )
     );
   }
@@ -1145,6 +1164,9 @@ export class SequenceMode extends BaseMode {
           );
         }
       } else if (nodeToDelete) {
+        const previousNodeInSameChain =
+          SequenceRenderer.previousNodeInSameChain;
+
         nodesToDelete = [
           [
             {
@@ -1171,7 +1193,9 @@ export class SequenceMode extends BaseMode {
         if (
           this.needToEditAntisense &&
           nodeToDelete.antisenseNode &&
-          !(nodeToDelete.antisenseNode instanceof EmptySequenceNode)
+          // Do not delete empty antisense node and connect prev and next nodes if delete empty node in one chain (no need to connect previous and current chains)
+          (!(nodeToDelete.antisenseNode instanceof EmptySequenceNode) ||
+            !previousNodeInSameChain)
         ) {
           nodeToDelete.antisenseNode?.monomers.forEach((monomer) => {
             modelChanges.merge(
@@ -1222,13 +1246,16 @@ export class SequenceMode extends BaseMode {
           this.unselectAllEntities();
 
           if (
-            this.isNodeExistAndNonEmpty(SequenceRenderer.nextNodeInSameChain) &&
+            this.isNodeExistAndNonEmpty(SequenceRenderer.currentEdittingNode) &&
             this.isNodeExistAndNonEmpty(
               SequenceRenderer.previousNodeInSameChain,
             )
           ) {
             this.splitCurrentChain();
           } else {
+            if (this.isSyncEditMode) {
+              this.turnOffAntisenseEditMode();
+            }
             this.startNewSequence();
           }
         },
@@ -1415,11 +1442,14 @@ export class SequenceMode extends BaseMode {
           let senseNodeToConnect = currentTwoStrandedNode?.senseNode;
           const isDnaEnteringMode =
             editor.sequenceTypeEnterMode === SequenceType.DNA;
+          const isRnaEnteringMode =
+            editor.sequenceTypeEnterMode === SequenceType.RNA;
+          const isEnteringSymbolP = enteredSymbol.toUpperCase() === 'P';
 
           if (this.needToEditSense) {
             const insertNewSequenceItemResult = this.insertNewSequenceItem(
               editor,
-              this.isAntisenseEditMode
+              this.isAntisenseEditMode && !isEnteringSymbolP
                 ? DrawingEntitiesManager.getAntisenseBaseLabel(
                     enteredSymbol,
                     isDnaEnteringMode,
@@ -1456,13 +1486,14 @@ export class SequenceMode extends BaseMode {
               editor,
               this.isAntisenseEditMode ||
                 (editor.sequenceTypeEnterMode !== SequenceType.DNA &&
-                  editor.sequenceTypeEnterMode !== SequenceType.RNA)
+                  editor.sequenceTypeEnterMode !== SequenceType.RNA) ||
+                isEnteringSymbolP
                 ? enteredSymbol
                 : DrawingEntitiesManager.getAntisenseBaseLabel(
                     enteredSymbol,
                     isDnaEnteringMode,
                   ),
-              previousTwoStrandedNodeInSameChain?.antisenseNode,
+              previousTwoStrandedNodeInSameChain?.antisenseNode || null,
               currentTwoStrandedNode?.antisenseNode,
             );
 
@@ -1494,7 +1525,30 @@ export class SequenceMode extends BaseMode {
 
           modelChanges.addOperation(new ReinitializeModeOperation());
           editor.renderersContainer.update(modelChanges);
-          modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+
+          if (
+            // If user type symbol that becomes part of a linker then caret does not move
+            !(isDnaEnteringMode || isRnaEnteringMode) ||
+            !(
+              isEnteringSymbolP &&
+              (this.needToEditSense
+                ? LinkerSequenceNode.isPartOfLinker(
+                    previousTwoStrandedNodeInSameChain?.senseNode?.monomer,
+                  ) ||
+                  LinkerSequenceNode.isPartOfLinker(
+                    currentTwoStrandedNode?.senseNode?.monomer,
+                  )
+                : LinkerSequenceNode.isPartOfLinker(
+                    previousTwoStrandedNodeInSameChain?.antisenseNode?.monomer,
+                  ) ||
+                  LinkerSequenceNode.isPartOfLinker(
+                    currentTwoStrandedNode?.antisenseNode?.monomer,
+                  ))
+            )
+          ) {
+            modelChanges.addOperation(SequenceRenderer.moveCaretForward());
+          }
+
           history.update(modelChanges);
         },
       },
@@ -1531,25 +1585,24 @@ export class SequenceMode extends BaseMode {
   public deleteSelection() {
     const selections = SequenceRenderer.selections;
 
-    if (selections.length > 1) {
-      return false;
+    if (selections.length === 0) {
+      return true;
     }
 
-    if (selections.length === 1) {
-      const deletionModelChanges = this.deleteSelectedDrawingEntities();
+    const deletionModelChanges = this.deleteSelectedDrawingEntities();
 
-      deletionModelChanges.merge(
-        this.handleNodesDeletion(selections, STRAND_TYPE.SENSE),
-      );
-      deletionModelChanges.merge(
-        this.handleNodesDeletion(selections, STRAND_TYPE.ANTISENSE),
-      );
-      this.finishNodesDeletion(
-        deletionModelChanges,
-        SequenceRenderer.caretPosition,
-        selections[0][0].nodeIndexOverall,
-      );
-    }
+    deletionModelChanges.merge(
+      this.handleNodesDeletion(selections, STRAND_TYPE.SENSE),
+    );
+    deletionModelChanges.merge(
+      this.handleNodesDeletion(selections, STRAND_TYPE.ANTISENSE),
+    );
+    this.finishNodesDeletion(
+      deletionModelChanges,
+      SequenceRenderer.caretPosition,
+      selections[0][0].nodeIndexOverall,
+    );
+
     return true;
   }
 
@@ -2456,7 +2509,7 @@ export class SequenceMode extends BaseMode {
   private insertNewSequenceItem(
     editor: CoreEditor,
     enteredSymbol: string,
-    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode,
+    nextNodeToConnect?: SubChainNode | BackBoneSequenceNode | null,
     previousNodeToConnect?: SubChainNode | BackBoneSequenceNode,
   ) {
     const currentTwoStrandedNode = SequenceRenderer.currentEdittingNode;
@@ -2516,10 +2569,10 @@ export class SequenceMode extends BaseMode {
           newPhosphateNode,
           currentTwoStrandedNode instanceof BackBoneSequenceNode
             ? currentTwoStrandedNode.secondConnectedNode
-            : undefined,
+            : nextNodeToConnect,
           currentTwoStrandedNode instanceof BackBoneSequenceNode
             ? currentTwoStrandedNode.firstConnectedNode
-            : undefined,
+            : previousNodeToConnect,
           true,
           true,
           false,

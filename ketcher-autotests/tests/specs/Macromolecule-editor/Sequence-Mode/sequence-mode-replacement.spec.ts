@@ -56,6 +56,7 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -83,8 +84,8 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await page.keyboard.press('Escape');
-  await page.keyboard.press('Escape');
+  await keyboardPressOnCanvas(page, 'Escape');
+  await keyboardPressOnCanvas(page, 'Escape');
   await resetZoomLevelToDefault(page);
   await selectClearCanvasTool(page);
   await resetZoomLevelToDefault(page);
@@ -2288,7 +2289,7 @@ test(`29. Verify saving and reopening a structure with replaced monomers in MOL 
 
   const expectedFile = await getMolfile(page, 'v3000');
   await saveToFile(
-    'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.mol',
+    'Common/Sequence-Mode-Replacement/replacement-expected.mol',
     expectedFile,
   );
 

@@ -87,7 +87,7 @@ import {
   MonomerToAtomBondAddOperation,
   MonomerToAtomBondDeleteOperation,
 } from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
-import { AtomLabel } from 'domain/constants';
+import { AtomLabel, HalfMonomerSize } from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import {
@@ -2995,10 +2995,9 @@ export class DrawingEntitiesManager {
               );
             }
 
+            lastAddedNode = senseNode;
             lastAddedMonomer = addedMonomer;
           });
-
-          lastAddedNode = senseNode;
         }
       });
       lastAddedNode = undefined;
@@ -3080,7 +3079,7 @@ export class DrawingEntitiesManager {
             secondMonomer.center,
           ]);
 
-        return distanceFromMonomerToLine < 0.375;
+        return distanceFromMonomerToLine < HalfMonomerSize;
       },
     );
 

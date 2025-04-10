@@ -20,7 +20,6 @@ import {
   pressButton,
   resetZoomLevelToDefault,
   selectAllStructuresOnCanvas,
-  selectMacroBond,
   selectMonomer,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
@@ -39,7 +38,6 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   closeErrorMessage,
   closeOpenStructure,
@@ -51,7 +49,6 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import {
   chooseTab,
-  enterSequence,
   Tabs,
   waitForMonomerPreview,
   zoomWithMouseWheel,
@@ -68,7 +65,15 @@ import {
   markResetToDefaultState,
   processResetToDefaultState,
 } from '@utils/testAnnotations/resetToDefaultState';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  bondSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 let page: Page;
 
@@ -413,8 +418,8 @@ test.describe('Import-Saving .idt Files', () => {
     await selectSequenceLayoutModeTool(page);
     await clickOnSequenceSymbol(page, 'G', { button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await enterSequence(page, 'ttt');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'ttt');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
   });
 
@@ -548,7 +553,7 @@ test.describe('Import-Saving .idt Files', () => {
       `/52MOErA/*/i2MOErC/*/32MOErT/`,
     );
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await bondLine.hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -782,7 +787,7 @@ test.describe('Import-Saving .idt Files', () => {
       'IDT',
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC).nth(1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -808,7 +813,7 @@ test.describe('Import-Saving .idt Files', () => {
       'R2',
       'R1',
     );
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -835,7 +840,7 @@ test.describe('Import-Saving .idt Files', () => {
       'R3',
       'R4',
     );
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -929,7 +934,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await selectMonomer(page, Peptides._1Nal);
     await clickOnCanvas(page, x, y);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, Peptides._1Nal).click();
     await page.mouse.down();
     await getMonomerLocator(page, Chem.iMe_dC).hover();
@@ -950,7 +955,7 @@ test.describe('Import-Saving .idt Files', () => {
     await selectMonomer(page, Peptides._1Nal);
     await clickOnCanvas(page, x, y);
     await selectSnakeLayoutModeTool(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, Peptides._1Nal).click();
     await page.mouse.down();
     await getMonomerLocator(page, Chem.iMe_dC).hover();
@@ -970,7 +975,7 @@ test.describe('Import-Saving .idt Files', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
     await selectMonomer(page, Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, Chem.iMe_dC).click();
     await page.mouse.down();
     await getMonomerLocator(page, Chem.Test_6_Ch).hover();

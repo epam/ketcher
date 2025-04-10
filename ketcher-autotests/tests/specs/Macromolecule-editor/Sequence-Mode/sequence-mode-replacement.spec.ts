@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { BrowserContext, chromium, expect, Page, test } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
@@ -20,10 +20,9 @@ import {
   selectMonomer,
   selectSequenceLayoutModeTool,
   takeEditorScreenshot,
-  waitForIndigoToLoad,
-  waitForKetcherInit,
+  waitForPageInit,
 } from '@utils';
-import {} from '@utils/macromolecules';
+import { chooseTab, Tabs } from '@utils/macromolecules';
 import { pageReload } from '@utils/common/helpers';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
@@ -58,28 +57,18 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
-let sharedContext: BrowserContext;
+
+async function configureInitialState(page: Page) {
+  await chooseTab(page, Tabs.Rna);
+}
 
 test.beforeAll(async ({ browser }) => {
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
+  const context = await browser.newContext();
+  page = await context.newPage();
 
-  // Reminder: do not pass page as async
-  page = await sharedContext.newPage();
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
+  await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
-  // Creation of custom presets needed for testing
-  await createTestPresets(page);
+  await configureInitialState(page);
 });
 
 test.afterEach(async () => {
@@ -91,11 +80,7 @@ test.afterEach(async () => {
 });
 
 test.afterAll(async ({ browser }) => {
-  await page.close();
-  await sharedContext.close();
-  await browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
+  await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
 // interface IReplaceMonomer {

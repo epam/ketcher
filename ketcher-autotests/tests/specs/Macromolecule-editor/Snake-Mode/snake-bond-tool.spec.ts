@@ -2,7 +2,7 @@ import { Bases } from '@constants/monomers/Bases';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
-import { Page, test, expect, BrowserContext, chromium } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   addRnaPresetOnCanvas,
@@ -18,11 +18,10 @@ import {
   moveMouseAway,
   scrollDown,
   scrollUp,
-  waitForIndigoToLoad,
-  waitForKetcherInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   resetZoomLevelToDefault,
+  waitForPageInit,
 } from '@utils';
 import {
   pressRedoButton,
@@ -31,7 +30,7 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
-import { waitForMonomerPreview } from '@utils/macromolecules';
+import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
 import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
@@ -76,27 +75,18 @@ async function createBondedMonomers(page: Page) {
 }
 
 let page: Page;
-let sharedContext: BrowserContext;
+
+async function configureInitialState(page: Page) {
+  await chooseTab(page, Tabs.Rna);
+}
 
 test.beforeAll(async ({ browser }) => {
-  // let sharedContext;
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
+  const context = await browser.newContext();
+  page = await context.newPage();
 
-  // Reminder: do not pass page as async
-  page = await sharedContext.newPage();
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
+  await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
+  await configureInitialState(page);
 });
 
 test.afterEach(async () => {
@@ -106,11 +96,7 @@ test.afterEach(async () => {
 });
 
 test.afterAll(async ({ browser }) => {
-  await page.close();
-  await sharedContext.close();
-  await browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
+  await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
 test.describe('Snake Bond Tool', () => {

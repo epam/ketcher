@@ -24,14 +24,14 @@ import {
 } from '@utils';
 import { chooseTab, Tabs } from '@utils/macromolecules';
 import { pageReload } from '@utils/common/helpers';
-// import { goToRNATab } from '@utils/macromolecules/library';
-// import {
-//   pressAddToPresetsButton,
-//   pressNewPresetButton,
-//   selectBaseSlot,
-//   selectPhosphateSlot,
-//   selectSugarSlot,
-// } from '@utils/macromolecules/rnaBuilder';
+import { goToRNATab } from '@utils/macromolecules/library';
+import {
+  pressAddToPresetsButton,
+  pressNewPresetButton,
+  selectBaseSlot,
+  selectPhosphateSlot,
+  selectSugarSlot,
+} from '@utils/macromolecules/rnaBuilder';
 import {
   clickOnSequenceSymbolByIndex,
   doubleClickOnSequenceSymbolByIndex,
@@ -69,6 +69,8 @@ test.beforeAll(async ({ browser }) => {
   await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
   await configureInitialState(page);
+  // Creation of custom presets needed for testing
+  await createTestPresets(page);
 });
 
 test.afterEach(async () => {
@@ -543,62 +545,62 @@ function filterBugsInTests(
   }).flatMap((item) => item.BugsInTests || []);
 }
 
-// async function createTestPresets(page: Page) {
-//   await goToRNATab(page);
+async function createTestPresets(page: Page) {
+  await goToRNATab(page);
 
-//   // Create preset without base
-//   await pressNewPresetButton(page);
-//   await selectSugarSlot(page);
-//   await selectMonomer(page, Sugars.R);
+  // Create preset without base
+  await pressNewPresetButton(page);
+  await selectSugarSlot(page);
+  await selectMonomer(page, Sugars.R);
 
-//   await selectPhosphateSlot(page);
-//   await selectMonomer(page, Phosphates.P);
+  await selectPhosphateSlot(page);
+  await selectMonomer(page, Phosphates.P);
 
-//   await pressAddToPresetsButton(page);
+  await pressAddToPresetsButton(page);
 
-//   // Create preset without phosphate
-//   await pressNewPresetButton(page);
-//   await selectSugarSlot(page);
-//   await selectMonomer(page, Sugars.R);
+  // Create preset without phosphate
+  await pressNewPresetButton(page);
+  await selectSugarSlot(page);
+  await selectMonomer(page, Sugars.R);
 
-//   await selectBaseSlot(page);
-//   await selectMonomer(page, Bases.A);
+  await selectBaseSlot(page);
+  await selectMonomer(page, Bases.A);
 
-//   await pressAddToPresetsButton(page);
+  await pressAddToPresetsButton(page);
 
-//   // Create preset 25mo3r(nC6n5C)Test-6-Ph
-//   await pressNewPresetButton(page);
-//   await selectSugarSlot(page);
-//   await selectMonomer(page, Sugars._25mo3r);
+  // Create preset 25mo3r(nC6n5C)Test-6-Ph
+  await pressNewPresetButton(page);
+  await selectSugarSlot(page);
+  await selectMonomer(page, Sugars._25mo3r);
 
-//   await selectBaseSlot(page);
-//   await selectMonomer(page, Bases.nC6n5C);
+  await selectBaseSlot(page);
+  await selectMonomer(page, Bases.nC6n5C);
 
-//   await selectPhosphateSlot(page);
-//   await selectMonomer(page, Phosphates.Test_6_Ph);
+  await selectPhosphateSlot(page);
+  await selectMonomer(page, Phosphates.Test_6_Ph);
 
-//   await pressAddToPresetsButton(page);
+  await pressAddToPresetsButton(page);
 
-//   // Create preset 25mo3r(nC6n5C)
-//   await pressNewPresetButton(page);
-//   await selectSugarSlot(page);
-//   await selectMonomer(page, Sugars._25mo3r);
+  // Create preset 25mo3r(nC6n5C)
+  await pressNewPresetButton(page);
+  await selectSugarSlot(page);
+  await selectMonomer(page, Sugars._25mo3r);
 
-//   await selectBaseSlot(page);
-//   await selectMonomer(page, Bases.nC6n5C);
+  await selectBaseSlot(page);
+  await selectMonomer(page, Bases.nC6n5C);
 
-//   await pressAddToPresetsButton(page);
+  await pressAddToPresetsButton(page);
 
-//   // Create preset 25mo3r()Test-6-Ph
-//   await pressNewPresetButton(page);
-//   await selectSugarSlot(page);
-//   await selectMonomer(page, Sugars._25mo3r);
+  // Create preset 25mo3r()Test-6-Ph
+  await pressNewPresetButton(page);
+  await selectSugarSlot(page);
+  await selectMonomer(page, Sugars._25mo3r);
 
-//   await selectPhosphateSlot(page);
-//   await selectMonomer(page, Phosphates.Test_6_Ph);
+  await selectPhosphateSlot(page);
+  await selectMonomer(page, Phosphates.Test_6_Ph);
 
-//   await pressAddToPresetsButton(page);
-// }
+  await pressAddToPresetsButton(page);
+}
 
 async function clickOnMonomerFromLibrary(page: Page, monomer: IReplaceMonomer) {
   if (monomer.IsCustomPreset) {

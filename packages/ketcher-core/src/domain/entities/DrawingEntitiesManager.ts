@@ -2995,10 +2995,9 @@ export class DrawingEntitiesManager {
               );
             }
 
+            lastAddedNode = senseNode;
             lastAddedMonomer = addedMonomer;
           });
-
-          lastAddedNode = senseNode;
         }
       });
       lastAddedNode = undefined;

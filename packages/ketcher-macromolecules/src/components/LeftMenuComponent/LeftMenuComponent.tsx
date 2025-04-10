@@ -63,7 +63,7 @@ export function LeftMenuComponent() {
       <Menu.Group>
         <Menu.Submenu
           disabled={isSequenceMode}
-          testId="bonds"
+          testId="bonds-drop-down-button"
           needOpenByMenuItemClick={false}
         >
           <Menu.Item

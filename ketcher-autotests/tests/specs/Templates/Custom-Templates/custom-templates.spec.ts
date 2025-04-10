@@ -14,10 +14,10 @@ import {
   clickOnTheCanvas,
   AtomButton,
   selectAtomInToolbar,
-  selectBond,
-  BondTypeName,
   clickOnAtom,
 } from '@utils';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -207,7 +207,7 @@ test.describe('Open Ketcher', () => {
     const point = { x: -50, y: 0 };
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickOnTheCanvas(page, point.x, point.y);
-    await selectBond(BondTypeName.Single, page);
+    await bondSelectionTool(page, MicroBondType.Single);
     await clickOnAtom(page, 'C', 0);
     await takeEditorScreenshot(page);
   });

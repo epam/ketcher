@@ -16,8 +16,6 @@ import {
   cutAndPaste,
   receiveFileComparisonData,
   saveToFile,
-  BondTool,
-  selectNestedTool,
   waitForPageInit,
   waitForSpinnerFinishedWork,
   waitForRender,
@@ -37,7 +35,11 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  bondSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -426,7 +428,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
-    await selectNestedTool(page, BondTool.UP);
+    await bondSelectionTool(page, MicroBondType.SingleUp);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
     await clickOnCanvas(page, point.x, point.y);
     await takeEditorScreenshot(page);

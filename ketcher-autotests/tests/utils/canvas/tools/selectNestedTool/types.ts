@@ -1,3 +1,4 @@
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { DropdownToolIds } from '@utils/clicks/types';
 
 /* eslint-disable no-magic-numbers */
@@ -14,30 +15,31 @@ export const DEFAULT_BONDS_MAIN_BUTTON_TEST_ID = 'bonds';
 // each field define number of presses and DOM element id
 type toolField = [presses: number, domElementId: DropdownToolIds];
 
+type bondToolField = [presses: number, domElementId: MicroBondType];
+
 type toolType = {
   [key: string]: toolField;
 };
 
-export const BondTool: toolType = {
-  SINGLE: [1, 'bond-single'],
-  DOUBLE: [2, 'bond-double'],
-  TRIPPLE: [3, 'bond-triple'],
-  ANY: [4, 'bond-any'],
-  AROMATIC: [5, 'bond-aromatic'],
-  SINGLE_DOUBLE: [6, 'bond-singledouble'],
-  SINGLE_AROMATIC: [7, 'bond-singlearomatic'],
-  DOUBLE_AROMATIC: [8, 'bond-doublearomatic'],
-  DATIVE: [9, 'bond-dative'],
-  HYDROGEN: [10, 'bond-hydrogen'],
-  UP: [11, 'bond-up'],
-  DOWN: [12, 'bond-down'],
-  UP_DOWN: [13, 'bond-updown'],
-  CROSSED: [14, 'bond-crossed'],
+type bondToolType = {
+  [key: string]: bondToolField;
 };
 
-export const MacroBondTool: { [key: string]: DropdownToolIds } = {
-  SINGLE: 'single-bond',
-  HYDROGEN: 'hydrogen-bond',
+export const BondTool: bondToolType = {
+  SINGLE: [1, MicroBondType.Single],
+  DOUBLE: [2, MicroBondType.Double],
+  TRIPPLE: [3, MicroBondType.Triple],
+  ANY: [4, MicroBondType.Any],
+  AROMATIC: [5, MicroBondType.Aromatic],
+  SINGLE_DOUBLE: [6, MicroBondType.SingleDouble],
+  SINGLE_AROMATIC: [7, MicroBondType.SingleAromatic],
+  DOUBLE_AROMATIC: [8, MicroBondType.DoubleAromatic],
+  DATIVE: [9, MicroBondType.Dative],
+  HYDROGEN: [10, MicroBondType.Hydrogen],
+  UP: [11, MicroBondType.SingleUp],
+  DOWN: [12, MicroBondType.SingleDown],
+  UP_DOWN: [13, MicroBondType.SingleUpDown],
+  CROSSED: [14, MicroBondType.DoubleCisTrans],
 };
 
 // Rotate tool do not change image after selecting

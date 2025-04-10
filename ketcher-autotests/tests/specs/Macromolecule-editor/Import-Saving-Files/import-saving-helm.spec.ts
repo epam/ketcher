@@ -1,13 +1,12 @@
 /* eslint-disable no-magic-numbers */
-import { chooseFileFormat } from '@utils/macromolecules';
-import { Page, test, BrowserContext, chromium, expect } from '@playwright/test';
+import { chooseFileFormat, chooseTab, Tabs } from '@utils/macromolecules';
+import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  waitForIndigoToLoad,
-  waitForKetcherInit,
   openStructurePasteFromClipboard,
   waitForSpinnerFinishedWork,
   pressButton,
+  waitForPageInit,
 } from '@utils';
 import {
   closeErrorMessage,
@@ -21,26 +20,18 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
-let sharedContext: BrowserContext;
+
+async function configureInitialState(page: Page) {
+  await chooseTab(page, Tabs.Rna);
+}
 
 test.beforeAll(async ({ browser }) => {
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
+  const context = await browser.newContext();
+  page = await context.newPage();
 
-  // Reminder: do not pass page as async
-  page = await sharedContext.newPage();
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
+  await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
+  await configureInitialState(page);
 });
 
 test.afterEach(async () => {
@@ -52,11 +43,7 @@ test.afterEach(async () => {
 });
 
 test.afterAll(async ({ browser }) => {
-  await page.close();
-  await sharedContext.close();
-  browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
+  await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
 async function loadHELMFromClipboard(page: Page, helmString: string) {

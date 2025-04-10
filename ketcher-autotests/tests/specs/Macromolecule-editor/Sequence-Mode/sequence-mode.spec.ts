@@ -36,6 +36,14 @@ async function clickOnTriangle(page: Page) {
   await page.locator('.dropdown').first().click();
 }
 
+// export async function clickOnTriangle(page: Page) {
+//   const expandButton = page
+//     .getByTestId('createAntisenseStrand')
+//     .getByTestId('dropdown-expand');
+
+//   await expandButton.click();
+// }
+
 test.describe('Sequence Mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);

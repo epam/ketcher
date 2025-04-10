@@ -20,7 +20,6 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   selectFlexLayoutModeTool,
-  selectMacroBond,
   selectMonomer,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
@@ -34,7 +33,6 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   FileType,
   verifyFileExport,
@@ -63,10 +61,14 @@ import {
   selectClearCanvasTool,
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  bondSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await getMonomerLocator(page, monomer).nth(nth).hover();
 }
 
@@ -1012,7 +1014,7 @@ test.describe('Sequence edit mode', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectFlexLayoutModeTool(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await hoverMouseOverMonomer(page, Sugars.R, 11);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1046,7 +1048,7 @@ test.describe('Sequence edit mode', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectFlexLayoutModeTool(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await hoverMouseOverMonomer(page, Sugars.dR, 11);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

@@ -30,7 +30,6 @@ import {
   waitForIndigoToLoad,
   selectOptionInTypeDropdown2,
   clickOnCanvas,
-  selectMacroBond,
   selectMonomer,
   selectSequenceLayoutModeTool,
   selectAllStructuresOnCanvas,
@@ -39,7 +38,6 @@ import {
   selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   FileType,
   verifyFileExport,
@@ -62,7 +60,11 @@ import {
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  bondSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -170,7 +172,7 @@ test('Create bond between two peptides', async () => {
   );
 
   // Select bond tool
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -209,7 +211,7 @@ test('Create bond between two chems', async () => {
   const chem2 = chems.nth(1);
 
   // Select bond tool
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
 
   // Create bonds between chems, taking screenshots in middle states
   await chem1.hover();
@@ -247,7 +249,7 @@ test('Select monomers and pass a bond', async () => {
     400,
     1,
   );
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondTwoMonomers(page, peptide1, peptide2);
   await bondTwoMonomers(page, peptide2, peptide1);
   await page.waitForSelector('#error-tooltip');
@@ -393,7 +395,7 @@ test('Verify that clicking "Reconnect" with different attachment points chosen r
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -409,7 +411,7 @@ test('Verify that clicking "Reconnect" without changing the attachment points re
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
   await openEditConnectionPointsMenu(page, bondLine);
   await pressButton(page, 'Reconnect');
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -432,7 +434,7 @@ test('Verify that clicking "Cancel" in the dialog results in no change to the bo
     hideMonomerPreview: true,
   });
   await pressButton(page, 'Cancel');
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -455,7 +457,7 @@ test('Verify that closing the dialog without clicking "Reconnect" or "Cancel" do
     hideMonomerPreview: true,
   });
   await page.getByTitle('Close window').click();
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -473,19 +475,19 @@ test('Verify that changes made in the "Edit Connection Points" dialog can be und
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
   await pressUndoButton(page);
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
   await pressRedoButton(page);
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -508,7 +510,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     'KET/two-peptides-connected-expected.ket',
     FileType.KET,
   );
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -536,7 +538,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     'v3000',
   );
 
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -580,7 +582,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   // await openFile('Sequence/two-peptides-connected-expected.seq', page);
   // await selectOptionInTypeDropdown('Peptide', page);
   // await pressButton(page, 'Open as New');
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -616,7 +618,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   await openFile('FASTA/two-peptides-connected-expected.fasta', page);
   await selectOptionInTypeDropdown2('Peptide', page);
   await pressButton(page, 'Open as New');
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -637,7 +639,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   await pressButton(page, 'Reconnect');
   await verifyFileExport(page, 'IDT/moe-idt-expected.idt', FileType.IDT);
   await openFileAndAddToCanvasAsNewProject('IDT/moe-idt-expected.idt', page);
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -655,7 +657,7 @@ test('Verify changing connection points of a side chain bond', async () => {
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R1' }).nth(1).click();
   await pressButton(page, 'Reconnect');
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -681,7 +683,7 @@ test('Verify editing of a cyclic structure', async () => {
     .getByRole('button')
     .click();
   await pressButton(page, 'Reconnect');
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -699,7 +701,7 @@ test('Verify correct display and changing of connection points in the dialog for
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -953,6 +955,7 @@ test('Save and Open structure with long bonds to/from KET', async () => {
     4. Open saved KET
     5. Take screenshot
     */
+  await selectFlexLayoutModeTool(page);
   const firstMonomer = getMonomerLocator(page, Peptides.C);
   const secondMonomer = getMonomerLocator(page, Peptides.dC);
   await openFileAndAddToCanvasMacro(

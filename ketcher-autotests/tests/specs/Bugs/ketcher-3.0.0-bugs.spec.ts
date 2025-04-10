@@ -12,7 +12,6 @@ import {
   takeEditorScreenshot,
   takePageScreenshot,
   openFileAndAddToCanvasAsNewProjectMacro,
-  selectMacroBond,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   selectAllStructuresOnCanvas,
@@ -41,7 +40,6 @@ import {
   selectRing,
   RingButton,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -72,10 +70,12 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import {
+  bondSelectionTool,
   selectAreaSelectionTool,
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
 
@@ -216,7 +216,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await connectMonomerToAtom(page);
     await takeEditorScreenshot(page);
   });
@@ -268,7 +268,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P}$$$$V2.0',
     );
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     const baseLocator = getMonomerLocator(page, Bases.A).first();
     await baseLocator.hover({ force: true });
     await takeEditorScreenshot(page, {

@@ -19,11 +19,11 @@ import {
 } from '@utils';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   selectClearCanvasTool,
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
 
@@ -330,7 +330,7 @@ for (const leftMonomer of shortMonomerList) {
         rightMonomerLocator,
         undefined,
         undefined,
-        MacroBondTool.HYDROGEN,
+        MacroBondType.Hydrogen,
       );
 
       await selectFlexLayoutModeTool(page);
@@ -497,7 +497,7 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
         rightMonomerLocator,
         undefined,
         undefined,
-        MacroBondTool.HYDROGEN,
+        MacroBondType.Hydrogen,
       );
 
       await selectFlexLayoutModeTool(page);
@@ -541,7 +541,7 @@ test(`3. Check that shorter chain (fewer monomers) should get "flipped", and if 
     getMonomerLocator(page, { monomerAlias: 'U' }),
     undefined,
     undefined,
-    MacroBondTool.HYDROGEN,
+    MacroBondType.Hydrogen,
   );
 
   await selectFlexLayoutModeTool(page);
@@ -590,7 +590,7 @@ test(`4. For R3-R1 sugar-base side connections (when the base does not have hydr
     getMonomerLocator(page, { monomerAlias: 'U' }),
     undefined,
     undefined,
-    MacroBondTool.HYDROGEN,
+    MacroBondType.Hydrogen,
   );
 
   await selectFlexLayoutModeTool(page);
@@ -804,7 +804,7 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
         rightMonomerLocator,
         undefined,
         undefined,
-        MacroBondTool.HYDROGEN,
+        MacroBondType.Hydrogen,
       );
 
       await selectSequenceLayoutModeTool(page);
@@ -872,7 +872,7 @@ for (const leftMonomer of shortMonomerList) {
           rightMonomerLocator,
           undefined,
           undefined,
-          MacroBondTool.HYDROGEN,
+          MacroBondType.Hydrogen,
         );
 
         await selectSequenceLayoutModeTool(page);

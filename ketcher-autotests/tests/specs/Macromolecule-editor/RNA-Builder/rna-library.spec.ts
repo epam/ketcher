@@ -20,7 +20,6 @@ import {
   selectSnakeLayoutModeTool,
   selectSequenceLayoutModeTool,
   clickOnCanvas,
-  selectMacroBond,
   selectMonomers,
   addMonomerToFavorites,
   removeMonomerFromFavorites,
@@ -48,7 +47,6 @@ import {
   MonomerLocationTabs,
 } from '@utils/macromolecules/library';
 import { clearLocalStorage, pageReload } from '@utils/common/helpers';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   FileType,
   verifyFileExport,
@@ -69,10 +67,12 @@ import {
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
+  bondSelectionTool,
   selectAreaSelectionTool,
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -95,7 +95,7 @@ async function drawThreeMonomersConnectedWithBonds(page: Page) {
   const phosphate = getMonomerLocator(page, Phosphates.P).nth(0);
 
   await drawThreeMonomers(page);
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await sugar.hover();
   await page.mouse.down();
   await base.hover();
@@ -116,7 +116,7 @@ async function drawBasePhosphate(page: Page) {
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Phosphates.P);
   await clickOnCanvas(page, x, y);
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await base.hover();
   await page.mouse.down();
   await phosphate.hover();
@@ -135,7 +135,7 @@ async function drawSugarPhosphate(page: Page) {
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Phosphates.P);
   await clickOnCanvas(page, x, y);
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await sugar.hover();
   await page.mouse.down();
   await phosphate.hover();
@@ -151,7 +151,7 @@ async function drawSugarBase(page: Page) {
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Bases.baA);
   await clickOnCanvas(page, x, y);
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await sugar.hover();
   await page.mouse.down();
   await base.hover();
@@ -860,7 +860,7 @@ test.describe('RNA Library', () => {
     const phosphate = getMonomerLocator(page, Phosphates.P).nth(0);
 
     await drawThreeMonomers(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await sugar.hover();
     await page.mouse.down();
     await base.hover();
@@ -926,7 +926,7 @@ test.describe('RNA Library', () => {
     Test working incorrect now because we have bug https://github.com/epam/ketcher/issues/3539
     */
       await addMonomerToCenterOfCanvas(page, Sugars._25R);
-      await selectMacroBond(page, MacroBondTool.SINGLE);
+      await bondSelectionTool(page, MacroBondType.Single);
       await getMonomerLocator(page, Sugars._25R).click();
       await pressEscapeWhenPullBond(page);
       await takeEditorScreenshot(page);

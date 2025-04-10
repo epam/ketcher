@@ -873,7 +873,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 //       await takeEditorScreenshot(page);
 //       await pressCancelAtEditAbbreviationDialog(page);
 
-//       await selectBond(BondTypeName.Triple, page);
+//       await bondSelectionTool(page, MicroBondType.Triple);
 //       await clickOnBondOfExpandedMonomer(page, 1);
 //       await takeEditorScreenshot(page);
 //       await pressCancelAtEditAbbreviationDialog(page);

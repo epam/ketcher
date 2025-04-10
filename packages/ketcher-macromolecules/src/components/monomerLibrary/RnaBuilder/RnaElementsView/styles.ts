@@ -43,11 +43,11 @@ export const DetailsContainer = styled.div<{ compact?: boolean }>`
   gap: 8px;
   justify-content: start;
   padding: ${({ compact }) => (compact ? '4px' : '8px')};
-  overflow: auto;
 `;
 
 export const RnaTabContent = styled.div`
-  height: 100%;
+  flex-grow: 1;
+  min-height: 0;
   background-color: #f7f9fa;
   border-radius: 4px;
   margin: 4px 8px;

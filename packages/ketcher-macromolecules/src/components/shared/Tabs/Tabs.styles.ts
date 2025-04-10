@@ -68,8 +68,8 @@ export const StyledTab = styled(Tab)`
     }
   }
 
-  // Probably not the best way to do so
-  &[data-testid='FAVORITES-TAB'] {
+  &:first-of-type {
+    font-size: 16px;
     color: #faa500;
   }
 `;

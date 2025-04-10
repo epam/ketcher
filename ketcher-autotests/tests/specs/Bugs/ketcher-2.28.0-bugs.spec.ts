@@ -14,7 +14,6 @@ import {
   copyToClipboardByKeyboard,
   FunctionalGroups,
   getBondLengthValue,
-  MacroBondType,
   MacroFileType,
   openBondsSettingsSection,
   openFileAndAddToCanvas,
@@ -59,6 +58,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 declare global {
   interface Window {
@@ -562,7 +562,7 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
   );
 
   const hydrogenBond = getBondLocator(page, {
-    bondType: MacroBondType.Hydrogen,
+    bondType: MacroBondDataIds.Hydrogen,
   }).first();
 
   await selectEraseTool(page);
@@ -649,7 +649,7 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
   );
 
   const hydrogenBond = getBondLocator(page, {
-    bondType: MacroBondType.Hydrogen,
+    bondType: MacroBondDataIds.Hydrogen,
   }).first();
 
   await selectEraseTool(page);

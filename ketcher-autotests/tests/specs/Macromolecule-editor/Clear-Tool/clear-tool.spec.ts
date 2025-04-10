@@ -3,7 +3,6 @@ import { test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  selectMacroBond,
   selectPartOfMolecules,
   takeEditorScreenshot,
   waitForPageInit,
@@ -15,10 +14,11 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {} from '@utils/macromolecules';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Clear Canvas Tool', () => {
@@ -66,7 +66,7 @@ test.describe('Clear Canvas Tool', () => {
     );
 
     // Select bond tool
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);

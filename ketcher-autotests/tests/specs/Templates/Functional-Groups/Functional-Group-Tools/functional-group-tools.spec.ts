@@ -48,7 +48,7 @@ import {
   selectEraseTool,
   selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 const X_DELTA = 300;
 

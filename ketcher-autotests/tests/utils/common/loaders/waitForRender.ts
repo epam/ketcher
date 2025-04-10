@@ -42,8 +42,12 @@ export const waitForItemsToMergeInitialization = async (
   callback = emptyFunction,
   timeout = 200,
 ) => {
-  await Promise.all([
-    waitForCustomEvent(page, 'itemsToMergeInitializationComplete', timeout),
-    callback(),
-  ]);
+  const waitForEvent = waitForCustomEvent(
+    page,
+    'itemsToMergeInitializationComplete',
+    timeout,
+  );
+
+  await callback();
+  await waitForEvent;
 };

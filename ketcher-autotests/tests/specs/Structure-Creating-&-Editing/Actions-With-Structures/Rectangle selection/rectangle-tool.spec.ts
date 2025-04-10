@@ -14,7 +14,7 @@ import {
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 test.describe('Rectangle selection tool', () => {
   test.beforeEach(async ({ page }) => {

@@ -1,7 +1,6 @@
 import { Page, test } from '@playwright/test';
 import {
   AtomButton,
-  BondTypeName,
   LeftPanelButton,
   RingButton,
   clickInTheMiddleOfTheScreen,
@@ -17,7 +16,6 @@ import {
   resetCurrentTool,
   selectAllStructuresOnCanvas,
   selectAtomInToolbar,
-  selectBond,
   selectDropdownTool,
   selectLeftPanelButton,
   selectRingButton,
@@ -28,6 +26,8 @@ import {
 } from '@utils';
 import { checkSmartsValue } from '../utils';
 import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 
 async function drawStructureWithArrowOpenAngle(page: Page) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -74,7 +74,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   });
 
   test('Checking SMARTS with reaction mapping tool', async ({ page }) => {
-    await selectBond(BondTypeName.Single, page);
+    await bondSelectionTool(page, MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
 

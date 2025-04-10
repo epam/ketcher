@@ -1,5 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
@@ -12,11 +14,7 @@ import {
   selectRing,
   RingButton,
   clickInTheMiddleOfTheScreen,
-  selectBond,
-  BondTypeName,
   clickOnAtom,
-  BondTool,
-  selectNestedTool,
   waitForPageInit,
   openSettings,
 } from '@utils';
@@ -639,10 +637,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectNestedTool(page, BondTool.UP);
+    await bondSelectionTool(page, MicroBondType.SingleUp);
     await clickOnAtom(page, 'C', 1);
 
-    await selectBond(BondTypeName.Single, page);
+    await bondSelectionTool(page, MicroBondType.Single);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });
@@ -656,7 +654,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectNestedTool(page, BondTool.UP);
+    await bondSelectionTool(page, MicroBondType.SingleUp);
     await clickOnAtom(page, 'C', 1);
     await takeEditorScreenshot(page);
   });

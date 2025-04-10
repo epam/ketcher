@@ -1,12 +1,10 @@
 import { Page, test, expect } from '@playwright/test';
 import {
-  BondTypeName,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   doubleClickOnAtom,
   getAtomByIndex,
   pressButton,
-  selectBond,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
@@ -27,6 +25,8 @@ import {
   setCharge,
   setValence,
 } from '../utils';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 async function setListOfAtoms(page: Page, atomLabels: string[]) {
   await selectAtomType(page, 'List');
@@ -104,7 +104,7 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
     await waitForPageInit(page);
-    await selectBond(BondTypeName.Single, page);
+    await bondSelectionTool(page, MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
     await doubleClickOnAtom(page, 'C', numberOfAtom);
@@ -209,7 +209,7 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
 test.describe('Checking if atoms are displayed correctly', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await selectBond(BondTypeName.Single, page);
+    await bondSelectionTool(page, MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
   });

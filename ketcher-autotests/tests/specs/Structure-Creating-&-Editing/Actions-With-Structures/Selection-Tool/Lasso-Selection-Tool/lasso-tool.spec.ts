@@ -8,10 +8,7 @@ import {
   getCoordinatesTopAtomOfBenzeneRing,
   BondType,
   getCoordinatesOfTheMiddleOfTheScreen,
-  BondTool,
-  selectNestedTool,
   waitForPageInit,
-  selectDropdownTool,
   waitForRender,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
@@ -22,8 +19,12 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@tests/pages/common/TopLeftToolbar';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import {
+  bondSelectionTool,
+  selectAreaSelectionTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 test.describe('Lasso Selection tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -168,7 +169,7 @@ test.describe('Lasso Selection tool', () => {
     const selectCoords = { x: 50, y: 50 };
     const shiftCoords = { x: 10, y: 10 };
     await drawBenzeneRing(page);
-    await selectDropdownTool(page, 'bonds', 'bond-singlearomatic');
+    await bondSelectionTool(page, MicroBondType.SingleAromatic);
     const coordinates = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, coordinates.x + xDelta, coordinates.y - yDelta);
     await selectAreaSelectionTool(page, SelectionToolType.Lasso);
@@ -314,7 +315,7 @@ test.describe('Lasso Selection tool', () => {
      */
     const yShift = 100;
     const xShift = 500;
-    await selectNestedTool(page, BondTool.SINGLE_AROMATIC);
+    await bondSelectionTool(page, MicroBondType.SingleAromatic);
     await clickOnCanvas(page, xAxis, yAxis);
     await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     // 'Shift+Tab' used for switch from Rectangle selection to Lasso

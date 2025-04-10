@@ -17,7 +17,7 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 const X_DELTA_ONE = 100;
 const X_DELTA_TWO = 150;

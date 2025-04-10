@@ -95,6 +95,7 @@ const SubMenu = ({
             name="dropdown"
             onClick={handleDropDownClick}
             isActive={isActive(visibleItemId)}
+            dataTestId="dropdown-expand"
           />
         )}
       </VisibleItem>

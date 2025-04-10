@@ -6,14 +6,16 @@ import {
   waitForPageInit,
   takeEditorScreenshot,
   moveMouseAway,
-  selectMacroBond,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import {
+  bondSelectionTool,
+  selectAreaSelectionTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Check attachment point rotation', () => {
@@ -60,7 +62,7 @@ test.describe('Check attachment point rotation', () => {
     );
 
     // Select bond tool
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -109,7 +111,7 @@ test.describe('Check attachment point rotation', () => {
     );
 
     // Select bond tool
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -128,7 +130,7 @@ test.describe('Check attachment point rotation', () => {
     await dragMouseTo(200, 400, page);
     await moveMouseAway(page);
 
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     // Hover 1th peptide
     await peptide1.hover();
     await takeEditorScreenshot(page, {

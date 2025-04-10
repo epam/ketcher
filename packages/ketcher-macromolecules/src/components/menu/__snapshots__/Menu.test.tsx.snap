@@ -81,6 +81,7 @@ Object {
               </button>
               <svg
                 class="dropdown css-zoaulv"
+                data-testid="dropdown-expand"
                 height="1000"
                 viewBox="0 0 1000 1000"
                 width="1000"
@@ -118,6 +119,7 @@ Object {
               </button>
               <svg
                 class="dropdown css-zoaulv"
+                data-testid="dropdown-expand"
                 height="1000"
                 viewBox="0 0 1000 1000"
                 width="1000"
@@ -155,6 +157,7 @@ Object {
               </button>
               <svg
                 class="dropdown css-zoaulv"
+                data-testid="dropdown-expand"
                 height="1000"
                 viewBox="0 0 1000 1000"
                 width="1000"
@@ -247,6 +250,7 @@ Object {
             </button>
             <svg
               class="dropdown css-zoaulv"
+              data-testid="dropdown-expand"
               height="1000"
               viewBox="0 0 1000 1000"
               width="1000"
@@ -284,6 +288,7 @@ Object {
             </button>
             <svg
               class="dropdown css-zoaulv"
+              data-testid="dropdown-expand"
               height="1000"
               viewBox="0 0 1000 1000"
               width="1000"
@@ -321,6 +326,7 @@ Object {
             </button>
             <svg
               class="dropdown css-zoaulv"
+              data-testid="dropdown-expand"
               height="1000"
               viewBox="0 0 1000 1000"
               width="1000"

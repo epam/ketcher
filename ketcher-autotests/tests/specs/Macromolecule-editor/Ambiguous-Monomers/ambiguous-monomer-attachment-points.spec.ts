@@ -7,14 +7,14 @@ import {
   waitForKetcherInit,
   openStructurePasteFromClipboard,
   waitForSpinnerFinishedWork,
-  selectMacroBond,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   selectClearCanvasTool,
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -353,7 +353,7 @@ test.describe('Monomer APs checks: ', () => {
       await zoomWithMouseWheel(page, -600);
 
       await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
-      await selectMacroBond(page, MacroBondTool.SINGLE);
+      await bondSelectionTool(page, MacroBondType.Single);
       await hoverMouseOverMonomer(page, ambiguousMonomer.monomerLocatorIndex);
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,

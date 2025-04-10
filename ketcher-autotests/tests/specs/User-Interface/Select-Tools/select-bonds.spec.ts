@@ -1,13 +1,13 @@
 import { test } from '@playwright/test';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import {
+  bondSelectionTool,
+  selectAreaSelectionTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
-  LeftPanelButton,
-  selectLeftPanelButton,
-  selectButtonById,
-  BondTypeId,
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
@@ -19,11 +19,16 @@ test.describe('Bonds plus atoms selection ', () => {
     await waitForPageInit(page);
   });
 
-  for (const bond of Object.values(BondTypeId)) {
+  const BondTypeId: MicroBondType[] = [
+    MicroBondType.Single,
+    MicroBondType.Double,
+    MicroBondType.Triple,
+    MicroBondType.SingleDown,
+  ];
+
+  for (const bond of BondTypeId) {
     test(`Bond selection with id ${bond} check`, async ({ page }) => {
-      await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
-      await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
-      await selectButtonById(bond, page);
+      await bondSelectionTool(page, bond);
       await clickInTheMiddleOfTheScreen(page);
 
       await selectAreaSelectionTool(page, SelectionToolType.Rectangle);

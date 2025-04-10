@@ -1,18 +1,18 @@
 import { Locator, Page } from '@playwright/test';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
   dragMouseTo,
   Monomer,
   MonomerType,
-  selectMacroBond,
   SymbolType,
   waitForRender,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
+  bondSelectionTool,
   selectAreaSelectionTool,
   selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 export async function moveMonomer(
   page: Page,
@@ -43,7 +43,7 @@ export async function connectMonomersWithBonds(
   page: Page,
   monomerNames: string[],
 ) {
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
 
   for (let i = 0; i < monomerNames.length - 1; i++) {
     const currentMonomer = monomerNames[i];

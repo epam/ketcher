@@ -1,9 +1,12 @@
 /* eslint-disable no-magic-numbers */
 import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
-import { clickOnCanvas, MacroBondType, MonomerType, moveMouseAway } from '..';
-import { selectMacroBond } from '@utils/canvas/tools';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { clickOnCanvas, MonomerType, moveMouseAway } from '..';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  MacroBondDataIds,
+  MacroBondType,
+} from '@tests/pages/constants/bondSelectionTool/Constants';
 
 export enum BondType {
   None = 0,
@@ -32,11 +35,11 @@ export async function bondTwoMonomers(
   secondMonomerElement: Locator,
   connectTitle1?: string,
   connectTitle2?: string,
-  bondType: (typeof MacroBondTool)[keyof typeof MacroBondTool] = MacroBondTool.SINGLE,
+  bondType: MacroBondType = MacroBondType.Single,
   needSelectAttachmentPoint = true,
   needConnect = true,
 ) {
-  await selectMacroBond(page, bondType);
+  await bondSelectionTool(page, bondType);
   await firstMonomerElement.hover({ force: true });
   await page.mouse.down();
   await secondMonomerElement.hover({ force: true });
@@ -281,11 +284,16 @@ export async function bondTwoMonomersPointToPoint(
   secondMonomer: Locator,
   firstMonomerConnectionPoint?: string,
   secondMonomerConnectionPoint?: string,
-  bondType?: (typeof MacroBondTool)[keyof typeof MacroBondTool],
+  bondType?: MacroBondType,
   // if true - first free from left connection point will be selected in the dialog for both monomers
   chooseConnectionPointsInDialogIfAppeared = false,
 ): Promise<Locator> {
-  await selectMacroBond(page, bondType);
+  if (bondType) {
+    await bondSelectionTool(page, bondType);
+  } else {
+    await bondSelectionTool(page, MacroBondType.Single);
+  }
+
   await firstMonomer.hover({ force: true });
 
   if (firstMonomerConnectionPoint) {
@@ -357,7 +365,7 @@ export async function bondTwoMonomersPointToPoint(
 
   let bondLocator: Locator = page.locator('');
   if (monomerOrAtom === 'monomer') {
-    bondLocator = await getBondLocator(page, {
+    bondLocator = getBondLocator(page, {
       fromMonomerId:
         (await firstMonomer.getAttribute('data-monomerid')) || undefined,
       toMonomerId:
@@ -366,7 +374,7 @@ export async function bondTwoMonomersPointToPoint(
       toConnectionPoint: secondMonomerConnectionPoint,
     });
   } else if (monomerOrAtom === 'atom') {
-    bondLocator = await getBondLocator(page, {
+    bondLocator = getBondLocator(page, {
       fromMonomerId:
         (await firstMonomer.getAttribute('data-monomerid')) || undefined,
       toAtomId: (await secondMonomer.getAttribute('data-atomid')) || undefined,
@@ -385,7 +393,7 @@ export async function bondMonomerPointToMoleculeAtom(
   monomerConnectionPoint?: string,
   connectionPointShift?: { x: number; y: number },
 ) {
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await monomer.hover({ force: true });
 
   if (monomerConnectionPoint) {
@@ -451,7 +459,7 @@ export async function bondNucleotidePointToMoleculeAtom(
   monomerConnectionPoint?: string,
   connectionPointShift?: { x: number; y: number },
 ) {
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await monomer.hover({ force: true });
 
   if (monomerConnectionPoint) {
@@ -573,7 +581,7 @@ export function getBondLocator(
     fromConnectionPoint,
     toConnectionPoint,
   }: {
-    bondType?: MacroBondType | number;
+    bondType?: MacroBondDataIds | number;
     bondStereo?: BondStereo;
     bondId?: string | number;
     fromMonomerId?: string | number;

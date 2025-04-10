@@ -16,7 +16,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   selectDropdownTool,
   clickInTheMiddleOfTheScreen,
-  selectMacroBond,
   moveMouseAway,
   selectRingButton,
   RingButton,
@@ -41,7 +40,6 @@ import {
   selectSequenceTypeMode,
   hideLibrary,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
@@ -67,7 +65,11 @@ import {
   switchToPeptideMode,
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  bondSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [
@@ -260,7 +262,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await page.getByTestId('canvas').getByText('O').click();
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);

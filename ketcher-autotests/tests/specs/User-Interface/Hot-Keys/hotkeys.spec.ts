@@ -34,7 +34,7 @@ import {
 } from '@utils';
 import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {

@@ -127,7 +127,7 @@ export function appUpdate(data) {
 export function saveSettings(newSettings) {
   storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
   reinitializeTemplateLibrary();
-  initOptionsState.getSettings();
+  initOptionsState().getSettings();
 
   return {
     type: 'SAVE_SETTINGS',

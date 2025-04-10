@@ -15,7 +15,10 @@
  ***************************************************************************/
 
 import isHidden from './isHidden';
-import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
+import {
+  KETCHER_ROOT_NODE_CSS_SELECTOR,
+  ketcherIdCssSelector,
+} from 'src/constants';
 
 const requestFullscreen = (element: HTMLElement) => {
   (element.requestFullscreen && element.requestFullscreen()) ||
@@ -40,8 +43,9 @@ const getIfFullScreen = () => {
   );
 };
 
-const toggleFullscreen = () => {
+const toggleFullscreen = (ketcherId: string) => {
   const fullscreenElement: HTMLElement =
+    document.querySelector(ketcherIdCssSelector(ketcherId)) ||
     document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
     document.documentElement;
   getIfFullScreen() ? exitFullscreen() : requestFullscreen(fullscreenElement);
@@ -51,7 +55,7 @@ export default {
   fullscreen: {
     title: 'Fullscreen mode',
     enabledInViewOnly: true,
-    action: () => toggleFullscreen(),
+    action: (ketcherId: string) => () => toggleFullscreen(ketcherId),
     hidden: (options) => isHidden(options, 'fullscreen'),
   },
 };

@@ -550,7 +550,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
     return this.chain.subChains.some((subChain) => {
       const firstNode = subChain.nodes[0];
       return (
-        !this.inIgnoreList(firstNode) &&
+        !this.inIgnoreList(this.node) &&
         (firstNode === this.node ||
           this.hasOnlyIgnoredNodesBeforeNodeInSubChain)
       );

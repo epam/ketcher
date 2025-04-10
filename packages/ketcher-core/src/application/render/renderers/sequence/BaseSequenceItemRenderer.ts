@@ -378,7 +378,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       // for example, chain:
       //     3   1     4
       // A A A @ A A A A
-      !this.isBeginningOfChain &&
+      !this.isSubChainNodeBeginningOfChain &&
       // display for first and last in subchain (except last MonomerSequenceNode)
       // for second last in subchain if last is MonomerSequenceNode (ex. Phosphate)
       // for every nth node in row (10th) in chain
@@ -530,13 +530,17 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
 
   // returns true if node is not in ignore list and is first node in chain
   // or has only ignored nodes before it in subchain
-  private get isBeginningOfChain() {
+  private get isSubChainNodeBeginningOfChain() {
     return (
       this.isSubChainNode(this.node) &&
       !this.inIgnoreList(this.node) &&
       this.isNodeInFirstSubChain &&
       this.isBeginningOfSubChain
     );
+  }
+
+  private get isBeginningOfChain() {
+    return this.monomerIndexInChain === 0;
   }
 
   private get isNodeInFirstSubChain(): boolean {

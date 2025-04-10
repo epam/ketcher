@@ -233,4 +233,10 @@ export class Indigo {
       })
       .then((data) => this.#ketSerializer.deserialize(data.struct));
   }
+
+  calculateMacromoleculeProperties(struct: string): Promise<Struct> {
+    return this.#structService.calculateMacromoleculeProperties({
+      struct,
+    });
+  }
 }

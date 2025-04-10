@@ -107,51 +107,8 @@ export abstract class BaseMode {
       return;
     }
     const editor = CoreEditor.provideEditorInstance();
-    const drawingEntitiesManager = new DrawingEntitiesManager();
-    editor.drawingEntitiesManager.selectedEntities.forEach(([, entity]) => {
-      if (entity instanceof BaseMonomer) {
-        drawingEntitiesManager.addMonomerChangeModel(
-          entity.monomerItem,
-          entity.position,
-          entity,
-        );
-      } else if (entity instanceof Atom) {
-        drawingEntitiesManager.addMonomerChangeModel(
-          entity.monomer.monomerItem,
-          entity.monomer.position,
-          entity.monomer,
-        );
-      } else if (entity instanceof PolymerBond && entity.secondMonomer) {
-        const firstAttachmentPoint =
-          entity.firstMonomer.getAttachmentPointByBond(entity);
-        const secondAttachmentPoint =
-          entity.secondMonomer?.getAttachmentPointByBond(entity);
-        if (
-          firstAttachmentPoint &&
-          secondAttachmentPoint &&
-          entity.firstMonomer.selected &&
-          entity.secondMonomer?.selected
-        ) {
-          drawingEntitiesManager.finishPolymerBondCreationModelChange(
-            entity.firstMonomer,
-            entity.secondMonomer,
-            firstAttachmentPoint,
-            secondAttachmentPoint,
-            undefined,
-            entity,
-          );
-        }
-      } else if (entity instanceof HydrogenBond && entity.secondMonomer) {
-        drawingEntitiesManager.finishPolymerBondCreationModelChange(
-          entity.firstMonomer,
-          entity.secondMonomer,
-          AttachmentPointName.HYDROGEN,
-          AttachmentPointName.HYDROGEN,
-          MACROMOLECULES_BOND_TYPES.HYDROGEN,
-          entity,
-        );
-      }
-    });
+    const drawingEntitiesManager =
+      editor.drawingEntitiesManager.filterSelection();
     const ketSerializer = new KetSerializer();
     const serializedKet = ketSerializer.serialize(
       new Struct(),

@@ -38,6 +38,7 @@ import {
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { useState } from 'react';
 import { IconName } from 'ketcher-react';
+import { CalculateMacromoleculePropertiesButton } from 'components/CalculateMacromoleculesPropertiesButton';
 
 const shortcuts =
   generateMenuShortcuts<typeof hotkeysConfiguration>(hotkeysConfiguration);
@@ -162,6 +163,7 @@ export function TopMenuComponent() {
             type="button"
           />
         </Menu.Submenu>
+        <CalculateMacromoleculePropertiesButton />
       </Menu.Group>
     </Menu>
   );

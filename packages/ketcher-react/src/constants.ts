@@ -30,7 +30,7 @@ export const KETCHER_ROOT_NODE_CLASS_NAME = 'Ketcher-root';
 export const KETCHER_ROOT_NODE_CSS_SELECTOR = `.${KETCHER_ROOT_NODE_CLASS_NAME}`;
 
 export const ketcherIdCssSelector = (ketcherId: string) =>
-  `ketcher-id-${ketcherId}`;
+  `.ketcher-id-${ketcherId}`;
 
 export const EditorClassName = 'Ketcher-polymer-editor-root';
 export const KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR = `.${EditorClassName}`;

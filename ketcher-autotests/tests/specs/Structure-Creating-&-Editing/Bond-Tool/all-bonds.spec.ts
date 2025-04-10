@@ -296,7 +296,7 @@ test.describe(`Bond tool:`, () => {
       /**
        *   Test cases: EPMLSOPKET-1378, 1386, 1395, 1401, 1409, 1415, 1421, 1427, 1433, 1442, 1449, 1456, 2243, 2249
        */
-      const fileName = `Molfiles-V2000/saving-and-rendering-${bondTypeName}-bond.mol`;
+      const fileName = `Molfiles-V2000/saving-and-rendering-${bondTypeName}-bond-(refactored).mol`;
       test(`${bondTypeName}: Save to file`, async () => {
         await bondSelectionTool(page, bondType);
         await clickOnTheCanvas(page, -200, 0);
@@ -350,7 +350,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
     )?.[0];
 
     test(
-      `Manipulations with ${bondTypeName}`,
+      `Manipulations with ${bondTypeName} (refactored)`,
       {
         tag: ['@FlakyTest'],
       },

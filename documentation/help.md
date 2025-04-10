@@ -952,6 +952,8 @@ _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 | `Ctrl+Alt+R` | Change the sequence mode typing type to RNA |
 | `Ctrl+Alt+D` | Change the sequence mode typing type to DNA |
 | `Ctrl+Alt+P` | Change the sequence mode typing type to Peptide |
+| `Shift+Alt+R` | Create an RNA antisense strand |
+| `Shift+Alt+D` | Create a DNA antisense strand |
 
 **Help**
 | Shortcut        | Action |

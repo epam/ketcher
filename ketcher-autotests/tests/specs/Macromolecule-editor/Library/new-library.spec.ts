@@ -4,7 +4,6 @@ import {
   delay,
   MacroFileType,
   selectAllStructuresOnCanvas,
-  selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   takeMonomerLibraryScreenshot,
 } from '@utils/canvas';

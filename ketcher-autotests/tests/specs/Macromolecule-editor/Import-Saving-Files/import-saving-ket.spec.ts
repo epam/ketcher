@@ -40,6 +40,8 @@ import {
   markResetToDefaultState,
   processResetToDefaultState,
 } from '@utils/testAnnotations/resetToDefaultState';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 
@@ -386,7 +388,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
         `KET/Base-Templates/${data.fileName}.ket`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -416,7 +418,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
         `KET/CHEM-Templates/${data.fileName}.ket`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -446,7 +448,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
         `KET/Peptide-Templates/${data.fileName}.ket`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -476,7 +478,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
         `KET/Phosphate-Templates/${data.fileName}.ket`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -506,7 +508,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
         `KET/Sugar-Templates/${data.fileName}.ket`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);

@@ -42,7 +42,6 @@ import {
   selectFunctionalGroups,
   selectLayoutTool,
   selectLeftPanelButton,
-  selectMacroBond,
   selectMonomer,
   selectOptionInDropdown,
   selectRing,
@@ -77,7 +76,6 @@ import {
   addSuperatomAttachmentPoint,
   removeSuperatomAttachmentPoint,
 } from '@utils/canvas/atoms/superatomAttachmentPoints';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
@@ -98,7 +96,14 @@ import {
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  bondSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import {
+  MacroBondType,
+  MicroBondType,
+} from '@tests/pages/constants/bondSelectionTool/Constants';
 
 const topLeftCorner = {
   x: -325,
@@ -932,7 +937,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -970,7 +975,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -989,7 +994,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await removeSuperatomAttachmentPoint(page, 'C', 2);
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -1508,7 +1513,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'R3',
     );
     await turnOnMicromoleculesEditor(page);
-    await selectDropdownTool(page, 'bonds', 'bond-double');
+    await bondSelectionTool(page, MicroBondType.Double);
     const canvasLocator = page.getByTestId('ketcher-canvas');
     await canvasLocator.locator('path').nth(5).click();
     await takeEditorScreenshot(page);
@@ -1900,7 +1905,7 @@ test.describe('Macro-Micro-Switcher', () => {
         await enterSequence(page, 'a');
         await page.keyboard.press('Escape');
         await selectSnakeLayoutModeTool(page);
-        await selectMacroBond(page, MacroBondTool.SINGLE);
+        await bondSelectionTool(page, MacroBondType.Single);
         await page.getByText('F1').locator('..').hover();
         await waitForMonomerPreview(page);
         await takeEditorScreenshot(page);

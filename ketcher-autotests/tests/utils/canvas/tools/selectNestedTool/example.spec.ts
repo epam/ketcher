@@ -15,7 +15,7 @@ export {};
 // // shows the usage of selectNestedTool for autotesters
 // test('use tripple bond tool', async ({ page }) => {
 //   await waitForPageInit(page);
-//   await selectNestedTool(page, BondTool.TRIPPLE);
+//   await bondSelectionTool(page, MicroBondType.Triple);
 // });
 
 // test('use shape rectangle tool', async ({ page }) => {

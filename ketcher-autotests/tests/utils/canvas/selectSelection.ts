@@ -5,7 +5,7 @@ import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import { INPUT_DELAY } from '@utils/globals';
 import { moveMouseAway, waitForRender } from '..';
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 export async function cutAndPaste(page: Page) {
   const modifier = getControlModifier();

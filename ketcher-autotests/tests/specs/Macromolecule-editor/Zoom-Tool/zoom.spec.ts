@@ -19,7 +19,6 @@ import {
   clickOnMiddleOfCanvas,
   zoomWithMouseWheel,
   clickOnCanvas,
-  selectMacroBond,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
@@ -32,13 +31,14 @@ import {
   selectOpenFileTool,
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   connectMonomersWithBonds,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { goToRNATab } from '@utils/macromolecules/library';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
@@ -377,7 +377,7 @@ test.describe('Zoom Tool', () => {
         1,
       );
     }
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, { monomerAlias: '(R1,R2,R3,R4,R5)' }).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);

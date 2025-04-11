@@ -48,6 +48,8 @@ if (process.env.MODE === 'standalone') {
   }
 }
 
+const EXTERNAL_ZOOM_SCALE = 0.5;
+
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig();
   const [hasError, setHasError] = useState(false);
@@ -55,26 +57,35 @@ const App = () => {
 
   return (
     <>
-      <Editor
-        errorHandler={(message: string) => {
-          setHasError(true);
-          setErrorMessage(message.toString());
-        }}
-        buttons={hiddenButtonsConfig}
-        staticResourcesUrl={process.env.PUBLIC_URL}
-        structServiceProvider={structServiceProvider}
-        onInit={(ketcher: Ketcher) => {
-          window.ketcher = ketcher;
+      <div
+        style={{ transform: `scale(${EXTERNAL_ZOOM_SCALE})`, height: '100%' }}
+      >
+        <Editor
+          errorHandler={(message: string) => {
+            setHasError(true);
+            setErrorMessage(message.toString());
+          }}
+          buttons={hiddenButtonsConfig}
+          staticResourcesUrl={process.env.PUBLIC_URL}
+          structServiceProvider={structServiceProvider}
+          onInit={(ketcher: Ketcher) => {
+            ketcher.editor.setOptions(
+              JSON.stringify({
+                externalZoomScale: EXTERNAL_ZOOM_SCALE,
+              }),
+            );
+            window.ketcher = ketcher;
 
-          window.parent.postMessage(
-            {
-              eventType: 'init',
-            },
-            '*',
-          );
-          window.scrollTo(0, 0);
-        }}
-      />
+            window.parent.postMessage(
+              {
+                eventType: 'init',
+              },
+              '*',
+            );
+            window.scrollTo(0, 0);
+          }}
+        />
+      </div>
       {hasError && (
         <InfoModal
           message={errorMessage}

@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import { getToolType, openTool } from './helpers';
-import { DEFAULT_BONDS_MAIN_BUTTON_TEST_ID, TYPE_BOND } from './types';
-
+import { DEFAULT_BONDS_MAIN_BUTTON_TEST_ID } from './types';
+/*, TYPE_BOND */
 /**
  * Select specific tool that has sub / nested levels.
  * This helper rely on the keyboard and use "Tab" and "Enter" buttons

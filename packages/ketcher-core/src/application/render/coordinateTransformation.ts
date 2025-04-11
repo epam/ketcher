@@ -4,7 +4,7 @@ import { Scale } from 'domain/helpers';
 
 const canvasToView = (point: Vec2, render: Render) => {
   const offset = new Vec2(render.viewBox.minX, render.viewBox.minY);
-  let scaledPoint = point.sub(offset).scaled(render.options.zoom);
+  const scaledPoint = point.sub(offset).scaled(render.options.zoom);
   return scaledPoint.scaled(render.options.externalZoomScale ?? 1.0);
 };
 

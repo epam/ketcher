@@ -1,5 +1,4 @@
 import {
-  BondTool,
   RotateTool,
   ArrowTool,
   ReactionMappingTool,
@@ -11,7 +10,6 @@ export * from './helpers';
 
 export {
   selectNestedTool,
-  BondTool,
   RotateTool,
   ArrowTool,
   ReactionMappingTool,

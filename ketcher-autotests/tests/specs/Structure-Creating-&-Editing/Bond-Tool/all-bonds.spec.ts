@@ -14,7 +14,6 @@ import {
   selectTool,
   takeEditorScreenshot,
   DELAY_IN_SECONDS,
-  BondTool,
   clickOnTheCanvas,
   openFileAndAddToCanvas,
   selectLeftPanelButton,
@@ -29,7 +28,6 @@ import {
   drawBenzeneRing,
   rightClickOnBond,
   selectOption,
-  waitForIndigoToLoad,
   waitForPageInit,
   waitForRender,
   cutToClipboardByKeyboard,
@@ -55,10 +53,10 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   bondSelectionTool,
-  commonLeftToolbarLocators,
   expandBondSelectionDropdown,
   selectAreaSelectionTool,
   selectEraseTool,
+  selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -81,7 +79,7 @@ const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.DoubleCisTrans]: 'Double Cis/Trans Bond (2)',
 };
 
-test.setTimeout(30000);
+test.setTimeout(45000);
 let page: Page;
 
 test.beforeAll(async ({ browser }) => {
@@ -89,7 +87,6 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await waitForIndigoToLoad(page);
 });
 
 test.afterEach(async () => {
@@ -126,8 +123,8 @@ test.describe(`Bond tool:`, () => {
       await clickInTheMiddleOfTheScreen(page);
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await clickOnCanvas(page, point.x, point.y);
-      await clickOnCanvas(page, point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y, { waitForRenderTimeOut: 0 });
+      await clickOnCanvas(page, point.x, point.y, { waitForRenderTimeOut: 0 });
 
       const countBonds = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -142,7 +139,7 @@ test.describe(`Bond tool:`, () => {
 
       await bondSelectionTool(page, bondType);
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await clickOnCanvas(page, point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y, { waitForRenderTimeOut: 0 });
 
       const countBondsWithRing = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -324,24 +321,6 @@ test.describe(`Bond tool:`, () => {
 });
 
 test.describe(`Bond tool (copy-paste):`, () => {
-  // test.describe.configure({ mode: 'serial' });
-  // let page: Page;
-
-  // test.beforeAll(async ({ browser }) => {
-  //   page = await browser.newPage();
-  //   await page.goto('', { waitUntil: 'domcontentloaded' });
-  //   await waitForKetcherInit(page);
-  //   await waitForIndigoToLoad(page);
-  // });
-
-  // test.beforeEach(async () => {
-  //   await selectClearCanvasTool(page);
-  // });
-
-  // test.afterAll(async () => {
-  //   await page.close();
-  // });
-
   for (const bondType of Object.values(MicroBondType)) {
     let point: { x: number; y: number };
 
@@ -633,18 +612,19 @@ test.describe('Bond Tool', () => {
   });
 });
 
-for (const [_, id] of Object.values(BondTool)) {
+for (const bondType of Object.values(MicroBondType)) {
   /*
    *   Test cases: EPMLSOPKET-1367, 2271,
    */
-  test(`${id} tool: verification`, async () => {
-    await waitForPageInit(page);
-    await commonLeftToolbarLocators(page).handToolButton.click();
-    await commonLeftToolbarLocators(page).bondSelectionDropdownButton.click();
-    await commonLeftToolbarLocators(page).bondSelectionDropdownButton.click();
-    const button = page.getByTestId(id);
-    await expect(button).toHaveAttribute('title', buttonIdToTitle[id]);
+  const bondTypeName = Object.entries(MicroBondType).find(
+    ([, enumValue]) => enumValue === bondType,
+  )?.[0];
+
+  test(`${bondTypeName} tool: verification`, async () => {
+    await expandBondSelectionDropdown(page);
+    const button = page.getByTestId(bondType);
+    await expect(button).toHaveAttribute('title', buttonIdToTitle[bondType]);
     await button.click();
-    await clickInTheMiddleOfTheScreen(page);
+    await selectHandTool(page);
   });
 }

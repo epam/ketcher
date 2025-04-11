@@ -49,7 +49,6 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import {
   chooseTab,
-  enterSequence,
   Tabs,
   waitForMonomerPreview,
   zoomWithMouseWheel,
@@ -71,6 +70,10 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 let page: Page;
 
@@ -415,8 +418,8 @@ test.describe('Import-Saving .idt Files', () => {
     await selectSequenceLayoutModeTool(page);
     await clickOnSequenceSymbol(page, 'G', { button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await enterSequence(page, 'ttt');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'ttt');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
   });
 

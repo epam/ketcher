@@ -27,7 +27,7 @@ export async function ZoomInByKeyboard(page: Page) {
 export async function keyboardPressOnCanvas(
   page: Page,
   key: string,
-  options?: { delay?: number; waitForRenderTimeOut: number },
+  options?: { delay?: number; waitForRenderTimeOut?: number },
 ) {
   await waitForRender(
     page,
@@ -41,7 +41,7 @@ export async function keyboardPressOnCanvas(
 export async function keyboardTypeOnCanvas(
   page: Page,
   text: string,
-  options?: { delay?: number; waitForRenderTimeOut: number },
+  options?: { delay?: number; waitForRenderTimeOut?: number },
 ) {
   for (const char of text) {
     await keyboardPressOnCanvas(page, char, options);

@@ -27,11 +27,15 @@ export async function ZoomInByKeyboard(page: Page) {
 export async function keyboardPressOnCanvas(
   page: Page,
   key: string,
-  options?: { delay?: number },
+  options?: { delay?: number; waitForRenderTimeOut: number },
 ) {
-  await waitForRender(page, async () => {
-    await page.keyboard.press(key, options);
-  });
+  await waitForRender(
+    page,
+    async () => {
+      await page.keyboard.press(key, options);
+    },
+    options?.waitForRenderTimeOut,
+  );
 }
 
 export async function keyboardTypeOnCanvas(

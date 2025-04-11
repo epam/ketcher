@@ -354,7 +354,7 @@ export async function addSingleMonomerToCanvas(
   index: number,
 ) {
   await page.getByTestId(monomer.testId).click();
-  await clickOnCanvas(page, positionX, positionY);
+  await clickOnCanvas(page, positionX, positionY, { waitForRenderTimeOut: 0 });
   await hideMonomerPreview(page);
   return getMonomerLocator(page, monomer).nth(index);
 }

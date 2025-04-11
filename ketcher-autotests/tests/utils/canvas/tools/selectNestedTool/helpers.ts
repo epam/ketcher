@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test';
 import {
-  TYPE_BOND,
+  // TYPE_BOND,
   // REMOVE in the future
   TYPE_SELECT,
   TYPE_TRANSFORM,
@@ -8,7 +8,7 @@ import {
   TYPE_REACTION,
   TYPE_R_GROUP,
   TYPE_SHAPE,
-  BondTool,
+  // BondTool,
   RotateTool,
   ArrowTool,
   ReactionMappingTool,
@@ -45,9 +45,9 @@ export const getToolType = (toolName: string) => {
   }
 
   switch (toolType) {
-    case TYPE_BOND:
-      toolType = BondTool;
-      break;
+    // case TYPE_BOND:
+    //   toolType = BondTool;
+    //   break;
     // case TYPE_SELECT:
     //   toolType = SelectTool;
     //   break;

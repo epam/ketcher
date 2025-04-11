@@ -25,7 +25,10 @@ import {
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { keyboardPressOnCanvas, keyboardTypeOnCanvas } from '@utils/keyboard/index';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 test.describe('Sequence Mode', () => {
   test.beforeEach(async ({ page }) => {

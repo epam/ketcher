@@ -14,7 +14,6 @@ import {
   selectTool,
   takeEditorScreenshot,
   DELAY_IN_SECONDS,
-  BondTool,
   clickOnTheCanvas,
   openFileAndAddToCanvas,
   selectLeftPanelButton,
@@ -29,7 +28,6 @@ import {
   drawBenzeneRing,
   rightClickOnBond,
   selectOption,
-  waitForIndigoToLoad,
   waitForPageInit,
   waitForRender,
   cutToClipboardByKeyboard,
@@ -55,7 +53,6 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   bondSelectionTool,
-  commonLeftToolbarLocators,
   expandBondSelectionDropdown,
   selectAreaSelectionTool,
   selectEraseTool,
@@ -89,7 +86,6 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await waitForIndigoToLoad(page);
 });
 
 test.afterEach(async () => {
@@ -324,24 +320,6 @@ test.describe(`Bond tool:`, () => {
 });
 
 test.describe(`Bond tool (copy-paste):`, () => {
-  // test.describe.configure({ mode: 'serial' });
-  // let page: Page;
-
-  // test.beforeAll(async ({ browser }) => {
-  //   page = await browser.newPage();
-  //   await page.goto('', { waitUntil: 'domcontentloaded' });
-  //   await waitForKetcherInit(page);
-  //   await waitForIndigoToLoad(page);
-  // });
-
-  // test.beforeEach(async () => {
-  //   await selectClearCanvasTool(page);
-  // });
-
-  // test.afterAll(async () => {
-  //   await page.close();
-  // });
-
   for (const bondType of Object.values(MicroBondType)) {
     let point: { x: number; y: number };
 
@@ -633,17 +611,18 @@ test.describe('Bond Tool', () => {
   });
 });
 
-for (const [_, id] of Object.values(BondTool)) {
+for (const bondType of Object.values(MicroBondType)) {
   /*
    *   Test cases: EPMLSOPKET-1367, 2271,
    */
-  test(`${id} tool: verification`, async () => {
-    await waitForPageInit(page);
-    await commonLeftToolbarLocators(page).handToolButton.click();
-    await commonLeftToolbarLocators(page).bondSelectionDropdownButton.click();
-    await commonLeftToolbarLocators(page).bondSelectionDropdownButton.click();
-    const button = page.getByTestId(id);
-    await expect(button).toHaveAttribute('title', buttonIdToTitle[id]);
+  const bondTypeName = Object.entries(MicroBondType).find(
+    ([, enumValue]) => enumValue === bondType,
+  )?.[0];
+
+  test(`${bondTypeName} tool: verification`, async () => {
+    await expandBondSelectionDropdown(page);
+    const button = page.getByTestId(bondType);
+    await expect(button).toHaveAttribute('title', buttonIdToTitle[bondType]);
     await button.click();
     await clickInTheMiddleOfTheScreen(page);
   });

@@ -18,7 +18,6 @@ import {
   SymbolType,
   takeEditorScreenshot,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 import {
   selectClearCanvasTool,

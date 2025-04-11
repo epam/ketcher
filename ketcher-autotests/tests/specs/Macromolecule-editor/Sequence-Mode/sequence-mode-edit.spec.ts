@@ -31,13 +31,12 @@ import {
   typePeptideAlphabet,
   typeRNADNAAlphabet,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {waitForMonomerPreview } from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   createDNAAntisenseChain,
@@ -66,7 +65,10 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { keyboardPressOnCanvas, keyboardTypeOnCanvas } from '@utils/keyboard/index';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await bondSelectionTool(page, MacroBondType.Single);

@@ -25,7 +25,6 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectUndoByKeyboard,
-  waitForRender,
   getControlModifier,
 } from '@utils';
 import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';

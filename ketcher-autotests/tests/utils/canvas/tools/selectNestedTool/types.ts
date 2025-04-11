@@ -2,7 +2,7 @@ import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { DropdownToolIds } from '@utils/clicks/types';
 
 /* eslint-disable no-magic-numbers */
-export const TYPE_BOND = 'bond';
+// export const TYPE_BOND = 'bond';
 export const TYPE_SELECT = 'select';
 export const TYPE_TRANSFORM = 'transform';
 export const TYPE_REACTION_ARROW = 'reactionarrow';

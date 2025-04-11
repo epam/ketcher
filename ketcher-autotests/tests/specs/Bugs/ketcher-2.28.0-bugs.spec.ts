@@ -59,7 +59,10 @@ import {
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { keyboardPressOnCanvas, keyboardTypeOnCanvas } from '@utils/keyboard/index';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 declare global {
   interface Window {

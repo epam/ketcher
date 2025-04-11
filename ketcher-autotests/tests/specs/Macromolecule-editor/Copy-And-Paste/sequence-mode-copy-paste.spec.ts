@@ -28,7 +28,10 @@ import {
   getSequenceSymbolLocator,
   selectSequenceRangeInEditMode,
 } from '@utils/macromolecules/sequence';
-import { keyboardPressOnCanvas, keyboardTypeOnCanvas } from '@utils/keyboard/index';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 const ZOOM_OUT_VALUE = 400;
 const SCROLL_DOWN_VALUE = 250;

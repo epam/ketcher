@@ -6,6 +6,7 @@ import {
   TYPE_REACTION,
   TYPE_R_GROUP,
   TYPE_SHAPE,
+  BondTool,
   RotateTool,
   ArrowTool,
   ReactionMappingTool,

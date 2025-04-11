@@ -10,10 +10,10 @@ import {
   REMOTE_POPUP_URL,
 } from './constants';
 import path from 'path';
-// Addign global beforeEach from testSetup
-// import './tests/testSetup';
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
+// Addign global beforeEach from testSetup
+// import './tests/testSetup';
 
 function baseURLFullScale(): string {
   if (!process.env.MODE || !process.env.KETCHER_URL) {

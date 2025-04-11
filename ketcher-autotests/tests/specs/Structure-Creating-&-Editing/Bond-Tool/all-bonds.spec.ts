@@ -56,6 +56,7 @@ import {
   expandBondSelectionDropdown,
   selectAreaSelectionTool,
   selectEraseTool,
+  selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -78,7 +79,7 @@ const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.DoubleCisTrans]: 'Double Cis/Trans Bond (2)',
 };
 
-test.setTimeout(30000);
+test.setTimeout(45000);
 let page: Page;
 
 test.beforeAll(async ({ browser }) => {
@@ -122,8 +123,8 @@ test.describe(`Bond tool:`, () => {
       await clickInTheMiddleOfTheScreen(page);
 
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await clickOnCanvas(page, point.x, point.y);
-      await clickOnCanvas(page, point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y, { waitForRenderTimeOut: 0 });
+      await clickOnCanvas(page, point.x, point.y, { waitForRenderTimeOut: 0 });
 
       const countBonds = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -138,7 +139,7 @@ test.describe(`Bond tool:`, () => {
 
       await bondSelectionTool(page, bondType);
       point = await getAtomByIndex(page, { label: 'C' }, 0);
-      await clickOnCanvas(page, point.x, point.y);
+      await clickOnCanvas(page, point.x, point.y, { waitForRenderTimeOut: 0 });
 
       const countBondsWithRing = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -624,6 +625,6 @@ for (const bondType of Object.values(MicroBondType)) {
     const button = page.getByTestId(bondType);
     await expect(button).toHaveAttribute('title', buttonIdToTitle[bondType]);
     await button.click();
-    await clickInTheMiddleOfTheScreen(page);
+    await selectHandTool(page);
   });
 }

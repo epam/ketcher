@@ -53,15 +53,15 @@ export async function selectEraseTool(page: Page) {
 export async function expandBondSelectionDropdown(page: Page) {
   const bondSelectionDropdownExpandButton =
     commonLeftToolbarLocators(page).bondSelectionDropdownExpandButton;
-  await selectHandTool(page);
-  const bondSelectionDropdownButton =
-    commonLeftToolbarLocators(page).bondSelectionDropdownButton;
-  await bondSelectionDropdownButton.click({ force: true });
-  await bondSelectionDropdownButton.click({ force: true });
+  await bondSelectionDropdownExpandButton.click({ force: true });
 
   if (await bondSelectionDropdownExpandButton.isVisible()) {
-    // alternative way to open the dropdown
-    await bondSelectionDropdownExpandButton.click({ force: true });
+    // alternative way to open the dropdown (doesn't work on Macro mode)
+    await selectHandTool(page);
+    const bondSelectionDropdownButton =
+      commonLeftToolbarLocators(page).bondSelectionDropdownButton;
+    await bondSelectionDropdownButton.click({ force: true });
+    await bondSelectionDropdownButton.click({ force: true });
   }
 }
 

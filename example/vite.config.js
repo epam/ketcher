@@ -219,4 +219,5 @@ export default defineConfig({
     ],
   },
   customLogger: logger,
+  tsconfig: './tsconfig.json',
 });

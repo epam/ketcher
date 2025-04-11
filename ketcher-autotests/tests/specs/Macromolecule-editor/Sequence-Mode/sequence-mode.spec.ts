@@ -20,8 +20,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   takeTopToolbarScreenshot,
   selectAllStructuresOnCanvas,
-  keyboardTypeOnCanvas,
-  keyboardPressOnCanvas,
 } from '@utils';
 import {
   pressUndoButton,
@@ -29,6 +27,10 @@ import {
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 import { createAntisenseStrandByButton } from '@utils/macromolecules/monomer';
 import { switchToDNAMode } from '@utils/macromolecules/sequence';
 

@@ -21,10 +21,16 @@ import { Button, Popover } from '@mui/material';
 import { zoomList } from 'src/script/ui/action/zoom';
 import { ZoomInput, updateInputString } from './ZoomInput';
 import { Icon } from 'components';
-import {
-  KETCHER_ROOT_NODE_CSS_SELECTOR,
-  KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR,
-} from 'src/constants';
+import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
+
+const isFullScreen = () => {
+  return !!(
+    document.fullscreenElement ||
+    document.mozFullScreenElement ||
+    document.webkitFullscreenElement ||
+    document.msFullscreenElement
+  );
+};
 
 const ElementAndDropdown = styled('div')`
   position: relative;
@@ -173,8 +179,10 @@ export const ZoomControls = ({
         onClose={onClose}
         anchorEl={containerRef.current}
         container={
-          document.querySelector(KETCHER_ROOT_NODE_CSS_SELECTOR) ||
-          document.querySelector(KETCHER_MACROMOLECULES_ROOT_NODE_SELECTOR)
+          isFullScreen()
+            ? containerRef.current?.closest(KETCHER_ROOT_NODE_CSS_SELECTOR) ??
+              document.body
+            : undefined
         }
         anchorOrigin={{
           vertical: 'bottom',

@@ -11,8 +11,6 @@ import { Page, test } from '@playwright/test';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
-  keyboardPressOnCanvas,
-  keyboardTypeOnCanvas,
   MacroFileType,
   Monomer,
   moveMouseAway,

@@ -76,7 +76,12 @@ const MenuItem = ({
           disabled={disabled}
         />
       ) : (
-        <MenuButton title={title} onClick={onClickCallback} disabled={disabled}>
+        <MenuButton
+          title={title}
+          onClick={onClickCallback}
+          disabled={disabled}
+          data-testid={testId}
+        >
           {title}
         </MenuButton>
       )}

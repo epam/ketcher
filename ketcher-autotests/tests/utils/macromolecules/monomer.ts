@@ -1,4 +1,4 @@
-import { Locator, Page, expect } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
   dragMouseTo,
@@ -253,30 +253,17 @@ export async function createAntisenseStrandByButton(
   page: Page,
   chosenType?: 'RNA' | 'DNA',
 ) {
-  const rnaButton = page.getByTestId('antisenseRnaStrand').first();
-  const dnaButton = page.getByTestId('antisenseDnaStrand').first();
-  if (await rnaButton.isVisible().catch(() => false)) {
-    await rnaButton.click();
-    return;
-  }
-  if (await dnaButton.isVisible().catch(() => false)) {
-    await dnaButton.click();
-    return;
-  }
-  const dropdownTrigger = page.getByRole('button', {
-    name: 'Create Antisense Strand',
-  });
+  const dropdownTrigger = page.getByTestId('Create Antisense Strand').first();
   await dropdownTrigger.click();
-  if (chosenType) {
-    const title =
-      chosenType === 'RNA'
-        ? 'Create RNA Antisense Strand (Shift+Alt+R)'
-        : 'Create DNA Antisense Strand (Shift+Alt+D)';
 
-    const dropdownOption = page.getByTitle(title);
-    await expect(dropdownOption).toBeVisible();
-    await dropdownOption.click();
-  }
+  if (!chosenType) return;
+
+  const optionTestId =
+    chosenType === 'RNA' ? 'antisenseRnaStrand' : 'antisenseDnaStrand';
+
+  const optionButton = page.getByTestId(optionTestId).first();
+  await optionButton.waitFor({ state: 'visible' });
+  await optionButton.click();
 }
 
 export async function modifyInRnaBuilder(page: Page, symbolLocator: Locator) {

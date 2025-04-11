@@ -249,6 +249,23 @@ export async function createRNAAntisenseChain(page: Page, monomer: Locator) {
   await createAntisenseStrandOption.click();
 }
 
+export async function createAntisenseStrandByButton(
+  page: Page,
+  chosenType?: 'RNA' | 'DNA',
+) {
+  const dropdownTrigger = page.getByTestId('Create Antisense Strand').first();
+  await dropdownTrigger.click();
+
+  if (!chosenType) return;
+
+  const optionTestId =
+    chosenType === 'RNA' ? 'antisenseRnaStrand' : 'antisenseDnaStrand';
+
+  const optionButton = page.getByTestId(optionTestId).first();
+  await optionButton.waitFor({ state: 'visible' });
+  await optionButton.click();
+}
+
 export async function modifyInRnaBuilder(page: Page, symbolLocator: Locator) {
   await symbolLocator.click({ button: 'right' });
   await page.getByTestId('modify_in_rna_builder').click();

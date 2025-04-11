@@ -83,11 +83,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  Tabs,
-  chooseTab,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { Tabs, chooseTab, waitForMonomerPreview } from '@utils/macromolecules';
 import { goToRNATab, goToTab } from '@utils/macromolecules/library';
 import {
   getMonomerLocator,

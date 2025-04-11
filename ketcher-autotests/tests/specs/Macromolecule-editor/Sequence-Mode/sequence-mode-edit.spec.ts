@@ -31,13 +31,12 @@ import {
   typePeptideAlphabet,
   typeRNADNAAlphabet,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {waitForMonomerPreview } from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   createDNAAntisenseChain,
@@ -66,11 +65,19 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { keyboardPressOnCanvas, keyboardTypeOnCanvas } from '@utils/keyboard/index';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await bondSelectionTool(page, MacroBondType.Single);
   await getMonomerLocator(page, monomer).nth(nth).hover();
+}
+
+async function callContextMenuForAnySymbol(page: Page) {
+  const anySymbol = getSymbolLocator(page, {}).first();
+  await anySymbol.click({ button: 'right', force: true });
 }
 
 test.describe('Sequence edit mode', () => {
@@ -117,6 +124,7 @@ test.describe('Sequence edit mode', () => {
   });
 
   test('Add/edit sequence', async ({ page }) => {
+    test.slow();
     await startNewSequence(page);
     await typeRNADNAAlphabet(page);
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
@@ -396,6 +404,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Peptide type of monomer in the library appears.
     */
     await selectMonomer(page, Peptides.A);
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 
@@ -1436,6 +1445,235 @@ test.describe('Sequence edit mode', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await turnSyncEditModeOff(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Verify that options "Copy", "Paste" and "Delete" added to the r-click drop down menu', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6472
+     * Description: Options "Copy", "Paste" and "Delete" added to the r-click drop down menu.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "ACGTU" in the sequence
+     * 3. Right click on the monomer
+     * 4. Take a screenshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that when monomers are selected "Copy" will copy the selected monomers, "Paste" will replace them by the pasted monomers, and "Delete" will delete them', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6472
+     * Description: When monomers are selected "Copy" will copy the selected monomers, "Paste" will replace them by the pasted monomers, and "Delete" will delete them.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "ACGTU" in the sequence
+     * 3. Right click on the monomer
+     * 4. Select "Copy"
+     * 5. Paste the copied monomers, then select all monomers
+     * 6. Delete the selected monomers through the r-click drop down menu
+     * 7. Take a screenshot
+     * After fix https://github.com/epam/ketcher/issues/6824 we should update snapshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('copy').click();
+    await keyboardPressOnCanvas(page, 'Escape');
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('paste').click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('delete').click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that R-clicking on a sequence when no monomers are selected "Copy" and "Delete" are disabled', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6472
+     * Description: R-clicking on a sequence when no monomers are selected "Copy" and "Delete" are disabled.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "ACGTU" in the sequence
+     * 3. Right click on the any monomer without selection it
+     * 4. Take a screenshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await callContextMenuForAnySymbol(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that when r-clicking outside of the sequence "Copy" and "Delete" disabled, and "Paste" enabled', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6472
+     * Description: When r-clicking outside of the sequence "Copy" and "Delete" disabled, and "Paste" enabled.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "ACGTU" in the sequence
+     * 3. Right click on the canvas
+     * 4. Take a screenshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await clickOnCanvas(page, 400, 400, { button: 'right' });
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that copied and pasted structures through r-click menu can be saved and then opened (KET)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6472
+     * Description: Copied and pasted structures through r-click menu can be saved and then opened (KET).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "ACGTU" in the sequence
+     * 3. Right click on the monomer
+     * 4. Select "Copy"
+     * 5. Paste the copied monomers, then select all monomers
+     * 6. Save to KET and open saved file
+     * 7. Take a screenshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('copy').click();
+    await keyboardPressOnCanvas(page, 'Escape');
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('paste').click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await verifyFileExport(
+      page,
+      'KET/acgtu-monomers-copied-by-right-click-menu-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/acgtu-monomers-copied-by-right-click-menu-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that copied and pasted structures through r-click menu can be saved and then opened (MOL V3000)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6472
+     * Description: Copied and pasted structures through r-click menu can be saved and then opened (MOL V3000).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "ACGTU" in the sequence
+     * 3. Right click on the monomer
+     * 4. Select "Copy"
+     * 5. Paste the copied monomers, then select all monomers
+     * 6. Save to MOL V3000 and open saved file
+     * 7. Take a screenshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('copy').click();
+    await keyboardPressOnCanvas(page, 'Escape');
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('paste').click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/acgtu-monomers-copied-by-right-click-menu-expected.mol',
+      FileType.MOL,
+      'v3000',
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/acgtu-monomers-copied-by-right-click-menu-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that deleted structures through r-click menu can be undo and redo', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6472
+     * Description: Deleted structures through r-click menu can be undo and redo.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "ACGTU" in the sequence
+     * 3. Right click on the monomer
+     * 4. Select "Copy"
+     * 5. Clear the canvas
+     * 6. Paste the copied monomers, then select all monomers
+     * 7. Delete the selected monomers through the r-click drop down menu
+     * 8. Undo the deletion and Redo it
+     * 9. Take a screenshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('copy').click();
+    await keyboardPressOnCanvas(page, 'Escape');
+    await selectClearCanvasTool(page);
+    await clickOnCanvas(page, 400, 400, { button: 'right' });
+    await page.getByTestId('paste').click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('delete').click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await pressUndoButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await pressRedoButton(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

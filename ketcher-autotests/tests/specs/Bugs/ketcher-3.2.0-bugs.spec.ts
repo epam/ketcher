@@ -58,7 +58,10 @@ import {
   switchToPeptideMode,
 } from '@utils/macromolecules/sequence';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
-import { keyboardPressOnCanvas, keyboardTypeOnCanvas } from '@utils/keyboard/index';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 let page: Page;
 

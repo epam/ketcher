@@ -57,7 +57,10 @@ import {
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
-import { keyboardPressOnCanvas, keyboardTypeOnCanvas } from '@utils/keyboard/index';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 let page: Page;
 
@@ -408,7 +411,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 4. Take a screenshot
      */
     await selectSequenceLayoutModeTool(page);
-    await keyboardTypeOnCanvas(page, 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+    await keyboardTypeOnCanvas(
+      page,
+      'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+    );
     await page.keyboard.down('Shift');
     for (let i = 0; i < 2; i++) {
       await keyboardPressOnCanvas(page, 'ArrowUp');

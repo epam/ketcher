@@ -38,7 +38,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { enterSequence, waitForMonomerPreview } from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   createDNAAntisenseChain,
@@ -67,6 +67,10 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await bondSelectionTool(page, MacroBondType.Single);
@@ -109,7 +113,7 @@ test.describe('Sequence edit mode', () => {
     await clickOnCanvas(page, x, y, { button: 'right' });
     await takeEditorScreenshot(page);
     await page.getByTestId('start_new_sequence').click();
-    await enterSequence(page, 'acgtu');
+    await keyboardTypeOnCanvas(page, 'acgtu');
     await keyboardPressOnCanvas(page, 'Escape');
     await page
       .locator('g.drawn-structures')
@@ -146,7 +150,7 @@ test.describe('Sequence edit mode', () => {
     const x = 400;
     const y = 400;
     await startNewSequence(page);
-    await enterSequence(page, 'acgtu');
+    await keyboardTypeOnCanvas(page, 'acgtu');
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
@@ -160,7 +164,7 @@ test.describe('Sequence edit mode', () => {
     Description: Exiting text-editing mode occurs with a click Escape on keyboard.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'acgtu');
+    await keyboardTypeOnCanvas(page, 'acgtu');
     await takeEditorScreenshot(page);
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
@@ -174,7 +178,7 @@ test.describe('Sequence edit mode', () => {
     Description: After entering, only letters allowed for RNA are present on the canvas.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'atgcuqweropzxc');
+    await keyboardTypeOnCanvas(page, 'atgcuqweropzxc');
     await takeEditorScreenshot(page);
   });
 
@@ -187,7 +191,7 @@ test.describe('Sequence edit mode', () => {
     */
     await startNewSequence(page);
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
-    await enterSequence(page, 'atgcuqweropzxc');
+    await keyboardTypeOnCanvas(page, 'atgcuqweropzxc');
     await takeEditorScreenshot(page);
   });
 
@@ -198,7 +202,7 @@ test.describe('Sequence edit mode', () => {
     */
     await startNewSequence(page);
     await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
-    await enterSequence(page, 'abcdefghijklmnopqrstuvwxyz');
+    await keyboardTypeOnCanvas(page, 'abcdefghijklmnopqrstuvwxyz');
     await takeEditorScreenshot(page);
   });
 
@@ -210,11 +214,11 @@ test.describe('Sequence edit mode', () => {
     Description: Enter starts a new chain aligned at the beginning of a new row.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'atgcu');
+    await keyboardTypeOnCanvas(page, 'atgcu');
     await keyboardPressOnCanvas(page, 'Enter');
-    await enterSequence(page, 'ucgta');
+    await keyboardTypeOnCanvas(page, 'ucgta');
     await keyboardPressOnCanvas(page, 'Enter');
-    await enterSequence(page, 'tacgu');
+    await keyboardTypeOnCanvas(page, 'tacgu');
     await takeEditorScreenshot(page);
   });
 
@@ -232,7 +236,7 @@ test.describe('Sequence edit mode', () => {
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await enterSequence(page, 'u');
+    await keyboardPressOnCanvas(page, 'u');
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
@@ -254,7 +258,7 @@ test.describe('Sequence edit mode', () => {
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await enterSequence(page, 'u');
+    await keyboardPressOnCanvas(page, 'u');
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
@@ -274,7 +278,7 @@ test.describe('Sequence edit mode', () => {
     await clickOnSequenceSymbol(page, 'T', { button: 'right' });
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await page.getByTestId('edit_sequence').click();
-    await enterSequence(page, 'u');
+    await keyboardPressOnCanvas(page, 'u');
     await takeEditorScreenshot(page);
   });
 
@@ -293,7 +297,7 @@ test.describe('Sequence edit mode', () => {
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await enterSequence(page, 'u');
+    await keyboardPressOnCanvas(page, 'u');
     await keyboardPressOnCanvas(page, 'Escape');
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
@@ -313,7 +317,7 @@ test.describe('Sequence edit mode', () => {
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await keyboardPressOnCanvas(page, 'ArrowRight');
-    await enterSequence(page, 'a');
+    await keyboardPressOnCanvas(page, 'a');
     await takeEditorScreenshot(page);
   });
 
@@ -328,9 +332,11 @@ test.describe('Sequence edit mode', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await startNewSequence(page);
-    await enterSequence(page, 'aaaaaaaaaa');
+    await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
+
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'ArrowLeft');
+
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });
@@ -505,7 +511,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4887
     Description: It is possible to start new sequence by using UI that appears if user hover mouse between squences or below bottom sequence or above the top sequence.
     */
-    await enterSequence(page, 'aaaaaaaaaa');
+    await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
     await page.getByTestId('ketcher-canvas').locator('div').click();
     await takeEditorScreenshot(page);
   });
@@ -518,7 +524,7 @@ test.describe('Sequence edit mode', () => {
     Description: Hover mouse over any letter in sequence, cursor displayed as a arrow.
     */
     await switchToRNAMode(page);
-    await enterSequence(page, 'aaaaaaaaaa');
+    await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
     await hoverOnSequenceSymbol(page, 'A', 0);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
@@ -531,7 +537,7 @@ test.describe('Sequence edit mode', () => {
     Test case: #4888
     Description: Hover mouse between two letters in sequence, cursor displayed as a caret.
     */
-    await enterSequence(page, 'aaaagaaaaaa');
+    await keyboardTypeOnCanvas(page, 'aaaagaaaaaa');
     await clickOnSequenceSymbol(page, 'G');
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -561,7 +567,7 @@ test.describe('Sequence edit mode', () => {
     */
     const sequenceSymbols = ['a', 'c', 'g', 'u', 't'];
     for (const symbol of sequenceSymbols) {
-      await enterSequence(page, symbol);
+      await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
       await selectClearCanvasTool(page);
     }
@@ -576,7 +582,7 @@ test.describe('Sequence edit mode', () => {
     */
     const sequenceSymbols = ['d', 'e', 'f'];
     for (const symbol of sequenceSymbols) {
-      await enterSequence(page, symbol);
+      await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
       await selectClearCanvasTool(page);
     }
@@ -593,7 +599,7 @@ test.describe('Sequence edit mode', () => {
     const sequenceSymbols = ['a', 'c', 'g', 'u', 't'];
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     for (const symbol of sequenceSymbols) {
-      await enterSequence(page, symbol);
+      await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
       await selectClearCanvasTool(page);
     }
@@ -609,7 +615,7 @@ test.describe('Sequence edit mode', () => {
     const sequenceSymbols = ['d', 'e', 'f'];
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     for (const symbol of sequenceSymbols) {
-      await enterSequence(page, symbol);
+      await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
       await selectClearCanvasTool(page);
     }
@@ -647,7 +653,7 @@ test.describe('Sequence edit mode', () => {
     ];
     await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     for (const symbol of sequenceSymbols) {
-      await enterSequence(page, symbol);
+      await keyboardPressOnCanvas(page, symbol);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await selectClearCanvasTool(page);
@@ -664,7 +670,7 @@ test.describe('Sequence edit mode', () => {
     const sequenceSymbols = ['b', 'j', 'z'];
     await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     for (const symbol of sequenceSymbols) {
-      await enterSequence(page, symbol);
+      await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
       await selectClearCanvasTool(page);
     }

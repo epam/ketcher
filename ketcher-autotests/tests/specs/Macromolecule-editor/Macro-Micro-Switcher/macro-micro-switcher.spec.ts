@@ -83,12 +83,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  Tabs,
-  chooseTab,
-  enterSequence,
-  waitForMonomerPreview,
-} from '@utils/macromolecules';
+import { Tabs, chooseTab, waitForMonomerPreview } from '@utils/macromolecules';
 import { goToRNATab, goToTab } from '@utils/macromolecules/library';
 import {
   getMonomerLocator,
@@ -104,6 +99,7 @@ import {
   MacroBondType,
   MicroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 
 const topLeftCorner = {
   x: -325,
@@ -953,13 +949,13 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     const modifier = getControlModifier();
-    await page.keyboard.press(`${modifier}+a`);
+    await keyboardPressOnCanvas(page, `${modifier}+a`);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await takeEditorScreenshot(page);
     await selectEraseTool(page);
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
-    await page.keyboard.press(`${modifier}+a`);
+    await keyboardPressOnCanvas(page, `${modifier}+a`);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await takeEditorScreenshot(page);
   });
@@ -1901,9 +1897,9 @@ test.describe('Macro-Micro-Switcher', () => {
 
         await clickOnSequenceSymbol(page, '@', { button: 'right' });
         await page.getByTestId('edit_sequence').click();
-        await page.keyboard.press('ArrowRight');
-        await enterSequence(page, 'a');
-        await page.keyboard.press('Escape');
+        await keyboardPressOnCanvas(page, 'ArrowRight');
+        await keyboardPressOnCanvas(page, 'a');
+        await keyboardPressOnCanvas(page, 'Escape');
         await selectSnakeLayoutModeTool(page);
         await bondSelectionTool(page, MacroBondType.Single);
         await page.getByText('F1').locator('..').hover();
@@ -1939,8 +1935,8 @@ test.describe('Macro-Micro-Switcher', () => {
 
         await clickOnSequenceSymbol(page, '@', { button: 'right' });
         await page.getByTestId('edit_sequence').click();
-        await page.keyboard.press('ArrowRight');
-        await enterSequence(page, 'a');
+        await keyboardPressOnCanvas(page, 'ArrowRight');
+        await keyboardPressOnCanvas(page, 'a');
         await takeEditorScreenshot(page);
       },
     );

@@ -76,6 +76,10 @@ import {
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 let page: Page;
 
@@ -169,8 +173,8 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'CCC',
     ];
     for (const sequence of sequences) {
-      await page.keyboard.type(sequence);
-      await page.keyboard.press('Enter');
+      await keyboardTypeOnCanvas(page, sequence);
+      await keyboardPressOnCanvas(page, 'Enter');
     }
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -300,8 +304,8 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     const symbolU = getSymbolLocator(page, { symbolAlias: 'U' }).first();
     await symbolU.click();
     await modifyInRnaBuilder(page, symbolU);
-    await page.keyboard.press('Enter');
-    await page.keyboard.type('AAA');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await keyboardTypeOnCanvas(page, 'AAA');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -351,10 +355,8 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await copyToClipboardByKeyboard(page);
     await selectClearCanvasTool(page);
     await selectSequenceLayoutModeTool(page);
-    await page.keyboard.press('U');
-    await page.keyboard.press('U');
-    await page.keyboard.press('U');
-    await page.keyboard.press('ArrowUp');
+    await keyboardTypeOnCanvas(page, 'UUU');
+    await keyboardPressOnCanvas(page, 'ArrowUp');
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -468,15 +470,15 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Take a screenshot
      */
     await switchToRNAMode(page);
-    await page.keyboard.type('AAATT');
+    await keyboardTypeOnCanvas(page, 'AAATT');
     await switchToDNAMode(page);
-    await page.keyboard.type('AAATT');
+    await keyboardTypeOnCanvas(page, 'AAATT');
     await switchToPeptideMode(page);
-    await page.keyboard.type('AAATT');
+    await keyboardTypeOnCanvas(page, 'AAATT');
     for (let i = 0; i < 3; i++) {
       await pressUndoButton(page);
     }
-    await page.keyboard.press('Enter');
+    await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -495,16 +497,16 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Repeat p.2
      * 5. Take a screenshot
      */
-    await page.keyboard.type('AAATT');
-    await page.keyboard.press('Enter');
-    await page.keyboard.type('AAATT');
-    await page.keyboard.press('Enter');
-    await page.keyboard.type('AAATT');
-    await page.keyboard.press('Enter');
+    await keyboardTypeOnCanvas(page, 'AAATT');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await keyboardTypeOnCanvas(page, 'AAATT');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await keyboardTypeOnCanvas(page, 'AAATT');
+    await keyboardPressOnCanvas(page, 'Enter');
     await selectClearCanvasTool(page);
-    await page.keyboard.type('AAATT');
-    await page.keyboard.press('Enter');
-    await page.keyboard.type('AAATT');
+    await keyboardTypeOnCanvas(page, 'AAATT');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await keyboardTypeOnCanvas(page, 'AAATT');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -524,17 +526,17 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Take a screenshot
      */
     await switchToRNAMode(page);
-    await page.keyboard.type('AAATT');
+    await keyboardTypeOnCanvas(page, 'AAATT');
     await page.keyboard.down('Shift');
     for (let i = 0; i < 3; i++) {
-      await page.keyboard.press('ArrowLeft');
+      await keyboardPressOnCanvas(page, 'ArrowLeft');
     }
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await page.keyboard.up('Shift');
-    await page.keyboard.press('ArrowLeft');
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

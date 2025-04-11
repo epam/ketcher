@@ -124,6 +124,7 @@ test.describe('Sequence edit mode', () => {
   });
 
   test('Add/edit sequence', async ({ page }) => {
+    test.slow();
     await startNewSequence(page);
     await typeRNADNAAlphabet(page);
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);

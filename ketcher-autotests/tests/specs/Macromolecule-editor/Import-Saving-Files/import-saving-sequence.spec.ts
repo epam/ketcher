@@ -238,7 +238,7 @@ test.describe('Import-Saving .seq Files', () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.1 Verify saving ambiguous peptides (with mapping, alternatives) in Sequence format (macro mode)
-    Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
+    Case: 1. Load ambiguous peptides (that have mapping to library) from KET
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
           4. Take screenshot to make sure export is correct
@@ -265,7 +265,7 @@ test.describe('Import-Saving .seq Files', () => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.2 Verify saving ambiguous peptides (with mapping, mixed) in Sequence format (macro mode)
-    Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
+    Case: 1. Load ambiguous peptides (that have mapping to library) from KET
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
              (Error should occure)
@@ -303,7 +303,7 @@ test.describe('Import-Saving .seq Files', () => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.3 Verify saving ambiguous peptides (without mapping, alternatives) in Sequence format (macro mode)
-    Case: 1. Load ambiguous peptides (that have mapping to library) from KET 
+    Case: 1. Load ambiguous peptides (that have mapping to library) from KET
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
             (Error should occure)
@@ -341,7 +341,7 @@ test.describe('Import-Saving .seq Files', () => {
       /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.4 Verify saving ambiguous peptides (without mapping, mixed) in Sequence format (macro mode)
-    Case: 1. Load ambiguous peptides (that have mapping to library, mixed) from KET 
+    Case: 1. Load ambiguous peptides (that have mapping to library, mixed) from KET
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
             (Error should occure)
@@ -378,7 +378,7 @@ test.describe('Import-Saving .seq Files', () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.5 Verify saving ambiguous DNA bases (with mapping, alternatives) in Sequence format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
           4. Take screenshot to make sure export is correct
@@ -405,7 +405,7 @@ test.describe('Import-Saving .seq Files', () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.6 Verify saving ambiguous DNA bases (with mapping, mixed) in Sequence format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
              (Error should occure)
@@ -436,7 +436,7 @@ test.describe('Import-Saving .seq Files', () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.7 Verify saving ambiguous RNA bases (with mapping, alternatives) in Sequence format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
           4. Take screenshot to make sure export is correct
@@ -463,7 +463,7 @@ test.describe('Import-Saving .seq Files', () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.8 Verify saving ambiguous RNA bases (with mapping, mixed) in Sequence format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
              (Error should occure)
@@ -493,7 +493,7 @@ test.describe('Import-Saving .seq Files', () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.9 Verify saving ambiguous (common) bases (with mapping, alternatives) in Sequence format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
           4. Take screenshot to make sure export is correct
@@ -519,7 +519,7 @@ test.describe('Import-Saving .seq Files', () => {
     /*
     Test task: https://github.com/epam/ketcher/issues/5558
     Description: 15.10 Verify saving ambiguous (common) bases (with mapping, mixed) in Sequence format (macro mode)
-    Case: 1. Load ambiguous bases (that have mapping to library) from KET 
+    Case: 1. Load ambiguous bases (that have mapping to library) from KET
           2. Take screenshot to make sure monomers on the canvas
           3. Open Save dialog and choose Sequence option
              (Error should occure)
@@ -600,7 +600,7 @@ test.describe('Import correct Sequence file: ', () => {
     test(`${correctSequenceFile.SequenceDescription}`, async ({ page }) => {
       /*
       Description: Verify import of Sequence files works correct
-      Case: 1. Load Sequence file 
+      Case: 1. Load Sequence file
             2. Take screenshot to make sure import works correct
       */
 
@@ -830,7 +830,7 @@ for (const sequenceToExport of sequencesToExport) {
   test(`${sequenceToExport.testCaseDescription} with ${sequenceToExport.sequenceDescription}`, async ({
     page,
   }) => {
-    /* 
+    /*
   Test case: https://github.com/epam/ketcher/issues/5215
   Description: Load correct 3-letter sequences, open Save dialog and compare export result with the template
   Case:

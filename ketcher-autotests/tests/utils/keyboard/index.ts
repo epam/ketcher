@@ -41,7 +41,7 @@ export async function keyboardPressOnCanvas(
 export async function keyboardTypeOnCanvas(
   page: Page,
   text: string,
-  options?: { delay?: number },
+  options?: { delay?: number; waitForRenderTimeOut: number },
 ) {
   for (const char of text) {
     await keyboardPressOnCanvas(page, char, options);

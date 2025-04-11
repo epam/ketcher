@@ -243,9 +243,16 @@ export async function takeMonomerLibraryScreenshot(
   options?: {
     masks?: Locator[];
     maxDiffPixelRatio?: number;
+    maxDiffPixels?: number;
     hideMonomerPreview?: boolean;
+    hideMacromoleculeEditorScrollBars?: boolean;
   },
 ) {
+  if (options?.hideMacromoleculeEditorScrollBars) {
+    // That works only for Macromolecule editor
+    const modifier = getControlModifier();
+    await page.keyboard.press(`${modifier}+KeyB`);
+  }
   await takeElementScreenshot(page, 'monomer-library', options);
 }
 

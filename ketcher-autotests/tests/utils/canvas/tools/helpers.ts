@@ -24,6 +24,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 
 /**
  * Selects an atom from Atom toolbar
@@ -203,15 +204,15 @@ export async function saveStructureWithReaction(page: Page, format?: string) {
 }
 
 export async function typeAllEnglishAlphabet(page: Page) {
-  await page.keyboard.type('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 }
 
 export async function typeRNADNAAlphabet(page: Page) {
-  await page.keyboard.type('ATGCU');
+  await keyboardTypeOnCanvas(page, 'ATGCU');
 }
 
 export async function typePeptideAlphabet(page: Page) {
-  await page.keyboard.type('ACDEFGHIKLMNPQRSTVWY');
+  await keyboardTypeOnCanvas(page, 'ACDEFGHIKLMNPQRSTVWY');
 }
 
 export async function setZoomInputValue(page: Page, value: string) {

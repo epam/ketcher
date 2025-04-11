@@ -73,9 +73,3 @@ export async function chooseTab(
 ) {
   await page.getByTestId(tab.testId).click();
 }
-
-export async function enterSequence(page: Page, sequence: string) {
-  for (const nucleotide of sequence) {
-    await page.keyboard.press(nucleotide);
-  }
-}

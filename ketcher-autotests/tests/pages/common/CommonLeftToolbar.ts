@@ -71,7 +71,6 @@ export async function bondSelectionTool(
 ) {
   let attempts = 0;
   const maxAttempts = 5;
-  const timeOut = 200;
 
   while (attempts < maxAttempts) {
     try {
@@ -80,7 +79,7 @@ export async function bondSelectionTool(
       return;
     } catch (error) {
       attempts++;
-      await page.waitForTimeout(timeOut);
+      console.warn('Unable to click on the bond type button, retrying...');
     }
   }
 }

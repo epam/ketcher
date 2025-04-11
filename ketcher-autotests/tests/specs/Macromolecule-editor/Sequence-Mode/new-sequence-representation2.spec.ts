@@ -23,6 +23,7 @@ import {
   turnSyncEditModeOff,
   turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
+import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 
 let page: Page;
 
@@ -147,10 +148,10 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
 
   await firstSymbol.dblclick();
 
-  await page.keyboard.press('ArrowLeft');
+  await keyboardPressOnCanvas(page, 'ArrowLeft');
 
   for (let i = 1; i < position; i++) {
-    await page.keyboard.press('ArrowRight');
+    await keyboardPressOnCanvas(page, 'ArrowRight');
   }
 
   if (syncEditMode) {
@@ -160,7 +161,7 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
   }
 
   if (senseOrAntisense === SequenceChainType.Antisense) {
-    await page.keyboard.press('ArrowDown');
+    await keyboardPressOnCanvas(page, 'ArrowDown');
   }
 }
 
@@ -371,9 +372,7 @@ for (const sequence of sequencesForAddingDash) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Minus');
-    });
+    await keyboardPressOnCanvas(page, 'Minus');
 
     await clickInTheMiddleOfTheScreen(page);
 
@@ -421,9 +420,7 @@ for (const sequence of sequencesForAddingDash) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Minus');
-    });
+    await keyboardPressOnCanvas(page, 'Minus');
 
     await clickInTheMiddleOfTheScreen(page);
 
@@ -474,9 +471,7 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     senseOrAntisense: SequenceChainType.Sense,
     syncEditMode: false,
   });
-  await waitForRender(page, async () => {
-    await page.keyboard.press('Minus');
-  });
+  await keyboardPressOnCanvas(page, 'Minus');
   await clickInTheMiddleOfTheScreen(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -485,9 +480,7 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     senseOrAntisense: SequenceChainType.Sense,
     syncEditMode: false,
   });
-  await waitForRender(page, async () => {
-    await page.keyboard.press('Minus');
-  });
+  await keyboardPressOnCanvas(page, 'Minus');
   await clickInTheMiddleOfTheScreen(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -496,9 +489,7 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     senseOrAntisense: SequenceChainType.Antisense,
     syncEditMode: false,
   });
-  await waitForRender(page, async () => {
-    await page.keyboard.press('Minus');
-  });
+  await keyboardPressOnCanvas(page, 'Minus');
   await clickInTheMiddleOfTheScreen(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -507,9 +498,7 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     senseOrAntisense: SequenceChainType.Antisense,
     syncEditMode: false,
   });
-  await waitForRender(page, async () => {
-    await page.keyboard.press('Minus');
-  });
+  await keyboardPressOnCanvas(page, 'Minus');
   await clickInTheMiddleOfTheScreen(page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });

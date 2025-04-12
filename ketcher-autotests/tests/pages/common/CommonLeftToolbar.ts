@@ -83,7 +83,7 @@ export async function bondSelectionTool(
   while (attempts < maxAttempts) {
     try {
       await expandBondSelectionDropdown(page);
-      await bondTypeButton.waitFor({ state: 'visible', timeout: 5000 });
+      await bondTypeButton.waitFor({ state: 'visible', timeout: 1000 });
       await bondTypeButton.click({ force: true });
       return;
     } catch (error) {

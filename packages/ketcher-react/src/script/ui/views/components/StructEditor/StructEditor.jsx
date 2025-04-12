@@ -150,14 +150,18 @@ class StructEditor extends Component {
   }
 
   componentDidMount() {
+    const ketcher = ketcherProvider.getKetcher(this.props.ketcherId);
+
     this.editor = new Editor(
+      this.props.ketcherId,
       this.editorRef.current,
       {
         ...this.props.options,
       },
       { ...this.props.serverSettings },
+      ketcher.editor,
     );
-    const ketcher = ketcherProvider.getKetcher();
+    ketcher.addEditor(this.editor);
     if (ketcher?.editor.macromoleculeConvertionError) {
       this.props.onShowMacromoleculesErrorMessage(
         ketcher.editor.macromoleculeConvertionError,
@@ -263,6 +267,9 @@ class StructEditor extends Component {
   }
 
   render() {
+    if (!this.editor) {
+      return null;
+    }
     const {
       Tag = 'div',
       className,

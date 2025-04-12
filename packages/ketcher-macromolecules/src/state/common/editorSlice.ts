@@ -68,12 +68,14 @@ export const editorSlice: Slice = createSlice({
     createEditor: (
       state,
       action: PayloadAction<{
+        ketcherId: string;
         theme: DeepPartial<ThemeType>;
         canvas: SVGSVGElement;
         monomersLibraryUpdate?: string | JSON;
       }>,
     ) => {
       state.editor = new CoreEditor({
+        ketcherId: action.payload.ketcherId,
         theme: action.payload.theme,
         canvas: action.payload.canvas,
         mode: state.editorLayoutMode

@@ -69,6 +69,7 @@ import { TransientDrawingView } from 'application/render/renderers/TransientView
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 
 interface ICoreEditorConstructorParams {
+  ketcherId: string;
   theme;
   canvas: SVGSVGElement;
   mode?: BaseMode;
@@ -83,6 +84,7 @@ let editor;
 
 export class CoreEditor {
   public events: IEditorEvents;
+  public ketcherId: string;
 
   public _type: EditorType;
   public renderersContainer: RenderersManager;
@@ -114,12 +116,14 @@ export class CoreEditor {
   private keydownEventHandler: (event: KeyboardEvent) => void = () => {};
 
   constructor({
+    ketcherId,
     theme,
     canvas,
     mode,
     monomersLibraryUpdate,
   }: ICoreEditorConstructorParams) {
     this._type = EditorType.Macromolecules;
+    this.ketcherId = ketcherId;
     this.theme = theme;
     this.canvas = canvas;
     this.drawnStructuresWrapperElement = canvas.querySelector(
@@ -147,7 +151,7 @@ export class CoreEditor {
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
-    const ketcher = ketcherProvider.getKetcher();
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     this.micromoleculesEditor = ketcher?.editor;
     this.switchToMacromolecules();
     this.rerenderSequenceMode();
@@ -858,7 +862,7 @@ export class CoreEditor {
       );
     reStruct.render.setMolecule(struct);
     if (conversionErrorMessage) {
-      const ketcher = ketcherProvider.getKetcher();
+      const ketcher = ketcherProvider.getKetcher(this.ketcherId);
 
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
@@ -869,7 +873,7 @@ export class CoreEditor {
 
   private switchToMacromolecules() {
     const struct = this.micromoleculesEditor?.struct() || new Struct();
-    const ketcher = ketcherProvider.getKetcher();
+    const ketcher = ketcherProvider.getKetcher(this.ketcherId);
     const { modelChanges } =
       MacromoleculesConverter.convertStructToDrawingEntities(
         struct,

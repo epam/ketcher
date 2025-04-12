@@ -33,7 +33,7 @@ import {
   initSaltsAndSolvents,
   initSaltsAndSolventsTemplates,
 } from '../state/saltsAndSolvents';
-import { useSubscriptionOnEvents } from '../../../hooks';
+import { useAppContext, useSubscriptionOnEvents } from '../../../hooks';
 import { AbbreviationLookupContainer } from '../dialog/AbbreviationLookup';
 import { initLib } from '../state/templates/init-lib';
 
@@ -59,6 +59,7 @@ const App = (props: Props) => {
   const { checkServer } = props;
 
   useSubscriptionOnEvents();
+  const { ketcherId } = useAppContext();
 
   useEffect(() => {
     checkServer();
@@ -73,13 +74,16 @@ const App = (props: Props) => {
   }, []);
 
   // Temporary workaround: add proper types for Editor
-  const Editor = ConnectedEditor as React.ComponentType<{ className: string }>;
+  const Editor = ConnectedEditor as React.ComponentType<{
+    className: string;
+    ketcherId: string;
+  }>;
 
   return (
     <ThemeProvider theme={muiTheme}>
       <div className={classes.app}>
         <AppHiddenContainer />
-        <Editor className={classes.canvas} />
+        <Editor ketcherId={ketcherId} className={classes.canvas} />
 
         <TopToolbarContainer
           className={classes.top}

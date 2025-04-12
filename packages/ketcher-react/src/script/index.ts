@@ -31,6 +31,9 @@ interface Config {
   togglerComponent?: JSX.Element;
 }
 
+export type { Config, ButtonsConfig };
+export * from './providers';
+
 async function buildKetcherAsync({
   element,
   appRoot,
@@ -45,24 +48,24 @@ async function buildKetcherAsync({
 
   await builder.appendApiAsync(structServiceProvider);
   builder.appendServiceMode(structServiceProvider.mode);
-  const { setKetcher, ketcherId, cleanup, setServer } =
-    await builder.appendUiAsync(
-      element,
-      appRoot,
-      staticResourcesUrl,
-      errorHandler,
-      buttons,
-      togglerComponent,
-      customButtons,
-    );
-
   const ketcher = builder.build();
+
+  const { setKetcher, cleanup, setServer } = await builder.appendUiAsync(
+    ketcher.id,
+    element,
+    appRoot,
+    staticResourcesUrl,
+    errorHandler,
+    buttons,
+    togglerComponent,
+    customButtons,
+  );
+
   if (ketcher) {
     setKetcher(ketcher);
   }
-  return { ketcher, ketcherId, cleanup, builder, setServer };
+
+  return { ketcher, cleanup, builder, setServer };
 }
 
-export type { Config, ButtonsConfig };
-export * from './providers';
 export default buildKetcherAsync;

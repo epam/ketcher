@@ -28,7 +28,7 @@ import { createRoot, Root } from 'react-dom/client';
 import { Ketcher, StructService } from 'ketcher-core';
 import classes from './Editor.module.less';
 import clsx from 'clsx';
-import { useResizeObserver } from './hooks';
+import { useAppContext, useResizeObserver } from './hooks';
 import {
   ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,
@@ -52,6 +52,7 @@ function MicromoleculesEditor(props: EditorProps) {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const setServerRef = useRef<(structService: StructService) => void>(() => {});
   const structServiceProvider = props.structServiceProvider;
+  const { ketcherId } = useAppContext();
 
   const rootElRef = useRef<HTMLDivElement>(null);
 
@@ -61,12 +62,13 @@ function MicromoleculesEditor(props: EditorProps) {
 
   useEffect(() => {
     ketcherBuilderRef.current?.reinitializeApi(
+      ketcherId,
       props.structServiceProvider,
       setServerRef.current,
     );
-  }, [structServiceProvider]);
+  }, [structServiceProvider, ketcherId]);
 
-  const initKetcher = () => {
+  const initKetcher = async () => {
     appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
 
     initPromiseRef.current = init({
@@ -75,19 +77,18 @@ function MicromoleculesEditor(props: EditorProps) {
       appRoot: appRootRef.current,
     });
 
-    initPromiseRef.current?.then(
-      ({ ketcher, ketcherId, cleanup, builder, setServer }) => {
-        cleanupRef.current = cleanup;
-        ketcherBuilderRef.current = builder;
-        setServerRef.current = setServer;
+    initPromiseRef.current?.then(({ ketcher, cleanup, builder, setServer }) => {
+      cleanupRef.current = cleanup;
+      ketcherBuilderRef.current = builder;
+      setServerRef.current = setServer;
+      console.log('ketcheId', ketcher.id);
 
-        if (typeof props.onInit === 'function' && ketcher) {
-          props.onInit(ketcher);
-          const ketcherInitEvent = new Event(ketcherInitEventName(ketcherId));
-          window.dispatchEvent(ketcherInitEvent);
-        }
-      },
-    );
+      if (typeof props.onInit === 'function' && ketcher) {
+        props.onInit(ketcher);
+        const ketcherInitEvent = new Event(ketcherInitEventName(ketcher.id));
+        window.dispatchEvent(ketcherInitEvent);
+      }
+    });
   };
   useEffect(() => {
     if (initPromiseRef.current === null) {

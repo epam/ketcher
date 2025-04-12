@@ -172,7 +172,12 @@ function Editor({
 
   useEffect(() => {
     dispatch(
-      createEditor({ theme, canvas: canvasRef.current, monomersLibraryUpdate }),
+      createEditor({
+        ketcherId,
+        theme,
+        canvas: canvasRef.current,
+        monomersLibraryUpdate,
+      }),
     );
 
     return () => {

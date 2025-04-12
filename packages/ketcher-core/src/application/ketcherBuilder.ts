@@ -63,7 +63,7 @@ export class KetcherBuilder {
     );
     ketcher[this.#structServiceProvider.mode] = true;
 
-    ketcherProvider.setKetcherInstance(ketcher);
+    ketcherProvider.addKetcherInstance(ketcher);
     return ketcher;
   }
 }

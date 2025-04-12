@@ -52,7 +52,7 @@ import {
   SupportedImageFormats,
   SupportedModes,
 } from 'application/ketcher.types';
-import { isNumber } from 'lodash';
+import { isNumber, uniqueId } from 'lodash';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
@@ -66,6 +66,7 @@ const allowedApiSettings = {
 };
 
 export class Ketcher {
+  _id: string;
   logging: LogSettings;
   structService: StructService;
   #formatterFactory: FormatterFactory;
@@ -83,15 +84,13 @@ export class Ketcher {
   }
 
   constructor(
-    editor: Editor,
     structService: StructService,
     formatterFactory: FormatterFactory,
   ) {
-    assert(editor != null);
     assert(structService != null);
     assert(formatterFactory != null);
+    this._id = uniqueId();
     this.changeEvent = new Subscription();
-    this.#editor = editor;
     this.structService = structService;
     this.#formatterFactory = formatterFactory;
     this._indigo = new Indigo(this.structService);
@@ -101,6 +100,10 @@ export class Ketcher {
       level: LogLevel.ERROR,
       showTrace: false,
     };
+  }
+
+  get id() {
+    return this._id;
   }
 
   get formatterFactory() {
@@ -131,6 +134,10 @@ export class Ketcher {
     return result;
   }
 
+  addEditor(editor: Editor) {
+    this.#editor = editor;
+  }
+
   // TODO: create options type
   setSettings(settings: Record<string, string>) {
     // TODO: need to expand this and refactor this method
@@ -158,7 +165,12 @@ export class Ketcher {
     const format = isExtended
       ? SupportedFormat.smilesExt
       : SupportedFormat.smiles;
-    return getStructure(format, this.#formatterFactory, this.editor.struct());
+    return getStructure(
+      this.id,
+      format,
+      this.#formatterFactory,
+      this.editor.struct(),
+    );
   }
 
   async getMolfile(molfileFormat?: MolfileFormat): Promise<string> {
@@ -175,6 +187,7 @@ export class Ketcher {
     const format = molfileFormat ? formatPassed : SupportedFormat.molAuto;
 
     const molfile = await getStructure(
+      this.id,
       format,
       this.#formatterFactory,
       this.#editor.struct(),
@@ -186,6 +199,7 @@ export class Ketcher {
 
   getIdt(): Promise<string> {
     return getStructure(
+      this.id,
       SupportedFormat.idt,
       this.#formatterFactory,
       this.#editor.struct(),
@@ -207,6 +221,7 @@ export class Ketcher {
         ? SupportedFormat.rxnV3000
         : SupportedFormat.rxn;
     const rxnfile = await getStructure(
+      this.id,
       format,
       this.#formatterFactory,
       this.#editor.struct(),
@@ -217,6 +232,7 @@ export class Ketcher {
 
   getKet(): Promise<string> {
     return getStructure(
+      this.id,
       SupportedFormat.ket,
       this.#formatterFactory,
       (CoreEditor.provideEditorInstance()?._type ??
@@ -233,6 +249,7 @@ export class Ketcher {
 
   getFasta(): Promise<string> {
     return getStructure(
+      this.id,
       SupportedFormat.fasta,
       this.#formatterFactory,
       this.#editor.struct(),
@@ -242,6 +259,7 @@ export class Ketcher {
 
   getSequence(): Promise<string> {
     return getStructure(
+      this.id,
       SupportedFormat.sequence,
       this.#formatterFactory,
       this.#editor.struct(),
@@ -254,6 +272,7 @@ export class Ketcher {
       throw new Error('SMARTS format is not available in macro mode');
     }
     return getStructure(
+      this.id,
       SupportedFormat.smarts,
       this.#formatterFactory,
       this.#editor.struct(),
@@ -265,6 +284,7 @@ export class Ketcher {
       throw new Error('CML format is not available in macro mode');
     }
     return getStructure(
+      this.id,
       SupportedFormat.cml,
       this.#formatterFactory,
       this.#editor.struct(),
@@ -279,7 +299,12 @@ export class Ketcher {
       molfileFormat === 'v2000'
         ? SupportedFormat.sdf
         : SupportedFormat.sdfV3000;
-    return getStructure(format, this.#formatterFactory, this.#editor.struct());
+    return getStructure(
+      this.id,
+      format,
+      this.#formatterFactory,
+      this.#editor.struct(),
+    );
   }
 
   getRdf(molfileFormat: MolfileFormat = 'v2000'): Promise<string> {
@@ -290,7 +315,12 @@ export class Ketcher {
       molfileFormat === 'v2000'
         ? SupportedFormat.rdf
         : SupportedFormat.rdfV3000;
-    return getStructure(format, this.#formatterFactory, this.#editor.struct());
+    return getStructure(
+      this.id,
+      format,
+      this.#formatterFactory,
+      this.#editor.struct(),
+    );
   }
 
   getCDXml(): Promise<string> {
@@ -298,6 +328,7 @@ export class Ketcher {
       throw new Error('CDXML format is not available in macro mode');
     }
     return getStructure(
+      this.id,
       SupportedFormat.cdxml,
       this.#formatterFactory,
       this.#editor.struct(),
@@ -309,6 +340,7 @@ export class Ketcher {
       throw new Error('CDX format is not available in macro mode');
     }
     return getStructure(
+      this.id,
       SupportedFormat.cdx,
       this.#formatterFactory,
       this.#editor.struct(),
@@ -317,6 +349,7 @@ export class Ketcher {
 
   getInchi(withAuxInfo = false): Promise<string> {
     return getStructure(
+      this.id,
       withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,
       this.#formatterFactory,
       this.#editor.struct(),
@@ -325,6 +358,7 @@ export class Ketcher {
 
   async getInChIKey(): Promise<string> {
     const struct: string = await getStructure(
+      this.id,
       SupportedFormat.ket,
       this.#formatterFactory,
       this.#editor.struct(),
@@ -574,7 +608,7 @@ export class Ketcher {
   public updateMonomersLibrary(rawMonomersData: string | JSON) {
     const editor = CoreEditor.provideEditorInstance();
 
-    ketcherProvider.getKetcher();
+    ketcherProvider.getKetcher(this.id);
 
     if (!editor) {
       throw new Error(

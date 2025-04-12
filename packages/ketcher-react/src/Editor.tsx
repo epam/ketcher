@@ -7,6 +7,7 @@ import styles from './Editor.module.less';
 
 type Props = EditorProps & {
   disableMacromoleculesEditor?: boolean;
+  ketcherId: string;
 };
 
 /*
@@ -51,7 +52,10 @@ export const Editor = (props: Props) => {
             </div>
           }
         >
-          <MacromoleculesEditor togglerComponent={togglerComponent} />
+          <MacromoleculesEditor
+            ketcherId={ketcherId}
+            togglerComponent={togglerComponent}
+          />
         </Suspense>
       ) : (
         <Suspense

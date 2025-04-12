@@ -15,7 +15,7 @@
  ***************************************************************************/
 
 import { BaseCallProps, BaseProps } from '../../../modal.types';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { Dialog, LoadingCircles } from '../../../../components';
 import classes from './Open.module.less';
 import Recognize from '../../process/Recognize/Recognize';
@@ -23,6 +23,7 @@ import { fileOpener } from '../../../../../utils/';
 import { DialogActionButton } from './components/DialogActionButton';
 import { ViewSwitcher } from './components/ViewSwitcher';
 import { getFormatMimeTypeByFileName, ketcherProvider } from 'ketcher-core';
+import { useAppContext } from 'src/hooks';
 interface OpenProps {
   server: any;
   errorHandler: (err: string) => void;
@@ -94,7 +95,11 @@ const Open: FC<Props> = (props) => {
   const [opener, setOpener] = useState<any>();
   const [currentState, setCurrentState] = useState(MODAL_STATES.idle);
   const [isLoading, setIsLoading] = useState(false);
-  const ketcher = ketcherProvider.getKetcher();
+  const { ketcherId } = useAppContext();
+  const ketcher = useMemo(
+    () => ketcherProvider.getKetcher(ketcherId),
+    [ketcherId],
+  );
 
   useEffect(() => {
     if (server) {

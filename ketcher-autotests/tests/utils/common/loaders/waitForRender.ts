@@ -8,7 +8,7 @@ const emptyFunction: AnyFunction = async () => {};
 export const waitForRender = async (
   page: Page,
   callback = emptyFunction,
-  timeout = 1000,
+  timeout = 500,
 ) => {
   await callback();
 
@@ -24,7 +24,7 @@ export const waitForRender = async (
 
     if (!eventReceived) {
       logTestWarning(
-        `[waitForRender] Test "${testName}" — callback "${callbackName}" did not receive "renderComplete" event within ${timeout}ms.`,
+        `[waitForRender] Test "${testName}" - callback "${callbackName}" did not receive "renderComplete" event within ${timeout}ms.`,
       );
     }
   }
@@ -73,7 +73,7 @@ export const waitForItemsToMergeInitialization = async (
 
   if (!eventReceived) {
     logTestWarning(
-      `[waitForItemsToMergeInitialization] Test "${testName}" — event "itemsToMergeInitializationComplete" not received within ${timeout}ms.`,
+      `[waitForItemsToMergeInitialization] Test "${testName}" - event "itemsToMergeInitializationComplete" not received within ${timeout}ms.`,
     );
   }
 };

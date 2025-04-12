@@ -78,9 +78,8 @@ test.describe('Zoom Tool', () => {
   const peptideCoordinates = { x: 300, y: 300 };
   let peptide: Locator;
   test.beforeEach(async () => {
-    // await waitForPageInit(page);
-    // await turnOnMacromoleculesEditor(page);
     await goToPeptidesTab(page);
+    // First monomer at the center of the screen
     peptide = await addSingleMonomerToCanvas(
       page,
       Peptides.C,

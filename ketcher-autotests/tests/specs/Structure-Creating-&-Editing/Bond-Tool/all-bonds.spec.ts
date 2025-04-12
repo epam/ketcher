@@ -78,7 +78,6 @@ const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.DoubleCisTrans]: 'Double Cis/Trans Bond (2)',
 };
 
-// test.setTimeout(145000);
 let page: Page;
 
 test.beforeAll(async ({ browser }) => {

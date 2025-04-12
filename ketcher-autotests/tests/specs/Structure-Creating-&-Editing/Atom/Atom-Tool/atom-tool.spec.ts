@@ -109,9 +109,7 @@ test.describe('Atom Tool', () => {
     await selectAtomInToolbar(AtomButton.Periodic, page);
     await page.getByRole('button', { name: 'Si 14' }).click();
     await page.getByTestId('OK').click();
-    await waitForRender(page, async () => {
-      await clickInTheMiddleOfTheScreen(page);
-    });
+    await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
 

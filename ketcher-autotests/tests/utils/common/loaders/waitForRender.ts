@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page } from '@playwright/test';
 import { logTestWarning } from '@utils/testLogging';
 
 type AnyFunction = (...args: any) => Promise<any>;
@@ -13,7 +13,6 @@ export const waitForRender = async (
   await callback();
 
   if (timeout !== 0) {
-    const testName = test.info().title;
     const callbackName = callback.name || 'anonymous';
 
     const eventReceived = await waitForCustomEvent(
@@ -24,7 +23,7 @@ export const waitForRender = async (
 
     if (!eventReceived) {
       logTestWarning(
-        `[waitForRender] Test "${testName}" - callback "${callbackName}" did not receive "renderComplete" event within ${timeout}ms.`,
+        `[waitForRender] - callback "${callbackName}" did not receive "renderComplete" event within ${timeout}ms.`,
       );
     }
   }
@@ -61,8 +60,6 @@ export const waitForItemsToMergeInitialization = async (
   callback = emptyFunction,
   timeout = 200,
 ) => {
-  const testName = test.info().title;
-
   await callback();
 
   const eventReceived = await waitForCustomEvent(
@@ -73,7 +70,7 @@ export const waitForItemsToMergeInitialization = async (
 
   if (!eventReceived) {
     logTestWarning(
-      `[waitForItemsToMergeInitialization] Test "${testName}" - event "itemsToMergeInitializationComplete" not received within ${timeout}ms.`,
+      `[waitForItemsToMergeInitialization] - event "itemsToMergeInitializationComplete" not received within ${timeout}ms.`,
     );
   }
 };

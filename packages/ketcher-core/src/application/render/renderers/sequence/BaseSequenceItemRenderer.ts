@@ -367,6 +367,7 @@ export abstract class BaseSequenceItemRenderer extends BaseSequenceRenderer {
       ?.append('use')
       .attr('x', -17)
       .attr('y', -27)
+      .attr('data-testid', 'sequence-start-arrow')
       .attr('href', `#${CHAIN_START_ARROW_SYMBOL_ID}`);
   }
 

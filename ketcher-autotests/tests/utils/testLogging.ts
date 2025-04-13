@@ -2,20 +2,19 @@
 import { test } from '@playwright/test';
 
 /**
- * Логирует предупреждение в консоль и добавляет аннотацию к текущему тесту.
+ * Logs a warning to the console and adds an annotation to the current test.
  */
 export function logTestWarning(message: string) {
-  const testInfo = test.info?.();
-  const testName = testInfo?.title || 'unknown test';
+  if (process.env.ENABLE_CUSTOM_WARNINGS === 'true') {
+    const testInfo = test.info?.();
+    const testName = testInfo?.title || 'unknown test';
+    console.warn(`[WARNING] [${testName}] ${message}`);
 
-  // Показываем в терминале и CI
-  console.warn(`[WARNING] [${testName}] ${message}`);
-
-  // Добавляем в Playwright HTML-отчёт
-  if (testInfo) {
-    testInfo.annotations.push({
-      type: 'warning',
-      description: message,
-    });
+    if (testInfo) {
+      testInfo.annotations.push({
+        type: 'warning',
+        description: message,
+      });
+    }
   }
 }

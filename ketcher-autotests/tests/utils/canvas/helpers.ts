@@ -176,10 +176,7 @@ export async function takeElementScreenshot(
   }
 
   const element = page.getByTestId(elementId).first();
-  await expect(element).toHaveScreenshot({
-    mask: options?.masks,
-    maxDiffPixelRatio: options?.maxDiffPixelRatio,
-  });
+  await expect(element).toHaveScreenshot(options);
 }
 
 export async function getCoordinatesOfTopMostCarbon(page: Page) {

@@ -21,6 +21,7 @@ import {
   moveMouseAway,
   resetZoomLevelToDefault,
   selectZoomOutTool,
+  MonomerType,
 } from '@utils';
 import {
   selectClearCanvasTool,
@@ -38,6 +39,7 @@ import {
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 function removeNotComparableData(file: string) {
   return file
@@ -167,7 +169,7 @@ test.describe('Import-Saving .mol Files', () => {
     Description: Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
-    await page.getByText('K').locator('..').first().hover();
+    await getMonomerLocator(page, { monomerAlias: 'K' }).first().hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
 
@@ -190,7 +192,7 @@ test.describe('Import-Saving .mol Files', () => {
       page,
     );
     await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
-    await page.getByText('cdaC').locator('..').hover();
+    await getMonomerLocator(page, { monomerAlias: `cdaC` }).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -770,7 +772,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
         page,
       );
       await bondSelectionTool(page, MacroBondType.Single);
-      await page.getByText('R1').locator('..').hover();
+      await getMonomerLocator(page, { monomerType: MonomerType.Base }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
@@ -892,7 +894,9 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
         page,
       );
       await bondSelectionTool(page, MacroBondType.Single);
-      await page.getByText('(R').locator('..').first().hover();
+      await getMonomerLocator(page, {
+        monomerType: MonomerType.Peptide,
+      }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
@@ -954,7 +958,10 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
         page,
       );
       await bondSelectionTool(page, MacroBondType.Single);
-      await page.getByText('(R').locator('..').first().hover();
+      await getMonomerLocator(page, {
+        monomerType: MonomerType.Phosphate,
+      }).hover();
+
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
@@ -1015,7 +1022,9 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
         page,
       );
       await bondSelectionTool(page, MacroBondType.Single);
-      await page.getByText('(R').locator('..').first().hover();
+      await getMonomerLocator(page, {
+        monomerType: MonomerType.Sugar,
+      }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 

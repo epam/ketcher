@@ -54,7 +54,10 @@ import {
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  getSymbolLocator,
+} from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import {
   toggleNucleotidesAccordion,
@@ -773,7 +776,7 @@ test.describe('Import-Saving .idt Files', () => {
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
     await selectSequenceLayoutModeTool(page);
-    await page.getByText('?').locator('..').nth(1).hover();
+    await getSymbolLocator(page, { symbolAlias: '?' }).nth(1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });

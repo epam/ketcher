@@ -651,7 +651,9 @@ test.describe('Macro-Micro-Switcher', () => {
         topLeftCorner.y,
       );
       await turnOnMacromoleculesEditor(page);
-      await page.getByText('F1').locator('..').hover();
+      await getMonomerLocator(page, {
+        monomerAlias: 'F1',
+      }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     },
@@ -672,7 +674,9 @@ test.describe('Macro-Micro-Switcher', () => {
         topLeftCorner.y,
       );
       await turnOnMacromoleculesEditor(page);
-      await page.getByText('F1').locator('..').hover();
+      await getMonomerLocator(page, {
+        monomerAlias: 'F1',
+      }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     },
@@ -693,7 +697,9 @@ test.describe('Macro-Micro-Switcher', () => {
         topLeftCorner.y,
       );
       await turnOnMacromoleculesEditor(page);
-      await page.getByText('F2').locator('..').hover();
+      await getMonomerLocator(page, {
+        monomerAlias: 'F2',
+      }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     },
@@ -714,7 +720,9 @@ test.describe('Macro-Micro-Switcher', () => {
         topLeftCorner.y,
       );
       await turnOnMacromoleculesEditor(page);
-      await page.getByText('F1').locator('..').hover();
+      await getMonomerLocator(page, {
+        monomerAlias: 'F1',
+      }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     },
@@ -775,9 +783,9 @@ test.describe('Macro-Micro-Switcher', () => {
         yOffsetFromCenter,
       );
       await turnOnMacromoleculesEditor(page);
-      await waitForRender(page, async () => {
-        await page.getByText('F1').locator('..').hover();
-      });
+      await getMonomerLocator(page, {
+        monomerAlias: 'F1',
+      }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     },
@@ -820,7 +828,9 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       await clickOnCanvas(page, topLeftCornerCoords.x, topLeftCornerCoords.y);
       await turnOnMacromoleculesEditor(page);
-      await page.getByText('F1').locator('..').hover();
+      await getMonomerLocator(page, {
+        monomerAlias: 'F1',
+      }).hover();
       await takeEditorScreenshot(page);
     },
   );
@@ -844,7 +854,9 @@ test.describe('Macro-Micro-Switcher', () => {
       );
       await clickOnCanvas(page, coordsToClick.x, coordsToClick.y);
       await turnOnMacromoleculesEditor(page);
-      await page.getByText('F1').locator('..').hover();
+      await getMonomerLocator(page, {
+        monomerAlias: 'F1',
+      }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
     },
@@ -1073,7 +1085,9 @@ test.describe('Macro-Micro-Switcher', () => {
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
-      await page.getByText('F1').locator('..').hover();
+      await getMonomerLocator(page, {
+        monomerAlias: 'F1',
+      }).hover();
       await waitForMonomerPreview(page);
       await dragMouseTo(x1, y1, page);
       await moveMouseAway(page);
@@ -1099,7 +1113,9 @@ test.describe('Macro-Micro-Switcher', () => {
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
-      await page.getByText('F1').locator('..').hover();
+      await getMonomerLocator(page, {
+        monomerAlias: 'F1',
+      }).hover();
       await waitForMonomerPreview(page);
       await dragMouseTo(x1, y1, page);
       await moveMouseAway(page);
@@ -1125,7 +1141,9 @@ test.describe('Macro-Micro-Switcher', () => {
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
-      await page.getByText('F1').locator('..').hover();
+      await getMonomerLocator(page, {
+        monomerAlias: 'F1',
+      }).hover();
       await waitForMonomerPreview(page);
       await dragMouseTo(x1, y1, page);
       await moveMouseAway(page);
@@ -1151,7 +1169,9 @@ test.describe('Macro-Micro-Switcher', () => {
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
-      await page.getByText('F1').locator('..').hover();
+      await getMonomerLocator(page, {
+        monomerAlias: 'F1',
+      }).hover();
       await waitForMonomerPreview(page);
       await dragMouseTo(x1, y1, page);
       await moveMouseAway(page);
@@ -1902,7 +1922,9 @@ test.describe('Macro-Micro-Switcher', () => {
         await keyboardPressOnCanvas(page, 'Escape');
         await selectSnakeLayoutModeTool(page);
         await bondSelectionTool(page, MacroBondType.Single);
-        await page.getByText('F1').locator('..').hover();
+        await getMonomerLocator(page, {
+          monomerAlias: 'F1',
+        }).hover();
         await waitForMonomerPreview(page);
         await takeEditorScreenshot(page);
       },

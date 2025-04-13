@@ -1852,7 +1852,7 @@ test.describe('Macro-Micro-Switcher', () => {
       async () => await selectTopPanelButton(TopPanelButton.Check, page),
     );
     await takeEditorScreenshot(page, {
-      masks: [page.locator('[class*="Check-module_checkInfo"] > span')],
+      mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
     });
   });
 

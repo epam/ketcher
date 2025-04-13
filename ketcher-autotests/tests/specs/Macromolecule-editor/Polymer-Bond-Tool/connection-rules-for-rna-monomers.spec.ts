@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, Locator, expect } from '@playwright/test';
 import {
-  takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
   moveMouseAway,
   dragMouseTo,

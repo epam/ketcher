@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, test, Locator } from '@playwright/test';
+import { Page, test, Locator, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
@@ -14,7 +14,11 @@ import {
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
+import {
+  bondTwoMonomersPointToPoint,
+  getBondLocator,
+} from '@utils/macromolecules/polymerBond';
+import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 test.describe('Connection rules for RNAs: ', () => {
   let page: Page;
@@ -604,12 +608,11 @@ test.describe('Connection rules for RNAs: ', () => {
 
         await bondTwoMonomersByCenterToCenter(page, leftSugar, rightBase);
 
-        // await zoomWithMouseWheel(page, -500);
+        const bondLine = getBondLocator(page, {
+          bondType: MacroBondDataIds.Single,
+        });
 
-        const bondLine = page.locator('g[pointer-events="stroke"]').first();
-        await bondLine.hover();
-
-        await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.01 });
+        expect(await bondLine.count()).toEqual(1);
       });
     });
   });
@@ -628,12 +631,11 @@ test.describe('Connection rules for RNAs: ', () => {
 
         await bondTwoMonomersByCenterToCenter(page, leftPhosphate, rightSugar);
 
-        // await zoomWithMouseWheel(page, -600);
+        const bondLine = getBondLocator(page, {
+          bondType: MacroBondDataIds.Single,
+        });
 
-        const bondLine = page.locator('g[pointer-events="stroke"]').first();
-        await bondLine.hover();
-
-        await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.01 });
+        expect(await bondLine.count()).toEqual(1);
       });
     });
   });
@@ -652,12 +654,11 @@ test.describe('Connection rules for RNAs: ', () => {
 
         await bondTwoMonomersByCenterToCenter(page, leftSugar, rightPhosphate);
 
-        // await zoomWithMouseWheel(page, -600);
+        const bondLine = getBondLocator(page, {
+          bondType: MacroBondDataIds.Single,
+        });
 
-        const bondLine = page.locator('g[pointer-events="stroke"]').first();
-        await bondLine.hover();
-
-        await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.01 });
+        expect(await bondLine.count()).toEqual(1);
       });
     });
   });

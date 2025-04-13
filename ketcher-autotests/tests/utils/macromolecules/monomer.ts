@@ -92,7 +92,7 @@ export function getMonomerLocatorById(page: Page, id: number | string) {
     .first();
 }
 
-type MonomerLocatorOptions = {
+export type MonomerLocatorOptions = {
   numberOfAttachmentPoints?: string;
   rValues?: boolean[];
   hydrogenConnectionNumber?: string | number;

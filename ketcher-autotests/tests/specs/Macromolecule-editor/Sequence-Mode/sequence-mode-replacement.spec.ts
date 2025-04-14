@@ -34,8 +34,6 @@ import {
   selectSugarSlot,
 } from '@utils/macromolecules/rnaBuilder';
 import {
-  clickOnSequenceSymbolByIndex,
-  doubleClickOnSequenceSymbolByIndex,
   pressCancelInConfirmYourActionDialog,
   pressYesInConfirmYourActionDialog,
 } from '@utils/macromolecules/sequence';
@@ -57,6 +55,7 @@ import {
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
+import { getSymbolLocator } from '@utils/macromolecules/monomer';
 
 let page: Page;
 let sharedContext: BrowserContext;
@@ -631,7 +630,7 @@ async function selectAndReplaceSymbol(
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
-  await clickOnSequenceSymbolByIndex(page, replacementPosition);
+  await getSymbolLocator(page, { nodeIndexOverall: replacementPosition }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
     await pressYesInConfirmYourActionDialog(page);
@@ -644,7 +643,7 @@ async function selectAndReplaceSymbolWithError(
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
-  await clickOnSequenceSymbolByIndex(page, replacementPosition);
+  await getSymbolLocator(page, { nodeIndexOverall: replacementPosition }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 }
 
@@ -656,18 +655,9 @@ async function selectAndReplaceAllSymbols(
   await selectSequenceLayoutModeTool(page);
 
   await page.keyboard.down('Shift');
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.LeftEnd,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.Center,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.RightEnd,
-  );
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.LeftEnd }).click();
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.Center }).click();
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.RightEnd }).click();
   await page.keyboard.up('Shift');
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
@@ -680,18 +670,9 @@ async function selectAllSymbols(page: Page, sequence: ISequence) {
   await selectSequenceLayoutModeTool(page);
 
   await page.keyboard.down('Shift');
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.LeftEnd,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.Center,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.RightEnd,
-  );
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.LeftEnd }).click();
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.Center }).click();
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.RightEnd }).click();
   await page.keyboard.up('Shift');
 }
 
@@ -713,18 +694,9 @@ async function selectAndReplaceAllSymbolsInEditMode(
   await selectSequenceLayoutModeTool(page);
 
   await page.keyboard.down('Shift');
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.LeftEnd,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.Center,
-  );
-  await doubleClickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.RightEnd,
-  );
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.LeftEnd }).click();
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.Center }).click();
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.RightEnd }).dblclick();
   await page.keyboard.up('Shift');
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
@@ -741,18 +713,9 @@ async function selectAndReplaceAllSymbolsInEditModeWithError(
   await selectSequenceLayoutModeTool(page);
 
   await page.keyboard.down('Shift');
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.LeftEnd,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.Center,
-  );
-  await doubleClickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.RightEnd,
-  );
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.LeftEnd }).click();
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.Center }).click();
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.RightEnd }).dblclick();
   await page.keyboard.up('Shift');
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
@@ -765,7 +728,7 @@ async function selectAndReplaceSymbolInEditMode(
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
-  await doubleClickOnSequenceSymbolByIndex(page, replacementPosition);
+  await getSymbolLocator(page, { nodeIndexOverall: replacementPosition }).dblclick();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
     await pressYesInConfirmYourActionDialog(page);
@@ -780,7 +743,7 @@ async function selectAndReplaceSymbolInEditModeWithError(
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
-  await doubleClickOnSequenceSymbolByIndex(page, replacementPosition);
+  await getSymbolLocator(page, { nodeIndexOverall: replacementPosition }).dblclick();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 }
 
@@ -1972,10 +1935,7 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectSequenceLayoutModeTool(page);
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.RightEnd,
-  );
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.RightEnd }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 
   const fullDialogMessage = page.getByText(
@@ -2028,18 +1988,9 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectSequenceLayoutModeTool(page);
   await page.keyboard.down('Shift');
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.LeftEnd,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.Center,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.RightEnd,
-  );
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.LeftEnd }).click();
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.Center }).click();
+  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.RightEnd }).click();
   await page.keyboard.up('Shift');
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 

@@ -29,7 +29,7 @@ import {
   waitForMonomerPreview,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
-import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
+import { getSymbolLocator } from '@utils/macromolecules/monomer';
 
 function removeNotComparableData(file: string) {
   return file.replaceAll('\r', '');
@@ -316,7 +316,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await page.getByText('Peptide', { exact: true }).click();
     await pressButton(page, 'Add to Canvas');
     await selectSequenceLayoutModeTool(page);
-    await clickOnSequenceSymbol(page, 'U');
+    await getSymbolLocator(page, { symbolAlias: 'U', nodeIndexOverall: 4 }).click();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });

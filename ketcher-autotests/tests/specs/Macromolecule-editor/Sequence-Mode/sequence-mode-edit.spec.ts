@@ -47,8 +47,6 @@ import {
 } from '@utils/macromolecules/monomer';
 import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
 import {
-  clickOnSequenceSymbol,
-  doubleClickOnSequenceSymbol,
   hoverOnSequenceSymbol,
   switchToDNAMode,
   switchToPeptideMode,
@@ -274,7 +272,7 @@ test.describe('Sequence edit mode', () => {
     */
     await openFileAndAddToCanvasMacro('KET/atuc.ket', page);
     await takeEditorScreenshot(page);
-    await clickOnSequenceSymbol(page, 'T', { button: 'right' });
+    await getSymbolLocator(page, { symbolAlias: 'T', nodeIndexOverall: 4 }).click({ button: 'right' });
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await page.getByTestId('edit_sequence').click();
     await keyboardPressOnCanvas(page, 'u');
@@ -537,7 +535,7 @@ test.describe('Sequence edit mode', () => {
     Description: Hover mouse between two letters in sequence, cursor displayed as a caret.
     */
     await keyboardTypeOnCanvas(page, 'aaaagaaaaaa');
-    await clickOnSequenceSymbol(page, 'G');
+    await getSymbolLocator(page, { symbolAlias: 'G', nodeIndexOverall: 4 }).click();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -551,7 +549,7 @@ test.describe('Sequence edit mode', () => {
     placed in corresponding cell of the grid before the symbol AND that symbol highlighted.
     */
     await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
-    await doubleClickOnSequenceSymbol(page, 'G');
+    await getSymbolLocator(page, { symbolAlias: 'G', nodeIndexOverall: 4 }).dblclick();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });

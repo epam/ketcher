@@ -23,7 +23,6 @@ import { BaseRenderer } from '../BaseRenderer';
 import {
   CORNER_LENGTH,
   DOUBLE_CORNER_LENGTH,
-  generateBend,
   generateCornerFromBottomToRight,
   generateCornerFromLeftToBottom,
   generateCornerFromLeftToTop,
@@ -31,7 +30,6 @@ import {
   generateCornerFromRightToTop,
   generateCornerFromTopToLeft,
   generateCornerFromTopToRight,
-  SMOOTH_CORNER_SIZE,
 } from './helpers';
 
 enum LineDirection {
@@ -286,7 +284,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
             absoluteLineY,
           ) + ' ';
       }
-      pathDAttributeValue += generateBend(0, -1, cos, -1) + ' ';
+      pathDAttributeValue +=
+        SideChainConnectionBondRendererUtility.generateBend(0, -1, cos, -1) +
+        ' ';
     } else {
       {
         const absoluteLineY =
@@ -304,7 +304,9 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         !isSecondCellEmpty &&
         !isTwoNeighborRowsConnection
       ) {
-        pathDAttributeValue += generateBend(0, 1, cos, 1) + ' ';
+        pathDAttributeValue +=
+          SideChainConnectionBondRendererUtility.generateBend(0, 1, cos, 1) +
+          ' ';
       }
     }
 
@@ -368,7 +370,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
             const absoluteLineY =
               endPosition.y -
               CELL_HEIGHT / 2 -
-              SMOOTH_CORNER_SIZE -
+              SideChainConnectionBondRendererUtility.smoothCornerSize -
               sin * (cellConnection.yOffset || 0) * 3 -
               (isTwoNeighborRowsConnection
                 ? maxHorizontalOffset - cellConnection.xOffset
@@ -379,10 +381,21 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
                 absoluteLineY,
               ) + ' ';
           }
-          pathDAttributeValue += generateBend(0, sin, cos, 1) + ' ';
+          pathDAttributeValue +=
+            SideChainConnectionBondRendererUtility.generateBend(
+              0,
+              sin,
+              cos,
+              1,
+            ) + ' ';
         }
-        pathDAttributeValue += `H ${endPosition.x - SMOOTH_CORNER_SIZE * cos} `;
-        pathDAttributeValue += generateBend(cos, 0, cos, 1) + ' ';
+        pathDAttributeValue += `H ${
+          endPosition.x -
+          SideChainConnectionBondRendererUtility.smoothCornerSize * cos
+        } `;
+        pathDAttributeValue +=
+          SideChainConnectionBondRendererUtility.generateBend(cos, 0, cos, 1) +
+          ' ';
         return;
       }
 

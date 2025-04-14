@@ -2,10 +2,6 @@ import {
   BaseMonomerRenderer,
   BaseSequenceItemRenderer,
 } from 'application/render';
-import {
-  generateBend,
-  SMOOTH_CORNER_SIZE,
-} from 'application/render/renderers/PolymerBondRenderer/helpers';
 import { SVGPathDAttributeUtil } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtil';
 import { BaseMonomer } from 'domain/entities';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
@@ -31,8 +27,7 @@ interface DrawPartOfSideConnectionResult {
 const CELL_HEIGHT = 40;
 
 export class SideChainConnectionBondRendererUtility {
-  // TODO: Replace `SMOOTH_CORNER_SIZE` by `smoothCornerSize` if it is only user of the constant.
-  public static readonly smoothCornerSize = SMOOTH_CORNER_SIZE;
+  public static readonly smoothCornerSize = 5;
 
   public static drawPartOfSideConnection({
     cell,
@@ -91,11 +86,27 @@ export class SideChainConnectionBondRendererUtility {
       pathPart +=
         SVGPathDAttributeUtil.generateVerticalAbsoluteLine(absoluteLineY) + ' ';
     }
-    pathPart += generateBend(cos, sin, cos, 1) + ' ';
+    pathPart += this.generateBend(cos, sin, cos, 1) + ' ';
 
     return {
       pathPart,
       sideConnectionBondTurnPoint: sideConnectionBondTurnPointInternal,
     };
+  }
+
+  // TODO: Can we use `-1 | 0 | 1` instead of `number`?
+  public static generateBend(
+    dx1: number,
+    dy1: number,
+    dx: number,
+    dy: -1 | 1,
+  ): string {
+    const size = this.smoothCornerSize;
+    return SVGPathDAttributeUtil.generateQuadraticRelativeCurve(
+      size * dx1,
+      size * dy1,
+      size * dx,
+      size * dy,
+    );
   }
 }

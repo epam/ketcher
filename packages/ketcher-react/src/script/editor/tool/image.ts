@@ -101,6 +101,7 @@ export class ImageTool implements Tool {
       const render = this.editor.render;
       handleMovingPosibilityCursor(
         item,
+        // @ts-ignore: raphael typing issues
         render.paper.canvas,
         getItemCursor(render, item),
       );

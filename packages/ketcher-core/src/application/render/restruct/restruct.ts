@@ -282,6 +282,7 @@ class ReStruct {
     for (const group in LayerMap) {
       this.layers[LayerMap[group]] = this.render.paper
         .rect(0, 0, 10, 10)
+        // @ts-ignore: raphael typing issues
         .attr({
           class: group + 'Layer',
           fill: '#000',

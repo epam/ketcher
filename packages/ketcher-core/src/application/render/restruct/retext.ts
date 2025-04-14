@@ -173,6 +173,7 @@ class ReText extends ReObject {
             fill: '#000000',
             ...styles,
           });
+        // @ts-ignore: raphael typing issues
         path.translateAbs(shiftX, shiftY + (styles.shiftY || 0));
         row.push(path);
         shiftX += path.getBBox().width;

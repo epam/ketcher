@@ -92,6 +92,7 @@ export class CommonArrowTool extends ArrowTool implements Tool {
       this.editor.hover(closestItem, null, event);
       handleMovingPosibilityCursor(
         closestItem,
+        // @ts-ignore: raphael typing issues
         this.render.paper.canvas,
         getItemCursor(this.render, closestItem),
       );

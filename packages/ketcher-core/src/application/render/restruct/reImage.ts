@@ -21,6 +21,7 @@ interface ClosestReferencePosition {
 }
 
 export class ReImage extends ReObject {
+  // @ts-ignore: raphael typing issues
   private selectionPointsSet: RaphaelSet;
 
   static isSelectable(): boolean {

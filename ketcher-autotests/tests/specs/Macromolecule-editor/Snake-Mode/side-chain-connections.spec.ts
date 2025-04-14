@@ -1,4 +1,4 @@
-import { Page, test, expect, BrowserContext, chromium } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
@@ -11,8 +11,6 @@ import {
   saveToFile,
   receiveFileComparisonData,
   getMolfile,
-  waitForIndigoToLoad,
-  waitForKetcherInit,
   hideLibrary,
   showLibrary,
   copyToClipboardByKeyboard,
@@ -20,6 +18,7 @@ import {
   selectAllStructuresOnCanvas,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
+  waitForPageInit,
 } from '@utils';
 import {
   pressUndoButton,
@@ -29,7 +28,7 @@ import {
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { pageReload } from '@utils/common/helpers';
-import { waitForMonomerPreview } from '@utils/macromolecules';
+import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
 import {
   selectAreaSelectionTool,
   selectEraseTool,
@@ -37,27 +36,18 @@ import {
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 let page: Page;
-let sharedContext: BrowserContext;
+
+async function configureInitialState(page: Page) {
+  await chooseTab(page, Tabs.Rna);
+}
 
 test.beforeAll(async ({ browser }) => {
-  // let sharedContext;
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
+  const context = await browser.newContext();
+  page = await context.newPage();
 
-  // Reminder: do not pass page as async
-  page = await sharedContext.newPage();
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
+  await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
+  await configureInitialState(page);
 });
 
 test.afterEach(async () => {
@@ -67,12 +57,7 @@ test.afterEach(async () => {
 });
 
 test.afterAll(async ({ browser }) => {
-  await page.close();
-  await sharedContext.close();
-  await browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
-  // await browser.close();
+  await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
 async function clickNthConnectionLine(page: Page, n: number) {

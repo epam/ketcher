@@ -2,14 +2,7 @@
 import { Chem } from '@constants/monomers/Chem';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
-import {
-  test,
-  expect,
-  Page,
-  BrowserContext,
-  chromium,
-  Locator,
-} from '@playwright/test';
+import { test, expect, Page, Locator } from '@playwright/test';
 import {
   takeEditorScreenshot,
   addSingleMonomerToCanvas,
@@ -26,8 +19,6 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   delay,
   moveMouseAway,
-  waitForKetcherInit,
-  waitForIndigoToLoad,
   selectOptionInTypeDropdown2,
   clickOnCanvas,
   selectMonomer,
@@ -37,6 +28,7 @@ import {
   pasteFromClipboardByKeyboard,
   selectSnakeLayoutModeTool,
   selectFlexLayoutModeTool,
+  waitForPageInit,
 } from '@utils';
 import {
   FileType,
@@ -65,28 +57,21 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { chooseTab, Tabs } from '@utils/macromolecules';
 
 let page: Page;
-let sharedContext: BrowserContext;
+
+async function configureInitialState(page: Page) {
+  await chooseTab(page, Tabs.Rna);
+}
 
 test.beforeAll(async ({ browser }) => {
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
+  const context = await browser.newContext();
+  page = await context.newPage();
 
-  // Reminder: do not pass page as async
-  page = await sharedContext.newPage();
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
+  await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
+  await configureInitialState(page);
 });
 
 test.afterEach(async () => {
@@ -98,11 +83,7 @@ test.afterEach(async () => {
 });
 
 test.afterAll(async ({ browser }) => {
-  await page.close();
-  await sharedContext.close();
-  browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
+  await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
 async function saveAndCompareMolfile(

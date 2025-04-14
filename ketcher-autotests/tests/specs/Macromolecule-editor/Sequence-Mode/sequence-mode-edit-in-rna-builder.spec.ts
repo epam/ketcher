@@ -151,7 +151,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await takeEditorScreenshot(page);
     await page.getByText('Yes').click();
     // should see updated nucleotides in chain
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Select entire chain and see enabled modify_in_rna_builder button', async ({
@@ -337,7 +337,7 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     await getSymbolLocator(page, { symbolAlias: 'p', nodeIndexOverall: 5 }).click();
     await page.keyboard.up('Shift');
     await getSymbolLocator(page, { symbolAlias: 'G', nodeIndexOverall: 1 }).click({ button: 'right' });
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('RNA builder highlighted in Edit mode. Canvas disabled', async ({

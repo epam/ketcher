@@ -2687,7 +2687,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'PEPTIDE1{A}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Peptides.A,
     unsplitNucleotide: false,
   },
   {
@@ -2697,7 +2697,7 @@ const shortMonomerList: IMonomer[] = [
       'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Peptides.X,
     unsplitNucleotide: false,
   },
   {
@@ -2706,7 +2706,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Sugars.R,
     unsplitNucleotide: false,
   },
   {
@@ -2715,7 +2715,7 @@ const shortMonomerList: IMonomer[] = [
     KETFile: 'KET/Antisense-Chains/8. Base A (from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Bases.A,
     unsplitNucleotide: false,
   },
   {
@@ -2725,7 +2725,7 @@ const shortMonomerList: IMonomer[] = [
       'KET/Antisense-Chains/9. Ambiguous DNA Base N (alternatives, from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Bases.DNA_N,
     unsplitNucleotide: false,
   },
   {
@@ -2734,7 +2734,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{P}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Phosphates.P,
     unsplitNucleotide: false,
   },
   {
@@ -2743,7 +2743,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{[2-damdA]}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Nucleotides._2_damdA,
     unsplitNucleotide: true,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6735',
@@ -2754,7 +2754,10 @@ const shortMonomerList: IMonomer[] = [
     KETFile: 'KET/Antisense-Chains/19. Unknown monomer.ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: {
+      monomerAlias: 'Unknown',
+      monomerType: MonomerType.UnknownMonomer,
+    },
     unsplitNucleotide: false,
   },
   {
@@ -2763,7 +2766,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'CHEM1{[4aPEGMal]}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Chem._4aPEGMal,
     unsplitNucleotide: false,
   },
   {
@@ -2772,7 +2775,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Bases.A,
     unsplitNucleotide: false,
   },
   {
@@ -2781,7 +2784,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A)P}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Bases.A,
     unsplitNucleotide: false,
   },
   {
@@ -2791,7 +2794,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A,C,G,T)P}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Bases.DNA_N,
     unsplitNucleotide: false,
   },
   {
@@ -2802,7 +2805,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Bases.nC6n8A,
     unsplitNucleotide: false,
   },
   {
@@ -2813,7 +2816,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{R([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Bases.nC6n8A,
     unsplitNucleotide: false,
   },
   {
@@ -2824,7 +2827,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Bases.nC6n8A,
     unsplitNucleotide: false,
   },
   {
@@ -2835,7 +2838,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{R([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Bases.nC6n8A,
     unsplitNucleotide: false,
   },
 ];
@@ -2917,19 +2920,17 @@ for (const monomer1 of shortMonomerList) {
   }
 }
 
-const chainWithAllTypeOfConnections: IMonomer[] = [
-  {
-    monomerDescription:
-      'All type of monomers connected to R1, R2, R3, R4 attachment points',
-    contentType: MacroFileType.Ket,
-    KETFile:
-      'KET/Antisense-Chains/Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored.ket',
-    eligibleForAntisense: true,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: {},
-    unsplitNucleotide: false,
-  },
-];
+const chainWithAllTypeOfConnections: IMonomer = {
+  monomerDescription:
+    'All type of monomers connected to R1, R2, R3, R4 attachment points',
+  contentType: MacroFileType.Ket,
+  KETFile:
+    'KET/Antisense-Chains/Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored.ket',
+  eligibleForAntisense: true,
+  baseWithR3R1ConnectionPresent: true,
+  monomerLocatorOptions: Bases.A,
+  unsplitNucleotide: false,
+};
 
 test(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1 for sugar and base!!!) are ignored`, async () => {
   /*
@@ -2943,7 +2944,7 @@ test(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1
    */
   test.setTimeout(20000);
 
-  const chain = chainWithAllTypeOfConnections[0];
+  const chain = chainWithAllTypeOfConnections;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -2964,22 +2965,20 @@ test(`5. Check that all non R1-R2 connections of backbone monomers (except R3-R1
   await takeEditorScreenshot(page);
 });
 
-const chainOfNucleotidesWithAllTypesOfPhosphateAndSugar: IMonomer[] = [
-  {
-    monomerDescription: 'All type of sugars and phosphates in one chain',
-    contentType: MacroFileType.HELM,
-    HELMString:
-      'RNA1{[25d3r]([4ime6A])[bP].[25mo3r]([az8A])[cm].[25moe3]([baA])[cmp].[25R]([br8A])[co].[3A6]([c3A])[fl2me].[4sR]([c7io7A])' +
-      '[gly].[5A6]([c7io7n])[hn].[ana]([meA])[Ssp].[Am2d]([m2A])[Smp].[ALtri2]([io2A])[s2p].[ALtri1]([imprn2])[Rsp].[ALmecl]([impr6n])[Rmp].' +
-      '[allyl2]([fl2A])[prn].[aFR]([eaA])[P-].[afl2Nm]([e6A])[oxy].[afhna]([dabA])[nen].[Ae2d]([daA])[msp].[acn4d]([cyp6A])[mp].' +
-      '[5S6Sm5]([cyh6A])[moen].[5S6Rm5]([cpmA])[mn].[5R6Sm5]([clA])[mepo2].[5R6Rm5]([cl8A])[me].[5formD]([cl2cyp])[m2np].[aoe2r]([mo2A])[en].' +
-      '[aR]([moprn2])[sP].[bcdna]([ms2A])[eop].[Bcm2r]([n2A])[sP-]}$$$$V2.0',
-    eligibleForAntisense: true,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: {},
-    unsplitNucleotide: false,
-  },
-];
+const chainOfNucleotidesWithAllTypesOfPhosphateAndSugar: IMonomer = {
+  monomerDescription: 'All type of sugars and phosphates in one chain',
+  contentType: MacroFileType.HELM,
+  HELMString:
+    'RNA1{[25d3r]([4ime6A])[bP].[25mo3r]([az8A])[cm].[25moe3]([baA])[cmp].[25R]([br8A])[co].[3A6]([c3A])[fl2me].[4sR]([c7io7A])' +
+    '[gly].[5A6]([c7io7n])[hn].[ana]([meA])[Ssp].[Am2d]([m2A])[Smp].[ALtri2]([io2A])[s2p].[ALtri1]([imprn2])[Rsp].[ALmecl]([impr6n])[Rmp].' +
+    '[allyl2]([fl2A])[prn].[aFR]([eaA])[P-].[afl2Nm]([e6A])[oxy].[afhna]([dabA])[nen].[Ae2d]([daA])[msp].[acn4d]([cyp6A])[mp].' +
+    '[5S6Sm5]([cyh6A])[moen].[5S6Rm5]([cpmA])[mn].[5R6Sm5]([clA])[mepo2].[5R6Rm5]([cl8A])[me].[5formD]([cl2cyp])[m2np].[aoe2r]([mo2A])[en].' +
+    '[aR]([moprn2])[sP].[bcdna]([ms2A])[eop].[Bcm2r]([n2A])[sP-]}$$$$V2.0',
+  eligibleForAntisense: true,
+  baseWithR3R1ConnectionPresent: true,
+  monomerLocatorOptions: {},
+  unsplitNucleotide: false,
+};
 
 test(`6. Check that every nucleotide (sugar and phosphate are part of the backbone and connected via R2(s)-R1(p), and the sugar is connected to a "sense base" via R3(s)-R1(b)) transform into a nucleotide on the antisense chain that contains ribose (R), phosphate (P), and the appropriate "antisense base"`, async () => {
   /*
@@ -2995,7 +2994,7 @@ test(`6. Check that every nucleotide (sugar and phosphate are part of the backbo
    */
   test.setTimeout(20000);
 
-  const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar[0];
+  const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -3066,7 +3065,7 @@ const chainOfNucleosidesWithAllTypesOfSugar: IMonomer[] = [
       'RNA97,RNA98,1:R2-1:R1$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: {},
+    monomerLocatorOptions: Bases.nC6n8A,
     unsplitNucleotide: false,
   },
 ];
@@ -3108,18 +3107,16 @@ test(`7. Check that every nucleoside (not a nucleotide, sugar is connected throu
   await resetZoomLevelToDefault(page);
 });
 
-const chainOfAllTypesModifiedMonomers: IMonomer[] = [
-  {
-    monomerDescription: 'All types of modified monomers in one chain',
-    contentType: MacroFileType.Ket,
-    KETFile:
-      'KET/Antisense-Chains/Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside directly copied to the antisense strand.ket',
-    eligibleForAntisense: true,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: {},
-    unsplitNucleotide: false,
-  },
-];
+const chainOfAllTypesModifiedMonomers: IMonomer = {
+  monomerDescription: 'All types of modified monomers in one chain',
+  contentType: MacroFileType.Ket,
+  KETFile:
+    'KET/Antisense-Chains/Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside directly copied to the antisense strand.ket',
+  eligibleForAntisense: true,
+  baseWithR3R1ConnectionPresent: true,
+  monomerLocatorOptions: Bases.A,
+  unsplitNucleotide: false,
+};
 
 test(`8. Check that all other monomers in the backbone that are not a part of the nucleotide or a nucleoside directly copied to the antisense strand`, async () => {
   /*
@@ -3134,7 +3131,7 @@ test(`8. Check that all other monomers in the backbone that are not a part of th
    */
   test.setTimeout(20000);
 
-  const chain = chainOfAllTypesModifiedMonomers[0];
+  const chain = chainOfAllTypesModifiedMonomers;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -3157,18 +3154,16 @@ test(`8. Check that all other monomers in the backbone that are not a part of th
   await resetZoomLevelToDefault(page);
 });
 
-const chainOfNucleotidesAndPeptides: IMonomer[] = [
-  {
-    monomerDescription: 'All types of modified monomers in one chain',
-    contentType: MacroFileType.HELM,
-    HELMString:
-      'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
-    eligibleForAntisense: true,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorOptions: {},
-    unsplitNucleotide: false,
-  },
-];
+const chainOfNucleotidesAndPeptides: IMonomer = {
+  monomerDescription: 'All types of modified monomers in one chain',
+  contentType: MacroFileType.HELM,
+  HELMString:
+    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe]}$RNA1,PEPTIDE1,9:R2-1:R1$$$V2.0',
+  eligibleForAntisense: true,
+  baseWithR3R1ConnectionPresent: true,
+  monomerLocatorOptions: Bases.U,
+  unsplitNucleotide: false,
+};
 
 test(`9. Check that the antisense chain should be "flipped" in relation to the sense chain checks`, async () => {
   /*
@@ -3186,7 +3181,7 @@ test(`9. Check that the antisense chain should be "flipped" in relation to the s
    */
   test.setTimeout(20000);
 
-  const chain = chainOfNucleotidesAndPeptides[0];
+  const chain = chainOfNucleotidesAndPeptides;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -3221,7 +3216,7 @@ test(`10. Check that options "Delete" and "Copy" added to the r-click menu`, asy
    */
   test.setTimeout(20000);
 
-  const chain = chainOfNucleotidesAndPeptides[0];
+  const chain = chainOfNucleotidesAndPeptides;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -3252,7 +3247,7 @@ test(`11. Check that option "Delete" deletes the selected monomers and all the b
    */
   test.setTimeout(20000);
 
-  const chain = chainOfNucleotidesAndPeptides[0];
+  const chain = chainOfNucleotidesAndPeptides;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -3286,7 +3281,7 @@ test(`12. Check that option "Copy" copies the selected monomers and any bonds be
    */
   test.setTimeout(20000);
 
-  const chain = chainOfNucleotidesAndPeptides[0];
+  const chain = chainOfNucleotidesAndPeptides;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -3322,7 +3317,7 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
    */
   test.setTimeout(30000);
 
-  const chain = chainOfNucleotidesAndPeptides[0];
+  const chain = chainOfNucleotidesAndPeptides;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -3387,7 +3382,7 @@ test(`14. Validate that both sense and antisense strands can be exported correct
    */
   test.setTimeout(30000);
 
-  const chain = chainOfNucleotidesAndPeptides[0];
+  const chain = chainOfNucleotidesAndPeptides;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -3442,7 +3437,7 @@ test(`15. Ensure that switching between (Flex, Snake, Sequence) modes does not b
    */
   test.setTimeout(20000);
 
-  const chain = chainOfNucleotidesAndPeptides[0];
+  const chain = chainOfNucleotidesAndPeptides;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -3486,7 +3481,7 @@ test(`16. Ensure that switching between macro and micro modes does not break the
    */
   test.setTimeout(20000);
 
-  const chain = chainOfNucleotidesAndPeptides[0];
+  const chain = chainOfNucleotidesAndPeptides;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -3528,7 +3523,7 @@ test(`17. Verify that copying the sense and antisense strand and pasting it with
   test.setTimeout(30000);
   await pageReload(page);
 
-  const chain = chainOfNucleotidesAndPeptides[0];
+  const chain = chainOfNucleotidesAndPeptides;
 
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
@@ -4315,7 +4310,7 @@ test(`26.5.1 Check that all non R1-R2 connections of backbone monomers (except R
   test.setTimeout(20000);
   await selectSequenceLayoutModeTool(page);
 
-  const chain = chainWithAllTypeOfConnections[0];
+  const chain = chainWithAllTypeOfConnections;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -4354,7 +4349,7 @@ test(`26.5.2 Check that all non R1-R2 connections of backbone monomers (except R
   test.setTimeout(20000);
   await selectSequenceLayoutModeTool(page);
 
-  const chain = chainWithAllTypeOfConnections[0];
+  const chain = chainWithAllTypeOfConnections;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -4395,7 +4390,7 @@ test(`26.6.1 Check that every nucleotide (sugar and phosphate are part of the ba
   test.setTimeout(20000);
   await selectSequenceLayoutModeTool(page);
 
-  const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar[0];
+  const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -4437,7 +4432,7 @@ test(`26.6.2 Check that every nucleotide (sugar and phosphate are part of the ba
   test.setTimeout(20000);
   await selectSequenceLayoutModeTool(page);
 
-  const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar[0];
+  const chain = chainOfNucleotidesWithAllTypesOfPhosphateAndSugar;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -4559,7 +4554,7 @@ test(`26.8.1 Check that all other monomers in the backbone that are not a part o
   test.setTimeout(20000);
   await selectSequenceLayoutModeTool(page);
 
-  const chain = chainOfAllTypesModifiedMonomers[0];
+  const chain = chainOfAllTypesModifiedMonomers;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);
@@ -4599,7 +4594,7 @@ test(`26.8.2 Check that all other monomers in the backbone that are not a part o
   test.setTimeout(20000);
   await selectSequenceLayoutModeTool(page);
 
-  const chain = chainOfAllTypesModifiedMonomers[0];
+  const chain = chainOfAllTypesModifiedMonomers;
   await loadMonomerOnCanvas(page, chain, chain.pageReloadNeeded);
 
   await selectAllStructuresOnCanvas(page);

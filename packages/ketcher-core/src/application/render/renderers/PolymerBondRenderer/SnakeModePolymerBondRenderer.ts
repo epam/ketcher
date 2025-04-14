@@ -9,11 +9,6 @@ import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
 import { BaseMonomer, Vec2 } from 'domain/entities';
 import { Cell } from 'domain/entities/canvas-matrix/Cell';
-import {
-  Connection,
-  ConnectionDirectionInDegrees,
-  ConnectionDirectionOfLastCell,
-} from 'domain/entities/canvas-matrix/Connection';
 import { DrawingEntity } from 'domain/entities/DrawingEntity';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { PolymerBond } from 'domain/entities/PolymerBond';
@@ -43,8 +38,6 @@ const RNA_CHAIN_VERTICAL_LINE_LENGTH = 74;
 const RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH = 20;
 const RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH = 210;
 
-const BOND_END_LENGTH = 15;
-const CELL_HEIGHT = 40;
 const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 
 // TODO: Need to split the class by three:
@@ -221,220 +214,13 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
 
   // TODO: Specify the types.
   private appendSideConnectionBond(rootElement, cells: Cell[]) {
-    const firstCell = cells[0];
-    const firstCellConnection = firstCell.connections.find(
-      (connection: Connection): boolean => {
-        return connection.polymerBond === this.polymerBond;
-      },
-    ) as Connection;
-    const isVerticalConnection = firstCellConnection.isVertical;
-    const isStraightVerticalConnection =
-      (cells.length === 2 ||
-        cells.reduce(
-          (isStraight: boolean, cell: Cell, index: number): boolean => {
-            if (!isStraight || index === 0 || index === cells.length - 1) {
-              return isStraight;
-            }
-            return cell.x === firstCell.x && !cell.monomer;
-          },
-          true,
-        )) &&
-      isVerticalConnection;
-    const isFirstMonomerOfBondInFirstCell = firstCell.node?.monomers.includes(
-      this.polymerBond.firstMonomer,
-    );
-    const isTwoNeighborRowsConnection = cells.every(
-      (cell) => cell.y === firstCell.y || cell.y === firstCell.y + 1,
-    );
-    const startPosition = isFirstMonomerOfBondInFirstCell
-      ? this.scaledPosition.startPosition
-      : this.scaledPosition.endPosition;
-    const endPosition = isFirstMonomerOfBondInFirstCell
-      ? this.scaledPosition.endPosition
-      : this.scaledPosition.startPosition;
-    const xDirection =
-      startPosition.x >= (this.sideConnectionBondTurnPoint || endPosition.x)
-        ? 180
-        : 0;
-    let pathDAttributeValue =
-      SVGPathDAttributeUtil.generateMoveTo(startPosition.x, startPosition.y) +
-      ' ';
-
-    const cos = Math.cos((xDirection * Math.PI) / 180);
-
-    let previousConnection: Connection;
-    let previousCell: Cell;
-
-    const horizontalPartIntersectionsOffset = firstCellConnection.xOffset;
-
-    const areCellsOnSameRow = cells.every((cell) => {
-      return cell.y === firstCell.y;
-    });
-    const isSecondCellEmpty = cells[1].node === null;
-
-    if (areCellsOnSameRow) {
-      {
-        const absoluteLineY =
-          startPosition.y -
-          BOND_END_LENGTH -
-          horizontalPartIntersectionsOffset * 3;
-        pathDAttributeValue +=
-          SVGPathDAttributeUtil.generateAbsoluteLine(
-            startPosition.x,
-            absoluteLineY,
-          ) + ' ';
-      }
-      pathDAttributeValue +=
-        SideChainConnectionBondRendererUtility.generateBend(0, -1, cos, -1) +
-        ' ';
-    } else {
-      {
-        const absoluteLineY =
-          startPosition.y +
-          BOND_END_LENGTH +
-          horizontalPartIntersectionsOffset * 3;
-        pathDAttributeValue +=
-          SVGPathDAttributeUtil.generateAbsoluteLine(
-            startPosition.x,
-            absoluteLineY,
-          ) + ' ';
-      }
-      if (
-        !isStraightVerticalConnection &&
-        !isSecondCellEmpty &&
-        !isTwoNeighborRowsConnection
-      ) {
-        pathDAttributeValue +=
-          SideChainConnectionBondRendererUtility.generateBend(0, 1, cos, 1) +
-          ' ';
-      }
-    }
-
-    if (isVerticalConnection && !isStraightVerticalConnection) {
-      const direction =
-        this.sideConnectionBondTurnPoint &&
-        startPosition.x < this.sideConnectionBondTurnPoint
-          ? 0
-          : 180;
-      const result =
-        SideChainConnectionBondRendererUtility.drawPartOfSideConnection({
-          cell: firstCell,
-          connection: firstCellConnection,
-          direction,
-          horizontal: true,
-          sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
-        });
-      pathDAttributeValue += result.pathPart;
-      this.sideConnectionBondTurnPoint = result.sideConnectionBondTurnPoint;
-    }
-
-    let maxHorizontalOffset = 0;
-
-    cells.forEach((cell: Cell, cellIndex: number): void => {
-      const cellConnection = cell.connections.find(
-        (connection: Connection): boolean => {
-          return connection.polymerBond === this.polymerBond;
-        },
-      ) as Connection;
-      const isLastCell = cellIndex === cells.length - 1;
-      const _xDirection = this.sideConnectionBondTurnPoint
-        ? endPosition.x < this.sideConnectionBondTurnPoint
-          ? 180
-          : 0
-        : xDirection;
-      const maxXOffset = cell.connections.reduce(
-        (max: number, connection: Connection): number => {
-          return connection.isVertical || max > connection.xOffset
-            ? max
-            : connection.xOffset;
-        },
-        0,
-      );
-
-      maxHorizontalOffset =
-        maxHorizontalOffset > maxXOffset ? maxHorizontalOffset : maxXOffset;
-
-      if (isLastCell) {
-        if (isStraightVerticalConnection) {
-          return;
-        }
-
-        const directionObject =
-          cellConnection.direction as ConnectionDirectionOfLastCell;
-        const yDirection = isVerticalConnection ? 90 : directionObject.y;
-        const sin = Math.sin((yDirection * Math.PI) / 180);
-        const cos = Math.cos((_xDirection * Math.PI) / 180);
-
-        if (!areCellsOnSameRow) {
-          {
-            const absoluteLineY =
-              endPosition.y -
-              CELL_HEIGHT / 2 -
-              SideChainConnectionBondRendererUtility.smoothCornerSize -
-              sin * (cellConnection.yOffset || 0) * 3 -
-              (isTwoNeighborRowsConnection
-                ? maxHorizontalOffset - cellConnection.xOffset
-                : cellConnection.xOffset) *
-                3;
-            pathDAttributeValue +=
-              SVGPathDAttributeUtil.generateVerticalAbsoluteLine(
-                absoluteLineY,
-              ) + ' ';
-          }
-          pathDAttributeValue +=
-            SideChainConnectionBondRendererUtility.generateBend(
-              0,
-              sin,
-              cos,
-              1,
-            ) + ' ';
-        }
-        pathDAttributeValue += `H ${
-          endPosition.x -
-          SideChainConnectionBondRendererUtility.smoothCornerSize * cos
-        } `;
-        pathDAttributeValue +=
-          SideChainConnectionBondRendererUtility.generateBend(cos, 0, cos, 1) +
-          ' ';
-        return;
-      }
-
-      // Empty cells.
-      if (cell.node === null) {
-        return;
-      }
-
-      // Other cells.
-      if (
-        previousConnection &&
-        previousConnection.direction !== cellConnection.direction
-      ) {
-        // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
-        const horizontal = new Set([0, 180]).has(
-          previousConnection.direction as ConnectionDirectionInDegrees,
-        );
-        const direction = horizontal
-          ? xDirection
-          : // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
-            (previousConnection.direction as ConnectionDirectionInDegrees);
-        const result =
-          SideChainConnectionBondRendererUtility.drawPartOfSideConnection({
-            cell: previousCell,
-            connection: previousConnection,
-            direction,
-            horizontal,
-            sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
-          });
-        pathDAttributeValue += result.pathPart;
-        this.sideConnectionBondTurnPoint = result.sideConnectionBondTurnPoint;
-      }
-      previousCell = cell;
-      previousConnection = cellConnection;
-    });
-
-    pathDAttributeValue +=
-      SVGPathDAttributeUtil.generateAbsoluteLine(endPosition.x, endPosition.y) +
-      ' ';
+    const bondSettings =
+      SideChainConnectionBondRendererUtility.calculateBondSettings({
+        cells,
+        polymerBond: this.polymerBond,
+        scaledPosition: this.scaledPosition,
+        sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
+      });
 
     this.bodyElement = rootElement
       .append('path')
@@ -446,7 +232,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           : '#43B5C0',
       )
       .attr('stroke-width', 1)
-      .attr('d', pathDAttributeValue)
+      .attr('d', bondSettings.pathDAttributeValue)
       .attr('fill', 'none')
       .attr('stroke-dasharray', this.isHydrogenBond ? '2' : '0')
       .attr('pointer-events', 'all')
@@ -472,7 +258,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         );
     }
 
-    this.path = pathDAttributeValue;
+    this.path = bondSettings.pathDAttributeValue;
 
     return this.bodyElement;
   }

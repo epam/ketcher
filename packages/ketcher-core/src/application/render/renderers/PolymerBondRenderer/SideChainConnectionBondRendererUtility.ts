@@ -25,7 +25,7 @@ interface CalculateBondSettingsResult {
   readonly sideConnectionBondTurnPoint: number;
 }
 
-interface DrawPartOfSideConnectionParameter {
+interface CalculatePartOfBondSettingsParameter {
   readonly cell: Cell;
   readonly connection: Connection;
   readonly direction: ConnectionDirectionInDegrees;
@@ -33,7 +33,7 @@ interface DrawPartOfSideConnectionParameter {
   readonly sideConnectionBondTurnPoint: number;
 }
 
-interface DrawPartOfSideConnectionResult {
+interface CalculatePartOfBondSettingsResult {
   readonly pathPart: string;
   readonly sideConnectionBondTurnPoint: number;
 }
@@ -113,9 +113,7 @@ export class SideChainConnectionBondRendererUtility {
             absoluteLineY,
           ) + ' ';
       }
-      pathDAttributeValue +=
-        SideChainConnectionBondRendererUtility.generateBend(0, -1, cos, -1) +
-        ' ';
+      pathDAttributeValue += this.#generateBend(0, -1, cos, -1) + ' ';
     } else {
       {
         const absoluteLineY =
@@ -133,9 +131,7 @@ export class SideChainConnectionBondRendererUtility {
         !isSecondCellEmpty &&
         !isTwoNeighborRowsConnection
       ) {
-        pathDAttributeValue +=
-          SideChainConnectionBondRendererUtility.generateBend(0, 1, cos, 1) +
-          ' ';
+        pathDAttributeValue += this.#generateBend(0, 1, cos, 1) + ' ';
       }
     }
 
@@ -147,14 +143,13 @@ export class SideChainConnectionBondRendererUtility {
         startPosition.x < sideConnectionBondTurnPoint
           ? 0
           : 180;
-      const result =
-        SideChainConnectionBondRendererUtility.drawPartOfSideConnection({
-          cell: firstCell,
-          connection: firstCellConnection,
-          direction,
-          horizontal: true,
-          sideConnectionBondTurnPoint: sideConnectionBondTurnPoint ?? 0,
-        });
+      const result = this.#calculatePartOfBondSettings({
+        cell: firstCell,
+        connection: firstCellConnection,
+        direction,
+        horizontal: true,
+        sideConnectionBondTurnPoint: sideConnectionBondTurnPoint ?? 0,
+      });
       pathDAttributeValue += result.pathPart;
       sideConnectionBondTurnPointInternal = result.sideConnectionBondTurnPoint;
     }
@@ -201,7 +196,7 @@ export class SideChainConnectionBondRendererUtility {
             const absoluteLineY =
               endPosition.y -
               CELL_HEIGHT / 2 -
-              SideChainConnectionBondRendererUtility.smoothCornerSize -
+              this.smoothCornerSize -
               sin * (cellConnection.yOffset || 0) * 3 -
               (isTwoNeighborRowsConnection
                 ? maxHorizontalOffset - cellConnection.xOffset
@@ -212,21 +207,12 @@ export class SideChainConnectionBondRendererUtility {
                 absoluteLineY,
               ) + ' ';
           }
-          pathDAttributeValue +=
-            SideChainConnectionBondRendererUtility.generateBend(
-              0,
-              sin,
-              cos,
-              1,
-            ) + ' ';
+          pathDAttributeValue += this.#generateBend(0, sin, cos, 1) + ' ';
         }
         pathDAttributeValue += `H ${
-          endPosition.x -
-          SideChainConnectionBondRendererUtility.smoothCornerSize * cos
+          endPosition.x - this.smoothCornerSize * cos
         } `;
-        pathDAttributeValue +=
-          SideChainConnectionBondRendererUtility.generateBend(cos, 0, cos, 1) +
-          ' ';
+        pathDAttributeValue += this.#generateBend(cos, 0, cos, 1) + ' ';
         return;
       }
 
@@ -248,14 +234,13 @@ export class SideChainConnectionBondRendererUtility {
           ? xDirection
           : // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
             (previousConnection.direction as ConnectionDirectionInDegrees);
-        const result =
-          SideChainConnectionBondRendererUtility.drawPartOfSideConnection({
-            cell: previousCell,
-            connection: previousConnection,
-            direction,
-            horizontal,
-            sideConnectionBondTurnPoint: sideConnectionBondTurnPoint ?? 0,
-          });
+        const result = this.#calculatePartOfBondSettings({
+          cell: previousCell,
+          connection: previousConnection,
+          direction,
+          horizontal,
+          sideConnectionBondTurnPoint: sideConnectionBondTurnPoint ?? 0,
+        });
         pathDAttributeValue += result.pathPart;
         sideConnectionBondTurnPointInternal =
           result.sideConnectionBondTurnPoint;
@@ -274,13 +259,13 @@ export class SideChainConnectionBondRendererUtility {
     };
   }
 
-  private static drawPartOfSideConnection({
+  static #calculatePartOfBondSettings({
     cell,
     connection,
     direction,
     horizontal,
     sideConnectionBondTurnPoint,
-  }: DrawPartOfSideConnectionParameter): DrawPartOfSideConnectionResult {
+  }: CalculatePartOfBondSettingsParameter): CalculatePartOfBondSettingsResult {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
     const xOffset = (CELL_WIDTH / 2) * cos;
@@ -331,7 +316,7 @@ export class SideChainConnectionBondRendererUtility {
       pathPart +=
         SVGPathDAttributeUtil.generateVerticalAbsoluteLine(absoluteLineY) + ' ';
     }
-    pathPart += this.generateBend(cos, sin, cos, 1) + ' ';
+    pathPart += this.#generateBend(cos, sin, cos, 1) + ' ';
 
     return {
       pathPart,
@@ -340,7 +325,7 @@ export class SideChainConnectionBondRendererUtility {
   }
 
   // TODO: Can we use `-1 | 0 | 1` instead of `number`?
-  private static generateBend(
+  static #generateBend(
     dx1: number,
     dy1: number,
     dx: number,

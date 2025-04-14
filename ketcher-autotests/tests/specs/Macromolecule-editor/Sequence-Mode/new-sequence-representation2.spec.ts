@@ -2,7 +2,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
-  clickInTheMiddleOfTheScreen,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
@@ -375,8 +374,8 @@ for (const sequence of sequencesForAddingDash) {
     });
 
     await keyboardPressOnCanvas(page, 'Minus');
-
-    await clickInTheMiddleOfTheScreen(page);
+    // Exit from edit mode
+    await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -423,8 +422,8 @@ for (const sequence of sequencesForAddingDash) {
     });
 
     await keyboardPressOnCanvas(page, 'Minus');
-
-    await clickInTheMiddleOfTheScreen(page);
+    // Exit from edit mode
+    await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -474,7 +473,8 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     syncEditMode: false,
   });
   await keyboardPressOnCanvas(page, 'Minus');
-  await clickInTheMiddleOfTheScreen(page);
+  // Exit from edit mode
+  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
@@ -483,7 +483,8 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     syncEditMode: false,
   });
   await keyboardPressOnCanvas(page, 'Minus');
-  await clickInTheMiddleOfTheScreen(page);
+  // Exit from edit mode
+  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
@@ -492,7 +493,8 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     syncEditMode: false,
   });
   await keyboardPressOnCanvas(page, 'Minus');
-  await clickInTheMiddleOfTheScreen(page);
+  // Exit from edit mode
+  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
@@ -501,7 +503,8 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     syncEditMode: false,
   });
   await keyboardPressOnCanvas(page, 'Minus');
-  await clickInTheMiddleOfTheScreen(page);
+  // Exit from edit mode
+  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 

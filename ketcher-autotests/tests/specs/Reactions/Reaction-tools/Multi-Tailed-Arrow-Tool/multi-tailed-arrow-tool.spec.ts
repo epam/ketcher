@@ -987,7 +987,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await selectSaveTool(page);
     await expect(page.getByText('Save to Templates')).toBeDisabled();
     await takeEditorScreenshot(page, {
-      masks: [page.getByTestId('rxn-preview-area-text')],
+      mask: [page.getByTestId('rxn-preview-area-text')],
     });
   });
 
@@ -3807,7 +3807,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
     await selectTopPanelButton(TopPanelButton.Check, page);
     await takeEditorScreenshot(page, {
-      masks: [page.locator('[class*="Check-module_checkInfo"] > span')],
+      mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
     });
     await pressButton(page, 'Cancel');
     await takeEditorScreenshot(page);

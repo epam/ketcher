@@ -26,6 +26,7 @@ import {
   selectSequenceLayoutModeTool,
   pasteFromClipboard,
   openStructurePasteFromClipboard,
+  MonomerType,
 } from '@utils';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
@@ -63,17 +64,6 @@ import {
 } from '@utils/keyboard/index';
 
 let page: Page;
-
-async function callContextMenuForMonomer(
-  page: Page,
-  monomerLocatorIndex: number,
-) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator
-    .locator('g.monomer')
-    .nth(monomerLocatorIndex)
-    .click({ button: 'right', force: true });
-}
 
 async function setRotationStep(page: Page, value: string) {
   await page.getByTestId('settings-button').click();
@@ -237,7 +227,12 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       'RNA1{R(A)P.[dR](A+C+G+U)P.R(A)P}$$$$V2.0',
     );
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForMonomer(page, 0);
+    await getMonomerLocator(page, {
+      monomerAlias: 'R',
+      monomerType: MonomerType.Sugar,
+    })
+      .first()
+      .click({ button: 'right', force: true });
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

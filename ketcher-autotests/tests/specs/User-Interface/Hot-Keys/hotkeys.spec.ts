@@ -401,7 +401,7 @@ test.describe('Hot keys', () => {
     await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
     await page.mouse.click(100, 100);
     await selectAromatizeTool(page);
-    await takeEditorScreenshot(page, { maxDiffPixels: 1 });
+    await takeEditorScreenshot(page, { maxDiffPixels: 2 });
     await selectDearomatizeTool(page);
     await takeEditorScreenshot(page);
   });

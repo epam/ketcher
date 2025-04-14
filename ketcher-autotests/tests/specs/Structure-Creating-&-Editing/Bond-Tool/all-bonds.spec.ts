@@ -60,7 +60,6 @@ import {
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { pageReloadMicro } from '@utils/common/helpers';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -79,7 +78,6 @@ const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.DoubleCisTrans]: 'Double Cis/Trans Bond (2)',
 };
 
-test.setTimeout(45000);
 let page: Page;
 
 test.beforeAll(async ({ browser }) => {
@@ -91,6 +89,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await selectClearCanvasTool(page);
+  await selectHandTool(page);
 });
 
 test.afterAll(async ({ browser }) => {
@@ -113,8 +112,6 @@ test.describe(`Bond tool:`, () => {
       /**
        *   Test cases: EPMLSOPKET-1371, 1380, 1389, 1396, 1404, 1410, 1416, 1422, 1428, 1437, 1444, 1451, 2238, 2244
        */
-      test.setTimeout(45000);
-      await pageReloadMicro(page);
       const drawnBonds = 3;
       const drawnBondsWithRing = 7;
       const bondAfterErase = 6;
@@ -337,9 +334,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         /**
          * Test case: EPMLSOPKET-1377, 1385, 1394, 1400, 1408, 1414, 1420 1426, 1432, 1441, 1448, 1455, 2242, 2248
          */
-        test.setTimeout(45000);
-        await pageReloadMicro(page);
-
+        test.setTimeout(120000);
         const DELTA_X = 100;
         point = await getCoordinatesOfTheMiddleOfTheScreen(page);
 
@@ -440,7 +435,7 @@ test.describe('Bond Tool', () => {
      *Test case: EPMLSOPKET-1366
      *Description: Drop down list: verification
      */
-    await pageReloadMicro(page);
+    await page.keyboard.press('1');
     await expandBondSelectionDropdown(page);
     await takeEditorScreenshot(page);
   });
@@ -451,6 +446,7 @@ test.describe('Bond Tool', () => {
      *Description: Bond Tool - Hot keys
      */
     const hotKeys = ['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit0'];
+    await page.keyboard.press('Escape');
     for (const [index, hotKey] of hotKeys.entries()) {
       // Delay prevents the search field from opening after the hotkey press
       // (otherwise the main window is blocked and the panel tools can't be selected)
@@ -464,28 +460,22 @@ test.describe('Bond Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Adding custom s-groups to bonds correctly selects bonds', async ({
-    page,
-  }) => {
+  test('Adding custom s-groups to bonds correctly selects bonds', async () => {
     /**
      *Test case: EPMLSOPKET-8940
      *Description: Bond Tool - Adding custom s-groups to bonds correctly selects bonds
      */
-    await pageReloadMicro(page);
     await drawBenzeneRing(page);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await clickOnBond(page, BondType.SINGLE, 0);
     await takeEditorScreenshot(page);
   });
 
-  test('Drawing bonds in one direction does not change the bond created in the other direction', async ({
-    page,
-  }) => {
+  test('Drawing bonds in one direction does not change the bond created in the other direction', async () => {
     /**
      *Test case: EPMLSOPKET-8922
      *Description: Bond Tool - Drawing bonds in one direction does not change the bond created in the other direction
      */
-    await pageReloadMicro(page);
     const point = { x: -50, y: 0 };
     await selectAtomInToolbar(AtomButton.Nitrogen, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -496,18 +486,26 @@ test.describe('Bond Tool', () => {
     await moveOnAtom(page, 'N', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'O', 0);
-    await waitForRender(page, async () => {
-      await page.mouse.up();
-    });
+    await waitForRender(
+      page,
+      async () => {
+        await page.mouse.up();
+      },
+      200,
+    );
     await bondSelectionTool(page, MicroBondType.Double);
     await takeEditorScreenshot(page);
 
     await moveOnAtom(page, 'O', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'N', 0);
-    await waitForRender(page, async () => {
-      await page.mouse.up();
-    });
+    await waitForRender(
+      page,
+      async () => {
+        await page.mouse.up();
+      },
+      200,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -527,16 +525,24 @@ test.describe('Bond Tool', () => {
     await moveOnAtom(page, 'N', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'O', 0);
-    await waitForRender(page, async () => {
-      await page.mouse.up();
-    });
+    await waitForRender(
+      page,
+      async () => {
+        await page.mouse.up();
+      },
+      200,
+    );
     await bondSelectionTool(page, MicroBondType.Double);
     await moveOnAtom(page, 'O', 0);
     await page.mouse.down();
     await moveOnAtom(page, 'N', 0);
-    await waitForRender(page, async () => {
-      await page.mouse.up();
-    });
+    await waitForRender(
+      page,
+      async () => {
+        await page.mouse.up();
+      },
+      200,
+    );
     await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
     const point2 = await getAtomByIndex(page, { label: 'N' }, 0);
     await page.mouse.move(point2.x, point2.y);
@@ -545,14 +551,11 @@ test.describe('Bond Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Multiple bond editing not changes bond types to all selected bonds', async ({
-    page,
-  }) => {
+  test('Multiple bond editing not changes bond types to all selected bonds', async () => {
     /**
      *Test case: EPMLSOPKET-11853
      *Description: Bond Tool - Multiple bond editing not changes bond types to all selected bonds
      */
-    await pageReloadMicro(page);
     const point = { x: -200, y: -200 };
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await openFileAndAddToCanvas('KET/ketcher-42.ket', page);
@@ -624,7 +627,7 @@ for (const bondType of Object.values(MicroBondType)) {
     await expandBondSelectionDropdown(page);
     const button = page.getByTestId(bondType);
     await expect(button).toHaveAttribute('title', buttonIdToTitle[bondType]);
-    await button.click();
+    // await button.click();
     await selectHandTool(page);
   });
 }

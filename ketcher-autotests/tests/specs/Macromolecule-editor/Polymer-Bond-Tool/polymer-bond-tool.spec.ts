@@ -203,12 +203,12 @@ test('Create bond between two chems', async () => {
 
   // Create 2 chems on canvas
   await clickOnCanvas(page, 300, 300);
+  await moveMouseAway(page);
   await clickOnCanvas(page, 400, 400);
 
   // Get 2 chems locators
-  const chems = page.getByText('hxy').locator('..');
-  const chem1 = chems.nth(0);
-  const chem2 = chems.nth(1);
+  const chem1 = getMonomerLocator(page, Chem.hxy).first();
+  const chem2 = getMonomerLocator(page, Chem.hxy).nth(1);
 
   // Select bond tool
   await bondSelectionTool(page, MacroBondType.Single);

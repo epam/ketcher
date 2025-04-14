@@ -17,6 +17,7 @@ export const commonLeftToolbarLocators = (page: Page) => ({
   bondSelectionDropdownExpandButton: page
     .getByTestId('bonds-drop-down-button')
     .getByTestId('dropdown-expand'),
+  bondMultiToolSection: page.getByTestId('multi-tool-dropdown').first(),
 });
 
 export async function selectHandTool(page: Page) {
@@ -53,13 +54,20 @@ export async function selectEraseTool(page: Page) {
 export async function expandBondSelectionDropdown(page: Page) {
   const bondSelectionDropdownExpandButton =
     commonLeftToolbarLocators(page).bondSelectionDropdownExpandButton;
-  await bondSelectionDropdownExpandButton.click({ force: true });
+  const bondSelectionDropdownButton =
+    commonLeftToolbarLocators(page).bondSelectionDropdownButton;
+  const bondMultiToolSection =
+    commonLeftToolbarLocators(page).bondMultiToolSection;
 
-  if (await bondSelectionDropdownExpandButton.isVisible()) {
+  try {
+    await bondSelectionDropdownExpandButton.click({ force: true });
+    await bondMultiToolSection.waitFor({ state: 'visible', timeout: 5000 });
+  } catch (error) {
+    console.warn(
+      "Bond Multi Tool Section didn't appeared after click in 5 seconds, trying alternative way...",
+    );
     // alternative way to open the dropdown (doesn't work on Macro mode)
     await selectHandTool(page);
-    const bondSelectionDropdownButton =
-      commonLeftToolbarLocators(page).bondSelectionDropdownButton;
     await bondSelectionDropdownButton.click({ force: true });
     await bondSelectionDropdownButton.click({ force: true });
   }
@@ -71,11 +79,12 @@ export async function bondSelectionTool(
 ) {
   let attempts = 0;
   const maxAttempts = 5;
-
+  const bondTypeButton = page.getByTestId(bondType).first();
   while (attempts < maxAttempts) {
     try {
       await expandBondSelectionDropdown(page);
-      await page.getByTestId(bondType).first().click({ force: true });
+      await bondTypeButton.waitFor({ state: 'visible', timeout: 1000 });
+      await bondTypeButton.click({ force: true });
       return;
     } catch (error) {
       attempts++;

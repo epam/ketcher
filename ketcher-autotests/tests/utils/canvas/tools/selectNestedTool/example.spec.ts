@@ -2,7 +2,6 @@ export {};
 // import { test } from '@playwright/test';
 // import {
 //   selectNestedTool,
-//   BondTool,
 //   ShapeTool,
 //   RotateTool,
 //   ArrowTool,

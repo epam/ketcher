@@ -109,6 +109,7 @@ const SubMenu = ({
           <OptionsContainer
             isVertical={vertical}
             islayoutModeButton={layoutModeButton}
+            data-testId="multi-tool-dropdown"
           >
             {subComponents.map((component) => component)}
           </OptionsContainer>

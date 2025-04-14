@@ -137,6 +137,7 @@ export function TopMenuComponent() {
           vertical={true}
           layoutModeButton={true}
           generalTitle="Create Antisense Strand"
+          testId="Create Antisense Strand"
           activeItem={antisenseActiveOption}
         >
           <Menu.Item

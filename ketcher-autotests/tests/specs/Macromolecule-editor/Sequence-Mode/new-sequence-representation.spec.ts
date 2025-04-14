@@ -18,7 +18,6 @@ import {
   SymbolType,
   takeEditorScreenshot,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 import {
   selectClearCanvasTool,
@@ -1511,10 +1510,12 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
 
   await firstSymbol.dblclick();
 
-  await keyboardPressOnCanvas(page, 'ArrowLeft');
+  await keyboardPressOnCanvas(page, 'ArrowLeft', { waitForRenderTimeOut: 0 });
 
   for (let i = 1; i < position; i++) {
-    await keyboardPressOnCanvas(page, 'ArrowRight');
+    await keyboardPressOnCanvas(page, 'ArrowRight', {
+      waitForRenderTimeOut: 0,
+    });
   }
 
   if (syncEditMode) {
@@ -1524,7 +1525,7 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
   }
 
   if (senseOrAntisense === SequenceChainType.Antisense) {
-    await keyboardPressOnCanvas(page, 'ArrowDown');
+    await keyboardPressOnCanvas(page, 'ArrowDown', { waitForRenderTimeOut: 0 });
   }
 }
 

@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -18,6 +18,8 @@ import {
   selectZoomOutTool,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
+  takeTopToolbarScreenshot,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import {
   pressUndoButton,
@@ -29,6 +31,15 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
+import { createAntisenseStrandByButton } from '@utils/macromolecules/monomer';
+import { switchToDNAMode } from '@utils/macromolecules/sequence';
+
+export async function clickOnTriangle(page: Page) {
+  const expandButton = page
+    .getByTestId('Create Antisense Strand')
+    .getByTestId('dropdown-expand');
+  await expandButton.click();
+}
 
 test.describe('Sequence Mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -570,6 +581,374 @@ test.describe('Sequence Mode', () => {
     await takeEditorScreenshot(page);
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
+  });
+
+  test('Check that a command icon added to the right of the Undo button and separated from it by a line.(Sequence mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: Command icon added to the right of the Undo button and separated from it by a line.(Sequence mode).
+     * When user add sequence and select appropriate monomers, the command icon is activated.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Check that a command icon added to the right of the Undo button and separated from it by a line.
+     * 3. Add a sequence and select all monomers
+     * 4. Check activation of the command icon
+     */
+    await selectSequenceLayoutModeTool(page);
+    await takeTopToolbarScreenshot(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await takeTopToolbarScreenshot(page);
+  });
+
+  test('Check that clicking on the triangle on the right-bottom corner of the icon give a drop-down menu with two options (Sequence mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: Clicking on the triangle on the right-bottom corner of the icon give a drop-down menu with two
+     * options - "Create RNA Antisense Strand" and "Create DNA Antisense Strand".(Sequence mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a sequence and select all monomers
+     * 3. Click on the triangle on the right-bottom corner of the icon
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await clickOnTriangle(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Create antisense strand by hotkeys/keyboard shortcuts (Sequence mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: Create antisense strand by hotkeys/keyboard shortcuts Shift+Alt+R (Shift+Option+R for MacOS) for
+     *  "Create RNA Antisense Strand".(Sequence mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a sequence and select all monomers
+     * 3. Press Shift+Alt+R (Shift+Option+R for MacOS) for "Create RNA Antisense Strand",
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await keyboardPressOnCanvas(page, 'Shift+Alt+R');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Create antisense strand by hotkeys/keyboard shortcuts (Snake mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: Create antisense strand by hotkeys/keyboard shortcuts Shift+Alt+R (Shift+Option+R for MacOS) for
+     *  "Create RNA Antisense Strand".(Snake mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a sequence
+     * 3. Switch to Snake mode and select all monomers
+     * 4. Press Shift+Alt+R (Shift+Option+R for MacOS) for "Create RNA Antisense Strand",
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectSnakeLayoutModeTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await keyboardPressOnCanvas(page, 'Shift+Alt+R');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Create DNA antisense strand by hotkeys/keyboard shortcuts (Sequence mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: Create antisense strand by hotkeys/keyboard shortcuts Shift+Alt+D (Shift+Option+D for MacOS) for
+     *  "Create DNA Antisense Strand".(Sequence mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a sequence and select all monomers
+     * 3. Press Shift+Alt+D (Shift+Option+D for MacOS) for "Create DNA Antisense Strand",
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await keyboardPressOnCanvas(page, 'Shift+Alt+D');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Create DNA antisense strand by hotkeys/keyboard shortcuts (Snake mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: Create antisense strand by hotkeys/keyboard shortcuts Shift+Alt+D (Shift+Option+D for MacOS) for
+     *  "Create DNA Antisense Strand".(Snake mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a sequence
+     * 3. Switch to Snake mode and select all monomers
+     * 4. Press Shift+Alt+D (Shift+Option+D for MacOS) for "Create DNA Antisense Strand",
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectSnakeLayoutModeTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await keyboardPressOnCanvas(page, 'Shift+Alt+D');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check creation RNA Antisense Strand by button (Sequence mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: Creation RNA Antisense Strand by button (Sequence mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a RNA sequence and select all monomers
+     * 3. Click on button "Create Antisense Strand"
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await createAntisenseStrandByButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check creation RNA Antisense Strand by button (Snake mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: Creation RNA Antisense Strand by button (Snake mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a RNA sequence
+     * 3. Switch to Snake mode and select all monomers
+     * 4. Click on button "Create Antisense Strand"
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectSnakeLayoutModeTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await createAntisenseStrandByButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check creation DNA Antisense Strand by button (Sequence mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: Creation DNA Antisense Strand by button (Sequence mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a DNA sequence and select all monomers
+     * 3. Click on button "Create Antisense Strand"
+     */
+    await selectSequenceLayoutModeTool(page);
+    await switchToDNAMode(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await createAntisenseStrandByButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check creation DNA Antisense Strand by button (Snake mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: Creation DNA Antisense Strand by button (Snake mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a DNA sequence
+     * 3. Switch to Snake mode and select all monomers
+     * 4. Click on button "Create Antisense Strand"
+     */
+    await selectSequenceLayoutModeTool(page);
+    await switchToDNAMode(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectSnakeLayoutModeTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await createAntisenseStrandByButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that when RNA and DNA is selected, clicking the Create Antisense Strand button opens a drop-down menu (Sequence mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: When RNA and DNA is selected, clicking the Create Antisense Strand button opens a drop-down menu (Sequence mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a RNA and DNA sequence and select all monomers
+     * 3. Click on button "Create Antisense Strand"
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await switchToDNAMode(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await createAntisenseStrandByButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that when RNA and DNA is selected, clicking the Create Antisense Strand button opens a drop-down menu (Snake mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: When RNA and DNA is selected, clicking the Create Antisense Strand button opens a drop-down menu (Snake mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a RNA and DNA sequence
+     * 3. Switch to Snake mode and select all monomers
+     * 4. Click on button "Create Antisense Strand"
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await switchToDNAMode(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectSnakeLayoutModeTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await createAntisenseStrandByButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that when RNA and DNA is selected, user can create RNA Strand by clicking from drop-down menu Create RNA Antisense Strand (Sequence mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: When RNA and DNA is selected, user can create RNA Strand by clicking from drop-down menu Create RNA Antisense Strand (Sequence mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a RNA and DNA sequence and select all monomers
+     * 3. Click on button "Create Antisense Strand" and select "Create RNA Antisense Strand"
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await switchToDNAMode(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await createAntisenseStrandByButton(page, 'RNA');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that when RNA and DNA is selected, user can create DNA Strand by clicking from drop-down menu Create DNA Antisense Strand (Sequence mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: When RNA and DNA is selected, user can create DNA Strand by clicking from drop-down menu Create DNA Antisense Strand (Sequence mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a RNA and DNA sequence and select all monomers
+     * 3. Click on button "Create Antisense Strand" and select "Create DNA Antisense Strand"
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await switchToDNAMode(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await createAntisenseStrandByButton(page, 'DNA');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that when RNA and DNA is selected, user can create RNA Strand by clicking from drop-down menu Create RNA Antisense Strand (Flex mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: When RNA and DNA is selected, user can create RNA Strand by clicking from drop-down menu Create RNA Antisense Strand (Flex mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a RNA and DNA sequence
+     * 3. Switch to Flex mode and select all monomers
+     * 4. Click on button "Create Antisense Strand" and select "Create RNA Antisense Strand"
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await switchToDNAMode(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectFlexLayoutModeTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await createAntisenseStrandByButton(page, 'RNA');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that when RNA and DNA is selected, user can create DNA Strand by clicking from drop-down menu Create DNA Antisense Strand (Flex mode)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/5999
+     * Description: When RNA and DNA is selected, user can create DNA Strand by clicking from drop-down menu Create DNA Antisense Strand (Flex mode).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode
+     * 2. Add a RNA and DNA sequence
+     * 3. Switch to Flex mode and select all monomers
+     * 4. Click on button "Create Antisense Strand" and select "Create DNA Antisense Strand"
+     */
+    await selectSequenceLayoutModeTool(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await switchToDNAMode(page);
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectFlexLayoutModeTool(page);
+    await selectAllStructuresOnCanvas(page);
+    await createAntisenseStrandByButton(page, 'DNA');
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   const testCases = [

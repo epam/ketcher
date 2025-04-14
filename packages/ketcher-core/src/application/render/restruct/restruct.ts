@@ -280,6 +280,8 @@ class ReStruct {
 
   initLayers(): void {
     for (const group in LayerMap) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore: raphael typing issues
       this.layers[LayerMap[group]] = this.render.paper
         .rect(0, 0, 10, 10)
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment

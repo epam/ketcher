@@ -38,6 +38,7 @@ const RNA_CHAIN_VERTICAL_LINE_LENGTH = 74;
 const RNA_ANTISENSE_CHAIN_VERTICAL_LINE_LENGTH = 20;
 const RNA_SENSE_CHAIN_VERTICAL_LINE_LENGTH = 210;
 
+// TODO?: Can it be moved to `SideChainConnectionBondRendererUtility`?
 const SIDE_CONNECTION_BODY_ELEMENT_CLASS = 'polymer-bond-body';
 
 // TODO: Need to split the class by three:
@@ -221,6 +222,8 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         scaledPosition: this.scaledPosition,
         sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
       });
+
+    this.sideConnectionBondTurnPoint = bondSettings.sideConnectionBondTurnPoint;
 
     this.bodyElement = rootElement
       .append('path')

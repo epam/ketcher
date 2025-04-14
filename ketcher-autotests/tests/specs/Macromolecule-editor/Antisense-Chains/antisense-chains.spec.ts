@@ -53,6 +53,7 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Bases } from '@constants/monomers/Bases';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Chem } from '@constants/monomers/Chem';
+import { Nucleotides } from '@constants/monomers/Nucleotides';
 
 let page: Page;
 
@@ -305,15 +306,11 @@ const monomers: IMonomer[] = [
   },
   {
     monomerDescription: '18. Unsplit monomer 2-damdA (from library)',
-    contentType: MacroFileType.Ket,
-    KETFile:
-      'KET/Antisense-Chains/18. Unsplit monomer 2-damdA (from library).ket',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{[2-damdA]}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorOptions: {
-      monomerAlias: '2-damdA',
-      monomerType: MonomerType.UnsplitNucleotide,
-    },
+    monomerLocatorOptions: Nucleotides._2_damdA,
     shouldFail: true,
     issueNumber: 'https://github.com/epam/ketcher/issues/6840',
     unsplitNucleotide: true,

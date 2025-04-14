@@ -21,6 +21,7 @@ import {
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { zoomWithMouseWheel, chooseTab, Tabs } from '@utils/macromolecules';
+import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 
 let page: Page;
 
@@ -109,7 +110,7 @@ test.describe('Import/export sequence:', () => {
     for (const value2 of expectedValues2) {
       expect(values2).toContain(value2);
     }
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
 
     // Case 30
     await fileFormatComboBox.click();
@@ -123,8 +124,8 @@ test.describe('Import/export sequence:', () => {
       expect(values3).toContain(value3);
     }
 
-    await page.keyboard.press('Escape');
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
   });
 
   test('It is possible to paste from clipboard A, T, C, G, U for RNA open structure', async () => {
@@ -288,7 +289,7 @@ test.describe('Import/export sequence:', () => {
       expect(values).toContain(value);
     }
 
-    await page.keyboard.press('Escape');
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
   });
 });

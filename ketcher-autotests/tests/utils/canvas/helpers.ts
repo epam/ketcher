@@ -162,7 +162,7 @@ export async function takeElementScreenshot(
   page: Page,
   elementId: string,
   options?: {
-    masks?: Locator[];
+    mask?: Locator[];
     maxDiffPixelRatio?: number;
     maxDiffPixels?: number;
     hideMonomerPreview?: boolean;
@@ -176,10 +176,7 @@ export async function takeElementScreenshot(
   }
 
   const element = page.getByTestId(elementId).first();
-  await expect(element).toHaveScreenshot({
-    mask: options?.masks,
-    maxDiffPixelRatio: options?.maxDiffPixelRatio,
-  });
+  await expect(element).toHaveScreenshot(options);
 }
 
 export async function getCoordinatesOfTopMostCarbon(page: Page) {
@@ -210,18 +207,14 @@ export async function getCoordinatesOfTopMostCarbon(page: Page) {
 
 export async function takePageScreenshot(
   page: Page,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number; timeout?: number },
+  options?: { mask?: Locator[]; maxDiffPixelRatio?: number; timeout?: number },
 ) {
-  await expect(page).toHaveScreenshot({
-    mask: options?.masks,
-    maxDiffPixelRatio: options?.maxDiffPixelRatio,
-    timeout: options?.timeout,
-  });
+  await expect(page).toHaveScreenshot(options);
 }
 
 export async function takePresetsScreenshot(
   page: Page,
-  options?: { masks?: Locator[]; maxDiffPixelRatio?: number },
+  options?: { mask?: Locator[]; maxDiffPixelRatio?: number },
 ) {
   await takeElementScreenshot(page, 'rna-accordion', options);
 }
@@ -229,7 +222,7 @@ export async function takePresetsScreenshot(
 export async function takeRNABuilderScreenshot(
   page: Page,
   options?: {
-    masks?: Locator[];
+    mask?: Locator[];
     maxDiffPixelRatio?: number;
     hideMonomerPreview?: boolean;
     timeout?: number;
@@ -241,18 +234,25 @@ export async function takeRNABuilderScreenshot(
 export async function takeMonomerLibraryScreenshot(
   page: Page,
   options?: {
-    masks?: Locator[];
+    mask?: Locator[];
     maxDiffPixelRatio?: number;
+    maxDiffPixels?: number;
     hideMonomerPreview?: boolean;
+    hideMacromoleculeEditorScrollBars?: boolean;
   },
 ) {
+  if (options?.hideMacromoleculeEditorScrollBars) {
+    // That works only for Macromolecule editor
+    const modifier = getControlModifier();
+    await page.keyboard.press(`${modifier}+KeyB`);
+  }
   await takeElementScreenshot(page, 'monomer-library', options);
 }
 
 export async function takeEditorScreenshot(
   page: Page,
   options?: {
-    masks?: Locator[];
+    mask?: Locator[];
     maxDiffPixelRatio?: number;
     maxDiffPixels?: number;
     hideMonomerPreview?: boolean;
@@ -347,7 +347,7 @@ export async function addSingleMonomerToCanvas(
   index: number,
 ) {
   await page.getByTestId(monomer.testId).click();
-  await clickOnCanvas(page, positionX, positionY);
+  await clickOnCanvas(page, positionX, positionY, { waitForRenderTimeOut: 0 });
   await hideMonomerPreview(page);
   return getMonomerLocator(page, monomer).nth(index);
 }

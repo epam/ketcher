@@ -18,7 +18,10 @@ import {
   ZoomOutByKeyboard,
 } from '@utils';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
-import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
+import {
+  bondTwoMonomersPointToPoint,
+  getBondLocator,
+} from '@utils/macromolecules/polymerBond';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -32,7 +35,10 @@ import {
   selectEraseTool,
   selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  MacroBondDataIds,
+  MacroBondType,
+} from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
 test.setTimeout(40000);
@@ -236,18 +242,24 @@ async function bondTwoMonomersByCenterToCenter(
 }
 
 async function hoverOverConnectionLine(page: Page) {
-  const bondLine = page.locator('g[pointer-events="stroke"]').first();
-  await bondLine.hover();
+  const bondLine = getBondLocator(page, {
+    bondType: MacroBondDataIds.Hydrogen,
+  }).first();
+  await bondLine.hover({ force: true });
 }
 
 async function callContexMenuOverConnectionLine(page: Page) {
-  const bondLine = page.locator('g[pointer-events="stroke"]').first();
-  await bondLine.click({ button: 'right' });
+  const bondLine = getBondLocator(page, {
+    bondType: MacroBondDataIds.Hydrogen,
+  }).first();
+  await bondLine.click({ button: 'right', force: true });
 }
 
 async function clickOnConnectionLine(page: Page) {
-  const bondLine = page.locator('g[pointer-events="stroke"]').first();
-  await bondLine.click();
+  const bondLine = getBondLocator(page, {
+    bondType: MacroBondDataIds.Hydrogen,
+  }).first();
+  await bondLine.click({ force: true });
 }
 
 Object.values(monomers).forEach((leftMonomer) => {
@@ -390,11 +402,11 @@ Object.values(monomersWithNoFreeConnectionPoint).forEach((leftMonomer) => {
         MacroBondType.Hydrogen,
       );
 
-      await zoomWithMouseWheel(page, -600);
-
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
+      const bondLine = getBondLocator(page, {
+        bondType: MacroBondDataIds.Hydrogen,
       });
+
+      expect(await bondLine.count()).toEqual(1);
     });
   });
 });
@@ -750,18 +762,16 @@ Object.values(monomers).forEach((leftMonomer) => {
         MacroBondType.Hydrogen,
       );
 
-      await zoomWithMouseWheel(page, -600);
-
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
+      const bondLine = getBondLocator(page, {
+        bondType: MacroBondDataIds.Hydrogen,
       });
+
+      expect(await bondLine.count()).toEqual(1);
 
       await selectEraseTool(page);
       await clickOnConnectionLine(page);
 
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-      });
+      expect(await bondLine.count()).toEqual(0);
     });
   });
 });
@@ -934,7 +944,7 @@ Object.values(monomers).forEach((leftMonomer) => {
       test.setTimeout(25000);
 
       await loadTwoMonomers(page, leftMonomer, rightMolecule);
-      await zoomWithMouseWheel(page, -600);
+
       await bondTwoMonomersByCenterToCenter(
         page,
         leftMonomer,
@@ -942,9 +952,11 @@ Object.values(monomers).forEach((leftMonomer) => {
         MacroBondType.Hydrogen,
       );
 
-      await takeEditorScreenshot(page, {
-        hideMonomerPreview: true,
-      });
+      const bondLine = getBondLocator(page, {
+        bondType: MacroBondDataIds.Hydrogen,
+      }).first();
+
+      expect(await bondLine.count()).toEqual(0);
     });
   });
 });

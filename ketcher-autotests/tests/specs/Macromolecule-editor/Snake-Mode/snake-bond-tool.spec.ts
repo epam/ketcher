@@ -444,6 +444,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake bond for chain with side chains', async () => {
+    await selectFlexLayoutModeTool(page);
     await goToRNATab(page);
 
     if (await page.getByTestId(Presets.C.testId).isHidden()) {

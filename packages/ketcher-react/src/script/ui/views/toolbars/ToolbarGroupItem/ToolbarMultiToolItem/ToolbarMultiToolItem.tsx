@@ -170,6 +170,7 @@ const ToolbarMultiToolItem = (props: Props) => {
             portalClassName,
           )}
           style={portalStyle}
+          testId="multi-tool-dropdown"
         >
           <Component
             options={options}

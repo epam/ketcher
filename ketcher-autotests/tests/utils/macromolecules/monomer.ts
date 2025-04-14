@@ -92,7 +92,7 @@ export function getMonomerLocatorById(page: Page, id: number | string) {
     .first();
 }
 
-type MonomerLocatorOptions = {
+export type MonomerLocatorOptions = {
   numberOfAttachmentPoints?: string;
   rValues?: boolean[];
   hydrogenConnectionNumber?: string | number;
@@ -247,6 +247,23 @@ export async function createRNAAntisenseChain(page: Page, monomer: Locator) {
     .first();
 
   await createAntisenseStrandOption.click();
+}
+
+export async function createAntisenseStrandByButton(
+  page: Page,
+  chosenType?: 'RNA' | 'DNA',
+) {
+  const dropdownTrigger = page.getByTestId('Create Antisense Strand').first();
+  await dropdownTrigger.click();
+
+  if (!chosenType) return;
+
+  const optionTestId =
+    chosenType === 'RNA' ? 'antisenseRnaStrand' : 'antisenseDnaStrand';
+
+  const optionButton = page.getByTestId(optionTestId).first();
+  await optionButton.waitFor({ state: 'visible' });
+  await optionButton.click();
 }
 
 export async function modifyInRnaBuilder(page: Page, symbolLocator: Locator) {

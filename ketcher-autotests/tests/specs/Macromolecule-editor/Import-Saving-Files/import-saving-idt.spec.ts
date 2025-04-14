@@ -49,13 +49,15 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import {
   chooseTab,
-  enterSequence,
   Tabs,
   waitForMonomerPreview,
   zoomWithMouseWheel,
 } from '@utils/macromolecules';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  getSymbolLocator,
+} from '@utils/macromolecules/monomer';
 import { bondTwoMonomersPointToPoint } from '@utils/macromolecules/polymerBond';
 import {
   toggleNucleotidesAccordion,
@@ -71,6 +73,10 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 let page: Page;
 
@@ -415,8 +421,8 @@ test.describe('Import-Saving .idt Files', () => {
     await selectSequenceLayoutModeTool(page);
     await clickOnSequenceSymbol(page, 'G', { button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await enterSequence(page, 'ttt');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'ttt');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
   });
 
@@ -770,7 +776,7 @@ test.describe('Import-Saving .idt Files', () => {
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
     await selectSequenceLayoutModeTool(page);
-    await page.getByText('?').locator('..').nth(1).hover();
+    await getSymbolLocator(page, { symbolAlias: '?' }).nth(1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });

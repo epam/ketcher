@@ -20,7 +20,7 @@ test.describe('Open Ketcher', () => {
     await selectTopPanelButton(TopPanelButton.About, page);
 
     await takeEditorScreenshot(page, {
-      masks: [
+      mask: [
         page.getByTestId('build-version'),
         page.getByTestId('build-time'),
         page.getByTestId('build-indigo-version'),

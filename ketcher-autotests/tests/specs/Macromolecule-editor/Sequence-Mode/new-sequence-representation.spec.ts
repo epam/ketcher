@@ -1,9 +1,11 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { Bases } from '@constants/monomers/Bases';
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect, Locator } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
+  clickOnCanvas,
+  delay,
   MacroFileType,
   MonomerType,
   openFileAndAddToCanvasMacro,
@@ -18,7 +20,6 @@ import {
   SymbolType,
   takeEditorScreenshot,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 import {
   selectClearCanvasTool,
@@ -44,6 +45,8 @@ import {
   MacroBondDataIds,
   MacroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { keyboardPressOnCanvas } from '@utils/keyboard/index';
+import { logTestWarning } from '@utils/testLogging';
 
 let page: Page;
 
@@ -1491,6 +1494,40 @@ async function selectSequenceMode(page: Page, sequenceMode: SequenceModeType) {
   }
 }
 
+async function exitFromEditMode(page: Page) {
+  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
+  await page.getByTestId('sequence-start-arrow').waitFor({ state: 'hidden' });
+}
+
+async function closeContextMenu(page: Page) {
+  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
+  await clickOnCanvas(page, 0, 0, { waitForRenderTimeOut: 0 });
+  await page.getByRole('menu').waitFor({ state: 'hidden' });
+}
+
+// Due to rare bug - sometimes wrong menu appears for selected symbol
+// Function below is workaround - it closes wrong menu and tries to open it once again
+async function callContextMenuForSelectedAllSymbol(
+  page: Page,
+  symbol: Locator,
+) {
+  let attempts = 0;
+  const maxAttempts = 5;
+  while (attempts < maxAttempts) {
+    await symbol.click({ button: 'right', force: true });
+    if (await page.getByTestId('sequence_menu_title').isVisible()) {
+      return;
+    }
+    attempts++;
+    await closeContextMenu(page);
+    await delay(1);
+    await selectAllStructuresOnCanvas(page);
+  }
+  logTestWarning(
+    'It was impossible to open contex menu for selected symbol in 5 tries',
+  );
+}
+
 async function turnIntoEditModeAndPlaceCursorToThePosition(
   page: Page,
   {
@@ -1510,10 +1547,12 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
 
   await firstSymbol.dblclick();
 
-  await page.keyboard.press('ArrowLeft');
+  await keyboardPressOnCanvas(page, 'ArrowLeft', { waitForRenderTimeOut: 0 });
 
   for (let i = 1; i < position; i++) {
-    await page.keyboard.press('ArrowRight');
+    await keyboardPressOnCanvas(page, 'ArrowRight', {
+      waitForRenderTimeOut: 0,
+    });
   }
 
   if (syncEditMode) {
@@ -1523,7 +1562,7 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
   }
 
   if (senseOrAntisense === SequenceChainType.Antisense) {
-    await page.keyboard.press('ArrowDown');
+    await keyboardPressOnCanvas(page, 'ArrowDown', { waitForRenderTimeOut: 0 });
   }
 }
 
@@ -1574,10 +1613,8 @@ for (const monomer of monomersToAdd) {
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 1 });
 
-      await waitForRender(page, async () => {
-        await page.keyboard.press(monomer.Letter);
-      });
-      await clickInTheMiddleOfTheScreen(page);
+      await keyboardPressOnCanvas(page, monomer.Letter);
+      await exitFromEditMode(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
@@ -1644,10 +1681,8 @@ for (const monomer of monomersToAddWithEnter) {
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 2 });
 
-      await waitForRender(page, async () => {
-        await page.keyboard.press(monomer.Letter);
-      });
-      await clickInTheMiddleOfTheScreen(page);
+      await keyboardPressOnCanvas(page, monomer.Letter);
+      await exitFromEditMode(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
@@ -1713,10 +1748,8 @@ for (const monomer of monomersToAddWithEnter) {
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 3 });
 
-      await waitForRender(page, async () => {
-        await page.keyboard.press(monomer.Letter);
-      });
-      await clickInTheMiddleOfTheScreen(page);
+      await keyboardPressOnCanvas(page, monomer.Letter);
+      await exitFromEditMode(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
@@ -1781,10 +1814,8 @@ for (const monomer of monomersToAdd) {
 
       await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 9 });
 
-      await waitForRender(page, async () => {
-        await page.keyboard.press(monomer.Letter);
-      });
-      await clickInTheMiddleOfTheScreen(page);
+      await keyboardPressOnCanvas(page, monomer.Letter);
+      await exitFromEditMode(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
@@ -1830,10 +1861,8 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 1 });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Delete');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Delete');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -1878,10 +1907,8 @@ for (const sequence of sequences) {
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 2 });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Delete');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Delete');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -1943,10 +1970,8 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
       position: !sequence.Rotation ? 3 : 7,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Delete');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Delete');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -1990,10 +2015,8 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 2 });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Backspace');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Backspace');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -2036,10 +2059,8 @@ for (const sequence of sequences) {
 
     await turnIntoEditModeAndPlaceCursorToThePosition(page, { position: 3 });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Backspace');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Backspace');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -2084,11 +2105,8 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
       position: !sequence.Rotation ? 4 : 8,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Backspace');
-    });
-
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Backspace');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -2610,29 +2628,32 @@ for (const senseSequence of sequencesForHydrogenBondTests) {
 
       // 3. Check If multiple monomers are selected, and any of them have hydrogen bonds, the option "Delete Hydrogen Bonds"
       //    available in the r-click menu ( Requirement: 1.4 )
-      await clickInTheMiddleOfTheScreen(page);
-      await senseSymbol.click({ button: 'right', force: true });
+      await closeContextMenu(page);
+      await selectAllStructuresOnCanvas(page);
+      await callContextMenuForSelectedAllSymbol(page, senseSymbol);
       await expect(deleteHydrogenBondsOption).toBeEnabled();
 
       // 2. Check if multiple monomers/symbols are selected and all symbols have H-bonds established with the monomer/symbol
       //    above/bellow it the option "Establish Hydrogen Bonds" disabled from the r-click menu ( Requirement: 1.3 )
-      await clickInTheMiddleOfTheScreen(page);
-      await senseSymbolWithHBond.click({ button: 'right', force: true });
+      await closeContextMenu(page);
+      await selectAllStructuresOnCanvas(page);
+      await callContextMenuForSelectedAllSymbol(page, senseSymbolWithHBond);
       await establishHydrogenBondsOption.click({ force: true });
       await selectAllStructuresOnCanvas(page);
-      await antisenseSymbol.click({ button: 'right', force: true });
+      await callContextMenuForSelectedAllSymbol(page, antisenseSymbol);
       await expect(establishHydrogenBondsOption).toBeDisabled();
 
       // 4. Check If multiple monomers are selected, and selected symbols have no H-bonds, the option "Delete Hydrogen Bonds" disabled in the r-click menu ( Requirement: 1.4 )
-      await clickInTheMiddleOfTheScreen(page);
+      await closeContextMenu(page);
       await selectAllStructuresOnCanvas(page);
       await antisenseSymbol.click({ button: 'right', force: true });
       await deleteHydrogenBondsOption.click({ force: true });
       // 5. Verify warning message on deleting all hydrogen bonds between two chains ( Requirement: 1.5 )
       await pressYesInConfirmYourActionDialog(page);
       await selectAllStructuresOnCanvas(page);
-      await antisenseSymbolWithHBond.click({ button: 'right', force: true });
+      await callContextMenuForSelectedAllSymbol(page, antisenseSymbolWithHBond);
       await expect(deleteHydrogenBondsOption).toBeDisabled();
+      await closeContextMenu(page);
     });
   }
 }
@@ -2822,10 +2843,8 @@ for (const monomer of monomersToAdd) {
         syncEditMode: false,
       });
 
-      await waitForRender(page, async () => {
-        await page.keyboard.press(monomer.Letter);
-      });
-      await clickInTheMiddleOfTheScreen(page);
+      await keyboardPressOnCanvas(page, monomer.Letter);
+      await exitFromEditMode(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
@@ -2879,10 +2898,8 @@ for (const monomer of monomersToAddWithDashAndEnter) {
         syncEditMode: false,
       });
 
-      await waitForRender(page, async () => {
-        await page.keyboard.press(monomer.Letter);
-      });
-      await clickInTheMiddleOfTheScreen(page);
+      await keyboardPressOnCanvas(page, monomer.Letter);
+      await exitFromEditMode(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
@@ -2932,10 +2949,8 @@ for (const monomer of monomersToAddWithDashAndEnter) {
         syncEditMode: false,
       });
 
-      await waitForRender(page, async () => {
-        await page.keyboard.press(monomer.Letter);
-      });
-      await clickInTheMiddleOfTheScreen(page);
+      await keyboardPressOnCanvas(page, monomer.Letter);
+      await exitFromEditMode(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
@@ -2987,10 +3002,8 @@ for (const monomer of monomersToAdd) {
         syncEditMode: false,
       });
 
-      await waitForRender(page, async () => {
-        await page.keyboard.press(monomer.Letter);
-      });
-      await clickInTheMiddleOfTheScreen(page);
+      await keyboardPressOnCanvas(page, monomer.Letter);
+      await exitFromEditMode(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
@@ -3039,10 +3052,8 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Delete');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Delete');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -3091,10 +3102,8 @@ for (const sequence of sequences) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Delete');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Delete');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -3143,10 +3152,8 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Delete');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Delete');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -3194,10 +3201,8 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Backspace');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Backspace');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -3244,10 +3249,8 @@ for (const sequence of sequences) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Backspace');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Backspace');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -3294,11 +3297,8 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Backspace');
-    });
-
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Backspace');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -3350,10 +3350,8 @@ for (const monomer of monomersToAdd) {
         syncEditMode: false,
       });
 
-      await waitForRender(page, async () => {
-        await page.keyboard.press(monomer.Letter);
-      });
-      await clickInTheMiddleOfTheScreen(page);
+      await keyboardPressOnCanvas(page, monomer.Letter);
+      await exitFromEditMode(page);
 
       await page.keyboard.press('Shift');
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -3404,10 +3402,8 @@ for (const monomer of monomersToAddWithDashAndEnter) {
         syncEditMode: false,
       });
 
-      await waitForRender(page, async () => {
-        await page.keyboard.press(monomer.Letter);
-      });
-      await clickInTheMiddleOfTheScreen(page);
+      await keyboardPressOnCanvas(page, monomer.Letter);
+      await exitFromEditMode(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
@@ -3457,10 +3453,8 @@ for (const monomer of monomersToAddWithDashAndEnter) {
         syncEditMode: false,
       });
 
-      await waitForRender(page, async () => {
-        await page.keyboard.press(monomer.Letter);
-      });
-      await clickInTheMiddleOfTheScreen(page);
+      await keyboardPressOnCanvas(page, monomer.Letter);
+      await exitFromEditMode(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
@@ -3512,10 +3506,8 @@ for (const monomer of monomersToAdd) {
         syncEditMode: false,
       });
 
-      await waitForRender(page, async () => {
-        await page.keyboard.press(monomer.Letter);
-      });
-      await clickInTheMiddleOfTheScreen(page);
+      await keyboardPressOnCanvas(page, monomer.Letter);
+      await exitFromEditMode(page);
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
@@ -3565,10 +3557,8 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Delete');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Delete');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -3617,10 +3607,8 @@ for (const sequence of sequences) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Delete');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Delete');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -3669,10 +3657,8 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Delete');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Delete');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -3720,10 +3706,8 @@ for (const sequence of uniquePairsOfFirstAndSecondSymbols) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Backspace');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Backspace');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -3770,10 +3754,8 @@ for (const sequence of sequences) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Backspace');
-    });
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Backspace');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -3820,11 +3802,8 @@ for (const sequence of uniquePairsOfSecondAndThirdSymbols) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Backspace');
-    });
-
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Backspace');
+    await exitFromEditMode(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -3901,13 +3880,13 @@ test(`Case 38. Check that up and down arrows on the keyboard allow the user to s
     hideMacromoleculeEditorScrollBars: true,
   });
 
-  await page.keyboard.press('ArrowDown');
+  await keyboardPressOnCanvas(page, 'ArrowDown');
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
 
-  await page.keyboard.press('ArrowUp');
+  await keyboardPressOnCanvas(page, 'ArrowUp');
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -3938,8 +3917,9 @@ test(`Case 39. Check if a line break (enter) is added in SYNC mode ON, both back
     senseOrAntisense: SequenceChainType.Sense,
     syncEditMode: true,
   });
-  await page.keyboard.press('Enter');
-  await clickInTheMiddleOfTheScreen(page);
+  await keyboardPressOnCanvas(page, 'Enter');
+  await exitFromEditMode(page);
+
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -3970,8 +3950,9 @@ test(`Case 40. Check if a line break (enter) is added in SYNC mode Off to sense 
     senseOrAntisense: SequenceChainType.Sense,
     syncEditMode: true,
   });
-  await page.keyboard.press('Enter');
-  await clickInTheMiddleOfTheScreen(page);
+  await keyboardPressOnCanvas(page, 'Enter');
+  await exitFromEditMode(page);
+
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -4002,8 +3983,9 @@ test(`Case 41. Check if a line break (enter) is added in SYNC mode Off to sense 
     senseOrAntisense: SequenceChainType.Antisense,
     syncEditMode: true,
   });
-  await page.keyboard.press('Enter');
-  await clickInTheMiddleOfTheScreen(page);
+  await keyboardPressOnCanvas(page, 'Enter');
+  await exitFromEditMode(page);
+
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,

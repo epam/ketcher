@@ -17,7 +17,10 @@ import {
   selectZoomOutTool,
 } from '@utils';
 import { hideMonomerPreview, zoomWithMouseWheel } from '@utils/macromolecules';
-import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import {
+  bondTwoMonomers,
+  getBondLocator,
+} from '@utils/macromolecules/polymerBond';
 import {
   pressUndoButton,
   selectClearCanvasTool,
@@ -39,7 +42,10 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  MacroBondDataIds,
+  MacroBondType,
+} from '@tests/pages/constants/bondSelectionTool/Constants';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {
@@ -158,14 +164,16 @@ test.describe('Erase Tool', () => {
     Test case: Erase Tool
     Description: Bond between two CHEMs are deleted.
     */
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
+    const bondLine = getBondLocator(page, {
+      bondType: MacroBondDataIds.Single,
+    }).first();
     await openFileAndAddToCanvasAsNewProject(
       `KET/two-chems-connected.ket`,
       page,
     );
     await takeEditorScreenshot(page);
     await selectEraseTool(page);
-    await bondLine.click();
+    await bondLine.click({ force: true });
     await takeEditorScreenshot(page);
   });
 

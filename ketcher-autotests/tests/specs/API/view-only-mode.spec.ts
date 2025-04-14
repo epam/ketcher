@@ -271,7 +271,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       async () => await selectTopPanelButton(TopPanelButton.Check, page),
     );
     await takeEditorScreenshot(page, {
-      masks: [page.locator('[class*="Check-module_checkInfo"] > span')],
+      mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
     });
     await closeErrorAndInfoModals(page);
     await waitForSpinnerFinishedWork(
@@ -338,7 +338,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
           async () => await page.keyboard.press(hotkey.keys),
         );
         await takePageScreenshot(page, {
-          masks: [
+          mask: [
             page.locator('[class*="Check-module_checkInfo"] > span'),
             page.getByTestId('mol-preview-area-text'),
           ],

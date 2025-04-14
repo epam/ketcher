@@ -59,6 +59,10 @@ import {
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 declare global {
   interface Window {
@@ -176,7 +180,7 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
     );
   });
 
-  await page.keyboard.press('A');
+  await keyboardPressOnCanvas(page, 'A');
 
   const consoleMessage = await consoleMessagePromise;
 
@@ -315,10 +319,8 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
   await selectClearCanvasTool(page);
 
   await selectSequenceLayoutModeTool(page);
-  await page.keyboard.press('U');
-  await page.keyboard.press('U');
-  await page.keyboard.press('U');
-  await page.keyboard.press('ArrowDown');
+  await keyboardTypeOnCanvas(page, 'UUU');
+  await keyboardPressOnCanvas(page, 'ArrowDown');
   await pasteFromClipboardByKeyboard(page);
 
   await takeEditorScreenshot(page, {

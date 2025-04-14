@@ -325,7 +325,7 @@ To add text to the canvas click the _Add text_ tool <img src=images/41_text_icon
 
 You can add templates (rings or other predefined structures) to the structure using the _Templates_ toolbar together with the _Custom Templates_ button located at the bottom:
 
-<img src=images/43_templates_toolbar.png width = "250"/>
+<img src=images/Templates-Toolbar-3.3..png width = "250"/>
 
 To add a ring to the molecule, select a ring from the toolbar and click inside the drawing area, or click on an atom or a bond in the molecule.
 
@@ -449,24 +449,25 @@ When option _Ignore the chiral flag_ is _true_ it will affect opening of MDL V20
 
 **Ketcher Macromolecules Mode** consists of the following elements:
 
-<img src=images/Macro-canvas-3.2..png width = "1000"/>
+<img src=images/Macro-canvas-3.3..png width = "1000"/>
 
 You can use the buttons on the main toolbar:
 
-<img src=images/Macro-Toolbar-3.2..png width = "1000"/>
+<img src=images/Macro-Toolbar-3.3..png width = "1000"/>
 
 - **Clear Canvas** (1) button to clear the drawing area;
 - **Open…** (2) and **Save As…** (3) buttons to import a drawing from a molecular file or save it to a supported molecular file format;
 - **Undo** (4) / **Redo** (5) to manage the last actions taken on the canvas;
-- **Sync/Non-sync switcher** (6) (available only in sequence layout mode) to change the editing style for double stranded nucleic-acid sequences;
-- **Macromolecules modes switcher** (7) to change the macromolecules view to **sequence layout mode** (1), **snake layout mode** (2), or **flex layout mode** (3);
+- **Create Antisense Strand** (6) to create a DNA or RNA antisense strand for the selected monomers;
+- **Sync/Non-sync switcher** (7) (available only in sequence layout mode) to change the editing style for double stranded nucleic-acid sequences;
+- **Macromolecules modes switcher** (8) to change the macromolecules view to **sequence layout mode** (1), **snake layout mode** (2), or **flex layout mode** (3);
 
 <img src=images/Macromolecules-Mode-Switcher-3.0..png width = "50"/>
 
-- **Sequence mode typing type switcher** (8) (available only in sequence layout mode) to change the way Ketcher interprets keyboard input (A can be a DNA nucleotide, and RNA nucleotide, or an amino acid);
-- **Molecules/Macromolecules switcher** (9) to change between Ketcher's modes. Current mode always has a tick mark next to it. Clicking on the mode without a tick mark leads to it;
-- **Fullscreen mode** (10) button allows to initiate displaying Ketcher window in the fullscreen mode;
-- **Zoom panel** (11) displays the current zoom percentage.
+- **Sequence mode typing type switcher** (9) (available only in sequence layout mode) to change the way Ketcher interprets keyboard input (A can be a DNA nucleotide, and RNA nucleotide, or an amino acid);
+- **Molecules/Macromolecules switcher** (10) to change between Ketcher's modes. Current mode always has a tick mark next to it. Clicking on the mode without a tick mark leads to it;
+- **Fullscreen mode** (11) button allows to initiate displaying Ketcher window in the fullscreen mode;
+- **Zoom panel** (12) displays the current zoom percentage.
 
 The left toolbar consists of the following elements:
 
@@ -487,16 +488,20 @@ Macromolecules library has 4 tabs:
 - **RNA tab** - contains RNA builder, a section containing presets, and monomers organized into sugars, bases, phosphates, and nucleotides sections;
 - **CHEM tab** - contains non-RNA and non-amino acid monomers, mostly linkers and tags.
 
-<img src=images/Library-Tabs-3.0..png width = "800"/>
+<img src=images/Library-Tabs-3.3..png width = "800"/>
 
 **Searching the library** is possible using monomer names, monomer symbols, or monomer IDT aliases:
 
-<img src=images/Library-Search-3.0..png width = "600"/>
+<img src=images/Library-Search-3.3..png width = "600"/>
+
+Depending on the size of the Ketcher window, the library might have a slightly different apperance to fit more information into a smaller space:
+
+<img src=images/Compacted-Library-3.3..png width = "400"/>
 
 Hovering over a library card will show the preview for that library element. 
 In case of a non-ambiguous monomer the preview will contain the name, the chemical structure, the exact position and composition of attachment points, and the IDT alias(es) (if the monomer has IDT alias(es)):
 
-<img src=images/Monomer-Preview-3.0..png width = "600"/>
+<img src=images/Monomer-Preview-3.3..png width = "600"/>
 
 In case of a preset, the symbol of the preset and the names and symbols of monomers making up that preset will be shown, as well as IDT alias(es) (if the preset has IDT alias(es)):
 
@@ -514,11 +519,11 @@ RNA builder can be found in the RNA section of the library. It can be used to cr
 
 To create a preset either click on the downwards pointing arrow to open RNA Builder or on _New Preset_ in the Presets section of the library:
 
-<img src=images/Create-Preset-3.0..png width = "200"/>
+<img src=images/Create-Preset-3.3..png width = "200"/>
 
 Clicking on _Sugar_, _Base_, or _Phosphate_ will open appropriate sections of the library where monomers can be picked. Library search is also available while RNA builder is active. 
 
-<img src=images/Create-Preset-2-3.0..png width = "200"/>
+<img src=images/Create-Preset-2-3.3..png width = "200"/>
 
 Name of the preset can be changed from the default form that is made up from symbols of the components in the format sugar(base)phosphate.
 
@@ -530,7 +535,7 @@ Clicking on _Add to Presets_ will save the preset and add it to the Presets sect
 
 Right clicking on selected presets in sequence mode gives the option to _Modify in RNA Builder..._
 
-<img src=images/Modify-in-RNA-Builder-3.2..png width = "200"/>
+<img src=images/Modify-in-RNA-Builder-3.3..png width = "200"/>
 <img src=images/Modify-in-RNA-Builder-2-3.0..png width = "200"/>
 
 Clicking on _Sugar_, _Base_, or _Phosphate_ will again open appropriate sections of the library so that selected nucleotides can be conveniently modified.
@@ -665,20 +670,24 @@ In flex layout mode, monomers connected via bonds can be snapped in relation to 
 
 In snake mode the snapping is available every ninety degrees. 
 
+Snapping to distance is available for both horizontally and vertically arranged monomers in snake and flex layout modes:
+
+<img src=images/Snap-To-Distance-3.3..gif width = "800"/>
+
 Holding `Crtl` (for Windows) or `Command` (for MacOS) while moving the monomer will disable the snapping.
 
 ## Creating antisense chains
 
-Antisense chains can be created in all layout modes from a right-click drop-down menu after the desired sense chain is selected. Options _Create Antisense RNA Strand_ and _Create Antisense DNA Strand_ are available. After choosing the antisense chain type from the right-click drop-down menu it is added bellow the sense chain with all hydrogen bonds already established.
+Antisense chains can be created in all layout modes from a right-click drop-down menu or using the _Create Antisense Strand_ icon, after the desired sense chain is selected. Options _Create Antisense RNA Strand_ and _Create Antisense DNA Strand_ are available. After choosing the antisense chain type it is added bellow the sense chain with all hydrogen bonds already established.
 
-Creation of an RNA antisense strand in sequence layout mode:
+Creation of an RNA antisense strand in sequence layout mode from the right-click drop-down menu:
 
-<img src=images/Create-AS-In-Sequence-1-3.2..png width = "400"/>
-<img src=images/Create-AS-In-Sequence-2-3.2..png width = "150"/>
+<img src=images/Create-AS-In-Sequence-1-3.3..png width = "300"/>
+<img src=images/Create-AS-In-Sequence-2-3.2..png width = "125"/>
 
-Creation of a DNA antisense strand in flex layout mode:
+Creation of a DNA antisense strand in flex layout mode using the _Create Antisense Strand_ icon:
 
-<img src=images/Create-AS-In-Flex-1-3.2..png width = "400"/>
+<img src=images/Create-AS-In-Flex-1-3.3..png width = "300"/>
 <img src=images/Create-AS-In-Flex-2-3.2..png width = "300"/>
 
 ### Working with antisense chains in sequence layout mode
@@ -695,13 +704,13 @@ In sequence layout mode:
 
 Hydrogen bond establishment/deletion is available in the right-click drop-down menu. When deleting, all hydrogen bonds that the selected monomers participate in will be removed:
 
-<img src=images/Delete-H-Bonds-1-3.2..png width = "250"/>
-<img src=images/Delete-H-Bonds-2-3.2..png width = "175"/>
+<img src=images/Delete-H-Bonds-1-3.3..png width = "250"/>
+<img src=images/Delete-H-Bonds-2-3.2..png width = "125"/>
 
 When establishing, hydrogen bonds will be established with the monomers represented on the other side of the double-stranded sequence:
 
-<img src=images/Establish-H-Bonds-1-3.2..png width = "250"/>
-<img src=images/Establish-H-Bonds-2-3.2..png width = "175"/>
+<img src=images/Establish-H-Bonds-1-3.3..png width = "250"/>
+<img src=images/Establish-H-Bonds-2-3.2..png width = "125"/>
 
 Depending on if the sync/non-sync toggle on the main toolbar is on or off, editing of the double-stranded sequence will happen differently.
 
@@ -742,7 +751,7 @@ To draw a structure contatining both monomers and monomers:
 
 <img src=images/Micro-Macro-Structure-3.0..png width = "400"/>
 
-2. Draw the meeded structure in **macromolecules mode** (order of steps 1 and 2 is arbitrary);
+2. Draw the needed structure in **macromolecules mode** (order of steps 1 and 2 is arbitrary);
 
 <img src=images/Micro-Macro-Structure-2-3.0..png width = "400"/>
 
@@ -763,7 +772,7 @@ Whole structure in molecules mode:
 After switching to molecules mode, right-clicking on a monomer gives the option to _Expand monomer_.
 
 <img src=images/Expand-Monomer-3.0..png width = "250"/>
-<img src=images/Expand-Monomer-2-3.0..png width = "250"/>
+<img src=images/Expand-Monomer-2-3.3..png width = "250"/>
 
 Multiple monomers can be expanded at the same time. 
 
@@ -943,6 +952,8 @@ _NOTE: `Mod` key is `Command` on OSX and `Ctrl` on PC systems_
 | `Ctrl+Alt+R` | Change the sequence mode typing type to RNA |
 | `Ctrl+Alt+D` | Change the sequence mode typing type to DNA |
 | `Ctrl+Alt+P` | Change the sequence mode typing type to Peptide |
+| `Shift+Alt+R` | Create an RNA antisense strand |
+| `Shift+Alt+D` | Create a DNA antisense strand |
 
 **Help**
 | Shortcut        | Action |

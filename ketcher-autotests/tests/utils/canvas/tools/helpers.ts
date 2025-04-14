@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import {
-  clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   MacromoleculesTopPanelButton,
   selectOption,
@@ -24,6 +23,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 
 /**
  * Selects an atom from Atom toolbar
@@ -203,15 +203,15 @@ export async function saveStructureWithReaction(page: Page, format?: string) {
 }
 
 export async function typeAllEnglishAlphabet(page: Page) {
-  await page.keyboard.type('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 }
 
 export async function typeRNADNAAlphabet(page: Page) {
-  await page.keyboard.type('ATGCU');
+  await keyboardTypeOnCanvas(page, 'ATGCU');
 }
 
 export async function typePeptideAlphabet(page: Page) {
-  await page.keyboard.type('ACDEFGHIKLMNPQRSTVWY');
+  await keyboardTypeOnCanvas(page, 'ACDEFGHIKLMNPQRSTVWY');
 }
 
 export async function setZoomInputValue(page: Page, value: string) {
@@ -438,7 +438,8 @@ export async function selectZoomInTool(page: Page, count = 1) {
       await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomIn, page);
     });
   }
-  await clickInTheMiddleOfTheScreen(page);
+  await page.getByTestId('zoom-selector').click({ force: true });
+  await page.getByTestId('zoom-in-button').waitFor({ state: 'detached' });
 }
 
 export async function selectZoomReset(page: Page) {
@@ -446,7 +447,8 @@ export async function selectZoomReset(page: Page) {
   await waitForRender(page, async () => {
     await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomReset, page);
   });
-  await clickInTheMiddleOfTheScreen(page);
+  await page.getByTestId('zoom-selector').click({ force: true });
+  await page.getByTestId('reset-zoom-button').waitFor({ state: 'detached' });
 }
 
 export async function selectZoomOutTool(page: Page, count = 1) {
@@ -456,7 +458,8 @@ export async function selectZoomOutTool(page: Page, count = 1) {
       await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomOut, page);
     });
   }
-  await clickInTheMiddleOfTheScreen(page);
+  await page.getByTestId('zoom-selector').click({ force: true });
+  await page.getByTestId('zoom-out-button').waitFor({ state: 'detached' });
 }
 
 export async function selectAddRemoveExplicitHydrogens(page: Page) {

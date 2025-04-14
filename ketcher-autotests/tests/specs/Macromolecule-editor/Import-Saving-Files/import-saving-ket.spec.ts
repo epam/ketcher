@@ -522,7 +522,6 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
   }
 });
 
-// Commented out because of we have BUG - https://github.com/epam/ketcher/issues/5873
 interface IMonomer {
   monomerDescription: string;
   KETFile: string;

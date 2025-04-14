@@ -221,9 +221,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         polymerBond: this.polymerBond,
         scaledPosition: this.scaledPosition,
         sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
+        sideConnectionBondTurnPointUpdateCallback: (value: number): void => {
+          this.sideConnectionBondTurnPoint = value;
+        },
       });
-
-    this.sideConnectionBondTurnPoint = bondSettings.sideConnectionBondTurnPoint;
 
     this.bodyElement = rootElement
       .append('path')

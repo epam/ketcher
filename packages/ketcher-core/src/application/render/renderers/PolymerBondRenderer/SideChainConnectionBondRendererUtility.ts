@@ -18,11 +18,11 @@ interface CalculateBondSettingsParameter {
   readonly polymerBond: PolymerBond;
   readonly scaledPosition: PolymerBondRendererStartAndEndPositions;
   readonly sideConnectionBondTurnPoint: number;
+  readonly sideConnectionBondTurnPointUpdateCallback: (value: number) => void;
 }
 
 interface CalculateBondSettingsResult {
   readonly pathDAttributeValue: string;
-  readonly sideConnectionBondTurnPoint: number;
 }
 
 interface CalculatePartOfBondSettingsParameter {
@@ -49,6 +49,7 @@ export class SideChainConnectionBondRendererUtility {
     polymerBond,
     scaledPosition,
     sideConnectionBondTurnPoint,
+    sideConnectionBondTurnPointUpdateCallback,
   }: CalculateBondSettingsParameter): CalculateBondSettingsResult {
     const firstCell = cells[0];
     const firstCellConnection = firstCell.connections.find(
@@ -137,8 +138,6 @@ export class SideChainConnectionBondRendererUtility {
       }
     }
 
-    let sideConnectionBondTurnPointInternal = 0;
-
     if (isVerticalConnection && !isStraightVerticalConnection) {
       const direction =
         sideConnectionBondTurnPoint &&
@@ -153,7 +152,9 @@ export class SideChainConnectionBondRendererUtility {
         sideConnectionBondTurnPoint: sideConnectionBondTurnPoint ?? 0,
       });
       pathDAttributeValue += result.pathPart;
-      sideConnectionBondTurnPointInternal = result.sideConnectionBondTurnPoint;
+      sideConnectionBondTurnPointUpdateCallback(
+        result.sideConnectionBondTurnPoint,
+      );
     }
 
     let maxHorizontalOffset = 0;
@@ -244,8 +245,9 @@ export class SideChainConnectionBondRendererUtility {
           sideConnectionBondTurnPoint: sideConnectionBondTurnPoint ?? 0,
         });
         pathDAttributeValue += result.pathPart;
-        sideConnectionBondTurnPointInternal =
-          result.sideConnectionBondTurnPoint;
+        sideConnectionBondTurnPointUpdateCallback(
+          result.sideConnectionBondTurnPoint,
+        );
       }
       previousCell = cell;
       previousConnection = cellConnection;
@@ -259,7 +261,6 @@ export class SideChainConnectionBondRendererUtility {
 
     return {
       pathDAttributeValue,
-      sideConnectionBondTurnPoint: sideConnectionBondTurnPointInternal,
     };
   }
 

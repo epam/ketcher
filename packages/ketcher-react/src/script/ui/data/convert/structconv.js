@@ -424,7 +424,7 @@ export function fromSgroup(ssgroup) {
         ssgroup.attrs.subscript == null &&
         ssgroup.attrs.connectivity == null
       ? {
-          subscript: 'nn',
+          subscript: 'n',
           connectivity: 'ht',
         }
       : {};

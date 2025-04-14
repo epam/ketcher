@@ -549,26 +549,19 @@ export class SGroup {
       });
       braketBox = !braketBox ? bbb : Box2Abs.union(braketBox, bbb!);
     });
-    if (!render) {
-      render = window.ketcher!.editor.render;
-    } else {
-      let attachmentPointsVBox =
-        render.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
-      attachmentPointsVBox = attachmentPointsVBox
-        ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
-        : attachmentPointsVBox;
-      braketBox =
-        attachmentPointsVBox && braketBox
-          ? Box2Abs.union(braketBox, attachmentPointsVBox)
-          : braketBox;
-      if (braketBox) {
-        braketBox = (braketBox as Box2Abs).extend(
-          PADDING_VECTOR,
-          PADDING_VECTOR,
-        );
-      }
-      sGroup.bracketBox = braketBox;
-    }
+    if (!render) render = window.ketcher!.editor.render;
+    let attachmentPointsVBox =
+      render.ctab.getRGroupAttachmentPointsVBoxByAtomIds(atoms);
+    attachmentPointsVBox = attachmentPointsVBox
+      ? attachmentPointsVBox.extend(BORDER_EXT, BORDER_EXT)
+      : attachmentPointsVBox;
+    braketBox =
+      attachmentPointsVBox && braketBox
+        ? Box2Abs.union(braketBox, attachmentPointsVBox)
+        : braketBox;
+    if (braketBox)
+      braketBox = (braketBox as Box2Abs).extend(PADDING_VECTOR, PADDING_VECTOR);
+    sGroup.bracketBox = braketBox;
   }
 
   static getBracketParameters(

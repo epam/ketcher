@@ -148,6 +148,7 @@ function getCIPValuePath({
   const box = text.getBBox();
   const path = paper.set();
   const rect = paper
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore: raphael typing issues
     .rect(box.x - 1, box.y - 1, box.width + 2, box.height + 2, 3, 3)
     .attr({ fill: '#fff', stroke: '#fff' });
@@ -184,9 +185,11 @@ function drawCIPLabel({
 
   if (atomOrBond instanceof Atom) {
     const box = relBox(cipValuePath.path.getBBox());
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore: raphael typing issues
     cipValuePath.path.translateAbs(0.5 * box.width, -0.5 * box.height);
   }
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   path.push(cipValuePath.path.toFront());
 

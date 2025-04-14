@@ -52,6 +52,7 @@ function getUnbalancedArrowHeadOffset(options: RenderOptions) {
 
 function rectangle(paper: RaphaelPaper, points: [Vec2, Vec2]) {
   return paper.rect(
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore: raphael typing issues
     tfx(Math.min(points[0].x, points[1].x)),
     tfx(Math.min(points[0].y, points[1].y)),
@@ -95,6 +96,7 @@ function polyline(paper: RaphaelPaper, points: Vec2[]) {
   const path = ['M', points[0].x, points[0].y];
   for (let i = 1; i < points.length; i++)
     path.push('L', points[i].x, points[i].y);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   return paper.path(path);
 }
@@ -102,10 +104,12 @@ function polyline(paper: RaphaelPaper, points: Vec2[]) {
 function line(paper: RaphaelPaper, points: [Vec2, Vec2]) {
   const path = ['M', points[0].x, points[0].y];
   path.push('L', points[1].x, points[1].y);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   return paper.path(path);
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: raphael typing issues
 function arrow(
   paper: RaphaelPaper,
@@ -334,6 +338,7 @@ function arrowEllipticalArcFilledBow(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   return paper.path(transformedPath).attr({
     ...options.lineattr,
@@ -373,6 +378,7 @@ function arrowEllipticalArcFilledTriangle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   return paper.path(transformedPath).attr({
     ...options.lineattr,
@@ -412,6 +418,7 @@ function arrowEllipticalArcOpenAngle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   return paper.path(transformedPath).attr({
     ...options.lineattr,
@@ -448,6 +455,7 @@ function arrowEllipticalArcOpenHalfAngle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   return paper.path(transformedPath).attr({
     ...options.lineattr,
@@ -476,6 +484,7 @@ function arrowOpenAngle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   return paper.path(transformedPath).attr({
     ...options.lineattr,
@@ -684,6 +693,7 @@ function arrowRetrosynthetic(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   return paper.path(transformedPath).attr({
     ...options.lineattr,
@@ -867,6 +877,7 @@ function arrowEquilibriumOpenAngle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   return paper.path(transformedPath).attr({
     ...options.lineattr,
@@ -966,6 +977,7 @@ function arrowUnbalancedEquilibriumOpenHalfAngle(
     .rotate(arrowAngle, start.x, start.y)
     .toString();
 
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   return paper.path(transformedPath).attr({
     ...options.lineattr,
@@ -1089,6 +1101,7 @@ function plus(paper: RaphaelPaper, point: Vec2, options: RenderOptions) {
   return paper
     .path(
       'M{0},{4}L{0},{5}M{2},{1}L{3},{1}',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore: raphael typing issues
       tfx(point.x),
       tfx(point.y),
@@ -1133,6 +1146,7 @@ function bondSingleUp(
   return paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}Z',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore: raphael typing issues
       tfx(a.x),
       tfx(a.y),
@@ -1163,6 +1177,7 @@ function bondSingleStereoBold(
   const bond = paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}L{6},{7}Z',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore: raphael typing issues
       tfx(a1.x),
       tfx(a1.y),
@@ -1192,10 +1207,12 @@ function bondDoubleStereoBold(
   color = '#000',
 ) {
   // eslint-disable-line max-params
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   return paper.set([
     sgBondPath,
     paper
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore: raphael typing issues
       .path('M{0},{1}L{2},{3}', tfx(b1.x), tfx(b1.y), tfx(b2.x), tfx(b2.y))
       .attr(options.lineattr)
@@ -1290,6 +1307,7 @@ function bondDouble(
       cisTrans
         ? 'M{0},{1}L{6},{7}M{4},{5}L{2},{3}'
         : 'M{0},{1}L{2},{3}M{4},{5}L{6},{7}',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore: raphael typing issues
       tfx(a1.x),
       tfx(a1.y),
@@ -1453,6 +1471,7 @@ function bondMark(
   mark: string | null,
   options: RenderOptions,
 ) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   const path = paper.text(point.x, point.y, mark).attr({
     font: options.font,
@@ -1460,6 +1479,7 @@ function bondMark(
     fill: '#000',
   });
   const rbb = util.relBox(path.getBBox());
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   recenterText(path, rbb);
   return path;
@@ -1472,6 +1492,7 @@ function radicalCap(paper: RaphaelPaper, point1: Vec2, options: RenderOptions) {
   return paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore: raphael typing issues
       tfx(point1.x - dw),
       tfx(point1.y + dh),
@@ -1493,6 +1514,7 @@ function radicalBullet(
   point1: Vec2,
   options: RenderOptions,
 ) {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore: raphael typing issues
   return paper.circle(tfx(point1.x), tfx(point1.y), options.lineWidth).attr({
     stroke: null,
@@ -1548,6 +1570,7 @@ function bracket(
   return paper
     .path(
       'M{0},{1}L{2},{3}L{4},{5}L{6},{7}',
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore: raphael typing issues
       tfx(bracketArc0.x),
       tfx(bracketArc0.y),
@@ -1569,6 +1592,7 @@ function selectionRectangle(
 ) {
   return paper
     .rect(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore: raphael typing issues
       tfx(Math.min(point1.x, point2.x)),
       tfx(Math.min(point1.y, point2.y)),
@@ -1658,6 +1682,7 @@ function recenterText(path: Element, relativeBox: RelativeBox) {
   // TODO: find a better way
   if (Raphael.vml) {
     const gap = relativeBox.height * 0.16;
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore: raphael typing issues
     path.translateAbs(0, gap);
     relativeBox.y += gap;
@@ -1673,6 +1698,7 @@ function rgroupAttachmentPoint(
 ) {
   const linePath = paper.path(
     'M{0},{1}L{2},{3}',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore: raphael typing issues
     tfx(shiftedAtomPositionVector.x),
     tfx(shiftedAtomPositionVector.y),

@@ -92,6 +92,7 @@ export class CommonArrowTool extends ArrowTool implements Tool {
       this.editor.hover(closestItem, null, event);
       handleMovingPosibilityCursor(
         closestItem,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore: raphael typing issues
         this.render.paper.canvas,
         getItemCursor(this.render, closestItem),

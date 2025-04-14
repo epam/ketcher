@@ -560,6 +560,7 @@ class ReAtom extends ReObject {
         node.setAttribute('fill-opacity', opacity.toString());
       }
       const aamBox = util.relBox(aamPath.getBBox());
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore: raphael typing issues
       draw.recenterText(aamPath, aamBox);
       const visel = this.visel;

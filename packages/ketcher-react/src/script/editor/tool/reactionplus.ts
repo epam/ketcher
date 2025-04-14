@@ -60,6 +60,7 @@ class ReactionPlusTool implements Tool {
 
       handleMovingPosibilityCursor(
         item,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore: raphael typing issues
         editor.render.paper.canvas,
         editor.render.options.movingStyle.cursor as string,

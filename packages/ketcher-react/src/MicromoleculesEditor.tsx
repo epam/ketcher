@@ -22,7 +22,7 @@ import 'whatwg-fetch';
 import './index.less';
 
 import init, { Config } from './script';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 
 import { Ketcher, StructService } from 'ketcher-core';
@@ -59,6 +59,8 @@ function MicromoleculesEditor(props: EditorProps) {
     ref: rootElRef,
   });
 
+  const [ketcherId, setKetcherId] = useState<string | null>(null);
+
   useEffect(() => {
     ketcherBuilderRef.current?.reinitializeApi(
       props.structServiceProvider,
@@ -80,6 +82,7 @@ function MicromoleculesEditor(props: EditorProps) {
         cleanupRef.current = cleanup;
         ketcherBuilderRef.current = builder;
         setServerRef.current = setServer;
+        setKetcherId(ketcherId);
 
         if (typeof props.onInit === 'function' && ketcher) {
           props.onInit(ketcher);
@@ -110,11 +113,16 @@ function MicromoleculesEditor(props: EditorProps) {
   return (
     <div
       ref={rootElRef}
-      className={clsx(KETCHER_ROOT_NODE_CLASS_NAME, classes.editor, {
-        [classes.small]:
-          (height && height <= mediaSizes.smallHeight) ||
-          (width && width <= mediaSizes.smallWidth),
-      })}
+      className={clsx(
+        KETCHER_ROOT_NODE_CLASS_NAME,
+        `ketcher-id-${ketcherId}`,
+        classes.editor,
+        {
+          [classes.small]:
+            (height && height <= mediaSizes.smallHeight) ||
+            (width && width <= mediaSizes.smallWidth),
+        },
+      )}
     />
   );
 }

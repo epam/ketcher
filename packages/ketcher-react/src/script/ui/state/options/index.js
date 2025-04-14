@@ -25,60 +25,62 @@ import { pick } from 'lodash/fp';
 import { storage } from '../../storage-ext';
 import { reinitializeTemplateLibrary } from '../templates/init-lib';
 
-export const initOptionsState = {
-  app: {
-    server: false,
-    templates: false,
-    functionalGroups: false,
-    saltsAndSolvents: false,
-  },
-  analyse: {
-    values: null,
-    roundWeight: 3,
-    roundMass: 3,
-    roundElAnalysis: 1,
-  },
-  check: {
-    checkOptions: [
-      'valence',
-      'radicals',
-      'pseudoatoms',
-      'stereo',
-      'query',
-      'overlapping_atoms',
-      'overlapping_bonds',
-      'rgroups',
-      'chiral',
-      '3d',
-      'chiral_flag',
-    ],
-  },
-  recognize: {
-    file: null,
-    structStr: null,
-    fragment: false,
-    version: null,
-  },
-  settings: Object.assign(
-    getDefaultOptions(),
-    validation(storage.getItem(KETCHER_SAVED_OPTIONS_KEY)),
-  ),
-  getSettings() {
-    this.settings = Object.assign(
+export function initOptionsState() {
+  return {
+    app: {
+      server: false,
+      templates: false,
+      functionalGroups: false,
+      saltsAndSolvents: false,
+    },
+    analyse: {
+      values: null,
+      roundWeight: 3,
+      roundMass: 3,
+      roundElAnalysis: 1,
+    },
+    check: {
+      checkOptions: [
+        'valence',
+        'radicals',
+        'pseudoatoms',
+        'stereo',
+        'query',
+        'overlapping_atoms',
+        'overlapping_bonds',
+        'rgroups',
+        'chiral',
+        '3d',
+        'chiral_flag',
+      ],
+    },
+    recognize: {
+      file: null,
+      structStr: null,
+      fragment: false,
+      version: null,
+    },
+    settings: Object.assign(
       getDefaultOptions(),
       validation(storage.getItem(KETCHER_SAVED_OPTIONS_KEY)),
-    );
-  },
-  getServerSettings() {
-    const seriliazedServerOptions = getSerilizedServerOptions(this.settings);
-    const defaultServerOptions = pick(SERVER_OPTIONS, this.settings);
+    ),
+    getSettings() {
+      this.settings = Object.assign(
+        getDefaultOptions(),
+        validation(storage.getItem(KETCHER_SAVED_OPTIONS_KEY)),
+      );
+    },
+    getServerSettings() {
+      const seriliazedServerOptions = getSerilizedServerOptions(this.settings);
+      const defaultServerOptions = pick(SERVER_OPTIONS, this.settings);
 
-    return {
-      ...defaultServerOptions,
-      ...seriliazedServerOptions,
-    };
-  },
-};
+      return {
+        ...defaultServerOptions,
+        ...seriliazedServerOptions,
+      };
+    },
+  };
+}
 
 function getSerilizedServerOptions(options) {
   let newOptions = {
@@ -125,7 +127,7 @@ export function appUpdate(data) {
 export function saveSettings(newSettings) {
   storage.setItem(KETCHER_SAVED_OPTIONS_KEY, newSettings);
   reinitializeTemplateLibrary();
-  initOptionsState.getSettings();
+  initOptionsState().getSettings();
 
   return {
     type: 'SAVE_SETTINGS',

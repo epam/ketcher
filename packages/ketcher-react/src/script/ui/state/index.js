@@ -108,7 +108,7 @@ export default function (options, server, setEditor) {
     actionState: null,
     editor: null,
     modal: null,
-    options: Object.assign(initOptionsState, {
+    options: Object.assign(initOptionsState(), {
       app: restOptions,
       buttons,
       customButtons,

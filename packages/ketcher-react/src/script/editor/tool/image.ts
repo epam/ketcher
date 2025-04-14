@@ -101,6 +101,8 @@ export class ImageTool implements Tool {
       const render = this.editor.render;
       handleMovingPosibilityCursor(
         item,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore: raphael typing issues
         render.paper.canvas,
         getItemCursor(render, item),
       );

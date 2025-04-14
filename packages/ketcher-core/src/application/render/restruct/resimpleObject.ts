@@ -219,6 +219,8 @@ class ReSimpleObject extends ReObject {
         const centerX = tfx(point[0].x + rx);
         const centerY = tfx(point[0].y + ry);
         const outerBorderEllipse = render.paper.ellipse(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore: raphael typing issues
           centerX,
           centerY,
           tfx(Math.abs(rx) + lineOffset),
@@ -230,6 +232,8 @@ class ReSimpleObject extends ReObject {
         });
 
         const fillEllipse = render.paper.ellipse(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore: raphael typing issues
           centerX,
           centerY,
           tfx(Math.abs(rx)),
@@ -244,6 +248,8 @@ class ReSimpleObject extends ReObject {
           Math.abs(ry) - scaleFactor / 8 > 0
         ) {
           const innerBorderEllipse = render.paper.ellipse(
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore: raphael typing issues
             centerX,
             centerY,
             tfx(Math.abs(rx) - lineOffset),
@@ -264,6 +270,8 @@ class ReSimpleObject extends ReObject {
         const bottomY = Math.max(point[0].y, point[1].y) - topY;
 
         const outerBorderRect = render.paper.rect(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore: raphael typing issues
           tfx(leftX - lineOffset),
           tfx(topY - lineOffset),
           tfx(rightX + 2 * lineOffset),
@@ -274,6 +282,8 @@ class ReSimpleObject extends ReObject {
           stylesApplied: true,
         });
         const fillRect = render.paper.rect(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore: raphael typing issues
           tfx(leftX),
           tfx(topY),
           tfx(rightX),
@@ -285,6 +295,8 @@ class ReSimpleObject extends ReObject {
         });
         if (rightX - 2 * lineOffset > 0 && bottomY - 2 * lineOffset > 0) {
           const innerRect = render.paper.rect(
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore: raphael typing issues
             tfx(leftX + lineOffset),
             tfx(topY + lineOffset),
             tfx(rightX - 2 * lineOffset),
@@ -342,6 +354,8 @@ class ReSimpleObject extends ReObject {
           p0.y - ((k * scaleFactor) / 8) * Math.cos(angle),
         );
         paths.push({
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore: raphael typing issues
           path: render.paper.path(poly).attr(render.options.hoverStyle),
           stylesApplied: true,
         });

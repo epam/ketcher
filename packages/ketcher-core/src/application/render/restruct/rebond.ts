@@ -920,6 +920,8 @@ function getBondDoubleStereoBoldPath(
   );
   return draw.bondDoubleStereoBold(
     render.paper,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore: raphael typing issues
     sgBondPath,
     b1,
     b2,
@@ -1348,6 +1350,8 @@ function getBondMark(
   const p = c.add(new Vec2(n.x * (s.x + fixed), n.y * (s.y + fixed)));
   const path = draw.bondMark(render.paper, p, mark, options);
   tooltip &&
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore: raphael typing issues
     path.node.childNodes[0].setAttribute(
       'data-tooltip',
       util.escapeHtml(tooltip),

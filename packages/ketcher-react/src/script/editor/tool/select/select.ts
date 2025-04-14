@@ -336,6 +336,8 @@ class SelectTool implements Tool {
     editor.hover(item, null, event);
     handleMovingPosibilityCursor(
       item,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore: raphael typing issues
       this.editor.render.paper.canvas,
       getItemCursor(this.editor.render, item),
     );

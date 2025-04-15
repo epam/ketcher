@@ -94,7 +94,6 @@ import {
   bondTwoMonomersPointToPoint,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
-import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import {
   bondSelectionTool,
   selectEraseTool,

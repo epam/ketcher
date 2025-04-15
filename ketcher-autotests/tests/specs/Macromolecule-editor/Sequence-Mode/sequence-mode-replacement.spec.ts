@@ -835,6 +835,7 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.LeftEnd,
       );
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
 
@@ -873,6 +874,7 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.Center,
       );
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
 
@@ -911,6 +913,7 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.RightEnd,
       );
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
 
@@ -1066,7 +1069,7 @@ const noR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
 
 for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 7-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 7-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}.
       Can't replace first symbol at ${sequence.SequenceName} on ${noR2ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 7
@@ -1127,7 +1130,7 @@ const noR1orR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
 
 for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 8-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 8-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}.
       Can't replace symbol in the center of ${sequence.SequenceName} on ${noR1orR2ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 8
@@ -1167,7 +1170,7 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
 
 for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 9-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 9-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}.
       Can't replace last symbol at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 9
@@ -1207,7 +1210,7 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
 
 for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 10-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 10-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}.
       Can't replace first symbol at ${sequence.SequenceName} on ${noR2ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 10
@@ -1245,7 +1248,7 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
 
 for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 11-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 11-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}.
       Can't replace symbol in the center of ${sequence.SequenceName} on ${noR1orR2ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 11
@@ -1285,7 +1288,7 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
 
 for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 12-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 12-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}.
       Can't replace last symbol at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 12
@@ -1342,6 +1345,7 @@ for (const replaceMonomer of replaceMonomers) {
       await openFileAndAddToCanvasMacro(sequence.FileName, page);
       await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
 
@@ -1380,6 +1384,7 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
 
@@ -1397,7 +1402,7 @@ for (const replaceMonomer of replaceMonomers) {
 
 for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 15-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 15-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}.
       Can't replace all symbols at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 15
@@ -1442,7 +1447,7 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
 
 for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 16-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 16-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}.
       Can't replace all symbols at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 16
@@ -1787,6 +1792,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence.ReplacementPositions.RightEnd,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
       await moveMouseAway(page);
@@ -1808,7 +1814,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
     test(`Case 20-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
       /*
           Test case: https://github.com/epam/ketcher/issues/5290 - Test case 4
-          Description: User can replace first symbol (of every type) connected to another sequence (via R3 side connection) in sequence 
+          Description: User can replace first symbol (of every type) connected to another sequence (via R3 side connection) in sequence
                       with another monomer (of the same type!) in edit mode
           Scenario:
           1. Clear canvas
@@ -1848,7 +1854,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
     test(`Case 21-${sequence.Id}-${replaceMonomer.Id}. Replace center symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
       /*
           Test case: https://github.com/epam/ketcher/issues/5290 - Test case 5
-          Description: User can replace symbol (of every type) at the center connected to another sequence (via R3 side connection) in sequence 
+          Description: User can replace symbol (of every type) at the center connected to another sequence (via R3 side connection) in sequence
                        with another monomer (of the same type!) in view mode
           Scenario:
           1. Clear canvas
@@ -1888,7 +1894,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
     test(`Case 22-${sequence.Id}-${replaceMonomer.Id}. Replace last symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
       /*
             Test case: https://github.com/epam/ketcher/issues/5290 - Test case 6
-            Description: User can replace last symbol (of every type) connected to another sequence (via R3 side connection) in sequence 
+            Description: User can replace last symbol (of every type) connected to another sequence (via R3 side connection) in sequence
                          with another monomer (of the same type!) in edit mode
             Scenario:
             1. Clear canvas

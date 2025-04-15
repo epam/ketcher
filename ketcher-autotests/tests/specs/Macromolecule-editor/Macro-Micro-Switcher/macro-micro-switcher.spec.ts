@@ -94,7 +94,6 @@ import {
   bondTwoMonomersPointToPoint,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
-import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import {
   bondSelectionTool,
   selectEraseTool,
@@ -1928,7 +1927,10 @@ test.describe('Macro-Micro-Switcher', () => {
           await switchSequenceEnteringButtonType(page, data.sequenceType);
         }
 
-        await getSymbolLocator(page, { symbolAlias: '@', nodeIndexOverall: 0 }).click({ button: 'right' });
+        await getSymbolLocator(page, {
+          symbolAlias: '@',
+          nodeIndexOverall: 0,
+        }).click({ button: 'right' });
         await page.getByTestId('edit_sequence').click();
         await keyboardPressOnCanvas(page, 'ArrowRight');
         await keyboardPressOnCanvas(page, 'a');
@@ -1968,7 +1970,10 @@ test.describe('Macro-Micro-Switcher', () => {
           await switchSequenceEnteringButtonType(page, data.sequenceType);
         }
 
-        await getSymbolLocator(page, { symbolAlias: '@', nodeIndexOverall: 0 }).click({ button: 'right' });
+        await getSymbolLocator(page, {
+          symbolAlias: '@',
+          nodeIndexOverall: 0,
+        }).click({ button: 'right' });
         await page.getByTestId('edit_sequence').click();
         await keyboardPressOnCanvas(page, 'ArrowRight');
         await keyboardPressOnCanvas(page, 'a');

@@ -15,6 +15,7 @@ import {
   getSmarts,
   getSequence,
   getSmiles,
+  getFasta,
 } from '@utils/formats';
 import { pressButton } from '@utils/clicks';
 import { chooseFileFormat } from '@utils/macromolecules';
@@ -34,6 +35,7 @@ export enum FileType {
   RDF = 'rdf',
   IDT = 'idt',
   SEQ = 'seq',
+  FASTA = 'fasta',
 }
 
 type FileTypeHandler =
@@ -54,6 +56,7 @@ const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.InChI]: getInchi,
   [FileType.IDT]: getIdt,
   [FileType.SEQ]: getSequence,
+  [FileType.FASTA]: getFasta,
 };
 
 async function getFileContent(

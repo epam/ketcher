@@ -239,9 +239,18 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
     );
     await page.keyboard.down('Shift');
-    await getSymbolLocator(page, { symbolAlias: '@', nodeIndexOverall: 0 }).click();
-    await getSymbolLocator(page, { symbolAlias: '@', nodeIndexOverall: 2 }).click();
-    await getSymbolLocator(page, { symbolAlias: '@', nodeIndexOverall: 4 }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: '@',
+      nodeIndexOverall: 0,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: '@',
+      nodeIndexOverall: 2,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: '@',
+      nodeIndexOverall: 4,
+    }).click();
     await page.keyboard.up('Shift');
     await selectMonomer(page, Peptides.C);
     await pressButton(page, 'Yes');

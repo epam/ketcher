@@ -316,7 +316,10 @@ test.describe('Import-Saving .fasta Files', () => {
     await page.getByText('Peptide', { exact: true }).click();
     await pressButton(page, 'Add to Canvas');
     await selectSequenceLayoutModeTool(page);
-    await getSymbolLocator(page, { symbolAlias: 'U', nodeIndexOverall: 4 }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'U',
+      nodeIndexOverall: 4,
+    }).click();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });

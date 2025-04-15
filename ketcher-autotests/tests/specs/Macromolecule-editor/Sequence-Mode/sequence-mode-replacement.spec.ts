@@ -617,7 +617,9 @@ async function selectAndReplaceSymbol(
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
-  await getSymbolLocator(page, { nodeIndexOverall: replacementPosition }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: replacementPosition,
+  }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
     await pressYesInConfirmYourActionDialog(page);
@@ -630,7 +632,9 @@ async function selectAndReplaceSymbolWithError(
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
-  await getSymbolLocator(page, { nodeIndexOverall: replacementPosition }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: replacementPosition,
+  }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 }
 
@@ -642,9 +646,15 @@ async function selectAndReplaceAllSymbols(
   await selectSequenceLayoutModeTool(page);
 
   await page.keyboard.down('Shift');
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.LeftEnd }).click();
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.Center }).click();
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.RightEnd }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.LeftEnd,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.Center,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
+  }).click();
   await page.keyboard.up('Shift');
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
@@ -657,9 +667,15 @@ async function selectAllSymbols(page: Page, sequence: ISequence) {
   await selectSequenceLayoutModeTool(page);
 
   await page.keyboard.down('Shift');
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.LeftEnd }).click();
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.Center }).click();
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.RightEnd }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.LeftEnd,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.Center,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
+  }).click();
   await page.keyboard.up('Shift');
 }
 
@@ -681,9 +697,15 @@ async function selectAndReplaceAllSymbolsInEditMode(
   await selectSequenceLayoutModeTool(page);
 
   await page.keyboard.down('Shift');
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.LeftEnd }).click();
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.Center }).click();
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.RightEnd }).dblclick();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.LeftEnd,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.Center,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
+  }).dblclick();
   await page.keyboard.up('Shift');
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
@@ -700,9 +722,15 @@ async function selectAndReplaceAllSymbolsInEditModeWithError(
   await selectSequenceLayoutModeTool(page);
 
   await page.keyboard.down('Shift');
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.LeftEnd }).click();
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.Center }).click();
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.RightEnd }).dblclick();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.LeftEnd,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.Center,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
+  }).dblclick();
   await page.keyboard.up('Shift');
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
@@ -715,7 +743,9 @@ async function selectAndReplaceSymbolInEditMode(
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
-  await getSymbolLocator(page, { nodeIndexOverall: replacementPosition }).dblclick();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: replacementPosition,
+  }).dblclick();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
     await pressYesInConfirmYourActionDialog(page);
@@ -730,7 +760,9 @@ async function selectAndReplaceSymbolInEditModeWithError(
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
-  await getSymbolLocator(page, { nodeIndexOverall: replacementPosition }).dblclick();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: replacementPosition,
+  }).dblclick();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 }
 
@@ -1922,7 +1954,9 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectSequenceLayoutModeTool(page);
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.RightEnd }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
+  }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 
   const fullDialogMessage = page.getByText(
@@ -1975,9 +2009,15 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectSequenceLayoutModeTool(page);
   await page.keyboard.down('Shift');
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.LeftEnd }).click();
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.Center }).click();
-  await getSymbolLocator(page, { nodeIndexOverall: sequence.ReplacementPositions.RightEnd }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.LeftEnd,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.Center,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
+  }).click();
   await page.keyboard.up('Shift');
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 

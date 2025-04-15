@@ -84,11 +84,39 @@ jobs:
           npm i
           npx playwright install chromium
           npx playwright test --project=chromium --grep-invert @chromium-popup --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-      - uses: actions/upload-artifact@v4
-        # run even if previous steps fails
+      - name: Upload blob report to GitHub Actions Artifacts
         if: always()
+        uses: actions/upload-artifact@v4
         with:
-          name: pw-report-${{ matrix.shardIndex }}
-          path: ketcher-autotests/playwright-report/
-          retention-days: 5
-  
+          name: blob-report-${{ matrix.shardIndex }}
+          path: blob-report
+          retention-days: 1
+  merge-reports:             
+      if: always()
+      needs: [part]
+          
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm ci
+          
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports 
+          pattern: blob-report-*
+          merge-multiple: true
+          
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports 
+          
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report--attempt-${{ github.run_attempt }}
+          path: playwright-report
+          retention-days: 7

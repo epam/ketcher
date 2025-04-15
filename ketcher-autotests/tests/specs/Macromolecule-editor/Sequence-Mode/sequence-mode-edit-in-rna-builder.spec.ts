@@ -158,12 +158,18 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     page,
   }) => {
     await page.keyboard.down('Control');
-    await getSymbolLocator(page, { symbolAlias: 'T', nodeIndexOverall: 1 }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'T',
+      nodeIndexOverall: 1,
+    }).click();
     await page.keyboard.up('Control');
     // should see the whole chain selected
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await getSymbolLocator(page, { symbolAlias: 'T', nodeIndexOverall: 1 }).click({ button: 'right' });
+    await getSymbolLocator(page, {
+      symbolAlias: 'T',
+      nodeIndexOverall: 1,
+    }).click({ button: 'right' });
     // should see correct context menu title and enabled 'modify_in_rna_builder' button
     await takeEditorScreenshot(page);
   });
@@ -333,10 +339,19 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     */
     await openFileAndAddToCanvasMacro('KET/modified-agtcup.ket', page);
     await page.keyboard.down('Shift');
-    await getSymbolLocator(page, { symbolAlias: 'G', nodeIndexOverall: 1 }).click();
-    await getSymbolLocator(page, { symbolAlias: 'p', nodeIndexOverall: 5 }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 1,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'p',
+      nodeIndexOverall: 5,
+    }).click();
     await page.keyboard.up('Shift');
-    await getSymbolLocator(page, { symbolAlias: 'G', nodeIndexOverall: 1 }).click({ button: 'right' });
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 1,
+    }).click({ button: 'right' });
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 

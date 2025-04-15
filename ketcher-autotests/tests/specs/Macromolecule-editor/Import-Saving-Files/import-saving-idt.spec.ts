@@ -418,7 +418,10 @@ test.describe('Import-Saving .idt Files', () => {
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
     );
     await selectSequenceLayoutModeTool(page);
-    await getSymbolLocator(page, { symbolAlias: 'G', nodeIndexOverall: 2 }).click({ button: 'right' });
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 2,
+    }).click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
     await keyboardTypeOnCanvas(page, 'ttt');
     await keyboardPressOnCanvas(page, 'Escape');

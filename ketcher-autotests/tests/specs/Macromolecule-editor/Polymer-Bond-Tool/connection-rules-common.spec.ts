@@ -108,10 +108,10 @@ test.describe('Common connection rules: ', () => {
   ) {
     await bondSelectionTool(page, MacroBondType.Single);
 
-    const leftMmonomerLocator = getMonomerLocator(page, leftMonomer).first();
+    const leftMonomerLocator = getMonomerLocator(page, leftMonomer).first();
     const rightMonomerLocator = getMonomerLocator(page, rightMonomer).first();
 
-    await leftMmonomerLocator.hover();
+    await leftMonomerLocator.hover();
     await page.mouse.down();
     await waitForRender(page, async () => {
       await rightMonomerLocator.hover();

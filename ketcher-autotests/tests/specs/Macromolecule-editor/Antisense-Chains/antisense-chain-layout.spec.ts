@@ -17,13 +17,22 @@ import {
   selectAllStructuresOnCanvas,
   selectSequenceLayoutModeTool,
 } from '@utils';
-import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  getMonomerLocator,
+  MonomerLocatorOptions,
+} from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import {
   selectClearCanvasTool,
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Sugars } from '@constants/monomers/Sugars';
+import { Bases } from '@constants/monomers/Bases';
+import { Phosphates } from '@constants/monomers/Phosphates';
+import { Nucleotides } from '@constants/monomers/Nucleotides';
+import { Chem } from '@constants/monomers/Chem';
 
 let page: Page;
 
@@ -54,7 +63,7 @@ interface IMonomer {
   HELMString?: string;
   eligibleForAntisense: boolean;
   baseWithR3R1ConnectionPresent: boolean;
-  monomerLocatorIndex: number;
+  monomerLocatorOptions: MonomerLocatorOptions;
   // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
@@ -67,7 +76,7 @@ interface IPolymer {
   KETFile?: string;
   HELMString?: string;
   checks: ('side chain' | '')[];
-  monomerLocatorIndex: number;
+  monomerLocatorOptions: MonomerLocatorOptions;
   // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
   // issueNumber is mandatory if shouldFail === true
@@ -97,7 +106,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'PEPTIDE1{A}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Peptides.A,
   },
   {
     id: 2,
@@ -109,7 +118,7 @@ const shortMonomerList: IMonomer[] = [
       'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Peptides.X,
   },
   {
     id: 3,
@@ -120,7 +129,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Sugars.R,
   },
   {
     id: 4,
@@ -131,7 +140,7 @@ const shortMonomerList: IMonomer[] = [
     KETFile: 'KET/Antisense-Chains/8. Base A (from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.A,
   },
   {
     id: 5,
@@ -143,7 +152,7 @@ const shortMonomerList: IMonomer[] = [
       'KET/Antisense-Chains/9. Ambiguous DNA Base N (alternatives, from library).ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.DNA_N,
   },
   {
     id: 6,
@@ -154,19 +163,18 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{P}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Phosphates.P,
   },
   {
     id: 7,
     monomerDescription: '7. Unsplit monomer 2-damdA (from library)',
     alias: '2-damdA',
     type: MonomerType.UnsplitNucleotide,
-    contentType: MacroFileType.Ket,
-    KETFile:
-      'KET/Antisense-Chains/18. Unsplit monomer 2-damdA (from library).ket',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{[2-damdA]}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Nucleotides._2_damdA,
   },
   {
     id: 8,
@@ -177,7 +185,10 @@ const shortMonomerList: IMonomer[] = [
     KETFile: 'KET/Antisense-Chains/19. Unknown monomer.ket',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: {
+      monomerAlias: 'Unknown',
+      monomerType: MonomerType.UnknownMonomer,
+    },
   },
   {
     id: 9,
@@ -188,7 +199,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'CHEM1{[4aPEGMal]}$$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: false,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Chem._4aPEGMal,
   },
   {
     id: 10,
@@ -199,7 +210,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.A,
   },
   {
     id: 11,
@@ -210,7 +221,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A)P}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.A,
   },
   {
     id: 12,
@@ -222,7 +233,7 @@ const shortMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A,C,G,T)P}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.DNA_N,
   },
   {
     id: 13,
@@ -235,7 +246,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.nC6n8A,
   },
   {
     id: 14,
@@ -248,7 +259,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{R([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:R2-1:R1$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.nC6n8A,
   },
   {
     id: 15,
@@ -261,7 +272,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{R([nC6n8A])}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.nC6n8A,
   },
   {
     id: 16,
@@ -274,7 +285,7 @@ const shortMonomerList: IMonomer[] = [
       'RNA1{R([nC6n8A])P}|CHEM1{[4aPEGMal]}$RNA1,CHEM1,2:pair-1:pair$$$V2.0',
     eligibleForAntisense: false,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.nC6n8A,
   },
 ];
 
@@ -350,20 +361,19 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.A,
   },
   {
     id: 2,
     monomerDescription:
       'Nucleoside with ambiguous alternative RNA base W - R(A,U)',
-    // Alias is not W because of the a bug
     alias: 'W',
     type: 'Nucleoside',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{R(A,U)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.RNA_W,
   },
   {
     id: 3,
@@ -374,7 +384,10 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A+U)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: {
+      monomerAlias: '%',
+      monomerType: MonomerType.Base,
+    },
   },
   {
     id: 4,
@@ -386,7 +399,7 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A,C,T)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.DNA_H,
   },
   {
     id: 5,
@@ -397,7 +410,10 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A+C+T)}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: {
+      monomerAlias: '%',
+      monomerType: MonomerType.Base,
+    },
   },
   {
     id: 6,
@@ -408,20 +424,19 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A)P}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.A,
   },
   {
     id: 7,
     monomerDescription:
       'Nucleotide with ambiguous alternative RNA base W - R(A,U)P',
-    // Alias is not W because of the a bug
     alias: 'W',
     type: 'Nucleotide',
     contentType: MacroFileType.HELM,
     HELMString: 'RNA1{R(A,U)P}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.RNA_W,
   },
   {
     id: 8,
@@ -432,7 +447,10 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A+U)P}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: {
+      monomerAlias: '%',
+      monomerType: MonomerType.Base,
+    },
   },
   {
     id: 9,
@@ -444,7 +462,7 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A,C,T)P}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: Bases.DNA_H,
   },
   {
     id: 10,
@@ -456,7 +474,23 @@ const eligibleForAntisenseMonomerList: IMonomer[] = [
     HELMString: 'RNA1{R(A+C+T)P}$$$$V2.0',
     eligibleForAntisense: true,
     baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
+    monomerLocatorOptions: {
+      monomerAlias: '%',
+      monomerType: MonomerType.Base,
+    },
+  },
+  {
+    id: 11,
+    monomerDescription: 'Unsplit monomer 2-damdA (from library)',
+    alias: '2_damdA',
+    type: 'Nucleotide',
+    contentType: MacroFileType.HELM,
+    HELMString: 'RNA1{[2-damdA]}$$$$V2.0',
+    eligibleForAntisense: true,
+    baseWithR3R1ConnectionPresent: false,
+    monomerLocatorOptions: Nucleotides._2_damdA,
+    // shouldFail: true,
+    // issueNumber: 'https://github.com/epam/ketcher/issues/6840',
   },
 ];
 
@@ -477,14 +511,16 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
 
       await loadMonomerOnCanvas(page, leftMonomer);
 
-      const leftMonomerLocator = getMonomerLocator(page, {
-        monomerAlias: leftMonomer.alias,
-      }).first();
+      const leftMonomerLocator = getMonomerLocator(
+        page,
+        leftMonomer.monomerLocatorOptions,
+      ).first();
       await loadMonomerOnCanvas(page, rightMonomer);
 
-      const rightMonomerLocators = getMonomerLocator(page, {
-        monomerAlias: rightMonomer.alias,
-      });
+      const rightMonomerLocators = getMonomerLocator(
+        page,
+        rightMonomer.monomerLocatorOptions,
+      );
 
       const rightMonomerLocator =
         (await rightMonomerLocators.count()) > 1
@@ -604,32 +640,27 @@ test(`4. For R3-R1 sugar-base side connections (when the base does not have hydr
 
 async function callContextMenuForMonomer(
   page: Page,
-  monomerLocatorIndex: number,
+  monomerLocatorOptions: MonomerLocatorOptions,
 ) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator
-    .locator('g.monomer')
-    .nth(monomerLocatorIndex)
-    .click({ button: 'right', force: true });
+  const canvasLocator = getMonomerLocator(page, monomerLocatorOptions).first();
+  await canvasLocator.click({ button: 'right', force: true });
 }
 
-const longChain: IMonomer[] = [
-  {
-    id: 1,
-    monomerDescription: '',
-    type: 'Nucleotide',
-    contentType: MacroFileType.HELM,
-    HELMString:
-      'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
-      'RNA2{R(U)P.R(G)P.R(C)P}|PEPTIDE2{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
-      'RNA3{R(U)P.R(G)P.R(C)P}|PEPTIDE3{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}' +
-      '$RNA1,PEPTIDE1,9:R2-1:R1|RNA2,PEPTIDE2,9:R2-1:R1|PEPTIDE1,RNA2,4:R2-1:R1|' +
-      'RNA3,PEPTIDE3,9:R2-1:R1|PEPTIDE2,RNA3,4:R2-1:R1$$$V2.0',
-    eligibleForAntisense: true,
-    baseWithR3R1ConnectionPresent: true,
-    monomerLocatorIndex: 0,
-  },
-];
+const longChain: IMonomer = {
+  id: 1,
+  monomerDescription: '',
+  type: 'Nucleotide',
+  contentType: MacroFileType.HELM,
+  HELMString:
+    'RNA1{R(U)P.R(G)P.R(C)P}|PEPTIDE1{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+    'RNA2{R(U)P.R(G)P.R(C)P}|PEPTIDE2{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}|' +
+    'RNA3{R(U)P.R(G)P.R(C)P}|PEPTIDE3{[1Nal].[Cys_Bn].[AspOMe].[aMePhe]}' +
+    '$RNA1,PEPTIDE1,9:R2-1:R1|RNA2,PEPTIDE2,9:R2-1:R1|PEPTIDE1,RNA2,4:R2-1:R1|' +
+    'RNA3,PEPTIDE3,9:R2-1:R1|PEPTIDE2,RNA3,4:R2-1:R1$$$V2.0',
+  eligibleForAntisense: true,
+  baseWithR3R1ConnectionPresent: true,
+  monomerLocatorOptions: Bases.U,
+};
 
 test(`5. Check that backbones should be placed parallel to each other`, async () => {
   /*
@@ -642,7 +673,7 @@ test(`5. Check that backbones should be placed parallel to each other`, async ()
    */
   test.setTimeout(20000);
 
-  const chain = longChain[0];
+  const chain = longChain;
 
   if (chain.HELMString) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -653,7 +684,7 @@ test(`5. Check that backbones should be placed parallel to each other`, async ()
   }
 
   await selectAllStructuresOnCanvas(page);
-  await callContextMenuForMonomer(page, 0);
+  await callContextMenuForMonomer(page, chain.monomerLocatorOptions);
   const createAntisenseStrandOption = page
     .getByTestId('create_antisense_rna_chain')
     .first();
@@ -783,15 +814,17 @@ for (const leftMonomer of eligibleForAntisenseMonomerList) {
 
       await loadMonomerOnCanvas(page, leftMonomer);
 
-      const leftMonomerLocator = getMonomerLocator(page, {
-        monomerAlias: leftMonomer.alias,
-      }).first();
+      const leftMonomerLocator = getMonomerLocator(
+        page,
+        leftMonomer.monomerLocatorOptions,
+      ).first();
 
       await loadMonomerOnCanvas(page, rightMonomer);
 
-      const rightMonomerLocators = getMonomerLocator(page, {
-        monomerAlias: rightMonomer.alias,
-      });
+      const rightMonomerLocators = getMonomerLocator(
+        page,
+        rightMonomer.monomerLocatorOptions,
+      );
 
       const rightMonomerLocator =
         (await rightMonomerLocators.count()) > 1

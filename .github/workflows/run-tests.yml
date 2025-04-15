@@ -103,11 +103,41 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Download shard artifacts
+      - name: Download blob-report-1
         uses: actions/download-artifact@v4
         with:
-          path: all-blob-reports
-          pattern: blob-report-*
+          name: blob-report-1
+          path: all-blob-reports/blob-report-1
+
+      - name: Download blob-report-2
+        uses: actions/download-artifact@v4
+        with:
+          name: blob-report-2
+          path: all-blob-reports/blob-report-2
+
+      - name: Download blob-report-3
+        uses: actions/download-artifact@v4
+        with:
+          name: blob-report-3
+          path: all-blob-reports/blob-report-3
+
+      - name: Download blob-report-4
+        uses: actions/download-artifact@v4
+        with:
+          name: blob-report-4
+          path: all-blob-reports/blob-report-4
+
+      - name: Download blob-report-5
+        uses: actions/download-artifact@v4
+        with:
+          name: blob-report-5
+          path: all-blob-reports/blob-report-5
+
+      - name: Download blob-report-6
+        uses: actions/download-artifact@v4
+        with:
+          name: blob-report-6
+          path: all-blob-reports/blob-report-6
 
       - name: Verify downloaded reports
         run: ls -laR all-blob-reports

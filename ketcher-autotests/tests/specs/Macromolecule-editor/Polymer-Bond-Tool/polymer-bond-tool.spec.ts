@@ -1223,6 +1223,276 @@ test('Check the existance of magnetic area for snapping to an angle or closest r
   }
 });
 
+test('(Horizontal snap-to-distance) If a monomer has a connection (horizontal length x) with another monomer', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6317
+    Description: (Horizontal snap-to-distance) If a monomer has a connection (horizontal length x) with another monomer 
+    (and the vertical distance between their centers is less than 0.75Å) there exists a magnetic area at length x in the other direction, 
+    15px away from the y perpendicular line. y should start 0.75Å above the lower monomer center and end 0.75Å bellow the higher monomer center.
+    Scenario:
+    1. Load ket file with two peptides connected by ordinary bond
+    2. Hover over the peptides and move it
+    3. Take screenshot
+    */
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'KET/four-monomers-connected.ket',
+    page,
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await getMonomerLocator(page, Peptides.meE).click();
+  await page.mouse.down();
+  await page.mouse.move(650, 380);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
+  await getMonomerLocator(page, Peptides._2Nal).click();
+  await page.mouse.down();
+  await page.mouse.move(380, 380);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
+  await getMonomerLocator(page, Peptides.Hhs).click();
+  await page.mouse.down();
+  await page.mouse.move(480, 360);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test('(Vertical snap-to-distance) If a monomer has a connection (horizontal length x) with another monomer', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6317
+    Description: (Horizontal snap-to-distance) If a monomer has a connection (horizontal length x) with another monomer 
+    (and the vertical distance between their centers is less than 0.75Å) there exists a magnetic area at length x in the other direction, 
+    15px away from the y perpendicular line. y should start 0.75Å above the lower monomer center and end 0.75Å bellow the higher monomer center.
+    Scenario:
+    1. Load ket file with two peptides connected by ordinary bond
+    2. Hover over the peptides and move it
+    3. Take screenshot
+    */
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'KET/four-monomers-connected-vertical.ket',
+    page,
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await getMonomerLocator(page, Peptides.meE).click();
+  await page.mouse.down();
+  await page.mouse.move(530, 220);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
+  await getMonomerLocator(page, Peptides._2Nal).click();
+  await page.mouse.down();
+  await page.mouse.move(500, 560);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
+  await getMonomerLocator(page, Peptides.Hhs).click();
+  await page.mouse.down();
+  await page.mouse.move(500, 440);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test('(Horizontal snap-to-distance) If a monomer has a connection by hydrogen bonds (horizontal length x) with another monomer', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6317
+    Description: (Horizontal snap-to-distance) If a monomer has a connection (horizontal length x) with another monomer 
+    (and the vertical distance between their centers is less than 0.75Å) there exists a magnetic area at length x in the other direction, 
+    15px away from the y perpendicular line. y should start 0.75Å above the lower monomer center and end 0.75Å bellow the higher monomer center.
+    Scenario:
+    1. Load ket file with two peptides connected by hydrogen bond
+    2. Hover over the peptides and move it
+    3. Take screenshot
+    */
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'KET/four-monomers-connected-by-hydrogen-bonds.ket',
+    page,
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await getMonomerLocator(page, Peptides.meE).click();
+  await page.mouse.down();
+  await page.mouse.move(635, 370);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
+  await getMonomerLocator(page, Peptides._2Nal).click();
+  await page.mouse.down();
+  await page.mouse.move(420, 370);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
+  await getMonomerLocator(page, Peptides.Hhs).click();
+  await page.mouse.down();
+  await page.mouse.move(485, 395);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test('(Vertical snap-to-distance) If a monomer has a connection by hydrogen bonds (horizontal length x) with another monomer', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6317
+    Description: (Horizontal snap-to-distance) If a monomer has a connection (horizontal length x) with another monomer 
+    (and the vertical distance between their centers is less than 0.75Å) there exists a magnetic area at length x in the other direction, 
+    15px away from the y perpendicular line. y should start 0.75Å above the lower monomer center and end 0.75Å bellow the higher monomer center.
+    Scenario:
+    1. Load ket file with two peptides connected by hydrogen bond
+    2. Hover over the peptides and move it
+    3. Take screenshot
+    */
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'KET/four-monomers-connected-by-hydrogen-bonds-vertical.ket',
+    page,
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await getMonomerLocator(page, Peptides.meE).click();
+  await page.mouse.down();
+  await page.mouse.move(530, 220);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
+  await getMonomerLocator(page, Peptides._2Nal).click();
+  await page.mouse.down();
+  await page.mouse.move(500, 560);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
+  await getMonomerLocator(page, Peptides.Hhs).click();
+  await page.mouse.down();
+  await page.mouse.move(500, 440);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test('Check that if the user holds down CRTL (⌘/Command for MacOS) while moving the monomer no snapping happen', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6317
+    Description: If the user holds down CRTL (⌘/Command for MacOS) while moving the monomer no snapping happen.
+    Scenario:
+    1. Load ket file with two peptides connected by ordinary bond
+    2. Hover over the peptides and move it
+    3. Take screenshot
+    */
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'KET/four-monomers-connected.ket',
+    page,
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await getMonomerLocator(page, Peptides.meE).click();
+  await page.mouse.down();
+  await page.keyboard.down('Control');
+  await page.mouse.move(650, 380);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
+  await page.keyboard.up('Control');
+  await getMonomerLocator(page, Peptides._2Nal).click();
+  await page.mouse.down();
+  await page.keyboard.down('Control');
+  await page.mouse.move(380, 380);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
+  await page.keyboard.up('Control');
+  await getMonomerLocator(page, Peptides.Hhs).click();
+  await page.mouse.down();
+  await page.keyboard.down('Control');
+  await page.mouse.move(480, 360);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test('(Vertical snap-to-distance) Check that if the user holds down CRTL (⌘/Command for MacOS) while moving the monomer no snapping happen', async () => {
+  /* 
+    Test case: https://github.com/epam/ketcher/issues/6317
+    Description: If the user holds down CRTL (⌘/Command for MacOS) while moving the monomer no snapping happen.
+    Scenario:
+    1. Load ket file with two peptides connected by hydrogen bond
+    2. Hover over the peptides and move it
+    3. Take screenshot
+    */
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'KET/four-monomers-connected-by-hydrogen-bonds-vertical.ket',
+    page,
+  );
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await getMonomerLocator(page, Peptides.meE).click();
+  await page.mouse.down();
+  await page.keyboard.down('Control');
+  await page.mouse.move(530, 220);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
+  await page.keyboard.up('Control');
+  await getMonomerLocator(page, Peptides._2Nal).click();
+  await page.mouse.down();
+  await page.keyboard.down('Control');
+  await page.mouse.move(500, 560);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+  await page.mouse.up();
+  await page.keyboard.up('Control');
+  await getMonomerLocator(page, Peptides.Hhs).click();
+  await page.mouse.down();
+  await page.keyboard.down('Control');
+  await page.mouse.move(500, 440);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
 test('Long bond not turns into a direct bond when moving the second monomer', async () => {
   /* 
     Test case: https://github.com/epam/ketcher/issues/6167

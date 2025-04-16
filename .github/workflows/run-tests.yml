@@ -85,7 +85,8 @@ jobs:
       - name: Run tests
         run: |
           cd example/ && nohup npm run serve:standalone &
-          cd ../ketcher-autotests/
+          cd ketcher-autotests/
+          ls -d
           npm i
           npx playwright install chromium
           npx playwright test \

@@ -68,11 +68,15 @@ export class NewSequenceButton {
       .attr('x', 0)
       .attr('y', 0)
       .attr('height', '48')
-      .attr('width', '48');
+      .attr('width', '48')
+      .attr('data-testid', 'NewSequencePlusButtonIncludingHiddenArea');
 
-    this.buttonElement = this.bodyElement.append<SVGElement>('xhtml:div').attr(
-      'style',
-      `
+    this.buttonElement = this.bodyElement
+      .append<SVGElement>('xhtml:div')
+      .attr('data-testid', 'NewSequencePlusButtonIcon')
+      .attr(
+        'style',
+        `
         width: 32px;
         margin: 8px;
         padding:  8px;
@@ -88,7 +92,7 @@ export class NewSequenceButton {
         align-items: center;
         justify-content: space-between;
       `,
-    );
+      );
 
     NewSequenceButton.appendPlusIcon(this.buttonElement);
 

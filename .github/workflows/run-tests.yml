@@ -86,20 +86,18 @@ jobs:
         run: |
           cd example/ && nohup npm run serve:standalone &
           cd ketcher-autotests/
-          ls -d
           npm i
           npx playwright install chromium
           npx playwright test \
             --project=chromium \
             --grep-invert @chromium-popup \
             --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} \
-            --reporter=blob,./blob-report
+            --reporter='blob,outputDir=./blob-report'
 
       - name: Check blob-report directory
         if: always()
         run: |
           pwd
-          ls -d
           ls -la ketcher-autotests/blob-report
 
       - name: Upload blob report to GitHub Actions Artifacts

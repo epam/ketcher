@@ -44,7 +44,7 @@ export class MacromoleculesConverter {
     const sgroupId = struct.sgroups.add(monomerMicromolecule);
 
     monomerMicromolecule.data.name = monomer.monomerItem.label;
-    monomerMicromolecule.data.expanded = false;
+    monomerMicromolecule.data.expanded = monomer.monomerItem.expanded;
     monomerMicromolecule.id = sgroupId;
     monomerMicromolecule.pp = monomer.position;
 
@@ -342,6 +342,7 @@ export class MacromoleculesConverter {
       {
         struct: fragmentStruct,
         label: 'F' + fragmentNumber,
+        expanded: false,
         colorScheme: undefined,
         favorite: false,
         props: {

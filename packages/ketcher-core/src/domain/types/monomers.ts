@@ -65,6 +65,7 @@ export type MonomerItemType = MonomerItemBase & {
   seqId?: number;
   isAntisense?: boolean;
   isSense?: boolean;
+  expanded: boolean;
 };
 
 export type AmbiguousMonomerType = MonomerItemBase & {

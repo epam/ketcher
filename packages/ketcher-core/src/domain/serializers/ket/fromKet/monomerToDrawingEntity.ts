@@ -47,6 +47,7 @@ export function monomerToDrawingEntity(
       props: templateToMonomerProps(template),
       attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
       seqId: node.seqid,
+      expanded: node.expanded,
     },
     position,
   );
@@ -62,6 +63,7 @@ export function createMonomersForVariantMonomer(
   const monomers = monomerTemplates.map((monomerTemplate) => {
     const monomerItem = {
       label: monomerTemplate.alias,
+      expanded: false,
       struct: KetSerializer.convertMonomerTemplateToStruct(monomerTemplate),
       props: templateToMonomerProps(monomerTemplate),
       attachmentPoints: monomerTemplate.attachmentPoints,

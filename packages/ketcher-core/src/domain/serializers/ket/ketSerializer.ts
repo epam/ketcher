@@ -838,6 +838,7 @@ export class KetSerializer implements Serializer<Struct> {
           alias: monomer.label,
           templateId,
           seqid: monomer.monomerItem.seqId,
+          expanded: monomer.monomerItem.expanded,
         };
         fileContent.root.nodes.push(getKetRef(monomerKey));
 

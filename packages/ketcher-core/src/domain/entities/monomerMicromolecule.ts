@@ -46,6 +46,7 @@ export class MonomerMicromolecule extends SGroup {
     monomerMicromoleculeClone.atoms = atomIdMap
       ? monomerMicromolecule.atoms.map((elem) => atomIdMap.get(elem))
       : monomerMicromolecule.atoms;
+    monomerMicromoleculeClone.data.expanded = monomerMicromolecule.isExpanded();
 
     return monomerMicromoleculeClone;
   }

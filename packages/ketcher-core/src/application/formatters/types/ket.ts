@@ -15,6 +15,14 @@ export interface IKetMonomerNode {
   };
   alias: string;
   templateId: string;
+  expanded: boolean;
+  transformation: {
+    rotation: number;
+    shift: {
+      x: number;
+      y: number;
+    };
+  };
 }
 
 export interface IKetAmbiguousMonomerNode {

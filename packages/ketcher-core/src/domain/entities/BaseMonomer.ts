@@ -51,6 +51,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     super(_position, config);
 
     this.monomerItem = { ...monomerItem };
+    this.monomerItem.expanded = monomerItem.expanded ?? false;
     this.attachmentPointsToBonds = this.getAttachmentPointDict();
     this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
     this.monomerItem.attachmentPoints =

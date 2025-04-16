@@ -87,13 +87,13 @@ jobs:
             --project=chromium \
             --grep-invert @chromium-popup \
             --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} \
-            --reporter=blob
+            --reporter=blob,./blob-report
 
       - name: Check blob-report directory
         if: always()
         run: |
           pwd
-          ls -la blob-report
+          ls -la ketcher-autotests/blob-report
 
       - name: Upload blob report to GitHub Actions Artifacts
         if: always()

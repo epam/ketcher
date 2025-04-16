@@ -512,7 +512,7 @@ test.describe('Sequence edit mode', () => {
     Description: It is possible to start new sequence by using UI that appears if user hover mouse between squences or below bottom sequence or above the top sequence.
     */
     await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
-    await page.getByTestId('NewSequencePlusButton').click();
+    await page.getByTestId('NewSequencePlusButtonIcon').click();
     await takeEditorScreenshot(page);
   });
 

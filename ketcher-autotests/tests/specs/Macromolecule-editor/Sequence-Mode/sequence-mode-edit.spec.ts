@@ -529,7 +529,7 @@ test.describe('Sequence edit mode', () => {
      *    4. Hover mouse outside Plus icon area but inside 1+1/4 of icons size (horizontally, one pixel inside the border)
      *    5. Take a screenshot to validate it's appearence
      *    6. Hover mouse outside Plus icon area but outside 1+1/4 of icons size (horizontally, one pixel outside the border)
-     *    7. Take a screenshot to validate it's absense
+     *    7. Take a screenshot to validate it's absense.
      **/
     await keyboardTypeOnCanvas(page, 'aaa');
     const plusButtonIcon = page

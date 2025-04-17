@@ -38,6 +38,7 @@ export enum SaltsAndSolvents {
   Butanol2 = '2-butanol',
   Ethylhexanol2 = '2-ethylhexanol',
   DMF = 'DMF',
+  DBU = '1,5-diazabicyclo[5.4.0]undec-7-ene',
   Isobutanol = 'isobutanol',
   Glycerol = 'glycerol',
   TButanol = 't-butanol',

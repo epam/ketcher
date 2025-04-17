@@ -8,6 +8,7 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   LeftPanelButton,
   openFileAndAddToCanvas,
+  openFileAndAddToCanvasAsNewProject,
   pressButton,
   RingButton,
   selectAllStructuresOnCanvas,
@@ -396,6 +397,10 @@ test.describe('Bond Properties', () => {
       'Rxn-V2000/rxn-1463-to-open-expected.rxn',
       FileType.RXN,
       'v2000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/rxn-1463-to-open-expected.rxn',
+      page,
     );
     await takeEditorScreenshot(page);
   });

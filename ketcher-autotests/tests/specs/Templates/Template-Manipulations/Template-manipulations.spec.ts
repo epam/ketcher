@@ -48,6 +48,7 @@ import {
   selectUndoByKeyboard,
   selectZoomOutTool,
   waitForElementInCanvas,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
@@ -387,6 +388,10 @@ test.describe('Template Manupulations', () => {
       'Rxn-V2000/templates-reaction-expected.rxn',
       FileType.RXN,
       'v2000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/templates-reaction-expected.rxn',
+      page,
     );
     await takeEditorScreenshot(page);
   });

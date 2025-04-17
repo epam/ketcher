@@ -21,6 +21,7 @@ import {
   drawBenzeneRing,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 
 import {
@@ -51,6 +52,7 @@ import {
 import {
   pressRedoButton,
   pressUndoButton,
+  selectClearCanvasTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
@@ -1391,15 +1393,21 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1656
       Description: The structure is saved as *.rxn file.
     */
-    await openFileAndAddToCanvas(
+    await openFileAndAddToCanvasAsNewProject(
       'Rxn-V3000/all-possible-atoms-properties.rxn',
       page,
     );
+    await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
       'Rxn-V3000/all-possible-atoms-properties-expected.rxn',
       FileType.RXN,
       'v3000',
+    );
+    await selectClearCanvasTool(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/all-possible-atoms-properties-expected.rxn',
+      page,
     );
     await takeEditorScreenshot(page);
   });

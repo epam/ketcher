@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   selectTopPanelButton,
   openFileAndAddToCanvas,
@@ -197,7 +197,11 @@ test.describe('Calculated Values Tools', () => {
     */
     await openFileAndAddToCanvas('Rxn-V2000/benzene-bromination.rxn', page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
-    await takeEditorScreenshot(page);
+    const exactMassEditBox = page
+      .getByTestId('Exact Mass-wrapper')
+      .getByRole('textbox');
+
+    await expect(exactMassEditBox).toHaveAttribute('value', '78.047');
   });
 
   test('Calculation for an inorganic compound', async ({ page }) => {

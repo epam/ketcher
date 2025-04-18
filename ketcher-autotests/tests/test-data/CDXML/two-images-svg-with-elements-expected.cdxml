@@ -259,13 +259,13 @@
         <arrow id="75" BoundingBox="367.121979 106.329544 240.691132 106.329544" FillType="None" ArrowheadType="Solid" HeadSize="2250" ArrowheadWidth="563" ArrowheadHead="Full" ArrowheadCenterSize="25" Head3D="367.121979 106.329544 0.000000" Tail3D="240.691132 106.329544 0.000000"/>
         <graphic id="78" BoundingBox="193.975403 118.120483 193.975403 110.620483" GraphicType="Symbol" SymbolType="Plus"/>
         <graphic id="81" BoundingBox="434.736603 213.374985 434.736603 205.874985" GraphicType="Symbol" SymbolType="Plus"/>
-        <graphic id="84" BoundingBox="-101.506477 163.338669 -101.506477 163.338669" Center3D="-101.506477 163.338669 0" MajorAxisEnd3D="-101.506477 163.338669 0" MinorAxisEnd3D="-101.506477 163.338669 0" GraphicType="Oval"/>
+        <graphic id="84" BoundingBox="-4.301234 56.007271 108.879509 -36.921139" Center3D="52.289139 9.543066 0" MajorAxisEnd3D="108.879509 9.543066 0" MinorAxisEnd3D="52.289139 56.007271 0" GraphicType="Oval"/>
         <graphic id="87" BoundingBox="7.978375 36.916786 92.523415 -19.673590" GraphicType="Line"/>
         <graphic id="90" BoundingBox="9.340538 38.278954 94.566643 -21.716856" GraphicType="Rectangle"/>
         <graphic id="93" BoundingBox="236.463882 151.261368 349.645691 58.329540" Center3D="293.054779 104.795456 0" MajorAxisEnd3D="349.645691 104.795456 0" MinorAxisEnd3D="293.054779 151.261368 0" GraphicType="Oval"/>
         <graphic id="96" BoundingBox="248.736588 132.170441 333.282043 75.579544" GraphicType="Line"/>
         <graphic id="99" BoundingBox="250.100235 133.534073 335.327515 73.534088" GraphicType="Rectangle"/>
-        <t id="102" p="123.813385 5.485082" InterpretChemically="no">
+        <t id="102" p="123.813385 38.537857" InterpretChemically="no">
             <s font="4" size="26" face="0">Test case</s>
         </t>
         <t id="105" p="364.577484 101.488632" InterpretChemically="no">

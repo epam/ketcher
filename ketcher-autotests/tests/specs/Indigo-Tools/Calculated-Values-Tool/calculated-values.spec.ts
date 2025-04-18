@@ -201,7 +201,10 @@ test.describe('Calculated Values Tools', () => {
       .getByTestId('Exact Mass-wrapper')
       .getByRole('textbox');
 
-    await expect(exactMassEditBox).toHaveAttribute('value', '78.047');
+    await expect(exactMassEditBox).toHaveAttribute(
+      'value',
+      '[78.047] > [155.957]',
+    );
   });
 
   test('Calculation for an inorganic compound', async ({ page }) => {

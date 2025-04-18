@@ -367,7 +367,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await goToPeptidesTab(page);
     await page.getByTestId('D-OAla___D-Lactic acid').hover();
     await waitForMonomerPreview(page);
-    await takePageScreenshot(page);
+    await takeElementScreenshot(page);
   });
 
   test(`Case 13: Separate selenocysteine from cysteine and pyrrolysine from lysine`, async () => {

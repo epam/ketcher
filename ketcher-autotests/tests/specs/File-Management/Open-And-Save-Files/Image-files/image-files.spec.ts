@@ -2495,11 +2495,10 @@ test.describe('Image files', () => {
      * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (SVG) with
      * elements selected and moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
      */
-    const fileContent2 = await readFileContents(
-      'tests/test-data/CDX/image-svg-with-elements-expected.cdx',
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-svg-with-elements-expected.cdxml',
+      page,
     );
-    await openPasteFromClipboard(page, fileContent2);
-    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
     await dragMouseTo(900, 300, page);
@@ -2601,11 +2600,10 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Erase"
      */
-    const fileContent2 = await readFileContents(
-      'tests/test-data/CDX/image-png-with-elements-expected.cdx',
+    await openFileAndAddToCanvasAsNewProject(
+      'CDXML/image-png-with-elements-expected.cdxml',
+      page,
     );
-    await openPasteFromClipboard(page, fileContent2);
-    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
     await selectEraseTool(page);

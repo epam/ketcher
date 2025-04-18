@@ -257,6 +257,7 @@ test.describe('Data S-Group tool', () => {
       'Absolute',
     );
     await moveMouseToTheMiddleOfTheScreen(page);
+    await page.getByTestId('s-group-info-panel').waitFor({ state: 'visible' });
     await takeEditorScreenshot(page);
   });
 
@@ -276,6 +277,7 @@ test.describe('Data S-Group tool', () => {
       'Attached',
     );
     await moveMouseToTheMiddleOfTheScreen(page);
+    await page.getByTestId('s-group-info-panel').waitFor({ state: 'visible' });
     await takeEditorScreenshot(page);
   });
 

@@ -36,6 +36,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await selectClearCanvasTool(page);
+  await turnOnMacromoleculesEditor(page);
 });
 
 test.afterAll(async ({ browser }) => {
@@ -211,6 +212,7 @@ test('2. Check that in snake mode all modifid monomers are marked', async () => 
         1. Open HELM with all not modified monomers at snake mode
         2. Take a screenshot to verify that all modified monomers are marked
     */
+  await selectSnakeLayoutModeTool(page);
   for (const modifiedMonomer of modifiedMonomers) {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

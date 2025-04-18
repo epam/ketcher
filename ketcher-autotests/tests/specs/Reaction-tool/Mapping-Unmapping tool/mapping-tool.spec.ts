@@ -12,6 +12,7 @@ import {
   clickOnAtom,
   selectDropdownTool,
   clickOnCanvas,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -135,5 +136,10 @@ test.describe('Mapping reactions', () => {
       FileType.RXN,
       'v2000',
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/mapped-reaction-expected.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
   });
 });

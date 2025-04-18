@@ -14,8 +14,6 @@ import {
   screenshotBetweenUndoRedo,
   selectPartOfMolecules,
   selectAllStructuresOnCanvas,
-  copyAndPaste,
-  cutAndPaste,
   moveOnAtom,
   dragMouseTo,
   clickOnFileFormatDropdown,
@@ -24,6 +22,9 @@ import {
   RingButton,
   waitForRender,
   selectLayoutTool,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  cutToClipboardByKeyboard,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -920,7 +921,9 @@ test.describe('Cascade Reactions', () => {
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
-      await copyAndPaste(page);
+      await selectAllStructuresOnCanvas(page);
+      await copyToClipboardByKeyboard(page);
+      await pasteFromClipboardByKeyboard(page);
       await clickOnCanvas(page, 500, 500);
       await takeEditorScreenshot(page);
       await screenshotBetweenUndoRedo(page);
@@ -956,7 +959,9 @@ test.describe('Cascade Reactions', () => {
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
       await selectAllStructuresOnCanvas(page);
-      await cutAndPaste(page);
+      await selectAllStructuresOnCanvas(page);
+      await cutToClipboardByKeyboard(page);
+      await pasteFromClipboardByKeyboard(page);
       await clickOnCanvas(page, 500, 500);
       await takeEditorScreenshot(page);
       await screenshotBetweenUndoRedo(page);
@@ -1761,7 +1766,9 @@ test.describe('Cascade Reactions', () => {
           await takeEditorScreenshot(page);
           await pressUndoButton(page);
           await takeEditorScreenshot(page);
-          await copyAndPaste(page);
+          await selectAllStructuresOnCanvas(page);
+          await copyToClipboardByKeyboard(page);
+          await pasteFromClipboardByKeyboard(page);
           await clickOnCanvas(page, 500, 200);
           await takeEditorScreenshot(page);
           await pressUndoButton(page);

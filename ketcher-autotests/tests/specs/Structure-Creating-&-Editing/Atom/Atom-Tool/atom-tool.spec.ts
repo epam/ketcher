@@ -26,6 +26,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { atomsNames } from '@utils/canvas/atoms/excludedAtoms';
 import {
@@ -346,6 +347,10 @@ test.describe('Atom Tool', () => {
       FileType.RXN,
       'v2000',
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/reaction-with-colored-atoms-expected.rxn',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -381,6 +386,10 @@ test.describe('Atom Tool', () => {
       FileType.RXN,
       'v2000',
     );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/reaction-list-notlist-expected.rxn',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -399,6 +408,10 @@ test.describe('Atom Tool', () => {
       'Rxn-V2000/reaction-with-group-generics-expected.rxn',
       FileType.RXN,
       'v2000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V2000/reaction-with-group-generics-expected.rxn',
+      page,
     );
     await takeEditorScreenshot(page);
   });

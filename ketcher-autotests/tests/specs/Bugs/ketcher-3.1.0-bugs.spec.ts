@@ -27,6 +27,8 @@ import {
   pasteFromClipboard,
   openStructurePasteFromClipboard,
   MonomerType,
+  waitForMonomerPreview,
+  takeElementScreenshot,
 } from '@utils';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
@@ -320,6 +322,11 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Click on Modes list button
      * 3. Take a screenshot
      */
+    await keyboardPressOnCanvas(page, 'A');
+    await keyboardPressOnCanvas(page, 'Backspace');
+    // Do note remove two rows above ^
+    // This is to make sure that edit triangle remain on constant place
+
     await openLayoutModeMenu(page);
     await takePageScreenshot(page);
   });
@@ -359,10 +366,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       goToPeptides: false,
     });
     await goToPeptidesTab(page);
-    await waitForRender(page, async () => {
-      await page.getByTestId('D-OAla___D-Lactic acid').hover();
-    });
-    await takePageScreenshot(page);
+    const libraryCard = page.getByTestId('D-OAla___D-Lactic acid');
+    await libraryCard.hover();
+    await waitForMonomerPreview(page);
+    await takeElementScreenshot(page, 'polymer-library-preview');
   });
 
   test(`Case 13: Separate selenocysteine from cysteine and pyrrolysine from lysine`, async () => {

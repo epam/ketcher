@@ -1,11 +1,9 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@playwright/test';
 import {
-  MacromoleculesTopPanelButton,
   openStructurePasteFromClipboard,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   selectFlexLayoutModeTool,
-  selectMacromoleculesPanelButton,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
@@ -16,7 +14,10 @@ import {
   resetZoomLevelToDefault,
   waitForPageInit,
 } from '@utils';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectClearCanvasTool,
+  selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { zoomWithMouseWheel, chooseTab, Tabs } from '@utils/macromolecules';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
@@ -257,10 +258,7 @@ test.describe('Import/export sequence:', () => {
         Case 31: Check option "FASTA" to dropdown 'File format' of modal window 'Save Structure'
     */
     await selectSequenceLayoutModeTool(page);
-    await selectMacromoleculesPanelButton(
-      MacromoleculesTopPanelButton.Save,
-      page,
-    );
+    await selectSaveTool(page);
 
     const fileFormatComboBox = page.getByRole('combobox');
 

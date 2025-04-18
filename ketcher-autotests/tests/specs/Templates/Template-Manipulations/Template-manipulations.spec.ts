@@ -46,7 +46,6 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectUndoByKeyboard,
-  selectZoomOutTool,
   waitForElementInCanvas,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -65,6 +64,10 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import {
+  selectZoomOutTool,
+  topRightToolbarLocators,
+} from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -343,6 +346,7 @@ test.describe('Template Manupulations', () => {
     Click the Zoom In button several times.
     Click the Zoom Out button several times.
     */
+    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
     await selectZoomOutTool(page);
     await clickInTheMiddleOfTheScreen(page);
     await drawBenzeneRing(page);
@@ -355,7 +359,7 @@ test.describe('Template Manupulations', () => {
     await openDropdown(page, 'reaction-arrow-open-angle');
     await clickOnTheCanvas(page, 1, 0);
     await takePageScreenshot(page);
-    await page.getByTestId('zoom-input').click();
+    await zoomSelector.click();
     await takeEditorScreenshot(page);
   });
 

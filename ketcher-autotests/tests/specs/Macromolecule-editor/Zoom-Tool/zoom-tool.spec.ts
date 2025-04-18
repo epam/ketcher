@@ -16,12 +16,7 @@ import {
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
-  selectZoomInTool,
-  selectZoomReset,
-  selectZoomOutTool,
 } from '@utils';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { pageReload } from '@utils/common/helpers';
 import {
   zoomWithMouseWheel,
@@ -34,6 +29,13 @@ import {
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  selectZoomReset,
+  selectZoomOutTool,
+  turnOnMacromoleculesEditor,
+  selectZoomInTool,
+} from '@tests/pages/common/TopRightToolbar';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -359,9 +361,6 @@ test.describe('Zoom Tool', () => {
     await selectZoomReset(page);
     await selectZoomOutTool(page, numberOfZooms);
     await takeEditorScreenshot(page);
-
-    // await page.getByTestId('zoom-selector').click();
-    // await selectFlexLayoutModeTool(page);
   });
 
   test('Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left corner of the most top and left monomer in the sequence(Sequence m)', async () => {

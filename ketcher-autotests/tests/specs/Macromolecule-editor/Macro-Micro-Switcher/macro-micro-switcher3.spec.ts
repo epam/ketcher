@@ -17,7 +17,6 @@ import {
   clickOnAtomById,
   clickOnCanvas,
   waitForRender,
-  setZoomInputValue,
   resetCurrentTool,
   resetZoomLevelToDefault,
 } from '@utils';
@@ -27,6 +26,7 @@ import {
   selectClearCanvasTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
+  setZoomInputValue,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';

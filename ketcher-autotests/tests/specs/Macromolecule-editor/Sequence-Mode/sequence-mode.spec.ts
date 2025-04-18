@@ -14,8 +14,6 @@ import {
   switchSequenceEnteringButtonType,
   SequenceType,
   selectUndoByKeyboard,
-  selectZoomInTool,
-  selectZoomOutTool,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   takeTopToolbarScreenshot,
@@ -25,7 +23,11 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import {
+  turnOnMacromoleculesEditor,
+  selectZoomOutTool,
+  selectZoomInTool,
+} from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   keyboardPressOnCanvas,

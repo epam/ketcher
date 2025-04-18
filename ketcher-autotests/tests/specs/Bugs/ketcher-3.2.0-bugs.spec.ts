@@ -22,7 +22,6 @@ import {
   resetZoomLevelToDefault,
   selectSaveFileFormat,
   FileFormatOption,
-  setZoomInputValue,
   resetCurrentTool,
   clickOnCanvas,
   setMolecule,
@@ -43,6 +42,7 @@ import {
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
+  setZoomInputValue,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';

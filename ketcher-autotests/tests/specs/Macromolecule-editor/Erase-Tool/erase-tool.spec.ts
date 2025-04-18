@@ -13,8 +13,6 @@ import {
   clickOnTheCanvas,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectZoomInTool,
-  selectZoomOutTool,
 } from '@utils';
 import { hideMonomerPreview, zoomWithMouseWheel } from '@utils/macromolecules';
 import {
@@ -25,7 +23,11 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import {
+  selectZoomInTool,
+  selectZoomOutTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopRightToolbar';
 import {
   FileType,
   verifyFileExport,

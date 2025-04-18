@@ -20,7 +20,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
   resetZoomLevelToDefault,
-  selectZoomOutTool,
   MonomerType,
 } from '@utils';
 import {
@@ -29,6 +28,7 @@ import {
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
+  selectZoomOutTool,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';

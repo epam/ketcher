@@ -50,7 +50,10 @@ import {
   selectClearCanvasTool,
   selectOpenFileTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import {
+  topRightToolbarLocators,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopRightToolbar';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import {
   bondSelectionTool,
@@ -248,7 +251,8 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
     */
   const x = 800;
   const y = 350;
-  await page.locator('.css-kp5gpq').click();
+  const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
+  await fullScreenButton.click();
   await selectMonomer(page, Peptides.bAla);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Peptides.Edc);
@@ -267,7 +271,8 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
     */
   const x = 800;
   const y = 350;
-  await page.locator('.css-kp5gpq').click();
+  const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
+  await fullScreenButton.click();
   await selectMonomer(page, Presets.MOE_A_P);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Presets.dR_U_P);
@@ -286,7 +291,8 @@ test('Check in full-screen mode it is possible to add a bond between a CHEM mono
     */
   const x = 800;
   const y = 350;
-  await page.locator('.css-kp5gpq').click();
+  const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
+  await fullScreenButton.click();
   await selectMonomer(page, Chem.A6OH);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Chem.Test_6_Ch);

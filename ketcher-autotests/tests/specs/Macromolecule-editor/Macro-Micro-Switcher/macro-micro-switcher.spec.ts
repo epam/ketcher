@@ -49,9 +49,6 @@ import {
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   selectTopPanelButton,
-  selectZoomInTool,
-  selectZoomOutTool,
-  selectZoomReset,
   setAttachmentPoints,
   switchSequenceEnteringButtonType,
   takeEditorScreenshot,
@@ -70,8 +67,12 @@ import {
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
+  selectZoomReset,
+  selectZoomOutTool,
+  topRightToolbarLocators,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
+  selectZoomInTool,
 } from '@tests/pages/common/TopRightToolbar';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
@@ -598,6 +599,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4094
     Description: There are no errors in DevTool console when switching to full screen mode after switching from micro mode.
     */
+    const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(
@@ -612,7 +614,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await moveMouseAway(page);
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
-    await page.locator('.css-kp5gpq').click();
+    await fullScreenButton.click();
   });
 
   test('Check the pop-up window appear in fullscreen mode after clicking the “Open/Save” button', async () => {
@@ -620,6 +622,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4173
     Description: The pop-up window appear in fullscreen mode after clicking the “Open/Save” button.
     */
+    const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(
@@ -628,7 +631,7 @@ test.describe('Macro-Micro-Switcher', () => {
         );
       }
     });
-    await page.locator('.css-kp5gpq').click();
+    await fullScreenButton.click();
     await selectOpenFileTool(page);
     await takeEditorScreenshot(page);
     await page.getByTitle('Close window').click();

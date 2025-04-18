@@ -151,6 +151,69 @@ export class CoreEditor {
     this.micromoleculesEditor = ketcher?.editor;
     this.switchToMacromolecules();
     this.rerenderSequenceMode();
+    this.initializeEventListeners();
+  }
+
+  private initializeEventListeners(): void {
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    window.addEventListener('blur', this.handleWindowBlur);
+  }
+
+  private handleVisibilityChange = (): void => {
+    if (document.hidden) {
+      this.cancelActiveDrag();
+    }
+  };
+
+  private handleWindowBlur = (): void => {
+    this.cancelActiveDrag();
+  };
+
+  private dragCtx = null;
+
+  private cancelActiveDrag(): void {
+    if (this.dragCtx) {
+      this.dragCtx = null;
+    }
+
+    const mouseUpEvent = new MouseEvent('mouseup', {
+      bubbles: true,
+      cancelable: true,
+      view: window,
+      clientX: this.lastCursorPosition.x,
+      clientY: this.lastCursorPosition.y,
+    });
+
+    document.dispatchEvent(mouseUpEvent);
+    this.canvas.dispatchEvent(mouseUpEvent);
+
+    if (this.tool && typeof this.tool.cancel === 'function') {
+      this.tool.cancel();
+    }
+
+    const mouseLeaveEvent = new MouseEvent('mouseleave');
+    this.events.mouseleave?.dispatch?.(mouseLeaveEvent);
+    this.events.mouseLeaveDrawingEntity.dispatch(mouseLeaveEvent);
+    this.events.mouseLeaveMonomer.dispatch(mouseLeaveEvent);
+
+    this.events.mouseup?.dispatch?.(mouseUpEvent);
+    this.events.mouseUpMonomer.dispatch(mouseUpEvent);
+
+    this.drawingEntitiesManager.unselectAllDrawingEntities();
+
+    if (this.renderersContainer) {
+      const command = new Command();
+      command.isCancel = true;
+      this.renderersContainer.update(command);
+    }
+  }
+
+  public dispose(): void {
+    document.removeEventListener(
+      'visibilitychange',
+      this.handleVisibilityChange,
+    );
+    window.removeEventListener('blur', this.handleWindowBlur);
   }
 
   static provideEditorInstance(): CoreEditor {

@@ -83,11 +83,13 @@ interface SGroupDataRenderProps {
   groupStruct: Struct;
   sGroup: SGroup;
   sGroupData: string | null;
+  testId?: string;
   className?: string;
 }
 
 const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
-  const { clientX, clientY, render, className, sGroup, sGroupData } = props;
+  const { clientX, clientY, render, className, sGroup, sGroupData, testId } =
+    props;
   const [wrapperHeight, setWrapperHeight] = useState(0);
   const [wrapperWidth, setWrapperWidth] = useState(0);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -113,6 +115,7 @@ const SGroupDataRender: FC<SGroupDataRenderProps> = (props) => {
       ref={wrapperRef}
       style={{ left: panelCoordinate.x + 'px', top: panelCoordinate.y + 'px' }}
       className={clsx(classes.infoPanel, className)}
+      data-testid={testId}
     >
       {sGroupData}
     </div>

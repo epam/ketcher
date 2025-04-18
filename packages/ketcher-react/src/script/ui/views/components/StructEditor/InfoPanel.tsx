@@ -164,6 +164,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
         left: x + 'px',
         top: y + 'px',
       }}
+      data-testid="info-panel"
       className={clsx(classes.infoPanel, className)}
     >
       <StructRender
@@ -185,6 +186,7 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
       render={render}
       groupStruct={groupStruct}
       sGroup={sGroup}
+      testId="s-group-info-panel"
       sGroupData={sGroupData}
       className={className}
     />

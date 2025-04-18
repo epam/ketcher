@@ -26,6 +26,7 @@ import {
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  delay,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getMolfile } from '@utils/formats';
@@ -257,6 +258,7 @@ test.describe('Data S-Group tool', () => {
       'Absolute',
     );
     await moveMouseToTheMiddleOfTheScreen(page);
+    await page.getByText('T@#qwer123').waitFor({ state: 'visible' });
     await takeEditorScreenshot(page);
   });
 
@@ -276,6 +278,7 @@ test.describe('Data S-Group tool', () => {
       'Attached',
     );
     await moveMouseToTheMiddleOfTheScreen(page);
+    await page.getByText('T@#qwer123').waitFor({ state: 'visible' });
     await takeEditorScreenshot(page);
   });
 

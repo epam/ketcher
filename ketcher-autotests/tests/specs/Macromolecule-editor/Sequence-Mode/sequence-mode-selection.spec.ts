@@ -17,10 +17,8 @@ import {
   selectZoomOutTool,
   moveMouseAway,
 } from '@utils';
-import {
-  pressUndoButton,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   getSequenceSymbolLocator,

@@ -68,9 +68,11 @@ import {
   selectOpenFileTool,
   pressUndoButton,
   selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import {
   addSuperatomAttachmentPoint,

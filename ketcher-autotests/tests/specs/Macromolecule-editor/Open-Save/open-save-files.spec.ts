@@ -10,8 +10,8 @@ import {
 import {
   selectClearCanvasTool,
   selectSaveTool,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Open/save file tests: ', () => {
   let page: Page;

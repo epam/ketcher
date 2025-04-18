@@ -49,8 +49,8 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
   selectOpenFileTool,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import {
   bondSelectionTool,

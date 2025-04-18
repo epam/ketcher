@@ -14,10 +14,8 @@ import {
   waitForPageInit,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {

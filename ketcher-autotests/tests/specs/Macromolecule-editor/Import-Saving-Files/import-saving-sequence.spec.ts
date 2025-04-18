@@ -27,8 +27,8 @@ import { zoomWithMouseWheel } from '@utils/macromolecules';
 import {
   selectOpenFileTool,
   selectSaveTool,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);

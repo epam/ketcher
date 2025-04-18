@@ -24,8 +24,8 @@ import {
 import {
   pressUndoButton,
   selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   keyboardPressOnCanvas,

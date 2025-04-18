@@ -11,11 +11,8 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
 } from '@utils';
-import {
-  pressUndoButton,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-
+import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 test.describe('Snake mode copy&paste', () => {

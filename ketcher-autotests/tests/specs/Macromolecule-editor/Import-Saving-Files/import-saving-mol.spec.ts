@@ -27,9 +27,11 @@ import {
   selectClearCanvasTool,
   selectOpenFileTool,
   selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import { pageReload } from '@utils/common/helpers';
 import { chooseFileFormat, waitForMonomerPreview } from '@utils/macromolecules';
 import {

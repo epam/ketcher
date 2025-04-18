@@ -9,10 +9,8 @@ import {
 } from '@utils/canvas';
 import { switchToRNAMode } from '@utils/macromolecules/sequence';
 import { waitForPageInit } from '@utils/common/loaders';
-import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
   selectBaseSlot,
   selectPhosphateSlot,

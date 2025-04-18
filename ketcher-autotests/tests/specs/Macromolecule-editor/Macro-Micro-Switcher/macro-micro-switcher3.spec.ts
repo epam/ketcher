@@ -25,9 +25,11 @@ import {
   pressRedoButton,
   pressUndoButton,
   selectClearCanvasTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 

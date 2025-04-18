@@ -11,11 +11,11 @@ import {
   waitForPageInit,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
-  selectClearCanvasTool,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import {
   getMonomerLocator,
   MonomerLocatorOptions,

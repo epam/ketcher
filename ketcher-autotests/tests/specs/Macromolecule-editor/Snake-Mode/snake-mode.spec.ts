@@ -36,6 +36,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await selectClearCanvasTool(page);
+  await turnOnMacromoleculesEditor(page);
 });
 
 test.afterAll(async ({ browser }) => {

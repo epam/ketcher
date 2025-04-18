@@ -28,6 +28,7 @@ import {
   openStructurePasteFromClipboard,
   MonomerType,
   waitForMonomerPreview,
+  takeElementScreenshot,
 } from '@utils';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
@@ -365,9 +366,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       goToPeptides: false,
     });
     await goToPeptidesTab(page);
-    await page.getByTestId('D-OAla___D-Lactic acid').hover();
+    const libraryCard = page.getByTestId('D-OAla___D-Lactic acid');
+    await libraryCard.hover();
     await waitForMonomerPreview(page);
-    await takeElementScreenshot(page);
+    await takeElementScreenshot(page, 'polymer-library-preview');
   });
 
   test(`Case 13: Separate selenocysteine from cysteine and pyrrolysine from lysine`, async () => {

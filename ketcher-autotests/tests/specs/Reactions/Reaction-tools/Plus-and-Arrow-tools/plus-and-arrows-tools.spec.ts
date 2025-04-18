@@ -430,9 +430,9 @@ test.describe('Plus and Arrows tools ', () => {
       page,
     }) => {
       // await pageReloadMicro(page);
-      await configureInitialState(page);
+      // await configureInitialState(page);
 
-      await clickOnCanvas(page, point.x + OFFSET_FROM_ARROW, point.y);
+      await clickOnCanvas(page, point.x - OFFSET_FROM_ARROW, point.y);
 
       await copyToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });

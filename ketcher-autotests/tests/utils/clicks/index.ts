@@ -45,7 +45,11 @@ export async function clickInTheMiddleOfTheScreen(
   page: Page,
   button: 'left' | 'right' = 'left',
 ) {
-  const body = (await page.locator('body').boundingBox()) as BoundingBox;
+  await page.locator('body').waitFor({ state: 'visible' });
+  const body = await page.locator('body').boundingBox();
+  if (!body) {
+    throw new Error('<body> has no bounding box');
+  }
   await waitForRender(page, async () => {
     await clickAfterItemsToMergeInitialization(
       page,

@@ -624,8 +624,9 @@ for (const bondType of Object.values(MicroBondType)) {
   )?.[0];
 
   test(`${bondTypeName} tool: verification`, async () => {
+    await selectHandTool(page);
     await expandBondSelectionDropdown(page);
-    const button = page.getByTestId(bondType);
+    const button = page.getByTestId(bondType).first();
     await expect(button).toHaveAttribute('title', buttonIdToTitle[bondType]);
     // await button.click();
     await selectHandTool(page);

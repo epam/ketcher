@@ -22,7 +22,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { SnakeMode } from 'ketcher-core';
 
 let page: Page;
 

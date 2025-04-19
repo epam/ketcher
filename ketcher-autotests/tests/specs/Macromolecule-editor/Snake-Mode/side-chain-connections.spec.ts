@@ -24,9 +24,11 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
   selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import { pageReload } from '@utils/common/helpers';
 import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
 import {

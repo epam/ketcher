@@ -9,7 +9,6 @@ import {
   pressButton,
   openFileAndAddToCanvas,
   resetZoomLevelToDefault,
-  setZoomInputValue,
   resetCurrentTool,
   screenshotBetweenUndoRedo,
   selectPartOfMolecules,
@@ -42,6 +41,7 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
 
 async function addTail(page: Page, x: number, y: number) {
   await page.mouse.click(x, y, { button: 'right' });

@@ -30,6 +30,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -42,12 +43,6 @@ const setupEllipse = async (page: Page) => {
   await dragMouseTo(ellipseCoordinates.x, ellipseCoordinates.y, page);
   return ellipseCoordinates;
 };
-
-async function setZoomInputValue(page: Page, value: string) {
-  await page.getByTestId('zoom-input').click();
-  await page.getByTestId('zoom-value').fill(value);
-  await page.keyboard.press('Enter');
-}
 
 async function selectAndMoveSimpleObjects(page: Page) {
   const point = { x: 727, y: 359 };

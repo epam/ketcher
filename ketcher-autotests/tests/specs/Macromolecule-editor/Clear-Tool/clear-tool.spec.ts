@@ -11,9 +11,11 @@ import {
   selectClearCanvasTool,
   pressRedoButton,
   pressUndoButton,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import {} from '@utils/macromolecules';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';

@@ -10,9 +10,11 @@ import {
   openFileAndAddToCanvasMacro,
   dragMouseTo,
   clickInTheMiddleOfTheScreen,
-  selectZoomOutTool,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectZoomOutTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 const fileName = 'KET/alanine-monomers-bonded.ket';

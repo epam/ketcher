@@ -6,7 +6,7 @@ import {
   getMolfile,
   receiveFileComparisonData,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('getMolfile', () => {
   test.beforeEach(async ({ page }) => {

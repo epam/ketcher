@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import { waitForPageInit } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('getKet', () => {
   test.beforeEach(async ({ page }) => {

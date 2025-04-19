@@ -16,8 +16,8 @@ import {
 import {
   selectClearCanvasTool,
   selectSaveTool,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 

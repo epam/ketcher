@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import { RNA_TAB } from '@constants/testIdConstants';
 import { moveMouseAway } from '@utils/moveMouseAway';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 export const RnaAccordionTypes = {
   Presets: {

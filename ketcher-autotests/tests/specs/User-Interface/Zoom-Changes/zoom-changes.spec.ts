@@ -20,14 +20,14 @@ import {
   pressRedoButton,
   selectOpenFileTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import { TestIdSelectors } from '@utils/selectors/testIdSelectors';
+import {
+  topRightToolbarLocators,
+  zoomDropdownLocators,
+} from '@tests/pages/common/TopRightToolbar';
 
 async function checkZoomLevel(page: Page, zoomLevel: string) {
-  const zoomInput = page.getByTestId(TestIdSelectors.ZoomInput);
-  const zoomInputValue = await zoomInput.evaluate(
-    (el: HTMLElement) => el.innerText,
-  );
-  expect(zoomInputValue).toBe(zoomLevel);
+  const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+  await expect(zoomSelector).toContainText(zoomLevel);
 }
 
 const randomNegativeNumber = -60;
@@ -88,14 +88,16 @@ test.describe('Zoom changes', () => {
     /*
     Test case: EPMLSOPKET-1761
     */
+    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+    const zoomInButton = zoomDropdownLocators(page).zoomInButton;
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
     await page.getByText('CO2Et').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
-    await page.getByTestId('zoom-input').click();
-    await page.getByTestId('zoom-in').click();
+    await zoomSelector.click();
+    await zoomInButton.click();
 
     await checkZoomLevel(page, '110%');
     await takeEditorScreenshot(page);
@@ -105,14 +107,16 @@ test.describe('Zoom changes', () => {
     /*
     Test case: EPMLSOPKET-1762
     */
+    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+    const zoomOut = zoomDropdownLocators(page).zoomOutButton;
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
     await page.getByText('CO2Et').click({ button: 'right' });
     await page.getByText('Expand Abbreviation').click();
-    await page.getByTestId('zoom-input').click();
-    await page.getByTestId('zoom-out').click();
+    await zoomSelector.click();
+    await zoomOut.click();
 
     await checkZoomLevel(page, '90%');
     await takeEditorScreenshot(page);
@@ -122,11 +126,13 @@ test.describe('Zoom changes', () => {
     /*
     Test case: EPMLSOPKET-1763, EPMLSOPKET-1764
     */
+    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+    const zoomInButton = zoomDropdownLocators(page).zoomInButton;
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
     await resetCurrentTool(page);
 
-    await page.getByTestId('zoom-input').click();
-    await page.getByTestId('zoom-in').click();
+    await zoomSelector.click();
+    await zoomInButton.click();
     await checkZoomLevel(page, '110%');
 
     await resetCurrentTool(page);
@@ -144,13 +150,15 @@ test.describe('Zoom changes', () => {
     /*
       Test case: EPMLSOPKET-1763, EPMLSOPKET-1764
       */
+    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+    const zoomInButton = zoomDropdownLocators(page).zoomInButton;
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
     await ZoomInByKeyboard(page);
-    await page.getByTestId('zoom-input').click();
-    await page.getByTestId('zoom-in').click();
+    await zoomSelector.click();
+    await zoomInButton.click();
     await checkZoomLevel(page, '120%');
     await takeEditorScreenshot(page);
   });
@@ -159,12 +167,14 @@ test.describe('Zoom changes', () => {
     /*
       Test case: EPMLSOPKET-18056
       */
+    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+    const zoomOutButton = zoomDropdownLocators(page).zoomOutButton;
     await drawBenzeneRing(page);
     await resetCurrentTool(page);
 
     await ZoomOutByKeyboard(page);
-    await page.getByTestId('zoom-input').click();
-    await page.getByTestId('zoom-out').click();
+    await zoomSelector.click();
+    await zoomOutButton.click();
     await checkZoomLevel(page, '80%');
     await takeEditorScreenshot(page);
   });
@@ -173,21 +183,24 @@ test.describe('Zoom changes', () => {
     /*
     Test case: EPMLSOPKET-1765
     */
+    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+    const zoomInButton = zoomDropdownLocators(page).zoomInButton;
+    const zoomOutButton = zoomDropdownLocators(page).zoomOutButton;
     await openFileAndAddToCanvas(
       'Molfiles-V2000/clean-diff-properties.mol',
       page,
     );
-    await page.getByTestId('zoom-input').click();
-    await page.getByTestId('zoom-in').click();
+    await zoomSelector.click();
+    await zoomInButton.click();
     await checkZoomLevel(page, '110%');
 
-    await page.getByTestId('zoom-in').click();
+    await zoomInButton.click();
     await checkZoomLevel(page, '120%');
 
-    await page.getByTestId('zoom-out').click();
+    await zoomOutButton.click();
     await checkZoomLevel(page, '110%');
 
-    await page.getByTestId('zoom-out').click();
+    await zoomOutButton.click();
     await checkZoomLevel(page, '100%');
   });
 
@@ -195,29 +208,32 @@ test.describe('Zoom changes', () => {
     /*
     Test case: EPMLSOPKET-1766
     */
+    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+    const zoomInButton = zoomDropdownLocators(page).zoomInButton;
+    const zoomOutButton = zoomDropdownLocators(page).zoomOutButton;
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/all-kind-of-r-group.mol',
       page,
     );
 
-    await page.getByTestId('zoom-input').click();
-    await page.getByTestId('zoom-in').click();
+    await zoomSelector.click();
+    await zoomInButton.click();
     await checkZoomLevel(page, '110%');
 
     await takeEditorScreenshot(page);
 
-    await page.getByTestId('zoom-in').click();
+    await zoomInButton.click();
     await checkZoomLevel(page, '120%');
 
     await takeEditorScreenshot(page);
 
-    await page.getByTestId('zoom-out').click();
+    await zoomOutButton.click();
     await checkZoomLevel(page, '110%');
 
     await takeEditorScreenshot(page);
 
-    await page.getByTestId('zoom-out').click();
+    await zoomOutButton.click();
     await checkZoomLevel(page, '100%');
 
     await takeEditorScreenshot(page);

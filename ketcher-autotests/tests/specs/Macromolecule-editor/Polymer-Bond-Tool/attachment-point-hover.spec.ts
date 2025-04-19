@@ -5,7 +5,7 @@ import {
   waitForPageInit,
   takeEditorScreenshot,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';

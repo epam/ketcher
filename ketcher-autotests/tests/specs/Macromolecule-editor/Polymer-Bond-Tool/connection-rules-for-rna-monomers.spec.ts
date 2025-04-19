@@ -8,10 +8,8 @@ import {
   waitForPageInit,
   MonomerType,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondTwoMonomersPointToPoint,

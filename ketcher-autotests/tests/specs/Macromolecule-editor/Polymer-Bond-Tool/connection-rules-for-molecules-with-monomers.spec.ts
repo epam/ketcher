@@ -15,7 +15,7 @@ import {
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import { addSuperatomAttachmentPoint } from '@utils/canvas/atoms/superatomAttachmentPoints';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';

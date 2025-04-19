@@ -6,9 +6,11 @@ import {
   openFileAndAddToCanvasMacro,
   setZoom,
   clickInTheMiddleOfTheScreen,
-  selectZoomInTool,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectZoomInTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopRightToolbar';
 
 test.describe('setZoom', () => {
   test.beforeEach(async ({ page }) => {

@@ -63,9 +63,11 @@ import {
   pressRedoButton,
   pressUndoButton,
   selectClearCanvasTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import {
   bondSelectionTool,
   selectAreaSelectionTool,
@@ -977,6 +979,7 @@ test.describe('RNA Library', () => {
     */
     // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
     await reloadPageAndConfigureInitialState(page);
+    await configureInitialState(page);
 
     await openFileAndAddToCanvasMacro(
       'KET/monomers-connected-with-bonds.ket',
@@ -1379,7 +1382,6 @@ test.describe('RNA Library', () => {
      *  Case 24 - Preview window appearing when hover over CHEM in library
      *  Case 25 - Search CHEM by entering its name in search field
      */
-    // Reload needed to reset the RNA builder state, as values from previous tests are preserved
     await clearLocalStorage(page);
     await reloadPageAndConfigureInitialState(page);
 

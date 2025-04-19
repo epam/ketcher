@@ -1,14 +1,7 @@
 /* eslint-disable no-magic-numbers */
-import {
-  LAYOUT_TOGGLER,
-  MACROMOLECULES_MODE,
-  MOLECULES_MODE,
-} from '@constants/testIdConstants';
-import { type Page, expect } from '@playwright/test';
-import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
+import { type Page } from '@playwright/test';
 import { clickOnCanvas } from '@utils/clicks';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
 
 export const topLeftToolbarLocators = (page: Page) => ({
   clearCanvasButton: page.getByTestId('clear-canvas'),
@@ -16,7 +9,6 @@ export const topLeftToolbarLocators = (page: Page) => ({
   saveButton: page.getByTestId('save-file-button'),
   undoButton: page.getByTestId('undo'),
   redoButton: page.getByTestId('redo'),
-  ketcherModeSwitcherCombobox: page.getByTestId('polymer-toggler'),
 });
 
 /**
@@ -73,46 +65,4 @@ export async function pressRedoButton(page: Page) {
   await waitForRender(page, async () => {
     await topLeftToolbarLocators(page).redoButton.click();
   });
-}
-
-export async function turnOnMacromoleculesEditor(
-  page: Page,
-  options: {
-    enableFlexMode?: boolean;
-    goToPeptides?: boolean;
-  } = { enableFlexMode: true, goToPeptides: true },
-) {
-  const ketcherModeSwitcherCombobox =
-    topLeftToolbarLocators(page).ketcherModeSwitcherCombobox;
-  expect(ketcherModeSwitcherCombobox).toBeVisible();
-  await ketcherModeSwitcherCombobox.click();
-  expect(page.getByTestId(MACROMOLECULES_MODE)).toBeVisible();
-  await page.getByTestId(MACROMOLECULES_MODE).click();
-  expect(page.getByTestId(LAYOUT_TOGGLER)).toBeVisible();
-
-  if (options.enableFlexMode) {
-    await selectFlexLayoutModeTool(page);
-  } else if (options.goToPeptides) {
-    await goToPeptidesTab(page);
-  } else {
-    // Dirty hack
-    // waiting Library to load
-    await page.getByTestId('summary-Nucleotides').waitFor({ state: 'visible' });
-  }
-
-  await page.evaluate(() => {
-    // Temporary solution to disable autozoom for the polymer editor in e2e tests
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    window._ketcher_isAutozoomDisabled = true;
-  });
-}
-
-export async function turnOnMicromoleculesEditor(page: Page) {
-  const ketcherModeSwitcherCombobox =
-    topLeftToolbarLocators(page).ketcherModeSwitcherCombobox;
-  expect(ketcherModeSwitcherCombobox).toBeVisible();
-  await ketcherModeSwitcherCombobox.click();
-  expect(page.getByTestId(MOLECULES_MODE)).toBeVisible();
-  await page.getByTestId(MOLECULES_MODE).click();
 }

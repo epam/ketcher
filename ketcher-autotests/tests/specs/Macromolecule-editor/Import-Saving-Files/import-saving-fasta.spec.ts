@@ -21,8 +21,8 @@ import {
 import {
   selectOpenFileTool,
   selectSaveTool,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { closeErrorMessage } from '@utils/common/helpers';
 import {
   waitForMonomerPreview,

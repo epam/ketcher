@@ -22,10 +22,8 @@ import {
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';

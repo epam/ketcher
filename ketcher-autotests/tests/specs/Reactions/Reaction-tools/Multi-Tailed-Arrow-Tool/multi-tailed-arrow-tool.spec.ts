@@ -32,15 +32,11 @@ import {
   selectPartOfMolecules,
   selectRing,
   selectTopPanelButton,
-  setZoomInputValue,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   TopPanelButton,
   waitForPageInit,
   waitForRender,
-  selectZoomOutTool,
-  selectZoomReset,
-  selectZoomInTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -65,6 +61,12 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import {
+  selectZoomReset,
+  selectZoomOutTool,
+  selectZoomInTool,
+  setZoomInputValue,
+} from '@tests/pages/common/TopRightToolbar';
 
 async function saveToTemplates(page: Page) {
   await pressButton(page, 'Save to Templates');

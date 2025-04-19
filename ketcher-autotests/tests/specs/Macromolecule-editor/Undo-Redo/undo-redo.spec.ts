@@ -37,8 +37,8 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import {
   pressRedoButton,
   pressUndoButton,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
   bondSelectionTool,
   selectAreaSelectionTool,

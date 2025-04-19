@@ -53,8 +53,6 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
   selectSaveTool,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
@@ -63,6 +61,10 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
+import {
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopRightToolbar';
 
 declare global {
   interface Window {

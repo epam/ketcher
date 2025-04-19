@@ -22,7 +22,6 @@ import {
   resetZoomLevelToDefault,
   selectSaveFileFormat,
   FileFormatOption,
-  setZoomInputValue,
   resetCurrentTool,
   clickOnCanvas,
   setMolecule,
@@ -41,9 +40,12 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
   selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
+  setZoomInputValue,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import {
   createDNAAntisenseChain,
   createRNAAntisenseChain,

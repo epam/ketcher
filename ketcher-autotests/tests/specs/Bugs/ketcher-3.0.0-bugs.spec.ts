@@ -65,9 +65,11 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
   selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import {
   bondSelectionTool,

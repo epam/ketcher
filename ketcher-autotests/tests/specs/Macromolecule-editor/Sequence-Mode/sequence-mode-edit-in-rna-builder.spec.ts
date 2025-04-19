@@ -26,7 +26,7 @@ import { pressSaveButton } from '@utils/macromolecules/rnaBuilder';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Bases } from '@constants/monomers/Bases';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,

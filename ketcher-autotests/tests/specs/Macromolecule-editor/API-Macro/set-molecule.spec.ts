@@ -6,9 +6,11 @@ import {
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
   clickInTheMiddleOfTheScreen,
-  selectZoomOutTool,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectZoomOutTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopRightToolbar';
 
 test.describe('setMolecule', () => {
   test.beforeEach(async ({ page }) => {

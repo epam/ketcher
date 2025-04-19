@@ -7,6 +7,10 @@ export const Bases = createMonomerGroup(MonomerType.Base, {
     alias: '2imen2',
     testId: '2imen2___N2-[(Imidazo-2-yl)ethylamino]adenine',
   },
+  _4ime6A: {
+    alias: '4ime6A',
+    testId: '4ime6A___N6-[2-(4-Imidazoyl)ethyl]adenine',
+  },
   _5meC: { alias: '5meC', testId: '5meC___5-methylcytosine' },
   baA: { alias: 'baA', testId: 'baA___N6-benzyladenine' },
   cpmA: {

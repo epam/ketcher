@@ -7,7 +7,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { hideMonomerPreview } from '@utils/macromolecules';
 
 test('Add molecule to favorites, switch to Favorites tab and drag it to the canvas', async ({

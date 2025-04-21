@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { BrowserContext, chromium, expect, Page, test } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
@@ -20,10 +20,9 @@ import {
   selectMonomer,
   selectSequenceLayoutModeTool,
   takeEditorScreenshot,
-  waitForIndigoToLoad,
-  waitForKetcherInit,
+  waitForPageInit,
 } from '@utils';
-import {} from '@utils/macromolecules';
+import { chooseTab, Tabs } from '@utils/macromolecules';
 import { pageReload } from '@utils/common/helpers';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
@@ -34,8 +33,6 @@ import {
   selectSugarSlot,
 } from '@utils/macromolecules/rnaBuilder';
 import {
-  clickOnSequenceSymbolByIndex,
-  doubleClickOnSequenceSymbolByIndex,
   pressCancelInConfirmYourActionDialog,
   pressYesInConfirmYourActionDialog,
 } from '@utils/macromolecules/sequence';
@@ -57,28 +54,21 @@ import {
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
+import { getSymbolLocator } from '@utils/macromolecules/monomer';
 
 let page: Page;
-let sharedContext: BrowserContext;
+
+async function configureInitialState(page: Page) {
+  await chooseTab(page, Tabs.Rna);
+}
 
 test.beforeAll(async ({ browser }) => {
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
+  const context = await browser.newContext();
+  page = await context.newPage();
 
-  // Reminder: do not pass page as async
-  page = await sharedContext.newPage();
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
+  await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
+  await configureInitialState(page);
   // Creation of custom presets needed for testing
   await createTestPresets(page);
 });
@@ -92,11 +82,7 @@ test.afterEach(async () => {
 });
 
 test.afterAll(async ({ browser }) => {
-  await page.close();
-  await sharedContext.close();
-  await browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
+  await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
 // interface IReplaceMonomer {
@@ -631,7 +617,9 @@ async function selectAndReplaceSymbol(
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
-  await clickOnSequenceSymbolByIndex(page, replacementPosition);
+  await getSymbolLocator(page, {
+    nodeIndexOverall: replacementPosition,
+  }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
     await pressYesInConfirmYourActionDialog(page);
@@ -644,7 +632,9 @@ async function selectAndReplaceSymbolWithError(
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
-  await clickOnSequenceSymbolByIndex(page, replacementPosition);
+  await getSymbolLocator(page, {
+    nodeIndexOverall: replacementPosition,
+  }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 }
 
@@ -656,18 +646,15 @@ async function selectAndReplaceAllSymbols(
   await selectSequenceLayoutModeTool(page);
 
   await page.keyboard.down('Shift');
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.LeftEnd,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.Center,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.RightEnd,
-  );
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.LeftEnd,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.Center,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
+  }).click();
   await page.keyboard.up('Shift');
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
@@ -680,18 +667,15 @@ async function selectAllSymbols(page: Page, sequence: ISequence) {
   await selectSequenceLayoutModeTool(page);
 
   await page.keyboard.down('Shift');
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.LeftEnd,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.Center,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.RightEnd,
-  );
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.LeftEnd,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.Center,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
+  }).click();
   await page.keyboard.up('Shift');
 }
 
@@ -713,18 +697,15 @@ async function selectAndReplaceAllSymbolsInEditMode(
   await selectSequenceLayoutModeTool(page);
 
   await page.keyboard.down('Shift');
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.LeftEnd,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.Center,
-  );
-  await doubleClickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.RightEnd,
-  );
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.LeftEnd,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.Center,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
+  }).dblclick();
   await page.keyboard.up('Shift');
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
@@ -741,18 +722,15 @@ async function selectAndReplaceAllSymbolsInEditModeWithError(
   await selectSequenceLayoutModeTool(page);
 
   await page.keyboard.down('Shift');
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.LeftEnd,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.Center,
-  );
-  await doubleClickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.RightEnd,
-  );
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.LeftEnd,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.Center,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
+  }).dblclick();
   await page.keyboard.up('Shift');
 
   await clickOnMonomerFromLibrary(page, replaceMonomer);
@@ -765,7 +743,9 @@ async function selectAndReplaceSymbolInEditMode(
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
-  await doubleClickOnSequenceSymbolByIndex(page, replacementPosition);
+  await getSymbolLocator(page, {
+    nodeIndexOverall: replacementPosition,
+  }).dblclick();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
   if (sequence.ConfirmationOnReplecement) {
     await pressYesInConfirmYourActionDialog(page);
@@ -780,7 +760,9 @@ async function selectAndReplaceSymbolInEditModeWithError(
   replacementPosition: number,
 ) {
   await selectSequenceLayoutModeTool(page);
-  await doubleClickOnSequenceSymbolByIndex(page, replacementPosition);
+  await getSymbolLocator(page, {
+    nodeIndexOverall: replacementPosition,
+  }).dblclick();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 }
 
@@ -853,6 +835,7 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.LeftEnd,
       );
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
 
@@ -891,6 +874,7 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.Center,
       );
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
 
@@ -929,6 +913,7 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
         sequence.ReplacementPositions.RightEnd,
       );
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
 
@@ -1084,7 +1069,7 @@ const noR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
 
 for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 7-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 7-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}.
       Can't replace first symbol at ${sequence.SequenceName} on ${noR2ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 7
@@ -1145,7 +1130,7 @@ const noR1orR2ConnectionPointReplaceMonomers: IReplaceMonomer[] = [
 
 for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 8-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 8-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}.
       Can't replace symbol in the center of ${sequence.SequenceName} on ${noR1orR2ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 8
@@ -1185,7 +1170,7 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
 
 for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 9-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 9-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}.
       Can't replace last symbol at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 9
@@ -1225,7 +1210,7 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
 
 for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 10-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 10-${sequence.Id}-${noR2ConnectionPointReplaceMonomer.Id}.
       Can't replace first symbol at ${sequence.SequenceName} on ${noR2ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 10
@@ -1263,7 +1248,7 @@ for (const noR2ConnectionPointReplaceMonomer of noR2ConnectionPointReplaceMonome
 
 for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 11-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 11-${sequence.Id}-${noR1orR2ConnectionPointReplaceMonomer.Id}.
       Can't replace symbol in the center of ${sequence.SequenceName} on ${noR1orR2ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 11
@@ -1303,7 +1288,7 @@ for (const noR1orR2ConnectionPointReplaceMonomer of noR1orR2ConnectionPointRepla
 
 for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 12-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 12-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}.
       Can't replace last symbol at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 12
@@ -1360,6 +1345,7 @@ for (const replaceMonomer of replaceMonomers) {
       await openFileAndAddToCanvasMacro(sequence.FileName, page);
       await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
 
@@ -1398,6 +1384,7 @@ for (const replaceMonomer of replaceMonomers) {
         sequence,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
 
@@ -1415,7 +1402,7 @@ for (const replaceMonomer of replaceMonomers) {
 
 for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 15-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 15-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}.
       Can't replace all symbols at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (view mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 15
@@ -1460,7 +1447,7 @@ for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonome
 
 for (const noR1ConnectionPointReplaceMonomer of noR1ConnectionPointReplaceMonomers) {
   for (const sequence of sequences) {
-    test(`Case 16-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}. 
+    test(`Case 16-${sequence.Id}-${noR1ConnectionPointReplaceMonomer.Id}.
       Can't replace all symbols at ${sequence.SequenceName} on ${noR1ConnectionPointReplaceMonomer.MonomerDescription} (edit mode)`, async () => {
       /*
         Test case: https://github.com/epam/ketcher/issues/5290 - Test case 16
@@ -1805,6 +1792,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
         sequence.ReplacementPositions.RightEnd,
       );
 
+      await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
       await selectFlexLayoutModeTool(page);
       await moveMouseAway(page);
@@ -1826,7 +1814,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
     test(`Case 20-${sequence.Id}-${replaceMonomer.Id}. Replace first symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
       /*
           Test case: https://github.com/epam/ketcher/issues/5290 - Test case 4
-          Description: User can replace first symbol (of every type) connected to another sequence (via R3 side connection) in sequence 
+          Description: User can replace first symbol (of every type) connected to another sequence (via R3 side connection) in sequence
                       with another monomer (of the same type!) in edit mode
           Scenario:
           1. Clear canvas
@@ -1866,7 +1854,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
     test(`Case 21-${sequence.Id}-${replaceMonomer.Id}. Replace center symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
       /*
           Test case: https://github.com/epam/ketcher/issues/5290 - Test case 5
-          Description: User can replace symbol (of every type) at the center connected to another sequence (via R3 side connection) in sequence 
+          Description: User can replace symbol (of every type) at the center connected to another sequence (via R3 side connection) in sequence
                        with another monomer (of the same type!) in view mode
           Scenario:
           1. Clear canvas
@@ -1906,7 +1894,7 @@ for (const replaceMonomer of withSideConnectionReplaceMonomers) {
     test(`Case 22-${sequence.Id}-${replaceMonomer.Id}. Replace last symbol at ${sequence.SequenceName} on ${replaceMonomer.MonomerDescription} in edit mode`, async () => {
       /*
             Test case: https://github.com/epam/ketcher/issues/5290 - Test case 6
-            Description: User can replace last symbol (of every type) connected to another sequence (via R3 side connection) in sequence 
+            Description: User can replace last symbol (of every type) connected to another sequence (via R3 side connection) in sequence
                          with another monomer (of the same type!) in edit mode
             Scenario:
             1. Clear canvas
@@ -1972,10 +1960,9 @@ test(`23. Verify functionality of 'Cancel' option in warning modal window`, asyn
 
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectSequenceLayoutModeTool(page);
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.RightEnd,
-  );
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
+  }).click();
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 
   const fullDialogMessage = page.getByText(
@@ -2028,18 +2015,15 @@ test(`24. Verify functionality of 'Cancel' option for multiple selected monomers
   await openFileAndAddToCanvasMacro(sequence.FileName, page);
   await selectSequenceLayoutModeTool(page);
   await page.keyboard.down('Shift');
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.LeftEnd,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.Center,
-  );
-  await clickOnSequenceSymbolByIndex(
-    page,
-    sequence.ReplacementPositions.RightEnd,
-  );
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.LeftEnd,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.Center,
+  }).click();
+  await getSymbolLocator(page, {
+    nodeIndexOverall: sequence.ReplacementPositions.RightEnd,
+  }).click();
   await page.keyboard.up('Shift');
   await clickOnMonomerFromLibrary(page, replaceMonomer);
 

@@ -53,9 +53,9 @@ import {
   modifyInRnaBuilder,
   getSymbolLocator,
   getMonomerLocator,
+  MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
 import {
-  clickOnSequenceSymbol,
   hoverOnSequenceSymbol,
   switchToDNAMode,
   switchToPeptideMode,
@@ -121,13 +121,10 @@ async function interactWithMicroMolecule(
 
 async function callContextMenuForMonomer(
   page: Page,
-  monomerLocatorIndex: number,
+  monomerLocatorOptions: MonomerLocatorOptions,
 ) {
-  const canvasLocator = page.getByTestId('ketcher-canvas');
-  await canvasLocator
-    .locator('g.monomer')
-    .nth(monomerLocatorIndex)
-    .click({ button: 'right', force: true });
+  const canvasLocator = getMonomerLocator(page, monomerLocatorOptions).first();
+  await canvasLocator.click({ button: 'right', force: true });
 }
 
 test.describe('Ketcher bugs in 3.0.0', () => {
@@ -242,9 +239,18 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
     );
     await page.keyboard.down('Shift');
-    await clickOnSequenceSymbol(page, '@');
-    await clickOnSequenceSymbol(page, '@', { nthNumber: 1 });
-    await clickOnSequenceSymbol(page, '@', { nthNumber: 2 });
+    await getSymbolLocator(page, {
+      symbolAlias: '@',
+      nodeIndexOverall: 0,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: '@',
+      nodeIndexOverall: 2,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: '@',
+      nodeIndexOverall: 4,
+    }).click();
     await page.keyboard.up('Shift');
     await selectMonomer(page, Peptides.C);
     await pressButton(page, 'Yes');
@@ -872,7 +878,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'RNA1{R(A,C,G,T)P.R(A,G,T)P.R(A,C,T)P.R(A,T)P}$$$$V2.0',
     );
     await selectAllStructuresOnCanvas(page);
-    await callContextMenuForMonomer(page, 0);
+    await callContextMenuForMonomer(page, Bases.DNA_N);
     const createAntisenseStrandOption = page
       .getByTestId('create_antisense_rna_chain')
       .first();

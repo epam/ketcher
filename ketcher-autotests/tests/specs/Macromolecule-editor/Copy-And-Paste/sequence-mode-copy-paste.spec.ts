@@ -24,7 +24,6 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
-  clickOnSequenceSymbol,
   getSequenceSymbolLocator,
   selectSequenceRangeInEditMode,
 } from '@utils/macromolecules/sequence';
@@ -32,6 +31,7 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
+import { getSymbolLocator } from '@utils/macromolecules/monomer';
 
 const ZOOM_OUT_VALUE = 400;
 const SCROLL_DOWN_VALUE = 250;
@@ -137,8 +137,10 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
       await copyToClipboardByKeyboard(page);
       await page.getByTitle('Close window').click();
 
-      await clickOnSequenceSymbol(page, 'G', { nthNumber: 2 });
-
+      await getSymbolLocator(page, {
+        symbolAlias: 'G',
+        nodeIndexOverall: 23,
+      }).dblclick();
       const arrowCount = 8;
       await page.keyboard.down('Shift');
       for (let i = 0; i < arrowCount; i++) {
@@ -165,7 +167,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
   //   await copyToClipboardByKeyboard(page);
   //   await page.getByTitle('Close window').click();
   //
-  //   await clickOnSequenceSymbol(page, 'G');
+  //   await getSymbolLocator(page, { symbolAlias: 'G', nodeIndexOverall: 0 }).dblclick();
   //   const arrowCount = 10;
   //   await page.keyboard.down('Shift');
   //   for (let i = 0; i < arrowCount; i++) {
@@ -203,7 +205,10 @@ test.describe('Sequence-edit mode', () => {
     await keyboardTypeOnCanvas(page, 'tcgtuctucc');
     await keyboardPressOnCanvas(page, 'Escape');
     await page.keyboard.down('Control');
-    await clickOnSequenceSymbol(page, 'G');
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 2,
+    }).click();
     await page.keyboard.up('Control');
     await copyToClipboardByKeyboard(page);
     await keyboardPressOnCanvas(page, 'Enter');
@@ -265,10 +270,22 @@ test.describe('Sequence-edit mode', () => {
     await keyboardTypeOnCanvas(page, 'aaaaaaagaaaaaataaaaaauaaaaaacaaaaa');
     await keyboardPressOnCanvas(page, 'Escape');
     await page.keyboard.down('Shift');
-    await clickOnSequenceSymbol(page, 'G');
-    await clickOnSequenceSymbol(page, 'T');
-    await clickOnSequenceSymbol(page, 'U');
-    await clickOnSequenceSymbol(page, 'C');
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 7,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'T',
+      nodeIndexOverall: 14,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'U',
+      nodeIndexOverall: 21,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'C',
+      nodeIndexOverall: 28,
+    }).click();
     await page.keyboard.up('Shift');
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
@@ -290,10 +307,22 @@ test.describe('Sequence-edit mode', () => {
     await keyboardTypeOnCanvas(page, 'aaaaaaagaaaaaataaaaaauaaaaaacaaaaa');
     await keyboardPressOnCanvas(page, 'Escape');
     await page.keyboard.down('Shift');
-    await clickOnSequenceSymbol(page, 'G');
-    await clickOnSequenceSymbol(page, 'T');
-    await clickOnSequenceSymbol(page, 'U');
-    await clickOnSequenceSymbol(page, 'C');
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 7,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'T',
+      nodeIndexOverall: 14,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'U',
+      nodeIndexOverall: 21,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'C',
+      nodeIndexOverall: 28,
+    }).click();
     await page.keyboard.up('Shift');
     await copyToClipboardByKeyboard(page);
     await getSequenceSymbolLocator(page, 'G').click({ button: 'right' });
@@ -312,14 +341,20 @@ test.describe('Sequence-edit mode', () => {
     */
     await startNewSequence(page);
     await keyboardTypeOnCanvas(page, 'aaagtgtuaaaaaauaaaaaacaaaaa');
-    await clickOnSequenceSymbol(page, 'G');
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 3,
+    }).click();
     await page.keyboard.down('Shift');
     for (let i = 0; i < 4; i++) {
       await keyboardPressOnCanvas(page, 'ArrowRight');
     }
     await page.keyboard.up('Shift');
     await copyToClipboardByKeyboard(page);
-    await clickOnSequenceSymbol(page, 'G');
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 3,
+    }).click();
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);

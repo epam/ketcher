@@ -53,10 +53,7 @@ import {
   turnSyncEditModeOff,
   turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
-import {
-  doubleClickOnSequenceSymbol,
-  switchToPeptideMode,
-} from '@utils/macromolecules/sequence';
+import { switchToPeptideMode } from '@utils/macromolecules/sequence';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import {
   keyboardPressOnCanvas,
@@ -459,7 +456,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)P.R(A)}|RNA2{P.R(U)}$RNA1,RNA2,2:pair-3:pair|RNA1,RNA2,8:pair-1:pair$$$V2.0',
     );
-    await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 2 });
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 2,
+    }).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowRight');
     await keyboardPressOnCanvas(page, 'C');
     await takeEditorScreenshot(page, {
@@ -485,7 +485,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'CHEM1{[4aPEGMal]}|RNA1{R(U)P}|CHEM2{[4aPEGMal]}|CHEM3{[4aPEGMal]}|RNA2{R(A)P}|RNA3{P}$RNA1,CHEM2,3:R2-1:R1|CHEM3,CHEM2,1:pair-1:pair|CHEM1,RNA1,1:R2-1:R1|RNA2,RNA3,3:R2-1:R1|RNA2,CHEM3,1:R1-1:R2|CHEM1,RNA3,1:pair-1:pair|RNA1,RNA2,2:pair-2:pair$$$V2.0',
     );
-    await doubleClickOnSequenceSymbol(page, 'U', { nthNumber: 0 });
+    await getSymbolLocator(page, {
+      symbolAlias: 'U',
+      nodeIndexOverall: 1,
+    }).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'C');
     await takeEditorScreenshot(page, {
@@ -550,7 +553,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
     );
-    await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 0 });
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 0,
+    }).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'C');
     await takeEditorScreenshot(page, {
@@ -580,7 +586,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
     );
     await turnSyncEditModeOff(page);
-    await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 0 });
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 0,
+    }).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowDown');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -619,7 +628,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,11:pair-2:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair$$$V2.0',
     );
     await turnSyncEditModeOff(page);
-    await doubleClickOnSequenceSymbol(page, 'U', { nthNumber: 2 });
+    await getSymbolLocator(page, {
+      symbolAlias: 'U',
+      nodeIndexOverall: 2,
+    }).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowDown');
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'U');
@@ -653,7 +665,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
     );
-    await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 1 });
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 1,
+    }).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await switchToPeptideMode(page);
     await keyboardPressOnCanvas(page, 'E');
@@ -680,7 +695,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)}|RNA2{R(U)P.R(U)}|RNA3{R(A)}$RNA1,RNA2,2:pair-2:pair|RNA2,RNA3,5:pair-2:pair$$$V2.0',
     );
-    await doubleClickOnSequenceSymbol(page, 'U', { nthNumber: 0 });
+    await getSymbolLocator(page, {
+      symbolAlias: 'U',
+      nodeIndexOverall: 0,
+    }).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowRight');
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'C');

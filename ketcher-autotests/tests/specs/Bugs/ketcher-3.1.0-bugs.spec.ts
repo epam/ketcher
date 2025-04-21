@@ -473,7 +473,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       'RNA1{R(A)P}|RNA2{R(U)P.R(U)}|PEPTIDE1{E.E}|RNA3{R(A)}$RNA1,PEPTIDE1,3:R2-1:R1|PEPTIDE1,RNA3,2:R2-1:R1|RNA1,RNA2,2:pair-5:pair|RNA3,RNA2,2:pair-2:pair$$$V2.0',
     );
     await turnSyncEditModeOff(page);
-    await getSymbolLocator(page, { symbolAlias: 'E', nodeIndexOverall: 1 }).dblclick();
+    await getSymbolLocator(page, {
+      symbolAlias: 'E',
+      nodeIndexOverall: 1,
+    }).dblclick();
     await keyboardPressOnCanvas(page, 'Backspace');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -504,7 +507,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       'RNA1{R(A)P.R(G)}|RNA2{R(U)}|RNA3{R(C)}$RNA1,RNA2,2:pair-2:pair|RNA1,RNA3,5:pair-2:pair$$$V2.0',
     );
     await turnSyncEditModeOff(page);
-    await getSymbolLocator(page, { symbolAlias: 'G', nodeIndexOverall: 2 }).dblclick();
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 2,
+    }).dblclick();
     for (let i = 0; i < 2; i++) {
       await keyboardPressOnCanvas(page, 'ArrowLeft');
     }
@@ -539,7 +545,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       'RNA1{R(C)P.R(A)}|RNA2{R(U)}|RNA3{R(G)}$RNA2,RNA1,2:pair-5:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
     );
     await turnSyncEditModeOn(page);
-    await getSymbolLocator(page, { symbolAlias: 'A', nodeIndexOverall: 2 }).dblclick();
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 2,
+    }).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'Backspace');
     await takeEditorScreenshot(page, {
@@ -570,7 +579,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       MacroFileType.HELM,
       'RNA1{R(C)P.R(A)P.R(C)P.R(A)P.R(A)}|RNA2{R(U)}|RNA3{R(G)}|RNA4{R(G)}$RNA1,RNA2,14:pair-2:pair|RNA1,RNA3,8:pair-2:pair|RNA1,RNA4,2:pair-2:pair$$$V2.0',
     );
-    await getSymbolLocator(page, { symbolAlias: 'C', nodeIndexOverall: 2 }).dblclick();
+    await getSymbolLocator(page, {
+      symbolAlias: 'C',
+      nodeIndexOverall: 2,
+    }).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'Backspace');
     await takeEditorScreenshot(page, {
@@ -657,7 +669,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       MacroFileType.HELM,
       'RNA1{R(C)P.R(A)}|RNA2{R(U)}|RNA3{R(G)}$RNA2,RNA1,2:pair-5:pair|RNA1,RNA3,2:pair-2:pair$$$V2.0',
     );
-    await getSymbolLocator(page, { symbolAlias: 'A', nodeIndexOverall: 2 }).dblclick();
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 2,
+    }).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'Backspace');
     await pressUndoButton(page);

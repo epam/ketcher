@@ -53,6 +53,8 @@ import {
   SupportedModes,
 } from 'application/ketcher.types';
 import { isNumber } from 'lodash';
+import { ChemicalMimeType } from 'ketcher-core';
+import { IndigoProvider } from 'ketcher-react';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
@@ -240,7 +242,34 @@ export class Ketcher {
     );
   }
 
-  getSequence(): Promise<string> {
+  getSequence(format: '1-letter' | '3-letter' = '1-letter'): Promise<string> {
+    if (format === '1-letter' || format === '3-letter') {
+      const editor = CoreEditor.provideEditorInstance();
+      const indigo = IndigoProvider.getIndigo() as StructService;
+
+      const ketSerializer = new KetSerializer();
+      const serializedKet = ketSerializer.serialize(
+        editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
+        editor.drawingEntitiesManager,
+      );
+
+      const formatToUse =
+        format === '1-letter'
+          ? ChemicalMimeType.SEQUENCE
+          : ChemicalMimeType.PeptideSequenceThreeLetter;
+
+      return indigo
+        .convert({
+          struct: serializedKet,
+          output_format: formatToUse,
+        })
+        .then((result) => result.struct)
+        .catch((error) => {
+          console.error('Error during sequence conversion:', error);
+          throw error;
+        });
+    }
+
     return getStructure(
       SupportedFormat.sequence,
       this.#formatterFactory,

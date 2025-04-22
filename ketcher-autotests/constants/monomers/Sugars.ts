@@ -4,7 +4,7 @@ import { createMonomerGroup } from './common';
 export const Sugars = createMonomerGroup(MonomerType.Sugar, {
   R: { alias: 'R', testId: 'R___Ribose' },
   dR: { alias: 'dR', testId: 'dR___Deoxy-Ribose' },
-  fR: { alias: 'fR', testId: "fR___2'-Flu0ro-Ribose" },
+  fR: { alias: 'fR', testId: "fR___2'-Fluoro-Ribose" },
   FMOE: {
     alias: 'FMOE',
     testId: "FMOE___2'-O-Tris-trifluoromethoxyethyl ribose",
@@ -39,5 +39,9 @@ export const Sugars = createMonomerGroup(MonomerType.Sugar, {
   nC62r: {
     alias: 'nC62r',
     testId: 'nC62r___2-O-(6-aminohexyl)ribose',
+  },
+  UNA: {
+    alias: 'UNA',
+    testId: "UNA___2'-3'-Unlocked-ribose",
   },
 });

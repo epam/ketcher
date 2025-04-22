@@ -18,6 +18,7 @@ import {
 import { D3SvgElementSelection } from 'application/render/types';
 import { UsageInMacromolecule } from 'application/render';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
+import { FlipDirection } from 'application/editor';
 
 export type MonomerColorScheme = {
   regular: string;
@@ -40,6 +41,12 @@ export type MonomerItemBase = {
   label: string;
   isAmbiguous?: boolean;
   favorite?: boolean;
+  transformation?: Partial<{
+    shift: Partial<{
+      x: number;
+      y: number;
+    }>;
+  }>;
 };
 
 export type MonomerItemType = MonomerItemBase & {
@@ -65,7 +72,11 @@ export type MonomerItemType = MonomerItemBase & {
   seqId?: number;
   isAntisense?: boolean;
   isSense?: boolean;
-  expanded: boolean;
+  expanded?: boolean;
+  transformation?: Partial<{
+    rotation?: number;
+    flip?: FlipDirection;
+  }>;
 };
 
 export type AmbiguousMonomerType = MonomerItemBase & {

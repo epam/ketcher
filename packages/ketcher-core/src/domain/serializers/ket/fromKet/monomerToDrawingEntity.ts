@@ -48,6 +48,7 @@ export function monomerToDrawingEntity(
       attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
       seqId: node.seqid,
       expanded: node.expanded,
+      transformation: node.transformation,
     },
     position,
   );
@@ -103,6 +104,7 @@ export function variantMonomerToDrawingEntity(
       options: template.options,
       idtAliases: template.idtAliases,
       isAmbiguous: true,
+      transformation: node.transformation,
     },
     position,
   );

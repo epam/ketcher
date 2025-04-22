@@ -1,4 +1,5 @@
 import { AttachmentPointName } from 'domain/types';
+import { FlipDirection } from 'application/editor';
 
 export enum KetNodeType {
   MONOMER = 'monomer',
@@ -15,14 +16,15 @@ export interface IKetMonomerNode {
   };
   alias: string;
   templateId: string;
-  expanded: boolean;
-  transformation: {
+  expanded?: boolean;
+  transformation?: Partial<{
     rotation: number;
-    shift: {
+    shift: Partial<{
       x: number;
       y: number;
-    };
-  };
+    }>;
+    flip: FlipDirection;
+  }>;
 }
 
 export interface IKetAmbiguousMonomerNode {
@@ -34,6 +36,12 @@ export interface IKetAmbiguousMonomerNode {
   };
   alias: string;
   templateId: string;
+  transformation?: Partial<{
+    shift: Partial<{
+      x: number;
+      y: number;
+    }>;
+  }>;
 }
 
 export type KetNode = IKetMonomerNode | IKetAmbiguousMonomerNode;

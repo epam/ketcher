@@ -21,27 +21,5 @@ type Props = EditorProps & {
 const MacromoleculesEditor = lazy(() => import('ketcher-macromolecules'));
 
 export const Editor = (props: Props) => {
-  const [showPolymerEditor, setShowPolymerEditor] = useState(false);
-
-  const togglePolymerEditor = (toggleValue: boolean) => {
-    setShowPolymerEditor(toggleValue);
-    window.isPolymerEditorTurnedOn = toggleValue;
-  };
-
-  const togglerComponent = !props.disableMacromoleculesEditor ? (
-    <ModeControl
-      toggle={togglePolymerEditor}
-      isPolymerEditor={showPolymerEditor}
-    />
-  ) : undefined;
-
-  useEffect(() => {
-    return () => {
-      window.isPolymerEditorTurnedOn = false;
-    };
-  }, []);
-
-  return (
-    <MicromoleculesEditor {...props} togglerComponent={togglerComponent} />
-  );
+  return <MicromoleculesEditor {...props} togglerComponent={undefined} />;
 };

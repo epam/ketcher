@@ -1,4 +1,9 @@
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { MicromoleculesEditor, EditorProps } from './MicromoleculesEditor';
+import { ModeControl } from './script/ui/views/toolbars/ModeControl';
+import { LoadingCircles } from './script/ui/views/components';
+
+import styles from './Editor.module.less';
 
 type Props = EditorProps & {
   disableMacromoleculesEditor?: boolean;
@@ -13,7 +18,44 @@ type Props = EditorProps & {
  */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
+const MacromoleculesEditor = lazy(() => import('ketcher-macromolecules'));
 
 export const Editor = (props: Props) => {
-  return <MicromoleculesEditor {...props} togglerComponent={undefined} />;
+  const [showPolymerEditor, setShowPolymerEditor] = useState(false);
+
+  const togglePolymerEditor = (toggleValue: boolean) => {
+    setShowPolymerEditor(toggleValue);
+    window.isPolymerEditorTurnedOn = toggleValue;
+  };
+
+  const togglerComponent = !props.disableMacromoleculesEditor ? (
+    <ModeControl
+      toggle={togglePolymerEditor}
+      isPolymerEditor={showPolymerEditor}
+    />
+  ) : undefined;
+
+  useEffect(() => {
+    return () => {
+      window.isPolymerEditorTurnedOn = false;
+    };
+  }, []);
+
+  return (
+    <>
+      {showPolymerEditor ? (
+        <Suspense
+          fallback={
+            <div className={styles.switchingLoader}>
+              <LoadingCircles />
+            </div>
+          }
+        >
+          <MacromoleculesEditor togglerComponent={togglerComponent} />
+        </Suspense>
+      ) : (
+        <MicromoleculesEditor {...props} togglerComponent={togglerComponent} />
+      )}
+    </>
+  );
 };

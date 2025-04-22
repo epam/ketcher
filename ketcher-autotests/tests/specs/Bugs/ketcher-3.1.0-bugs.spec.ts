@@ -30,7 +30,7 @@ import {
   takeElementScreenshot,
   waitForMonomerPreview,
 } from '@utils';
-import { waitForPageInit, waitForRender } from '@utils/common';
+import { waitForPageInit } from '@utils/common';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   goToFavoritesTab,

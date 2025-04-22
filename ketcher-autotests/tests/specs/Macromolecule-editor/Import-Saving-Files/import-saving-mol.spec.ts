@@ -13,7 +13,6 @@ import {
   openFile,
   receiveFileComparisonData,
   selectOptionInDropdown,
-  pressButton,
   selectSnakeLayoutModeTool,
   delay,
   selectFlexLayoutModeTool,
@@ -42,6 +41,8 @@ import {
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 function removeNotComparableData(file: string) {
   return file
@@ -107,10 +108,17 @@ test.describe('Import-Saving .mol Files', () => {
 
   test('Import incorrect data', async () => {
     const randomText = 'asjfnsalkfl';
+    const pasteFromClipboardButton =
+      openStructureDialog(page).pasteFromClipboardButton;
+    const openStructureTextarea =
+      pasteFromClipboardDialog(page).openStructureTextarea;
+    const addToCanvasButton =
+      pasteFromClipboardDialog(page).openStructureTextarea;
+
     await selectOpenFileTool(page);
-    await page.getByTestId('paste-from-clipboard-button').click();
-    await page.getByTestId('open-structure-textarea').fill(randomText);
-    await page.getByTestId('add-to-canvas-button').click();
+    await pasteFromClipboardButton.click();
+    await openStructureTextarea.fill(randomText);
+    await addToCanvasButton.click();
     await takeEditorScreenshot(page);
 
     // Closing page since test expects it to have closed at the end
@@ -333,9 +341,12 @@ test.describe('Import-Saving .mol Files', () => {
     IMPORTANT: Test fails because of the bug - https://github.com/epam/ketcher/issues/5382
     */
       test.setTimeout(20);
+      const addToCanvasButton =
+        pasteFromClipboardDialog(page).addToCanvasButton;
+
       await selectOpenFileTool(page);
       await openFile('Molfiles-V2000/empty-file.mol', page);
-      await expect(page.getByText('Add to Canvas')).toBeDisabled();
+      await expect(addToCanvasButton).toBeDisabled();
 
       // Closing page since test expects it to have closed at the end
       const context = page.context();
@@ -351,12 +362,14 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: System does not let uploading corrupted .mol file
     */
-    await selectOpenFileTool(page);
-
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
     const filename = 'Molfiles-V3000/corrupted-file.mol';
+
+    await selectOpenFileTool(page);
     await openFile(filename, page);
     await selectOptionInDropdown(filename, page);
-    await pressButton(page, 'Add to Canvas');
+    await addToCanvasButton.click();
+
     // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
     await delay(2);
     await takeEditorScreenshot(page);

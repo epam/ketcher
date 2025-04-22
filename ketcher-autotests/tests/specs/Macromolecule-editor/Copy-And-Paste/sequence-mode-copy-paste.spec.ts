@@ -30,6 +30,7 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 const ZOOM_OUT_VALUE = 400;
 const SCROLL_DOWN_VALUE = 250;
@@ -127,13 +128,15 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     },
     async ({ page }) => {
       test.slow();
+      const closeWindowButton =
+        pasteFromClipboardDialog(page).closeWindowButton;
       const fileContent = await readFileContents(
         'tests/test-data/KET/single-fragment-for-paste.ket',
       );
       await openPasteFromClipboard(page, fileContent);
       await selectAllStructuresOnCanvas(page);
       await copyToClipboardByKeyboard(page);
-      await page.getByTitle('Close window').click();
+      await closeWindowButton.click();
 
       await getSymbolLocator(page, {
         symbolAlias: 'G',

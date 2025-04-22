@@ -15,10 +15,14 @@ import {
   waitForLoad,
 } from '@utils';
 import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
+import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 async function openFileViaClipboard(filename: string, page: Page) {
   const fileContent = await readFileContents(filename);
-  await page.getByText('Paste from clipboard').click();
+  const pasteFromClipboardButton =
+    openStructureDialog(page).pasteFromClipboardButton;
+  await pasteFromClipboardButton.click();
   await page.getByRole('dialog').getByRole('textbox').fill(fileContent);
 }
 
@@ -45,9 +49,11 @@ test.describe('Floating windows', () => {
   test('Open structure: Errors of input (text file)', async ({ page }) => {
     // Test case: EPMLSOPKET-4007
     // Verify if adding incorrect text file triggers Error message
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+
     await selectOpenFileTool(page);
     await openFile('Txt/incorect-text.txt', page);
-    await pressButton(page, 'Add to Canvas');
+    await addToCanvasButton.click();
     await takeEditorScreenshot(page);
   });
 
@@ -160,10 +166,14 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4008
       Description: Bad data via paste from clipboard 
     */
+    const pasteFromClipboardButton =
+      openStructureDialog(page).pasteFromClipboardButton;
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+
     await selectOpenFileTool(page);
-    await page.getByText('Paste from clipboard').click();
+    await pasteFromClipboardButton.click();
     await pasteFromClipboard(page, 'VAAA==');
-    await pressButton(page, 'Add to Canvas');
+    await addToCanvasButton.click();
     await takeEditorScreenshot(page);
   });
 
@@ -172,8 +182,10 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4011
       Description: place structure via paste from clipboard 
     */
+    const pasteFromClipboardButton =
+      openStructureDialog(page).pasteFromClipboardButton;
     await selectOpenFileTool(page);
-    await page.getByText('Paste from clipboard').click();
+    await pasteFromClipboardButton.click();
     await pasteFromClipboard(
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,

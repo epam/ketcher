@@ -9,8 +9,6 @@ import {
   takeEditorScreenshot,
   moveMouseAway,
   MacroFileType,
-  SequenceType,
-  PeptideType,
   resetZoomLevelToDefault,
   waitForPageInit,
 } from '@utils';
@@ -21,6 +19,11 @@ import {
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { zoomWithMouseWheel, chooseTab, Tabs } from '@utils/macromolecules';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
+import {
+  PeptideLetterCodeType,
+  SequenceMonomerType,
+} from '@tests/pages/constants/monomers/Constants';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 let page: Page;
 
@@ -66,59 +69,65 @@ test.describe('Import/export sequence:', () => {
         it should display the additional options "RNA", "DNA", "Peptide"
 
     */
+    const contentTypeSelector =
+      pasteFromClipboardDialog(page).contentTypeSelector;
+    const monomerTypeSelector =
+      pasteFromClipboardDialog(page).monomerTypeSelector;
+
     await selectSequenceLayoutModeTool(page);
     await openStructurePasteFromClipboard(page);
 
-    const fileFormatComboBox = page
-      .getByTestId('dropdown-select')
-      .getByRole('combobox');
-
-    const defaultValue = await fileFormatComboBox
+    const defaultValue = await contentTypeSelector
       .locator('span')
       .first()
       .innerText();
     expect(defaultValue).toBe('Ket');
 
-    await fileFormatComboBox.click();
+    await contentTypeSelector.click();
 
     const options = page.getByRole('option');
     const values = await options.allTextContents();
 
     const expectedValues = [
-      'Ket',
-      'MDL Molfile V3000',
-      'Sequence',
-      'FASTA',
-      'IDT',
+      MacroFileType.Ket,
+      MacroFileType.MOLv3000,
+      MacroFileType.Sequence,
+      MacroFileType.FASTA,
+      MacroFileType.IDT,
     ];
     for (const value of expectedValues) {
       expect(values).toContain(value);
     }
     // Case 2
-    await page.getByText('Sequence').click();
+    await page.getByText(MacroFileType.Sequence).click();
 
-    const typeSelectorComboBox = page
-      .getByTestId('dropdown-select-type')
-      .getByRole('combobox');
-    await typeSelectorComboBox.click();
+    await monomerTypeSelector.click();
 
     const options2 = page.getByRole('option');
     const values2 = await options2.allTextContents();
 
-    const expectedValues2 = ['RNA', 'DNA', 'Peptide'];
+    const expectedValues2 = [
+      SequenceMonomerType.RNA,
+      SequenceMonomerType.DNA,
+      SequenceMonomerType.Peptide,
+    ];
     for (const value2 of expectedValues2) {
       expect(values2).toContain(value2);
     }
     await keyboardPressOnCanvas(page, 'Escape');
 
     // Case 30
-    await fileFormatComboBox.click();
-    await page.getByText('FASTA').click();
-    await typeSelectorComboBox.click();
+    await contentTypeSelector.click();
+    await page.getByText(MacroFileType.FASTA).click();
+    await monomerTypeSelector.click();
     const options3 = page.getByRole('option');
     const values3 = await options3.allTextContents();
 
-    const expectedValues3 = ['RNA', 'DNA', 'Peptide'];
+    const expectedValues3 = [
+      SequenceMonomerType.RNA,
+      SequenceMonomerType.DNA,
+      SequenceMonomerType.Peptide,
+    ];
     for (const value3 of expectedValues3) {
       expect(values3).toContain(value3);
     }
@@ -139,7 +148,7 @@ test.describe('Import/export sequence:', () => {
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      [MacroFileType.Sequence, SequenceType.RNA],
+      [MacroFileType.Sequence, SequenceMonomerType.RNA],
       'ATCGUatcgu',
     );
 
@@ -160,7 +169,7 @@ test.describe('Import/export sequence:', () => {
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      [MacroFileType.Sequence, SequenceType.RNA],
+      [MacroFileType.Sequence, SequenceMonomerType.RNA],
       'ATCGUatcgu',
     );
 
@@ -183,7 +192,7 @@ test.describe('Import/export sequence:', () => {
       page,
       [
         MacroFileType.Sequence,
-        [SequenceType.PEPTIDE, PeptideType.oneLetterCode],
+        [SequenceMonomerType.Peptide, PeptideLetterCodeType.oneLetterCode],
       ],
       'ACDEFGHIKLMNPQRSTVWYacdefghiklmnpqrstcwy',
     );

@@ -79,6 +79,8 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
+import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 let page: Page;
 
@@ -87,20 +89,26 @@ async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   fillStructure: string,
   needToWait = true,
 ) {
+  const pasteFromClipboardButton =
+    openStructureDialog(page).pasteFromClipboardButton;
+  const openStructureTextarea =
+    pasteFromClipboardDialog(page).openStructureTextarea;
+  const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+
   await selectOpenFileTool(page);
-  await page.getByText('Paste from clipboard').click();
+  await pasteFromClipboardButton.click();
   if (!(structureFormat === 'Ket')) {
     await page.getByRole('combobox').click();
     await page.getByText(structureFormat).click();
   }
 
-  await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
+  await openStructureTextarea.fill(fillStructure);
   if (needToWait) {
     await waitForLoad(page, async () => {
-      await pressButton(page, 'Add to Canvas');
+      await addToCanvasButton.click();
     });
   } else {
-    await pressButton(page, 'Add to Canvas');
+    await addToCanvasButton.click();
   }
 }
 
@@ -149,13 +157,11 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/#4495
     Description: Option "IDT" to the format dropdown menu of modal window Paste from the clipboard is exist.
     */
+    const contentTypeSelector =
+      pasteFromClipboardDialog(page).contentTypeSelector;
+
     await openStructurePasteFromClipboard(page);
-
-    const fileFormatComboBox = page
-      .getByTestId('dropdown-select')
-      .getByRole('combobox');
-
-    await fileFormatComboBox.click();
+    await contentTypeSelector.click();
 
     const options = page.getByRole('option');
     const values = await options.allTextContents();
@@ -209,17 +215,6 @@ test.describe('Import-Saving .idt Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  // Fail while performance issue on Indigo side
-  // test('Import incorrect data', async ({ page }) => {
-  //   const randomText = '!+%45#asjfnsalkfl';
-  //   await selectOpenFileTool(page);
-  //   await page.getByTestId('paste-from-clipboard-button').click();
-  //   await page.getByTestId('open-structure-textarea').fill(randomText);
-  //   await chooseFileFormat(page, 'IDT');
-  //   await page.getByTestId('add-to-canvas-button').click();
-  //   await takeEditorScreenshot(page);
-  // });
-
   test('Check import of .ket file and save in .idt format', async () => {
     await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
     await verifyFileExport(page, 'IDT/idt-rna-a.idt', FileType.IDT);
@@ -232,9 +227,13 @@ test.describe('Import-Saving .idt Files', () => {
   });
 
   test('Check that system does not let importing empty .idt file', async () => {
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
+
     await selectOpenFileTool(page);
     await openFile('IDT/idt-empty.idt', page);
-    await expect(page.getByText('Add to Canvas')).toBeDisabled();
+    await expect(addToCanvasButton).toBeDisabled();
+    await closeWindowButton.click();
   });
 
   test('Check IDT aliases, where defined in the preview window for Phosphates section', async () => {
@@ -1107,12 +1106,17 @@ test.describe('Import-Saving .idt Files', () => {
 });
 
 async function loadIDTFromClipboard(page: Page, idtString: string) {
+  const openStructureTextarea =
+    pasteFromClipboardDialog(page).openStructureTextarea;
+  const addToCanvasButton =
+    pasteFromClipboardDialog(page).openStructureTextarea;
+
   await openStructurePasteFromClipboard(page);
   await chooseFileFormat(page, 'IDT');
-  await page.getByTestId('open-structure-textarea').fill(idtString);
+  await openStructureTextarea.fill(idtString);
   await waitForSpinnerFinishedWork(
     page,
-    async () => await page.getByTestId('add-to-canvas-button').click(),
+    async () => await addToCanvasButton.click(),
   );
 }
 interface IIDTString {

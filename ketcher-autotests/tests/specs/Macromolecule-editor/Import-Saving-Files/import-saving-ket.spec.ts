@@ -9,7 +9,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFile,
-  pressButton,
   selectSnakeLayoutModeTool,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -43,6 +42,8 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { closeErrorMessage } from '@utils/common/helpers';
 
 let page: Page;
 
@@ -217,9 +218,13 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: System does not let importing empty .ket file
     */
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
+
     await selectOpenFileTool(page);
     await openFile('KET/empty-file.ket', page);
-    await expect(page.getByText('Add to Canvas')).toBeDisabled();
+    await expect(addToCanvasButton).toBeDisabled();
+    await closeWindowButton.click();
   });
 
   test('Check that system does not let uploading corrupted .ket file', async () => {
@@ -227,10 +232,13 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: System does not let uploading corrupted .ket file
     */
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+
     await selectOpenFileTool(page);
     await openFile('KET/corrupted-file.ket', page);
-    await pressButton(page, 'Add to Canvas');
+    await addToCanvasButton.click();
     await takeEditorScreenshot(page);
+    await closeErrorMessage(page);
   });
 
   test('Validate correct displaying of snake viewed peptide chain loaded from .ket file format', async () => {

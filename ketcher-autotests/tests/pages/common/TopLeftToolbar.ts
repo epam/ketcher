@@ -25,7 +25,7 @@ export const topLeftToolbarLocators = (page: Page) => ({
  **/
 export async function selectClearCanvasTool(page: Page, maxAttempts = 10) {
   const clearCanvasButton = topLeftToolbarLocators(page).clearCanvasButton;
-  const closeWindowXButton = page.getByTestId('close-icon');
+  const closeWindowXButton = page.getByTestId('close-window-button');
   let attempts = 0;
 
   while (attempts < maxAttempts) {

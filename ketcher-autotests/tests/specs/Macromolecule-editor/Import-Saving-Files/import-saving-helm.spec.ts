@@ -18,6 +18,7 @@ import {
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 let page: Page;
 
@@ -47,12 +48,17 @@ test.afterAll(async ({ browser }) => {
 });
 
 async function loadHELMFromClipboard(page: Page, helmString: string) {
+  const openStructureTextarea =
+    pasteFromClipboardDialog(page).openStructureTextarea;
+  const addToCanvasButton =
+    pasteFromClipboardDialog(page).openStructureTextarea;
+
   await openStructurePasteFromClipboard(page);
   await chooseFileFormat(page, 'HELM');
-  await page.getByTestId('open-structure-textarea').fill(helmString);
+  await openStructureTextarea.fill(helmString);
   await waitForSpinnerFinishedWork(
     page,
-    async () => await page.getByTestId('add-to-canvas-button').click(),
+    async () => await addToCanvasButton.click(),
   );
 }
 

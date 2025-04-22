@@ -41,6 +41,7 @@ import {
 import { goToRNATab } from '@utils/macromolecules/library';
 import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
@@ -397,9 +398,11 @@ test.describe('Zoom Tool', () => {
     Paste from Clipboard window not change their position and not overlap each other.
     After fix bug https://github.com/epam/ketcher/issues/4174 need to update snapshot.
     */
+    const pasteFromClipboardButton =
+      openStructureDialog(page).pasteFromClipboardButton;
     await goToRNATab(page);
     await selectOpenFileTool(page);
-    await page.getByTestId('paste-from-clipboard-button').click();
+    await pasteFromClipboardButton.click();
     await browser.newContext({ deviceScaleFactor: 2.5 });
     await page.setViewportSize({ width: 435, height: 291 });
     await takePageScreenshot(page);

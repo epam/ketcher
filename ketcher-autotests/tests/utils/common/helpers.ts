@@ -1,6 +1,7 @@
 import { Page } from '@playwright/test';
 import { waitForKetcherInit, waitForIndigoToLoad } from './loaders';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export async function emptyFunction() {}
@@ -64,13 +65,11 @@ export async function closeErrorMessage(page: Page) {
 }
 
 export async function closeOpenStructure(page: Page) {
-  const closeWindowButton = page.getByRole('button', {
-    name: 'Close window',
-  });
+  const closeButton = openStructureDialog(page).closeWindowButton;
   const openStructure = page.getByText('Open Structure', {
     exact: true,
   });
-  await closeWindowButton.click();
+  await closeButton.click();
   await openStructure.waitFor({ state: 'hidden' });
 }
 
@@ -80,7 +79,7 @@ export async function closeErrorAndInfoModals(page: Page) {
     await closeButton.click();
   }
 
-  const closeIcon = page.locator('[data-testid="close-icon"]');
+  const closeIcon = page.locator('[data-testid="close-window-button"]');
   if (await closeIcon.isVisible()) {
     await closeIcon.click();
   }

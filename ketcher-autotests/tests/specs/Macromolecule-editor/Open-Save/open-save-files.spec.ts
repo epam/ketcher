@@ -12,6 +12,7 @@ import {
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 test.describe('Open/save file tests: ', () => {
   let page: Page;
@@ -63,20 +64,20 @@ test.describe('Open/save file tests: ', () => {
     test.setTimeout(25000);
 
     await openStructurePasteFromClipboard(page);
-    const openStructureFromClipboardTextArea = page.getByTestId(
-      'open-structure-textarea',
-    );
+
+    const openStructureTextarea =
+      pasteFromClipboardDialog(page).openStructureTextarea;
 
     const textToPaste = 'Random text to past from clipboard';
     // IMPORTANT: It is not possible to use clipboard to paste some data from since it is shared with other test threads and tests can interfere
-    await openStructureFromClipboardTextArea.fill(textToPaste);
+    await openStructureTextarea.fill(textToPaste);
 
-    await expect(openStructureFromClipboardTextArea).toHaveValue(textToPaste);
+    await expect(openStructureTextarea).toHaveValue(textToPaste);
 
-    await openStructureFromClipboardTextArea.press('Control+A');
-    await openStructureFromClipboardTextArea.press('Backspace');
+    await openStructureTextarea.press('Control+A');
+    await openStructureTextarea.press('Backspace');
 
-    await expect(openStructureFromClipboardTextArea).toHaveValue('');
+    await expect(openStructureTextarea).toHaveValue('');
   });
 
   async function selectFASTAFileFormat(page: Page) {

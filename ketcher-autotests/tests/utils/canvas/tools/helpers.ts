@@ -23,6 +23,7 @@ import {
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
+import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 /**
  * Selects an atom from Atom toolbar
@@ -134,10 +135,9 @@ export async function selectImageTool(page: Page) {
 }
 
 export async function openStructurePasteFromClipboard(page: Page) {
+  const pasteFromClipboardButton =
+    openStructureDialog(page).pasteFromClipboardButton;
   await selectOpenFileTool(page);
-  const pasteFromClipboardButton = page.getByTestId(
-    'paste-from-clipboard-button',
-  );
   await pasteFromClipboardButton.click();
 }
 

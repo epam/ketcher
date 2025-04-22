@@ -37,6 +37,7 @@ import {
   pressUndoButton,
   selectOpenFileTool,
 } from '@tests/pages/common/TopLeftToolbar';
+import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;
@@ -1056,8 +1057,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const smartsString =
       '[#6]-[#6]-[#6]-[#6]-[!#40!#79!#30]-[#6]-[#6]-[#6]-[#6]';
+    const pasteFromClipboardButton =
+      openStructureDialog(page).pasteFromClipboardButton;
     await selectOpenFileTool(page);
-    await page.getByText('Paste from clipboard').click();
+    await pasteFromClipboardButton.click();
     await page.getByRole('dialog').getByRole('textbox').fill(smartsString);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);

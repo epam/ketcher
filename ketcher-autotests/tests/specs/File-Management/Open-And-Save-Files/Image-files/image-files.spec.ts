@@ -41,8 +41,8 @@ import {
   takeLeftToolbarScreenshot,
   TopPanelButton,
   waitForPageInit,
-  waitForRender,
   waitForSpinnerFinishedWork,
+  pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import {
   selectClearCanvasTool,
@@ -67,6 +67,7 @@ import {
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 test.describe('Image files', () => {
   let page: Page;
@@ -265,8 +266,7 @@ test.describe('Image files', () => {
     const fileContent = await readFileContents(
       'tests/test-data/KET/images-png-svg.ket',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Add to Canvas');
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -289,13 +289,14 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Images together (PNG, SVG) are copied from .ket format and added from clipboard directly to selected place on Canvas with correct positions
      */
+    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
     const fileContent = await readFileContents(
       'tests/test-data/KET/images-png-svg.ket',
     );
     await openPasteFromClipboard(page, fileContent);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await page.getByTestId('close-icon').click();
+    await closeWindowButton.click();
     await pasteFromClipboardByKeyboard(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -310,8 +311,7 @@ test.describe('Image files', () => {
     const fileContent = await readFileContents(
       'tests/test-data/CDXML/image-png-svg-together.cdxml',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Add to Canvas');
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -336,13 +336,14 @@ test.describe('Image files', () => {
      * Description: Images together (PNG, SVG) are copied from .cdxml format and added from clipboard directly to selected place on Canvas with correct positions
      * (SVG image replaced by placeholder)
      */
+    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
     const fileContent = await readFileContents(
       'tests/test-data/CDXML/image-png-svg-together.cdxml',
     );
     await openPasteFromClipboard(page, fileContent);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await page.getByTestId('close-icon').click();
+    await closeWindowButton.click();
     await pasteFromClipboardByKeyboard(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -384,9 +385,11 @@ test.describe('Image files', () => {
        * Test case: #4911
        * Description: Error message is displayed - "Cannot deserialize input JSON."
        */
+      const addToCanvasButton =
+        pasteFromClipboardDialog(page).addToCanvasButton;
       await selectOpenFileTool(page);
       await openFile(`KET/${fileName}.ket`, page);
-      await pressButton(page, 'Add to Canvas');
+      await addToCanvasButton.click();
       await takeEditorScreenshot(page);
     });
   }
@@ -412,9 +415,11 @@ test.describe('Image files', () => {
        * Test case: #4911
        * Description: Error message is displayed - "Cannot deserialize input JSON."
        */
+      const addToCanvasButton =
+        pasteFromClipboardDialog(page).addToCanvasButton;
       await selectOpenFileTool(page);
       await openFile(`KET/${file}`, page);
-      await pressButton(page, 'Add to Canvas');
+      await addToCanvasButton.click();
       await takeEditorScreenshot(page);
     });
   }
@@ -424,9 +429,10 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Error message is displayed - "Cannot deserialize input JSON."
      */
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
     await selectOpenFileTool(page);
     await openFile(`KET/image-png-159-symbols.ket`, page);
-    await pressButton(page, 'Add to Canvas');
+    await addToCanvasButton.click();
     await takeEditorScreenshot(page);
   });
 
@@ -1815,10 +1821,7 @@ test.describe('Image files', () => {
     const fileContent = await readFileContents(
       'tests/test-data/CDX/image-png-with-elements-expected.cdx',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
@@ -1851,10 +1854,7 @@ test.describe('Image files', () => {
     const fileContent = await readFileContents(
       'tests/test-data/CDX/image-png-with-elements-expected.cdx',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
@@ -1886,10 +1886,7 @@ test.describe('Image files', () => {
     const fileContent = await readFileContents(
       'tests/test-data/CDX/image-svg-with-elements-expected.cdx',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
@@ -1922,10 +1919,7 @@ test.describe('Image files', () => {
     const fileContent = await readFileContents(
       'tests/test-data/CDX/image-svg-with-elements-expected.cdx',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
@@ -1957,10 +1951,7 @@ test.describe('Image files', () => {
     const fileContent = await readFileContents(
       'tests/test-data/CDX/image-svg-png-with-elements-expected.cdx',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
@@ -1993,10 +1984,7 @@ test.describe('Image files', () => {
     const fileContent = await readFileContents(
       'tests/test-data/CDX/image-svg-png-with-elements-expected.cdx',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickOnCanvas(page, 200, 200);
 
     await openFileAndAddToCanvas(
@@ -2193,9 +2181,10 @@ test.describe('Image files', () => {
      * Description: Image can't be loaded from CDX/CDXML/Base 64 CDX file if the length of bitmap is less than 160 symbols and error message
      *  is displayed - "Cannot deserialize input JSON.".
      */
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
     await selectOpenFileTool(page);
     await openFile(`CDXML/image-png-169-symbols.cdxml`, page);
-    await pressButton(page, 'Add to Canvas');
+    await addToCanvasButton.click();
     await takeEditorScreenshot(page);
   });
 

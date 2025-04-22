@@ -420,6 +420,7 @@ const Open = ({ isModalOpen, onClose }: RequiredModalProps) => {
           clickHandler={openHandler}
           label="Open as New"
           styleType="secondary"
+          data-testid="open-as-new-button"
         />
         <FooterButton
           key="copyButton"

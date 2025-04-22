@@ -1,18 +1,14 @@
 import { Page, test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   FILE_TEST_DATA,
-  waitForLoad,
   waitForPageInit,
   moveMouseAway,
+  pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import {
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
   verifyFileExport,
@@ -24,15 +20,6 @@ async function saveAsMdlRxnV3000(page: Page) {
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'MDL Rxnfile V3000' }).click();
   await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-
-async function pasteFromClipboard(page: Page, fileFormats: string) {
-  await selectOpenFileTool(page);
-  await page.getByText('Paste from clipboard').click();
-  await page.getByRole('dialog').getByRole('textbox').fill(fileFormats);
-  await waitForLoad(page, async () => {
-    await pressButton(page, 'Add to Canvas');
-  });
 }
 
 test.describe('Reagents RXN format', () => {
@@ -158,7 +145,7 @@ test.describe('Reagents RXN format', () => {
       Test case: EPMLSOPKET-4677
       Description: Reagent 'Cl' displays below reaction arrow
       */
-    await pasteFromClipboard(
+    await pasteFromClipboardAndAddToCanvas(
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
     );
@@ -173,7 +160,7 @@ test.describe('Reagents RXN format', () => {
       Description: Reagent 'Cl' displays below reaction arrow
       We have a bug https://github.com/epam/Indigo/issues/2591
       */
-    await pasteFromClipboard(
+    await pasteFromClipboardAndAddToCanvas(
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV3000,
     );

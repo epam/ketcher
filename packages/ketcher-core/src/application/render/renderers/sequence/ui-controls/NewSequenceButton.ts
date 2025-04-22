@@ -10,6 +10,7 @@ const HOVER_COLOR = '#167782';
 const BUTTON_OFFSET_FROM_CANVAS = 20;
 const BUTTON_Y_OFFSET_FROM_SENSE_ROW = 12;
 const BUTTON_Y_OFFSET_FROM_ANTISENSE_ROW = 30;
+const RECT_MAX_WIDTH = 620;
 
 export class NewSequenceButton {
   private buttonElement?: D3SvgElementSelection<SVGElement, void>;
@@ -56,7 +57,7 @@ export class NewSequenceButton {
       .append('rect')
       .attr('x', '16')
       .attr('y', '22')
-      .attr('width', '595')
+      .attr('width', '0')
       .attr('height', '4')
       .attr('stroke', '#B4B9D6')
       .attr('stroke-width', '1')
@@ -141,5 +142,14 @@ export class NewSequenceButton {
   public remove() {
     this.rootElement?.remove();
     this.rootElement = undefined;
+  }
+
+  public setWidth(width: number): void {
+    const rectElement = this.rootElement?.select('rect');
+    const computedWidthPx = Math.min(
+      (width - 1) * 20 + (width / 10) * 10,
+      RECT_MAX_WIDTH,
+    );
+    rectElement?.attr('width', computedWidthPx);
   }
 }

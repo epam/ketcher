@@ -87,4 +87,9 @@ export const Bases = createMonomerGroup(MonomerType.Base, {
   R: { alias: 'R', testId: '_A___Adenine_G___Guanine' },
   S: { alias: 'S', testId: '_C___Cytosine_G___Guanine' },
   V: { alias: 'V', testId: '_A___Adenine_C___Cytosine_G___Guanine' },
+  e6A: { alias: 'e6A', testId: 'e6A___2-amino-6-etoxypurine' },
+  h456UR: {
+    alias: 'h456UR',
+    testId: 'h456UR___(4R)-tetrahydro-4-hydroxy-1H-pyrimidin-2-one',
+  },
 });

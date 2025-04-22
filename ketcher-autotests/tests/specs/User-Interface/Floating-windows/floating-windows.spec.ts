@@ -18,14 +18,6 @@ import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
-async function openFileViaClipboard(filename: string, page: Page) {
-  const fileContent = await readFileContents(filename);
-  const pasteFromClipboardButton =
-    openStructureDialog(page).pasteFromClipboardButton;
-  await pasteFromClipboardButton.click();
-  await page.getByRole('dialog').getByRole('textbox').fill(fileContent);
-}
-
 async function editText(page: Page, text: string) {
   await page.getByTestId('openStructureModal').getByRole('textbox').click();
   await page.keyboard.press('Home');
@@ -40,8 +32,18 @@ test.describe('Floating windows', () => {
   test('Open structure: Opening the text file', async ({ page }) => {
     // Test case: EPMLSOPKET-4004
     // Verify adding text file and ability of editing it
+    const openStructureTextarea =
+      pasteFromClipboardDialog(page).openStructureTextarea;
+    const pasteFromClipboardButton =
+      openStructureDialog(page).pasteFromClipboardButton;
+
     await selectOpenFileTool(page);
-    await openFileViaClipboard('tests/test-data/Txt/kecther-text.txt', page);
+    const fileContent = await readFileContents(
+      'tests/test-data/Txt/kecther-text.txt',
+    );
+    await pasteFromClipboardButton.click();
+    await openStructureTextarea.fill(fileContent);
+
     await editText(page, '  NEW TEXT   ');
     await takeEditorScreenshot(page);
   });

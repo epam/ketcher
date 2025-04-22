@@ -1,17 +1,12 @@
 /* eslint-disable no-magic-numbers */
-import {
-  chooseFileFormat,
-  zoomWithMouseWheel,
-  Tabs,
-  chooseTab,
-} from '@utils/macromolecules';
+import { zoomWithMouseWheel, Tabs, chooseTab } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  openStructurePasteFromClipboard,
-  waitForSpinnerFinishedWork,
   MonomerType,
   waitForPageInit,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  MacroFileType,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
@@ -22,7 +17,6 @@ import {
   getMonomerLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 let page: Page;
 
@@ -50,20 +44,6 @@ test.afterEach(async () => {
 test.afterAll(async ({ browser }) => {
   await Promise.all(browser.contexts().map((context) => context.close()));
 });
-
-async function loadHELMFromClipboard(page: Page, helmString: string) {
-  const openStructureTextarea =
-    pasteFromClipboardDialog(page).openStructureTextarea;
-  const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-
-  await openStructurePasteFromClipboard(page);
-  await chooseFileFormat(page, 'HELM');
-  await openStructureTextarea.fill(helmString);
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await addToCanvasButton.click(),
-  );
-}
 
 interface IHELMString {
   testDescription: string;
@@ -475,7 +455,11 @@ test.describe('Monomer APs checks: ', () => {
       if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
       await zoomWithMouseWheel(page, -600);
 
-      await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        ambiguousMonomer.HELMString,
+      );
       await bondSelectionTool(page, MacroBondType.Single);
       await getMonomerLocator(
         page,

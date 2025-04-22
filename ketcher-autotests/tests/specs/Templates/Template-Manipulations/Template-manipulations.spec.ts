@@ -218,8 +218,7 @@ test.describe('Template Manupulations', () => {
     const x = 300;
     const y = 300;
     const anyAtom = 0;
-    // const pasteFromClipboardButton =
-    //     openStructureDialog(page).pasteFromClipboardButton;
+
     await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
@@ -228,12 +227,6 @@ test.describe('Template Manupulations', () => {
     await selectAtomInToolbar(AtomButton.Iodine, page);
     await clickOnAtom(page, 'C', anyAtom);
 
-    // await selectOpenFileTool(page);
-    // await pasteFromClipboardButton.click();
-    // await pasteFromClipboard(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
-    // await waitForLoad(page, async () => {
-    //   await pressButton(page, 'Add to Canvas');
-    // });
     await pasteFromClipboardAndAddToCanvas(
       page,
       'CCCCC/CC/C:CC.C(C)CCCCCCCCCC',

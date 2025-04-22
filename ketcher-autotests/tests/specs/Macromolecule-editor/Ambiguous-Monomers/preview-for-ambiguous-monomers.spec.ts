@@ -1,14 +1,14 @@
 /* eslint-disable no-magic-numbers */
-import { chooseFileFormat, chooseTab, Tabs } from '@utils/macromolecules';
+import { chooseTab, Tabs } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  openStructurePasteFromClipboard,
   selectFlexLayoutModeTool,
-  waitForSpinnerFinishedWork,
   selectSequenceLayoutModeTool,
   MonomerType,
   waitForPageInit,
+  MacroFileType,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
@@ -20,7 +20,6 @@ import {
   getMonomerLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 let page: Page;
 
@@ -44,21 +43,6 @@ test.afterEach(async () => {
 test.afterAll(async ({ browser }) => {
   await Promise.all(browser.contexts().map((context) => context.close()));
 });
-
-async function loadHELMFromClipboard(page: Page, helmString: string) {
-  const openStructureTextarea =
-    pasteFromClipboardDialog(page).openStructureTextarea;
-  const addToCanvasButton =
-    pasteFromClipboardDialog(page).openStructureTextarea;
-
-  await openStructurePasteFromClipboard(page);
-  await chooseFileFormat(page, 'HELM');
-  await openStructureTextarea.fill(helmString);
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await addToCanvasButton.click(),
-  );
-}
 
 async function hoverMouseOverMicroMonomer(
   page: Page,
@@ -482,7 +466,11 @@ test.describe('Preview tooltips checks: ', () => {
       test.setTimeout(30000);
       if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
 
-      await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        ambiguousMonomer.HELMString,
+      );
       await getMonomerLocator(
         page,
         ambiguousMonomer.monomerLocatorOptions,
@@ -516,7 +504,11 @@ test.describe('Preview tooltips checks: ', () => {
       await pageReload(page);
       if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
       await selectFlexLayoutModeTool(page);
-      await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        ambiguousMonomer.HELMString,
+      );
       await turnOnMicromoleculesEditor(page);
 
       await hoverMouseOverMicroMonomer(
@@ -552,7 +544,11 @@ test.describe('Preview tooltips checks: ', () => {
       if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
 
       await selectSequenceLayoutModeTool(page);
-      await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        ambiguousMonomer.HELMString,
+      );
       await hoverMouseOverSequenceModeMonomer(page);
       await page
         .getByTestId('polymer-library-preview')

@@ -234,10 +234,12 @@ export async function pasteFromClipboardAndOpenAsNewProject(
 ) {
   const pasteFromClipboardButton =
     openStructureDialog(page).pasteFromClipboardButton;
+  const openStructureTextarea =
+    pasteFromClipboardDialog(page).openStructureTextarea;
 
   await selectOpenFileTool(page);
   await pasteFromClipboardButton.click();
-  await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
+  await openStructureTextarea.fill(fillStructure);
   if (needToWait) {
     await waitForLoad(page, async () => {
       await pressButton(page, 'Open as New Project');
@@ -302,6 +304,8 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   const monomerTypeSelector =
     pasteFromClipboardDialog(page).monomerTypeSelector;
   const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+  const openStructureTextarea =
+    pasteFromClipboardDialog(page).openStructureTextarea;
 
   let structureType: MacroFileType = MacroFileType.Ket;
   let sequenceOrFastaType: SequenceMonomerType = SequenceMonomerType.RNA;
@@ -348,7 +352,7 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
     }
   }
 
-  await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
+  await openStructureTextarea.fill(fillStructure);
 
   if (!errorExpected) {
     await waitForLoad(page, async () => {

@@ -42,20 +42,6 @@ export const Editor = (props: Props) => {
   }, []);
 
   return (
-    <>
-      {showPolymerEditor ? (
-        <Suspense
-          fallback={
-            <div className={styles.switchingLoader}>
-              <LoadingCircles />
-            </div>
-          }
-        >
-          <MacromoleculesEditor togglerComponent={togglerComponent} />
-        </Suspense>
-      ) : (
-        <MicromoleculesEditor {...props} togglerComponent={togglerComponent} />
-      )}
-    </>
+    <MicromoleculesEditor {...props} togglerComponent={togglerComponent} />
   );
 };

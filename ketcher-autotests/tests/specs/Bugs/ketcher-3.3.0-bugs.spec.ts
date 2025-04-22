@@ -32,8 +32,6 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
   selectSaveTool,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   createRNAAntisenseChain,

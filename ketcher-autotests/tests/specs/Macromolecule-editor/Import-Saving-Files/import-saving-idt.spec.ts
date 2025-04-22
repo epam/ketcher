@@ -27,10 +27,8 @@ import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePolymerEditorScreenshot,
-  waitForLoad,
   waitForPageInit,
   waitForRender,
-  waitForSpinnerFinishedWork,
 } from '@utils';
 import {
   selectClearCanvasTool,
@@ -81,7 +79,6 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 let page: Page;
@@ -1164,19 +1161,6 @@ test.describe('Import-Saving .idt Files', () => {
   });
 });
 
-async function loadIDTFromClipboard(page: Page, idtString: string) {
-  const openStructureTextarea =
-    pasteFromClipboardDialog(page).openStructureTextarea;
-  const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-
-  await openStructurePasteFromClipboard(page);
-  await chooseFileFormat(page, 'IDT');
-  await openStructureTextarea.fill(idtString);
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await addToCanvasButton.click(),
-  );
-}
 interface IIDTString {
   idtDescription: string;
   IDTString: string;

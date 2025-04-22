@@ -337,7 +337,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * Bug: https://github.com/epam/ketcher/issues/6830
      * Description: RNA Builder section (Base, Sugar, Phosphate) highlight corresponding monomer in library on first click.
      * Scenario:
-     * 1. Go to Macro mode
+     * 1. Go to Macro
      * 2. Expand RNA Builder
      * 3. Add to RNA Builder monomers
      * 3. Click on any monomer in the RNA Builder section

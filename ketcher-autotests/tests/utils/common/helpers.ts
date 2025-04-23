@@ -74,12 +74,12 @@ export async function closeOpenStructure(page: Page) {
 }
 
 export async function closeErrorAndInfoModals(page: Page) {
-  const closeButton = page.getByRole('button', { name: 'Close' });
+  const closeButton = page.getByRole('button', { name: 'Close' }).first();
   if (await closeButton.isVisible()) {
     await closeButton.click();
   }
 
-  const closeIcon = page.locator('[data-testid="close-window-button"]');
+  const closeIcon = page.locator('[data-testid="close-window-button"]').first();
   if (await closeIcon.isVisible()) {
     await closeIcon.click();
   }

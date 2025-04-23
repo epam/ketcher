@@ -73,8 +73,7 @@ test.describe('Import-Saving .seq Files', () => {
       openStructureDialog(page).pasteFromClipboardButton;
     const openStructureTextarea =
       pasteFromClipboardDialog(page).openStructureTextarea;
-    const addToCanvasButton =
-      pasteFromClipboardDialog(page).openStructureTextarea;
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
 
     await selectOpenFileTool(page);
     await pasteFromClipboardButton.click();
@@ -214,7 +213,7 @@ test.describe('Import-Saving .seq Files', () => {
       const openStructureTextarea =
         pasteFromClipboardDialog(page).openStructureTextarea;
       const addToCanvasButton =
-        pasteFromClipboardDialog(page).openStructureTextarea;
+        pasteFromClipboardDialog(page).addToCanvasButton;
 
       await selectOpenFileTool(page);
       await pasteFromClipboardButton.click();

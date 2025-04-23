@@ -24,15 +24,14 @@ import {
 import {
   selectClearCanvasTool,
   selectOpenFileTool,
-  selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectZoomOutTool,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
-import { pageReload } from '@utils/common/helpers';
-import { chooseFileFormat, waitForMonomerPreview } from '@utils/macromolecules';
+import { closeErrorAndInfoModals, pageReload } from '@utils/common/helpers';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   bondSelectionTool,
   selectAreaSelectionTool,
@@ -43,13 +42,10 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-
-function removeNotComparableData(file: string) {
-  return file
-    .split('\n')
-    .filter((_, lineNumber) => lineNumber !== 1)
-    .join('\n');
-}
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 
@@ -112,8 +108,7 @@ test.describe('Import-Saving .mol Files', () => {
       openStructureDialog(page).pasteFromClipboardButton;
     const openStructureTextarea =
       pasteFromClipboardDialog(page).openStructureTextarea;
-    const addToCanvasButton =
-      pasteFromClipboardDialog(page).openStructureTextarea;
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
 
     await selectOpenFileTool(page);
     await pasteFromClipboardButton.click();
@@ -121,6 +116,7 @@ test.describe('Import-Saving .mol Files', () => {
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);
 
+    await closeErrorAndInfoModals(page);
     // Closing page since test expects it to have closed at the end
     const context = page.context();
     await page.close();
@@ -131,22 +127,12 @@ test.describe('Import-Saving .mol Files', () => {
 
   test('Export monomers and chem', async () => {
     await openFileAndAddToCanvasMacro('KET/monomers-and-chem.ket', page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, 'MDL Molfile V3000');
-    await page
-      .getByTestId('dropdown-select')
-      .getByRole('combobox')
-      .allInnerTexts();
-
-    const textArea = page.getByTestId('preview-area-text');
-    const file = await readFileContents(
-      'tests/test-data/Molfiles-V3000/monomers-and-chem.mol',
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/monomers-and-chem.mol',
+      FileType.MOL,
+      'v3000',
     );
-    const expectedData = removeNotComparableData(file);
-    const valueInTextarea = removeNotComparableData(
-      await textArea.inputValue(),
-    );
-    await expect(valueInTextarea).toBe(expectedData);
 
     // Closing page since test expects it to have closed at the end
     const context = page.context();

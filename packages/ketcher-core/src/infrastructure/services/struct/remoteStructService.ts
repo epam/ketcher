@@ -24,6 +24,7 @@ import {
   CalculateCipResult,
   CalculateData,
   CalculateMacromoleculePropertiesData,
+  CalculateMacromoleculePropertiesResult,
   CalculateResult,
   CheckData,
   CheckResult,
@@ -449,7 +450,7 @@ export class RemoteStructService implements StructService {
   calculateMacromoleculeProperties(
     data: CalculateMacromoleculePropertiesData,
     options?: StructServiceOptions,
-  ): Promise<ExplicitHydrogensResult> {
+  ): Promise<CalculateMacromoleculePropertiesResult> {
     return indigoCall(
       'POST',
       'indigo/calculateMacroProperties',

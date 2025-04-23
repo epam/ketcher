@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { Tab, Tabs } from '@mui/material';
 
-export const StyledTabs = styled(Tabs)`
+export const StyledTabs = styled(Tabs)<{ isLayoutToRight?: boolean }>`
   height: 32px;
   min-height: 32px;
   list-style-type: none;
@@ -15,6 +15,12 @@ export const StyledTabs = styled(Tabs)`
   & .MuiTabs-flexContainer {
     height: 100%;
     overflow: unset !important;
+  }
+
+  & .MuiTabs-flexContainer {
+    justify-content: ${({ isLayoutToRight }) =>
+      isLayoutToRight ? 'flex-end' : 'flex-start'};
+    padding-right: ${({ isLayoutToRight }) => (isLayoutToRight ? '16px' : '0')};
   }
 
   & .MuiTabs-indicator {
@@ -35,7 +41,6 @@ export const StyledTab = styled(Tab)`
   color: ${({ theme }) => theme.ketcher.color.text.light};
   list-style-type: none;
   margin-left: 1px;
-  flex: 1 1 auto;
   align-items: center;
   border: 1px solid transparent;
   border-bottom: none;

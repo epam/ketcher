@@ -14,8 +14,14 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { useAppSelector } from 'hooks';
-import { selectEditor } from 'state/common';
+import { useAppDispatch, useAppSelector } from 'hooks';
+import {
+  isMacromoleculesPropertiesWindowOpened,
+  selectEditor,
+  selectIsMacromoleculesPropertiesWindowOpened,
+  setMacromoleculesProperties,
+  setMacromoleculesPropertiesWindowVisibility,
+} from 'state/common';
 import styled from '@emotion/styled';
 import { Button, IndigoProvider } from 'ketcher-react';
 import { blurActiveElement } from 'helpers/canvas';
@@ -47,11 +53,11 @@ const StyledButton = styled(Button)<{ isActive?: boolean }>(
 );
 
 export const CalculateMacromoleculePropertiesButton = () => {
+  const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
-  const [
-    isMacromoleculesPropertiesWindowOpened,
-    setIsMacromoleculesPropertiesWindowOpened,
-  ] = useState(false);
+  const isMacromoleculesPropertiesWindowOpened = useAppSelector(
+    selectIsMacromoleculesPropertiesWindowOpened,
+  );
 
   const handleClick = async () => {
     const isMacromoleculesPropertiesWindowOpenedNewState =
@@ -65,15 +71,19 @@ export const CalculateMacromoleculePropertiesButton = () => {
       drawingEntitiesManager,
     );
 
-    setIsMacromoleculesPropertiesWindowOpened(
-      isMacromoleculesPropertiesWindowOpenedNewState,
-    );
-
     const calculateMacromoleculePropertiesResponse =
       await indigo.calculateMacromoleculeProperties({ struct: serializedKet });
     const macromoleculeProperties =
       calculateMacromoleculePropertiesResponse.properties &&
       JSON.parse(calculateMacromoleculePropertiesResponse.properties);
+
+    dispatch(
+      setMacromoleculesPropertiesWindowVisibility(
+        isMacromoleculesPropertiesWindowOpenedNewState,
+      ),
+    );
+
+    dispatch(setMacromoleculesProperties(macromoleculeProperties));
 
     console.log(macromoleculeProperties);
 

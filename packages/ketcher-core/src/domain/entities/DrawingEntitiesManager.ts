@@ -1654,7 +1654,6 @@ export class DrawingEntitiesManager {
 
       const snakeLayoutMatrix =
         this.calculateSnakeLayoutMatrix(chainsCollection);
-
       this.snakeLayoutMatrix = snakeLayoutMatrix;
 
       command.merge(

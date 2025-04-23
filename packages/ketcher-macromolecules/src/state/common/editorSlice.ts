@@ -15,7 +15,12 @@
  ***************************************************************************/
 
 import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
-import { CoreEditor, LayoutMode, modesMap } from 'ketcher-core';
+import {
+  CoreEditor,
+  LayoutMode,
+  modesMap,
+  SingleChainMacromoleculeProperties,
+} from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
 import { PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
@@ -31,6 +36,8 @@ interface EditorState {
   preview: EditorStatePreview;
   position: PresetPosition | undefined;
   isContextMenuActive: boolean;
+  isMacromoleculesPropertiesWindowOpened: boolean;
+  macromoleculesProperties: SingleChainMacromoleculeProperties[] | undefined;
 }
 
 const initialState: EditorState = {
@@ -45,6 +52,8 @@ const initialState: EditorState = {
   },
   position: undefined,
   isContextMenuActive: false,
+  isMacromoleculesPropertiesWindowOpened: false,
+  macromoleculesProperties: undefined,
 };
 
 export const editorSlice: Slice = createSlice({
@@ -98,6 +107,18 @@ export const editorSlice: Slice = createSlice({
     setContextMenuActive: (state, action: PayloadAction<boolean>) => {
       state.isContextMenuActive = action.payload;
     },
+    setMacromoleculesPropertiesWindowVisibility: (
+      state,
+      action: PayloadAction<boolean>,
+    ) => {
+      state.isMacromoleculesPropertiesWindowOpened = action.payload;
+    },
+    setMacromoleculesProperties: (
+      state,
+      action: PayloadAction<SingleChainMacromoleculeProperties[]>,
+    ) => {
+      state.macromoleculesProperties = action.payload;
+    },
   },
 });
 
@@ -111,6 +132,8 @@ export const {
   destroyEditor,
   showPreview,
   setContextMenuActive,
+  setMacromoleculesPropertiesWindowVisibility,
+  setMacromoleculesProperties,
 } = editorSlice.actions;
 
 export const selectEditorIsReady = (state: RootState) => state.editor.isReady;
@@ -153,5 +176,12 @@ export const hasAntisenseChains = (state: RootState): CoreEditor =>
 
 export const selectIsContextMenuActive = (state: RootState): boolean =>
   state.editor.isContextMenuActive;
+
+export const selectIsMacromoleculesPropertiesWindowOpened = (
+  state: RootState,
+) => state.editor.isMacromoleculesPropertiesWindowOpened;
+
+export const selectMacromoleculesProperties = (state: RootState) =>
+  state.editor.macromoleculesProperties?.[0];
 
 export const editorReducer = editorSlice.reducer;

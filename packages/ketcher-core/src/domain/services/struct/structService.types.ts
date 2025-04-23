@@ -116,7 +116,20 @@ export interface ExplicitHydrogensData extends WithStruct, WithOutputFormat {
 
 export type CalculateMacromoleculePropertiesData = WithStruct;
 
-export type CalculateMacromoleculePropertiesResult = WithStruct;
+export interface SingleChainMacromoleculeProperties {
+  grossFormula: string;
+  mass: number;
+  monomerCount: {
+    nucleotides?: Record<string, number>;
+    peptides?: Record<string, number>;
+  };
+  pKa?: number;
+  extinctionCoefficient?: number;
+}
+
+export interface CalculateMacromoleculePropertiesResult {
+  properties: SingleChainMacromoleculeProperties[];
+}
 
 export interface ExplicitHydrogensResult extends WithStruct, WithFormat {}
 

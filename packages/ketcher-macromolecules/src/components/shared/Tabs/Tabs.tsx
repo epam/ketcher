@@ -33,13 +33,14 @@ const a11yProps = (index: number) => {
 
 type Props = {
   tabs: TabsData;
+  isLayoutToRight?: boolean;
 };
 
 const Tabs = (props: Props) => {
   const dispatch = useAppDispatch();
   const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
 
-  const { tabs } = props;
+  const { tabs, isLayoutToRight } = props;
   const tabPanel = tabs[selectedTabIndex];
   const Component = tabPanel?.component;
   const componentProps = tabPanel?.props;
@@ -53,7 +54,11 @@ const Tabs = (props: Props) => {
 
   return (
     <>
-      <StyledTabs value={selectedTabIndex} onChange={handleChange}>
+      <StyledTabs
+        value={selectedTabIndex}
+        onChange={handleChange}
+        isLayoutToRight={isLayoutToRight}
+      >
         {tabs.map((tabPanel, index) => (
           <StyledTab
             label={tabPanel.caption}

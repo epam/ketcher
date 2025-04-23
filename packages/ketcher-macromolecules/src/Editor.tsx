@@ -96,6 +96,7 @@ import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
 import { RootSizeProvider } from './contexts';
+import { MacromoleculePropertiesWindow } from 'components/MacromoleculesPropertiesWindow';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -312,6 +313,7 @@ function Editor({
             )}
           </CanvasWrapper>
           {isLoading && <Loader />}
+          <MacromoleculePropertiesWindow />
         </Layout.Main>
 
         <Layout.Right hide={isMonomerLibraryHidden}>

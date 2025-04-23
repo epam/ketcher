@@ -1,23 +1,16 @@
 /* eslint-disable no-magic-numbers */
-import {
-  chooseFileFormat,
-  zoomWithMouseWheel,
-  Tabs,
-  chooseTab,
-} from '@utils/macromolecules';
+import { zoomWithMouseWheel, Tabs, chooseTab } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  openStructurePasteFromClipboard,
-  waitForSpinnerFinishedWork,
   MonomerType,
   waitForPageInit,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  MacroFileType,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
@@ -51,16 +44,6 @@ test.afterEach(async () => {
 test.afterAll(async ({ browser }) => {
   await Promise.all(browser.contexts().map((context) => context.close()));
 });
-
-async function loadHELMFromClipboard(page: Page, helmString: string) {
-  await openStructurePasteFromClipboard(page);
-  await chooseFileFormat(page, 'HELM');
-  await page.getByTestId('open-structure-textarea').fill(helmString);
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await page.getByTestId('add-to-canvas-button').click(),
-  );
-}
 
 interface IHELMString {
   testDescription: string;
@@ -472,7 +455,11 @@ test.describe('Monomer APs checks: ', () => {
       if (ambiguousMonomer.pageReloadNeeded) await pageReload(page);
       await zoomWithMouseWheel(page, -600);
 
-      await loadHELMFromClipboard(page, ambiguousMonomer.HELMString);
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        ambiguousMonomer.HELMString,
+      );
       await bondSelectionTool(page, MacroBondType.Single);
       await getMonomerLocator(
         page,

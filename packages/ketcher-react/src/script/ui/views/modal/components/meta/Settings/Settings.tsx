@@ -152,10 +152,10 @@ const SettingsDialog = (props: Props) => {
           options={getSelectOptionsFromSchema(settingsProps?.resetToSelect)}
           data-testid="reset-to-select"
         />
-        <Field name="rotationStep" />
+        <Field name="rotationStep" data-testid="rotation-step" />
         <Field name="showValenceWarnings" />
         <Field name="atomColoring" />
-        <Field name="font" component={SystemFonts} data-testid="font" />
+        <Field name="font" component={SystemFonts} />
         <Field
           name="fontsz"
           component={MeasureInput}
@@ -333,6 +333,7 @@ const SettingsDialog = (props: Props) => {
       className={classes.acsStyleButton}
       key="acsstylebutton"
       onClick={onACSStyle}
+      data-testid="acs-style-button"
     >
       Set ACS Settings
     </button>

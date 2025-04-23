@@ -3,10 +3,10 @@ import { chooseFileFormat, chooseTab, Tabs } from '@utils/macromolecules';
 import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  openStructurePasteFromClipboard,
-  waitForSpinnerFinishedWork,
   pressButton,
   waitForPageInit,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  MacroFileType,
 } from '@utils';
 import {
   closeErrorMessage,
@@ -16,8 +16,8 @@ import {
 import {
   selectClearCanvasTool,
   selectSaveTool,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -45,16 +45,6 @@ test.afterEach(async () => {
 test.afterAll(async ({ browser }) => {
   await Promise.all(browser.contexts().map((context) => context.close()));
 });
-
-async function loadHELMFromClipboard(page: Page, helmString: string) {
-  await openStructurePasteFromClipboard(page);
-  await chooseFileFormat(page, 'HELM');
-  await page.getByTestId('open-structure-textarea').fill(helmString);
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await page.getByTestId('add-to-canvas-button').click(),
-  );
-}
 
 async function openSaveToHELMDialog(page: Page) {
   await selectSaveTool(page);
@@ -446,9 +436,13 @@ test.describe('Import correct HELM sequence: ', () => {
         1. Load correct HELM via paste from clipboard way
         2. Take screenshot of the canvas to compare it with example
     */
-      test.setTimeout(35000);
+      test.setTimeout(25000);
 
-      await loadHELMFromClipboard(page, correctHELMString.HELMString);
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        correctHELMString.HELMString,
+      );
 
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -474,7 +468,7 @@ test.describe('Export to HELM: ', () => {
         2. Export canvas to HELM
         2. Compare export result with source HELM string
     */
-      test.setTimeout(35000);
+      test.setTimeout(25000);
       // Test should be skipped if related bug exists
       test.fixme(
         correctHELMString.shouldFail === true,
@@ -482,7 +476,11 @@ test.describe('Export to HELM: ', () => {
       );
       if (correctHELMString.pageReloadNeeded) await pageReload(page);
 
-      await loadHELMFromClipboard(page, correctHELMString.HELMString);
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        correctHELMString.HELMString,
+      );
       await openSaveToHELMDialog(page);
       const HELMExportResult = await page
         .getByTestId('preview-area-text')
@@ -885,8 +883,15 @@ test.describe('Import incorrect HELM sequence: ', () => {
         3. Take screenshot to compare it with example
       */
       test.setTimeout(20000);
+      const errorExpected = true;
 
-      await loadHELMFromClipboard(page, incorrectHELMString.HELMString);
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        incorrectHELMString.HELMString,
+        errorExpected,
+      );
+
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });

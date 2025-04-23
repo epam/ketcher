@@ -51,13 +51,14 @@ export const Peptides = createMonomerGroup(MonomerType.Peptide, {
   meD: { alias: 'meD', testId: 'meD___N-Methyl-Aspartic acid' },
   meE: { alias: 'meE', testId: 'meE___N-Methyl-Glutamic acid' },
   meM: { alias: 'meM', testId: 'meM___N-Methyl-Methionine' },
-  meR: { alias: 'meR', testId: '' },
+  meR: { alias: 'meR', testId: 'meR___N-Methyl-Arginine' },
   meS: { alias: 'meS', testId: 'meS___N-Methyl-Serine' },
   Nal: { alias: 'Nal', testId: '' },
   LysiPr: {
     alias: 'LysiPr',
     testId: 'LysiPr___(2S)-2-amino-6-[(propan-2-yl)amino]hexanoic acid',
   },
+  O: { alias: 'O', testId: 'O___Pyrrolysine' },
   Phe_ol: { alias: 'Phe-ol', testId: 'Phe-ol___L-phenylalaninol' },
   SertBu: {
     alias: 'SertBu',
@@ -73,6 +74,7 @@ export const Peptides = createMonomerGroup(MonomerType.Peptide, {
     testId: 'TyrabD___(2E)-2-amino-3-(4-methoxyphenyl)prop-2-enoic acid',
   },
   Tza: { alias: 'Tza', testId: 'Tza___3-(4-Thiazolyl)-alanine' },
+  U: { alias: 'U', testId: 'U___Selenocysteine' },
   Phe4Me: {
     alias: 'Phe4Me',
     testId: 'Phe4Me___p-Methylphenylalanine',

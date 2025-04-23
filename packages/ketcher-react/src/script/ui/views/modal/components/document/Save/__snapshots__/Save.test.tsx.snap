@@ -25,7 +25,7 @@ Object {
           >
             <button
               class="buttonTop"
-              data-testid="close-icon"
+              data-testid="close-window-button"
             >
               <icon-close.svg
                 classname="closeButton"
@@ -156,12 +156,14 @@ Object {
         >
           <button
             class="saveTmpl"
+            data-testid="save-to-templates-button"
             disabled=""
           >
             Save to Templates
           </button>
           <button
             class="cancel"
+            data-testid="cancel-button"
             mode="onCancel"
             type="button"
           >
@@ -169,6 +171,7 @@ Object {
           </button>
           <button
             class="ok"
+            data-testid="save-button"
             disabled=""
           >
             Save
@@ -428,7 +431,7 @@ Object {
         >
           <button
             class="buttonTop"
-            data-testid="close-icon"
+            data-testid="close-window-button"
           >
             <icon-close.svg
               classname="closeButton"
@@ -559,12 +562,14 @@ Object {
       >
         <button
           class="saveTmpl"
+          data-testid="save-to-templates-button"
           disabled=""
         >
           Save to Templates
         </button>
         <button
           class="cancel"
+          data-testid="cancel-button"
           mode="onCancel"
           type="button"
         >
@@ -572,6 +577,7 @@ Object {
         </button>
         <button
           class="ok"
+          data-testid="save-button"
           disabled=""
         >
           Save

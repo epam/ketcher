@@ -84,22 +84,10 @@ export enum RingButton {
 
 export const STRUCTURE_LIBRARY_BUTTON_NAME = 'Structure Library';
 
-export enum MacromoleculesTopPanelButton {
-  Clear = 'Clear',
-  Undo = 'Undo',
-  Redo = 'Redo',
-  Open = 'Open...',
-  Save = 'Save',
-  ZoomIn = 'Zoom In',
-  ZoomOut = 'Zoom Out',
-  ZoomReset = 'Zoom 100%',
-}
-
 export type ToolbarButton =
   | AtomButton
   | TopPanelButton
   | LeftPanelButton
-  | MacromoleculesTopPanelButton
   | RingButton
   | typeof STRUCTURE_LIBRARY_BUTTON_NAME;
 

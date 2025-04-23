@@ -22,15 +22,17 @@ import {
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
-  selectZoomInTool,
-  selectZoomOutTool,
-  selectZoomReset,
   selectMonomer,
 } from '@utils';
+import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
-  selectOpenFileTool,
+  selectZoomReset,
+  selectZoomOutTool,
+  topRightToolbarLocators,
   turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+  zoomDropdownLocators,
+  selectZoomInTool,
+} from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   connectMonomersWithBonds,
@@ -39,6 +41,7 @@ import {
 import { goToRNATab } from '@utils/macromolecules/library';
 import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
@@ -65,26 +68,26 @@ test.describe('Zoom Tool', () => {
     Test case: Zoom Tool
     Description: Zoom in, Zoom out, Reset buttons tooltips are located in the top toolbar.
     */
-    const icons = [
+    const buttons = [
       {
-        testId: 'zoom-in-button',
+        locator: zoomDropdownLocators(page).zoomInButton,
         title: 'Zoom In',
       },
       {
-        testId: 'zoom-out-button',
+        locator: zoomDropdownLocators(page).zoomOutButton,
         title: 'Zoom Out',
       },
       {
-        testId: 'reset-zoom-button',
+        locator: zoomDropdownLocators(page).zoomDefaultButton,
         title: 'Zoom 100%',
       },
     ];
-    await page.getByTestId('zoom-selector').click();
-    for (const icon of icons) {
-      const iconButton = page.getByTestId(icon.testId);
-      await expect(iconButton).toHaveAttribute('title', icon.title);
-      await iconButton.hover();
-      expect(icon.title).toBeTruthy();
+    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+    await zoomSelector.click();
+    for (const button of buttons) {
+      await expect(button.locator).toHaveAttribute('title', button.title);
+      await button.locator.hover();
+      expect(button.title).toBeTruthy();
     }
     await clickInTheMiddleOfTheScreen(page);
   });
@@ -115,6 +118,8 @@ test.describe('Zoom Tool', () => {
     Test case: Zoom Tool
     Description: Minimum value for zoom out is 20% and maximum value for zoom in is 400%
     */
+    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+
     await goToRNATab(page);
     await openFileAndAddToCanvasMacro(
       'KET/peptides-connected-with-bonds.ket',
@@ -123,14 +128,14 @@ test.describe('Zoom Tool', () => {
     await selectZoomOutTool(page, 10);
 
     await clickInTheMiddleOfTheScreen(page);
-    let zoomValue = await page.getByTestId('zoom-selector').textContent();
+    let zoomValue = await zoomSelector.textContent();
     expect(zoomValue).toBe('20%');
     await takePageScreenshot(page);
 
     await selectZoomReset(page);
     await selectZoomInTool(page, 30);
     await clickInTheMiddleOfTheScreen(page);
-    zoomValue = await page.getByTestId('zoom-selector').textContent();
+    zoomValue = await zoomSelector.textContent();
     expect(zoomValue).toBe('400%');
     await takePageScreenshot(page);
   });
@@ -393,9 +398,11 @@ test.describe('Zoom Tool', () => {
     Paste from Clipboard window not change their position and not overlap each other.
     After fix bug https://github.com/epam/ketcher/issues/4174 need to update snapshot.
     */
+    const pasteFromClipboardButton =
+      openStructureDialog(page).pasteFromClipboardButton;
     await goToRNATab(page);
     await selectOpenFileTool(page);
-    await page.getByTestId('paste-from-clipboard-button').click();
+    await pasteFromClipboardButton.click();
     await browser.newContext({ deviceScaleFactor: 2.5 });
     await page.setViewportSize({ width: 435, height: 291 });
     await takePageScreenshot(page);

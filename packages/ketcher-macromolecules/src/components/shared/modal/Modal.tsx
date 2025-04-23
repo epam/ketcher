@@ -170,7 +170,11 @@ export const Modal = ({
               </IconButton>
             )}
             {showCloseButton && (
-              <IconButton title={'Close window'} onClick={onClose}>
+              <IconButton
+                title={'Close window'}
+                onClick={onClose}
+                data-testid="close-window-button"
+              >
                 <StyledIcon name={'close'} />
               </IconButton>
             )}

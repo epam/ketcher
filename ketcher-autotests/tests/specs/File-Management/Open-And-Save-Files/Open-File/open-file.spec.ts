@@ -5,7 +5,6 @@ import {
   pressButton,
   takeEditorScreenshot,
   openFromFileViaClipboard,
-  clickOnTheCanvas,
   waitForLoad,
   openFileAndAddToCanvas,
   waitForPageInit,
@@ -62,12 +61,12 @@ test.describe('open files with different formats', () => {
     await clickInTheMiddleOfTheScreen(page);
 
     // add second structure from file to canvas
-    await selectOpenFileTool(page);
-    await openFile('Molfiles-V2000/glutamine.mol', page);
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
-    await clickOnTheCanvas(page, X_OFFSET, 0);
+    await openFileAndAddToCanvas(
+      'Molfiles-V2000/glutamine.mol',
+      page,
+      X_OFFSET,
+      0,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -83,12 +82,12 @@ test.describe('open files with different formats', () => {
       page,
     );
     // add second structure from file to canvas
-    await selectOpenFileTool(page);
-    await openFile('Rxn-V2000/rxn-reaction.rxn', page);
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
-    await clickOnTheCanvas(page, 0, -X_OFFSET);
+    await openFileAndAddToCanvas(
+      'Rxn-V2000/rxn-reaction.rxn',
+      page,
+      0,
+      -X_OFFSET,
+    );
     await takeEditorScreenshot(page);
   });
 

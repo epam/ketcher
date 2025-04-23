@@ -8,9 +8,7 @@ import {
   drawBenzeneRing,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  openPasteFromClipboard,
   pasteFromClipboardAndAddToCanvas,
-  pressButton,
   receiveFileComparisonData,
   saveToFile,
   selectAtomInToolbar,
@@ -19,7 +17,6 @@ import {
   takeEditorScreenshot,
   waitForIndigoToLoad,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
@@ -273,13 +270,10 @@ test.describe('Open/Save/Paste files', () => {
       Test case: EPMLSOPKET-1844
       Description: MolFile is pasted to canvas
       */
-    await openPasteFromClipboard(
+    await pasteFromClipboardAndAddToCanvas(
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
     );
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

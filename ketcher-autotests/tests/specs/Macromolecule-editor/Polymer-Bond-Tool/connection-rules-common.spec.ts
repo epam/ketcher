@@ -34,11 +34,11 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Bases } from '@constants/monomers/Bases';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
-  selectClearCanvasTool,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import {
   bondSelectionTool,
   selectEraseTool,

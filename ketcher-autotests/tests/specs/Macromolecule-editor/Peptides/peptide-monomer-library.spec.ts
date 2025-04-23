@@ -18,7 +18,7 @@ import {
   takeMonomerLibraryScreenshot,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToPeptidesTab, goToTab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';

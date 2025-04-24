@@ -5,7 +5,6 @@ import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
   openFromFileViaClipboard,
-  readFileContents,
   takeEditorScreenshot,
   waitForPageInit,
   openFile,
@@ -15,7 +14,6 @@ import {
   selectFlexLayoutModeTool,
   moveMouseAway,
   resetZoomLevelToDefault,
-  MonomerType,
 } from '@utils';
 import {
   selectClearCanvasTool,

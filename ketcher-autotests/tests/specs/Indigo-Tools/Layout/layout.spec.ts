@@ -1,35 +1,18 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  openFile,
-  pressButton,
-  waitForLoad,
   openFileAndAddToCanvas,
   moveOnAtom,
   dragMouseTo,
   selectAtomInToolbar,
   AtomButton,
   clickOnAtom,
-  getCoordinatesOfTheMiddleOfTheScreen,
   waitForPageInit,
   takeTopToolbarScreenshot,
   selectPartOfMolecules,
   selectPartOfChain,
-  clickOnCanvas,
   selectLayoutTool,
 } from '@utils';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
-
-async function openFileWithShift(filename: string, page: Page) {
-  await selectOpenFileTool(page);
-  await openFile(filename, page);
-  await waitForLoad(page, async () => {
-    await pressButton(page, 'Add to Canvas');
-  });
-  const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
-  const shift = 150;
-  await clickOnCanvas(page, x + shift, y + shift);
-}
 
 test.describe('Indigo Tools - Layout', () => {
   test.beforeEach(async ({ page }) => {
@@ -77,7 +60,8 @@ test.describe('Indigo Tools - Layout', () => {
     // Related Github issue: https://github.com/epam/ketcher/issues/3025
     const structureWithStereoFlags = 'KET/structure-with-stereo-flags.ket';
     const numberOfIterations = 3;
-    await openFileWithShift(structureWithStereoFlags, page);
+    const shift = 150;
+    await openFileAndAddToCanvas(structureWithStereoFlags, page, shift, shift);
     for (let i = 0; i < numberOfIterations; i++) {
       await selectLayoutTool(page);
     }

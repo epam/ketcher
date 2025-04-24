@@ -87,10 +87,10 @@ export enum SequenceType {
   PEPTIDE = 'PEPTIDE',
 }
 
-export enum PeptideType {
-  oneLetterCode = '1-letter code',
-  threeLetterCode = '3-letter code',
-}
+// export enum PeptideType {
+//   oneLetterCode = '1-letter code',
+//   threeLetterCode = '3-letter code',
+// }
 
 export enum MacroFileType {
   Ket = 'Ket',

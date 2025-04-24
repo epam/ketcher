@@ -46,6 +46,7 @@ Object {
             <span>
               <button
                 class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+                data-testid="close-window-button"
                 tabindex="0"
                 title="Close window"
                 type="button"
@@ -112,6 +113,7 @@ Object {
                 </div>
                 <div
                   class="css-uve29d"
+                  data-testid="open-from-file-button"
                 >
                   <div
                     role="button"
@@ -157,6 +159,7 @@ Object {
                 </div>
                 <div
                   class="css-uve29d"
+                  data-testid="open-from-image-button"
                 >
                   <div
                     role="button"

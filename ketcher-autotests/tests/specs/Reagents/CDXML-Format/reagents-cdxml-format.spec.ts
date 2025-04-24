@@ -1,32 +1,19 @@
 import { Page, test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   FILE_TEST_DATA,
-  waitForLoad,
   waitForPageInit,
+  pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import {
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { clickOnFileFormatDropdown } from '@utils/formats';
 
 async function previewCDXML(page: Page) {
   await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: 'CDXML' }).click();
-}
-
-async function pasteCDXML(page: Page, fileFormat: string) {
-  await selectOpenFileTool(page);
-  await page.getByText('Paste from clipboard').click();
-  await page.getByRole('dialog').getByRole('textbox').fill(fileFormat);
-  await waitForLoad(page, async () => {
-    await pressButton(page, 'Add to Canvas');
-  });
 }
 
 test.describe('Reagents CDXML format', () => {
@@ -113,7 +100,11 @@ test.describe('Reagents CDXML format', () => {
       Test case: EPMLSOPKET-4722
       Description: Reagent 'NH3' displays above reaction arrow
       */
-    await pasteCDXML(page, FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3);
+    // await pasteCDXML(page, FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3);
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

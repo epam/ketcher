@@ -6,7 +6,7 @@ import {
   takeTopToolbarScreenshot,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Sequence edit mode', () => {
   test.beforeEach(async ({ page }) => {

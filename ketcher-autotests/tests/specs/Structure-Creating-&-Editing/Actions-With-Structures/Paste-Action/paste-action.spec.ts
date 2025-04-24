@@ -15,6 +15,7 @@ import {
 } from '@utils';
 import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import { TopPanelButton } from '@utils/selectors';
+import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 test.describe('Paste Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -41,6 +42,8 @@ test.describe('Paste Tool', () => {
     3. Open Paste from Canvas tool and paste by CTRL+V
     4. Check that the structure of file is MOL
     */
+    const pasteFromClipboardButton =
+      openStructureDialog(page).pasteFromClipboardButton;
     await drawBenzeneRing(page);
 
     await selectRing(RingButton.Benzene, page);
@@ -52,7 +55,7 @@ test.describe('Paste Tool', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await selectOpenFileTool(page);
-    await page.getByText('Paste from clipboard').click();
+    await pasteFromClipboardButton.click();
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });

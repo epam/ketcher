@@ -109,7 +109,7 @@ export const ZoomControls = () => {
             currentZoom={currentZoom}
           />
           <ZoomControlButton
-            data-testid="zoom-out-button"
+            data-testid="zoom-out"
             title="Zoom Out"
             onClick={onZoomOut}
           >
@@ -117,7 +117,7 @@ export const ZoomControls = () => {
             <ShortcutLabel>{shortcuts['zoom-minus']}</ShortcutLabel>
           </ZoomControlButton>
           <ZoomControlButton
-            data-testid="zoom-in-button"
+            data-testid="zoom-in"
             title="Zoom In"
             onClick={onZoomIn}
           >
@@ -125,7 +125,7 @@ export const ZoomControls = () => {
             <ShortcutLabel>{shortcuts['zoom-plus']}</ShortcutLabel>
           </ZoomControlButton>
           <ZoomControlButton
-            data-testid="reset-zoom-button"
+            data-testid="zoom-default"
             title="Zoom 100%"
             onClick={onZoomReset}
           >

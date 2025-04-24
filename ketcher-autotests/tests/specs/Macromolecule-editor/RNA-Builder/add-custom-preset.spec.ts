@@ -10,7 +10,7 @@ import {
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { waitForPageInit } from '@utils/common';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';

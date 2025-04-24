@@ -32,15 +32,13 @@ import {
   selectPartOfMolecules,
   selectRing,
   selectTopPanelButton,
-  setZoomInputValue,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   TopPanelButton,
   waitForPageInit,
   waitForRender,
-  selectZoomOutTool,
-  selectZoomReset,
-  selectZoomInTool,
+  getCoordinatesOfTheMiddleOfTheScreen,
+  pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -65,6 +63,13 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import {
+  selectZoomReset,
+  selectZoomOutTool,
+  selectZoomInTool,
+  setZoomInputValue,
+} from '@tests/pages/common/TopRightToolbar';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 async function saveToTemplates(page: Page) {
   await pressButton(page, 'Save to Templates');
@@ -240,13 +245,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/three-different-multi-tail-arrows-with-elements.ket',
       page,
     );
-    await selectOpenFileTool(page);
-    await openFile('KET/three-different-multi-tail-arrows.ket', page);
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
-    await clickOnCanvas(page, 200, 300);
-
+    const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
+    await openFileAndAddToCanvas(
+      'KET/three-different-multi-tail-arrows.ket',
+      page,
+      200 - x,
+      300 - y,
+    );
     await verifyFileExport(
       page,
       'KET/multi-tailed-arrows-from-two-different-files-expected.ket',
@@ -408,10 +413,15 @@ test.describe('Multi-Tailed Arrow Tool', () => {
        * Test case: https://github.com/epam/ketcher/issues/5104
        * Description: ${detailedDescription}
        */
+      const addToCanvasButton =
+        pasteFromClipboardDialog(page).addToCanvasButton;
+
       await selectOpenFileTool(page);
       await openFile(file, page);
-      await pressButton(page, 'Add to Canvas');
+      await addToCanvasButton.click();
+
       await takeEditorScreenshot(page);
+      await closeErrorAndInfoModals(page);
     });
   }
 
@@ -426,8 +436,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     const fileContent = await readFileContents(
       'tests/test-data/KET/three-different-multi-tail-arrows.ket',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Add to Canvas');
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

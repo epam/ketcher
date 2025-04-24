@@ -19,7 +19,6 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   delay,
   moveMouseAway,
-  selectOptionInTypeDropdown2,
   clickOnCanvas,
   selectMonomer,
   selectSequenceLayoutModeTool,
@@ -49,8 +48,11 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
   selectOpenFileTool,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import {
+  topRightToolbarLocators,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopRightToolbar';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import {
   bondSelectionTool,
@@ -58,6 +60,8 @@ import {
 } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { chooseTab, Tabs } from '@utils/macromolecules';
+import { monomerTypeSelection } from '@tests/pages/common/PasteFromClipboardDialog';
+import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 
 let page: Page;
 
@@ -248,7 +252,8 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
     */
   const x = 800;
   const y = 350;
-  await page.locator('.css-kp5gpq').click();
+  const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
+  await fullScreenButton.click();
   await selectMonomer(page, Peptides.bAla);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Peptides.Edc);
@@ -267,7 +272,8 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
     */
   const x = 800;
   const y = 350;
-  await page.locator('.css-kp5gpq').click();
+  const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
+  await fullScreenButton.click();
   await selectMonomer(page, Presets.MOE_A_P);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Presets.dR_U_P);
@@ -286,7 +292,8 @@ test('Check in full-screen mode it is possible to add a bond between a CHEM mono
     */
   const x = 800;
   const y = 350;
-  await page.locator('.css-kp5gpq').click();
+  const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
+  await fullScreenButton.click();
   await selectMonomer(page, Chem.A6OH);
   await clickInTheMiddleOfTheScreen(page);
   await selectMonomer(page, Chem.Test_6_Ch);
@@ -556,13 +563,9 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   await openFileAndAddToCanvasAsNewProjectMacro(
     'Sequence/two-peptides-connected-expected.seq',
     page,
-    'Peptide',
+    SequenceMonomerType.Peptide,
   );
 
-  // await selectOpenFileTool(page);
-  // await openFile('Sequence/two-peptides-connected-expected.seq', page);
-  // await selectOptionInTypeDropdown('Peptide', page);
-  // await pressButton(page, 'Open as New');
   await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {
@@ -597,7 +600,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   expect(fastaFile).toEqual(fastaFileExpected);
   await selectOpenFileTool(page);
   await openFile('FASTA/two-peptides-connected-expected.fasta', page);
-  await selectOptionInTypeDropdown2('Peptide', page);
+  await monomerTypeSelection(page, SequenceMonomerType.Peptide);
   await pressButton(page, 'Open as New');
   await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();

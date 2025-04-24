@@ -15,7 +15,6 @@ import {
   TopPanelButton,
   openFile,
   moveOnAtom,
-  setZoomInputValue,
   resetCurrentTool,
   clickOnAtom,
   pressButton,
@@ -45,6 +44,11 @@ import {
   selectAreaSelectionTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import {
+  setZoomInputValue,
+  topRightToolbarLocators,
+} from '@tests/pages/common/TopRightToolbar';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -235,10 +239,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The help, about and fullscreen mode are enabled in view-only mode 
     */
+    const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
     await enableViewOnlyModeBySetOptions(page);
     await expect(page.getByTestId('help-button')).toBeEnabled();
     await expect(page.getByTestId('about-button')).toBeEnabled();
-    await expect(page.getByTestId('fullscreen-mode-button')).toBeEnabled();
+    await expect(fullScreenButton).toBeEnabled();
     await takeTopToolbarScreenshot(page);
   });
 
@@ -294,11 +299,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The "Add to Canvas" button is disabled in the "Open structure" dialog window
     */
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+    const openAsNewButton = pasteFromClipboardDialog(page).openAsNewButton;
     await enableViewOnlyModeBySetOptions(page);
     await selectOpenFileTool(page);
     await openFile(`KET/images-png-50-with-50-structures.ket`, page);
-    await expect(page.getByText('Add to Canvas')).toBeDisabled();
-    await expect(page.getByText('Open as New Project')).toBeEnabled();
+    await expect(addToCanvasButton).toBeDisabled();
+    await expect(openAsNewButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
 

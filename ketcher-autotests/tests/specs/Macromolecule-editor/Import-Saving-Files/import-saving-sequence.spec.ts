@@ -12,10 +12,7 @@ import {
   readFileContents,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
-  TypeDropdownOptions,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  SequenceType,
-  PeptideType,
   MacroFileType,
 } from '@utils';
 import {
@@ -27,8 +24,14 @@ import { zoomWithMouseWheel } from '@utils/macromolecules';
 import {
   selectOpenFileTool,
   selectSaveTool,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import {
+  PeptideLetterCodeType,
+  SequenceMonomerType,
+} from '@tests/pages/constants/monomers/Constants';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
@@ -36,7 +39,11 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('Import-Saving .seq Files', () => {
-  const sequenceFileTypes = ['DNA', 'RNA', 'Peptide'] as const;
+  const sequenceFileTypes = [
+    SequenceMonomerType.DNA,
+    SequenceMonomerType.RNA,
+    SequenceMonomerType.Peptide,
+  ] as const;
 
   for (const fileType of sequenceFileTypes) {
     test(`Import .seq ${fileType} file`, async ({ page }) => {
@@ -52,17 +59,6 @@ test.describe('Import-Saving .seq Files', () => {
     });
   }
 
-  // Fail while performance issue on Indigo side
-  // test('Import incorrect data', async ({ page }) => {
-  //   const randomText = 'asjfnsalkfl';
-  //   await selectOpenFileTool(page);
-  //   await page.getByTestId('paste-from-clipboard-button').click();
-  //   await page.getByTestId('open-structure-textarea').fill(randomText);
-  //   await chooseFileFormat(page, 'Sequence');
-  //   await page.getByTestId('add-to-canvas-button').click();
-  //   await takeEditorScreenshot(page);
-  // });
-
   test('Check that Ketcher can handle spaces and line breaks in FASTA file when it pasted from clipboard as sequence (single sequence)', async ({
     page,
   }) => {
@@ -73,11 +69,17 @@ test.describe('Import-Saving .seq Files', () => {
     const fileContent = await readFileContents(
       'tests/test-data/Sequence/sequence-fasta-single-chain.seq',
     );
+    const pasteFromClipboardButton =
+      openStructureDialog(page).pasteFromClipboardButton;
+    const openStructureTextarea =
+      pasteFromClipboardDialog(page).openStructureTextarea;
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+
     await selectOpenFileTool(page);
-    await page.getByTestId('paste-from-clipboard-button').click();
-    await page.getByTestId('open-structure-textarea').fill(fileContent);
+    await pasteFromClipboardButton.click();
+    await openStructureTextarea.fill(fileContent);
     await chooseFileFormat(page, 'Sequence');
-    await page.getByTestId('add-to-canvas-button').click();
+    await addToCanvasButton.click();
     await takeEditorScreenshot(page);
   });
 
@@ -102,21 +104,24 @@ test.describe('Import-Saving .seq Files', () => {
   test('Check that system does not let importing empty .seq file', async ({
     page,
   }) => {
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+
     await selectOpenFileTool(page);
     await openFile('Sequence/sequence-empty.seq', page);
-    // await page.getByText('Add to Canvas').isDisabled();
-    await expect(page.getByText('Add to Canvas')).toBeDisabled();
+    await expect(addToCanvasButton).toBeDisabled();
+    await closeErrorMessage(page);
   });
 
   test('Check that system does not let uploading corrupted .seq file', async ({
     page,
   }) => {
-    await selectOpenFileTool(page);
-
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
     const filename = 'Sequence/sequence-corrupted.seq';
+
+    await selectOpenFileTool(page);
     await openFile(filename, page);
     await selectOptionInDropdown(filename, page);
-    await pressButton(page, 'Add to Canvas');
+    await addToCanvasButton.click();
 
     const errorDialog = page.getByLabel('Unsupported symbols').first();
     await errorDialog.waitFor({ state: 'visible' });
@@ -203,16 +208,23 @@ test.describe('Import-Saving .seq Files', () => {
     */
       const Rna = 'acgtu';
       const Dna = 'acgtu';
+      const pasteFromClipboardButton =
+        openStructureDialog(page).pasteFromClipboardButton;
+      const openStructureTextarea =
+        pasteFromClipboardDialog(page).openStructureTextarea;
+      const addToCanvasButton =
+        pasteFromClipboardDialog(page).addToCanvasButton;
+
       await selectOpenFileTool(page);
-      await page.getByTestId('paste-from-clipboard-button').click();
-      await page.getByTestId('open-structure-textarea').fill(Rna);
+      await pasteFromClipboardButton.click();
+      await openStructureTextarea.fill(Rna);
       await chooseFileFormat(page, 'Sequence');
-      await page.getByTestId('add-to-canvas-button').click();
+      await addToCanvasButton.click();
       await selectOpenFileTool(page);
-      await page.getByTestId('paste-from-clipboard-button').click();
-      await page.getByTestId('open-structure-textarea').fill(Dna);
+      await pasteFromClipboardButton.click();
+      await openStructureTextarea.fill(Dna);
       await chooseFileFormat(page, 'Sequence');
-      await page.getByTestId('add-to-canvas-button').click();
+      await addToCanvasButton.click();
       await takeEditorScreenshot(page);
     },
   );
@@ -548,7 +560,7 @@ test.describe('Import correct Sequence file: ', () => {
   interface ISequenceFile {
     SequenceDescription: string;
     SequenceFileName: string;
-    SequenceType: TypeDropdownOptions;
+    SequenceMonomerType: SequenceMonomerType;
     // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
     shouldFail?: boolean;
     // issueNumber is mandatory if shouldFail === true
@@ -561,7 +573,7 @@ test.describe('Import correct Sequence file: ', () => {
       SequenceDescription: '1. Ambiguous (common) Bases with DNA sugar',
       SequenceFileName:
         'Sequence/Ambiguous-Monomers/Ambiguous (common) Bases.seq',
-      SequenceType: 'DNA',
+      SequenceMonomerType: SequenceMonomerType.DNA,
       shouldFail: false,
     },
     {
@@ -569,21 +581,21 @@ test.describe('Import correct Sequence file: ', () => {
       SequenceDescription: '2. Ambiguous (common) Bases with RNA sugar',
       SequenceFileName:
         'Sequence/Ambiguous-Monomers/Ambiguous (common) Bases.seq',
-      SequenceType: 'RNA',
+      SequenceMonomerType: SequenceMonomerType.RNA,
       shouldFail: false,
     },
     {
       // Test task: https://github.com/epam/ketcher/issues/5558
       SequenceDescription: '3. Ambiguous DNA Bases',
       SequenceFileName: 'Sequence/Ambiguous-Monomers/Ambiguous DNA Bases.seq',
-      SequenceType: 'DNA',
+      SequenceMonomerType: SequenceMonomerType.DNA,
       shouldFail: false,
     },
     {
       // Test task: https://github.com/epam/ketcher/issues/5558
       SequenceDescription: '4. Ambiguous RNA Bases',
       SequenceFileName: 'Sequence/Ambiguous-Monomers/Ambiguous RNA Bases.seq',
-      SequenceType: 'RNA',
+      SequenceMonomerType: SequenceMonomerType.RNA,
       shouldFail: false,
     },
     {
@@ -591,7 +603,7 @@ test.describe('Import correct Sequence file: ', () => {
       SequenceDescription: '5. Peptides (that have mapping to library)',
       SequenceFileName:
         'Sequence/Ambiguous-Monomers/Peptides (that have mapping to library).seq',
-      SequenceType: 'Peptide',
+      SequenceMonomerType: SequenceMonomerType.Peptide,
       shouldFail: false,
     },
   ];
@@ -607,7 +619,7 @@ test.describe('Import correct Sequence file: ', () => {
       await openFileAndAddToCanvasAsNewProjectMacro(
         correctSequenceFile.SequenceFileName,
         page,
-        correctSequenceFile.SequenceType,
+        correctSequenceFile.SequenceMonomerType,
       );
 
       await takeEditorScreenshot(page, {
@@ -622,8 +634,8 @@ interface ISequenceString {
   sequenceDescription: string;
   sequenceString: string;
   sequenceType:
-    | Exclude<SequenceType, SequenceType.PEPTIDE>
-    | [SequenceType.PEPTIDE, PeptideType];
+    | Exclude<SequenceMonomerType, SequenceMonomerType.Peptide>
+    | [SequenceMonomerType.Peptide, PeptideLetterCodeType];
   HELMString?: string;
   // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
   shouldFail?: boolean;
@@ -639,21 +651,30 @@ const correctSequences: ISequenceString[] = [
       '1. Verify import with valid three-letter codes in the sequence',
     sequenceDescription: 'Three letters peptide codes - part 1',
     sequenceString: 'AlaAsxCysAspGluPheGlyHisIle',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
   },
   {
     testCaseDescription:
       '1. Verify import with valid three-letter codes in the sequence',
     sequenceDescription: 'Three letters peptide codes - part 2',
     sequenceString: 'XleLysLeuMetAsnPylProGlnArg',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
   },
   {
     testCaseDescription:
       '1. Verify import with valid three-letter codes in the sequence',
     sequenceDescription: 'Three letters peptide codes - part 3',
     sequenceString: 'SerThrSecValTrpXaaTyrGlx',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
   },
   {
     testCaseDescription:
@@ -661,14 +682,20 @@ const correctSequences: ISequenceString[] = [
     sequenceDescription: 'e.g. AlaAla CysCys (1)',
     sequenceString:
       'AlaAsx CysAspGlu PheGlyHisIle XleLysLeuMetAsn PylProGlnArgSerThr SecValTrpXaaTyrGlx',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
   },
   {
     testCaseDescription: '3. Verify ignoring of line breaks during import',
     sequenceDescription: 'e.g. AlaGly\nCys (2)',
     sequenceString:
       'Ala\nAsx\n\n Cys\n\n\nAsp\n\n\n\nGlu\n Phe\nGly\nHis\nIle \n\nXle\nLys\nLeu\nMet\nAsn Pyl\nPro\nGln\nArg\nSer\nThr\n SecValTrpXaaTyrGlx',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
   },
 ];
 
@@ -700,48 +727,69 @@ const incorrectSequences: ISequenceString[] = [
       '4. Verify error message for unsupported symbols in import',
     sequenceDescription: 'Ala| (1)',
     sequenceString: 'Ala|',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
   },
   {
     testCaseDescription:
       '4. Verify error message for unsupported symbols in import',
     sequenceDescription: 'ala (2)',
     sequenceString: 'ala',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
   },
   {
     testCaseDescription:
       '4. Verify error message for unsupported symbols in import',
     sequenceDescription: 'alA (3)',
     sequenceString: 'alA',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
   },
   {
     testCaseDescription:
       '4. Verify error message for unsupported symbols in import',
     sequenceDescription: 'aLa (4)',
     sequenceString: 'aLa',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
   },
   {
     testCaseDescription:
       '4. Verify error message for unsupported symbols in import',
     sequenceDescription: 'ALA  (5)',
     sequenceString: 'ALA',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
   },
   {
     testCaseDescription: '5. Verify error for incorrect formatting in import',
     sequenceDescription: 'uppercase/lowercase mix - CysALAAsx',
     sequenceString: 'CysALAAsx',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
   },
   {
     testCaseDescription:
       '6. Verify error when a three-letter sequence cannot be matched to amino acids',
     sequenceDescription: 'Alx',
     sequenceString: 'Alx',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
   },
 ];
 
@@ -800,7 +848,10 @@ const sequencesToExport: ISequenceString[] = [
       '8. Verify export functionality for sequences using three-letter codes only',
     sequenceDescription: 'Three letters peptide codes - part 1',
     sequenceString: 'AlaAsxCysAspGluPheGlyHisIle',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -808,7 +859,10 @@ const sequencesToExport: ISequenceString[] = [
       '8. Verify export functionality for sequences using three-letter codes only',
     sequenceDescription: 'Three letters peptide codes - part 2',
     sequenceString: 'XleLysLeuMetAsnPylProGlnArg',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -816,12 +870,18 @@ const sequencesToExport: ISequenceString[] = [
       '8. Verify export functionality for sequences using three-letter codes only',
     sequenceDescription: 'Three letters peptide codes - part 3',
     sequenceString: 'SerThrSecValTrpXaaTyrGlx',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
 ];
 
-async function openSaveToSequenceDialog(page: Page, seqeunceType: PeptideType) {
+async function openSaveToSequenceDialog(
+  page: Page,
+  seqeunceType: PeptideLetterCodeType,
+) {
   await selectSaveTool(page);
   await chooseFileFormat(page, `Sequence (${seqeunceType})`);
 }
@@ -846,7 +906,7 @@ for (const sequenceToExport of sequencesToExport) {
       sequenceToExport.sequenceString,
     );
 
-    await openSaveToSequenceDialog(page, PeptideType.threeLetterCode);
+    await openSaveToSequenceDialog(page, PeptideLetterCodeType.threeLetterCode);
     const sequenceExportResult = await page
       .getByTestId('preview-area-text')
       .textContent();
@@ -871,7 +931,10 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     HELMString: 'PEPTIDE1{(A+C+D)}$$$$V2.0',
     sequenceString:
       'not applicable - export of anmbiguous petide to sequence is impossible',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -881,7 +944,10 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     HELMString: 'PEPTIDE1{(A,C,D)}$$$$V2.0',
     sequenceString:
       'not applicable - export of anmbiguous petide to sequence is impossible',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -891,7 +957,10 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     HELMString: 'PEPTIDE1{A}|RNA1{R}$PEPTIDE1,RNA1,1:R2-1:R1$$$V2.0',
     sequenceString:
       'not applicable - export on pure peptide sequences to sequence is impossible',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -901,7 +970,10 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     HELMString: 'PEPTIDE1{A}|RNA1{P}$PEPTIDE1,RNA1,1:R2-1:R1$$$V2.0',
     sequenceString:
       'not applicable - export on pure peptide sequences to sequence is impossible',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     // todo clean this too
     shouldFail: false,
   },
@@ -912,7 +984,10 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     HELMString: 'PEPTIDE1{A}|RNA1{[2-damdA]}$PEPTIDE1,RNA1,1:R2-1:R1$$$V2.0',
     sequenceString:
       'not applicable - export on pure peptide sequences to sequence is impossible',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -922,7 +997,10 @@ const nonStandardAmbiguousPeptides: ISequenceString[] = [
     HELMString: 'PEPTIDE1{A}|CHEM1{[4aPEGMal]}$PEPTIDE1,CHEM1,1:R2-1:R1$$$V2.0',
     sequenceString:
       'not applicable - export on pure peptide sequences to sequence is impossible',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
 ];
@@ -951,7 +1029,7 @@ for (const sequenceToExport of nonStandardAmbiguousPeptides) {
       );
     }
 
-    await openSaveToSequenceDialog(page, PeptideType.threeLetterCode);
+    await openSaveToSequenceDialog(page, PeptideLetterCodeType.threeLetterCode);
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -969,7 +1047,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       '{[D-OAla].[D-2Thi].[D-3Pal].[D-Abu].[D-Cha]}|PEPTIDE4{[DAlaol].[dA]}|PEPTIDE5{[L-OAla].[Dha]}|PEPTIDE6{[meA].[NMebAl].[Thi].[Tza]}$$$$V2.0',
     sequenceString:
       'AlaAlaAlaAlaAlaAlaAla AlaAlaAlaAlaAlaAlaAla AlaAlaAlaAlaAla AlaAla AlaAla AlaAlaAlaAla',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -978,7 +1059,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString:
       'PEPTIDE1{C.[Cys_Bn].[Cys_Me]}|PEPTIDE2{[DACys].[dC].[Edc].[Hcy].[meC]}$$$$V2.0',
     sequenceString: 'CysCysCys CysCysCysCysCys',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -986,7 +1070,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     sequenceDescription: 'All peptides with natulal analog D',
     HELMString: 'PEPTIDE1{D.[AspOMe].[D*].[dD].[dD]}$$$$V2.0',
     sequenceString: 'AspAspAspAspAsp',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -994,7 +1081,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     sequenceDescription: 'All peptides with natulal analog E',
     HELMString: 'PEPTIDE1{E.[D-gGlu].[dE].[gGlu].[Gla].[meE]}$$$$V2.0',
     sequenceString: 'GluGluGluGluGluGlu',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1007,7 +1097,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       '[PheNO2]}|PEPTIDE6{[PhLA]}$$$$V2.0',
     sequenceString:
       'PhePhePhePhePhe PhePhePhePhePhePhePhe PhePhePhePhePhePhe PhePhePhePhePhePhe PhePhePhePhePhePhePhe Phe',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1019,7 +1112,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       '[Phg].[Phg-ol]}|PEPTIDE7{[Pyr]}$$$$V2.0',
     sequenceString:
       'GlyGlyGlyGlyGly GlyGly GlyGly GlyGly GlyGlyGlyGlyGlyGly GlyGly Gly',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1028,7 +1124,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString:
       'PEPTIDE1{H.[dH].[DHis1B].[Hhs].[His1Bn].[His1Me].[His3Me].[meH]}$$$$V2.0',
     sequenceString: 'HisHisHisHisHisHisHisHis',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1037,7 +1136,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString:
       'PEPTIDE1{I.[aIle].[D-aIle].[dI].[DxiIle].[meI].[xiIle]}$$$$V2.0',
     sequenceString: 'IleIleIleIleIleIleIle',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1046,7 +1148,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString:
       'PEPTIDE1{K.[Aad].[D-Orn].[DALys].[dK].[Dpm].[Hyl5xi].[Lys_Ac].[Lys-al]}|PEPTIDE2{[LysBoc].[LysiPr].[LysMe3].[meK].[Orn].[Lys-ol]}$$$$V2.0',
     sequenceString: 'LysLysLysLysLysLysLysLysLys LysLysLysLysLysLys',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1055,7 +1160,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString:
       'PEPTIDE1{L.[Ar5c].[D-Nle]}|PEPTIDE2{[DALeu].[dL].[Leu-al]}|PEPTIDE3{[OLeu].[Leu-ol]}|PEPTIDE4{[meL].[Nle].[tLeu]}$$$$V2.0',
     sequenceString: 'LeuLeuLeu LeuLeuLeu LeuLeuLeu Leu',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1063,7 +1171,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     sequenceDescription: 'All peptides with natulal analog M',
     HELMString: 'PEPTIDE1{M.[dM].[DMetSO].[meM].[Met_O].[Met_O2]}$$$$V2.0',
     sequenceString: 'MetMetMetMetMetMet',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1071,7 +1182,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     sequenceDescription: 'All peptides with natulal analog N',
     HELMString: 'PEPTIDE1{N.[Asp-al]}|PEPTIDE2{[dN].[meN]}$$$$V2.0',
     sequenceString: 'AsnAsn AsnAsn',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1079,7 +1193,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     sequenceDescription: 'All peptides with natulal analog O',
     HELMString: 'PEPTIDE1{O.[dO].[meO]}$$$$V2.0',
     sequenceString: 'PylPylPyl',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1089,7 +1206,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'PEPTIDE1{P.[aHyp].[aMePro].[Aze].[D-aHyp].[D-Hyp].[D-Thz].[dP].[DProol]}|PEPTIDE2{[meP].[Hyp]}' +
       '|PEPTIDE3{[Mhp].[Pro-al]}|PEPTIDE4{[Thz].[xiHyp].[Pro-ol]}$$$$V2.0',
     sequenceString: 'ProProProProProProProProPro ProPro ProPro ProProPro',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1097,7 +1217,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     sequenceDescription: 'All peptides with natulal analog Q',
     HELMString: 'PEPTIDE1{Q.[dQ].[meQ]}$$$$V2.0',
     sequenceString: 'GlnGlnGln',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1106,7 +1229,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString:
       'PEPTIDE1{R.[Arg-al]}|PEPTIDE2{[Cit].[D-Cit].[D-hArg].[DhArgE].[dR].[Har].[hArg].[LhArgE].[meR]}$$$$V2.0',
     sequenceString: 'ArgArg ArgArgArgArgArgArgArgArgArg',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1115,7 +1241,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString:
       'PEPTIDE1{S.[D-Dap].[Dap].[dS].[DSerBn].[DSertB].[Hse].[meS].[Ser_Bn].[SerPO3].[SertBu]}$$$$V2.0',
     sequenceString: 'SerSerSerSerSerSerSerSerSerSerSer',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1124,7 +1253,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString:
       'PEPTIDE1{T.[aThr].[D-aThr].[dT].[dThrol]}|PEPTIDE2{[meT].[Thr-ol]}|PEPTIDE3{[ThrPO3].[xiThr]}$$$$V2.0',
     sequenceString: 'ThrThrThrThrThr ThrThr ThrThr',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1132,7 +1264,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     sequenceDescription: 'All peptides with natulal analog U',
     HELMString: 'PEPTIDE1{U.[dU].[meU]}$$$$V2.0',
     sequenceString: 'SecSecSec',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1141,7 +1276,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString:
       'PEPTIDE1{V.[D-Nva].[D-Pen].[DaMeAb].[dV].[Iva]}|PEPTIDE2{[D-OVal].[meV].[Nva].[Pen]}|PEPTIDE3{[L-OVal].[Val-ol]}|PEPTIDE4{[Val3OH]}$$$$V2.0',
     sequenceString: 'ValValValValValVal ValValValVal ValVal Val',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1150,7 +1288,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString:
       'PEPTIDE1{W.[DTrp2M].[DTrpFo].[dW].[Kyn].[meW].[Trp_Me].[Trp5OH].[TrpOme]}$$$$V2.0',
     sequenceString: 'TrpTrpTrpTrpTrpTrpTrpTrpTrp',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1170,7 +1311,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'Xaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa ' +
       'XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa ' +
       'XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa XaaXaaXaa',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1181,7 +1325,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       '.[nTyr].[Tyr_3I].[Tyr_Bn].[Tyr_Me]}|PEPTIDE4{[Tyr26d].[Tyr35d].[Tyr3NO].[Tyr3OH].[TyrabD].[TyrPh4].[TyrPO3].[TyrSO3].[TyrtBu]}$$$$V2.0',
     sequenceString:
       'TyrTyrTyrTyr TyrTyr TyrTyrTyrTyrTyrTyrTyrTyr TyrTyrTyrTyrTyrTyrTyrTyrTyr',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1191,7 +1338,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     HELMString:
       'PEPTIDE1{(A,C,D,E,F,G,H,I,K,L,M,N,O,P,Q,R,S,T,U,V,W,Y)}$$$$V2.0',
     sequenceString: 'Xaa',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1199,7 +1349,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
     sequenceDescription: 'B, J, Z',
     HELMString: 'PEPTIDE1{(D,N).(L,I).(E,Q)}$$$$V2.0',
     sequenceString: 'AsxXleGlx',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
   {
@@ -1210,7 +1363,10 @@ const nonNaturalPeptideSequences: ISequenceString[] = [
       'PEPTIDE1{A}|PEPTIDE2{C.D}|PEPTIDE3{E.F.G}|PEPTIDE4{H.I.K.L}|PEPTIDE5{M.N.O.P.Q}|PEPTIDE6{R.S.T.U.V.W}$$$$V2.0',
     sequenceString:
       'Ala CysAsp GluPheGly HisIleLysLeu MetAsnPylProGln ArgSerThrSecValTrp',
-    sequenceType: [SequenceType.PEPTIDE, PeptideType.threeLetterCode],
+    sequenceType: [
+      SequenceMonomerType.Peptide,
+      PeptideLetterCodeType.threeLetterCode,
+    ],
     shouldFail: false,
   },
 ];
@@ -1235,7 +1391,7 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
       sequenceToExport.sequenceString,
     );
 
-    await openSaveToSequenceDialog(page, PeptideType.threeLetterCode);
+    await openSaveToSequenceDialog(page, PeptideLetterCodeType.threeLetterCode);
     const sequenceExportResult = await page
       .getByTestId('preview-area-text')
       .textContent();

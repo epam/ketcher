@@ -8,7 +8,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { hideMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';

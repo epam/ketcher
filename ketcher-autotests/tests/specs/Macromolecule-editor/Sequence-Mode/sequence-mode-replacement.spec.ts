@@ -50,9 +50,11 @@ import {
 import {
   selectClearCanvasTool,
   pressUndoButton,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
 

@@ -32,8 +32,6 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
   selectSaveTool,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   createRNAAntisenseChain,
@@ -52,6 +50,10 @@ import {
   selectSugarSlot,
   toggleRnaBuilder,
 } from '@utils/macromolecules/rnaBuilder';
+import {
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 

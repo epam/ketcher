@@ -10,9 +10,7 @@ import {
   saveToFile,
   openFile,
   receiveFileComparisonData,
-  selectOptionInDropdown,
   selectSnakeLayoutModeTool,
-  delay,
   selectFlexLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
@@ -347,16 +345,9 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: System does not let uploading corrupted .mol file
     */
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
     const filename = 'Molfiles-V3000/corrupted-file.mol';
 
-    await selectOpenFileTool(page);
-    await openFile(filename, page);
-    await selectOptionInDropdown(filename, page);
-    await addToCanvasButton.click();
-
-    // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
-    await delay(2);
+    await openFileAndAddToCanvasMacro(filename, page, undefined, true);
     await takeEditorScreenshot(page);
 
     // Closing page since test expects it to have closed at the end

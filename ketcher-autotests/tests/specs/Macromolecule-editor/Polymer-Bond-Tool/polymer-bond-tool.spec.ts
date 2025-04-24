@@ -16,7 +16,6 @@ import {
   getSequence,
   getFasta,
   openFileAndAddToCanvasAsNewProjectMacro,
-  delay,
   moveMouseAway,
   clickOnCanvas,
   selectMonomer,
@@ -57,7 +56,7 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { chooseTab, Tabs } from '@utils/macromolecules';
+import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 
 let page: Page;
@@ -1616,7 +1615,7 @@ test.describe('Verify "Select/Edit Connection Points" dialogues for ambiguous mo
       await moveMouseAway(page);
       const bondLine = await getConnectionLine(page);
       await bondLine.hover();
-      await delay(1);
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
       await openEditConnectionPointsMenu(page, bondLine);
       await takeEditorScreenshot(page, {

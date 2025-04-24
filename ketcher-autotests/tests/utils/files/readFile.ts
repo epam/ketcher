@@ -28,21 +28,16 @@ import {
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
 
-export async function readFileContent(filePath: string) {
-  // const resolvedFilePath = path.resolve(process.cwd(), filePath);
-  const projectRoot = path.resolve(__dirname, '../../..');
-  const resolvedFilePath = path.resolve(
-    projectRoot,
-    'tests/test-data',
-    filePath,
-  );
-  return fs.promises.readFile(resolvedFilePath, 'utf8');
-}
-
 export function getTestDataDirectory() {
   const projectRoot = path.resolve(__dirname, '../../..');
   const resolvedFilePath = path.resolve(projectRoot, 'tests/test-data');
   return resolvedFilePath;
+}
+
+export async function readFileContent(filePath: string) {
+  const testDataDirectory = getTestDataDirectory();
+  const resolvedFilePath = path.resolve(testDataDirectory, filePath);
+  return fs.promises.readFile(resolvedFilePath, 'utf8');
 }
 
 export async function openFile(filename: string, page: Page) {
@@ -119,6 +114,7 @@ export async function openFileAndAddToCanvasMacro(
   filename: string,
   page: Page,
   typeDropdownOption?: SequenceMonomerType,
+  errorExpected = false,
 ) {
   const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
 
@@ -131,10 +127,13 @@ export async function openFileAndAddToCanvasMacro(
   if (typeDropdownOption) {
     await monomerTypeSelection(page, typeDropdownOption);
   }
-
-  await waitForLoad(page, async () => {
+  if (!errorExpected) {
+    await waitForLoad(page, async () => {
+      await addToCanvasButton.click();
+    });
+  } else {
     await addToCanvasButton.click();
-  });
+  }
 }
 
 export async function openFileAndAddToCanvasAsNewProjectMacro(

@@ -5,7 +5,6 @@ export class Command {
   public operations: Operation[] = [];
   private undoOperationReverse = false;
   private setUndoOperationByPriority = false;
-  isCancel?: boolean;
 
   public addOperation(operation: Operation) {
     this.operations.push(operation);

@@ -193,27 +193,9 @@ export class CoreEditor {
 
     const mouseLeaveEvent = new MouseEvent('mouseleave');
     this.events.mouseleave?.dispatch?.(mouseLeaveEvent);
-    this.events.mouseLeaveDrawingEntity.dispatch(mouseLeaveEvent);
-    this.events.mouseLeaveMonomer.dispatch(mouseLeaveEvent);
-
-    this.events.mouseup?.dispatch?.(mouseUpEvent);
     this.events.mouseUpMonomer.dispatch(mouseUpEvent);
 
     this.drawingEntitiesManager.unselectAllDrawingEntities();
-
-    if (this.renderersContainer) {
-      const command = new Command();
-      command.isCancel = true;
-      this.renderersContainer.update(command);
-    }
-  }
-
-  public dispose(): void {
-    document.removeEventListener(
-      'visibilitychange',
-      this.handleVisibilityChange,
-    );
-    window.removeEventListener('blur', this.handleWindowBlur);
   }
 
   static provideEditorInstance(): CoreEditor {

@@ -130,7 +130,12 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
 
     await pasteFromClipboardAndOpenAsNewProject(page, smileString);
 
-    await pasteFromClipboardAndOpenAsNewProject(page, incorrectSmileString);
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      incorrectSmileString,
+      // error expected
+      false,
+    );
 
     const convertErrorMessage = await page
       .getByTestId('info-modal-body')

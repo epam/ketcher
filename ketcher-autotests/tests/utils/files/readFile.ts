@@ -29,7 +29,9 @@ import {
 } from '@tests/pages/constants/monomers/Constants';
 
 export async function readFileContents(filePath: string) {
-  const resolvedFilePath = path.resolve(process.cwd(), filePath);
+  // const resolvedFilePath = path.resolve(process.cwd(), filePath);
+  const projectRoot = path.resolve(__dirname, '../../..');
+  const resolvedFilePath = path.resolve(projectRoot, filePath);
   return fs.promises.readFile(resolvedFilePath, 'utf8');
 }
 

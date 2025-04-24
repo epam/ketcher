@@ -13,12 +13,14 @@ import {
   clickOnAtom,
   selectPartOfChain,
   selectPartOfMolecules,
-  saveToFile,
   selectCleanTool,
   selectLayoutTool,
 } from '@utils';
-import { getMolfile } from '@utils/formats/formats';
 import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Indigo Tools - Clean Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -432,16 +434,14 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Click the Layout button.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
-    await takeEditorScreenshot(page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile('Molfiles-V2000/ring-with-attachment.mol', expectedFile);
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ring-with-attachment.mol',
+
+    await verifyFileExport(
       page,
+      'Molfiles-V2000/ring-with-attachment.mol',
+      FileType.MOL,
+      'v2000',
+      [1],
     );
-    await selectPartOfMolecules(page);
-    await selectCleanTool(page);
-    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean Up action on part of structure with S-Group', async ({

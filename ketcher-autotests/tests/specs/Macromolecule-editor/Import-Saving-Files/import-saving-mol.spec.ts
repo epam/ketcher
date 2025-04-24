@@ -8,20 +8,15 @@ import {
   readFileContents,
   takeEditorScreenshot,
   waitForPageInit,
-  getMolfile,
-  saveToFile,
   openFile,
-  receiveFileComparisonData,
   selectOptionInDropdown,
   pressButton,
   selectSnakeLayoutModeTool,
   delay,
   selectFlexLayoutModeTool,
-  openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
   resetZoomLevelToDefault,
   selectZoomOutTool,
-  MonomerType,
 } from '@utils';
 import {
   selectClearCanvasTool,
@@ -33,13 +28,15 @@ import {
 import { pageReload } from '@utils/common/helpers';
 import { chooseFileFormat, waitForMonomerPreview } from '@utils/macromolecules';
 import {
-  bondSelectionTool,
   selectAreaSelectionTool,
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 function removeNotComparableData(file: string) {
   return file
@@ -221,29 +218,37 @@ test.describe('Import-Saving .mol Files', () => {
     Description: Structure in center of canvas after opening
     */
     await openFileAndAddToCanvasMacro('KET/fifty-monomers.ket', page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+    // const expectedFile = await getMolfile(page);
+    // await saveToFile(
+    //   'Molfiles-V3000/fifty-monomers-v3000-expected.mol',
+    //   expectedFile,
+    // );
+
+    // const METADATA_STRING_INDEX = [1];
+
+    // const { fileExpected: molFileExpected, file: molFile } =
+    //   await receiveFileComparisonData({
+    //     page,
+    //     expectedFileName:
+    //       'tests/test-data/Molfiles-V3000/fifty-monomers-v3000-expected.mol',
+    //     fileFormat: 'v3000',
+    //     metaDataIndexes: METADATA_STRING_INDEX,
+    //   });
+
+    // expect(molFile).toEqual(molFileExpected);
+
+    // const numberOfPressZoomOut = 6;
+    // await selectZoomOutTool(page, numberOfPressZoomOut);
+    // await clickInTheMiddleOfTheScreen(page);
+    // await takeEditorScreenshot(page);
+
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/fifty-monomers-v3000-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/fifty-monomers-v3000-expected.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
-
-    const numberOfPressZoomOut = 6;
-    await selectZoomOutTool(page, numberOfPressZoomOut);
-    await clickInTheMiddleOfTheScreen(page);
-    await takeEditorScreenshot(page);
   });
 
   test('Check import of file with 100 monomers and save in MOL V3000 format', async () => {
@@ -252,24 +257,32 @@ test.describe('Import-Saving .mol Files', () => {
     Description: Structure in center of canvas after opening
     */
     await openFileAndAddToCanvasMacro('KET/hundred-monomers.ket', page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+    // const expectedFile = await getMolfile(page);
+    // await saveToFile(
+    //   'Molfiles-V3000/hundred-monomers-v3000-expected.mol',
+    //   expectedFile,
+    // );
+
+    // const METADATA_STRING_INDEX = [1];
+
+    // const { fileExpected: molFileExpected, file: molFile } =
+    //   await receiveFileComparisonData({
+    //     page,
+    //     expectedFileName:
+    //       'tests/test-data/Molfiles-V3000/hundred-monomers-v3000-expected.mol',
+    //     fileFormat: 'v3000',
+    //     metaDataIndexes: METADATA_STRING_INDEX,
+    //   });
+
+    // expect(molFile).toEqual(molFileExpected);
+
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/hundred-monomers-v3000-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/hundred-monomers-v3000-expected.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
 
     // Closing page since test expects it to have closed at the end
     const context = page.context();
@@ -304,20 +317,14 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: Empty file can be saved in .mol format
     */
-    const expectedFile = await getMolfile(page);
-    await saveToFile('Molfiles-V2000/empty-canvas-expected.mol', expectedFile);
 
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/empty-canvas-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
+    await verifyFileExport(
+      page,
+      'Molfiles-V2000/empty-canvas-expected.mol',
+      FileType.MOL,
+      'v2000',
+      [1],
+    );
   });
 
   test.fixme(
@@ -399,24 +406,32 @@ test.describe('Import-Saving .mol Files', () => {
       'Molfiles-V3000/snake-mode-peptides.mol',
       page,
     );
-    await selectSnakeLayoutModeTool(page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+    // await selectSnakeLayoutModeTool(page);
+    // const expectedFile = await getMolfile(page);
+    // await saveToFile(
+    //   'Molfiles-V3000/snake-mode-peptides-expected.mol',
+    //   expectedFile,
+    // );
+
+    // const METADATA_STRING_INDEX = [1];
+
+    // const { fileExpected: molFileExpected, file: molFile } =
+    //   await receiveFileComparisonData({
+    //     page,
+    //     expectedFileName:
+    //       'tests/test-data/Molfiles-V3000/snake-mode-peptides-expected.mol',
+    //     metaDataIndexes: METADATA_STRING_INDEX,
+    //   });
+
+    // expect(molFile).toEqual(molFileExpected);
+
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/snake-mode-peptides-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/snake-mode-peptides-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
   });
 
   test('Check that .mol file with macro structures is imported correctly in macro mode when saving it in micro mode', async () => {
@@ -482,29 +497,37 @@ test.describe('Import-Saving .mol Files', () => {
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
     );
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
-      'Molfiles-V3000/unsplit-nucleotides-connected-with-nucleotides.mol',
-      expectedFile,
-    );
+    // const expectedFile = await getMolfile(page);
+    // await saveToFile(
+    //   'Molfiles-V3000/unsplit-nucleotides-connected-with-nucleotides.mol',
+    //   expectedFile,
+    // );
 
-    const METADATA_STRING_INDEX = [1];
+    // const METADATA_STRING_INDEX = [1];
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-nucleotides.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+    // const { fileExpected: molFileExpected, file: molFile } =
+    //   await receiveFileComparisonData({
+    //     page,
+    //     expectedFileName:
+    //       'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-nucleotides.mol',
+    //     fileFormat: 'v3000',
+    //     metaDataIndexes: METADATA_STRING_INDEX,
+    //   });
 
-    expect(molFile).toEqual(molFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/unsplit-nucleotides-connected-with-nucleotides.mol',
+    // expect(molFile).toEqual(molFileExpected);
+    // await openFileAndAddToCanvasAsNewProject(
+    //   'Molfiles-V3000/unsplit-nucleotides-connected-with-nucleotides.mol',
+    //   page,
+    // );
+    // await takeEditorScreenshot(page);
+
+    await verifyFileExport(
       page,
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-nucleotides.mol',
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with chems could be saved to mol 3000 file and loaded back', async () => {
@@ -517,29 +540,37 @@ test.describe('Import-Saving .mol Files', () => {
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
     );
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
-      'Molfiles-V3000/unsplit-nucleotides-connected-with-chems.mol',
-      expectedFile,
-    );
+    // const expectedFile = await getMolfile(page);
+    // await saveToFile(
+    //   'Molfiles-V3000/unsplit-nucleotides-connected-with-chems.mol',
+    //   expectedFile,
+    // );
 
-    const METADATA_STRING_INDEX = [1];
+    // const METADATA_STRING_INDEX = [1];
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-chems.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+    // const { fileExpected: molFileExpected, file: molFile } =
+    //   await receiveFileComparisonData({
+    //     page,
+    //     expectedFileName:
+    //       'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-chems.mol',
+    //     fileFormat: 'v3000',
+    //     metaDataIndexes: METADATA_STRING_INDEX,
+    //   });
 
-    expect(molFile).toEqual(molFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/unsplit-nucleotides-connected-with-chems.mol',
+    // expect(molFile).toEqual(molFileExpected);
+    // await openFileAndAddToCanvasAsNewProject(
+    //   'Molfiles-V3000/unsplit-nucleotides-connected-with-chems.mol',
+    //   page,
+    // );
+    // await takeEditorScreenshot(page);
+
+    await verifyFileExport(
       page,
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-chems.mol',
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with sugars could be saved to mol 3000 file and loaded back', async () => {
@@ -552,29 +583,37 @@ test.describe('Import-Saving .mol Files', () => {
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
     );
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
-      'Molfiles-V3000/unsplit-nucleotides-connected-with-sugars.mol',
-      expectedFile,
-    );
+    // const expectedFile = await getMolfile(page);
+    // await saveToFile(
+    //   'Molfiles-V3000/unsplit-nucleotides-connected-with-sugars.mol',
+    //   expectedFile,
+    // );
 
-    const METADATA_STRING_INDEX = [1];
+    // const METADATA_STRING_INDEX = [1];
 
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-sugars.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
+    // const { fileExpected: molFileExpected, file: molFile } =
+    //   await receiveFileComparisonData({
+    //     page,
+    //     expectedFileName:
+    //       'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-sugars.mol',
+    //     fileFormat: 'v3000',
+    //     metaDataIndexes: METADATA_STRING_INDEX,
+    //   });
 
-    expect(molFile).toEqual(molFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/unsplit-nucleotides-connected-with-sugars.mol',
+    // expect(molFile).toEqual(molFileExpected);
+    // await openFileAndAddToCanvasAsNewProject(
+    //   'Molfiles-V3000/unsplit-nucleotides-connected-with-sugars.mol',
+    //   page,
+    // );
+    // await takeEditorScreenshot(page);
+
+    await verifyFileExport(
       page,
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-sugars.mol',
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-    await takeEditorScreenshot(page);
   });
 
   test('Validate that unsplit nucleotides connected with bases could be saved to mol 3000 file and loaded back', async () => {
@@ -587,31 +626,14 @@ test.describe('Import-Saving .mol Files', () => {
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
     );
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
-      'Molfiles-V3000/unsplit-nucleotides-connected-with-bases.mol',
-      expectedFile,
-    );
 
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-bases.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/unsplit-nucleotides-connected-with-bases.mol',
+    await verifyFileExport(
       page,
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-bases.mol',
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
   });
 
   test('Validate that unsplit nucleotides connected with phosphates could be saved to mol 3000 file and loaded back', async () => {
@@ -624,31 +646,14 @@ test.describe('Import-Saving .mol Files', () => {
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
     );
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
-      'Molfiles-V3000/unsplit-nucleotides-connected-with-phosphates.mol',
-      expectedFile,
-    );
 
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-phosphates.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/unsplit-nucleotides-connected-with-phosphates.mol',
+    await verifyFileExport(
       page,
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-phosphates.mol',
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
   });
 
   test('Validate that unsplit nucleotides connected with peptides could be saved to mol 3000 file and loaded back', async () => {
@@ -660,31 +665,14 @@ test.describe('Import-Saving .mol Files', () => {
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
     );
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
-      'Molfiles-V3000/unsplit-nucleotides-connected-with-peptides.mol',
-      expectedFile,
-    );
 
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/unsplit-nucleotides-connected-with-peptides.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
-    await openFileAndAddToCanvasAsNewProject(
-      'Molfiles-V3000/unsplit-nucleotides-connected-with-peptides.mol',
+    await verifyFileExport(
       page,
+      'Molfiles-V3000/unsplit-nucleotides-connected-with-peptides.mol',
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-    await takeEditorScreenshot(page, {
-      hideMacromoleculeEditorScrollBars: true,
-    });
   });
 });
 
@@ -771,25 +759,14 @@ test.describe('Base monomers on the canvas, their connection points and preview 
         `Molfiles-V3000/Base-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
-      await getMonomerLocator(page, { monomerType: MonomerType.Base }).hover();
-      await waitForMonomerPreview(page);
-      await takeEditorScreenshot(page);
 
-      const expectedFile = await getMolfile(page);
-      await saveToFile(
+      await verifyFileExport(
+        page,
         `Molfiles-V3000/Base-Templates/${fileName}-expected.mol`,
-        expectedFile,
+        FileType.MOL,
+        'v3000',
+        [1],
       );
-      const METADATA_STRING_INDEX = [1];
-      const { file: molFile, fileExpected: molFileExpected } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: `tests/test-data/Molfiles-V3000/Base-Templates/${fileName}-expected.mol`,
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
-
-      expect(molFile).toEqual(molFileExpected);
     });
   }
 });
@@ -832,25 +809,14 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
         `Molfiles-V3000/CHEM-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
-      await page.getByText('(R').locator('..').first().hover();
-      await waitForMonomerPreview(page);
-      await takeEditorScreenshot(page);
 
-      const expectedFile = await getMolfile(page);
-      await saveToFile(
+      await verifyFileExport(
+        page,
         `Molfiles-V3000/CHEM-Templates/${fileName}-expected.mol`,
-        expectedFile,
+        FileType.MOL,
+        'v3000',
+        [1],
       );
-      const METADATA_STRING_INDEX = [1];
-      const { file: molFile, fileExpected: molFileExpected } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: `tests/test-data/Molfiles-V3000/CHEM-Templates/${fileName}-expected.mol`,
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
-
-      expect(molFile).toEqual(molFileExpected);
     });
   }
 });
@@ -893,27 +859,14 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
         `Molfiles-V3000/Peptide-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
-      await getMonomerLocator(page, {
-        monomerType: MonomerType.Peptide,
-      }).hover();
-      await waitForMonomerPreview(page);
-      await takeEditorScreenshot(page);
 
-      const expectedFile = await getMolfile(page);
-      await saveToFile(
+      await verifyFileExport(
+        page,
         `Molfiles-V3000/Peptide-Templates/${fileName}-expected.mol`,
-        expectedFile,
+        FileType.MOL,
+        'v3000',
+        [1],
       );
-      const METADATA_STRING_INDEX = [1];
-      const { file: molFile, fileExpected: molFileExpected } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: `tests/test-data/Molfiles-V3000/Peptide-Templates/${fileName}-expected.mol`,
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
-
-      expect(molFile).toEqual(molFileExpected);
     });
   }
 });
@@ -957,28 +910,14 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
         `Molfiles-V3000/Phosphate-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
-      await getMonomerLocator(page, {
-        monomerType: MonomerType.Phosphate,
-      }).hover();
 
-      await waitForMonomerPreview(page);
-      await takeEditorScreenshot(page);
-
-      const expectedFile = await getMolfile(page);
-      await saveToFile(
+      await verifyFileExport(
+        page,
         `Molfiles-V3000/Phosphate-Templates/${fileName}-expected.mol`,
-        expectedFile,
+        FileType.MOL,
+        'v3000',
+        [1],
       );
-      const METADATA_STRING_INDEX = [1];
-      const { file: molFile, fileExpected: molFileExpected } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: `tests/test-data/Molfiles-V3000/Phosphate-Templates/${fileName}-expected.mol`,
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
-
-      expect(molFile).toEqual(molFileExpected);
     });
   }
 });
@@ -1021,27 +960,14 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
         `Molfiles-V3000/Sugar-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
-      await getMonomerLocator(page, {
-        monomerType: MonomerType.Sugar,
-      }).hover();
-      await waitForMonomerPreview(page);
-      await takeEditorScreenshot(page);
 
-      const expectedFile = await getMolfile(page);
-      await saveToFile(
+      await verifyFileExport(
+        page,
         `Molfiles-V3000/Sugar-Templates/${fileName}-expected.mol`,
-        expectedFile,
+        FileType.MOL,
+        'v3000',
+        [1],
       );
-      const METADATA_STRING_INDEX = [1];
-      const { file: molFile, fileExpected: molFileExpected } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: `tests/test-data/Molfiles-V3000/Sugar-Templates/${fileName}-expected.mol`,
-          metaDataIndexes: METADATA_STRING_INDEX,
-        });
-
-      expect(molFile).toEqual(molFileExpected);
     });
   }
 });

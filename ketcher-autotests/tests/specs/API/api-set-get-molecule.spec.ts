@@ -2,7 +2,6 @@
 import { expect, Page, test } from '@playwright/test';
 import {
   AtomButton,
-  readFileContents,
   selectAtomInToolbar,
   takeEditorScreenshot,
   FILE_TEST_DATA,
@@ -15,6 +14,7 @@ import {
   clickOnCanvas,
   openSettings,
   pressButton,
+  readFileContent,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -97,7 +97,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test working not in proper way because we have bug https://github.com/epam/ketcher/issues/4320
     After fix we need update screenshot.
     */
-      const MolV2000File = await readFileContents(
+      const MolV2000File = await readFileContent(
         'Molfiles-V2000/aromatized-benzene-ring.mol',
       );
       await clickInTheMiddleOfTheScreen(page);
@@ -194,7 +194,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: EPMLSOPKET- 10095
     Description:  Molecule set and get using V3000 format
     */
-    const orEnantiomer = await readFileContents(
+    const orEnantiomer = await readFileContent(
       'Molfiles-V3000/or-enantiomer.mol',
     );
     await waitForSpinnerFinishedWork(
@@ -789,7 +789,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       2. Load structure from API
       3. Take a screenshot
     */
-    const MolV2000File = await readFileContents(
+    const MolV2000File = await readFileContent(
       'Molfiles-V2000/non-proprietary-structure.mol',
     );
     await applyIgnoreChiralFlag(page);
@@ -812,7 +812,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       3. Apply "Ignore the chiral flag" setting
       4. Take a screenshot
     */
-    const MolV2000File = await readFileContents(
+    const MolV2000File = await readFileContent(
       'Molfiles-V2000/non-proprietary-structure.mol',
     );
     await waitForSpinnerFinishedWork(

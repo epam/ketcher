@@ -4,7 +4,6 @@ import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
-  openFromFileViaClipboard,
   takeEditorScreenshot,
   waitForPageInit,
   getMolfile,
@@ -21,6 +20,7 @@ import {
   MonomerType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
+  readFileContent,
 } from '@utils';
 import {
   selectClearCanvasTool,
@@ -93,10 +93,14 @@ test.describe('Import-Saving .mol Files', () => {
   });
 
   test('Import monomers and chem with clipboard', async () => {
-    await selectOpenFileTool(page);
-    await openFromFileViaClipboard(
+    const fileContent = await readFileContent(
       'Molfiles-V3000/monomers-and-chem.mol',
+    );
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
+      MacroFileType.MOLv3000,
+      fileContent,
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

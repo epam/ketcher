@@ -10,13 +10,13 @@ import {
   selectRectangleArea,
   moveMouseAway,
   openPasteFromClipboard,
-  readFileContents,
   startNewSequence,
   selectSnakeLayoutModeTool,
   waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
+  readFileContent,
 } from '@utils';
 import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
@@ -130,7 +130,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
       test.slow();
       const closeWindowButton =
         pasteFromClipboardDialog(page).closeWindowButton;
-      const fileContent = await readFileContents(
+      const fileContent = await readFileContent(
         'KET/single-fragment-for-paste.ket',
       );
       await openPasteFromClipboard(page, fileContent);
@@ -246,7 +246,7 @@ test.describe('Sequence-edit mode', () => {
   //   Test case: #3894
   //   Description: Sequence pasted on canvas.
   //   */
-  //   const fileContent = await readFileContents(
+  //   const fileContent = await readFileContent(
   //     'Sequence/sequence-500-symbols.seq',
   //   );
   //   await openPasteFromClipboard(page, fileContent);

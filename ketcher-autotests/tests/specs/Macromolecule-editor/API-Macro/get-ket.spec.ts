@@ -2,7 +2,6 @@
 import { test, expect } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
-  readFileContents,
   waitForPageInit,
   getKet,
   saveToFile,
@@ -12,6 +11,7 @@ import {
   AtomButton,
   clickInTheMiddleOfTheScreen,
   selectAllStructuresOnCanvas,
+  readFileContent,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
@@ -29,7 +29,7 @@ test.describe('getKet', () => {
     await openFileAndAddToCanvasMacro('KET/alanine-monomers-bonded.ket', page);
     const ket = await getKet(page);
     await saveToFile('KET/alanine-monomers-bonded-expected.ket', ket);
-    const fileContents = await readFileContents(
+    const fileContents = await readFileContent(
       'KET/alanine-monomers-bonded-expected.ket',
     );
     expect(ket).toBe(fileContents);

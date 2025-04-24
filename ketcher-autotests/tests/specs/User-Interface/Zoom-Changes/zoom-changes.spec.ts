@@ -10,15 +10,15 @@ import {
   TemplateLibrary,
   openFileAndAddToCanvas,
   waitForPageInit,
-  openFromFileViaClipboard,
   drawBenzeneRing,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
+  readFileContent,
+  pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import {
   pressUndoButton,
   pressRedoButton,
-  selectOpenFileTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   topRightToolbarLocators,
@@ -259,8 +259,9 @@ test.describe('Zoom changes', () => {
       Description: The correct structure fits on the canvas, and the zoom percentage 
       has decreased on the "Zoom panel"
     */
-    await selectOpenFileTool(page);
-    await openFromFileViaClipboard('Molfiles-V2000/long-chain.mol', page);
+    const fileContent = await readFileContent('Molfiles-V2000/long-chain.mol');
+
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await expect(page).toHaveScreenshot();
   });

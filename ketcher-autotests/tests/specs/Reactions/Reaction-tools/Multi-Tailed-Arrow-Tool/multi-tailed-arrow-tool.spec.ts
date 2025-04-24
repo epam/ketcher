@@ -18,7 +18,6 @@ import {
   openPasteFromClipboard,
   pasteFromClipboardByKeyboard,
   pressButton,
-  readFileContents,
   selectAddRemoveExplicitHydrogens,
   resetCurrentTool,
   RingButton,
@@ -40,6 +39,7 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndOpenAsNewProject,
+  readFileContent,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -434,7 +434,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Three different Multi-Tailed Arrows are copied from .ket format and added to selected place on Canvas
      * with correct positions and parameters using "PASTE FROM CLIPBOARD - Add to Canvas"
      */
-    const fileContent = await readFileContents(
+    const fileContent = await readFileContent(
       'KET/three-different-multi-tail-arrows.ket',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
@@ -449,7 +449,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5104
      * Description: Three different Multi-Tailed Arrows are copied from .ket format and added to the center of Canvas using "PASTE FROM CLIPBOARD - Open as New Project"
      */
-    const fileContent = await readFileContents(
+    const fileContent = await readFileContent(
       'KET/three-different-multi-tail-arrows.ket',
     );
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
@@ -465,7 +465,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Three different Multi-Tailed Arrows are copied from .ket format and added from clipboard directly to selected place on Canvas
      * with correct positions and sizes of spines, tails and heads
      */
-    const fileContent = await readFileContents(
+    const fileContent = await readFileContent(
       'KET/three-different-multi-tail-arrows.ket',
     );
     await openPasteFromClipboard(page, fileContent);

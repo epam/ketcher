@@ -2,7 +2,6 @@ import { Page, expect, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  readFileContents,
   pressButton,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
@@ -12,6 +11,7 @@ import {
   receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
+  readFileContent,
 } from '@utils';
 import {
   selectClearCanvasTool,
@@ -33,7 +33,7 @@ async function getPreviewForSmiles(page: Page, smileType: string) {
 }
 
 async function getAndCompareSmiles(page: Page, smilesFilePath: string) {
-  const smilesFileExpected = await readFileContents(smilesFilePath);
+  const smilesFileExpected = await readFileContent(smilesFilePath);
   const smilesFile = await getSmiles(page);
   expect(smilesFile).toEqual(smilesFileExpected);
 }

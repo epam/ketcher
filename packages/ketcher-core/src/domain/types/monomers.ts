@@ -74,8 +74,8 @@ export type MonomerItemType = MonomerItemBase & {
   isSense?: boolean;
   expanded?: boolean;
   transformation?: Partial<{
-    rotation?: number;
-    flip?: FlipDirection;
+    rotate: number;
+    flip: FlipDirection;
   }>;
 };
 

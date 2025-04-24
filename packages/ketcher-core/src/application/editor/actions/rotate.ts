@@ -285,7 +285,7 @@ export function fromRotate(restruct, selection, center, angle: number) {
 
         if (sg instanceof MonomerMicromolecule) {
           action.addOp(
-            new MonomerTransform({ type: 'rotation', value: angle, id: sg.id }),
+            new MonomerTransform({ type: 'rotate', value: angle, id: sg.id }),
           );
         }
       });

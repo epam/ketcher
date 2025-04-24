@@ -4,7 +4,7 @@ import { ReStruct } from 'application/render';
 import { MonomerMicromolecule } from 'domain/entities';
 
 type MonomerTransformPayload =
-  | { type: 'rotation'; value: number }
+  | { type: 'rotate'; value: number }
   | { type: 'flip'; value: 'horizontal' | 'vertical' }
   | { type: 'shift'; value: { x: number; y: number } };
 
@@ -23,18 +23,28 @@ export class MonomerTransform extends BaseOperation {
       return;
     }
 
-    if (!monomerSGroup.monomer.monomerItem.transformation) {
-      monomerSGroup.monomer.monomerItem.transformation = {};
+    const monomerTransformation =
+      (monomerSGroup.monomer.monomerItem.transformation ||= {});
+
+    if (this.data.type === 'flip') {
+      const previousFlip = monomerTransformation.flip;
+      const newFlip = this.data.value;
+
+      if (previousFlip && previousFlip !== newFlip) {
+        const previousRotation = monomerTransformation.rotate ?? 0;
+        delete monomerTransformation.flip;
+        monomerTransformation.rotate = previousRotation + Math.PI;
+        return;
+      }
     }
 
     this.previousData = {
       id: this.data.id,
       type: this.data.type,
-      value: monomerSGroup.monomer.monomerItem.transformation[this.data.type],
+      value: monomerTransformation[this.data.type],
     };
 
-    monomerSGroup.monomer.monomerItem.transformation[this.data.type] =
-      this.data.value;
+    monomerTransformation[this.data.type] = this.data.value;
   }
 
   invert() {

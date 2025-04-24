@@ -38,8 +38,7 @@ import {
   AtomMove,
   rotateDelta,
   flipPointByCenter,
-  Bond,
-  BondAttr,
+  flipBonds,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -291,7 +290,9 @@ class Editor implements KetcherEditor {
     this.struct(undefined);
   }
 
-  private applyMonomersTransformations(struct: Struct, action: Action) {
+  private applyMonomersTransformations(struct: Struct) {
+    const action = new Action();
+
     const atomToBonds = new Map<number, number[]>();
 
     struct.bonds.forEach((bond, bondId) => {
@@ -312,9 +313,8 @@ class Editor implements KetcherEditor {
         return;
       }
 
-      const monomerRotation =
-        sGroup.monomer.monomerItem.transformation?.rotation;
-      if (monomerRotation) {
+      const rotateValue = sGroup.monomer.monomerItem.transformation?.rotate;
+      if (rotateValue) {
         sGroup.atoms.forEach((atomId) => {
           const atom = struct.atoms.get(atomId);
           if (!atom) {
@@ -322,16 +322,13 @@ class Editor implements KetcherEditor {
           }
 
           action.addOp(
-            new AtomMove(
-              atomId,
-              rotateDelta(atom.pp, center, monomerRotation),
-            ).perform(this.render.ctab),
+            new AtomMove(atomId, rotateDelta(atom.pp, center, rotateValue)),
           );
         });
       }
 
-      const monomerFlip = sGroup.monomer.monomerItem.transformation?.flip;
-      if (monomerFlip) {
+      const flipValue = sGroup.monomer.monomerItem.transformation?.flip;
+      if (flipValue) {
         sGroup.atoms.forEach((atomId) => {
           const atom = struct.atoms.get(atomId);
           if (!atom) {
@@ -339,52 +336,19 @@ class Editor implements KetcherEditor {
           }
 
           action.addOp(
-            new AtomMove(
-              atomId,
-              flipPointByCenter(atom.pp, center, monomerFlip),
-            ).perform(this.render.ctab),
+            new AtomMove(atomId, flipPointByCenter(atom.pp, center, flipValue)),
           );
         });
 
-        const sGroupAtoms = new Set<number>(sGroup.atoms);
-        const sGroupBonds = new Set<number>();
+        const sGroupBonds = new Set<number>(
+          sGroup.atoms.flatMap((atomId) => atomToBonds.get(atomId)),
+        );
 
-        for (const atomId of sGroupAtoms) {
-          (atomToBonds.get(atomId) ?? []).forEach((bondId) =>
-            sGroupBonds.add(bondId),
-          );
-        }
-
-        sGroupBonds.forEach((bondId) => {
-          const bond = struct.bonds.get(bondId);
-
-          if (!bond) {
-            return;
-          }
-
-          if (bond.type !== Bond.PATTERN.TYPE.SINGLE) {
-            return;
-          }
-
-          if (bond.stereo === Bond.PATTERN.STEREO.UP) {
-            action.addOp(
-              new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.DOWN).perform(
-                this.render.ctab,
-              ),
-            );
-            return;
-          }
-
-          if (bond.stereo === Bond.PATTERN.STEREO.DOWN) {
-            action.addOp(
-              new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.UP).perform(
-                this.render.ctab,
-              ),
-            );
-          }
-        });
+        flipBonds([...sGroupBonds.values()], struct, action);
       }
     });
+
+    return action.perform(this.render.ctab);
   }
 
   renderAndRecoordinateStruct(
@@ -393,11 +357,10 @@ class Editor implements KetcherEditor {
     x?: number,
     y?: number,
   ): Struct {
-    const action = fromNewCanvas(this.render.ctab, struct);
+    const canvasLoadAction = fromNewCanvas(this.render.ctab, struct);
+    const transformAction = this.applyMonomersTransformations(struct);
 
-    this.applyMonomersTransformations(struct, action);
-
-    this.update(action);
+    this.update(canvasLoadAction.mergeWith(transformAction));
 
     if (needToCenterStruct) {
       this.centerStruct();

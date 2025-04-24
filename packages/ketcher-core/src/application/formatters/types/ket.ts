@@ -18,7 +18,7 @@ export interface IKetMonomerNode {
   templateId: string;
   expanded?: boolean;
   transformation?: Partial<{
-    rotation: number;
+    rotate: number;
     shift: Partial<{
       x: number;
       y: number;

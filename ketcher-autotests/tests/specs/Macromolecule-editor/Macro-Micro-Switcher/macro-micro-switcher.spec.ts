@@ -14,7 +14,6 @@ import {
   LeftPanelButton,
   RingButton,
   SaltsAndSolvents,
-  SequenceType,
   TopPanelButton,
   addMonomersToFavorites,
   clickInTheMiddleOfTheScreen,
@@ -32,6 +31,8 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasMacro,
   openPasteFromClipboard,
+  pasteFromClipboardAndAddToCanvas,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
   pressButton,
   readFileContents,
   selectAromatizeTool,
@@ -49,16 +50,12 @@ import {
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   selectTopPanelButton,
-  selectZoomInTool,
-  selectZoomOutTool,
-  selectZoomReset,
   setAttachmentPoints,
   switchSequenceEnteringButtonType,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
   takeTopToolbarScreenshot,
-  waitForLoad,
   waitForPageInit,
   waitForRender,
   waitForSpinnerFinishedWork,
@@ -68,10 +65,20 @@ import {
   selectOpenFileTool,
   pressUndoButton,
   selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectZoomReset,
+  selectZoomOutTool,
+  topRightToolbarLocators,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import { selectAllStructuresOnCanvas } from '@utils/canvas';
+  selectZoomInTool,
+} from '@tests/pages/common/TopRightToolbar';
+import {
+  MacroFileType,
+  selectAllStructuresOnCanvas,
+  SequenceType,
+} from '@utils/canvas';
 import {
   addSuperatomAttachmentPoint,
   removeSuperatomAttachmentPoint,
@@ -121,21 +128,6 @@ async function zoomWithMouseWheel(page: Page, scrollValue: number) {
 async function scrollHorizontally(page: Page, scrollValue: number) {
   await waitForRender(page, async () => {
     await page.mouse.wheel(scrollValue, 0);
-  });
-}
-
-async function pasteFromClipboard(
-  page: Page,
-  fileFormats: string,
-  filename = '.ket',
-) {
-  await selectOpenFileTool(page);
-  await page.getByText('Paste from clipboard').click();
-  await page.getByRole('dialog').getByRole('textbox').fill(fileFormats);
-  await selectOptionInDropdown(filename, page);
-
-  await waitForLoad(page, async () => {
-    await pressButton(page, 'Add to Canvas');
   });
 }
 
@@ -494,7 +486,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Ket-structure pasted from the clipboard in Macro mode is visible in Micro mode
     */
-    await pasteFromClipboard(
+    await pasteFromClipboardAndAddToCanvas(
       page,
       FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
     );
@@ -509,10 +501,10 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Mol-structure pasted from the clipboard in Macro mode  is visible in Micro mode
     */
 
-    await pasteFromClipboard(
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
+      MacroFileType.MOLv3000,
       FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
-      '.mol',
     );
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
@@ -596,6 +588,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4094
     Description: There are no errors in DevTool console when switching to full screen mode after switching from micro mode.
     */
+    const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(
@@ -610,7 +603,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await moveMouseAway(page);
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
-    await page.locator('.css-kp5gpq').click();
+    await fullScreenButton.click();
   });
 
   test('Check the pop-up window appear in fullscreen mode after clicking the “Open/Save” button', async () => {
@@ -618,6 +611,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4173
     Description: The pop-up window appear in fullscreen mode after clicking the “Open/Save” button.
     */
+    const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(
@@ -626,7 +620,7 @@ test.describe('Macro-Micro-Switcher', () => {
         );
       }
     });
-    await page.locator('.css-kp5gpq').click();
+    await fullScreenButton.click();
     await selectOpenFileTool(page);
     await takeEditorScreenshot(page);
     await page.getByTitle('Close window').click();
@@ -826,7 +820,7 @@ test.describe('Macro-Micro-Switcher', () => {
         x: 500,
         y: 100,
       };
-      await pasteFromClipboard(
+      await pasteFromClipboardAndAddToCanvas(
         page,
         FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
       );
@@ -851,10 +845,10 @@ test.describe('Macro-Micro-Switcher', () => {
         x: 400,
         y: 100,
       };
-      await pasteFromClipboard(
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
+        MacroFileType.MOLv3000,
         FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
-        '.mol',
       );
       await clickOnCanvas(page, coordsToClick.x, coordsToClick.y);
       await turnOnMacromoleculesEditor(page);

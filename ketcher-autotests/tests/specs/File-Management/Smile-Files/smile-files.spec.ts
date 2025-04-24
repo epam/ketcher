@@ -3,10 +3,8 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   readFileContents,
-  pasteFromClipboard,
   pressButton,
   clickInTheMiddleOfTheScreen,
-  waitForLoad,
   waitForPageInit,
   nonEmptyString,
   pasteFromClipboardAndAddToCanvas,
@@ -17,7 +15,6 @@ import {
 } from '@utils';
 import {
   selectClearCanvasTool,
-  selectOpenFileTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
@@ -44,12 +41,8 @@ async function getAndCompareSmiles(page: Page, smilesFilePath: string) {
 async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
   await pressButton(page, 'Cancel');
   await selectClearCanvasTool(page);
-  await selectOpenFileTool(page);
-  await page.getByText('Paste from clipboard').click();
-  await pasteFromClipboard(page, smiles);
-  await waitForLoad(page, async () => {
-    await pressButton(page, 'Add to Canvas');
-  });
+
+  await pasteFromClipboardAndAddToCanvas(page, smiles);
   await clickInTheMiddleOfTheScreen(page);
 }
 

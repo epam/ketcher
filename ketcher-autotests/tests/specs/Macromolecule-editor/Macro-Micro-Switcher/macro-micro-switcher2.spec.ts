@@ -26,7 +26,6 @@ import {
   pasteFromClipboardByKeyboard,
   copyToClipboardByIcon,
   addMonomersToFavorites,
-  setZoomInputValue,
   resetCurrentTool,
   selectAllStructuresOnCanvas,
   screenshotBetweenUndoRedo,
@@ -51,9 +50,12 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
   selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
+  setZoomInputValue,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Chem } from '@constants/monomers/Chem';

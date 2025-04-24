@@ -23,6 +23,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { clickOnFileFormatDropdown } from '@utils/formats';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 async function selectInChiOption(page: Page) {
   await selectOptionByText(page, 'InChI');
@@ -390,6 +391,7 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1927
      * Description: Open and Save file - InChi for structure
      */
+    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
     await openFileAndAddToCanvas('KET/nonone-chain-structure.ket', page);
     await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
@@ -398,7 +400,7 @@ test.describe('Open and Save InChI file', () => {
       .getByTestId('inChI-preview-area-text')
       .inputValue();
     await copyToClipboardByKeyboard(page);
-    await page.getByTestId('close-icon').click();
+    await closeWindowButton.click();
     await selectClearCanvasTool(page);
     await pasteFromClipboardAndAddToCanvas(page, inChistring);
   });

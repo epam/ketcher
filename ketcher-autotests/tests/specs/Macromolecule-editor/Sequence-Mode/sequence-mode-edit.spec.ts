@@ -56,8 +56,8 @@ import {
   pressRedoButton,
   pressUndoButton,
   selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
   bondSelectionTool,
   selectEraseTool,
@@ -503,7 +503,6 @@ test.describe('Sequence edit mode', () => {
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
-
   test('Validate that it is possible to start new sequence by using UI that appears if user hover mouse between squences', async ({
     page,
   }) => {
@@ -512,7 +511,56 @@ test.describe('Sequence edit mode', () => {
     Description: It is possible to start new sequence by using UI that appears if user hover mouse between squences or below bottom sequence or above the top sequence.
     */
     await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
-    await page.getByTestId('ketcher-canvas').locator('div').click();
+    await page.getByTestId('NewSequencePlusButtonIcon').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify activation area of the plus for adding sequences in sequence mode', async ({
+    page,
+  }) => {
+    /**
+     * Test task: https://github.com/epam/ketcher/issues/6948
+     * Description: Verify activation area of the plus for adding sequences in sequence mode
+     * Scenario:
+     *    1. Type few symbols on the canvas to proceed with edit triangle jump
+     *    2. Hover mouse over Plus icon center
+     *    3. Take a screenshot to validate it's appearence
+     *    4. Hover mouse outside Plus icon area but inside 1+1/4 of icons size (horizontally, one pixel inside the border)
+     *    5. Take a screenshot to validate it's appearence
+     *    6. Hover mouse outside Plus icon area but outside 1+1/4 of icons size (horizontally, one pixel outside the border)
+     *    7. Take a screenshot to validate it's absense
+     **/
+    await keyboardTypeOnCanvas(page, 'aaa');
+    const plusButtonIcon = page
+      .getByTestId('NewSequencePlusButtonIcon')
+      .first();
+    await plusButtonIcon.hover();
+    const box = await plusButtonIcon.boundingBox();
+    await takeEditorScreenshot(page);
+
+    if (!box) {
+      throw new Error('Plus button not visible or not found');
+    }
+    const plusWidth = box.width;
+    const plusHeight = box.height;
+
+    const centerPlus = {
+      x: box.x + plusWidth / 2,
+      y: box.y + plusHeight / 2,
+    };
+
+    await page.mouse.move(
+      centerPlus.x + (3 / 4) * plusWidth - 1,
+      centerPlus.y,
+      { steps: 3 },
+    );
+    await takeEditorScreenshot(page);
+
+    await page.mouse.move(
+      centerPlus.x + (3 / 4) * plusWidth + 10,
+      centerPlus.y,
+      { steps: 3 },
+    );
     await takeEditorScreenshot(page);
   });
 

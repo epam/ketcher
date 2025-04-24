@@ -12,10 +12,8 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
   getSymbolLocator,
   turnSyncEditModeOff,
@@ -562,6 +560,11 @@ const sequences: ISequence[] = [
     Id: 99,
     SequenceName: '(A---p)(A---A)(OA)',
     HELM: 'RNA1{R(A)P.R(A)P}|RNA2{R(U)P.R(U)P}|RNA3{P}|CHEM1{[4aPEGMal]}$RNA1,RNA2,5:pair-5:pair|RNA1,RNA3,2:pair-1:pair|RNA2,RNA3,6:R2-1:R1|RNA1,CHEM1,6:R2-1:R1$$$V2.0',
+    Rotation: true,
+    LeftAnchoredHELM:
+      'RNA1{R(A)P.R(A)P}|RNA2{R(U)P.R(U)P}|RNA3{P}|CHEM1{[4aPEGMal]}|PEPTIDE1{D.D.D.D}$RNA1,RNA2,5:pair-5:pair|RNA1,RNA3,2:pair-1:pair|RNA2,RNA3,6:R2-1:R1|RNA1,CHEM1,6:R2-1:R1|PEPTIDE1,RNA1,4:R2-1:R1$$$V2.0',
+    RightAnchoredHELM:
+      'RNA1{R(A)P.R(A)P}|RNA2{R(U)P.R(U)P}|RNA3{P}|CHEM1{[4aPEGMal]}|PEPTIDE1{D.D.D.D}$RNA1,RNA2,5:pair-5:pair|RNA1,RNA3,2:pair-1:pair|RNA2,RNA3,6:R2-1:R1|RNA1,CHEM1,6:R2-1:R1|CHEM1,PEPTIDE1,1:R2-1:R1$$$V2.0',
   },
   {
     Id: 100,

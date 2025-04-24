@@ -20,8 +20,8 @@ import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
 import {
   pressRedoButton,
   pressUndoButton,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Chem } from '@constants/monomers/Chem';
 import { goToPeptidesTab } from '@utils/macromolecules/library';

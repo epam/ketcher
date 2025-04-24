@@ -15,14 +15,12 @@ import {
   openFileAndAddToCanvasAsNewProject,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
-  SequenceType,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   FILE_TEST_DATA,
   resetZoomLevelToDefault,
   selectSaveFileFormat,
   FileFormatOption,
-  setZoomInputValue,
   resetCurrentTool,
   clickOnCanvas,
   setMolecule,
@@ -41,9 +39,12 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
   selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
+  setZoomInputValue,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import {
   createDNAAntisenseChain,
   createRNAAntisenseChain,
@@ -59,6 +60,7 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
+import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 
 let page: Page;
 
@@ -195,7 +197,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await selectSequenceLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      [MacroFileType.Sequence, SequenceType.RNA],
+      [MacroFileType.Sequence, SequenceMonomerType.RNA],
       'ACGTUNBDHKWYMRSV',
     );
     await selectAllStructuresOnCanvas(page);

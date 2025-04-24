@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { waitForPageInit } from '@utils/common';
 import { takeMonomerLibraryScreenshot } from '@utils';
 import { goToCHEMTab } from '@utils/macromolecules/library';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {

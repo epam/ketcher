@@ -23,7 +23,6 @@ import {
   waitForIndigoToLoad,
   waitForRender,
   resetCurrentTool,
-  pressButton,
   clickAfterItemsToMergeInitialization,
   cutToClipboardByKeyboard,
   copyToClipboardByKeyboard,
@@ -37,6 +36,8 @@ import {
   pressUndoButton,
   selectOpenFileTool,
 } from '@tests/pages/common/TopLeftToolbar';
+import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;
@@ -1056,12 +1057,18 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const smartsString =
       '[#6]-[#6]-[#6]-[#6]-[!#40!#79!#30]-[#6]-[#6]-[#6]-[#6]';
+    const pasteFromClipboardButton =
+      openStructureDialog(page).pasteFromClipboardButton;
+    const openStructureTextarea =
+      pasteFromClipboardDialog(page).openStructureTextarea;
+    const cancelButton = pasteFromClipboardDialog(page).cancelButton;
+
     await selectOpenFileTool(page);
-    await page.getByText('Paste from clipboard').click();
-    await page.getByRole('dialog').getByRole('textbox').fill(smartsString);
+    await pasteFromClipboardButton.click();
+    await openStructureTextarea.fill(smartsString);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await pressButton(page, 'Cancel');
+    await cancelButton.click();
     await page.keyboard.press('Control+Alt+v');
     await clickInTheMiddleOfTheScreen(page);
     await expect(page).toHaveScreenshot();

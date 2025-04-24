@@ -6,7 +6,6 @@ import {
   saveToFile,
   openFile,
   receiveFileComparisonData,
-  selectOptionInDropdown,
   pressButton,
   selectSnakeLayoutModeTool,
   chooseFileFormat,
@@ -15,14 +14,13 @@ import {
   selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
-  TypeDropdownOptions,
   takeEditorScreenshot,
 } from '@utils';
 import {
   selectOpenFileTool,
   selectSaveTool,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { closeErrorMessage } from '@utils/common/helpers';
 import {
   waitForMonomerPreview,
@@ -33,6 +31,8 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 // function removeNotComparableData(file: string) {
 //   return file.replaceAll('\r', '');
@@ -44,7 +44,11 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('Import-Saving .fasta Files', () => {
-  const fastaFileTypes = ['DNA', 'RNA', 'Peptide'] as const;
+  const fastaFileTypes = [
+    SequenceMonomerType.DNA,
+    SequenceMonomerType.RNA,
+    SequenceMonomerType.Peptide,
+  ] as const;
 
   for (const fileType of fastaFileTypes) {
     test(`Import .fasta ${fileType} file`, async ({ page }) => {
@@ -100,9 +104,10 @@ test.describe('Import-Saving .fasta Files', () => {
   test('Check that system does not let importing empty .fasta file', async ({
     page,
   }) => {
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
     await selectOpenFileTool(page);
     await openFile('FASTA/fasta-empty.fasta', page);
-    await expect(page.getByText('Add to Canvas')).toBeDisabled();
+    await expect(addToCanvasButton).toBeDisabled();
   });
 
   // Fail while performance issue on Indigo side
@@ -261,14 +266,9 @@ test.describe('Import-Saving .fasta Files', () => {
   test('Import FASTA: Verify ignoring header during import (i.e. if we load file with header - it will be lost on export - we do not store it)', async ({
     page,
   }) => {
-    test.slow();
-
-    await selectOpenFileTool(page);
-
     const filename = 'FASTA/fasta-rna-musculus-rearranged.fasta';
-    await openFile(filename, page);
-    await selectOptionInDropdown(filename, page);
-    await pressButton(page, 'Add to Canvas');
+
+    await openFileAndAddToCanvasMacro(filename, page);
     await verifyFileExport(
       page,
       'FASTA/fasta-rna-musculus-rearranged-expected.fasta',
@@ -298,14 +298,12 @@ test.describe('Import-Saving .fasta Files', () => {
   test('Import FASTA: Verify recognition of "U" symbol as Selenocysteine for peptide sequences', async ({
     page,
   }) => {
-    await selectOpenFileTool(page);
-
     const filename = 'FASTA/fasta-with-selenocystein.fasta';
-    await openFile(filename, page);
-    await selectOptionInDropdown(filename, page);
-    await page.getByTestId('dropdown-select-type').click();
-    await page.getByText('Peptide', { exact: true }).click();
-    await pressButton(page, 'Add to Canvas');
+    await openFileAndAddToCanvasMacro(
+      filename,
+      page,
+      SequenceMonomerType.Peptide,
+    );
     await selectSequenceLayoutModeTool(page);
     await getSymbolLocator(page, {
       symbolAlias: 'U',
@@ -712,7 +710,7 @@ test.describe('Import correct FASTA file: ', () => {
   interface IFASTAFile {
     FASTADescription: string;
     FASTAFileName: string;
-    FASTAType: TypeDropdownOptions;
+    FASTAType: SequenceMonomerType;
     // Set shouldFail to true if you expect test to fail because of existed bug and put issues link to issueNumber
     shouldFail?: boolean;
     // issueNumber is mandatory if shouldFail === true
@@ -723,28 +721,28 @@ test.describe('Import correct FASTA file: ', () => {
     {
       FASTADescription: '1. Ambiguous (common) Bases with DNA sugar',
       FASTAFileName: 'FASTA/Ambiguous-Monomers/Ambiguous (common) Bases.fasta',
-      FASTAType: 'DNA',
+      FASTAType: SequenceMonomerType.DNA,
       shouldFail: true,
       issueNumber: 'wrong labels screenshots',
     },
     {
       FASTADescription: '2. Ambiguous (common) Bases with RNA sugar',
       FASTAFileName: 'FASTA/Ambiguous-Monomers/Ambiguous (common) Bases.fasta',
-      FASTAType: 'RNA',
+      FASTAType: SequenceMonomerType.RNA,
       shouldFail: true,
       issueNumber: "can't load in rc2",
     },
     {
       FASTADescription: '3. Ambiguous DNA Bases',
       FASTAFileName: 'FASTA/Ambiguous-Monomers/Ambiguous DNA Bases.fasta',
-      FASTAType: 'DNA',
+      FASTAType: SequenceMonomerType.DNA,
       shouldFail: true,
       issueNumber: 'wrong labels screenshots',
     },
     {
       FASTADescription: '4. Ambiguous RNA Bases',
       FASTAFileName: 'FASTA/Ambiguous-Monomers/Ambiguous RNA Bases.fasta',
-      FASTAType: 'RNA',
+      FASTAType: SequenceMonomerType.RNA,
       shouldFail: true,
       issueNumber: 'wrong labels screenshots',
     },
@@ -752,7 +750,7 @@ test.describe('Import correct FASTA file: ', () => {
       FASTADescription: '5. Peptides (that have mapping to library)',
       FASTAFileName:
         'FASTA/Ambiguous-Monomers/Peptides (that have mapping to library).fasta',
-      FASTAType: 'Peptide',
+      FASTAType: SequenceMonomerType.Peptide,
       shouldFail: true,
       issueNumber: 'wrong labels screenshots',
     },

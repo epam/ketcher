@@ -6,17 +6,16 @@ import {
   TopPanelButton,
   readFileContents,
   openFile,
-  pressButton,
   FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  pasteFromClipboard,
   pasteFromClipboardAndAddToCanvas,
-  waitForLoad,
+  pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
 import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { closeErrorAndInfoModals } from '@utils/common/helpers';
 
 async function editText(page: Page, text: string) {
   await page.getByTestId('openStructureModal').getByRole('textbox').click();
@@ -168,15 +167,9 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4008
       Description: Bad data via paste from clipboard 
     */
-    const pasteFromClipboardButton =
-      openStructureDialog(page).pasteFromClipboardButton;
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-
-    await selectOpenFileTool(page);
-    await pasteFromClipboardButton.click();
-    await pasteFromClipboard(page, 'VAAA==');
-    await addToCanvasButton.click();
+    await pasteFromClipboardAndAddToCanvas(page, 'VAAA==', false);
     await takeEditorScreenshot(page);
+    await closeErrorAndInfoModals(page);
   });
 
   test('Paste from clipboard as a new project', async ({ page }) => {
@@ -184,17 +177,10 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4011
       Description: place structure via paste from clipboard 
     */
-    const pasteFromClipboardButton =
-      openStructureDialog(page).pasteFromClipboardButton;
-    await selectOpenFileTool(page);
-    await pasteFromClipboardButton.click();
-    await pasteFromClipboard(
+    await pasteFromClipboardAndOpenAsNewProject(
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
     );
-    await waitForLoad(page, () => {
-      pressButton(page, 'Open as New Project');
-    });
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

@@ -3,9 +3,7 @@ import { commonLeftToolbarLocators } from '@tests/pages/common/CommonLeftToolbar
 import {
   AtomButton,
   clickInTheMiddleOfTheScreen,
-  pressButton,
   takeEditorScreenshot,
-  waitForLoad,
   openFileAndAddToCanvas,
   openPasteFromClipboard,
   waitForPageInit,
@@ -20,6 +18,7 @@ import {
   saveToFile,
   moveOnAtom,
   clickOnCanvas,
+  pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
 import { getKet } from '@utils/formats';
 
@@ -101,10 +100,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
      */
     const smileString = 'C1=CC=CC=C1';
 
-    await openPasteFromClipboard(page, smileString);
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
+    await pasteFromClipboardAndOpenAsNewProject(page, smileString);
     await takeEditorScreenshot(page);
   });
 
@@ -116,10 +112,10 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
      */
     const smileStringWithArrowSymbol = 'C1=CC=CC=C1>>C1=CC=CC=C1';
 
-    await openPasteFromClipboard(page, smileStringWithArrowSymbol);
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
+    await pasteFromClipboardAndOpenAsNewProject(
+      page,
+      smileStringWithArrowSymbol,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -132,13 +128,10 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     const smileString = 'CCCCCC';
     const incorrectSmileString = 'CCCCC0';
 
-    await openPasteFromClipboard(page, smileString);
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
+    await pasteFromClipboardAndOpenAsNewProject(page, smileString);
 
-    await openPasteFromClipboard(page, incorrectSmileString);
-    await pressButton(page, 'Open as New Project');
+    await pasteFromClipboardAndOpenAsNewProject(page, incorrectSmileString);
+
     const convertErrorMessage = await page
       .getByTestId('info-modal-body')
       .textContent();

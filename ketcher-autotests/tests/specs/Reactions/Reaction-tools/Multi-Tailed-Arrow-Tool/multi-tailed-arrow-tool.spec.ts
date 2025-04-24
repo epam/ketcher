@@ -451,8 +451,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     const fileContent = await readFileContents(
       'tests/test-data/KET/three-different-multi-tail-arrows.ket',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Open as New Project');
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

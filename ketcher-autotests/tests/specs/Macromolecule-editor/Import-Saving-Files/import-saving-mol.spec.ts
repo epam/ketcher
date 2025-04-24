@@ -5,7 +5,6 @@ import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
   openFromFileViaClipboard,
-  readFileContents,
   takeEditorScreenshot,
   waitForPageInit,
   getMolfile,
@@ -20,6 +19,8 @@ import {
   moveMouseAway,
   resetZoomLevelToDefault,
   MonomerType,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  MacroFileType,
 } from '@utils';
 import {
   selectClearCanvasTool,
@@ -40,7 +41,6 @@ import {
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
   FileType,
@@ -104,16 +104,14 @@ test.describe('Import-Saving .mol Files', () => {
 
   test('Import incorrect data', async () => {
     const randomText = 'asjfnsalkfl';
-    const pasteFromClipboardButton =
-      openStructureDialog(page).pasteFromClipboardButton;
-    const openStructureTextarea =
-      pasteFromClipboardDialog(page).openStructureTextarea;
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
 
-    await selectOpenFileTool(page);
-    await pasteFromClipboardButton.click();
-    await openStructureTextarea.fill(randomText);
-    await addToCanvasButton.click();
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.Ket,
+      randomText,
+      // error expected
+      true,
+    );
     await takeEditorScreenshot(page);
 
     await closeErrorAndInfoModals(page);

@@ -1,7 +1,8 @@
 import 'ketcher-react/dist/index.css';
 
-import { useEffect, useState } from 'react';
+import { SyntheticEvent, useEffect, useState } from 'react';
 import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
+import { Dialog } from '@mui/material';
 import { Ketcher, StructServiceProvider } from 'ketcher-core';
 import { getStructServiceProvider } from './utils';
 
@@ -22,6 +23,8 @@ const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig();
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [moleculeInput, setMoleculeInput] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
 
   const [structServiceProvider, setStructServiceProvider] =
     useState<StructServiceProvider | null>(null);
@@ -35,39 +38,58 @@ const App = () => {
 
   return (
     <>
-      <Editor
-        errorHandler={(message: string) => {
-          setHasError(true);
-          setErrorMessage(message.toString());
-        }}
-        buttons={hiddenButtonsConfig}
-        staticResourcesUrl={process.env.PUBLIC_URL}
-        structServiceProvider={structServiceProvider}
-        onInit={(ketcher: Ketcher) => {
-          window.ketcher = ketcher;
-
-          window.parent.postMessage(
-            {
-              eventType: 'init',
-            },
-            '*',
-          );
-          window.scrollTo(0, 0);
-        }}
+      <textarea
+        onInput={(e: SyntheticEvent<HTMLTextAreaElement>) =>
+          setMoleculeInput(e.currentTarget.value)
+        }
       />
-      {hasError && (
-        <InfoModal
-          message={errorMessage}
-          close={() => {
-            setHasError(false);
+      <button
+        style={{
+          position: 'relative',
+          zIndex: 99999,
+        }}
+        onClick={() => {
+          setIsOpen(!isOpen);
+        }}
+      >
+        Heelllooo
+      </button>
+      <Dialog open={isOpen} fullScreen={false} maxWidth="xl">
+        <Editor
+          errorHandler={(message: string) => {
+            setHasError(true);
+            setErrorMessage(message.toString());
+          }}
+          buttons={hiddenButtonsConfig}
+          staticResourcesUrl={process.env.PUBLIC_URL}
+          structServiceProvider={structServiceProvider}
+          onInit={(ketcher: Ketcher) => {
+            window.ketcher = ketcher;
 
-            // Focus on editor after modal is closed
-            const cliparea: HTMLElement | null =
-              document.querySelector('.cliparea');
-            cliparea?.focus();
+            window.parent.postMessage(
+              {
+                eventType: 'init',
+              },
+              '*',
+            );
+            window.scrollTo(0, 0);
+            ketcher.setMolecule(moleculeInput);
           }}
         />
-      )}
+        {hasError && (
+          <InfoModal
+            message={errorMessage}
+            close={() => {
+              setHasError(false);
+
+              // Focus on editor after modal is closed
+              const cliparea: HTMLElement | null =
+                document.querySelector('.cliparea');
+              cliparea?.focus();
+            }}
+          />
+        )}
+      </Dialog>
     </>
   );
 };

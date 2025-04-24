@@ -1,13 +1,11 @@
 import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  openFile,
-  pressButton,
   takeEditorScreenshot,
   openFromFileViaClipboard,
-  waitForLoad,
   openFileAndAddToCanvas,
   waitForPageInit,
+  openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
@@ -142,11 +140,10 @@ test.describe('open files with different formats', () => {
      * Description: Open structures from mol file
      */
     // add first structure from clipboard to canvas
-    await selectOpenFileTool(page);
-    await openFile('Molfiles-V3000/a-query-notList.mol', page);
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/a-query-notList.mol',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -156,11 +153,10 @@ test.describe('open files with different formats', () => {
      * Description: Open structures from mol file
      */
     // add first stucture from clipboard to canvas
-    await selectOpenFileTool(page);
-    await openFile('Molfiles-V3000/dhis-prohibit-atoms.mol', page);
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/dhis-prohibit-atoms.mol',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 

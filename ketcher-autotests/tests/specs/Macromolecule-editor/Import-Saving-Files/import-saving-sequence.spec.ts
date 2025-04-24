@@ -26,7 +26,6 @@ import {
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
   PeptideLetterCodeType,
@@ -69,17 +68,11 @@ test.describe('Import-Saving .seq Files', () => {
     const fileContent = await readFileContents(
       'tests/test-data/Sequence/sequence-fasta-single-chain.seq',
     );
-    const pasteFromClipboardButton =
-      openStructureDialog(page).pasteFromClipboardButton;
-    const openStructureTextarea =
-      pasteFromClipboardDialog(page).openStructureTextarea;
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-
-    await selectOpenFileTool(page);
-    await pasteFromClipboardButton.click();
-    await openStructureTextarea.fill(fileContent);
-    await chooseFileFormat(page, 'Sequence');
-    await addToCanvasButton.click();
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      [MacroFileType.Sequence, SequenceMonomerType.RNA],
+      fileContent,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -158,20 +151,7 @@ test.describe('Import-Saving .seq Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, 'Sequence (1-letter code)');
-    await page
-      .getByTestId('dropdown-select')
-      .getByRole('combobox')
-      .allInnerTexts();
-
-    const textArea = page.getByTestId('preview-area-text');
-    const file = await readFileContents(
-      'tests/test-data/Sequence/sequence-rna-a.seq',
-    );
-    const expectedData = file;
-    const valueInTextarea = await textArea.inputValue();
-    expect(valueInTextarea).toBe(expectedData);
+    await verifyFileExport(page, 'Sequence/sequence-rna-a.seq', FileType.SEQ);
   });
 
   // Should not convert to Sequence type in case of there are more than one monomer type
@@ -208,23 +188,19 @@ test.describe('Import-Saving .seq Files', () => {
     */
       const Rna = 'acgtu';
       const Dna = 'acgtu';
-      const pasteFromClipboardButton =
-        openStructureDialog(page).pasteFromClipboardButton;
-      const openStructureTextarea =
-        pasteFromClipboardDialog(page).openStructureTextarea;
-      const addToCanvasButton =
-        pasteFromClipboardDialog(page).addToCanvasButton;
 
-      await selectOpenFileTool(page);
-      await pasteFromClipboardButton.click();
-      await openStructureTextarea.fill(Rna);
-      await chooseFileFormat(page, 'Sequence');
-      await addToCanvasButton.click();
-      await selectOpenFileTool(page);
-      await pasteFromClipboardButton.click();
-      await openStructureTextarea.fill(Dna);
-      await chooseFileFormat(page, 'Sequence');
-      await addToCanvasButton.click();
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        [MacroFileType.Sequence, SequenceMonomerType.RNA],
+        Rna,
+      );
+
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        [MacroFileType.Sequence, SequenceMonomerType.DNA],
+        Dna,
+      );
+
       await takeEditorScreenshot(page);
     },
   );

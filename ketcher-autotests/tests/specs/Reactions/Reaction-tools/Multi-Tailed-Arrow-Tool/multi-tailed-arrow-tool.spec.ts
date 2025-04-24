@@ -39,6 +39,7 @@ import {
   waitForRender,
   getCoordinatesOfTheMiddleOfTheScreen,
   pasteFromClipboardAndAddToCanvas,
+  pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -451,8 +452,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     const fileContent = await readFileContents(
       'tests/test-data/KET/three-different-multi-tail-arrows.ket',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Open as New Project');
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

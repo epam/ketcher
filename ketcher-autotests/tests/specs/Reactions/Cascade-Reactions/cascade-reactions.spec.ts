@@ -102,10 +102,14 @@ test.describe('Cascade Reactions', () => {
     We have a bug https://github.com/epam/ketcher/issues/5273
     After fix we should update snapshot.
     */
-    await selectOpenFileTool(page);
-    await openFile('RDF-V2000/rdf-mol-v2000-no-reaction-3-elements.rdf', page);
-    await pressButton(page, 'Open as New Project');
+    await openFileAndAddToCanvasAsNewProject(
+      'RDF-V2000/rdf-mol-v2000-no-reaction-3-elements.rdf',
+      page,
+      // error expected
+      true,
+    );
     await takeEditorScreenshot(page);
+    await closeErrorAndInfoModals(page);
   });
 
   test('Verify that RDF file with elements without reaction MOL V3000 cant be loaded and error is displayed', async () => {
@@ -114,9 +118,12 @@ test.describe('Cascade Reactions', () => {
     Description: RDF file with elements without reaction MOL V3000 can't be loaded and error is displayed - 
     Convert error! struct data not recognized as molecule, query, reaction or reaction query. 
     */
-    await selectOpenFileTool(page);
-    await openFile('RDF-V3000/rdf-mol-v3000-no-reaction-3-elements.rdf', page);
-    await pressButton(page, 'Open as New Project');
+    await openFileAndAddToCanvasAsNewProject(
+      'RDF-V3000/rdf-mol-v3000-no-reaction-3-elements.rdf',
+      page,
+      // error expected
+      true,
+    );
     await takeEditorScreenshot(page);
   });
 

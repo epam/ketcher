@@ -14,7 +14,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   getMolfile,
   getSequence,
-  openFile,
   getFasta,
   openFileAndAddToCanvasAsNewProjectMacro,
   delay,
@@ -47,7 +46,6 @@ import {
   pressRedoButton,
   pressUndoButton,
   selectClearCanvasTool,
-  selectOpenFileTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   topRightToolbarLocators,
@@ -60,7 +58,6 @@ import {
 } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { chooseTab, Tabs } from '@utils/macromolecules';
-import { monomerTypeSelection } from '@tests/pages/common/PasteFromClipboardDialog';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 
 let page: Page;
@@ -598,10 +595,13 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
     });
 
   expect(fastaFile).toEqual(fastaFileExpected);
-  await selectOpenFileTool(page);
-  await openFile('FASTA/two-peptides-connected-expected.fasta', page);
-  await monomerTypeSelection(page, SequenceMonomerType.Peptide);
-  await pressButton(page, 'Open as New');
+
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'FASTA/two-peptides-connected-expected.fasta',
+    page,
+    SequenceMonomerType.Peptide,
+  );
+
   await bondSelectionTool(page, MacroBondType.Single);
   await bondLine.hover();
   await takeEditorScreenshot(page, {

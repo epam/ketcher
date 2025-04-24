@@ -29,7 +29,9 @@ import {
 } from '@tests/pages/constants/monomers/Constants';
 
 export async function readFileContents(filePath: string) {
-  const resolvedFilePath = path.resolve(process.cwd(), filePath);
+  // const resolvedFilePath = path.resolve(process.cwd(), filePath);
+  const projectRoot = path.resolve(__dirname, '../../..');
+  const resolvedFilePath = path.resolve(projectRoot, filePath);
   return fs.promises.readFile(resolvedFilePath, 'utf8');
 }
 
@@ -39,13 +41,6 @@ export async function openFile(filename: string, page: Page) {
   const fileChooserPromise = page.waitForEvent('filechooser');
   await openFromFileButton.click();
   const fileChooser = await fileChooserPromise;
-
-  // const [fileChooser] = await Promise.all([
-  //   // It is important to call waitForEvent before click to set up waiting.
-  //   page.waitForEvent('filechooser'),
-  //   // Opens the file chooser.
-  //   openFromFileButton.click(),
-  // ]);
   await fileChooser.setFiles(`tests/test-data/${filename}`);
 }
 
@@ -57,22 +52,20 @@ export async function selectOptionInDropdown(filename: string, page: Page) {
     seq: 'Sequence',
   };
   const optionText = (options as any)[extention];
-  const selector = page.getByTestId('dropdown-select');
-  const selectorExists = await selector.isVisible();
+  const contentTypeSelector =
+    pasteFromClipboardDialog(page).contentTypeSelector;
+  const selectorExists = await contentTypeSelector.isVisible();
 
   if (selectorExists && extention && extention !== 'ket' && optionText) {
-    const selectorText = (await selector.innerText()).replace(
+    const selectorText = (await contentTypeSelector.innerText()).replace(
       /(\r\n|\n|\r)/gm,
       '',
     );
-    await selector.getByText(selectorText).click();
+    await contentTypeSelector.getByText(selectorText).click();
     const option = page.getByRole('option');
     await option.getByText(optionText).click();
     // to stabilize the test
-    await page
-      .getByTestId('dropdown-select')
-      .getByRole('combobox')
-      .allInnerTexts();
+    await contentTypeSelector.getByRole('combobox').allInnerTexts();
   }
 }
 
@@ -135,7 +128,10 @@ export async function openFileAndAddToCanvasAsNewProjectMacro(
   filename: string,
   page: Page,
   typeDropdownOption?: SequenceMonomerType,
+  errorExpected = false,
 ) {
+  const openAsNewButton = pasteFromClipboardDialog(page).openAsNewButton;
+
   await selectOpenFileTool(page);
   await openFile(filename, page);
 
@@ -146,30 +142,45 @@ export async function openFileAndAddToCanvasAsNewProjectMacro(
     await monomerTypeSelection(page, typeDropdownOption);
   }
 
-  await waitForLoad(page, async () => {
-    await pressButton(page, 'Open as New');
-  });
+  if (!errorExpected) {
+    await waitForLoad(page, async () => {
+      await openAsNewButton.click();
+    });
+  } else {
+    await openAsNewButton.click();
+  }
 }
 
 export async function openFileAndAddToCanvasAsNewProject(
   filename: string,
   page: Page,
+  errorExpected = false,
 ) {
+  const openAsNewButton = pasteFromClipboardDialog(page).openAsNewButton;
+
   await selectOpenFileTool(page);
   await openFile(filename, page);
 
   await selectOptionInDropdown(filename, page);
 
-  await waitForLoad(page, async () => {
-    const openAsNewProjectButton = await page.$(
-      'button[data-id="Open as New Project"]',
-    );
-    if (openAsNewProjectButton) {
-      await pressButton(page, 'Open as New Project');
-    } else {
-      await pressButton(page, 'Open as New');
-    }
-  });
+  if (!errorExpected) {
+    await waitForLoad(page, async () => {
+      await openAsNewButton.click();
+    });
+  } else {
+    await openAsNewButton.click();
+  }
+
+  // await waitForLoad(page, async () => {
+  //   const openAsNewProjectButton = await page.$(
+  //     'button[data-id="Open as New Project"]',
+  //   );
+  //   if (openAsNewProjectButton) {
+  //     await pressButton(page, 'Open as New Project');
+  //   } else {
+  //     await pressButton(page, 'Open as New');
+  //   }
+  // });
 }
 
 export async function openImageAndAddToCanvas(
@@ -236,16 +247,17 @@ export async function pasteFromClipboardAndOpenAsNewProject(
     openStructureDialog(page).pasteFromClipboardButton;
   const openStructureTextarea =
     pasteFromClipboardDialog(page).openStructureTextarea;
+  const openAsNewButton = pasteFromClipboardDialog(page).openAsNewButton;
 
   await selectOpenFileTool(page);
   await pasteFromClipboardButton.click();
   await openStructureTextarea.fill(fillStructure);
   if (needToWait) {
     await waitForLoad(page, async () => {
-      await pressButton(page, 'Open as New Project');
+      await openAsNewButton.click();
     });
   } else {
-    await pressButton(page, 'Open as New Project');
+    await openAsNewButton.click();
   }
 }
 
@@ -439,18 +451,6 @@ export async function saveToFile(filename: string, data: string) {
       'utf-8',
     );
   }
-}
-
-/*
-Example of usage:
-await openFileAndAddToCanvas('KET/benzene-arrow-benzene-reagent-hcl.ket', page);
-const rxnFile = await getRxn(page, 'v3000');
-await saveToFile('Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn', rxnFile); */
-export async function pasteFromClipboard(page: Page, fillValue: string) {
-  const openStructureTextarea =
-    pasteFromClipboardDialog(page).openStructureTextarea;
-
-  await openStructureTextarea.fill(fillValue);
 }
 
 export async function openPasteFromClipboard(

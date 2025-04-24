@@ -802,16 +802,15 @@ async function checkForKnownBugs(
 }
 
 async function closeErrorMessage(page: Page) {
-  const errorMessage = await page.getByText('Error message', {
+  const errorMessage = page.getByText('Error message', {
     exact: true,
   });
-  const closeWindowButton = await page.getByRole('button', {
+  const closeWindowButton = page.getByRole('button', {
     name: 'Close window',
   });
 
   await closeWindowButton.click();
   await errorMessage.waitFor({ state: 'hidden' });
-  // await closeWindowButton.click();
 }
 
 for (const replaceMonomer of replaceMonomers) {

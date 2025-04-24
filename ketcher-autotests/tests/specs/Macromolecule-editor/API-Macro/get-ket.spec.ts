@@ -30,7 +30,7 @@ test.describe('getKet', () => {
     const ket = await getKet(page);
     await saveToFile('KET/alanine-monomers-bonded-expected.ket', ket);
     const fileContents = await readFileContents(
-      'tests/test-data/KET/alanine-monomers-bonded-expected.ket',
+      'KET/alanine-monomers-bonded-expected.ket',
     );
     expect(ket).toBe(fileContents);
   });

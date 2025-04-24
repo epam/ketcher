@@ -131,7 +131,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
       const closeWindowButton =
         pasteFromClipboardDialog(page).closeWindowButton;
       const fileContent = await readFileContents(
-        'tests/test-data/KET/single-fragment-for-paste.ket',
+        'KET/single-fragment-for-paste.ket',
       );
       await openPasteFromClipboard(page, fileContent);
       await selectAllStructuresOnCanvas(page);
@@ -247,7 +247,7 @@ test.describe('Sequence-edit mode', () => {
   //   Description: Sequence pasted on canvas.
   //   */
   //   const fileContent = await readFileContents(
-  //     'tests/test-data/Sequence/sequence-500-symbols.seq',
+  //     'Sequence/sequence-500-symbols.seq',
   //   );
   //   await openPasteFromClipboard(page, fileContent);
   //   await selectAllStructuresOnCanvas(page);

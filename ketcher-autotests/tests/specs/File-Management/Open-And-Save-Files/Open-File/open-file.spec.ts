@@ -52,10 +52,7 @@ test.describe('open files with different formats', () => {
      */
     // add first stucture from clipboard to canvas
     await selectOpenFileTool(page);
-    await openFromFileViaClipboard(
-      'tests/test-data/Txt/1840225-mol-1.txt',
-      page,
-    );
+    await openFromFileViaClipboard('Txt/1840225-mol-1.txt', page);
     await clickInTheMiddleOfTheScreen(page);
 
     // add second structure from file to canvas
@@ -75,10 +72,7 @@ test.describe('open files with different formats', () => {
      */
     // add first stucture from clipboard to canvas
     await selectOpenFileTool(page);
-    await openFromFileViaClipboard(
-      'tests/test-data/Txt/1879938-rxn-1[1].txt',
-      page,
-    );
+    await openFromFileViaClipboard('Txt/1879938-rxn-1[1].txt', page);
     // add second structure from file to canvas
     await openFileAndAddToCanvas(
       'Rxn-V2000/rxn-reaction.rxn',
@@ -96,10 +90,7 @@ test.describe('open files with different formats', () => {
      */
     // add first stucture from clipboard to canvas
     await selectOpenFileTool(page);
-    await openFromFileViaClipboard(
-      'tests/test-data/Txt/1837-inchi-1.txt',
-      page,
-    );
+    await openFromFileViaClipboard('Txt/1837-inchi-1.txt', page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -111,10 +102,7 @@ test.describe('open files with different formats', () => {
      */
     // add first stucture from clipboard to canvas
     await selectOpenFileTool(page);
-    await openFromFileViaClipboard(
-      'tests/test-data/Txt/1837-inchi-2.txt',
-      page,
-    );
+    await openFromFileViaClipboard('Txt/1837-inchi-2.txt', page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -126,10 +114,7 @@ test.describe('open files with different formats', () => {
      */
     // add first structure from clipboard to canvas
     await selectOpenFileTool(page);
-    await openFromFileViaClipboard(
-      'tests/test-data/Txt/1837-inchi-3.txt',
-      page,
-    );
+    await openFromFileViaClipboard('Txt/1837-inchi-3.txt', page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

@@ -153,7 +153,7 @@ test.describe('Text tools test cases', () => {
   test('Open saved .ket file', async ({ page }) => {
     // Test case: EPMLSOPKET-2235
     await selectOpenFileTool(page);
-    await openFromFileViaClipboard('tests/test-data/KET/ketfile01.ket', page);
+    await openFromFileViaClipboard('KET/ketfile01.ket', page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await page.getByText('TEST321').dblclick();
@@ -217,7 +217,7 @@ test.describe('Text tools test cases', () => {
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await pressButton(page, 'Apply');
-    await openFromFileViaTextBox('tests/test-data/Txt/longtext_test.txt', page);
+    await openFromFileViaTextBox('Txt/longtext_test.txt', page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -226,10 +226,7 @@ test.describe('Text tools test cases', () => {
     // Test case: EPMLSOPKET-5253
     // Verify if possible is add UTF-8 data format  to canvas
     await selectOpenFileTool(page);
-    await openFromFileViaClipboard(
-      'tests/test-data/KET/utf-8-svg-png.ket',
-      page,
-    );
+    await openFromFileViaClipboard('KET/utf-8-svg-png.ket', page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

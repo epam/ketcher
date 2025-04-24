@@ -98,7 +98,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     After fix we need update screenshot.
     */
       const MolV2000File = await readFileContents(
-        'tests/test-data/Molfiles-V2000/aromatized-benzene-ring.mol',
+        'Molfiles-V2000/aromatized-benzene-ring.mol',
       );
       await clickInTheMiddleOfTheScreen(page);
       await enableDearomatizeOnLoad(page);
@@ -195,7 +195,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description:  Molecule set and get using V3000 format
     */
     const orEnantiomer = await readFileContents(
-      'tests/test-data/Molfiles-V3000/or-enantiomer.mol',
+      'Molfiles-V3000/or-enantiomer.mol',
     );
     await waitForSpinnerFinishedWork(
       page,
@@ -790,7 +790,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       3. Take a screenshot
     */
     const MolV2000File = await readFileContents(
-      'tests/test-data/Molfiles-V2000/non-proprietary-structure.mol',
+      'Molfiles-V2000/non-proprietary-structure.mol',
     );
     await applyIgnoreChiralFlag(page);
     await waitForSpinnerFinishedWork(
@@ -813,7 +813,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       4. Take a screenshot
     */
     const MolV2000File = await readFileContents(
-      'tests/test-data/Molfiles-V2000/non-proprietary-structure.mol',
+      'Molfiles-V2000/non-proprietary-structure.mol',
     );
     await waitForSpinnerFinishedWork(
       page,

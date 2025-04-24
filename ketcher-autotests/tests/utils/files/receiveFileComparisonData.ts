@@ -93,7 +93,7 @@ export async function verifyFileExport(
   // and file content from memory (named as file) from unnessusary data
   const { fileExpected, file } = await receiveFileComparisonData({
     page,
-    expectedFileName: `tests/test-data/${expectedFilename}`,
+    expectedFileName: `${expectedFilename}`,
     fileFormat: format,
     metaDataIndexes,
   });

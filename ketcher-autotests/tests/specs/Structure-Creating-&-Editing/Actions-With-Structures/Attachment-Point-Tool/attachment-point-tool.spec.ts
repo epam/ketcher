@@ -415,7 +415,7 @@ test.describe('Attachment Point Tool', () => {
         page,
         metaDataIndexes: METADATA_STRING_INDEX,
         expectedFileName:
-          'tests/test-data/Molfiles-V2000/chain-with-attachment-points-expected.mol',
+          'Molfiles-V2000/chain-with-attachment-points-expected.mol',
       });
     expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
@@ -439,7 +439,7 @@ test.describe('Attachment Point Tool', () => {
         page,
         metaDataIndexes: METADATA_STRING_INDEX,
         expectedFileName:
-          'tests/test-data/Molfiles-V2000/chain-with-attachment-points-expected.mol',
+          'Molfiles-V2000/chain-with-attachment-points-expected.mol',
       });
     expect(molFile).toEqual(molFileExpected);
     await takeEditorScreenshot(page);
@@ -529,8 +529,7 @@ test.describe('Attachment Point Tool', () => {
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName:
-          'tests/test-data/SMILES/chain-with-attachment-points-expected.smi',
+        expectedFileName: 'SMILES/chain-with-attachment-points-expected.smi',
       });
     expect(smiFile).toEqual(smiFileExpected);
     await takeEditorScreenshot(page);
@@ -555,8 +554,7 @@ test.describe('Attachment Point Tool', () => {
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName:
-          'tests/test-data/SMILES/chain-with-attachment-points-expected.smi',
+        expectedFileName: 'SMILES/chain-with-attachment-points-expected.smi',
       });
     expect(smiFile).toEqual(smiFileExpected);
     await takeEditorScreenshot(page);

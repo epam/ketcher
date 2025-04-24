@@ -2229,7 +2229,7 @@ test(`28. Verify saving and reopening a structure with replaced monomers in KET`
     await receiveFileComparisonData({
       page,
       expectedFileName:
-        'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.ket',
+        'Common/Sequence-Mode-Replacement/replacement-expected.ket',
     });
 
   expect(ketFile).toEqual(ketFileExpected);
@@ -2284,7 +2284,7 @@ test(`29. Verify saving and reopening a structure with replaced monomers in MOL 
     await receiveFileComparisonData({
       page,
       expectedFileName:
-        'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.mol',
+        'Common/Sequence-Mode-Replacement/replacement-expected.mol',
       fileFormat: 'v3000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
@@ -2341,7 +2341,7 @@ test(`30. Verify saving and reopening a structure with replaced monomers in Sequ
     await receiveFileComparisonData({
       page,
       expectedFileName:
-        'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.seq',
+        'Common/Sequence-Mode-Replacement/replacement-expected.seq',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 
@@ -2396,7 +2396,7 @@ test(`31. Verify saving and reopening a structure with replaced monomers in FAST
     await receiveFileComparisonData({
       page,
       expectedFileName:
-        'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.fasta',
+        'Common/Sequence-Mode-Replacement/replacement-expected.fasta',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 

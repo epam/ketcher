@@ -435,7 +435,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * with correct positions and parameters using "PASTE FROM CLIPBOARD - Add to Canvas"
      */
     const fileContent = await readFileContents(
-      'tests/test-data/KET/three-different-multi-tail-arrows.ket',
+      'KET/three-different-multi-tail-arrows.ket',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
@@ -450,7 +450,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Three different Multi-Tailed Arrows are copied from .ket format and added to the center of Canvas using "PASTE FROM CLIPBOARD - Open as New Project"
      */
     const fileContent = await readFileContents(
-      'tests/test-data/KET/three-different-multi-tail-arrows.ket',
+      'KET/three-different-multi-tail-arrows.ket',
     );
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
@@ -466,7 +466,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * with correct positions and sizes of spines, tails and heads
      */
     const fileContent = await readFileContents(
-      'tests/test-data/KET/three-different-multi-tail-arrows.ket',
+      'KET/three-different-multi-tail-arrows.ket',
     );
     await openPasteFromClipboard(page, fileContent);
     await selectAllStructuresOnCanvas(page);

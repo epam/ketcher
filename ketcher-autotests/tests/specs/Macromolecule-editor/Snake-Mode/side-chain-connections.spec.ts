@@ -93,7 +93,7 @@ async function saveToKet(page: Page, fileName: string) {
   const { fileExpected: ketFileExpected, file: ketFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: `tests/test-data/KET/Side-Chain-Connections/${fileName}`,
+      expectedFileName: `KET/Side-Chain-Connections/${fileName}`,
     });
 
   expect(ketFile).toEqual(ketFileExpected);
@@ -107,7 +107,7 @@ async function saveToMol(page: Page, fileName: string) {
   const { fileExpected: molFileExpected, file: molFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName: `tests/test-data/KET/Side-Chain-Connections/${fileName}`,
+      expectedFileName: `KET/Side-Chain-Connections/${fileName}`,
       metaDataIndexes: [ignoredLineIndigo],
       fileFormat: 'v3000',
     });

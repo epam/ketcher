@@ -58,10 +58,7 @@ test.describe('SMILES files', () => {
     versa structure is correctly generated from SmileString.
     */
     await openFileAndAddToCanvas('KET/all-type-bonds.ket', page);
-    await getAndCompareSmiles(
-      page,
-      'tests/test-data/JSON/smiles-all-bonds-expected.json',
-    );
+    await getAndCompareSmiles(page, 'JSON/smiles-all-bonds-expected.json');
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await moveMouseAway(page);
@@ -80,7 +77,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('KET/all-atoms-properties.ket', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/JSON/smiles-all-atoms-properties-expected.json',
+      'JSON/smiles-all-atoms-properties-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -115,10 +112,7 @@ test.describe('SMILES files', () => {
     Description: In Daylight SMILES the structure will be saved without S-groups
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sgroups-diff-symyx.mol', page);
-    await getAndCompareSmiles(
-      page,
-      'tests/test-data/JSON/sgroups-diff-symyx-expected.json',
-    );
+    await getAndCompareSmiles(page, 'JSON/sgroups-diff-symyx-expected.json');
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await moveMouseAway(page);
@@ -143,10 +137,7 @@ test.describe('SMILES files', () => {
       'Molfiles-V2000/heteroatoms-structure.mol',
       page,
     );
-    await getAndCompareSmiles(
-      page,
-      'tests/test-data/JSON/smiles-heteroatoms-expected.json',
-    );
+    await getAndCompareSmiles(page, 'JSON/smiles-heteroatoms-expected.json');
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await moveMouseAway(page);
@@ -166,10 +157,7 @@ test.describe('SMILES files', () => {
     and bonds that are not supported in the SMILES. Query properties will not be reflected in the saved file
     */
     await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
-    await getAndCompareSmiles(
-      page,
-      'tests/test-data/JSON/attached-data-expected.json',
-    );
+    await getAndCompareSmiles(page, 'JSON/attached-data-expected.json');
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await page.getByText('Warnings').click();
@@ -193,10 +181,7 @@ test.describe('SMILES files', () => {
     All stereobonds are displayed as in a mol-file.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/V2000-abs.mol', page);
-    await getAndCompareSmiles(
-      page,
-      'tests/test-data/JSON/smiles-v2000-abs-expected.json',
-    );
+    await getAndCompareSmiles(page, 'JSON/smiles-v2000-abs-expected.json');
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await moveMouseAway(page);
@@ -224,7 +209,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/different-features.mol', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/JSON/smiles-different-features-expected.json',
+      'JSON/smiles-different-features-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -250,7 +235,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/cis-trans-cycle.mol', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/JSON/smiles-cis-trans-cycle-expected.json',
+      'JSON/smiles-cis-trans-cycle-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -275,7 +260,7 @@ test.describe('SMILES files', () => {
     await openFileAndAddToCanvas('KET/alias-pseudoatom.ket', page);
     await getAndCompareSmiles(
       page,
-      'tests/test-data/JSON/smiles-alias-pseudoatom-expected.json',
+      'JSON/smiles-alias-pseudoatom-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -298,7 +283,7 @@ test.describe('SMILES files', () => {
       await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
       await getAndCompareSmiles(
         page,
-        'tests/test-data/JSON/smiles-two-arrows-and-plus-expected.json',
+        'JSON/smiles-two-arrows-and-plus-expected.json',
       );
 
       await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -326,7 +311,7 @@ test.describe('SMILES files', () => {
     );
     await getAndCompareSmiles(
       page,
-      'tests/test-data/JSON/smiles-benzene-arrow-benzene-reagent-nh3-expected.json',
+      'JSON/smiles-benzene-arrow-benzene-reagent-nh3-expected.json',
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -349,7 +334,7 @@ test.describe('SMILES files', () => {
     );
     await getAndCompareSmiles(
       page,
-      'tests/test-data/SMILES/structure-with-s-group-properties.smi',
+      'SMILES/structure-with-s-group-properties.smi',
     );
     await page.getByText('info2').dblclick();
     await takeEditorScreenshot(page);
@@ -416,8 +401,7 @@ test.describe('SMILES files', () => {
     const { fileExpected: smilesFileExpected, file: smilesFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName:
-          'tests/test-data/SMILES/unsplit-nucleotides-connected-with-chems.smi',
+        expectedFileName: 'SMILES/unsplit-nucleotides-connected-with-chems.smi',
       });
 
     expect(smilesFile).toEqual(smilesFileExpected);
@@ -450,7 +434,7 @@ test.describe('SMILES files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
+          'SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
       });
 
     expect(smilesFile).toEqual(smilesFileExpected);
@@ -482,8 +466,7 @@ test.describe('SMILES files', () => {
     const { fileExpected: smilesFileExpected, file: smilesFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName:
-          'tests/test-data/SMILES/unsplit-nucleotides-connected-with-bases.smi',
+        expectedFileName: 'SMILES/unsplit-nucleotides-connected-with-bases.smi',
       });
 
     expect(smilesFile).toEqual(smilesFileExpected);
@@ -516,7 +499,7 @@ test.describe('SMILES files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/SMILES/unsplit-nucleotides-connected-with-sugars.smi',
+          'SMILES/unsplit-nucleotides-connected-with-sugars.smi',
       });
 
     expect(smilesFile).toEqual(smilesFileExpected);
@@ -549,7 +532,7 @@ test.describe('SMILES files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/SMILES/unsplit-nucleotides-connected-with-peptides.smi',
+          'SMILES/unsplit-nucleotides-connected-with-peptides.smi',
       });
 
     expect(smilesFile).toEqual(smilesFileExpected);
@@ -582,7 +565,7 @@ test.describe('SMILES files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
+          'SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
       });
 
     expect(smilesFile).toEqual(smilesFileExpected);
@@ -620,7 +603,7 @@ test.describe('SMILES files', () => {
     } = await receiveFileComparisonData({
       page,
       expectedFileName:
-        'tests/test-data/Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
+        'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
     });
 
     expect(extendedsmilesFile).toEqual(extendedsmilesFileExpected);
@@ -658,7 +641,7 @@ test.describe('SMILES files', () => {
     } = await receiveFileComparisonData({
       page,
       expectedFileName:
-        'tests/test-data/Extended-SMILES/unsplit-nucleotides-connected-with-nucleotides.cxsmi',
+        'Extended-SMILES/unsplit-nucleotides-connected-with-nucleotides.cxsmi',
     });
 
     expect(extendedsmilesFile).toEqual(extendedsmilesFileExpected);
@@ -696,7 +679,7 @@ test.describe('SMILES files', () => {
     } = await receiveFileComparisonData({
       page,
       expectedFileName:
-        'tests/test-data/Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
+        'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
     });
 
     expect(extendedsmilesFile).toEqual(extendedsmilesFileExpected);
@@ -728,8 +711,7 @@ test.describe('SMILES files', () => {
     const { fileExpected: smilesFileExpected, file: smilesFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName:
-          'tests/test-data/SMILES/simple-schema-with-retrosynthetic-arrow.smi',
+        expectedFileName: 'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
       });
 
     expect(smilesFile).toEqual(smilesFileExpected);
@@ -763,7 +745,7 @@ test.describe('SMILES files', () => {
         await receiveFileComparisonData({
           page,
           expectedFileName:
-            'tests/test-data/SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
+            'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
         });
 
       expect(smilesFile).toEqual(smilesFileExpected);
@@ -797,7 +779,7 @@ test.describe('SMILES files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
+          'SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
       });
 
     expect(smilesFile).toEqual(smilesFileExpected);
@@ -829,8 +811,7 @@ test.describe('SMILES files', () => {
     const { fileExpected: smilesFileExpected, file: smilesFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName:
-          'tests/test-data/SMILES/schema-with-two-retrosynthetic-arrows.smi',
+        expectedFileName: 'SMILES/schema-with-two-retrosynthetic-arrows.smi',
       });
 
     expect(smilesFile).toEqual(smilesFileExpected);
@@ -863,7 +844,7 @@ test.describe('SMILES files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
+          'SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
       });
 
     expect(smilesFile).toEqual(smilesFileExpected);
@@ -896,7 +877,7 @@ test.describe('SMILES files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
+          'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
       });
 
     expect(smilesFile).toEqual(smilesFileExpected);

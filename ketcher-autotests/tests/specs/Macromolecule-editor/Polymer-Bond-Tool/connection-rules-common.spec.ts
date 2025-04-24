@@ -168,7 +168,7 @@ test.describe('Common connection rules: ', () => {
     const { fileExpected: ketFileExpected, file: ketFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: `tests/test-data/KET/Common-Bond-Tests/${fileName}`,
+        expectedFileName: `KET/Common-Bond-Tests/${fileName}`,
       });
 
     expect(ketFile).toEqual(ketFileExpected);
@@ -182,7 +182,7 @@ test.describe('Common connection rules: ', () => {
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: `tests/test-data/KET/Common-Bond-Tests/${fileName}`,
+        expectedFileName: `KET/Common-Bond-Tests/${fileName}`,
         metaDataIndexes: [ignoredLineIndigo],
         fileFormat: 'v3000',
       });

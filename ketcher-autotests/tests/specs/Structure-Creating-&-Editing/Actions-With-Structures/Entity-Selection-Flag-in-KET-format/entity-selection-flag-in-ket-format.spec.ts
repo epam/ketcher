@@ -328,7 +328,7 @@ test.describe('4. User can save and than restore selection for:', () => {
       const { fileExpected: fileKetExpected2, file: ketFile } =
         await receiveFileComparisonData({
           page,
-          expectedFileName: `tests/test-data/KET/Entity-Selection-Flag-in-KET-format/BondsAndAtoms/Results/Selection-Result-${fileName}`,
+          expectedFileName: `KET/Entity-Selection-Flag-in-KET-format/BondsAndAtoms/Results/Selection-Result-${fileName}`,
         });
       expect(ketFile).toEqual(fileKetExpected2);
 

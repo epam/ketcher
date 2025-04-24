@@ -47,10 +47,7 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1963-inchi.txt',
-        page,
-      );
+      await openFromFileViaClipboard('Txt/1963-inchi.txt', page);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -66,10 +63,7 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1967-inchi.txt',
-        page,
-      );
+      await openFromFileViaClipboard('Txt/1967-inchi.txt', page);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -85,10 +79,7 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1968-inchi.txt',
-        page,
-      );
+      await openFromFileViaClipboard('Txt/1968-inchi.txt', page);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -104,10 +95,7 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1969-inchi.txt',
-        page,
-      );
+      await openFromFileViaClipboard('Txt/1969-inchi.txt', page);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -123,10 +111,7 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1970-inchi.txt',
-        page,
-      );
+      await openFromFileViaClipboard('Txt/1970-inchi.txt', page);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -142,10 +127,7 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1971-inchi.txt',
-        page,
-      );
+      await openFromFileViaClipboard('Txt/1971-inchi.txt', page);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -161,10 +143,7 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1974-inchi.txt',
-        page,
-      );
+      await openFromFileViaClipboard('Txt/1974-inchi.txt', page);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -180,10 +159,7 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1975-inchi.txt',
-        page,
-      );
+      await openFromFileViaClipboard('Txt/1975-inchi.txt', page);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -199,10 +175,7 @@ test.describe('', () => {
        */
       // add first structure from clipboard to canvas
       await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1976-inchi.txt',
-        page,
-      );
+      await openFromFileViaClipboard('Txt/1976-inchi.txt', page);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },

@@ -58,7 +58,7 @@ test.describe('Reagents SMILES format', () => {
     );
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/SMILES/daylight-smiles-expected.smi',
+      'SMILES/daylight-smiles-expected.smi',
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
@@ -84,7 +84,7 @@ test.describe('Reagents SMILES format', () => {
     );
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/SMILES/daylight-smiles-below-expected.smi',
+      'SMILES/daylight-smiles-below-expected.smi',
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
@@ -208,7 +208,7 @@ test.describe('Reagents SMILES format', () => {
     );
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/SMILES/daylight-smiles-expected.smi',
+      'SMILES/daylight-smiles-expected.smi',
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
@@ -227,7 +227,7 @@ test.describe('Reagents SMILES format', () => {
     );
 
     const smiFileExpected = await readFileContents(
-      'tests/test-data/Extended-SMILES/extended-smiles.cxsmi',
+      'Extended-SMILES/extended-smiles.cxsmi',
     );
     const smiFile = await getExtendedSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);

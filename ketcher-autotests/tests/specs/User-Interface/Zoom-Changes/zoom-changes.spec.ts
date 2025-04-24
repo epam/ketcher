@@ -260,10 +260,7 @@ test.describe('Zoom changes', () => {
       has decreased on the "Zoom panel"
     */
     await selectOpenFileTool(page);
-    await openFromFileViaClipboard(
-      'tests/test-data/Molfiles-V2000/long-chain.mol',
-      page,
-    );
+    await openFromFileViaClipboard('Molfiles-V2000/long-chain.mol', page);
     await clickInTheMiddleOfTheScreen(page);
     await expect(page).toHaveScreenshot();
   });

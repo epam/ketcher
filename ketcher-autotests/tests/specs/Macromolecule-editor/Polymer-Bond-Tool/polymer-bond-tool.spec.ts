@@ -518,7 +518,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   await saveAndCompareMolfile(
     page,
     'Molfiles-V3000/two-peptides-connected-expected.mol',
-    'tests/test-data/Molfiles-V3000/two-peptides-connected-expected.mol',
+    'Molfiles-V3000/two-peptides-connected-expected.mol',
     [1],
     'v3000',
   );
@@ -550,8 +550,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   const { fileExpected: sequenceFileExpected, file: sequenceFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName:
-        'tests/test-data/Sequence/two-peptides-connected-expected.seq',
+      expectedFileName: 'Sequence/two-peptides-connected-expected.seq',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 
@@ -589,8 +588,7 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   const { fileExpected: fastaFileExpected, file: fastaFile } =
     await receiveFileComparisonData({
       page,
-      expectedFileName:
-        'tests/test-data/FASTA/two-peptides-connected-expected.fasta',
+      expectedFileName: 'FASTA/two-peptides-connected-expected.fasta',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 

@@ -20,7 +20,7 @@ test.describe('setMolecule', () => {
 
   test('mol with two monomers bonded', async ({ page }) => {
     const fileContents = await readFileContents(
-      'tests/test-data/Molfiles-V3000/alanine-monomers-bonded-expected.mol',
+      'Molfiles-V3000/alanine-monomers-bonded-expected.mol',
     );
     await waitForSpinnerFinishedWork(
       page,
@@ -34,7 +34,7 @@ test.describe('setMolecule', () => {
 
   test('ket with two monomers bonded', async ({ page }) => {
     const fileContents = await readFileContents(
-      'tests/test-data/KET/alanine-monomers-bonded.ket',
+      'KET/alanine-monomers-bonded.ket',
     );
     await waitForSpinnerFinishedWork(
       page,

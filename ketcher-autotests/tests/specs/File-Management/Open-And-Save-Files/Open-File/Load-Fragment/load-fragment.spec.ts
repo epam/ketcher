@@ -232,7 +232,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/KET/hydrogen-plus-oxygen-arrow-hydrogen-expected.ket',
+          'KET/hydrogen-plus-oxygen-arrow-hydrogen-expected.ket',
       });
 
     expect(ketFile).toEqual(ketFileExpected);

@@ -37,9 +37,7 @@ test.describe('Floating windows', () => {
       openStructureDialog(page).pasteFromClipboardButton;
 
     await selectOpenFileTool(page);
-    const fileContent = await readFileContents(
-      'tests/test-data/Txt/kecther-text.txt',
-    );
+    const fileContent = await readFileContents('Txt/kecther-text.txt');
     await pasteFromClipboardButton.click();
     await openStructureTextarea.fill(fileContent);
 

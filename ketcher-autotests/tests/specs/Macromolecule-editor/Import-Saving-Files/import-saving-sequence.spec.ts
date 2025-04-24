@@ -66,7 +66,7 @@ test.describe('Import-Saving .seq Files', () => {
     Description: File pasted to canvas.
     */
     const fileContent = await readFileContents(
-      'tests/test-data/Sequence/sequence-fasta-single-chain.seq',
+      'Sequence/sequence-fasta-single-chain.seq',
     );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

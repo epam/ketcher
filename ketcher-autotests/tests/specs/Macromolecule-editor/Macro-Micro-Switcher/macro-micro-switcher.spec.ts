@@ -2083,9 +2083,7 @@ test.describe('Macro-Micro-Switcher', () => {
      * to Macro mode and presented after returning to Micro
      */
 
-    const fileContent = await readFileContents(
-      'tests/test-data/CDX/image-png-expected.cdx',
-    );
+    const fileContent = await readFileContents('CDX/image-png-expected.cdx');
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
 
     await takeEditorScreenshot(page);

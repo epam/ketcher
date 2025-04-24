@@ -527,7 +527,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
           page,
           metaDataIndexes: METADATA_STRING_INDEX,
           expectedFileName:
-            'tests/test-data/Molfiles-V2000/structure-with-stereo-bonds-expectedV2000.mol',
+            'Molfiles-V2000/structure-with-stereo-bonds-expectedV2000.mol',
           fileFormat: 'v2000',
         });
 
@@ -564,10 +564,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await getAndCompareSmiles(
-      page,
-      'tests/test-data/SMILES/structure-with-stereo-bonds.smi',
-    );
+    await getAndCompareSmiles(page, 'SMILES/structure-with-stereo-bonds.smi');
   });
 
   test('Save as .inchi file structure with stereo labels', async ({ page }) => {
@@ -580,9 +577,6 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await getAndCompareInchi(
-      page,
-      'tests/test-data/InChI/structure-with-stereo-bonds.inchi',
-    );
+    await getAndCompareInchi(page, 'InChI/structure-with-stereo-bonds.inchi');
   });
 });

@@ -31,7 +31,11 @@ import {
 export async function readFileContents(filePath: string) {
   // const resolvedFilePath = path.resolve(process.cwd(), filePath);
   const projectRoot = path.resolve(__dirname, '../../..');
-  const resolvedFilePath = path.resolve(projectRoot, filePath);
+  const resolvedFilePath = path.resolve(
+    projectRoot,
+    'tests/test-data',
+    filePath,
+  );
   return fs.promises.readFile(resolvedFilePath, 'utf8');
 }
 

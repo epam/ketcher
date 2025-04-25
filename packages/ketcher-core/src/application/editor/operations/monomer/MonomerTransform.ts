@@ -40,10 +40,16 @@ export class MonomerTransform extends BaseOperation {
 
     this.previousData = {
       id: this.data.id,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       type: this.data.type,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       value: monomerTransformation[this.data.type],
     };
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     monomerTransformation[this.data.type] = this.data.value;
   }
 

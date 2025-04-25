@@ -176,24 +176,9 @@ export class CoreEditor {
       this.dragCtx = null;
     }
 
-    const mouseUpEvent = new MouseEvent('mouseup', {
-      bubbles: true,
-      cancelable: true,
-      view: window,
-      clientX: this.lastCursorPosition.x,
-      clientY: this.lastCursorPosition.y,
-    });
-
-    document.dispatchEvent(mouseUpEvent);
-    this.canvas.dispatchEvent(mouseUpEvent);
-
     if (this.tool && typeof this.tool.cancel === 'function') {
       this.tool.cancel();
     }
-
-    const mouseLeaveEvent = new MouseEvent('mouseleave');
-    this.events.mouseleave?.dispatch?.(mouseLeaveEvent);
-    this.events.mouseUpMonomer.dispatch(mouseUpEvent);
 
     this.drawingEntitiesManager.unselectAllDrawingEntities();
   }

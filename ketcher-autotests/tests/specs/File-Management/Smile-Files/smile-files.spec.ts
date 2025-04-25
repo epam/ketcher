@@ -22,6 +22,10 @@ import {
   getExtendedSmiles,
   getSmiles,
 } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 async function getPreviewForSmiles(page: Page, smileType: string) {
   await selectSaveTool(page);
@@ -30,12 +34,6 @@ async function getPreviewForSmiles(page: Page, smileType: string) {
   const previewInput = page.getByTestId('smiles-preview-area-text');
   await previewInput.waitFor({ state: 'visible' });
   await expect(previewInput).toContainText(nonEmptyString);
-}
-
-async function getAndCompareSmiles(page: Page, smilesFilePath: string) {
-  const smilesFileExpected = await readFileContent(smilesFilePath);
-  const smilesFile = await getSmiles(page);
-  expect(smilesFile).toEqual(smilesFileExpected);
 }
 
 async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
@@ -58,7 +56,11 @@ test.describe('SMILES files', () => {
     versa structure is correctly generated from SmileString.
     */
     await openFileAndAddToCanvas('KET/all-type-bonds.ket', page);
-    await getAndCompareSmiles(page, 'JSON/smiles-all-bonds-expected.json');
+    await verifyFileExport(
+      page,
+      'SMILES/smiles-all-bonds-expected.smi',
+      FileType.SMILES,
+    );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await moveMouseAway(page);
@@ -75,9 +77,10 @@ test.describe('SMILES files', () => {
     vise versa structure is correctly generated from SmileString.
     */
     await openFileAndAddToCanvas('KET/all-atoms-properties.ket', page);
-    await getAndCompareSmiles(
+    await verifyFileExport(
       page,
-      'JSON/smiles-all-atoms-properties-expected.json',
+      'SMILES/smiles-all-atoms-properties-expected.smi',
+      FileType.SMILES,
     );
 
     await getPreviewForSmiles(page, 'Daylight SMILES');
@@ -112,8 +115,11 @@ test.describe('SMILES files', () => {
     Description: In Daylight SMILES the structure will be saved without S-groups
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sgroups-diff-symyx.mol', page);
-    await getAndCompareSmiles(page, 'JSON/sgroups-diff-symyx-expected.json');
-
+    await verifyFileExport(
+      page,
+      'SMILES/sgroups-diff-symyx-expected.smi',
+      FileType.SMILES,
+    );
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -137,8 +143,11 @@ test.describe('SMILES files', () => {
       'Molfiles-V2000/heteroatoms-structure.mol',
       page,
     );
-    await getAndCompareSmiles(page, 'JSON/smiles-heteroatoms-expected.json');
-
+    await verifyFileExport(
+      page,
+      'SMILES/smiles-heteroatoms-expected.smi',
+      FileType.SMILES,
+    );
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -157,8 +166,11 @@ test.describe('SMILES files', () => {
     and bonds that are not supported in the SMILES. Query properties will not be reflected in the saved file
     */
     await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
-    await getAndCompareSmiles(page, 'JSON/attached-data-expected.json');
-
+    await verifyFileExport(
+      page,
+      'SMILES/attached-data-expected.smi',
+      FileType.SMILES,
+    );
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await page.getByText('Warnings').click();
     await moveMouseAway(page);
@@ -181,8 +193,11 @@ test.describe('SMILES files', () => {
     All stereobonds are displayed as in a mol-file.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/V2000-abs.mol', page);
-    await getAndCompareSmiles(page, 'JSON/smiles-v2000-abs-expected.json');
-
+    await verifyFileExport(
+      page,
+      'SMILES/smiles-v2000-abs-expected.smi',
+      FileType.SMILES,
+    );
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -207,11 +222,11 @@ test.describe('SMILES files', () => {
     Rgroup labels are rendered as R# symbols.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/different-features.mol', page);
-    await getAndCompareSmiles(
+    await verifyFileExport(
       page,
-      'JSON/smiles-different-features-expected.json',
+      'SMILES/smiles-different-features-expected.smi',
+      FileType.SMILES,
     );
-
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -233,11 +248,11 @@ test.describe('SMILES files', () => {
     structure is correctly generated from SmileString.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/cis-trans-cycle.mol', page);
-    await getAndCompareSmiles(
+    await verifyFileExport(
       page,
-      'JSON/smiles-cis-trans-cycle-expected.json',
+      'SMILES/smiles-cis-trans-cycle-expected.smi',
+      FileType.SMILES,
     );
-
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -258,11 +273,11 @@ test.describe('SMILES files', () => {
     pseudoatoms are rendered, alias appears as common atom symbol for which this alias was assigned.
     */
     await openFileAndAddToCanvas('KET/alias-pseudoatom.ket', page);
-    await getAndCompareSmiles(
+    await verifyFileExport(
       page,
-      'JSON/smiles-alias-pseudoatom-expected.json',
+      'SMILES/smiles-alias-pseudoatom-expected.smi',
+      FileType.SMILES,
     );
-
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -281,11 +296,11 @@ test.describe('SMILES files', () => {
        * and keep all structures (all intermediate structures should be products and the arrow is replaced by a plus)
        */
       await openFileAndAddToCanvas('KET/two-arrows-and-plus.ket', page);
-      await getAndCompareSmiles(
+      await verifyFileExport(
         page,
-        'JSON/smiles-two-arrows-and-plus-expected.json',
+        'SMILES/smiles-two-arrows-and-plus-expected.smi',
+        FileType.SMILES,
       );
-
       await getPreviewForSmiles(page, 'Daylight SMILES');
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -309,11 +324,11 @@ test.describe('SMILES files', () => {
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
-    await getAndCompareSmiles(
+    await verifyFileExport(
       page,
-      'JSON/smiles-benzene-arrow-benzene-reagent-nh3-expected.json',
+      'SMILES/smiles-benzene-arrow-benzene-reagent-nh3-expected.smi',
+      FileType.SMILES,
     );
-
     await getPreviewForSmiles(page, 'Daylight SMILES');
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -332,9 +347,10 @@ test.describe('SMILES files', () => {
       'SMILES/structure-with-s-group-properties.smi',
       page,
     );
-    await getAndCompareSmiles(
+    await verifyFileExport(
       page,
       'SMILES/structure-with-s-group-properties.smi',
+      FileType.SMILES,
     );
     await page.getByText('info2').dblclick();
     await takeEditorScreenshot(page);

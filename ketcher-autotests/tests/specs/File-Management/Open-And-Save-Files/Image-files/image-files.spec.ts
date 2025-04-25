@@ -44,6 +44,7 @@ import {
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
+  copyContentToClipboard,
 } from '@utils';
 import {
   selectClearCanvasTool,
@@ -285,12 +286,8 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Images together (PNG, SVG) are copied from .ket format and added from clipboard directly to selected place on Canvas with correct positions
      */
-    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
     const fileContent = await readFileContent('KET/images-png-svg.ket');
-    await openPasteFromClipboard(page, fileContent);
-    await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await closeWindowButton.click();
+    await copyContentToClipboard(page, fileContent);
     await pasteFromClipboardByKeyboard(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -329,14 +326,10 @@ test.describe('Image files', () => {
      * Description: Images together (PNG, SVG) are copied from .cdxml format and added from clipboard directly to selected place on Canvas with correct positions
      * (SVG image replaced by placeholder)
      */
-    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
     const fileContent = await readFileContent(
       'CDXML/image-png-svg-together.cdxml',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await closeWindowButton.click();
+    await copyContentToClipboard(page, fileContent);
     await pasteFromClipboardByKeyboard(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

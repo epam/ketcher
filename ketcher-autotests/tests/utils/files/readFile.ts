@@ -420,26 +420,6 @@ export async function receiveRxnFileComparisonData(
   return { rxnFileExpected, rxnFile };
 }
 
-export async function receiveKetFileComparisonData(
-  page: Page,
-  expectedKetFileName: string,
-) {
-  const ketFileExpected = fs
-    .readFileSync(expectedKetFileName, 'utf8')
-    .split('\n');
-  const ketFile = (await page.evaluate(() => window.ketcher.getKet())).split(
-    '\n',
-  );
-
-  return { ketFileExpected, ketFile };
-}
-
-export async function getAndCompareSmiles(page: Page, smilesFilePath: string) {
-  const smilesFileExpected = await readFileContent(smilesFilePath);
-  const smilesFile = await getSmiles(page);
-  expect(smilesFile).toEqual(smilesFileExpected);
-}
-
 // The function is used to save the structure that is placed in the center
 // of canvas when opened. So when comparing files, the coordinates
 // always match and there is no difference between the results when comparing.
@@ -466,25 +446,8 @@ export async function openPasteFromClipboard(
   // await waitForLoad(page);
 }
 
-export async function placeFileInTheMiddle(
-  filename: string,
-  page: Page,
-  delayInSeconds: number,
-) {
-  await selectOpenFileTool(page);
-  await openFile(filename, page);
-  await pressButton(page, 'AddToCanvas');
-  await clickInTheMiddleOfTheScreen(page);
-  await delay(delayInSeconds);
-  await takeEditorScreenshot(page);
-  const cmlFile = (await page.evaluate(() => window.ketcher.getCml())).split(
-    '/n',
-  );
-  return { cmlFile };
-}
-
-export async function getAndCompareInchi(page: Page, inchiFilePath: string) {
-  const inchiFileExpected = await readFileContent(inchiFilePath);
-  const inchiFile = await getInchi(page);
-  expect(inchiFile).toEqual(inchiFileExpected);
+export async function copyContentToClipboard(page: Page, content: string) {
+  await page.evaluate(async (content) => {
+    await navigator.clipboard.writeText(content);
+  }, content);
 }

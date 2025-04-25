@@ -40,6 +40,7 @@ import {
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
+  copyContentToClipboard,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -468,10 +469,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     const fileContent = await readFileContent(
       'KET/three-different-multi-tail-arrows.ket',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pressButton(page, 'Cancel');
+    await copyContentToClipboard(page, fileContent);
     await pasteFromClipboardByKeyboard(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);

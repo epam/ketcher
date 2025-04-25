@@ -5,8 +5,6 @@ import {
   openFileAndAddToCanvas,
   TopPanelButton,
   takeEditorScreenshot,
-  getAndCompareInchi,
-  getAndCompareSmiles,
   BondType,
   selectRingButton,
   RingButton,
@@ -564,7 +562,11 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await getAndCompareSmiles(page, 'SMILES/structure-with-stereo-bonds.smi');
+    await verifyFileExport(
+      page,
+      'SMILES/structure-with-stereo-bonds.smi',
+      FileType.SMILES,
+    );
   });
 
   test('Save as .inchi file structure with stereo labels', async ({ page }) => {
@@ -577,6 +579,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await getAndCompareInchi(page, 'InChI/structure-with-stereo-bonds.inchi');
+    await verifyFileExport(
+      page,
+      'InChI/structure-with-stereo-bonds.inchi',
+      FileType.InChI,
+    );
   });
 });

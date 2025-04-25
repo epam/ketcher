@@ -33,9 +33,10 @@ const StyledFormControl = styled(FormControl)`
 
 const DropDownSelect = styled(Select)`
   height: 24px;
-  border: 1px solid #5b6077;
+  border: 1px solid #e1e5ea;
   border-radius: 4px;
   font-size: 14px;
+  background-color: white;
 
   ${({ open }) =>
     open &&

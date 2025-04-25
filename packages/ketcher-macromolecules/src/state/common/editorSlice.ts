@@ -20,12 +20,15 @@ import {
   LayoutMode,
   modesMap,
   SingleChainMacromoleculeProperties,
+  ChainsCollection,
 } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
 import { PreviewType } from 'state/types';
 import { ThemeType } from 'theming/defaultTheme';
 import { DeepPartial } from '../../types';
 import { PresetPosition } from 'ketcher-react';
+
+export type MolarMeasurementUnit = 'nM' | 'μM' | 'mM';
 
 // TODO: Looks like we do not use `isReady`. Delete?
 interface EditorState {
@@ -37,6 +40,8 @@ interface EditorState {
   position: PresetPosition | undefined;
   isMacromoleculesPropertiesWindowOpened: boolean;
   macromoleculesProperties: SingleChainMacromoleculeProperties[] | undefined;
+  unipositiveIonsMeasurementUnit: MolarMeasurementUnit;
+  oligonucleotidesMeasurementUnit: MolarMeasurementUnit;
 }
 
 const initialState: EditorState = {
@@ -52,6 +57,8 @@ const initialState: EditorState = {
   position: undefined,
   isMacromoleculesPropertiesWindowOpened: false,
   macromoleculesProperties: undefined,
+  unipositiveIonsMeasurementUnit: 'nM',
+  oligonucleotidesMeasurementUnit: 'μM',
 };
 
 export const editorSlice: Slice = createSlice({
@@ -114,6 +121,18 @@ export const editorSlice: Slice = createSlice({
     ) => {
       state.macromoleculesProperties = action.payload;
     },
+    setUnipositiveIonsMeasurementUnit: (
+      state,
+      action: PayloadAction<MolarMeasurementUnit>,
+    ) => {
+      state.unipositiveIonsMeasurementUnit = action.payload;
+    },
+    setOligonucleotidesMeasurementUnit: (
+      state,
+      action: PayloadAction<MolarMeasurementUnit>,
+    ) => {
+      state.oligonucleotidesMeasurementUnit = action.payload;
+    },
   },
 });
 
@@ -128,6 +147,8 @@ export const {
   setPosition,
   setMacromoleculesPropertiesWindowVisibility,
   setMacromoleculesProperties,
+  setUnipositiveIonsMeasurementUnit,
+  setOligonucleotidesMeasurementUnit,
 } = editorSlice.actions;
 
 export const selectEditorIsReady = (state: RootState) => state.editor.isReady;
@@ -173,6 +194,15 @@ export const selectIsMacromoleculesPropertiesWindowOpened = (
 ) => state.editor.isMacromoleculesPropertiesWindowOpened;
 
 export const selectMacromoleculesProperties = (state: RootState) =>
-  state.editor.macromoleculesProperties?.[0];
+  state.editor.macromoleculesProperties;
+
+export const selectUnipositiveIonsMeasurementUnit = (state: RootState) =>
+  state.editor.unipositiveIonsMeasurementUnit;
+
+export const selectOligonucleotidesMeasurementUnit = (state: RootState) =>
+  state.editor.oligonucleotidesMeasurementUnit;
+
+export const selectMonomers = (state: RootState) =>
+  state.editor.editor?.drawingEntitiesManager?.monomers;
 
 export const editorReducer = editorSlice.reducer;

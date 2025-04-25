@@ -19,6 +19,7 @@ import {
   isMacromoleculesPropertiesWindowOpened,
   selectEditor,
   selectIsMacromoleculesPropertiesWindowOpened,
+  selectMonomers,
   setMacromoleculesProperties,
   setMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
@@ -26,7 +27,7 @@ import styled from '@emotion/styled';
 import { Button, IndigoProvider } from 'ketcher-react';
 import { blurActiveElement } from 'helpers/canvas';
 import { KetSerializer, Struct, StructService } from 'ketcher-core';
-import { useState } from 'react';
+import { useRecalculateMacromoleculeProperties } from '../../hooks/useRecalculateMacromoleculeProperties';
 
 const StyledButton = styled(Button)<{ isActive?: boolean }>(
   ({ theme, isActive }) => ({
@@ -58,34 +59,19 @@ export const CalculateMacromoleculePropertiesButton = () => {
   const isMacromoleculesPropertiesWindowOpened = useAppSelector(
     selectIsMacromoleculesPropertiesWindowOpened,
   );
+  const recalculateMacromoleculeProperties =
+    useRecalculateMacromoleculeProperties();
 
   const handleClick = async () => {
     const isMacromoleculesPropertiesWindowOpenedNewState =
       !isMacromoleculesPropertiesWindowOpened;
-    const indigo = IndigoProvider.getIndigo() as StructService;
-    const drawingEntitiesManager =
-      editor.drawingEntitiesManager.filterSelection();
-    const ketSerializer = new KetSerializer();
-    const serializedKet = ketSerializer.serialize(
-      new Struct(),
-      drawingEntitiesManager,
-    );
 
-    const calculateMacromoleculePropertiesResponse =
-      await indigo.calculateMacromoleculeProperties({ struct: serializedKet });
-    const macromoleculeProperties =
-      calculateMacromoleculePropertiesResponse.properties &&
-      JSON.parse(calculateMacromoleculePropertiesResponse.properties);
-
+    await recalculateMacromoleculeProperties();
     dispatch(
       setMacromoleculesPropertiesWindowVisibility(
         isMacromoleculesPropertiesWindowOpenedNewState,
       ),
     );
-
-    dispatch(setMacromoleculesProperties(macromoleculeProperties));
-
-    console.log(macromoleculeProperties);
 
     blurActiveElement();
   };

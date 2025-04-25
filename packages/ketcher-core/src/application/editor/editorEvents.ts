@@ -62,8 +62,6 @@ export interface IEditorEvents {
   pasteFromClipboard: Subscription;
   deleteSelectedStructure: Subscription;
   selectEntities: Subscription;
-  mouseleave: Subscription;
-  mouseup: Subscription;
 }
 
 export let editorEvents: IEditorEvents;
@@ -126,8 +124,6 @@ export function resetEditorEvents() {
     pasteFromClipboard: new Subscription(),
     deleteSelectedStructure: new Subscription(),
     selectEntities: new Subscription(),
-    mouseleave: new Subscription(),
-    mouseup: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -166,8 +162,6 @@ export const renderersEvents: ToolEventHandlerName[] = [
   'doubleClickOnSequenceItem',
   'mouseUpAtom',
   'selectEntities',
-  'mouseleave',
-  'mouseup',
 ];
 
 export const hotkeysConfiguration = {

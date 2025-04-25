@@ -191,6 +191,9 @@ export async function openImageAndAddToCanvas(
   x?: number,
   y?: number,
 ) {
+  const testDataDirectory = getTestDataDirectory();
+  const resolvedFilePath = path.resolve(testDataDirectory, filename);
+
   await selectImageTool(page);
 
   if (x !== undefined && y !== undefined) {
@@ -201,7 +204,7 @@ export async function openImageAndAddToCanvas(
 
   const inputFile = await page.$('input[type="file"]');
   if (inputFile) {
-    await inputFile.setInputFiles(`tests/test-data/${filename}`);
+    await inputFile.setInputFiles(resolvedFilePath);
   } else {
     throw new Error('Input file element not found');
   }

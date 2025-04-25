@@ -14,13 +14,14 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   resetCurrentTool,
-  receiveFileComparisonData,
-  saveToFile,
   moveOnAtom,
   clickOnCanvas,
   pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
-import { getKet } from '@utils/formats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 const testCasesForOpeningFiles = [
   {
@@ -221,21 +222,11 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       'KET/hydrogen-plus-oxygen-arrow-hydrogen.ket',
       page,
     );
-
-    const expectedKetFile = await getKet(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'KET/hydrogen-plus-oxygen-arrow-hydrogen-expected.ket',
-      expectedKetFile,
+      FileType.KET,
     );
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'KET/hydrogen-plus-oxygen-arrow-hydrogen-expected.ket',
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
     await takeEditorScreenshot(page);
   });
 });

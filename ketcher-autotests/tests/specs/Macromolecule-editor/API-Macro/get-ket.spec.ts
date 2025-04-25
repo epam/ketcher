@@ -3,15 +3,12 @@ import { test, expect } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
-  getKet,
-  saveToFile,
   layout,
   recognize,
   selectAtomInToolbar,
   AtomButton,
   clickInTheMiddleOfTheScreen,
   selectAllStructuresOnCanvas,
-  readFileContent,
 } from '@utils';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
@@ -27,12 +24,11 @@ test.describe('getKet', () => {
 
   test('with two monomers bonded', async ({ page }) => {
     await openFileAndAddToCanvasMacro('KET/alanine-monomers-bonded.ket', page);
-    const ket = await getKet(page);
-    await saveToFile('KET/alanine-monomers-bonded-expected.ket', ket);
-    const fileContents = await readFileContent(
+    await verifyFileExport(
+      page,
       'KET/alanine-monomers-bonded-expected.ket',
+      FileType.KET,
     );
-    expect(ket).toBe(fileContents);
   });
 
   test('Check that layout method throws an Error: layout is not available in macro mode', async ({

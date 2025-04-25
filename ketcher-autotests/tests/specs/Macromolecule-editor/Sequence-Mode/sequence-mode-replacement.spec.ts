@@ -4,7 +4,6 @@ import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
   getFasta,
-  getKet,
   getMolfile,
   getSequence,
   Monomer,
@@ -87,23 +86,9 @@ test.afterAll(async ({ browser }) => {
   await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
-// interface IReplaceMonomer {
-//   Id: number;
-//   Monomer?: Monomer;
-//   MonomerDescription: string;
-//   IsCustomPreset?: boolean;
-//   MonomerAlias?: string;
-//   MonomerTestId?: string;
-//   // ShouldFail?: boolean;
-//   // KnownBugs?: boolean;
-//   // BugsInTests?: IBugsInTests[];
-// }
 interface IBaseReplaceMonomer {
   Id: number;
   MonomerDescription: string;
-  // ShouldFail?: boolean;
-  // KnownBugs?: boolean;
-  // BugsInTests?: IBugsInTests[];
 }
 
 interface IStandardMonomer extends IBaseReplaceMonomer {
@@ -2219,20 +2204,11 @@ test(`28. Verify saving and reopening a structure with replaced monomers in KET`
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  const expectedKetFile = await getKet(page);
-  await saveToFile(
+  await verifyFileExport(
+    page,
     'Common/Sequence-Mode-Replacement/replacement-expected.ket',
-    expectedKetFile,
+    FileType.KET,
   );
-
-  const { fileExpected: ketFileExpected, file: ketFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'Common/Sequence-Mode-Replacement/replacement-expected.ket',
-    });
-
-  expect(ketFile).toEqual(ketFileExpected);
 
   await checkForKnownBugs(
     replaceMonomer,

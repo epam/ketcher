@@ -15,3 +15,4 @@
  ***************************************************************************/
 
 export * from './MacromoleculePropertiesWindow';
+export * from './CalculateMacromoleculePropertiesButton';

@@ -981,6 +981,7 @@ export class KetSerializer implements Serializer<Struct> {
     _struct: Struct,
     drawingEntitiesManager = new DrawingEntitiesManager(),
     selection?: EditorSelection,
+    isBeautified = true, // TODO make false by default
   ) {
     const struct = KetSerializer.removeLeavingGroupsFromConnectedAtoms(_struct);
     struct.enableInitiallySelected();
@@ -1014,7 +1015,11 @@ export class KetSerializer implements Serializer<Struct> {
       ...serializedMicromoleculesStruct.root.nodes,
     ];
 
-    return JSON.stringify(fileContent, null, 4) as unknown as string;
+    return JSON.stringify(
+      fileContent,
+      null,
+      isBeautified ? 4 : undefined,
+    ) as unknown as string;
   }
 
   convertMonomersLibrary(monomersLibrary: IKetMacromoleculesContent) {

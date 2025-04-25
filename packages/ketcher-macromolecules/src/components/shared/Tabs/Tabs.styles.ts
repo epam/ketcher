@@ -79,6 +79,16 @@ export const StyledTab = styled(Tab)`
   }
 `;
 
+export const HiddenTab = styled(Tab)`
+  width: 0;
+  height: 0;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  visibility: hidden;
+`;
+
 export const TabPanelContent = styled.div`
   display: flex;
   flex-direction: row;

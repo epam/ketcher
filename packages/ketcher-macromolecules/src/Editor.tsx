@@ -96,7 +96,7 @@ import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
 import { RootSizeProvider } from './contexts';
-import { MacromoleculePropertiesWindow } from 'components/MacromoleculesPropertiesWindow';
+import { MacromoleculePropertiesWindow } from 'components/macromoleculeProperties';
 
 const muiTheme = createTheme(muiOverrides);
 

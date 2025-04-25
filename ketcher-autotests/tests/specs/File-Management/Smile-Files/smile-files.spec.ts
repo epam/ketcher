@@ -11,7 +11,6 @@ import {
   receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
-  readFileContent,
 } from '@utils';
 import {
   selectClearCanvasTool,

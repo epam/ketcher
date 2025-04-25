@@ -1,19 +1,15 @@
 /* eslint-disable max-len */
 import * as fs from 'fs';
 import * as path from 'path';
-import { Page, expect } from '@playwright/test';
+import { Page } from '@playwright/test';
 import {
-  pressButton,
   clickInTheMiddleOfTheScreen,
-  delay,
-  takeEditorScreenshot,
   clickOnTheCanvas,
   selectImageTool,
   clickOnCanvas,
   MacroFileType,
 } from '@utils';
 import { waitForLoad } from '@utils/common';
-import { getSmiles, getInchi } from '@utils/formats';
 import { MolfileFormat } from 'ketcher-core';
 import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';

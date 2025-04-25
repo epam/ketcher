@@ -15,7 +15,6 @@ import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
-  openPasteFromClipboard,
   pasteFromClipboardByKeyboard,
   pressButton,
   selectAddRemoveExplicitHydrogens,

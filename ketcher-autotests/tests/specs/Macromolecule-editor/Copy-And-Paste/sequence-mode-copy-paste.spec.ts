@@ -9,13 +9,11 @@ import {
   scrollDown,
   selectRectangleArea,
   moveMouseAway,
-  openPasteFromClipboard,
   startNewSequence,
   selectSnakeLayoutModeTool,
   waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
   readFileContent,
   copyContentToClipboard,
 } from '@utils';
@@ -31,7 +29,6 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 const ZOOM_OUT_VALUE = 400;
 const SCROLL_DOWN_VALUE = 250;

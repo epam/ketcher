@@ -4,13 +4,13 @@ import {
   selectTopPanelButton,
   waitForPageInit,
   TopPanelButton,
-  readFileContents,
   openFile,
   FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndOpenAsNewProject,
+  readFileContent,
 } from '@utils';
 import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
@@ -37,9 +37,7 @@ test.describe('Floating windows', () => {
       openStructureDialog(page).pasteFromClipboardButton;
 
     await selectOpenFileTool(page);
-    const fileContent = await readFileContents(
-      'tests/test-data/Txt/kecther-text.txt',
-    );
+    const fileContent = await readFileContent('Txt/kecther-text.txt');
     await pasteFromClipboardButton.click();
     await openStructureTextarea.fill(fileContent);
 

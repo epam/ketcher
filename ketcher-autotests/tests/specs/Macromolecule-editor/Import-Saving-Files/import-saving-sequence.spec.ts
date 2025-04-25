@@ -9,11 +9,11 @@ import {
   pressButton,
   selectSnakeLayoutModeTool,
   chooseFileFormat,
-  readFileContents,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
+  readFileContent,
 } from '@utils';
 import {
   FileType,
@@ -65,8 +65,8 @@ test.describe('Import-Saving .seq Files', () => {
     Test case: #3894
     Description: File pasted to canvas.
     */
-    const fileContent = await readFileContents(
-      'tests/test-data/Sequence/sequence-fasta-single-chain.seq',
+    const fileContent = await readFileContent(
+      'Sequence/sequence-fasta-single-chain.seq',
     );
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

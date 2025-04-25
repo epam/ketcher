@@ -1,17 +1,16 @@
 /* eslint-disable no-inline-comments */
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
   takeEditorScreenshot,
-  saveToFile,
-  clickOnFileFormatDropdown,
-  pressButton,
-  receiveFileComparisonData,
   selectAllStructuresOnCanvas,
 } from '@utils';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('1. User can restore previously saved selection for:', () => {
   /*
@@ -308,30 +307,11 @@ test.describe('4. User can save and than restore selection for:', () => {
       await moveMouseAway(page);
       await selectAllStructuresOnCanvas(page);
       await takeEditorScreenshot(page);
-      // replace this block of code with ketFielExpected = await getKet(page);
-      // once https://github.com/epam/ketcher/issues/4238 will be fixed
-      await selectSaveTool(page);
-      await clickOnFileFormatDropdown(page);
-      await page.getByTestId('Ket Format-option').click();
-      const ketFileExpected = page
-        .getByTestId('ket-preview-area-text')
-        .inputValue();
-      // End of block
-
-      // Save it to test-data if no file in where
-      await saveToFile(
+      await verifyFileExport(
+        page,
         `KET/Entity-Selection-Flag-in-KET-format/BondsAndAtoms/Results/Selection-Result-${fileName}`,
-        await ketFileExpected,
+        FileType.KET,
       );
-      await pressButton(page, 'Cancel');
-
-      const { fileExpected: fileKetExpected2, file: ketFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName: `tests/test-data/KET/Entity-Selection-Flag-in-KET-format/BondsAndAtoms/Results/Selection-Result-${fileName}`,
-        });
-      expect(ketFile).toEqual(fileKetExpected2);
-
       await openFileAndAddToCanvasAsNewProject(
         `KET/Entity-Selection-Flag-in-KET-format/BondsAndAtoms/Results/Selection-Result-${fileName}`,
         page,

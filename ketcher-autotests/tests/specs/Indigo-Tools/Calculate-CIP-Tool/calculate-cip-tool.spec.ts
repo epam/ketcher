@@ -5,8 +5,6 @@ import {
   openFileAndAddToCanvas,
   TopPanelButton,
   takeEditorScreenshot,
-  getAndCompareInchi,
-  getAndCompareSmiles,
   BondType,
   selectRingButton,
   RingButton,
@@ -527,7 +525,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
           page,
           metaDataIndexes: METADATA_STRING_INDEX,
           expectedFileName:
-            'tests/test-data/Molfiles-V2000/structure-with-stereo-bonds-expectedV2000.mol',
+            'Molfiles-V2000/structure-with-stereo-bonds-expectedV2000.mol',
           fileFormat: 'v2000',
         });
 
@@ -564,9 +562,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await getAndCompareSmiles(
+    await verifyFileExport(
       page,
-      'tests/test-data/SMILES/structure-with-stereo-bonds.smi',
+      'SMILES/structure-with-stereo-bonds.smi',
+      FileType.SMILES,
     );
   });
 
@@ -580,9 +579,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await getAndCompareInchi(
+    await verifyFileExport(
       page,
-      'tests/test-data/InChI/structure-with-stereo-bonds.inchi',
+      'InChI/structure-with-stereo-bonds.inchi',
+      FileType.InChI,
     );
   });
 });

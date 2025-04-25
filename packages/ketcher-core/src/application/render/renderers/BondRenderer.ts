@@ -449,7 +449,7 @@ export class BondRenderer extends BaseRenderer {
       .attr('stroke', 'transparent')
       // BOND_WIDTH_HOVER was replaced with 4 because otherwise - hover area for bond is too big
       // and it is bad if triple bond is close to another bond (double in my case - see
-      // ketcher/ketcher-autotests/tests/test-data/KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket)
+      // ketcher/ketcher-autotests/KET/Micro-Macro-Switcher/Deleting a bonds in macromolecules mode test.ket)
       .attr('stroke-width', `${combinedPathWidth * 4}`);
 
     hoverPath

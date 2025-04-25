@@ -27,6 +27,7 @@ import {
   MonomerType,
   takeElementScreenshot,
   waitForMonomerPreview,
+  copyContentToClipboard,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import {
@@ -726,9 +727,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      */
     await selectSequenceLayoutModeTool(page);
     await switchToPeptideMode(page);
-    await page.evaluate(async () => {
-      await navigator.clipboard.writeText('GATYLIK');
-    });
+    await copyContentToClipboard(page, 'GATYLIK');
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

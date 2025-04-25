@@ -39,10 +39,10 @@ interface CalculatePartOfBondSettingsResult {
 }
 
 export class SideChainConnectionBondRendererUtility {
-  private static readonly bondEndLength = 15;
-  private static readonly cellHeight = 40;
-  private static readonly cellWidth = CELL_WIDTH;
-  private static readonly smoothCornerSize = 5;
+  static readonly #bondEndLength = 15;
+  static readonly #cellHeight = 40;
+  static readonly #cellWidth = CELL_WIDTH;
+  static readonly #smoothCornerSize = 5;
 
   public static calculateBondSettings({
     cells,
@@ -108,7 +108,7 @@ export class SideChainConnectionBondRendererUtility {
       {
         const absoluteLineY =
           startPosition.y -
-          this.bondEndLength -
+          this.#bondEndLength -
           horizontalPartIntersectionsOffset * 3;
         pathDAttributeValue +=
           SVGPathDAttributeUtility.generateAbsoluteLine(
@@ -116,12 +116,12 @@ export class SideChainConnectionBondRendererUtility {
             absoluteLineY,
           ) + ' ';
       }
-      pathDAttributeValue += this.generateBend(0, -1, cos, -1) + ' ';
+      pathDAttributeValue += this.#generateBend(0, -1, cos, -1) + ' ';
     } else {
       {
         const absoluteLineY =
           startPosition.y +
-          this.bondEndLength +
+          this.#bondEndLength +
           horizontalPartIntersectionsOffset * 3;
         pathDAttributeValue +=
           SVGPathDAttributeUtility.generateAbsoluteLine(
@@ -134,7 +134,7 @@ export class SideChainConnectionBondRendererUtility {
         !isSecondCellEmpty &&
         !isTwoNeighborRowsConnection
       ) {
-        pathDAttributeValue += this.generateBend(0, 1, cos, 1) + ' ';
+        pathDAttributeValue += this.#generateBend(0, 1, cos, 1) + ' ';
       }
     }
 
@@ -144,7 +144,7 @@ export class SideChainConnectionBondRendererUtility {
         startPosition.x < sideConnectionBondTurnPoint
           ? 0
           : 180;
-      const result = this.calculatePartOfBondSettings({
+      const result = this.#calculatePartOfBondSettings({
         cell: firstCell,
         connection: firstCellConnection,
         direction,
@@ -198,8 +198,8 @@ export class SideChainConnectionBondRendererUtility {
           {
             const absoluteLineY =
               endPosition.y -
-              this.cellHeight / 2 -
-              this.smoothCornerSize -
+              this.#cellHeight / 2 -
+              this.#smoothCornerSize -
               sin * (cellConnection.yOffset || 0) * 3 -
               (isTwoNeighborRowsConnection
                 ? maxHorizontalOffset - cellConnection.xOffset
@@ -210,12 +210,12 @@ export class SideChainConnectionBondRendererUtility {
                 absoluteLineY,
               ) + ' ';
           }
-          pathDAttributeValue += this.generateBend(0, sin, cos, 1) + ' ';
+          pathDAttributeValue += this.#generateBend(0, sin, cos, 1) + ' ';
         }
         pathDAttributeValue += `H ${
-          endPosition.x - this.smoothCornerSize * cos
+          endPosition.x - this.#smoothCornerSize * cos
         } `;
-        pathDAttributeValue += this.generateBend(cos, 0, cos, 1) + ' ';
+        pathDAttributeValue += this.#generateBend(cos, 0, cos, 1) + ' ';
         return;
       }
 
@@ -237,7 +237,7 @@ export class SideChainConnectionBondRendererUtility {
           ? xDirection
           : // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
             (previousConnection.direction as ConnectionDirectionInDegrees);
-        const result = this.calculatePartOfBondSettings({
+        const result = this.#calculatePartOfBondSettings({
           cell: previousCell,
           connection: previousConnection,
           direction,
@@ -264,7 +264,7 @@ export class SideChainConnectionBondRendererUtility {
     };
   }
 
-  private static calculatePartOfBondSettings({
+  static #calculatePartOfBondSettings({
     cell,
     connection,
     direction,
@@ -273,8 +273,8 @@ export class SideChainConnectionBondRendererUtility {
   }: CalculatePartOfBondSettingsParameter): CalculatePartOfBondSettingsResult {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
-    const xOffset = (this.cellWidth / 2) * cos;
-    const yOffset = (this.cellHeight / 2) * sin;
+    const xOffset = (this.#cellWidth / 2) * cos;
+    const yOffset = (this.#cellHeight / 2) * sin;
     const maxXOffset = cell.connections.reduce(
       (max: number, connection: Connection): number => {
         return max > connection.xOffset ? max : connection.xOffset;
@@ -312,17 +312,17 @@ export class SideChainConnectionBondRendererUtility {
     }
     let pathPart = '';
     if (horizontal) {
-      const absoluteLineX = endOfPathPart - this.smoothCornerSize * cos;
+      const absoluteLineX = endOfPathPart - this.#smoothCornerSize * cos;
       pathPart +=
         SVGPathDAttributeUtility.generateHorizontalAbsoluteLine(absoluteLineX) +
         ' ';
     } else {
-      const absoluteLineY = endOfPathPart - this.smoothCornerSize * cos;
+      const absoluteLineY = endOfPathPart - this.#smoothCornerSize * cos;
       pathPart +=
         SVGPathDAttributeUtility.generateVerticalAbsoluteLine(absoluteLineY) +
         ' ';
     }
-    pathPart += this.generateBend(cos, sin, cos, 1) + ' ';
+    pathPart += this.#generateBend(cos, sin, cos, 1) + ' ';
 
     return {
       pathPart,
@@ -331,13 +331,13 @@ export class SideChainConnectionBondRendererUtility {
   }
 
   // TODO: Can we use `-1 | 0 | 1` instead of `number`?
-  private static generateBend(
+  static #generateBend(
     dx1: number,
     dy1: number,
     dx: number,
     dy: -1 | 1,
   ): string {
-    const size = this.smoothCornerSize;
+    const size = this.#smoothCornerSize;
     return SVGPathDAttributeUtility.generateQuadraticRelativeCurve(
       size * dx1,
       size * dy1,

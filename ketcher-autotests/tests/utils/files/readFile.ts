@@ -49,18 +49,23 @@ export async function openFile(filename: string, page: Page) {
 }
 
 export async function selectOptionInDropdown(filename: string, page: Page) {
-  const extention = filename.split('.')[1];
   const options = {
     mol: 'MDL Molfile V3000',
     fasta: 'FASTA',
     seq: 'Sequence',
   };
-  const optionText = (options as any)[extention];
+  const extention = filename.split('.')[1] as keyof typeof options;
+  const optionText = options[extention];
   const contentTypeSelector =
     pasteFromClipboardDialog(page).contentTypeSelector;
   const selectorExists = await contentTypeSelector.isVisible();
 
-  if (selectorExists && extention && extention !== 'ket' && optionText) {
+  if (
+    selectorExists &&
+    extention &&
+    optionText &&
+    extention !== ('ket' as string)
+  ) {
     const selectorText = (await contentTypeSelector.innerText()).replace(
       /(\r\n|\n|\r)/gm,
       '',

@@ -24,12 +24,12 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectSequenceLayoutModeTool,
-  pasteFromClipboard,
-  openStructurePasteFromClipboard,
   MonomerType,
+  takeElementScreenshot,
+  waitForMonomerPreview,
+  copyContentToClipboard,
 } from '@utils';
-import { waitForPageInit, waitForRender } from '@utils/common';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
+import { waitForPageInit } from '@utils/common';
 import {
   goToFavoritesTab,
   goToPeptidesTab,
@@ -53,14 +53,17 @@ import {
 import {
   pressUndoButton,
   selectClearCanvasTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
+import { Bases } from '@constants/monomers/Bases';
 
 let page: Page;
 
@@ -320,6 +323,10 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Click on Modes list button
      * 3. Take a screenshot
      */
+    // to awoid flakiness - following two lines moves edit triangle to exact plave
+    await keyboardTypeOnCanvas(page, 'A');
+    await keyboardTypeOnCanvas(page, 'Backspace');
+
     await openLayoutModeMenu(page);
     await takePageScreenshot(page);
   });
@@ -359,10 +366,9 @@ test.describe('Ketcher bugs in 3.1.0', () => {
       goToPeptides: false,
     });
     await goToPeptidesTab(page);
-    await waitForRender(page, async () => {
-      await page.getByTestId('D-OAla___D-Lactic acid').hover();
-    });
-    await takePageScreenshot(page);
+    await page.getByTestId(Peptides.D_OAla.testId).hover();
+    await waitForMonomerPreview(page);
+    await takeElementScreenshot(page, 'polymer-library-preview');
   });
 
   test(`Case 13: Separate selenocysteine from cysteine and pyrrolysine from lysine`, async () => {
@@ -383,13 +389,11 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      */
     await selectFlexLayoutModeTool(page);
     await goToPeptidesTab(page);
-    await waitForRender(page, async () => {
-      await page.getByTestId('O___Pyrrolysine').hover();
-    });
+    await page.getByTestId(Peptides.O.testId).hover();
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
-    await waitForRender(page, async () => {
-      await page.getByTestId('U___Selenocysteine').hover();
-    });
+    await page.getByTestId(Peptides.U.testId).hover();
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 
@@ -643,7 +647,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await symbolN.click();
     await modifyInRnaBuilder(page, symbolN);
     await selectBaseSlot(page);
-    await page.getByTestId('4ime6A___N6-[2-(4-Imidazoyl)ethyl]adenine').click();
+    await page.getByTestId(Bases._4ime6A.testId).click();
     await pressSaveButton(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -723,11 +727,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      */
     await selectSequenceLayoutModeTool(page);
     await switchToPeptideMode(page);
-    await openStructurePasteFromClipboard(page);
-    await pasteFromClipboard(page, 'GATYLIK');
-    await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await closeErrorAndInfoModals(page);
+    await copyContentToClipboard(page, 'GATYLIK');
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

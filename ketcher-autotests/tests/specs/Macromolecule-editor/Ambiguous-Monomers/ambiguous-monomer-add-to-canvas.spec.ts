@@ -1,14 +1,15 @@
+import { test } from '@playwright/test';
 import { Bases } from '@constants/monomers/Bases';
 import { Peptides } from '@constants/monomers/Peptides';
-import { test } from '@playwright/test';
 import {
   clickOnTheCanvas,
   selectMonomer,
   takeEditorScreenshot,
+  waitForMonomerPreview,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
 import { Monomer } from '@utils/types';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 interface IAmbiguousMonomerName {
   testDescription: string;
@@ -122,6 +123,7 @@ test.describe('Put ambiguous monomer on the canvas from library:', () => {
         */
       await selectMonomer(page, AmbiguousMonomer.AmbiguousMonomer);
       await clickOnTheCanvas(page, 0, 0);
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       // Test should be skipped if related bug exists

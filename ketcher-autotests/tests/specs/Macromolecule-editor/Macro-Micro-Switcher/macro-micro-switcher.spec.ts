@@ -14,7 +14,6 @@ import {
   LeftPanelButton,
   RingButton,
   SaltsAndSolvents,
-  SequenceType,
   TopPanelButton,
   addMonomersToFavorites,
   clickInTheMiddleOfTheScreen,
@@ -27,13 +26,15 @@ import {
   hideLibrary,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
-  openFile,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
+  openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasMacro,
-  openPasteFromClipboard,
+  pasteFromClipboardAndAddToCanvas,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  pasteFromClipboardAndOpenAsNewProject,
   pressButton,
-  readFileContents,
+  readFileContent,
   selectAromatizeTool,
   selectAtomInToolbar,
   selectCleanTool,
@@ -43,22 +44,17 @@ import {
   selectLayoutTool,
   selectLeftPanelButton,
   selectMonomer,
-  selectOptionInDropdown,
   selectRing,
   selectSaltsAndSolvents,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   selectTopPanelButton,
-  selectZoomInTool,
-  selectZoomOutTool,
-  selectZoomReset,
   setAttachmentPoints,
   switchSequenceEnteringButtonType,
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   takePageScreenshot,
   takeTopToolbarScreenshot,
-  waitForLoad,
   waitForPageInit,
   waitForRender,
   waitForSpinnerFinishedWork,
@@ -68,15 +64,25 @@ import {
   selectOpenFileTool,
   pressUndoButton,
   selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectZoomReset,
+  selectZoomOutTool,
+  topRightToolbarLocators,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import { selectAllStructuresOnCanvas } from '@utils/canvas';
+  selectZoomInTool,
+} from '@tests/pages/common/TopRightToolbar';
+import {
+  MacroFileType,
+  selectAllStructuresOnCanvas,
+  SequenceType,
+} from '@utils/canvas';
 import {
   addSuperatomAttachmentPoint,
   removeSuperatomAttachmentPoint,
 } from '@utils/canvas/atoms/superatomAttachmentPoints';
-import { pageReload } from '@utils/common/helpers';
+import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import {
@@ -104,6 +110,7 @@ import {
   MicroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 const topLeftCorner = {
   x: -325,
@@ -121,21 +128,6 @@ async function zoomWithMouseWheel(page: Page, scrollValue: number) {
 async function scrollHorizontally(page: Page, scrollValue: number) {
   await waitForRender(page, async () => {
     await page.mouse.wheel(scrollValue, 0);
-  });
-}
-
-async function pasteFromClipboard(
-  page: Page,
-  fileFormats: string,
-  filename = '.ket',
-) {
-  await selectOpenFileTool(page);
-  await page.getByText('Paste from clipboard').click();
-  await page.getByRole('dialog').getByRole('textbox').fill(fileFormats);
-  await selectOptionInDropdown(filename, page);
-
-  await waitForLoad(page, async () => {
-    await pressButton(page, 'Add to Canvas');
   });
 }
 
@@ -170,34 +162,6 @@ async function setAtomAndBondSettings(page: Page) {
     .nth(2)
     .fill('05');
   await page.getByTestId('OK').click();
-}
-
-async function openCdxFile(page: Page) {
-  await selectOpenFileTool(page);
-  await openFile(
-    'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
-    page,
-  );
-
-  await selectOptionInDropdown(
-    'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
-    page,
-  );
-  await pressButton(page, 'Open as New Project');
-}
-
-async function openCdxmlFile(page: Page) {
-  await selectOpenFileTool(page);
-  await openFile(
-    'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
-    page,
-  );
-
-  await selectOptionInDropdown(
-    'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
-    page,
-  );
-  await pressButton(page, 'Open as New Project');
 }
 
 enum FileFormat {
@@ -494,7 +458,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Ket-structure pasted from the clipboard in Macro mode is visible in Micro mode
     */
-    await pasteFromClipboard(
+    await pasteFromClipboardAndAddToCanvas(
       page,
       FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
     );
@@ -509,10 +473,10 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Mol-structure pasted from the clipboard in Macro mode  is visible in Micro mode
     */
 
-    await pasteFromClipboard(
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
+      MacroFileType.MOLv3000,
       FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
-      '.mol',
     );
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMicromoleculesEditor(page);
@@ -596,6 +560,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4094
     Description: There are no errors in DevTool console when switching to full screen mode after switching from micro mode.
     */
+    const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(
@@ -610,7 +575,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await moveMouseAway(page);
     await turnOnMicromoleculesEditor(page);
     await turnOnMacromoleculesEditor(page);
-    await page.locator('.css-kp5gpq').click();
+    await fullScreenButton.click();
   });
 
   test('Check the pop-up window appear in fullscreen mode after clicking the “Open/Save” button', async () => {
@@ -618,6 +583,9 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4173
     Description: The pop-up window appear in fullscreen mode after clicking the “Open/Save” button.
     */
+    const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
+    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
+
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(
@@ -626,10 +594,10 @@ test.describe('Macro-Micro-Switcher', () => {
         );
       }
     });
-    await page.locator('.css-kp5gpq').click();
+    await fullScreenButton.click();
     await selectOpenFileTool(page);
     await takeEditorScreenshot(page);
-    await page.getByTitle('Close window').click();
+    await closeWindowButton.click();
     await selectSaveTool(page);
     await takeEditorScreenshot(page);
   });
@@ -826,7 +794,7 @@ test.describe('Macro-Micro-Switcher', () => {
         x: 500,
         y: 100,
       };
-      await pasteFromClipboard(
+      await pasteFromClipboardAndAddToCanvas(
         page,
         FILE_TEST_DATA.oneFunctionalGroupExpandedKet,
       );
@@ -851,10 +819,10 @@ test.describe('Macro-Micro-Switcher', () => {
         x: 400,
         y: 100,
       };
-      await pasteFromClipboard(
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
+        MacroFileType.MOLv3000,
         FILE_TEST_DATA.functionalGroupsExpandedContractedV3000,
-        '.mol',
       );
       await clickOnCanvas(page, coordsToClick.x, coordsToClick.y);
       await turnOnMacromoleculesEditor(page);
@@ -1690,11 +1658,18 @@ test.describe('Macro-Micro-Switcher', () => {
       FileType.CDX,
     );
 
-    await openCdxFile(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+      page,
+      undefined,
+      // Error expected
+      true,
+    );
+
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
-    await pageReload(page);
+    await closeErrorAndInfoModals(page);
   });
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files', async () => {
@@ -1713,7 +1688,10 @@ test.describe('Macro-Micro-Switcher', () => {
       FileType.CDXML,
     );
 
-    await openCdxmlFile(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -2105,11 +2083,9 @@ test.describe('Macro-Micro-Switcher', () => {
      * to Macro mode and presented after returning to Micro
      */
 
-    const fileContent = await readFileContents(
-      'tests/test-data/CDX/image-png-expected.cdx',
-    );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Open as New Project');
+    const fileContent = await readFileContent('CDX/image-png-expected.cdx');
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
@@ -2905,8 +2881,12 @@ test('Switch to Macro mode, verify that user cant open reactions from RDF RXN V2
   Test case: https://github.com/epam/Indigo/issues/2102
   Description: In Macro mode, user can't open reactions from RDF RXN V2000/V3000 - error message is displayed. 
   */
-  await selectOpenFileTool(page);
-  await openFile('RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf', page);
-  await pressButton(page, 'Open as New');
+  await openFileAndAddToCanvasAsNewProjectMacro(
+    'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf',
+    page,
+    undefined,
+    // error is expected
+    true,
+  );
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 });

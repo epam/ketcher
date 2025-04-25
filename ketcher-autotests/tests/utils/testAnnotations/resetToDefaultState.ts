@@ -4,7 +4,7 @@ import { chooseTab, Tabs } from '@utils/macromolecules';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 
 const resetStateTypes = {
   defaultLayout: async (page: Page) => {

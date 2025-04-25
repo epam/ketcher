@@ -13,14 +13,14 @@ import {
   clickInTheMiddleOfTheScreen,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectZoomInTool,
-  selectZoomOutTool,
   moveMouseAway,
 } from '@utils';
+import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 import {
-  pressUndoButton,
   turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+  selectZoomOutTool,
+  selectZoomInTool,
+} from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   getSequenceSymbolLocator,

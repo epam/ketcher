@@ -233,8 +233,7 @@ test.describe('Multiple S-Group tool', () => {
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/multiple-group-data-expected.mol',
+        expectedFileName: 'Molfiles-V2000/multiple-group-data-expected.mol',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);

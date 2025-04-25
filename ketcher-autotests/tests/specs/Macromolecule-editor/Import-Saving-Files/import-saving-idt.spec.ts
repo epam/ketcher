@@ -10,12 +10,14 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   copyToClipboardByKeyboard,
+  MacroFileType,
   moveMouseAway,
   openFile,
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasMacro,
   openStructurePasteFromClipboard,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   pressButton,
   resetZoomLevelToDefault,
@@ -25,19 +27,20 @@ import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
   takePolymerEditorScreenshot,
-  waitForLoad,
   waitForPageInit,
   waitForRender,
-  waitForSpinnerFinishedWork,
 } from '@utils';
 import {
   selectClearCanvasTool,
   selectOpenFileTool,
   pressUndoButton,
   selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
+
 import {
   closeErrorMessage,
   closeOpenStructure,
@@ -76,30 +79,9 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 let page: Page;
-
-async function pasteFromClipboardAndAddToMacromoleculesCanvas(
-  structureFormat: string,
-  fillStructure: string,
-  needToWait = true,
-) {
-  await selectOpenFileTool(page);
-  await page.getByText('Paste from clipboard').click();
-  if (!(structureFormat === 'Ket')) {
-    await page.getByRole('combobox').click();
-    await page.getByText(structureFormat).click();
-  }
-
-  await page.getByRole('dialog').getByRole('textbox').fill(fillStructure);
-  if (needToWait) {
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
-  } else {
-    await pressButton(page, 'Add to Canvas');
-  }
-}
 
 test.beforeAll(async ({ browser }) => {
   let sharedContext;
@@ -146,13 +128,11 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/#4495
     Description: Option "IDT" to the format dropdown menu of modal window Paste from the clipboard is exist.
     */
+    const contentTypeSelector =
+      pasteFromClipboardDialog(page).contentTypeSelector;
+
     await openStructurePasteFromClipboard(page);
-
-    const fileFormatComboBox = page
-      .getByTestId('dropdown-select')
-      .getByRole('combobox');
-
-    await fileFormatComboBox.click();
+    await contentTypeSelector.click();
 
     const options = page.getByRole('option');
     const values = await options.allTextContents();
@@ -168,13 +148,11 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/#4495
     Description: Option "IDT" to dropdown File format of modal window Save Structure is exist.
     */
+    const contentTypeSelector =
+      pasteFromClipboardDialog(page).contentTypeSelector;
+
     await selectSaveTool(page);
-
-    const fileFormatComboBox = page
-      .getByTestId('dropdown-select')
-      .getByRole('combobox');
-
-    await fileFormatComboBox.click();
+    await contentTypeSelector.click();
 
     const options = page.getByRole('option');
     const values = await options.allTextContents();
@@ -206,17 +184,6 @@ test.describe('Import-Saving .idt Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  // Fail while performance issue on Indigo side
-  // test('Import incorrect data', async ({ page }) => {
-  //   const randomText = '!+%45#asjfnsalkfl';
-  //   await selectOpenFileTool(page);
-  //   await page.getByTestId('paste-from-clipboard-button').click();
-  //   await page.getByTestId('open-structure-textarea').fill(randomText);
-  //   await chooseFileFormat(page, 'IDT');
-  //   await page.getByTestId('add-to-canvas-button').click();
-  //   await takeEditorScreenshot(page);
-  // });
-
   test('Check import of .ket file and save in .idt format', async () => {
     await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
     await verifyFileExport(page, 'IDT/idt-rna-a.idt', FileType.IDT);
@@ -229,9 +196,13 @@ test.describe('Import-Saving .idt Files', () => {
   });
 
   test('Check that system does not let importing empty .idt file', async () => {
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
+
     await selectOpenFileTool(page);
     await openFile('IDT/idt-empty.idt', page);
-    await expect(page.getByText('Add to Canvas')).toBeDisabled();
+    await expect(addToCanvasButton).toBeDisabled();
+    await closeWindowButton.click();
   });
 
   test('Check IDT aliases, where defined in the preview window for Phosphates section', async () => {
@@ -370,7 +341,8 @@ test.describe('Import-Saving .idt Files', () => {
       markResetToDefaultState('defaultLayout');
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        'IDT',
+        page,
+        MacroFileType.IDT,
         `${fileName}`,
       );
 
@@ -398,11 +370,13 @@ test.describe('Import-Saving .idt Files', () => {
     Description: Error appears
     */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `A*C*G*C*G*C*G*A*C*T*
       A*T*A*C*G*C*G*C*C*T`,
-      false,
+      true,
     );
+
     await takeEditorScreenshot(page);
   });
 
@@ -414,7 +388,8 @@ test.describe('Import-Saving .idt Files', () => {
     markResetToDefaultState('defaultLayout');
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
     );
     await selectSequenceLayoutModeTool(page);
@@ -436,7 +411,8 @@ test.describe('Import-Saving .idt Files', () => {
     markResetToDefaultState('defaultLayout');
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
     );
     await selectSequenceLayoutModeTool(page);
@@ -451,7 +427,8 @@ test.describe('Import-Saving .idt Files', () => {
     Description: IDT appears in save preview
     */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T`,
     );
     await verifyFileExport(
@@ -474,7 +451,8 @@ test.describe('Import-Saving .idt Files', () => {
     markResetToDefaultState('defaultLayout');
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `+G*+C*+G*C*G*A*C*T*A*T*A*C*G*+C*+G*+C`,
     );
     await selectSequenceLayoutModeTool(page);
@@ -498,7 +476,8 @@ test.describe('Import-Saving .idt Files', () => {
     markResetToDefaultState('defaultLayout');
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T
       
       /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*C*G*A*C*T*A*T*A*C*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
@@ -523,7 +502,8 @@ test.describe('Import-Saving .idt Files', () => {
     markResetToDefaultState('defaultLayout');
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `A*C*G*C*G*C*G*A*C*T*A*T*A*C*G*C*G*C*C*T
       
       /52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*C*G*A*C*T*A*T*A*C*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/
@@ -554,7 +534,8 @@ test.describe('Import-Saving .idt Files', () => {
     Description: Bonds establishment between monomers from R2 to R1 attachment points.
     */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/32MOErT/`,
     );
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
@@ -572,7 +553,8 @@ test.describe('Import-Saving .idt Files', () => {
     markResetToDefaultState('defaultLayout');
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/5Phos/ACG/3Phos/`,
     );
     await takeEditorScreenshot(page);
@@ -588,7 +570,8 @@ test.describe('Import-Saving .idt Files', () => {
     markResetToDefaultState('defaultLayout');
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
     await selectSequenceLayoutModeTool(page);
@@ -624,7 +607,8 @@ test.describe('Import-Saving .idt Files', () => {
     Description: If * is specified, Phosphorothioate (sP) is included in nucleotide if not it is (P).
     */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/32MOErT/
       
       /5Phos/ACG/3Phos/
@@ -651,7 +635,8 @@ test.describe('Import-Saving .idt Files', () => {
     markResetToDefaultState('defaultLayout');
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/52MOErA/
        /i2MOErA/
        /52MOErA//i2MOErA/
@@ -673,7 +658,8 @@ test.describe('Import-Saving .idt Files', () => {
     markResetToDefaultState('defaultLayout');
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/32MOErA/
        /52MOErA/*/32MOErC/
        /52MOErA//32MOErC/
@@ -693,9 +679,10 @@ test.describe('Import-Saving .idt Files', () => {
     Description: Error appears
     */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/52MOErG/*/i2MOErG/*/3Phos/`,
-      false,
+      true,
     );
     await takeEditorScreenshot(page);
   });
@@ -706,7 +693,8 @@ test.describe('Import-Saving .idt Files', () => {
     Description: Sequences are opened.
     */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/i2MOErG/*G*+A*mT*A*T*rA*G*/i2MOErG/*/32MOErT/ `,
     );
     await takeEditorScreenshot(page);
@@ -752,7 +740,8 @@ test.describe('Import-Saving .idt Files', () => {
     markResetToDefaultState('defaultLayout');
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
     await takeEditorScreenshot(page);
@@ -771,7 +760,8 @@ test.describe('Import-Saving .idt Files', () => {
     markResetToDefaultState('defaultLayout');
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
     await getMonomerLocator(page, Chem.iMe_dC).nth(1).hover();
@@ -789,7 +779,8 @@ test.describe('Import-Saving .idt Files', () => {
     Description: R1/R2 (backbone) and R3/R4 (sidechain) attachment points are available for unresolved IDT monomers.
     */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/*G*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErC/*/32MOErT/`,
     );
     await bondSelectionTool(page, MacroBondType.Single);
@@ -808,7 +799,11 @@ test.describe('Import-Saving .idt Files', () => {
     const y = 400;
     const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
     const secondMonomer = getMonomerLocator(page, Peptides._1Nal);
-    await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.IDT,
+      `/iMe-dC/`,
+    );
     await selectMonomer(page, Peptides._1Nal);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
@@ -835,7 +830,11 @@ test.describe('Import-Saving .idt Files', () => {
     const y = 400;
     const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
-    await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.IDT,
+      `/iMe-dC/`,
+    );
     await selectMonomer(page, Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
@@ -858,7 +857,11 @@ test.describe('Import-Saving .idt Files', () => {
     const secondMonomer = getMonomerLocator(page, Peptides._1Nal);
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
 
-    await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.IDT,
+      `/iMe-dC/`,
+    );
     await selectMonomer(page, Peptides._1Nal);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
@@ -894,7 +897,11 @@ test.describe('Import-Saving .idt Files', () => {
     const firstMonomer = getMonomerLocator(page, Chem.iMe_dC);
     const secondMonomer = getMonomerLocator(page, Chem.Test_6_Ch);
     const bondLine = page.locator('g[pointer-events="stroke"]').first();
-    await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.IDT,
+      `/iMe-dC/`,
+    );
     await selectMonomer(page, Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondTwoMonomersPointToPoint(
@@ -919,7 +926,8 @@ test.describe('Import-Saving .idt Files', () => {
     const x = 0;
     const y = 600;
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
     );
     await selectAllStructuresOnCanvas(page);
@@ -936,7 +944,11 @@ test.describe('Import-Saving .idt Files', () => {
     */
     const x = 650;
     const y = 400;
-    await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.IDT,
+      `/iMe-dC/`,
+    );
     await selectMonomer(page, Peptides._1Nal);
     await clickOnCanvas(page, x, y);
     await bondSelectionTool(page, MacroBondType.Single);
@@ -956,7 +968,11 @@ test.describe('Import-Saving .idt Files', () => {
 
     const x = 650;
     const y = 400;
-    await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.IDT,
+      `/iMe-dC/`,
+    );
     await selectMonomer(page, Peptides._1Nal);
     await clickOnCanvas(page, x, y);
     await selectSnakeLayoutModeTool(page);
@@ -977,7 +993,11 @@ test.describe('Import-Saving .idt Files', () => {
 
     const x = 650;
     const y = 400;
-    await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.IDT,
+      `/iMe-dC/`,
+    );
     await selectMonomer(page, Chem.Test_6_Ch);
     await clickOnCanvas(page, x, y);
     await bondSelectionTool(page, MacroBondType.Single);
@@ -1002,7 +1022,8 @@ test.describe('Import-Saving .idt Files', () => {
       // Reload needed as monomer IDs increment in prior tests, affecting screenshots
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
-        'IDT',
+        page,
+        MacroFileType.IDT,
         `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
       );
       await selectSaveTool(page);
@@ -1022,7 +1043,8 @@ test.describe('Import-Saving .idt Files', () => {
     await pageReload(page);
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
     );
 
@@ -1062,7 +1084,8 @@ test.describe('Import-Saving .idt Files', () => {
     markResetToDefaultState('macromoleculesEditor');
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
     );
     await turnOnMicromoleculesEditor(page);
@@ -1075,7 +1098,8 @@ test.describe('Import-Saving .idt Files', () => {
     Description: Unresolved IDT monomers saved and opened in IDT format
     */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
-      'IDT',
+      page,
+      MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
     );
     await verifyFileExport(
@@ -1095,7 +1119,11 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/4431
     Description: Unresolved IDT monomers deleted from canvas.
     */
-    await pasteFromClipboardAndAddToMacromoleculesCanvas('IDT', `/iMe-dC/`);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.IDT,
+      `/iMe-dC/`,
+    );
     await takeEditorScreenshot(page);
     await selectEraseTool(page);
     await getMonomerLocator(page, Chem.iMe_dC).click();
@@ -1103,15 +1131,6 @@ test.describe('Import-Saving .idt Files', () => {
   });
 });
 
-async function loadIDTFromClipboard(page: Page, idtString: string) {
-  await openStructurePasteFromClipboard(page);
-  await chooseFileFormat(page, 'IDT');
-  await page.getByTestId('open-structure-textarea').fill(idtString);
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await page.getByTestId('add-to-canvas-button').click(),
-  );
-}
 interface IIDTString {
   idtDescription: string;
   IDTString: string;
@@ -1258,14 +1277,6 @@ const correctIDTStrings: IIDTString[] = [
   },
   {
     idtDescription:
-      '27. DNA with same mixed bases defined 4 different times using index and later inserted as RNA',
-    IDTString:
-      '(B4:00653005)(B3:00603010)(B2:00553015)(B1:00503020)(B:00453025)r(B)r(B1)r(B2)r(B3)r(B4)',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2336',
-  },
-  {
-    idtDescription:
       '28. Mix of RNAs with standard mixed bases are designated using a (Ni:XXYYZZQQ) way',
     IDTString: 'r(M:55450000)r(B:00453025)r(N:40302010)',
   },
@@ -1384,12 +1395,6 @@ const correctIDTStrings: IIDTString[] = [
     IDTString: '(B1:00503020)(B1)',
   },
   {
-    idtDescription: '52. RNA of three mixed bases later inserted as DNA',
-    IDTString: 'r(B1:00503020)(B1)',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2336',
-  },
-  {
     idtDescription: '53. LRNA of three mixed bases later inserted as DNA',
     IDTString: '+(B1:00503020)(B1)',
   },
@@ -1402,22 +1407,8 @@ const correctIDTStrings: IIDTString[] = [
     IDTString: 'r(B1:00503020)r(B1)',
   },
   {
-    idtDescription: '56. LRNA of three mixed bases later inserted as RNA',
-    IDTString: '+(B1:00503020)r(B1)',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2336',
-  },
-  {
-    idtDescription: '57. mRNA of three mixed bases later inserted as RNA',
-    IDTString: 'm(B1:00503020)r(B1)',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2336',
-  },
-  {
-    idtDescription: '58. RNA of three mixed bases later inserted as LRNA',
-    IDTString: 'r(B1:00503020)+(B1)',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2336',
+    idtDescription: '58. LRNA of three mixed bases later inserted as DNA',
+    IDTString: '+(B1:00503020)(B1)',
   },
   {
     idtDescription: '59. LRNA of three mixed bases later inserted as LRNA',
@@ -1426,16 +1417,6 @@ const correctIDTStrings: IIDTString[] = [
   {
     idtDescription: '60. mRNA of three mixed bases later inserted as LRNA',
     IDTString: 'm(B1:00503020)+(B1)',
-  },
-  {
-    idtDescription: '61. RNA of three mixed bases later inserted as DNA',
-    IDTString: 'r(B1:00503020)(B1)',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/Indigo/issues/2336',
-  },
-  {
-    idtDescription: '62. LRNA of three mixed bases later inserted as DNA',
-    IDTString: '+(B1:00503020)(B1)',
   },
   {
     idtDescription: '63. mRNA of three mixed bases later inserted as DNA',
@@ -1467,7 +1448,11 @@ test.describe('Import correct IDT sequence: ', () => {
     */
       test.setTimeout(20000);
 
-      await loadIDTFromClipboard(page, correctIDTString.IDTString);
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.IDT,
+        correctIDTString.IDTString,
+      );
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -1557,6 +1542,37 @@ const incorrectIDTStrings: IIDTString[] = [
     shouldFail: true,
     issueNumber: 'https://github.com/epam/Indigo/issues/2381',
   },
+  {
+    idtDescription:
+      '16. (DNA and RNA thogether is not alowed) DNA with same mixed bases defined 4 different times using index and later inserted as RNA',
+    IDTString:
+      '(B4:00653005)(B3:00603010)(B2:00553015)(B1:00503020)(B:00453025)r(B)r(B1)r(B2)r(B3)r(B4)',
+  },
+  {
+    idtDescription:
+      '17. (DNA and RNA thogether is not alowed) RNA of three mixed bases later inserted as DNA',
+    IDTString: 'r(B1:00503020)(B1)',
+  },
+  {
+    idtDescription:
+      '18. (LRNA and RNA thogether is not alowed) LRNA of three mixed bases later inserted as RNA',
+    IDTString: '+(B1:00503020)r(B1)',
+  },
+  {
+    idtDescription:
+      '19. (mRNA and RNA thogether is not alowed) mRNA of three mixed bases later inserted as RNA',
+    IDTString: 'm(B1:00503020)r(B1)',
+  },
+  {
+    idtDescription:
+      '20. (LRNA and RNA thogether is not alowed) RNA of three mixed bases later inserted as LRNA',
+    IDTString: 'r(B1:00503020)+(B1)',
+  },
+  {
+    idtDescription:
+      '21. (DNA and RNA thogether is not alowed) RNA of three mixed bases later inserted as DNA',
+    IDTString: 'r(B1:00503020)(B1)',
+  },
 ];
 
 test.describe('Import incorrect IDT sequence: ', () => {
@@ -1572,7 +1588,12 @@ test.describe('Import incorrect IDT sequence: ', () => {
       */
       test.setTimeout(20000);
 
-      await loadIDTFromClipboard(page, incorrectIDTString.IDTString);
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.IDT,
+        incorrectIDTString.IDTString,
+        true,
+      );
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });

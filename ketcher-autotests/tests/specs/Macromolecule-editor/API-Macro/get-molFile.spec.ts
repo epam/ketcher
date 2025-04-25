@@ -6,7 +6,7 @@ import {
   getMolfile,
   receiveFileComparisonData,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('getMolfile', () => {
   test.beforeEach(async ({ page }) => {
@@ -25,8 +25,7 @@ test.describe('getMolfile', () => {
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V3000/alanine-monomers-bonded-expected.mol',
+        expectedFileName: 'Molfiles-V3000/alanine-monomers-bonded-expected.mol',
         fileFormat: 'v3000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });

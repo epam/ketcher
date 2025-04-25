@@ -2,7 +2,6 @@
 import { Page } from '@playwright/test';
 import {
   clickOnCanvas,
-  MacromoleculesTopPanelButton,
   selectOption,
   SequenceType,
   waitForRender,
@@ -24,6 +23,7 @@ import {
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
+import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 /**
  * Selects an atom from Atom toolbar
@@ -37,10 +37,7 @@ export async function selectAtom(type: AtomButton, page: Page) {
  *  Select button from left panel
  * Usage: await selectTool(LeftPanelButton.HandTool, page)
  */
-export async function selectTool(
-  type: LeftPanelButton | MacromoleculesTopPanelButton,
-  page: Page,
-) {
+export async function selectTool(type: LeftPanelButton, page: Page) {
   await selectButtonByTitle(type, page);
 }
 
@@ -138,10 +135,9 @@ export async function selectImageTool(page: Page) {
 }
 
 export async function openStructurePasteFromClipboard(page: Page) {
+  const pasteFromClipboardButton =
+    openStructureDialog(page).pasteFromClipboardButton;
   await selectOpenFileTool(page);
-  const pasteFromClipboardButton = page.getByTestId(
-    'paste-from-clipboard-button',
-  );
   await pasteFromClipboardButton.click();
 }
 
@@ -181,7 +177,7 @@ export async function selectLeftPanelButton(
 }
 
 export async function selectMacromoleculesPanelButton(
-  buttonName: MacromoleculesLeftPanelButton | MacromoleculesTopPanelButton,
+  buttonName: MacromoleculesLeftPanelButton,
   page: Page,
 ) {
   const topPanelButton = page.locator(`button[title*="${buttonName}"]`);
@@ -212,12 +208,6 @@ export async function typeRNADNAAlphabet(page: Page) {
 
 export async function typePeptideAlphabet(page: Page) {
   await keyboardTypeOnCanvas(page, 'ACDEFGHIKLMNPQRSTVWY');
-}
-
-export async function setZoomInputValue(page: Page, value: string) {
-  await page.getByTestId('zoom-input').click();
-  await page.getByTestId('zoom-value').fill(value);
-  await page.keyboard.press('Enter');
 }
 
 export async function selectWithLasso(
@@ -429,37 +419,6 @@ export async function scrollToDownInSetting(page: Page) {
   const scrollToDown = page.getByTestId('Options for Debugging-accordion');
   await scrollToDown.scrollIntoViewIfNeeded();
   await scrollToDown.hover({ force: true });
-}
-
-export async function selectZoomInTool(page: Page, count = 1) {
-  await page.getByTestId('zoom-selector').click();
-  for (let i = 0; i < count; i++) {
-    await waitForRender(page, async () => {
-      await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomIn, page);
-    });
-  }
-  await page.getByTestId('zoom-selector').click({ force: true });
-  await page.getByTestId('zoom-in-button').waitFor({ state: 'detached' });
-}
-
-export async function selectZoomReset(page: Page) {
-  await page.getByTestId('zoom-selector').click();
-  await waitForRender(page, async () => {
-    await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomReset, page);
-  });
-  await page.getByTestId('zoom-selector').click({ force: true });
-  await page.getByTestId('reset-zoom-button').waitFor({ state: 'detached' });
-}
-
-export async function selectZoomOutTool(page: Page, count = 1) {
-  await page.getByTestId('zoom-selector').click();
-  for (let i = 0; i < count; i++) {
-    await waitForRender(page, async () => {
-      await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomOut, page);
-    });
-  }
-  await page.getByTestId('zoom-selector').click({ force: true });
-  await page.getByTestId('zoom-out-button').waitFor({ state: 'detached' });
 }
 
 export async function selectAddRemoveExplicitHydrogens(page: Page) {

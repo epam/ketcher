@@ -2,7 +2,6 @@ import { test, expect, Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  openFromFileViaClipboard,
   pressButton,
   selectOptionByText,
   openFileAndAddToCanvas,
@@ -12,10 +11,10 @@ import {
   nonEmptyString,
   copyToClipboardByKeyboard,
   openFileAndAddToCanvasAsNewProject,
+  readFileContent,
 } from '@utils';
 import {
   selectClearCanvasTool,
-  selectOpenFileTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
@@ -23,6 +22,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { clickOnFileFormatDropdown } from '@utils/formats';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 async function selectInChiOption(page: Page) {
   await selectOptionByText(page, 'InChI');
@@ -45,11 +45,9 @@ test.describe('', () => {
        * Description: Open multiple structures from InChi string
        */
       // add first structure from clipboard to canvas
-      await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1963-inchi.txt',
-        page,
-      );
+      const fileContent = await readFileContent('Txt/1963-inchi.txt');
+
+      await pasteFromClipboardAndAddToCanvas(page, fileContent);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -64,11 +62,9 @@ test.describe('', () => {
        * Description: Open structure with single bonds from InChi string
        */
       // add first structure from clipboard to canvas
-      await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1967-inchi.txt',
-        page,
-      );
+      const fileContent = await readFileContent('Txt/1967-inchi.txt');
+
+      await pasteFromClipboardAndAddToCanvas(page, fileContent);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -83,11 +79,9 @@ test.describe('', () => {
        * Description: Open structure with some double bonds from InChi string
        */
       // add first structure from clipboard to canvas
-      await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1968-inchi.txt',
-        page,
-      );
+      const fileContent = await readFileContent('Txt/1968-inchi.txt');
+
+      await pasteFromClipboardAndAddToCanvas(page, fileContent);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -102,11 +96,9 @@ test.describe('', () => {
        * Description: Open structure with some triple bonds from InChi string
        */
       // add first structure from clipboard to canvas
-      await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1969-inchi.txt',
-        page,
-      );
+      const fileContent = await readFileContent('Txt/1969-inchi.txt');
+
+      await pasteFromClipboardAndAddToCanvas(page, fileContent);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -121,11 +113,9 @@ test.describe('', () => {
        * Description: Open cyclic structure with single bonds from InChi string
        */
       // add first structure from clipboard to canvas
-      await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1970-inchi.txt',
-        page,
-      );
+      const fileContent = await readFileContent('Txt/1970-inchi.txt');
+
+      await pasteFromClipboardAndAddToCanvas(page, fileContent);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -140,11 +130,9 @@ test.describe('', () => {
        * Description: Open sugar without stereobonds from InChi string
        */
       // add first structure from clipboard to canvas
-      await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1971-inchi.txt',
-        page,
-      );
+      const fileContent = await readFileContent('Txt/1971-inchi.txt');
+
+      await pasteFromClipboardAndAddToCanvas(page, fileContent);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -159,11 +147,9 @@ test.describe('', () => {
        * Description: Open structure with stereobonds from InChi string
        */
       // add first structure from clipboard to canvas
-      await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1974-inchi.txt',
-        page,
-      );
+      const fileContent = await readFileContent('Txt/1974-inchi.txt');
+
+      await pasteFromClipboardAndAddToCanvas(page, fileContent);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -178,11 +164,9 @@ test.describe('', () => {
        * Description: Open structure with fused bonds from InChi string
        */
       // add first structure from clipboard to canvas
-      await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1975-inchi.txt',
-        page,
-      );
+      const fileContent = await readFileContent('Txt/1975-inchi.txt');
+
+      await pasteFromClipboardAndAddToCanvas(page, fileContent);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -197,11 +181,9 @@ test.describe('', () => {
        * Description: Open spiro structure from InChi string
        */
       // add first structure from clipboard to canvas
-      await selectOpenFileTool(page);
-      await openFromFileViaClipboard(
-        'tests/test-data/Txt/1976-inchi.txt',
-        page,
-      );
+      const fileContent = await readFileContent('Txt/1976-inchi.txt');
+
+      await pasteFromClipboardAndAddToCanvas(page, fileContent);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     },
@@ -390,6 +372,7 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1927
      * Description: Open and Save file - InChi for structure
      */
+    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
     await openFileAndAddToCanvas('KET/nonone-chain-structure.ket', page);
     await selectSaveTool(page);
     await clickOnFileFormatDropdown(page);
@@ -398,7 +381,7 @@ test.describe('Open and Save InChI file', () => {
       .getByTestId('inChI-preview-area-text')
       .inputValue();
     await copyToClipboardByKeyboard(page);
-    await page.getByTestId('close-icon').click();
+    await closeWindowButton.click();
     await selectClearCanvasTool(page);
     await pasteFromClipboardAndAddToCanvas(page, inChistring);
   });

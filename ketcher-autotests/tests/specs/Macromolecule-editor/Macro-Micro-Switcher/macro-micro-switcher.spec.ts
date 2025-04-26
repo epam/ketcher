@@ -19,7 +19,6 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   clickOnCanvas,
-  clickOnFileFormatDropdown,
   dragMouseTo,
   drawBenzeneRing,
   getControlModifier,
@@ -111,6 +110,8 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 const topLeftCorner = {
   x: -325,
@@ -162,17 +163,6 @@ async function setAtomAndBondSettings(page: Page) {
     .nth(2)
     .fill('05');
   await page.getByTestId('OK').click();
-}
-
-enum FileFormat {
-  SVGDocument = 'SVG Document',
-  PNGImage = 'PNG Image',
-}
-
-async function saveFileAsPngOrSvgFormat(page: Page, FileFormat: string) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: FileFormat }).click();
 }
 
 async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
@@ -1751,7 +1741,7 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
-      await saveFileAsPngOrSvgFormat(page, FileFormat.SVGDocument);
+      await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
       await takeEditorScreenshot(page);
     },
   );
@@ -1770,7 +1760,7 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
-      await saveFileAsPngOrSvgFormat(page, FileFormat.PNGImage);
+      await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
       await takeEditorScreenshot(page);
     },
   );

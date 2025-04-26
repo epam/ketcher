@@ -391,7 +391,7 @@ class SaveDialog extends Component {
       </div>
     );
 
-    const PreviewContent = ({ format }) => {
+    const PreviewContent = () => {
       return (
         <div className={classes.previewBackground}>
           <textarea
@@ -399,7 +399,7 @@ class SaveDialog extends Component {
             className={classes.previewArea}
             readOnly
             ref={this.textAreaRef}
-            data-testid={`${format}-preview-area-text`}
+            data-testid="preview-area-text"
           />
           <IconButton
             onClick={this.handleCopy}

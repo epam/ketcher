@@ -46,11 +46,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  clickOnFileFormatDropdown,
-  FileFormatOption,
-  selectSaveFileFormat,
-} from '@utils/formats';
 import { openStructureLibrary } from '@utils/templates';
 import {
   pressRedoButton,
@@ -71,8 +66,16 @@ import {
   setZoomInputValue,
 } from '@tests/pages/common/TopRightToolbar';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 async function saveToTemplates(page: Page) {
+  const saveToTemplatesButton = saveStructureDialog(page).saveToTemplatesButton;
+
+  await saveToTemplatesButton.click();
   await pressButton(page, 'Save to Templates');
   await page.getByPlaceholder('template').click();
   await page
@@ -500,8 +503,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('Ket Format-option').click();
+    await chooseFileFormat(page, MoleculesFileFormatType.KetFormat);
     await takeEditorScreenshot(page);
   });
 
@@ -984,6 +986,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5055
      * Description: Multi-Tailed Arrows can't be saved to template - "Save to Template" button is disabled
      */
+    const saveToTemplatesButton =
+      saveStructureDialog(page).saveToTemplatesButton;
+    const saveStructureTextarea =
+      saveStructureDialog(page).saveStructureTextarea;
+
     await selectDropdownTool(
       page,
       'reaction-arrow-open-angle',
@@ -991,9 +998,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickOnCanvas(page, 500, 600);
     await selectSaveTool(page);
-    await expect(page.getByText('Save to Templates')).toBeDisabled();
+    await expect(saveToTemplatesButton).toBeDisabled();
     await takeEditorScreenshot(page, {
-      mask: [page.getByTestId('rxn-preview-area-text')],
+      mask: [saveStructureTextarea],
     });
   });
 
@@ -3475,10 +3482,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
-    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 
@@ -3496,10 +3505,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
-    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 
@@ -3515,10 +3526,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
-    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
     await selectClearCanvasTool(page);

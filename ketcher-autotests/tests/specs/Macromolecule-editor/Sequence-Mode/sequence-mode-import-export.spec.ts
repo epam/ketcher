@@ -24,6 +24,11 @@ import {
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import {
+  MacromoleculesFileFormatName,
+  MacromoleculesFileFormatType,
+} from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
 
@@ -266,29 +271,31 @@ test.describe('Import/export sequence:', () => {
         Confirm that the dropdown now includes the option "Sequence.
         Case 31: Check option "FASTA" to dropdown 'File format' of modal window 'Save Structure'
     */
+
+    const fileFormatDropdonwList =
+      saveStructureDialog(page).fileFormatDropdonwList;
+
     await selectSequenceLayoutModeTool(page);
     await selectSaveTool(page);
 
-    const fileFormatComboBox = page.getByRole('combobox');
-
-    const defaultValue = await fileFormatComboBox
+    const defaultValue = await fileFormatDropdonwList
       .locator('span')
       .first()
       .innerText();
-    expect(defaultValue).toBe('Ket');
+    expect(defaultValue).toBe(MacromoleculesFileFormatName.Ket);
 
-    await fileFormatComboBox.click();
+    await fileFormatDropdonwList.click();
 
     const options = page.getByRole('option');
     const values = await options.allTextContents();
 
     const expectedValues = [
-      'Ket',
-      'MDL Molfile V3000',
-      'Sequence (1-letter code)',
-      'Sequence (3-letter code)',
-      'FASTA',
-      'IDT',
+      MacromoleculesFileFormatType.Ket,
+      MacromoleculesFileFormatType.MDLMolfileV3000,
+      MacromoleculesFileFormatType.Sequence1LetterCode,
+      MacromoleculesFileFormatType.Sequence3LetterCode,
+      MacromoleculesFileFormatType.FASTA,
+      MacromoleculesFileFormatType.IDT,
     ];
     for (const value of expectedValues) {
       expect(values).toContain(value);

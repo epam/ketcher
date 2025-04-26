@@ -2,13 +2,11 @@
 import { Page } from '@playwright/test';
 import {
   clickOnCanvas,
-  selectOption,
   SequenceType,
   waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
-import { clickOnFileFormatDropdown } from '@utils/formats';
 import {
   AtomButton,
   LeftPanelButton,
@@ -24,6 +22,11 @@ import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 /**
  * Selects an atom from Atom toolbar
@@ -189,13 +192,17 @@ export async function selectButtonById(buttonId: 'OK', page: Page) {
   await element.click();
 }
 
-export async function saveStructureWithReaction(page: Page, format?: string) {
+export async function saveStructureWithReaction(
+  page: Page,
+  format?: MoleculesFileFormatType,
+) {
+  const saveButton = saveStructureDialog(page).saveButton;
+
   await selectSaveTool(page);
   if (format) {
-    await clickOnFileFormatDropdown(page);
-    await selectOption(page, format);
+    await chooseFileFormat(page, format);
   }
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await saveButton.click();
 }
 
 export async function typeAllEnglishAlphabet(page: Page) {
@@ -227,8 +234,10 @@ export async function selectWithLasso(
 }
 
 export async function saveToTemplates(page: Page, templateName: string) {
+  const saveToTemplatesButton = saveStructureDialog(page).saveToTemplatesButton;
+
   await selectSaveTool(page);
-  await page.getByRole('button', { name: 'Save to Templates' }).click();
+  await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill(templateName);
   await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -239,8 +248,11 @@ export async function selectFormatForSaving(page: Page, templateName: string) {
 }
 
 export async function clickOnSaveFileAndOpenDropdown(page: Page) {
+  const fileFormatDropdonwList =
+    saveStructureDialog(page).fileFormatDropdonwList;
+
   await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
+  await fileFormatDropdonwList.click();
 }
 
 export async function openSettings(page: Page) {

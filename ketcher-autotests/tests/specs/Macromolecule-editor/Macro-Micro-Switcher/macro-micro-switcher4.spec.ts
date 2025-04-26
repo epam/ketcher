@@ -1,7 +1,7 @@
 /* eslint-disable no-self-compare */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { chooseFileFormat, chooseTab, Tabs } from '@utils/macromolecules';
+import { chooseTab, Tabs } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -44,6 +44,8 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
 
@@ -291,7 +293,10 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await takeEditorScreenshot(page);
 
   await selectSaveTool(page);
-  await chooseFileFormat(page, 'Sequence (1-letter code)');
+  await chooseFileFormat(
+    page,
+    MacromoleculesFileFormatType.Sequence1LetterCode,
+  );
   await takeEditorScreenshot(page);
 
   await closeErrorMessage(page);
@@ -316,7 +321,10 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await takeEditorScreenshot(page);
 
   await selectSaveTool(page);
-  await chooseFileFormat(page, 'Sequence (3-letter code)');
+  await chooseFileFormat(
+    page,
+    MacromoleculesFileFormatType.Sequence3LetterCode,
+  );
   await takeEditorScreenshot(page);
 
   // await closeErrorMessage(page);
@@ -346,7 +354,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await takeEditorScreenshot(page);
 
   await selectSaveTool(page);
-  await chooseFileFormat(page, 'IDT');
+  await chooseFileFormat(page, MacromoleculesFileFormatType.IDT);
   await takeEditorScreenshot(page);
 
   // await closeErrorMessage(page);

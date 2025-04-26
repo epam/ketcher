@@ -43,7 +43,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { chooseFileFormat, zoomWithMouseWheel } from '@utils/macromolecules';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import {
   createRNAAntisenseChain,
   getMonomerLocator,
@@ -65,6 +65,11 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 declare global {
   interface Window {
@@ -239,8 +244,8 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
    * 3. Save them in the SVG file format
    * 4. Take a screenshot to validate the names are displayed correctly
    */
+  const cancelButton = saveStructureDialog(page).cancelButton;
   await selectFlexLayoutModeTool(page);
-
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -248,12 +253,12 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
   );
 
   await selectSaveTool(page);
-  await chooseFileFormat(page, 'SVG Document');
+  await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await pressButton(page, 'Cancel');
+  await cancelButton.click();
 });
 
 test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for atom in bonds too)`, async () => {

@@ -41,25 +41,6 @@ export async function scrollUp(page: Page, scrollDelta: number) {
   await page.mouse.wheel(0, -scrollDelta);
 }
 
-export async function chooseFileFormat(
-  page: Page,
-  fileFomat:
-    | 'Ket'
-    | 'MDL Molfile V3000'
-    | 'FASTA'
-    | 'Sequence'
-    | 'Sequence (1-letter code)'
-    | 'Sequence (3-letter code)'
-    | 'IDT'
-    | 'HELM'
-    | 'SVG Document',
-) {
-  await page.getByTestId('dropdown-select').click();
-  await waitForSpinnerFinishedWork(page, async () => {
-    await page.getByRole('option', { name: fileFomat }).click();
-  });
-}
-
 export const Tabs = {
   Favorites: { displayName: 'Favorites', testId: FAVORITES_TAB },
   Peptides: { displayName: 'Peptides', testId: PEPTIDES_TAB },

@@ -31,6 +31,7 @@ import {
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
+import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -55,8 +56,10 @@ async function selectAndMoveSimpleObjects(page: Page) {
 }
 
 async function saveToTemplates(page: Page) {
+  const saveToTemplates = saveStructureDialog(page).saveToTemplatesButton;
+
   await selectSaveTool(page);
-  await page.getByRole('button', { name: 'Save to Templates' }).click();
+  await saveToTemplates.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My New Template');
   await page.getByRole('button', { name: 'Save', exact: true }).click();

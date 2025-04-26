@@ -60,6 +60,7 @@ import {
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -292,11 +293,13 @@ test.describe(`Bond tool:`, () => {
        */
       const fileName = `Molfiles-V2000/saving-and-rendering-${bondTypeName}-bond-(refactored).mol`;
       test(`${bondTypeName}: Save to file`, async () => {
+        const saveButton = saveStructureDialog(page).saveButton;
+
         await bondSelectionTool(page, bondType);
         await clickOnTheCanvas(page, -200, 0);
         await clickInTheMiddleOfTheScreen(page);
         await selectSaveTool(page);
-        await page.getByRole('button', { name: 'Save', exact: true }).click();
+        await saveButton.click();
       });
 
       test(`${bondTypeName}: Open and edit`, async () => {

@@ -19,13 +19,10 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   FILE_TEST_DATA,
   resetZoomLevelToDefault,
-  selectSaveFileFormat,
-  FileFormatOption,
   resetCurrentTool,
   clickOnCanvas,
   setMolecule,
 } from '@utils';
-import { chooseFileFormat } from '@utils/macromolecules';
 import {
   waitForPageInit,
   waitForRender,
@@ -61,13 +58,11 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 let page: Page;
-
-async function openSaveToHELMDialog(page: Page) {
-  await selectSaveTool(page);
-  await chooseFileFormat(page, 'HELM');
-}
 
 async function callContexMenu(page: Page, locatorText: string) {
   const canvasLocator = page.getByTestId('ketcher-canvas');
@@ -407,7 +402,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await openSaveToHELMDialog(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MacromoleculesFileFormatType.HELM);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -883,7 +879,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       'KET/Bugs/Elliptical arrows can be saved to the png.ket',
       page,
     );
-    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 
@@ -902,7 +899,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       'CDXML/Bugs/stereochemistry.cdxml',
       page,
     );
-    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
     await takeEditorScreenshot(page);
   });
 

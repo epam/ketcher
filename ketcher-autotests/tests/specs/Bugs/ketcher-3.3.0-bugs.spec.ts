@@ -26,7 +26,7 @@ import {
   SaltsAndSolvents,
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
-import { chooseFileFormat, waitForMonomerPreview } from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { waitForPageInit } from '@utils/common';
 import {
   pressUndoButton,
@@ -54,17 +54,14 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
 
 let page: Page;
 
 async function callContextMenuForAnySymbol(page: Page) {
   const anySymbol = getSymbolLocator(page, {}).first();
   await anySymbol.click({ button: 'right', force: true });
-}
-
-async function openSaveToHELMDialog(page: Page) {
-  await selectSaveTool(page);
-  await chooseFileFormat(page, 'HELM');
 }
 
 test.describe('Ketcher bugs in 3.3.0', () => {
@@ -824,7 +821,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await selectBaseSlot(page);
     await selectMonomer(page, Bases.DNA_N);
     await pressSaveButton(page);
-    await openSaveToHELMDialog(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MacromoleculesFileFormatType.HELM);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

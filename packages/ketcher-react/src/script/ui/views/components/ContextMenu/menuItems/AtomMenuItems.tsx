@@ -16,6 +16,7 @@ import {
   AtomQueryProperties,
   AtomAllAttributeName,
   Atom,
+  ketcherProvider,
 } from 'ketcher-core';
 import { atom } from 'src/script/ui/data/schema/struct-schema';
 import styles from '../ContextMenu.module.less';
@@ -102,8 +103,10 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const [handleRemoveAttachmentPoint] = useRemoveAttachmentPoint();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
-  const { getKetcherInstance } = useAppContext();
-  const editor = getKetcherInstance().editor as Editor;
+  // const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
+  const ketcher = ketcherProvider.getKetcher(ketcherId);
+  const editor = ketcher.editor as Editor;
   const struct = editor.struct();
 
   const getPropertyValue = (key: AtomAllAttributeName) => {

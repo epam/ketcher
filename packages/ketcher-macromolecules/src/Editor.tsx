@@ -42,6 +42,7 @@ import {
   destroyEditor,
   selectEditor,
   selectIsHandToolSelected,
+  initKetcherId,
 } from 'state/common';
 import {
   useAppDispatch,
@@ -106,10 +107,12 @@ interface EditorProps {
 
 interface EditorContainerProps extends EditorProps {
   onInit?: () => void;
+  ketcherId: string;
 }
 
 function EditorContainer({
   onInit,
+  ketcherId,
   theme,
   togglerComponent,
   monomersLibraryUpdate,
@@ -122,6 +125,8 @@ function EditorContainer({
   const mergedTheme: MergedThemeType = merge(muiTheme, {
     ketcher: editorTheme,
   });
+
+  store.dispatch(initKetcherId(ketcherId));
 
   useEffect(() => {
     onInit?.();
@@ -173,7 +178,6 @@ function Editor({
   useEffect(() => {
     dispatch(
       createEditor({
-        ketcherId,
         theme,
         canvas: canvasRef.current,
         monomersLibraryUpdate,

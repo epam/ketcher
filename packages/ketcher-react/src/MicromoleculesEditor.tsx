@@ -28,7 +28,7 @@ import { createRoot, Root } from 'react-dom/client';
 import { Ketcher, StructService } from 'ketcher-core';
 import classes from './Editor.module.less';
 import clsx from 'clsx';
-import { useAppContext, useResizeObserver } from './hooks';
+import { useResizeObserver } from './hooks';
 import {
   ketcherInitEventName,
   KETCHER_ROOT_NODE_CLASS_NAME,
@@ -42,6 +42,8 @@ const mediaSizes = {
 
 export interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
   onInit?: (ketcher: Ketcher) => void;
+  onSetKetcherId: (ketcherId: string) => void;
+  ketcherId: string;
 }
 
 function MicromoleculesEditor(props: EditorProps) {
@@ -52,7 +54,6 @@ function MicromoleculesEditor(props: EditorProps) {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   const setServerRef = useRef<(structService: StructService) => void>(() => {});
   const structServiceProvider = props.structServiceProvider;
-  const { ketcherId } = useAppContext();
 
   const rootElRef = useRef<HTMLDivElement>(null);
 
@@ -61,12 +62,15 @@ function MicromoleculesEditor(props: EditorProps) {
   });
 
   useEffect(() => {
+    if (!props.ketcherId) {
+      return;
+    }
     ketcherBuilderRef.current?.reinitializeApi(
-      ketcherId,
+      props.ketcherId,
       props.structServiceProvider,
       setServerRef.current,
     );
-  }, [structServiceProvider, ketcherId]);
+  }, [structServiceProvider, props.ketcherId]);
 
   const initKetcher = async () => {
     appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);
@@ -81,6 +85,7 @@ function MicromoleculesEditor(props: EditorProps) {
       cleanupRef.current = cleanup;
       ketcherBuilderRef.current = builder;
       setServerRef.current = setServer;
+      props.onSetKetcherId(ketcher.id);
       console.log('ketcheId', ketcher.id);
 
       if (typeof props.onInit === 'function' && ketcher) {

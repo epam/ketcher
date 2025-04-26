@@ -45,12 +45,13 @@ class KetcherBuilder {
     this.formatterFactory = null;
   }
 
-  async appendApiAsync(structServiceProvider: StructServiceProvider) {
+  appendApiAsync(structServiceProvider: StructServiceProvider) {
     this.structService = createApi(
       structServiceProvider,
       DefaultStructServiceOptions,
     );
     this.formatterFactory = new FormatterFactory(this.structService!);
+    return this.structService;
   }
 
   reinitializeApi(
@@ -64,6 +65,7 @@ class KetcherBuilder {
       structServiceProvider,
       DefaultStructServiceOptions,
     );
+    this.structService.addKetcherId(ketcherId);
 
     window.addEventListener(
       STRUCT_SERVICE_INITIALIZED_EVENT,
@@ -165,7 +167,7 @@ class KetcherBuilder {
       userInput === 'constructor' ||
       userInput === 'prototype'
     ) {
-      return;
+      return ketcher;
     }
     const params = new URLSearchParams(document.location.search);
     const initialMol = params.get('moll');

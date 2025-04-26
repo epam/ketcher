@@ -881,8 +881,6 @@ function updateLastCursorPosition(editor: Editor, event) {
     const clientAreaBoundingBox =
       editor.render.clientArea.getBoundingClientRect();
 
-    console.log('position', clientAreaBoundingBox);
-
     editor.lastCursorPosition = {
       x: event.clientX - clientAreaBoundingBox.x,
       y: event.clientY - clientAreaBoundingBox.y,

@@ -219,6 +219,7 @@ class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions;
   private worker: Worker;
   private readonly EE: EventEmitter = new EventEmitter();
+  private ketcherId: string | null = null;
 
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions;
@@ -240,12 +241,19 @@ class IndigoService implements StructService {
     };
   }
 
+  public addKetcherId(ketcherId: string) {
+    this.ketcherId = ketcherId;
+  }
+
   private getStandardServerOptions(options?: StructServiceOptions) {
     if (!options) {
       return this.defaultOptions;
     }
+    if (!this.ketcherId) {
+      throw new Error('Cannot getting options because there are no ketcherId');
+    }
 
-    return pickStandardServerOptions(options);
+    return pickStandardServerOptions(this.ketcherId, options);
   }
 
   private callIndigoNoRenderLoadedCallback() {

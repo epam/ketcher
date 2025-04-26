@@ -7,7 +7,6 @@ import styles from './Editor.module.less';
 
 type Props = EditorProps & {
   disableMacromoleculesEditor?: boolean;
-  ketcherId: string;
 };
 
 /*
@@ -23,7 +22,7 @@ const MacromoleculesEditor = lazy(() => import('ketcher-macromolecules'));
 
 export const Editor = (props: Props) => {
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
-
+  const [ketcherId, setKetcherId] = useState<string>('');
   const togglePolymerEditor = (toggleValue: boolean) => {
     setShowPolymerEditor(toggleValue);
     window.isPolymerEditorTurnedOn = toggleValue;
@@ -67,6 +66,8 @@ export const Editor = (props: Props) => {
         >
           <MicromoleculesEditor
             {...props}
+            ketcherId={ketcherId}
+            onSetKetcherId={setKetcherId}
             togglerComponent={togglerComponent}
           />
         </Suspense>

@@ -14,7 +14,11 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { FunctionalGroup, MULTITAIL_ARROW_KEY } from 'ketcher-core';
+import {
+  FunctionalGroup,
+  ketcherProvider,
+  MULTITAIL_ARROW_KEY,
+} from 'ketcher-core';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { useContextMenu } from 'react-contexify';
 import { useAppContext } from 'src/hooks';
@@ -30,6 +34,7 @@ import TemplateTool from 'src/script/editor/tool/template';
 const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
   const { getKetcherInstance } = useAppContext();
   const { show } = useContextMenu<ContextMenuProps>();
+  const { ketcherId } = useAppContext();
 
   const getSelectedGroupsInfo = useCallback(() => {
     const editor = getKetcherInstance().editor as Editor;
@@ -72,7 +77,8 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
     (event) => {
       event.preventDefault();
 
-      const editor = getKetcherInstance().editor as Editor;
+      const ketcher = ketcherProvider.getKetcher(ketcherId);
+      const editor = ketcher.editor as Editor;
 
       if (editor.render.options.viewOnlyMode) {
         return;
@@ -134,7 +140,11 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         }
 
         case ContextMenuTriggerType.ClosestItem: {
-          showProps = getMenuPropsForClosestItem(editor, closestItem);
+          showProps = getMenuPropsForClosestItem(
+            editor,
+            closestItem,
+            ketcherId,
+          );
           break;
         }
 
@@ -142,6 +152,7 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
           showProps = getMenuPropsForSelection(
             selection,
             selectedFunctionalGroups,
+            ketcherId,
           );
           break;
         }
@@ -151,10 +162,10 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
         show({
           id: showProps.id,
           event,
-          props: showProps,
+          props: { ...showProps, ketcherId },
         });
     },
-    [getKetcherInstance, getSelectedGroupsInfo, show],
+    [getKetcherInstance, getSelectedGroupsInfo, show, ketcherId],
   );
 
   return (

@@ -46,9 +46,10 @@ async function buildKetcherAsync({
 }: Config) {
   const builder = new KetcherBuilder();
 
-  await builder.appendApiAsync(structServiceProvider);
+  const structService = builder.appendApiAsync(structServiceProvider);
   builder.appendServiceMode(structServiceProvider.mode);
   const ketcher = builder.build();
+  structService.addKetcherId(ketcher.id);
 
   const { setKetcher, cleanup, setServer } = await builder.appendUiAsync(
     ketcher.id,

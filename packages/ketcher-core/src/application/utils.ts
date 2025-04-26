@@ -25,9 +25,9 @@ class KetcherProvider {
 
   getKetcher(id: string) {
     const ketcher = this.ketcherInstances.get(id);
-    // if (!ketcher) {
-    //   throw Error(`couldnt find ketcher instance ${id}`);
-    // }
+    if (!ketcher) {
+      throw Error(`couldnt find ketcher instance ${id}`);
+    }
     return ketcher;
   }
 }

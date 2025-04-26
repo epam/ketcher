@@ -267,15 +267,14 @@ class StructEditor extends Component {
   }
 
   render() {
-    if (!this.editor) {
-      return null;
-    }
     const {
       Tag = 'div',
       className,
-      indigoVerification,
+      /* eslint-disable @typescript-eslint/no-unused-vars */
+      ketcherId,
       /* eslint-disable @typescript-eslint/no-unused-vars */
       struct,
+      indigoVerification,
       tool,
       toolOpts,
       options,

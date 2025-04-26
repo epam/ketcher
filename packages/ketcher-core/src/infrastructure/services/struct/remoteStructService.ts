@@ -132,8 +132,11 @@ function indigoCall(
   };
 }
 
-export function pickStandardServerOptions(options?: StructServiceOptions) {
-  const ketcherInstance = ketcherProvider.getKetcher();
+export function pickStandardServerOptions(
+  ketcherId: string,
+  options?: StructServiceOptions,
+) {
+  const ketcherInstance = ketcherProvider.getKetcher(ketcherId);
 
   return {
     'dearomatize-on-load': options?.['dearomatize-on-load'],
@@ -153,6 +156,7 @@ export class RemoteStructService implements StructService {
   private readonly apiPath: string;
   private readonly defaultOptions: StructServiceOptions;
   private readonly customHeaders?: Record<string, string>;
+  private ketcherId: string | null;
 
   constructor(
     apiPath: string,
@@ -162,6 +166,11 @@ export class RemoteStructService implements StructService {
     this.apiPath = apiPath;
     this.defaultOptions = defaultOptions;
     this.customHeaders = customHeaders;
+    this.ketcherId = null;
+  }
+
+  addKetcherId(ketcherId: string) {
+    this.ketcherId = ketcherId;
   }
 
   getInChIKey(struct: string): Promise<string> {
@@ -184,8 +193,11 @@ export class RemoteStructService implements StructService {
     if (!options) {
       return this.defaultOptions;
     }
+    if (!this.ketcherId) {
+      throw Error('ketcherId is missed when options getting');
+    }
 
-    return pickStandardServerOptions(options);
+    return pickStandardServerOptions(this.ketcherId, options);
   }
 
   async info(): Promise<InfoResult> {

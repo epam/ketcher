@@ -24,6 +24,7 @@ import { PresetPosition } from 'ketcher-react';
 
 // TODO: Looks like we do not use `isReady`. Delete?
 interface EditorState {
+  ketcherId: string;
   isReady: boolean | null;
   activeTool: string;
   editor: CoreEditor | undefined;
@@ -33,6 +34,7 @@ interface EditorState {
 }
 
 const initialState: EditorState = {
+  ketcherId: '',
   isReady: null,
   activeTool: 'select',
   editor: undefined,
@@ -51,6 +53,9 @@ export const editorSlice: Slice = createSlice({
   reducers: {
     init: (state) => {
       state.isReady = false;
+    },
+    initKetcherId: (state, action: PayloadAction<string>) => {
+      state.ketcherId = action.payload;
     },
     initSuccess: (state) => {
       state.isReady = true;
@@ -75,7 +80,7 @@ export const editorSlice: Slice = createSlice({
       }>,
     ) => {
       state.editor = new CoreEditor({
-        ketcherId: action.payload.ketcherId,
+        ketcherId: state.ketcherId,
         theme: action.payload.theme,
         canvas: action.payload.canvas,
         mode: state.editorLayoutMode
@@ -102,6 +107,7 @@ export const {
   init,
   initSuccess,
   initFailure,
+  initKetcherId,
   selectTool,
   createEditor,
   showPreview,
@@ -123,6 +129,10 @@ export const selectEditorPosition = (
 // export const selectEditorActiveTool = (
 //   state: RootState,
 // ): EditorState['activeTool'] => state.editor.activeTool;
+
+export const selectKetcherId = (state: RootState): string => {
+  return state.editor.ketcherId;
+};
 
 export const selectEditor = (state: RootState): CoreEditor =>
   state.editor.editor;

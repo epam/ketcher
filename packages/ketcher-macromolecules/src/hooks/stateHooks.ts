@@ -21,6 +21,7 @@ import {
   selectEditor,
   selectEditorLayoutMode,
   selectIsSequenceEditInRNABuilderMode,
+  selectKetcherId,
 } from 'state/common';
 import {
   LayoutMode,
@@ -33,7 +34,8 @@ export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export function useLayoutMode() {
-  const ketcher = ketcherProvider.getKetcher();
+  const ketcherId = useAppSelector(selectKetcherId);
+  const ketcher = ketcherProvider.getKetcher(ketcherId);
   const isBlank = ketcher?.editor?.struct().isBlank();
   const fallbackMode = isBlank ? DEFAULT_LAYOUT_MODE : HAS_CONTENT_LAYOUT_MODE;
   const editor = useAppSelector(selectEditor);

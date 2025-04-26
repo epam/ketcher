@@ -158,6 +158,7 @@ export interface GenerateImageOptions extends StructServiceOptions {
 }
 
 export interface StructService {
+  addKetcherId: (id: string) => void;
   info: () => Promise<InfoResult>;
   convert: (
     data: ConvertData,

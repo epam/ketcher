@@ -7,11 +7,14 @@ import {
 } from './modes';
 import { KetSerializer } from 'domain/serializers';
 
-export const initializeMode = (mode?: BaseMode): BaseMode => {
+export const initializeMode = (
+  ketcherId: string,
+  mode?: BaseMode,
+): BaseMode => {
   if (mode) {
     return mode;
   }
-  const ketcher = ketcherProvider.getKetcher();
+  const ketcher = ketcherProvider.getKetcher(ketcherId);
   const isBlank = ketcher?.editor?.struct().isBlank();
   if (isBlank) {
     return new modesMap[DEFAULT_LAYOUT_MODE]();

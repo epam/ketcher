@@ -59,7 +59,7 @@ const App = (props: Props) => {
   const { checkServer } = props;
 
   useSubscriptionOnEvents();
-  const { ketcherId } = useAppContext();
+  const { ketcherId, prevKetcherId } = useAppContext();
 
   useEffect(() => {
     checkServer();
@@ -77,13 +77,18 @@ const App = (props: Props) => {
   const Editor = ConnectedEditor as React.ComponentType<{
     className: string;
     ketcherId: string;
+    prevKetcherId: string;
   }>;
 
   return (
     <ThemeProvider theme={muiTheme}>
       <div className={classes.app}>
         <AppHiddenContainer />
-        <Editor ketcherId={ketcherId} className={classes.canvas} />
+        <Editor
+          prevKetcherId={prevKetcherId}
+          ketcherId={ketcherId}
+          className={classes.canvas}
+        />
 
         <TopToolbarContainer
           className={classes.top}

@@ -174,7 +174,7 @@ class Editor implements KetcherEditor {
   lastEvent: any;
   macromoleculeConvertionError: string | null | undefined;
 
-  constructor(ketcherId, clientArea, options, serverSettings, currentEditor) {
+  constructor(ketcherId, clientArea, options, serverSettings, prevEditor) {
     this.render = new Render(
       clientArea,
       Object.assign(
@@ -183,7 +183,7 @@ class Editor implements KetcherEditor {
         },
         options,
       ),
-      currentEditor?.render,
+      prevEditor?.render,
       options.reuseRestructIfExist !== false,
     );
 

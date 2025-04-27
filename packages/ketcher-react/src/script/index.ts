@@ -29,6 +29,7 @@ interface Config {
   customButtons?: Array<CustomButton>;
   errorHandler: (message: string) => void;
   togglerComponent?: JSX.Element;
+  ketcherId: string;
 }
 
 export type { Config, ButtonsConfig };
@@ -43,6 +44,7 @@ async function buildKetcherAsync({
   errorHandler,
   togglerComponent,
   customButtons,
+  ketcherId: prevKetcherId,
 }: Config) {
   const builder = new KetcherBuilder();
 
@@ -51,7 +53,8 @@ async function buildKetcherAsync({
   const ketcher = builder.build();
   structService.addKetcherId(ketcher.id);
 
-  const { setKetcher, cleanup, setServer } = await builder.appendUiAsync(
+  const { cleanup, setServer } = await builder.appendUiAsync(
+    prevKetcherId,
     ketcher.id,
     element,
     appRoot,
@@ -61,10 +64,6 @@ async function buildKetcherAsync({
     togglerComponent,
     customButtons,
   );
-
-  if (ketcher) {
-    setKetcher(ketcher);
-  }
 
   return { ketcher, cleanup, builder, setServer };
 }

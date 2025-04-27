@@ -150,6 +150,9 @@ class StructEditor extends Component {
   }
 
   componentDidMount() {
+    const prevKetcher = this.props.prevKetcherId
+      ? ketcherProvider.getKetcher(this.props.prevKetcherId)
+      : undefined;
     const ketcher = ketcherProvider.getKetcher(this.props.ketcherId);
 
     this.editor = new Editor(
@@ -159,7 +162,7 @@ class StructEditor extends Component {
         ...this.props.options,
       },
       { ...this.props.serverSettings },
-      ketcher.editor,
+      prevKetcher?.editor,
     );
     ketcher.addEditor(this.editor);
     if (ketcher?.editor.macromoleculeConvertionError) {

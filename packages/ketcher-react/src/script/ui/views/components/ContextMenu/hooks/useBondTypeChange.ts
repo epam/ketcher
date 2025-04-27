@@ -1,4 +1,4 @@
-import { fromBondsAttrs } from 'ketcher-core';
+import { fromBondsAttrs, ketcherProvider } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -8,10 +8,10 @@ import { BondsContextMenuProps, ItemEventParams } from '../contextMenu.types';
 type Params = ItemEventParams<BondsContextMenuProps>;
 
 const useBondTypeChange = () => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
   const handler = useCallback(
     ({ id, props }: Params) => {
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const molecule = editor.render.ctab;
       const bondIds = props?.bondIds || [];
       const bondProps = tools[id].action.opts;
@@ -23,12 +23,12 @@ const useBondTypeChange = () => {
       }
       editor.update(fromBondsAttrs(molecule, bondIds, bondProps));
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   const disabled = useCallback(({ props }: Params) => {
     const selectedBondIds = props?.bondIds;
-    const editor = getKetcherInstance().editor;
+    const editor = ketcherProvider.getKetcher(ketcherId).editor;
 
     if (Array.isArray(selectedBondIds) && selectedBondIds.length !== 0) {
       if (editor.struct().isBondFromMacromolecule(selectedBondIds[0])) {

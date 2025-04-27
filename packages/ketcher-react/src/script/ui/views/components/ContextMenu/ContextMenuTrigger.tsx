@@ -32,12 +32,11 @@ import {
 import TemplateTool from 'src/script/editor/tool/template';
 
 const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
-  const { getKetcherInstance } = useAppContext();
-  const { show } = useContextMenu<ContextMenuProps>();
   const { ketcherId } = useAppContext();
+  const { show } = useContextMenu<ContextMenuProps>();
 
   const getSelectedGroupsInfo = useCallback(() => {
-    const editor = getKetcherInstance().editor as Editor;
+    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const struct = editor.struct();
     const selectedAtomIds = editor.selection()?.atoms;
     // Map and Set can do deduplication
@@ -71,7 +70,7 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
       selectedFunctionalGroups,
       selectedSGroupsIds,
     };
-  }, [getKetcherInstance]);
+  }, [ketcherId]);
 
   const handleDisplay = useCallback<React.MouseEventHandler<HTMLDivElement>>(
     (event) => {
@@ -165,7 +164,7 @@ const ContextMenuTrigger: FC<PropsWithChildren> = ({ children }) => {
           props: { ...showProps, ketcherId },
         });
     },
-    [getKetcherInstance, getSelectedGroupsInfo, show, ketcherId],
+    [getSelectedGroupsInfo, show, ketcherId],
   );
 
   return (

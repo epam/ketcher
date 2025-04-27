@@ -1,4 +1,4 @@
-import { Action, setExpandMonomerSGroup } from 'ketcher-core';
+import { Action, ketcherProvider, setExpandMonomerSGroup } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -10,11 +10,11 @@ import {
 type Params = ItemEventParams<MacromoleculeContextMenuProps>;
 
 const useMonomerExpansionHandlers = () => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
 
   const action = useCallback(
     ({ props }: Params, toExpand: boolean) => {
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
 
       const molecule = editor.render.ctab;
       const selectedFunctionalGroups = props?.functionalGroups;
@@ -31,7 +31,7 @@ const useMonomerExpansionHandlers = () => {
       editor.update(action);
       editor.rotateController.rerender();
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   const hidden = useCallback(({ props }: Params, toExpand: boolean) => {

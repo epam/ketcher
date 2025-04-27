@@ -16,14 +16,15 @@ import {
 import { getIconName, Icon } from 'components';
 import { useAppContext } from 'src/hooks';
 import HighlightMenu from 'src/script/ui/action/highlightColors/HighlightColors';
+import { ketcherProvider } from 'ketcher-core';
 
 const bondNames = getBondNames(tools);
 
 const SelectionMenuItems: FC<MenuItemsProps<SelectionContextMenuProps>> = (
   props,
 ) => {
-  const { getKetcherInstance } = useAppContext();
-  const editor = getKetcherInstance().editor as Editor;
+  const { ketcherId } = useAppContext();
+  const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
   const [handleBondEdit, bondEditDisabled] = useBondEdit();
   const [handleAtomEdit, atomEditDisabled] = useAtomEdit();
   const [handleTypeChange, bondTypeChangeDisabled] = useBondTypeChange();

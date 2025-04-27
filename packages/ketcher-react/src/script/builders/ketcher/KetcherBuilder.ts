@@ -94,6 +94,7 @@ class KetcherBuilder {
   }
 
   async appendUiAsync(
+    prevKetcherId: string,
     ketcherId: string,
     element: HTMLDivElement | null,
     appRoot: Root,
@@ -103,19 +104,18 @@ class KetcherBuilder {
     togglerComponent?: JSX.Element,
     customButtons?: Array<CustomButton>,
   ): Promise<{
-    setKetcher: (ketcher: Ketcher) => void;
     cleanup: ReturnType<typeof initApp> | null;
     setServer: (structService: StructService) => void;
   }> {
     const { structService } = this;
     let cleanup: ReturnType<typeof initApp> | null = null;
 
-    const { editor, setKetcher, setServer } = await new Promise<{
+    const { editor, setServer } = await new Promise<{
       editor: Editor;
-      setKetcher: (ketcher: Ketcher) => void;
       setServer: (structService: StructService) => void;
     }>((resolve) => {
       cleanup = initApp(
+        prevKetcherId,
         ketcherId,
         element,
         appRoot,
@@ -140,7 +140,7 @@ class KetcherBuilder {
         : // eslint-disable-next-line @typescript-eslint/no-empty-function
           () => {};
 
-    return { setKetcher, cleanup, setServer };
+    return { cleanup, setServer };
   }
 
   build() {

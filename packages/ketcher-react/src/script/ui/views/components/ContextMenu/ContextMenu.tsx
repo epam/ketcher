@@ -29,6 +29,7 @@ import { createPortal } from 'react-dom';
 import { KETCHER_ROOT_NODE_CSS_SELECTOR } from 'src/constants';
 import { MultitailArrowMenuItems } from './menuItems/MultitailArrowMenuItems';
 import MacromoleculeMenuItems from './menuItems/MacromoleculeMenuItems';
+import { ketcherProvider } from 'ketcher-core';
 
 const props: Partial<MenuProps> = {
   animation: false,
@@ -36,7 +37,7 @@ const props: Partial<MenuProps> = {
 };
 
 const ContextMenu: React.FC = () => {
-  const { getKetcherInstance, ketcherId } = useAppContext();
+  const { ketcherId } = useAppContext();
 
   const adjustSubmenuPosition = (submenuElement: HTMLElement) => {
     const rect = submenuElement.getBoundingClientRect();
@@ -131,7 +132,7 @@ const ContextMenu: React.FC = () => {
 
   const trackVisibility = useCallback(
     (id: string, visible: boolean) => {
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       if (visible) {
         editor.hoverIcon.hide();
         const contextMenuElement = document.querySelector(
@@ -154,7 +155,7 @@ const ContextMenu: React.FC = () => {
       }
       editor.contextMenu[id] = visible;
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   const ketcherEditorRootElement = document.querySelector(

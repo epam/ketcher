@@ -103,7 +103,6 @@ const AtomMenuItems: FC<MenuItemsProps<AtomContextMenuProps>> = (props) => {
   const [handleRemoveAttachmentPoint] = useRemoveAttachmentPoint();
   const [handleStereo, stereoDisabled] = useAtomStereo();
   const handleDelete = useDelete();
-  // const { getKetcherInstance } = useAppContext();
   const { ketcherId } = useAppContext();
   const ketcher = ketcherProvider.getKetcher(ketcherId);
   const editor = ketcher.editor as Editor;

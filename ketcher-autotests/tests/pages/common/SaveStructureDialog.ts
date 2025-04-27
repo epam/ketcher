@@ -4,7 +4,7 @@ import { MacromoleculesFileFormatType } from '../constants/fileFormats/macroFile
 
 export const saveStructureDialog = (page: Page) => ({
   fileNameEditbox: page.getByTestId('filename-input'),
-  fileFormatDropdonwList: page.getByTestId('file-format-list'),
+  fileFormatDropdonwList: page.getByTestId('file-format-list').first(),
 
   // preview tab is available only in Micromolecules mode
   previewTab: page.getByTestId('preview-tab'),

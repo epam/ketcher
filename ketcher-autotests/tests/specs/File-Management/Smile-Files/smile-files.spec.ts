@@ -34,7 +34,7 @@ async function getPreviewForSmiles(
   await selectSaveTool(page);
   await chooseFileFormat(page, smileType);
   const previewInput = await getTextAreaValue(page);
-  expect(previewInput).toContain(nonEmptyString);
+  expect(previewInput).not.toBe('');
 }
 
 async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {

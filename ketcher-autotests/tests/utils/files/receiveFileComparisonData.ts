@@ -22,6 +22,7 @@ import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import {
   chooseFileFormat,
+  getTextAreaValue,
   saveStructureDialog,
 } from '@tests/pages/common/SaveStructureDialog';
 
@@ -228,12 +229,12 @@ export async function receiveFileComparisonData({
 }
 
 export async function verifyHELMExport(page: Page, HELMExportExpected = '') {
-  const saveStructureTextarea = saveStructureDialog(page).saveStructureTextarea;
   const cancelButton = saveStructureDialog(page).cancelButton;
 
   await selectSaveTool(page);
+
   await chooseFileFormat(page, MacromoleculesFileFormatType.HELM);
-  const HELMExportResult = saveStructureTextarea.textContent();
+  const HELMExportResult = await getTextAreaValue(page);
 
   expect(HELMExportResult).toEqual(HELMExportExpected);
 

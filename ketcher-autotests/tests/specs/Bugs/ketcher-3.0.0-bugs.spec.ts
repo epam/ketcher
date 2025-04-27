@@ -880,7 +880,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Create antisense for that chain
      * 4. Take a screenshot
      */
-    test.slow();
+    // test.slow();
     await selectSnakeLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

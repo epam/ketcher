@@ -40,12 +40,22 @@ export async function setFileName(page: Page, fileName: string) {
 
 export async function getTextAreaValue(page: Page) {
   const textarea = saveStructureDialog(page).saveStructureTextarea;
+  const loadingSpinner = page.locator('.loading-spinner');
+
   await textarea.waitFor({ state: 'visible' });
+  if (await loadingSpinner.isVisible()) {
+    await page.waitForSelector('.loading-spinner', { state: 'detached' });
+  }
   return textarea.inputValue();
 }
 
 export async function getWarningTextAreaValue(page: Page) {
   const textarea = saveStructureDialog(page).warningTextarea;
+  const loadingSpinner = page.locator('.loading-spinner');
+
   await textarea.waitFor({ state: 'visible' });
+  if (await loadingSpinner.isVisible()) {
+    await page.waitForSelector('.loading-spinner', { state: 'detached' });
+  }
   return textarea.inputValue();
 }

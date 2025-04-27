@@ -219,7 +219,7 @@ test.describe('Save files', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.InChI);
+    await chooseFileFormat(page, MoleculesFileFormatType.InChIKey);
     const inChistring = await getTextAreaValue(page);
     expect(inChistring).toEqual('UHOVQNZJYSORNB-UHFFFAOYSA-N');
   });

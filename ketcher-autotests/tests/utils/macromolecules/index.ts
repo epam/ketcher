@@ -6,10 +6,7 @@ import {
   FAVORITES_TAB,
   CHEM_TAB,
 } from '@constants/testIdConstants';
-import {
-  moveMouseToTheMiddleOfTheScreen,
-  waitForSpinnerFinishedWork,
-} from '@utils';
+import { moveMouseToTheMiddleOfTheScreen } from '@utils';
 
 export async function waitForMonomerPreview(page: Page) {
   await page

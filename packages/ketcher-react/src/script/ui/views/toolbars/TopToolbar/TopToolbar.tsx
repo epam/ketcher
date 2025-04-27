@@ -159,7 +159,6 @@ export const TopToolbar = ({
 }: PanelProps) => {
   const { ref: resizeRef, width = 50 } = useResizeObserver<HTMLDivElement>();
   const { ketcherId } = useAppContext();
-  console.log('ketcherIdtop', ketcherId);
   const ketcher = useMemo(
     () => ketcherProvider.getKetcher(ketcherId),
     [ketcherId],

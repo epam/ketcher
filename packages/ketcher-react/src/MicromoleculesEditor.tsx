@@ -86,7 +86,6 @@ function MicromoleculesEditor(props: EditorProps) {
       ketcherBuilderRef.current = builder;
       setServerRef.current = setServer;
       props.onSetKetcherId(ketcher.id);
-      console.log('ketcheId', ketcher.id);
 
       if (typeof props.onInit === 'function' && ketcher) {
         props.onInit(ketcher);

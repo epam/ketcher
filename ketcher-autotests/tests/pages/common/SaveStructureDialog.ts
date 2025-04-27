@@ -60,7 +60,7 @@ export async function getWarningTextAreaValue(page: Page) {
 
   await warningTextarea.waitFor({ state: 'visible' });
   if (await loadingSpinner.isVisible()) {
-    await page.waitForSelector('.loading-spinner', { state: 'detached' });
+    await loadingSpinner.waitFor({ state: 'detached' });
   }
   return warningTextarea.inputValue();
 }

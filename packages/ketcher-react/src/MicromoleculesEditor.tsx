@@ -70,7 +70,7 @@ function MicromoleculesEditor(props: EditorProps) {
       props.structServiceProvider,
       setServerRef.current,
     );
-  }, [structServiceProvider, props.ketcherId]);
+  }, [structServiceProvider]);
 
   const initKetcher = async () => {
     appRootRef.current = createRoot(rootElRef.current as HTMLDivElement);

@@ -5,7 +5,6 @@ import {
   pressButton,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
-  nonEmptyString,
   pasteFromClipboardAndAddToCanvas,
   saveToFile,
   receiveFileComparisonData,
@@ -16,23 +15,25 @@ import {
   selectClearCanvasTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import {
-  clickOnFileFormatDropdown,
-  getExtendedSmiles,
-  getSmiles,
-} from '@utils/formats';
+import { getExtendedSmiles, getSmiles } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import {
+  chooseFileFormat,
+  getTextAreaValue,
+} from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
-async function getPreviewForSmiles(page: Page, smileType: string) {
+async function getPreviewForSmiles(
+  page: Page,
+  smileType: MoleculesFileFormatType,
+) {
   await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: smileType }).click();
-  const previewInput = page.getByTestId('smiles-preview-area-text');
-  await previewInput.waitFor({ state: 'visible' });
-  await expect(previewInput).toContainText(nonEmptyString);
+  await chooseFileFormat(page, smileType);
+  const previewInput = await getTextAreaValue(page);
+  expect(previewInput).not.toBe('');
 }
 
 async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
@@ -61,7 +62,7 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
 
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -82,7 +83,7 @@ test.describe('SMILES files', () => {
       FileType.SMILES,
     );
 
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -102,7 +103,7 @@ test.describe('SMILES files', () => {
     warning appears for all types of Sgroup except the multiple Sgroup type.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sec-butyl-abr.mol', page);
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await page.getByText('Warnings').click();
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -119,7 +120,7 @@ test.describe('SMILES files', () => {
       'SMILES/sgroups-diff-symyx-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -147,7 +148,7 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-heteroatoms-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -170,7 +171,7 @@ test.describe('SMILES files', () => {
       'SMILES/attached-data-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await page.getByText('Warnings').click();
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
@@ -197,7 +198,7 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-v2000-abs-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -226,7 +227,7 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-different-features-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -252,7 +253,7 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-cis-trans-cycle-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -277,7 +278,7 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-alias-pseudoatom-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
@@ -300,7 +301,7 @@ test.describe('SMILES files', () => {
         'SMILES/smiles-two-arrows-and-plus-expected.smi',
         FileType.SMILES,
       );
-      await getPreviewForSmiles(page, 'Daylight SMILES');
+      await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
@@ -328,7 +329,7 @@ test.describe('SMILES files', () => {
       'SMILES/smiles-benzene-arrow-benzene-reagent-nh3-expected.smi',
       FileType.SMILES,
     );
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await getPreviewForSmiles(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 

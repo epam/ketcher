@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   AtomButton,
   FILE_TEST_DATA,
@@ -12,33 +12,28 @@ import {
   receiveFileComparisonData,
   saveToFile,
   selectAtomInToolbar,
-  selectOptionByText,
   selectRingButton,
   takeEditorScreenshot,
   waitForIndigoToLoad,
   waitForPageInit,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
-import {
-  clickOnFileFormatDropdown,
-  getMolfile,
-  getSmiles,
-} from '@utils/formats';
+import { getMolfile, getSmiles } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import {
+  chooseFileFormat,
+  getTextAreaValue,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
 
 const RING_OFFSET = 150;
 const ARROW_OFFSET = 20;
 const ARROW_LENGTH = 100;
-
-async function getPreviewForSmiles(page: Page, smileType: string) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: smileType }).click();
-}
 
 test.describe('Save files', () => {
   test.beforeEach(async ({ page }) => {
@@ -173,10 +168,15 @@ test.describe('Save files', () => {
     Test case: EPMLSOPKET-4739
     Description: File formats in the Save Structure window match the mockup
     */
+    const fileFormatDropdonwList =
+      saveStructureDialog(page).fileFormatDropdonwList;
+
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
-    await page.getByText('MDL Molfile V2000').click();
+    await chooseFileFormat(page, MoleculesFileFormatType.KetFormat);
+    await fileFormatDropdonwList.click();
+    await takeEditorScreenshot(page);
   });
 
   test('An atom or structure copied to the clipboard is saved without coordinates', async ({
@@ -220,11 +220,8 @@ test.describe('Save files', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await selectOptionByText(page, 'InChIKey');
-    const inChistring = await page
-      .getByTestId('inChIKey-preview-area-text')
-      .inputValue();
+    await chooseFileFormat(page, MoleculesFileFormatType.InChIKey);
+    const inChistring = await getTextAreaValue(page);
     expect(inChistring).toEqual('UHOVQNZJYSORNB-UHFFFAOYSA-N');
   });
 
@@ -327,8 +324,7 @@ test.describe('Open/Save/Paste files', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
     await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'SVG Document' }).click();
+    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
     await takeEditorScreenshot(page);
   });
 
@@ -339,8 +335,7 @@ test.describe('Open/Save/Paste files', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
     await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'PNG Image' }).click();
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 
@@ -352,9 +347,9 @@ test.describe('Open/Save/Paste files', () => {
     Query properties will not be reflected in the file saved."
     */
     await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
-
-    await getPreviewForSmiles(page, 'Daylight SMILES');
-    await page.getByText('Warnings').click();
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMILES);
+    await saveStructureDialog(page).warningsTab.click();
     await takeEditorScreenshot(page);
   });
 

@@ -5,7 +5,8 @@ import {
   waitForPageInit,
 } from '@utils';
 import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
-import { clickOnFileFormatDropdown } from '@utils/formats';
+import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 test.describe('Open UTF-8 and save as SVG and PNG', () => {
   test.beforeEach(async ({ page }) => {
@@ -19,8 +20,7 @@ test.describe('Open UTF-8 and save as SVG and PNG', () => {
   */
     await openFileAndAddToCanvas('KET/utf-8-svg-png.ket', page);
     await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'SVG Document' }).click();
+    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
 
     await takeEditorScreenshot(page);
   });
@@ -33,8 +33,7 @@ test.describe('Open UTF-8 and save as SVG and PNG', () => {
     await openFileAndAddToCanvas('KET/utf-8-svg-png.ket', page);
 
     await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'PNG Image' }).click();
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
 
     await takeEditorScreenshot(page);
   });

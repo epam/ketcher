@@ -1,5 +1,5 @@
 import { Page, test, TestInfo } from '@playwright/test';
-import { selectFlexLayoutModeTool } from '@utils/canvas';
+import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { chooseTab, Tabs } from '@utils/macromolecules';
 import {
   turnOnMacromoleculesEditor,
@@ -57,7 +57,7 @@ export const processResetToDefaultState = async (
   testInfo: TestInfo,
   page: Page,
 ) => {
-  if (testInfo.status != 'passed') {
+  if (testInfo.status !== 'passed') {
     return;
   }
 

@@ -134,7 +134,7 @@ Object {
                 >
                   <textarea
                     class="previewArea"
-                    data-testid="mol-preview-area-text"
+                    data-testid="preview-area-text"
                     readonly=""
                   />
                   <button
@@ -540,7 +540,7 @@ Object {
               >
                 <textarea
                   class="previewArea"
-                  data-testid="mol-preview-area-text"
+                  data-testid="preview-area-text"
                   readonly=""
                 />
                 <button

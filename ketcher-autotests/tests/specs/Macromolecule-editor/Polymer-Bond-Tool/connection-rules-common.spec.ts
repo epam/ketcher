@@ -12,13 +12,13 @@ import {
   waitForRender,
   selectFlexLayoutModeTool,
   selectSnakeLayoutModeTool,
-  selectRectangleArea,
   clickOnCanvas,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
   Monomer,
 } from '@utils';
+import { selectRectangleArea } from '@utils/canvas/tools';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';

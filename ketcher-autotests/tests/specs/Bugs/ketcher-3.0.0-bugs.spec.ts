@@ -47,7 +47,6 @@ import {
   verifyFileExport,
   verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
-import { chooseFileFormat } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   modifyInRnaBuilder,
@@ -82,6 +81,11 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
 
@@ -767,6 +771,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Press Save button
      */
     test.slow();
+    const saveButton = saveStructureDialog(page).saveButton;
     await turnOnMacromoleculesEditor(page, {
       enableFlexMode: true,
       goToPeptides: false,
@@ -777,9 +782,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'PEPTIDE1{A.C.D}$$$$V2.0',
     );
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'Sequence (3-letter code)');
+    await chooseFileFormat(
+      page,
+      MacromoleculesFileFormatType.Sequence3LetterCode,
+    );
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Save');
+    await saveButton.click();
     await takeEditorScreenshot(page);
   });
 
@@ -872,7 +880,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Create antisense for that chain
      * 4. Take a screenshot
      */
-    test.slow();
+    // test.slow();
     await selectSnakeLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

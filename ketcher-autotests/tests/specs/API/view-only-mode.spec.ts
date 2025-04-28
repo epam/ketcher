@@ -49,6 +49,7 @@ import {
   topRightToolbarLocators,
 } from '@tests/pages/common/TopRightToolbar';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { aboutDialogLocators } from '@tests/pages/molecules/canvas/AboutDialog';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
@@ -335,6 +336,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       test(`Verify that hotkey ${hotkey.keys} triggers ${hotkey.action}`, async ({
         page,
       }) => {
+        const saveStructureTextarea =
+          saveStructureDialog(page).saveStructureTextarea;
+
         await selectRingButton(RingButton.Benzene, page);
         await clickInTheMiddleOfTheScreen(page);
         await enableViewOnlyModeBySetOptions(page);
@@ -349,7 +353,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         await takePageScreenshot(page, {
           mask: [
             page.locator('[class*="Check-module_checkInfo"] > span'),
-            page.getByTestId('mol-preview-area-text'),
+            saveStructureTextarea,
           ],
         });
         await closeErrorAndInfoModals(page);

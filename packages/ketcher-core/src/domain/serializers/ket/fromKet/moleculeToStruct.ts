@@ -163,7 +163,7 @@ export function rglabelToStruct(source) {
   });
   ifDef(params, 'attachmentPoints', source.attachmentPoints);
   const rglabel = toRlabel(
-    source.$refs.map((el) => parseInt(el.slice(3))) ?? [],
+    source.$refs?.map((el) => parseInt(el.slice(3))) ?? [],
   );
   ifDef(params, 'rglabel', rglabel);
   const newAtom = new Atom(params);

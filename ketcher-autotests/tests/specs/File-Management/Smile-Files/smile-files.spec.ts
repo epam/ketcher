@@ -5,7 +5,6 @@ import {
   pressButton,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
-  nonEmptyString,
   pasteFromClipboardAndAddToCanvas,
   saveToFile,
   receiveFileComparisonData,

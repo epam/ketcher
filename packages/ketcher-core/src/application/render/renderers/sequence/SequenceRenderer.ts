@@ -229,7 +229,13 @@ export class SequenceRenderer {
       );
 
       if (!isEditInRnaBuilderMode) {
-        this.showNewSequenceButton(chainIndex);
+        this.showNewSequenceButton(
+          chainIndex,
+          Math.max(
+            chain.length,
+            (sequenceViewModel.chains.at(chainIndex + 1) ?? []).length,
+          ),
+        );
       }
     });
 
@@ -1179,9 +1185,10 @@ export class SequenceRenderer {
     return rendererToReturn;
   }
 
-  public static showNewSequenceButton(indexOfRowBefore: number) {
+  public static showNewSequenceButton(indexOfRowBefore: number, width = 0) {
     const newSequenceButton = new NewSequenceButton(indexOfRowBefore);
     newSequenceButton.show();
+    newSequenceButton.setWidth(width);
     this.newSequenceButtons.push(newSequenceButton);
   }
 

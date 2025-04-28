@@ -3,10 +3,10 @@ import { Page, chromium, expect, test } from '@playwright/test';
 import {
   waitForKetcherInit,
   waitForIndigoToLoad,
-  openStructurePasteFromClipboard,
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
 } from '@utils';
+import { openStructurePasteFromClipboard } from '@utils/canvas/tools';
 import {
   selectClearCanvasTool,
   selectSaveTool,

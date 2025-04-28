@@ -140,6 +140,7 @@ export async function selectImageTool(page: Page) {
 export async function openStructurePasteFromClipboard(page: Page) {
   const pasteFromClipboardButton =
     openStructureDialog(page).pasteFromClipboardButton;
+
   await selectOpenFileTool(page);
   await pasteFromClipboardButton.click();
 }

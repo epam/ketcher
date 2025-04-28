@@ -34,11 +34,6 @@ import {
   KetcherLogger,
   fromPaste,
   Coordinates,
-  MonomerMicromolecule,
-  AtomMove,
-  rotateDelta,
-  flipPointByCenter,
-  flipBonds,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -290,77 +285,15 @@ class Editor implements KetcherEditor {
     this.struct(undefined);
   }
 
-  private applyMonomersTransformations(struct: Struct) {
-    const action = new Action();
-
-    const atomToBonds = new Map<number, number[]>();
-
-    struct.bonds.forEach((bond, bondId) => {
-      for (const atomId of [bond.begin, bond.end]) {
-        const list = atomToBonds.get(atomId) ?? [];
-        list.push(bondId);
-        atomToBonds.set(atomId, list);
-      }
-    });
-
-    struct.sgroups.forEach((sGroup) => {
-      if (!(sGroup instanceof MonomerMicromolecule)) {
-        return;
-      }
-
-      const center = sGroup.pp;
-      if (!center) {
-        return;
-      }
-
-      const rotateValue = sGroup.monomer.monomerItem.transformation?.rotate;
-      if (rotateValue) {
-        sGroup.atoms.forEach((atomId) => {
-          const atom = struct.atoms.get(atomId);
-          if (!atom) {
-            return;
-          }
-
-          action.addOp(
-            new AtomMove(atomId, rotateDelta(atom.pp, center, rotateValue)),
-          );
-        });
-      }
-
-      const flipValue = sGroup.monomer.monomerItem.transformation?.flip;
-      if (flipValue) {
-        sGroup.atoms.forEach((atomId) => {
-          const atom = struct.atoms.get(atomId);
-          if (!atom) {
-            return;
-          }
-
-          action.addOp(
-            new AtomMove(atomId, flipPointByCenter(atom.pp, center, flipValue)),
-          );
-        });
-
-        const sGroupBonds = new Set<number>(
-          sGroup.atoms.flatMap((atomId) => atomToBonds.get(atomId)),
-        );
-
-        flipBonds([...sGroupBonds.values()], struct, action);
-      }
-    });
-
-    return action.perform(this.render.ctab);
-  }
-
   renderAndRecoordinateStruct(
     struct: Struct,
     needToCenterStruct = true,
     x?: number,
     y?: number,
   ): Struct {
-    const canvasLoadAction = fromNewCanvas(this.render.ctab, struct);
-    const transformAction = this.applyMonomersTransformations(struct);
+    const action = fromNewCanvas(this.render.ctab, struct);
 
-    this.update(canvasLoadAction.mergeWith(transformAction));
+    this.update(action);
 
     if (needToCenterStruct) {
       this.centerStruct();

@@ -35,7 +35,6 @@ import { ReStruct } from 'application/render';
 import { getRelSGroupsBySelection, structSelection } from './utils';
 import { Action } from './action';
 import { EditorSelection } from '../editor.types';
-import { RotateMonomerOperation } from 'application/editor/operations/monomer/RotateMonomerOperation';
 import { FlipMonomerOperation } from 'application/editor/operations/monomer/FlipMonomerOperation';
 
 export type FlipDirection = 'horizontal' | 'vertical';
@@ -274,6 +273,8 @@ export function fromRotate(restruct, selection, center, angle: number) {
     if (!selection.sgroupData) {
       const sgroups = getRelSGroupsBySelection(struct, selection.atoms);
 
+      console.log(angle);
+
       sgroups.forEach((sg) => {
         if (!sg.pp) {
           return;
@@ -282,10 +283,6 @@ export function fromRotate(restruct, selection, center, angle: number) {
         action.addOp(
           new SGroupDataMove(sg.id, rotateDelta(sg.pp, center, angle)),
         );
-
-        if (sg instanceof MonomerMicromolecule) {
-          action.addOp(new RotateMonomerOperation({ id: sg.id, value: angle }));
-        }
       });
     }
   }

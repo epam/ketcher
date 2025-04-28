@@ -174,6 +174,7 @@ test.describe('Save files', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.KetFormat);
     await fileFormatDropdonwList.click();
     await takeEditorScreenshot(page);
   });

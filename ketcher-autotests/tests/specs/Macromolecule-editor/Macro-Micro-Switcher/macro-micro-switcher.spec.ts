@@ -22,7 +22,6 @@ import {
   dragMouseTo,
   drawBenzeneRing,
   getControlModifier,
-  hideLibrary,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
@@ -58,6 +57,7 @@ import {
   waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
+import { hideLibrary, showLibrary } from '@utils/canvas/tools';
 import {
   selectClearCanvasTool,
   selectOpenFileTool,
@@ -267,6 +267,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await hideLibrary(page);
     await takePageScreenshot(page);
     expect(page.getByTestId('show-monomer-library')).toBeVisible();
+    await showLibrary(page);
   });
 
   test('Check that the Mol-structure opened from the file in Macro mode is visible on Micro mode', async () => {
@@ -320,6 +321,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Abbreviation of monomer expanded without errors.
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3659
     */
+    await turnOnMacromoleculesEditor(page);
     await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
       page,
@@ -462,7 +464,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure pasted from the clipboard in Macro mode  is visible in Micro mode
     */
-
+    await turnOnMacromoleculesEditor(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.MOLv3000,
@@ -486,7 +488,7 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/3712
       Description: Pressing Layout or Clean Up button not erase all macromolecules from canvas
       */
-
+      await turnOnMacromoleculesEditor(page);
       await selectMonomer(page, Peptides.A);
       await clickInTheMiddleOfTheScreen(page);
       await moveMouseAway(page);
@@ -2873,6 +2875,7 @@ test('Switch to Macro mode, verify that user cant open reactions from RDF RXN V2
   Test case: https://github.com/epam/Indigo/issues/2102
   Description: In Macro mode, user can't open reactions from RDF RXN V2000/V3000 - error message is displayed. 
   */
+  await turnOnMacromoleculesEditor(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
     'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf',
     page,

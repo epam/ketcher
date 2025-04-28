@@ -277,7 +277,7 @@ self.onmessage = (e: MessageEvent<InputMessage<CommandData>>) => {
       handle(
         (indigo, indigoOptions) =>
           indigo.calculateMacroProperties(data.struct, indigoOptions),
-        undefined,
+        data.options,
         Command.CalculateMacromoleculeProperties,
       );
       break;

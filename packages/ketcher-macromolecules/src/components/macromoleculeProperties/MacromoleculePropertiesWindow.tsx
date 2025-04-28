@@ -20,11 +20,8 @@ import {
   selectEditor,
   selectIsMacromoleculesPropertiesWindowOpened,
   selectMacromoleculesProperties,
-  selectMonomers,
   selectOligonucleotidesMeasurementUnit,
-  selectSelectionChainsCollection,
   selectUnipositiveIonsMeasurementUnit,
-  setMacromoleculesProperties,
   setMacromoleculesPropertiesWindowVisibility,
   setOligonucleotidesMeasurementUnit,
   setUnipositiveIonsMeasurementUnit,
@@ -33,21 +30,13 @@ import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-import { FC, useEffect, useState } from 'react';
-import {
-  BaseMonomer,
-  ChainsCollection,
-  KetSerializer,
-  SingleChainMacromoleculeProperties,
-  Struct,
-  StructService,
-} from 'ketcher-core';
-import { Icon, IndigoProvider } from 'ketcher-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { SingleChainMacromoleculeProperties } from 'ketcher-core';
+import { Icon } from 'ketcher-react';
 import { DropDown } from 'components/shared/dropDown';
-import { DrawingEntity } from 'ketcher-core/dist/domain/entities/DrawingEntity';
 import { useRecalculateMacromoleculeProperties } from '../../hooks/useRecalculateMacromoleculeProperties';
-import { isNumber } from 'lodash';
-import { selectCurrentTabIndex } from 'state/library';
+import { debounce, isNumber } from 'lodash';
+import * as d3 from 'd3';
 
 function hasNucleotideSpecificProperties(
   macromoleculesProperties: SingleChainMacromoleculeProperties,
@@ -65,14 +54,15 @@ function hasPeptideSpecificProperties(
 }
 
 const StyledWrapper = styled('div')<{ isActive?: boolean; hasError?: boolean }>(
-  ({ theme, isActive, hasError }) => ({
+  ({ hasError }) => ({
     width: '100%',
     height: hasError ? '124px' : '177px',
     position: 'relative',
-    bottom: hasError ? '124px' : '177px',
     backgroundColor: 'white',
     padding: '2px 0',
-    borderRadius: '8px 8px 0 0',
+    borderRadius: '8px 8px',
+    overflow: 'hidden',
+    boxShadow: '0px 2px 5px rgba(103, 104, 132, 0.15)',
   }),
 );
 
@@ -102,7 +92,7 @@ const Header = styled('div')(() => ({
   padding: '0 8px',
 }));
 
-const GrossFormula = styled('div')(({ theme }) => ({
+const GrossFormula = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
   fontSize: '14px',
@@ -111,7 +101,7 @@ const GrossFormula = styled('div')(({ theme }) => ({
   color: '#585858',
 }));
 
-const MolecularMass = styled('div')(({ theme }) => ({
+const MolecularMass = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
   height: '24px',
@@ -119,7 +109,7 @@ const MolecularMass = styled('div')(({ theme }) => ({
   color: '#585858',
 }));
 
-const MolecularMassAmount = styled('div')(({ theme }) => ({
+const MolecularMassAmount = styled('div')(() => ({
   fontSize: '14px',
   fontWeight: '700',
   padding: '0 8px',
@@ -164,14 +154,14 @@ const BasicPropertiesWrapper = styled('div')(() => ({
 const PeptidePropertiesBottomPart = styled('div')(() => ({
   display: 'grid',
   gridTemplateColumns: '2fr 1fr',
-  gap: '2px 0',
+  gap: '0 2px',
 }));
 
 const HydrophobicityChartWrapper = styled('div')(() => ({
-  display: 'flex',
-  padding: '4px 0px',
-  height: '32px',
-  gap: '12px',
+  height: '90px',
+  backgroundColor: 'white',
+  borderRadius: '8px',
+  padding: '5px',
 }));
 
 const RnaBasicPropertiesWrapper = styled('div')(() => ({
@@ -179,11 +169,15 @@ const RnaBasicPropertiesWrapper = styled('div')(() => ({
   justifyContent: 'space-between',
 }));
 
-const StyledBasicProperty = styled('div')(() => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: '0 0 0 6px',
-}));
+const StyledBasicProperty = styled('div')<{ disabled?: boolean }>(
+  ({ disabled }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 0 0 6px',
+    pointerEvents: disabled ? 'none' : 'auto',
+    opacity: disabled ? 0.5 : 1,
+  }),
+);
 
 const BasicPropertyName = styled('div')(() => ({
   fontSize: '10px',
@@ -218,7 +212,7 @@ const StyledMonomersCountPanel = styled('div')(() => ({
   backgroundColor: 'white',
   borderRadius: '8px',
   padding: '6px',
-  height: '89px',
+  height: '90px',
   alignContent: 'flex-start',
 }));
 
@@ -229,7 +223,6 @@ const StyledMonomersCountPanelItem = styled('div')<{
   display: flex;
   position: relative;
   justify-content: space-between;
-  //width: 74px;
   background-color: #eff2f5;
   padding: 4px 6px;
   font-weight: 500;
@@ -269,6 +262,7 @@ interface BasicPropertyProps {
   hint?: string;
   options?: string[];
   selectedOption?: string;
+  disabled?: boolean;
   onChangeOption?: (option: string) => void;
 }
 
@@ -278,9 +272,15 @@ interface MonomersCountPanelProps {
 }
 
 const MonomersCountPanel = (props: MonomersCountPanelProps) => {
+  const countsEntries = Object.entries(props.monomerCount);
+
+  countsEntries.sort((a, b) => {
+    return b[0] === 'Other' ? -1 : a[0].localeCompare(b[0]);
+  });
+
   return (
     <StyledMonomersCountPanel>
-      {_map(props.monomerCount, (count, monomerShortName) => {
+      {_map(countsEntries, ([monomerShortName, count]) => {
         return (
           <StyledMonomersCountPanelItem
             monomerShortName={monomerShortName}
@@ -299,7 +299,7 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
 
 const BasicProperty = (props: BasicPropertyProps) => {
   return (
-    <StyledBasicProperty>
+    <StyledBasicProperty disabled={props.disabled}>
       <BasicPropertyName>{props.name}:</BasicPropertyName>
       <BasicPropertyValue>{props.value}</BasicPropertyValue>
       {props.hint && (
@@ -341,6 +341,167 @@ interface PeptidePropertiesProps {
 
 type DnaRnaPropertiesProps = PeptidePropertiesProps;
 
+interface HydrophobicityChartProps {
+  data: number[];
+}
+
+const StyledHydrophobicityChartSvg = styled('svg')(() => ({
+  width: '100%',
+  height: '100%',
+}));
+
+function lttb(xs, ys, threshold) {
+  // Largest Triangle Three Buckets algorithm
+  const dataLength = xs.length;
+
+  if (threshold >= dataLength || threshold === 0) {
+    return { xs, ys };
+  }
+
+  const sampledXs = [xs[0]];
+  const sampledYs = [ys[0]];
+
+  const every = (dataLength - 2) / (threshold - 2);
+  let a = 0;
+
+  for (let i = 0; i < threshold - 2; i++) {
+    const rangeStart = Math.floor((i + 1) * every) + 1;
+    const rangeEnd = Math.floor((i + 2) * every) + 1;
+
+    // avg point in next bucket
+    const avgRangeStart = rangeStart;
+    const avgRangeEnd = rangeEnd;
+    let avgX = 0;
+    let avgY = 0;
+
+    const rangeLength = avgRangeEnd - avgRangeStart;
+    for (let j = avgRangeStart; j < avgRangeEnd; j++) {
+      avgX += xs[j];
+      avgY += ys[j];
+    }
+    avgX /= rangeLength;
+    avgY /= rangeLength;
+
+    // range for this bucket
+    const rangeOffs = Math.floor(i * every) + 1;
+    const rangeTo = Math.floor((i + 1) * every) + 1;
+
+    let maxArea = -1;
+    let nextA = rangeOffs;
+
+    for (let j = rangeOffs; j < rangeTo; j++) {
+      // triangle area
+      const area = Math.abs(
+        (xs[a] - avgX) * (ys[j] - ys[a]) - (xs[a] - xs[j]) * (avgY - ys[a]),
+      );
+      if (area > maxArea) {
+        maxArea = area;
+        nextA = j;
+      }
+    }
+
+    sampledXs.push(xs[nextA]);
+    sampledYs.push(ys[nextA]);
+    a = nextA;
+  }
+
+  sampledXs.push(xs[dataLength - 1]);
+  sampledYs.push(ys[dataLength - 1]);
+
+  return { xs: sampledXs, ys: sampledYs };
+}
+
+const HydrophobicityChart = (props: HydrophobicityChartProps) => {
+  const { data: initialData } = props;
+  const data = lttb(
+    initialData.map((_item, index) => index + 1),
+    initialData,
+    100,
+  );
+
+  const svgRef = useRef<SVGSVGElement | null>(null);
+
+  useEffect(() => {
+    if (!data.xs.length || !svgRef.current) return;
+
+    const width = svgRef.current.width.baseVal.value;
+    const height = svgRef.current.height.baseVal.value;
+    const margin = { top: 10, right: 10, bottom: 20, left: 30 };
+
+    d3.select(svgRef.current).selectAll('*').remove();
+
+    const xScale = d3
+      .scaleLinear()
+      .domain([0, data.xs.length - 1])
+      .range([margin.left, width - margin.right]);
+
+    const yScale = d3
+      .scaleLinear()
+      .domain([0, 1])
+      .range([height - margin.bottom, margin.top]);
+
+    const line = d3
+      .line<number>()
+      .x((_d, i) => xScale(i))
+      .y((d) => yScale(d))
+      .curve(d3.curveLinear);
+
+    const leftTickIndex = Math.floor((data.xs.length * 20) / 100);
+    const svgContainer = d3.select(svgRef.current);
+
+    const xAxis = d3
+      .axisBottom(xScale)
+      .tickValues([leftTickIndex, data.xs.length - 1 - leftTickIndex])
+      .tickFormat((d) => data.xs[Number(d)]);
+
+    svgContainer
+      .append('g')
+      .attr('transform', `translate(0,${height - margin.bottom})`)
+      .call(xAxis)
+      .call((g) => g.select('.domain').remove()) // remove baseline
+      .call((g) =>
+        g.selectAll('line').attr('stroke', '#CAD3DD').attr('y1', -height),
+      )
+      .call((g) => g.selectAll('text').attr('font-size', '8px'));
+
+    const yAxis = d3
+      .axisLeft(yScale)
+      .tickValues([0, 0.5, 1])
+      .tickFormat(d3.format('.1f'));
+
+    svgContainer
+      .append('g')
+      .attr('transform', `translate(${margin.left},0)`)
+      .call(yAxis)
+      .call((g) => g.select('.domain').remove())
+      .call((g) => {
+        g.selectAll('line').each((value, index, lines) => {
+          if (value === 0.5) {
+            d3.select(lines[index])
+              .attr('x1', width)
+              .attr('stroke', '#CAD3DD')
+              .attr('stroke-dasharray', 2);
+          } else {
+            d3.select(lines[index]).remove();
+          }
+        });
+      })
+      .call((g) => g.selectAll('text').attr('font-size', '8px'));
+
+    svgContainer
+      .append('path')
+      .datum(data.ys)
+      .attr('fill', 'none')
+      .attr('stroke', '#167782')
+      .attr('stroke-width', 1)
+      .attr('d', line);
+  }, [initialData]);
+
+  return (
+    <StyledHydrophobicityChartSvg ref={svgRef}></StyledHydrophobicityChartSvg>
+  );
+};
+
 const PeptideProperties = (props: PeptidePropertiesProps) => {
   return props.isError ? (
     <TabContentErrorWrapper>
@@ -354,20 +515,37 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
       <BasicPropertiesWrapper>
         <BasicProperty
           name="Isoelectric Point"
-          value={_round(props.macromoleculesProperties.pKa, 2)}
+          value={
+            isNumber(props.macromoleculesProperties.pKa)
+              ? _round(props.macromoleculesProperties.pKa, 2)
+              : '–'
+          }
           hint="The isoelectric point is calculated as the median of all pKa values for the structure."
         />
         <BasicProperty
           name="Extinction Coef.(1/Mcm)"
-          value={_round(props.macromoleculesProperties.extinctionCoefficient)}
+          value={
+            isNumber(props.macromoleculesProperties.extinctionCoefficient)
+              ? _round(props.macromoleculesProperties.extinctionCoefficient)
+              : '–'
+          }
           hint="The extinction coefficient for wavelength of 280nm is calculated using the method from Gill, S.C. and von Hippel, P.H. (1989). Only amino acid natural analogues are used in the calculation."
         ></BasicProperty>
       </BasicPropertiesWrapper>
       <PeptidePropertiesBottomPart>
-        <MonomersCountPanel
-          monomerCount={props.macromoleculesProperties.monomerCount.peptides}
-          isPeptide
-        />
+        {props.macromoleculesProperties.monomerCount.peptides && (
+          <MonomersCountPanel
+            monomerCount={props.macromoleculesProperties.monomerCount.peptides}
+            isPeptide
+          />
+        )}
+        <HydrophobicityChartWrapper>
+          {props.macromoleculesProperties.hydrophobicity && (
+            <HydrophobicityChart
+              data={props.macromoleculesProperties.hydrophobicity}
+            />
+          )}
+        </HydrophobicityChartWrapper>
       </PeptidePropertiesBottomPart>
     </TabContentWrapper>
   );
@@ -418,6 +596,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             value={140}
             options={['nM', 'μM', 'mM']}
             selectedOption={unipositiveIonsMeasurementUnit}
+            disabled={!isNumber(props.macromoleculesProperties.Tm)}
             onChangeOption={onChangeUnipositiveIonsMeasurementUnit}
           />
           <BasicProperty
@@ -425,13 +604,16 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
             value={200}
             options={['nM', 'μM', 'mM']}
             selectedOption={oligonucleotidesMeasurementUnit}
+            disabled={!isNumber(props.macromoleculesProperties.Tm)}
             onChangeOption={onChangeOligonucleotidesMeasurementUnit}
           />
         </BasicPropertiesWrapper>
       </RnaBasicPropertiesWrapper>
-      <MonomersCountPanel
-        monomerCount={props.macromoleculesProperties.monomerCount.nucleotides}
-      />
+      {props.macromoleculesProperties.monomerCount.nucleotides && (
+        <MonomersCountPanel
+          monomerCount={props.macromoleculesProperties.monomerCount.nucleotides}
+        />
+      )}
     </TabContentWrapper>
   );
 };
@@ -457,11 +639,22 @@ export const MacromoleculePropertiesWindow = () => {
   );
   const recalculateMacromoleculeProperties =
     useRecalculateMacromoleculeProperties();
-  const monomers = useAppSelector(selectMonomers);
+  const debouncedRecalculateMacromoleculeProperties = useCallback(
+    debounce(() => {
+      recalculateMacromoleculeProperties();
+    }, 500),
+    [recalculateMacromoleculeProperties],
+  );
+  const unipositiveIonsMeasurementUnit = useAppSelector(
+    selectUnipositiveIonsMeasurementUnit,
+  );
+  const oligonucleotidesMeasurementUnit = useAppSelector(
+    selectOligonucleotidesMeasurementUnit,
+  );
 
   useEffect(() => {
-    const selectEntitiesHandler = async (selectedEntities: DrawingEntity[]) => {
-      await recalculateMacromoleculeProperties();
+    const selectEntitiesHandler = () => {
+      debouncedRecalculateMacromoleculeProperties();
     };
 
     editor?.events.selectEntities.add(selectEntitiesHandler);
@@ -470,6 +663,10 @@ export const MacromoleculePropertiesWindow = () => {
       editor?.events.selectEntities.remove(selectEntitiesHandler);
     };
   }, [editor]);
+
+  useEffect(() => {
+    debouncedRecalculateMacromoleculeProperties();
+  }, [unipositiveIonsMeasurementUnit, oligonucleotidesMeasurementUnit]);
 
   useEffect(() => {
     setSelectedTabIndex(

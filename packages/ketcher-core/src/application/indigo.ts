@@ -16,6 +16,7 @@
 
 import {
   AutomapMode,
+  CalculateMacromoleculePropertiesResult,
   CalculateProps,
   CalculateResult,
   CheckResult,
@@ -234,7 +235,9 @@ export class Indigo {
       .then((data) => this.#ketSerializer.deserialize(data.struct));
   }
 
-  calculateMacromoleculeProperties(struct: string): Promise<Struct> {
+  calculateMacromoleculeProperties(
+    struct: string,
+  ): Promise<CalculateMacromoleculePropertiesResult> {
     return this.#structService.calculateMacromoleculeProperties({
       struct,
     });

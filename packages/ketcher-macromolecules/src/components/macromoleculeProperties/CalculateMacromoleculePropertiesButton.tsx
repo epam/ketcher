@@ -16,17 +16,12 @@
 
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
-  isMacromoleculesPropertiesWindowOpened,
-  selectEditor,
   selectIsMacromoleculesPropertiesWindowOpened,
-  selectMonomers,
-  setMacromoleculesProperties,
   setMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
 import styled from '@emotion/styled';
-import { Button, IndigoProvider } from 'ketcher-react';
+import { Button } from 'ketcher-react';
 import { blurActiveElement } from 'helpers/canvas';
-import { KetSerializer, Struct, StructService } from 'ketcher-core';
 import { useRecalculateMacromoleculeProperties } from '../../hooks/useRecalculateMacromoleculeProperties';
 
 const StyledButton = styled(Button)<{ isActive?: boolean }>(
@@ -55,7 +50,6 @@ const StyledButton = styled(Button)<{ isActive?: boolean }>(
 
 export const CalculateMacromoleculePropertiesButton = () => {
   const dispatch = useAppDispatch();
-  const editor = useAppSelector(selectEditor);
   const isMacromoleculesPropertiesWindowOpened = useAppSelector(
     selectIsMacromoleculesPropertiesWindowOpened,
   );

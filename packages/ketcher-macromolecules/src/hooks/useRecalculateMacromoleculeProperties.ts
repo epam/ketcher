@@ -1,13 +1,19 @@
 import { IndigoProvider } from 'ketcher-react';
 import {
-  BaseMonomer,
   Chain,
   ChainsCollection,
+  KetcherLogger,
   KetSerializer,
   Struct,
   StructService,
 } from 'ketcher-core';
-import { selectEditor, setMacromoleculesProperties } from 'state/common';
+import {
+  molarMeasurementUnitToNumber,
+  selectEditor,
+  selectOligonucleotidesMeasurementUnit,
+  selectUnipositiveIonsMeasurementUnit,
+  setMacromoleculesProperties,
+} from 'state/common';
 import { useAppDispatch, useAppSelector } from './stateHooks';
 
 function isSenseAntisenseChains(chain1: Chain, chain2: Chain) {
@@ -20,6 +26,12 @@ function isSenseAntisenseChains(chain1: Chain, chain2: Chain) {
 export const useRecalculateMacromoleculeProperties = () => {
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
+  const unipositiveIonsMeasurementUnit = useAppSelector(
+    selectUnipositiveIonsMeasurementUnit,
+  );
+  const oligonucleotidesMeasurementUnit = useAppSelector(
+    selectOligonucleotidesMeasurementUnit,
+  );
 
   return async () => {
     const indigo = IndigoProvider.getIndigo() as StructService;
@@ -55,13 +67,28 @@ export const useRecalculateMacromoleculeProperties = () => {
       false,
     );
     const calculateMacromoleculePropertiesResponse =
-      await indigo.calculateMacromoleculeProperties({
-        struct: serializedKet,
-      });
-    const macromoleculeProperties =
-      calculateMacromoleculePropertiesResponse.properties &&
-      JSON.parse(calculateMacromoleculePropertiesResponse.properties);
+      await indigo.calculateMacromoleculeProperties(
+        {
+          struct: serializedKet,
+        },
+        {
+          upc:
+            140 / molarMeasurementUnitToNumber[unipositiveIonsMeasurementUnit],
+          nac:
+            200 / molarMeasurementUnitToNumber[oligonucleotidesMeasurementUnit],
+        },
+      );
 
-    dispatch(setMacromoleculesProperties(macromoleculeProperties));
+    try {
+      const macromoleculeProperties =
+        calculateMacromoleculePropertiesResponse.properties &&
+        JSON.parse(calculateMacromoleculePropertiesResponse.properties);
+
+      dispatch(setMacromoleculesProperties(macromoleculeProperties));
+    } catch (e) {
+      KetcherLogger.error('Error during parsing macromolecule properties: ', e);
+
+      dispatch(setMacromoleculesProperties(undefined));
+    }
   };
 };

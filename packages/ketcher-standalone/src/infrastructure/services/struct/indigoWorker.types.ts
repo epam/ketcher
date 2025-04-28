@@ -50,7 +50,7 @@ export const enum WorkerEvent {
   GenerateImageAsBase64 = 'generateImageAsBase64',
   GetInChIKey = 'getInChIKey',
   ExplicitHydrogens = 'convert_explicit_hydrogens',
-  CalculateMacromoleculeProperties = 'macromolecule_properties',
+  CalculateMacromoleculeProperties = 'calculateMacroProperties',
 }
 
 export enum SupportedFormat {

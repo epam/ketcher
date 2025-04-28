@@ -125,10 +125,12 @@ export interface SingleChainMacromoleculeProperties {
   };
   pKa?: number;
   extinctionCoefficient?: number;
+  hydrophobicity?: number[];
+  Tm?: number;
 }
 
 export interface CalculateMacromoleculePropertiesResult {
-  properties: SingleChainMacromoleculeProperties[];
+  properties: string;
 }
 
 export interface ExplicitHydrogensResult extends WithStruct, WithFormat {}

@@ -15,17 +15,12 @@ import {
   legacyCopy,
   legacyPaste,
 } from 'utilities';
-import { BaseMonomer, SequenceType, Struct, Vec2 } from 'domain/entities';
+import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat, SupportedFormat } from 'application/formatters';
 import { KetSerializer } from 'domain/serializers';
 import { ChemicalMimeType } from 'domain/services';
-import { PolymerBond } from 'domain/entities/PolymerBond';
 import { ketcherProvider } from 'application/utils';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { AttachmentPointName } from 'domain/types';
-import { Atom } from 'domain/entities/CoreAtom';
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
 
 export abstract class BaseMode {
   private _pasteIsInProgress = false;

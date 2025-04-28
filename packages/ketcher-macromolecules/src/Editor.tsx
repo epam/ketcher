@@ -310,12 +310,15 @@ function Editor({
             )}
           </CanvasWrapper>
           {isLoading && <Loader />}
-          <MacromoleculePropertiesWindow />
         </Layout.Main>
 
         <Layout.Right hide={isMonomerLibraryHidden}>
           <MonomerLibrary toggleLibraryVisibility={toggleLibraryVisibility} />
         </Layout.Right>
+
+        <Layout.Bottom>
+          <MacromoleculePropertiesWindow />
+        </Layout.Bottom>
         <Layout.InsideRoot>
           {isMonomerLibraryHidden && (
             <MonomerLibraryToggle onClick={toggleLibraryVisibility} />

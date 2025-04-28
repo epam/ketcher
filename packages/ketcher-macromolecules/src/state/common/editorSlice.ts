@@ -20,7 +20,6 @@ import {
   LayoutMode,
   modesMap,
   SingleChainMacromoleculeProperties,
-  ChainsCollection,
 } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
 import { PreviewType } from 'state/types';
@@ -28,7 +27,17 @@ import { ThemeType } from 'theming/defaultTheme';
 import { DeepPartial } from '../../types';
 import { PresetPosition } from 'ketcher-react';
 
-export type MolarMeasurementUnit = 'nM' | 'μM' | 'mM';
+export enum MolarMeasurementUnit {
+  nanoMol = 'nM',
+  microMol = 'μM',
+  milliMol = 'mM',
+}
+
+export const molarMeasurementUnitToNumber = {
+  [MolarMeasurementUnit.nanoMol]: 10 ** 9,
+  [MolarMeasurementUnit.microMol]: 10 ** 6,
+  [MolarMeasurementUnit.milliMol]: 10 ** 3,
+};
 
 // TODO: Looks like we do not use `isReady`. Delete?
 interface EditorState {
@@ -57,8 +66,8 @@ const initialState: EditorState = {
   position: undefined,
   isMacromoleculesPropertiesWindowOpened: false,
   macromoleculesProperties: undefined,
-  unipositiveIonsMeasurementUnit: 'nM',
-  oligonucleotidesMeasurementUnit: 'μM',
+  unipositiveIonsMeasurementUnit: MolarMeasurementUnit.nanoMol,
+  oligonucleotidesMeasurementUnit: MolarMeasurementUnit.microMol,
 };
 
 export const editorSlice: Slice = createSlice({

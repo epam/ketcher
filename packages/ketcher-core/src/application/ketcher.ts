@@ -56,6 +56,7 @@ import { isNumber } from 'lodash';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
+  rescale?: boolean;
 };
 
 const allowedApiSettings = {
@@ -396,17 +397,20 @@ export class Ketcher {
           this.structService,
           this,
         );
+        if (options?.rescale === false) {
+          this.#editor.struct(struct, false);
+        } else {
+          struct.rescale();
 
-        struct.rescale();
+          const { x, y } = options?.position ?? {};
 
-        const { x, y } = options?.position ?? {};
-
-        // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
-        // It needs to rotate them by 180 degrees in y-axis.
-        this.#editor.struct(struct, false, x, isNumber(y) ? -y : y);
-        this.#editor.zoomAccordingContent(struct);
-        if (x == null && y == null) {
-          this.#editor.centerStruct();
+          // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
+          // It needs to rotate them by 180 degrees in y-axis.
+          this.#editor.struct(struct, false, x, isNumber(y) ? -y : y);
+          this.#editor.zoomAccordingContent(struct);
+          if (x == null && y == null) {
+            this.#editor.centerStruct();
+          }
         }
       }
     }, this.eventBus);

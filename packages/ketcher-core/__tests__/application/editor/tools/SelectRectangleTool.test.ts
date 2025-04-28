@@ -100,8 +100,10 @@ describe('Select Rectangle Tool', () => {
         __data__: polymerBond.renderer,
       },
     } as MouseEvent;
+    const ketcherId = '1';
     const selectRectangleTool = new SelectRectangle(
       new CoreEditor({
+        ketcherId,
         theme: polymerEditorTheme,
         canvas: createPolymerEditorCanvas(),
         mode: new FlexMode(),
@@ -116,7 +118,9 @@ describe('Select Rectangle Tool', () => {
   it('should initiate the render of peptide mousedown', () => {
     const canvas: SVGSVGElement = createPolymerEditorCanvas();
     const mode = new FlexMode();
+    const ketcherId = '1';
     const editor: CoreEditor = new CoreEditor({
+      ketcherId,
       canvas,
       theme: polymerEditorTheme,
       mode,
@@ -131,7 +135,9 @@ describe('Select Rectangle Tool', () => {
   it('should move selected entity', () => {
     const canvas: SVGSVGElement = createPolymerEditorCanvas();
     const mode = new FlexMode();
+    const ketcherId = '1';
     const editor = new CoreEditor({
+      ketcherId,
       theme: polymerEditorTheme,
       canvas,
       mode,

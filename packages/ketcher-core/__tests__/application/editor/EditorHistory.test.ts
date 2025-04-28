@@ -9,9 +9,10 @@ describe('EditorHistory', () => {
   let history: EditorHistory;
   let mode: BaseMode;
   beforeEach(() => {
+    const ketcherId = '1';
     mode = new FlexMode();
     canvas = createPolymerEditorCanvas();
-    editor = new CoreEditor({ theme: {}, canvas, mode });
+    editor = new CoreEditor({ ketcherId, theme: {}, canvas, mode });
     history = new EditorHistory(editor);
   });
 

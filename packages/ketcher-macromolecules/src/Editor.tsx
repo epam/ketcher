@@ -100,6 +100,7 @@ import { RootSizeProvider } from './contexts';
 const muiTheme = createTheme(muiOverrides);
 
 interface EditorProps {
+  ketcherId: string;
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
   monomersLibraryUpdate?: string | JSON;
@@ -107,7 +108,6 @@ interface EditorProps {
 
 interface EditorContainerProps extends EditorProps {
   onInit?: () => void;
-  ketcherId: string;
 }
 
 function EditorContainer({
@@ -139,6 +139,7 @@ function EditorContainer({
         <RootSizeProvider rootRef={rootElRef}>
           <EditorWrapper ref={rootElRef} className={EditorClassName}>
             <Editor
+              ketcherId={ketcherId}
               theme={editorTheme}
               togglerComponent={togglerComponent}
               monomersLibraryUpdate={monomersLibraryUpdate}

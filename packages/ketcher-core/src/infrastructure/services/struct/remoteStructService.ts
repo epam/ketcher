@@ -264,7 +264,9 @@ export class RemoteStructService implements StructService {
     const expandedOptions = {
       ...this.getStandardServerOptions(options),
 
-      'render-label-mode': getLabelRenderModeForIndigo(),
+      'render-label-mode': this.ketcherId
+        ? getLabelRenderModeForIndigo(this.ketcherId)
+        : undefined,
       'render-font-size': options?.['render-font-size'],
       'render-font-size-unit': options?.['render-font-size-unit'],
       'render-font-size-sub': options?.['render-font-size-sub'],
@@ -438,7 +440,9 @@ export class RemoteStructService implements StructService {
         'render-output-sheet-width': options?.['render-output-sheet-width'],
         'render-output-sheet-height': options?.['render-output-sheet-height'],
         'render-output-format': outputFormat,
-        'render-label-mode': getLabelRenderModeForIndigo(),
+        'render-label-mode': this.ketcherId
+          ? getLabelRenderModeForIndigo(this.ketcherId)
+          : undefined,
       },
       (response) => response.then((resp) => resp.text()),
     );

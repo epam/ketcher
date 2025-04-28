@@ -70,13 +70,15 @@ export class Ketcher {
   logging: LogSettings;
   structService: StructService;
   #formatterFactory: FormatterFactory;
-  #editor: Editor;
+  #editor: Editor | null = null;
   _indigo: Indigo;
   #eventBus: EventEmitter;
   changeEvent: Subscription;
 
   get editor(): Editor {
-    return this.#editor;
+    // we should assign editor exactly after ketcher creation
+    // eslint-disable-next-line  @typescript-eslint/no-non-null-assertion
+    return this.#editor!;
   }
 
   get eventBus(): EventEmitter {
@@ -116,7 +118,7 @@ export class Ketcher {
 
   // TEMP.: getting only dearomatize-on-load setting
   get settings() {
-    const options = this.#editor.options();
+    const options = this.editor.options();
     const result = Object.entries(allowedApiSettings).reduce(
       (acc, [apiSetting, clientSetting]) => {
         if (clientSetting in options) {
@@ -155,7 +157,7 @@ export class Ketcher {
       SettingsManager.disableCustomQuery = !!settings.disableCustomQuery;
     }
 
-    return this.#editor.setOptions(JSON.stringify(options));
+    return this.editor.setOptions(JSON.stringify(options));
   }
 
   getSmiles(isExtended = false): Promise<string> {
@@ -190,7 +192,7 @@ export class Ketcher {
       this.id,
       format,
       this.#formatterFactory,
-      this.#editor.struct(),
+      this.editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
 
@@ -202,7 +204,7 @@ export class Ketcher {
       this.id,
       SupportedFormat.idt,
       this.#formatterFactory,
-      this.#editor.struct(),
+      this.editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
   }
@@ -224,7 +226,7 @@ export class Ketcher {
       this.id,
       format,
       this.#formatterFactory,
-      this.#editor.struct(),
+      this.editor.struct(),
     );
 
     return rxnfile;
@@ -237,13 +239,13 @@ export class Ketcher {
       this.#formatterFactory,
       (CoreEditor.provideEditorInstance()?._type ??
         EditorType.Micromolecules) === EditorType.Micromolecules
-        ? this.#editor.struct()
+        ? this.editor.struct()
         : CoreEditor.provideEditorInstance()?.drawingEntitiesManager.micromoleculesHiddenEntities?.clone(),
       (CoreEditor.provideEditorInstance()?._type ??
         EditorType.Micromolecules) === EditorType.Micromolecules
         ? undefined
         : CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
-      this.#editor.selection() as EditorSelection,
+      this.editor.selection() as EditorSelection,
     );
   }
 
@@ -252,7 +254,7 @@ export class Ketcher {
       this.id,
       SupportedFormat.fasta,
       this.#formatterFactory,
-      this.#editor.struct(),
+      this.editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
   }
@@ -262,7 +264,7 @@ export class Ketcher {
       this.id,
       SupportedFormat.sequence,
       this.#formatterFactory,
-      this.#editor.struct(),
+      this.editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,
     );
   }
@@ -275,7 +277,7 @@ export class Ketcher {
       this.id,
       SupportedFormat.smarts,
       this.#formatterFactory,
-      this.#editor.struct(),
+      this.editor.struct(),
     );
   }
 
@@ -287,7 +289,7 @@ export class Ketcher {
       this.id,
       SupportedFormat.cml,
       this.#formatterFactory,
-      this.#editor.struct(),
+      this.editor.struct(),
     );
   }
 
@@ -303,7 +305,7 @@ export class Ketcher {
       this.id,
       format,
       this.#formatterFactory,
-      this.#editor.struct(),
+      this.editor.struct(),
     );
   }
 
@@ -319,7 +321,7 @@ export class Ketcher {
       this.id,
       format,
       this.#formatterFactory,
-      this.#editor.struct(),
+      this.editor.struct(),
     );
   }
 
@@ -331,7 +333,7 @@ export class Ketcher {
       this.id,
       SupportedFormat.cdxml,
       this.#formatterFactory,
-      this.#editor.struct(),
+      this.editor.struct(),
     );
   }
 
@@ -343,7 +345,7 @@ export class Ketcher {
       this.id,
       SupportedFormat.cdx,
       this.#formatterFactory,
-      this.#editor.struct(),
+      this.editor.struct(),
     );
   }
 
@@ -352,7 +354,7 @@ export class Ketcher {
       this.id,
       withAuxInfo ? SupportedFormat.inChIAuxInfo : SupportedFormat.inChI,
       this.#formatterFactory,
-      this.#editor.struct(),
+      this.editor.struct(),
     );
   }
 
@@ -361,7 +363,7 @@ export class Ketcher {
       this.id,
       SupportedFormat.ket,
       this.#formatterFactory,
-      this.#editor.struct(),
+      this.editor.struct(),
     );
 
     return this.structService.getInChIKey(struct);
@@ -437,10 +439,10 @@ export class Ketcher {
 
         // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
         // It needs to rotate them by 180 degrees in y-axis.
-        this.#editor.struct(struct, false, x, isNumber(y) ? -y : y);
-        this.#editor.zoomAccordingContent(struct);
+        this.editor.struct(struct, false, x, isNumber(y) ? -y : y);
+        this.editor.zoomAccordingContent(struct);
         if (x == null && y == null) {
-          this.#editor.centerStruct();
+          this.editor.centerStruct();
         }
       }
     }, this.eventBus);
@@ -455,9 +457,9 @@ export class Ketcher {
         this,
       );
       struct.rescale();
-      this.#editor.struct(struct);
-      this.#editor.zoomAccordingContent(struct);
-      this.#editor.centerStruct();
+      this.editor.struct(struct);
+      this.editor.zoomAccordingContent(struct);
+      this.editor.centerStruct();
     }, this.eventBus);
   }
 
@@ -493,7 +495,7 @@ export class Ketcher {
 
         // System coordinates for browser and for chemistry files format (mol, ket, etc.) area are different.
         // It needs to rotate them by 180 degrees in y-axis.
-        this.#editor.structToAddFragment(struct, x, isNumber(y) ? -y : y);
+        this.editor.structToAddFragment(struct, x, isNumber(y) ? -y : y);
       }
     }, this.eventBus);
   }
@@ -505,7 +507,7 @@ export class Ketcher {
 
     runAsyncAction<void>(async () => {
       const struct = await this._indigo.layout(
-        this.#editor.struct(),
+        this.editor.struct(),
         this.editor.serverSettings,
       );
       const ketSerializer = new KetSerializer();
@@ -517,7 +519,7 @@ export class Ketcher {
     if (window.isPolymerEditorTurnedOn) {
       throw new Error('Calculate is not available in macro mode');
     }
-    return await this._indigo.calculate(this.#editor.struct(), options);
+    return await this._indigo.calculate(this.editor.struct(), options);
   }
 
   /**

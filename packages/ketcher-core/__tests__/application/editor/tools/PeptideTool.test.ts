@@ -5,8 +5,10 @@ import { createPolymerEditorCanvas } from '../../../helpers/dom';
 
 describe('PeptideTool', () => {
   it('should initiate the render of peptide preview on mouseover event', () => {
+    const ketcherId = '1';
     const canvas = createPolymerEditorCanvas();
     const editor: CoreEditor = new CoreEditor({
+      ketcherId,
       canvas,
       theme: polymerEditorTheme,
       mode: new FlexMode(),
@@ -19,8 +21,10 @@ describe('PeptideTool', () => {
   });
 
   it('should initiate the render of peptide mousedown', () => {
+    const ketcherId = '1';
     const canvas = createPolymerEditorCanvas();
     const editor: CoreEditor = new CoreEditor({
+      ketcherId,
       canvas,
       theme: polymerEditorTheme,
       mode: new FlexMode(),

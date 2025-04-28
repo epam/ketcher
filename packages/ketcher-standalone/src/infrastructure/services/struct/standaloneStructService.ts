@@ -411,7 +411,9 @@ class IndigoService implements StructService {
         ...this.getStandardServerOptions(options),
         'output-content-type': 'application/json',
 
-        'render-label-mode': getLabelRenderModeForIndigo(),
+        'render-label-mode': this.ketcherId
+          ? getLabelRenderModeForIndigo(this.ketcherId)
+          : undefined,
         'render-font-size': options?.['render-font-size'],
         'render-font-size-unit': options?.['render-font-size-unit'],
         'render-font-size-sub': options?.['render-font-size-sub'],
@@ -755,7 +757,9 @@ class IndigoService implements StructService {
 
       const commandOptions: CommandOptions = {
         ...this.getStandardServerOptions(restOptions),
-        'render-label-mode': getLabelRenderModeForIndigo(),
+        'render-label-mode': this.ketcherId
+          ? getLabelRenderModeForIndigo(this.ketcherId)
+          : undefined,
         'render-coloring': restOptions['render-coloring'],
         'render-font-size': restOptions['render-font-size'],
         'render-font-size-unit': restOptions['render-font-size-unit'],

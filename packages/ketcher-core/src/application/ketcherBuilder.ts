@@ -20,7 +20,6 @@ import {
   StructServiceProvider,
 } from 'domain/services';
 
-import { Editor } from 'application/editor';
 import { FormatterFactory } from 'application/formatters';
 import { Ketcher } from './ketcher';
 import assert from 'assert';

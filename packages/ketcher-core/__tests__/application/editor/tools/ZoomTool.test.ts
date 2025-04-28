@@ -36,8 +36,10 @@ describe('Zoom Tool', () => {
   it('should zoom in when scroll mouse wheel up and press CTRL', () => {
     jest.spyOn(ZoomTool.prototype, 'zoomAction').mockImplementation(zoomed);
 
+    const ketcherId = '1';
     // eslint-disable-next-line no-new
     new CoreEditor({
+      ketcherId,
       theme: polymerEditorTheme,
       canvas,
       mode: new FlexMode(),

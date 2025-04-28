@@ -44,8 +44,9 @@ const ket = new KetSerializer();
 
 describe('deserialize (ToStruct)', () => {
   const canvas = createPolymerEditorCanvas();
+  const ketcherId = '1';
   // eslint-disable-next-line no-new
-  new CoreEditor({ canvas, theme: {}, mode: new FlexMode() });
+  new CoreEditor({ ketcherId, canvas, theme: {}, mode: new FlexMode() });
   const parsedPrepareContent = JSON.parse(preparedKet);
   const deserData = ket.deserialize(preparedKet);
   it('correct work with atoms', () => {
@@ -180,8 +181,9 @@ describe('deserialize (ToStruct)', () => {
 
 describe('serialize (ToKet)', () => {
   const canvas = createPolymerEditorCanvas();
+  const ketcherId = '1';
   // eslint-disable-next-line no-new
-  new CoreEditor({ canvas, theme: {}, mode: new FlexMode() });
+  new CoreEditor({ ketcherId, canvas, theme: {}, mode: new FlexMode() });
   const parsedNewPrepareStruct = JSON.parse(ket.serialize(prepareStruct));
   const parsedPrepareContent = JSON.parse(preparedKet);
   it('correct work with atoms', () => {

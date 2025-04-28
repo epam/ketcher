@@ -390,10 +390,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
               1,
             ) + ' ';
         }
-        pathDAttributeValue += `H ${
-          endPosition.x -
-          SideChainConnectionBondRendererUtility.smoothCornerSize * cos
-        } `;
+        pathDAttributeValue +=
+          SVGPathDAttributeUtility.generateHorizontalAbsoluteLine(
+            endPosition.x -
+              SideChainConnectionBondRendererUtility.smoothCornerSize * cos,
+          ) + ' ';
         pathDAttributeValue +=
           SideChainConnectionBondRendererUtility.generateBend(cos, 0, cos, 1) +
           ' ';

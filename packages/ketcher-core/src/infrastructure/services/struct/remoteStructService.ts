@@ -457,6 +457,10 @@ export class RemoteStructService implements StructService {
       this.apiPath,
       this.defaultOptions,
       this.customHeaders,
-    )(data, this.getStandardServerOptions(options));
+    )(data, {
+      ...this.getStandardServerOptions(options),
+      upc: options?.upc,
+      nac: options?.nac,
+    });
   }
 }

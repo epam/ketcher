@@ -1015,34 +1015,30 @@ test.describe('Import-Saving .idt Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  const testFormats: Array<
-    | MacromoleculesFileFormatType.FASTA
-    | MacromoleculesFileFormatType.Sequence1LetterCode
-  > = [
-    MacromoleculesFileFormatType.FASTA,
-    MacromoleculesFileFormatType.Sequence1LetterCode,
+  const testFormats = [
+    {
+      name: MacromoleculesFileFormatName.FASTA,
+      testId: MacromoleculesFileFormatType.FASTA,
+    },
+    {
+      name: MacromoleculesFileFormatName.Sequence1LetterCode,
+      testId: MacromoleculesFileFormatType.Sequence1LetterCode,
+    },
   ];
 
   for (const format of testFormats) {
-    test(`Verify error message when saving macromolecules with unresolved monomers to non-IDT/KET format ${format}`, async () => {
+    test(`Verify error message when saving macromolecules with unresolved monomers to non-IDT/KET format ${format.name}`, async () => {
       /*
     Test case: Import/Saving files/#4431
     Description: Error message appears when saving macromolecules with unresolved monomers to non-IDT/KET formats.
     */
-      // Reload needed as monomer IDs increment in prior tests, affecting screenshots
-
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.IDT,
         `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
       );
       await selectSaveTool(page);
-      await chooseFileFormat(
-        page,
-        format as
-          | MacromoleculesFileFormatType.FASTA
-          | MacromoleculesFileFormatType.Sequence1LetterCode,
-      );
+      await chooseFileFormat(page, format.testId);
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });

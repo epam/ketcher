@@ -27,7 +27,7 @@ export async function chooseFileFormat(
   page: Page,
   fileFomat: MoleculesFileFormatType | MacromoleculesFileFormatType,
 ) {
-  const delayTime = 0.1;
+  const delayTime = 0.15;
   const fileFormatDropdonwList =
     saveStructureDialog(page).fileFormatDropdonwList;
 

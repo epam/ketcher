@@ -286,12 +286,16 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       await selectMonomer(page, Sugars._25d3r);
       await waitForMonomerPreview(page);
       // Screenshot suppression is not used on purpose, as it’s required for the test
-      await takePageScreenshot(page);
+      await takePageScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
       await keyboardPressOnCanvas(page, 'Escape');
       await selectMonomer(page, Bases._5meC);
       await waitForMonomerPreview(page);
       // Screenshot suppression is not used on purpose, as it’s required for the test
-      await takePageScreenshot(page);
+      await takePageScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
     },
   );
 

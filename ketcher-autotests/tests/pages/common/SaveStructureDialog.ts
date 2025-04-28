@@ -1,4 +1,4 @@
-import { type Page, expect } from '@playwright/test';
+import { type Page } from '@playwright/test';
 import { MoleculesFileFormatType } from '../constants/fileFormats/microFileFormats';
 import { MacromoleculesFileFormatType } from '../constants/fileFormats/macroFileFormats';
 import { delay } from '@utils/canvas';

@@ -21,6 +21,7 @@ import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar'
 import {
   chooseFileFormat,
   getTextAreaValue,
+  saveStructureDialog,
 } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
@@ -475,6 +476,7 @@ test.describe('Export to HELM: ', () => {
         `That test fails because of ${correctHELMString.issueNumber} issue.`,
       );
       if (correctHELMString.pageReloadNeeded) await pageReload(page);
+      const cancelButton = saveStructureDialog(page).cancelButton;
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
@@ -483,6 +485,7 @@ test.describe('Export to HELM: ', () => {
       );
       await selectSaveTool(page);
       await chooseFileFormat(page, MacromoleculesFileFormatType.HELM);
+
       const HELMExportResult = await getTextAreaValue(page);
 
       if (correctHELMString.differentHELMExport) {
@@ -491,7 +494,7 @@ test.describe('Export to HELM: ', () => {
         expect(HELMExportResult).toEqual(correctHELMString.HELMString);
       }
 
-      await pressButton(page, 'Cancel');
+      await cancelButton.click();
     });
   }
 });

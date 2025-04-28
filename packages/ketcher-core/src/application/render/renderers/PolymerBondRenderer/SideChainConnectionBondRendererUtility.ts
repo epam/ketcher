@@ -2,7 +2,7 @@ import type {
   BaseMonomerRenderer,
   BaseSequenceItemRenderer,
 } from 'application/render';
-import { SVGPathDAttributeUtil as SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtil';
+import { SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtility';
 import type { BaseMonomer } from 'domain/entities';
 import type { Cell } from 'domain/entities/canvas-matrix/Cell';
 import type {

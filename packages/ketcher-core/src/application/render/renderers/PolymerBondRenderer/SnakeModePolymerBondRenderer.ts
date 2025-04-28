@@ -4,7 +4,7 @@ import { CoreEditor } from 'application/editor/internal';
 import { Coordinates } from 'application/editor/shared/coordinates';
 import type { PolymerBondRendererStartAndEndPositions } from 'application/render/renderers/PolymerBondRenderer/PolymerBondRenderer.types';
 import { SideChainConnectionBondRendererUtility } from 'application/render/renderers/PolymerBondRenderer/SideChainConnectionBondRendererUtility';
-import { SVGPathDAttributeUtil } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtil';
+import { SVGPathDAttributeUtility } from 'application/render/renderers/PolymerBondRenderer/SVGPathDAttributeUtility';
 import { D3SvgElementSelection } from 'application/render/types';
 import assert from 'assert';
 import { BaseMonomer, Vec2 } from 'domain/entities';
@@ -256,8 +256,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
         ? 180
         : 0;
     let pathDAttributeValue =
-      SVGPathDAttributeUtil.generateMoveTo(startPosition.x, startPosition.y) +
-      ' ';
+      SVGPathDAttributeUtility.generateMoveTo(
+        startPosition.x,
+        startPosition.y,
+      ) + ' ';
 
     const cos = Math.cos((xDirection * Math.PI) / 180);
 
@@ -278,7 +280,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           SideChainConnectionBondRendererUtility.bondEndLength -
           horizontalPartIntersectionsOffset * 3;
         pathDAttributeValue +=
-          SVGPathDAttributeUtil.generateAbsoluteLine(
+          SVGPathDAttributeUtility.generateAbsoluteLine(
             startPosition.x,
             absoluteLineY,
           ) + ' ';
@@ -293,7 +295,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           SideChainConnectionBondRendererUtility.bondEndLength +
           horizontalPartIntersectionsOffset * 3;
         pathDAttributeValue +=
-          SVGPathDAttributeUtil.generateAbsoluteLine(
+          SVGPathDAttributeUtility.generateAbsoluteLine(
             startPosition.x,
             absoluteLineY,
           ) + ' ';
@@ -376,7 +378,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
                 : cellConnection.xOffset) *
                 3;
             pathDAttributeValue +=
-              SVGPathDAttributeUtil.generateVerticalAbsoluteLine(
+              SVGPathDAttributeUtility.generateVerticalAbsoluteLine(
                 absoluteLineY,
               ) + ' ';
           }
@@ -432,8 +434,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     });
 
     pathDAttributeValue +=
-      SVGPathDAttributeUtil.generateAbsoluteLine(endPosition.x, endPosition.y) +
-      ' ';
+      SVGPathDAttributeUtility.generateAbsoluteLine(
+        endPosition.x,
+        endPosition.y,
+      ) + ' ';
 
     this.bodyElement = rootElement
       .append('path')
@@ -759,7 +763,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
     startPosition?: Vec2,
   ): void {
     const start = startPosition
-      ? SVGPathDAttributeUtil.generateMoveTo(
+      ? SVGPathDAttributeUtility.generateMoveTo(
           Math.round(startPosition.x),
           Math.round(startPosition.y),
         )
@@ -772,11 +776,11 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
   }
 
   private addRandomLine(startPosition: Vec2, endPosition: Vec2): void {
-    const start = SVGPathDAttributeUtil.generateMoveTo(
+    const start = SVGPathDAttributeUtility.generateMoveTo(
       Math.round(startPosition.x),
       Math.round(startPosition.y),
     );
-    const line = SVGPathDAttributeUtil.generateAbsoluteLine(
+    const line = SVGPathDAttributeUtility.generateAbsoluteLine(
       Math.round(endPosition.x),
       Math.round(endPosition.y),
     );

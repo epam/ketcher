@@ -76,6 +76,7 @@ import {
 } from '@utils/keyboard/index';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [
@@ -369,7 +370,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMacromoleculesEditor(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.KetFormat);
+    await chooseFileFormat(page, MacromoleculesFileFormatType.Ket);
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

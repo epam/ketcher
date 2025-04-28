@@ -25,10 +25,7 @@ import {
 } from '@tests/pages/constants/monomers/Constants';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import {
-  MacromoleculesFileFormatName,
-  MacromoleculesFileFormatType,
-} from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { MacromoleculesFileFormatName } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
 
@@ -274,6 +271,7 @@ test.describe('Import/export sequence:', () => {
 
     const fileFormatDropdonwList =
       saveStructureDialog(page).fileFormatDropdonwList;
+    const cancelButton = saveStructureDialog(page).cancelButton;
 
     await selectSequenceLayoutModeTool(page);
     await selectSaveTool(page);
@@ -290,18 +288,18 @@ test.describe('Import/export sequence:', () => {
     const values = await options.allTextContents();
 
     const expectedValues = [
-      MacromoleculesFileFormatType.Ket,
-      MacromoleculesFileFormatType.MDLMolfileV3000,
-      MacromoleculesFileFormatType.Sequence1LetterCode,
-      MacromoleculesFileFormatType.Sequence3LetterCode,
-      MacromoleculesFileFormatType.FASTA,
-      MacromoleculesFileFormatType.IDT,
+      MacromoleculesFileFormatName.Ket,
+      MacromoleculesFileFormatName.MDLMolfileV3000,
+      MacromoleculesFileFormatName.Sequence1LetterCode,
+      MacromoleculesFileFormatName.Sequence3LetterCode,
+      MacromoleculesFileFormatName.FASTA,
+      MacromoleculesFileFormatName.IDT,
     ];
     for (const value of expectedValues) {
       expect(values).toContain(value);
     }
 
-    await keyboardPressOnCanvas(page, 'Escape');
-    await keyboardPressOnCanvas(page, 'Escape');
+    await options.first().click();
+    await cancelButton.click();
   });
 });

@@ -76,7 +76,6 @@ async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = saveStructureDialog(page).saveToTemplatesButton;
 
   await saveToTemplatesButton.click();
-  await pressButton(page, 'Save to Templates');
   await page.getByPlaceholder('template').click();
   await page
     .getByPlaceholder('template')

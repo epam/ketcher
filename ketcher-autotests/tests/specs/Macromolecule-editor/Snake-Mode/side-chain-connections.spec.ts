@@ -19,6 +19,7 @@ import {
 import {
   pressUndoButton,
   selectClearCanvasTool,
+  selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   turnOnMacromoleculesEditor,
@@ -1059,6 +1060,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/16.ket`,
       page,
     );
+    await selectSaveTool(page);
     await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
     await takeEditorScreenshot(page);
     // Closing Save dialog

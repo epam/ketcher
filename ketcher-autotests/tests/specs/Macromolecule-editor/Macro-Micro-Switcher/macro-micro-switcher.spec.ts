@@ -1741,6 +1741,7 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
+      await selectSaveTool(page);
       await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
       await takeEditorScreenshot(page);
     },
@@ -1760,6 +1761,7 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
+      await selectSaveTool(page);
       await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
       await takeEditorScreenshot(page);
     },

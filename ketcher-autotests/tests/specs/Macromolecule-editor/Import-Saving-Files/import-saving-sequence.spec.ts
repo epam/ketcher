@@ -31,7 +31,10 @@ import {
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import {
+  chooseFileFormat,
+  getTextAreaValue,
+} from '@tests/pages/common/SaveStructureDialog';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
@@ -904,9 +907,7 @@ for (const sequenceToExport of sequencesToExport) {
       page,
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );
-    const sequenceExportResult = await page
-      .getByTestId('preview-area-text')
-      .textContent();
+    const sequenceExportResult = await getTextAreaValue(page);
 
     if (sequenceToExport.differentSequenceExport) {
       expect(sequenceExportResult).toEqual(
@@ -1397,9 +1398,7 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
       page,
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );
-    const sequenceExportResult = await page
-      .getByTestId('preview-area-text')
-      .textContent();
+    const sequenceExportResult = await getTextAreaValue(page);
 
     if (sequenceToExport.differentSequenceExport) {
       expect(sequenceExportResult).toEqual(

@@ -1704,7 +1704,7 @@ test.describe('Cascade Reactions', () => {
 
   [MoleculesFileFormatType.RDFV2000, MoleculesFileFormatType.RDFV3000].forEach(
     (format) => {
-      test(`Canvas is empty, click on Save as..., verify that ${format} option is placed under SDF V2000, SDF V3000 in a File format dropdown`, async () => {
+      test(`Canvas is empty, click on Save as..., verify that ${format} is placed under SDF V2000, SDF V3000 in a File format dropdown`, async () => {
         /**
          * Test case: https://github.com/epam/Indigo/issues/2237
          * Description: Canvas is empty, click on Save as..., verify that ${format} option is placed under SDF V2000, SDF V3000

@@ -35,7 +35,8 @@ import { ReStruct } from 'application/render';
 import { getRelSGroupsBySelection, structSelection } from './utils';
 import { Action } from './action';
 import { EditorSelection } from '../editor.types';
-import { MonomerTransform } from 'application/editor/operations/monomer/MonomerTransform';
+import { RotateMonomerOperation } from 'application/editor/operations/monomer/RotateMonomerOperation';
+import { FlipMonomerOperation } from 'application/editor/operations/monomer/FlipMonomerOperation';
 
 export type FlipDirection = 'horizontal' | 'vertical';
 
@@ -239,10 +240,9 @@ function fromStructureFlip(
 
     if (sGroup instanceof MonomerMicromolecule) {
       action.addOp(
-        new MonomerTransform({
-          type: 'flip',
-          value: flipDirection,
+        new FlipMonomerOperation({
           id: sGroup.id,
+          value: flipDirection,
         }),
       );
     }
@@ -284,9 +284,7 @@ export function fromRotate(restruct, selection, center, angle: number) {
         );
 
         if (sg instanceof MonomerMicromolecule) {
-          action.addOp(
-            new MonomerTransform({ type: 'rotate', value: angle, id: sg.id }),
-          );
+          action.addOp(new RotateMonomerOperation({ id: sg.id, value: angle }));
         }
       });
     }

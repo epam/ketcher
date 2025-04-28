@@ -94,6 +94,9 @@ export const OperationType = Object.freeze({
   MULTITAIL_ARROW_RESIZE_HEAD_TAIL: 'Resize head tail',
   MULTITAIL_ARROW_MOVE_HEAD_TAIL: 'Move head tail',
   MONOMER_TRANSFORM: 'Transform monomer',
+  ROTATE_MONOMER: 'Rotate monomer',
+  FLIP_MONOMER: 'Flip monomer',
+  SHIFT_MONOMER: 'Shift monomer',
 });
 
 export enum OperationPriority {

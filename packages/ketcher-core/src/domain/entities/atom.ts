@@ -55,7 +55,7 @@ export enum StereoLabel {
   Or = 'or',
 }
 
-enum CIP {
+export enum CIP {
   S = 'S',
   R = 'R',
   s = 's',

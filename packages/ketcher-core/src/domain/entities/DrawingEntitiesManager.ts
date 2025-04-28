@@ -12,6 +12,7 @@ import assert from 'assert';
 import {
   BaseMonomer,
   Chem,
+  CIP,
   LinkerSequenceNode,
   MonomerSequenceNode,
   Phosphate,
@@ -1871,6 +1872,7 @@ export class DrawingEntitiesManager {
         bond.type,
         bond.stereo,
         bond.bondIdInMicroMode,
+        bond.cip,
       );
       const addedBond = bondAddCommand.operations[0].bond as Bond;
 
@@ -2359,6 +2361,7 @@ export class DrawingEntitiesManager {
     stereo: number,
     bondIdInMicroMode: number,
     _bond?: Bond,
+    cip: CIP | null = null,
   ) {
     if (_bond) {
       this.bonds.set(_bond.id, _bond);
@@ -2372,6 +2375,7 @@ export class DrawingEntitiesManager {
       bondIdInMicroMode,
       type,
       stereo,
+      cip,
     );
 
     this.bonds.set(bond.id, bond);
@@ -2387,6 +2391,7 @@ export class DrawingEntitiesManager {
     type: number,
     stereo: number,
     bondIdInMicroMode: number,
+    cip: CIP | null,
   ) {
     const command = new Command();
     const bondAddOperation = new BondAddOperation(
@@ -2398,6 +2403,7 @@ export class DrawingEntitiesManager {
           stereo,
           bondIdInMicroMode,
           bond,
+          cip,
         ),
       (bond: Bond) => this.deleteBondChangeModel(bond),
     );

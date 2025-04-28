@@ -3,6 +3,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { Atom } from 'domain/entities/CoreAtom';
 import { BaseRenderer } from 'application/render';
 import { BondRenderer } from 'application/render/renderers/BondRenderer';
+import { CIP } from 'domain/entities/atom';
 
 export enum BondType {
   None,
@@ -29,13 +30,14 @@ export enum BondStereo {
 export class Bond extends DrawingEntity {
   public endPosition: Vec2 = new Vec2();
   public renderer: BondRenderer | undefined = undefined;
-  public cycles = [];
+
   constructor(
     public firstAtom: Atom,
     public secondAtom: Atom,
-    public bondIdInMicroMode,
+    public bondIdInMicroMode: number,
     public type: BondType = BondType.Single,
     public stereo: BondStereo = BondStereo.None,
+    public cip: CIP | null = null,
   ) {
     super(firstAtom.position);
     this.endPosition = secondAtom.position;

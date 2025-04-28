@@ -436,11 +436,54 @@ export class AtomRenderer extends BaseRenderer {
     this.appendExplicitValence();
   }
 
+  private appendCIPLabel() {
+    if (!this.atom.properties.cip) {
+      return;
+    }
+
+    const cipValue = this.atom.properties.cip;
+    const cipGroup = this.rootElement?.append('g');
+
+    const cipText = cipGroup
+      ?.append('text')
+      .text(`(${cipValue})`)
+      .attr('font-family', 'Arial')
+      .attr('font-size', '13px')
+      .attr('pointer-events', 'none');
+
+    // Calculate the bounding box of the text element
+    const textNode = cipText?.node();
+    if (textNode) {
+      const box = textNode.getBBox();
+
+      // Insert rectangle before text (so text appears on top)
+      cipGroup
+        ?.insert('rect', 'text')
+        .attr('x', box.x - 1)
+        .attr('y', box.y - 1)
+        .attr('width', box.width + 2)
+        .attr('height', box.height + 2)
+        .attr('rx', 3)
+        .attr('ry', 3)
+        .attr('fill', '#f5f5f5')
+        .attr('stroke', '#f5f5f5');
+
+      // Position the group appropriately (offset from the atom)
+      cipGroup?.attr(
+        'transform',
+        `translate(${0.5 * box.width}, ${-0.5 * box.height})`,
+      );
+    }
+
+    return cipGroup;
+  }
+
   show() {
     this.rootElement = this.appendRootElement();
     this.bodyElement = this.appendBody();
     this.textElement = this.appendLabel();
     this.appendAtomProperties();
+    this.appendCIPLabel();
     this.hoverElement = this.appendHover();
     this.drawSelection();
   }

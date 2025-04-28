@@ -7,6 +7,7 @@ import { AtomLabel, Elements } from 'domain/constants';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { isNumber } from 'lodash';
 import { MonomerToAtomBond } from './MonomerToAtomBond';
+import { CIP } from './atom';
 
 export enum AtomRadical {
   None,
@@ -21,14 +22,17 @@ export interface AtomProperties {
   isotope?: number | null;
   radical?: AtomRadical;
   alias?: string | null;
+  cip?: CIP | null;
 }
+
 export class Atom extends DrawingEntity {
   public bonds: Array<Bond | MonomerToAtomBond> = [];
   public renderer: AtomRenderer | undefined = undefined;
+
   constructor(
     position: Vec2,
     public monomer: BaseMonomer,
-    public atomIdInMicroMode,
+    public atomIdInMicroMode: number,
     public label: AtomLabel,
     public properties: AtomProperties = {},
   ) {

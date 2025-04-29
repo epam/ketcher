@@ -380,7 +380,7 @@ test.describe('CDF files', () => {
   }) => {
     /*
     Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF2000 file and loaded back
+    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF2000 file and loaded back - system should filter out them
     */
     await openFileAndAddToCanvas(
       'KET/simple-schema-with-retrosynthetic-arrow.ket',
@@ -396,7 +396,7 @@ test.describe('CDF files', () => {
   }) => {
     /*
     Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF2000 file and loaded back
+    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF2000 file and loaded back - system should filter out them
     */
     await openFileAndAddToCanvas(
       'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
@@ -412,7 +412,7 @@ test.describe('CDF files', () => {
   }) => {
     /*
     Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF2000 file and loaded back
+    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF2000 file and loaded back - system should filter out them
     */
     await openFileAndAddToCanvas(
       'KET/schema-with-two-retrosynthetic-arrows.ket',
@@ -429,7 +429,7 @@ test.describe('CDF files', () => {
   }) => {
     /*
     Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF3000 file and loaded back
+    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF3000 file and loaded back - system should filter out them
     */
     await openFileAndAddToCanvas(
       'KET/simple-schema-with-retrosynthetic-arrow.ket',
@@ -445,7 +445,7 @@ test.describe('CDF files', () => {
   }) => {
     /*
     Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF3000 file and loaded back
+    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF3000 file and loaded back - system should filter out them
     */
     await openFileAndAddToCanvas(
       'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
@@ -461,7 +461,7 @@ test.describe('CDF files', () => {
   }) => {
     /*
     Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF3000 file and loaded back
+    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF3000 file and loaded back - system should filter out them
     */
     await openFileAndAddToCanvas(
       'KET/schema-with-two-retrosynthetic-arrows.ket',

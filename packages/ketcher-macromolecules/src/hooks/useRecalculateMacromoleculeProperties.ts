@@ -34,6 +34,10 @@ export const useRecalculateMacromoleculeProperties = () => {
   );
 
   return async () => {
+    if (!editor) {
+      return;
+    }
+
     const indigo = IndigoProvider.getIndigo() as StructService;
     const selectionDrawingEntitiesManager =
       editor.drawingEntitiesManager.filterSelection();

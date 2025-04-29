@@ -31,15 +31,21 @@ import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { SingleChainMacromoleculeProperties } from 'ketcher-core';
+import {
+  peptideNaturalAnalogues,
+  rnaDnaNaturalAnalogues,
+  SingleChainMacromoleculeProperties,
+} from 'ketcher-core';
 import { Icon } from 'ketcher-react';
 import { DropDown } from 'components/shared/dropDown';
 import { useRecalculateMacromoleculeProperties } from '../../hooks/useRecalculateMacromoleculeProperties';
 import { debounce, isNumber } from 'lodash';
 import * as d3 from 'd3';
 
+const OTHER_MONOMER_COUNT_NAME = 'Other';
+
 function hasNucleotideSpecificProperties(
-  macromoleculesProperties: SingleChainMacromoleculeProperties,
+  macromoleculesProperties?: SingleChainMacromoleculeProperties,
 ) {
   return (
     macromoleculesProperties?.monomerCount?.nucleotides &&
@@ -206,7 +212,9 @@ const PropertyHintIconWrapper = styled('div')(() => ({
 }));
 
 const BasicPropertyDropdown = styled(DropDown)(() => ({
+  position: 'relative',
   padding: '0 0 0 5px',
+  zIndex: 1, // needed because tabs below are shifted up and overlaps the dropdown element to match the design
 }));
 
 const StyledMonomersCountPanel = styled('div')(() => ({
@@ -224,6 +232,7 @@ const StyledMonomersCountPanel = styled('div')(() => ({
 const StyledMonomersCountPanelItem = styled('div')<{
   monomerShortName: string;
   isPeptide?: boolean;
+  disabled?: boolean;
 }>`
   display: flex;
   position: relative;
@@ -235,6 +244,7 @@ const StyledMonomersCountPanelItem = styled('div')<{
   border-radius: 2px;
   min-width: 50px;
   flex: 1;
+  opacity: ${({ disabled }) => (disabled ? 0.4 : 1)};
 
   &:after {
     content: '';
@@ -277,10 +287,22 @@ interface MonomersCountPanelProps {
 }
 
 const MonomersCountPanel = (props: MonomersCountPanelProps) => {
-  const countsEntries = Object.entries(props.monomerCount);
+  const naturalAnaloguesArray = props.isPeptide
+    ? peptideNaturalAnalogues
+    : rnaDnaNaturalAnalogues;
+  const countsEntries: [string, number][] = naturalAnaloguesArray.map(
+    (peptideNaturalAnalogues) => [
+      peptideNaturalAnalogues,
+      props.monomerCount[peptideNaturalAnalogues] || 0,
+    ],
+  );
 
+  countsEntries.push([
+    OTHER_MONOMER_COUNT_NAME,
+    props.monomerCount[OTHER_MONOMER_COUNT_NAME] || 0,
+  ]);
   countsEntries.sort((a, b) => {
-    return b[0] === 'Other' ? -1 : a[0].localeCompare(b[0]);
+    return a[0] === OTHER_MONOMER_COUNT_NAME ? 1 : a[0].localeCompare(b[0]);
   });
 
   return (
@@ -290,6 +312,8 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
           <StyledMonomersCountPanelItem
             monomerShortName={monomerShortName}
             isPeptide={props.isPeptide}
+            disabled={count === 0}
+            key={monomerShortName}
           >
             <StyledMonomersCountPanelItemName>
               {monomerShortName}
@@ -635,15 +659,44 @@ enum PROPERTIES_TABS {
   NO_TAB = -1,
 }
 
+enum MassMeasurementUnit {
+  Da = 'Da',
+  kDa = 'kDa',
+  MDa = 'MDa',
+}
+
+const massMeasurementUnitToNumber = {
+  [MassMeasurementUnit.Da]: 1,
+  [MassMeasurementUnit.kDa]: 1000,
+  [MassMeasurementUnit.MDa]: 1000000,
+};
+
+const calculateMassMeasurementUnit = (mass?: number) => {
+  if (!isNumber(mass)) {
+    return MassMeasurementUnit.Da;
+  }
+
+  return mass < 1000
+    ? MassMeasurementUnit.Da
+    : mass < 1000000
+    ? MassMeasurementUnit.kDa
+    : MassMeasurementUnit.MDa;
+};
+
 export const MacromoleculePropertiesWindow = () => {
   const dispatch = useAppDispatch();
   const editor = useAppSelector(selectEditor);
   const macromoleculesProperties = useAppSelector(
     selectMacromoleculesProperties,
   );
-  const firstMacromoleculesProperties = macromoleculesProperties?.[0];
+  const firstMacromoleculesProperties:
+    | SingleChainMacromoleculeProperties
+    | undefined = macromoleculesProperties?.[0];
   const [selectedTabIndex, setSelectedTabIndex] = useState(
     PROPERTIES_TABS.PEPTIDES,
+  );
+  const [massMeasurementUnit, setMassMeasurementUnit] = useState(
+    calculateMassMeasurementUnit(firstMacromoleculesProperties?.mass),
   );
   const isMacromoleculesPropertiesWindowOpened = useAppSelector(
     selectIsMacromoleculesPropertiesWindowOpened,
@@ -685,6 +738,9 @@ export const MacromoleculePropertiesWindow = () => {
         ? PROPERTIES_TABS.RNA
         : PROPERTIES_TABS.PEPTIDES,
     );
+    setMassMeasurementUnit(
+      calculateMassMeasurementUnit(firstMacromoleculesProperties?.mass),
+    );
   }, [firstMacromoleculesProperties]);
 
   const onTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -693,6 +749,10 @@ export const MacromoleculePropertiesWindow = () => {
 
   const closeWindow = () => {
     dispatch(setMacromoleculesPropertiesWindowVisibility(false));
+  };
+
+  const onMassMeasurementUnitChange = (option: string) => {
+    setMassMeasurementUnit(option as MassMeasurementUnit);
   };
 
   const hasPeptidesTabError =
@@ -746,19 +806,23 @@ export const MacromoleculePropertiesWindow = () => {
             <MolecularMass>
               <MolecularMassAmount>
                 {_round(
-                  firstMacromoleculesProperties?.mass < 1000
-                    ? firstMacromoleculesProperties?.mass
-                    : firstMacromoleculesProperties?.mass < 1000000
-                    ? firstMacromoleculesProperties?.mass / 1000
-                    : firstMacromoleculesProperties?.mass / 1000000,
+                  firstMacromoleculesProperties?.mass /
+                    massMeasurementUnitToNumber[massMeasurementUnit],
                   3,
                 )}
               </MolecularMassAmount>{' '}
-              {firstMacromoleculesProperties?.mass < 1000
-                ? 'Da'
-                : firstMacromoleculesProperties?.mass < 1000000
-                ? 'kDa'
-                : 'MDa'}
+              <BasicPropertyDropdown
+                options={[
+                  MassMeasurementUnit.Da,
+                  MassMeasurementUnit.kDa,
+                  MassMeasurementUnit.MDa,
+                ].map((unit) => ({
+                  id: unit,
+                  label: unit,
+                }))}
+                currentSelection={massMeasurementUnit}
+                selectionHandler={onMassMeasurementUnitChange}
+              />
             </MolecularMass>
           </>
         )}

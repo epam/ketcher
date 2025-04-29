@@ -18,6 +18,7 @@ import {
   hasAntisenseChains,
   selectEditor,
   selectEditorActiveTool,
+  selectIsContextMenuActive,
   selectTool,
   showPreview,
 } from 'state/common';
@@ -56,6 +57,7 @@ const noPreviewTools = [ToolName.bondSingle, ToolName.selectRectangle];
 export const EditorEvents = () => {
   const editor = useAppSelector(selectEditor);
   const activeTool = useAppSelector(selectEditorActiveTool);
+  const isContextMenuActive = useAppSelector(selectIsContextMenuActive);
   const dispatch = useAppDispatch();
   const presets = useAppSelector(selectAllPresets);
   const hasAtLeastOneAntisense = useAppSelector(hasAntisenseChains);
@@ -184,6 +186,16 @@ export const EditorEvents = () => {
         return;
       }
 
+      if (e.buttons === 2) {
+        return;
+      }
+
+      if (isContextMenuActive) {
+        e.preventDefault();
+        e.stopPropagation();
+        return;
+      }
+
       const polymerBond = e.target.__data__?.polymerBond;
 
       if (
@@ -294,7 +306,7 @@ export const EditorEvents = () => {
 
       debouncedShowPreview(monomerPreviewData);
     },
-    [handleOpenBondPreview, debouncedShowPreview, presets],
+    [handleOpenBondPreview, debouncedShowPreview, presets, isContextMenuActive],
   );
 
   const handleClosePreview = useCallback(() => {

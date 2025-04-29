@@ -1,5 +1,5 @@
 import { AttachmentPointName } from 'domain/types';
-import { FlipDirection } from 'application/editor';
+import type { FlipDirection } from 'application/editor/shared/utils.types';
 
 export enum KetNodeType {
   MONOMER = 'monomer',

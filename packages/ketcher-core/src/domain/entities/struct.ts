@@ -16,11 +16,7 @@
 
 import assert from 'assert';
 import { Atom, radicalElectrons } from './atom';
-import {
-  EditorSelection,
-  flipPointByCenter,
-  rotateDelta,
-} from 'application/editor';
+import type { EditorSelection } from 'application/editor';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Elements } from 'domain/constants';
@@ -45,6 +41,10 @@ import { isNumber } from 'lodash';
 import { Image } from './image';
 import { getStereoAtomsMap } from 'application/editor/actions/helpers';
 import { MultitailArrow } from './multitailArrow';
+import {
+  flipPointByCenter,
+  rotateDelta,
+} from 'application/editor/shared/utils';
 
 export type Neighbor = {
   aid: number;

@@ -18,7 +18,7 @@ import {
 import { D3SvgElementSelection } from 'application/render/types';
 import { UsageInMacromolecule } from 'application/render';
 import { MonomerToAtomBond } from 'domain/entities/MonomerToAtomBond';
-import { FlipDirection } from 'application/editor';
+import type { FlipDirection } from 'application/editor/shared/utils.types';
 
 export type MonomerColorScheme = {
   regular: string;

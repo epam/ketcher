@@ -36,36 +36,8 @@ import { getRelSGroupsBySelection, structSelection } from './utils';
 import { Action } from './action';
 import { EditorSelection } from '../editor.types';
 import { FlipMonomerOperation } from 'application/editor/operations/monomer/FlipMonomerOperation';
-
-export type FlipDirection = 'horizontal' | 'vertical';
-
-export const rotateDelta = (v: Vec2, center: Vec2, angle: number) => {
-  let v1 = v.sub(center);
-  v1 = v1.rotate(angle);
-  v1.add_(center); // eslint-disable-line no-underscore-dangle
-  return v1.sub(v);
-};
-
-export const flipPointByCenter = (
-  pointToFlip: Vec2,
-  center: Vec2,
-  flipDirection: FlipDirection,
-) => {
-  const d = new Vec2();
-  if (flipDirection === 'horizontal') {
-    d.x =
-      center.x > pointToFlip.x
-        ? 2 * (center.x - pointToFlip.x)
-        : -2 * (pointToFlip.x - center.x);
-  } else {
-    // 'vertical'
-    d.y =
-      center.y > pointToFlip.y
-        ? 2 * (center.y - pointToFlip.y)
-        : -2 * (pointToFlip.y - center.y);
-  }
-  return d;
-};
+import type { FlipDirection } from '../shared/utils.types';
+import { flipPointByCenter, rotateDelta } from '../shared/utils';
 
 export function fromFlip(
   reStruct: ReStruct,

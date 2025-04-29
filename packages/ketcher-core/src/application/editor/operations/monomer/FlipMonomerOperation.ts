@@ -15,8 +15,9 @@
  ***************************************************************************/
 
 import BaseOperation from 'application/editor/operations/base';
-import { FlipDirection, OperationType } from 'application/editor';
+import { OperationType } from 'application/editor';
 import { ReStruct } from 'application/render';
+import type { FlipDirection } from 'application/editor/shared/utils.types';
 import { MonomerMicromolecule } from 'domain/entities';
 
 type FlipMonomerData = {

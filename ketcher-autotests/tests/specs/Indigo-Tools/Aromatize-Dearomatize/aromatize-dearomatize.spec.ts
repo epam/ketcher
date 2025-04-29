@@ -28,6 +28,8 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@tests/pages/common/TopLeftToolbar';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -179,11 +181,13 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Description: Atom added to the structure.
     The structures are rendered with a circle inside the cycle during any manipulations.
     */
+    const atomToolbar = rightToolbar(page);
+
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectAromatizeTool(page);
     await selectAllStructuresOnCanvas(page);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await takeEditorScreenshot(page);
   });
 

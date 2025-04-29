@@ -61,6 +61,8 @@ import {
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -480,10 +482,12 @@ test.describe('Bond Tool', () => {
      *Description: Bond Tool - Drawing bonds in one direction does not change the bond created in the other direction
      */
     const point = { x: -50, y: 0 };
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnTheCanvas(page, point.x, point.y);
     await bondSelectionTool(page, MicroBondType.Single);
     await moveOnAtom(page, 'N', 0);

@@ -52,15 +52,6 @@ export async function selectAction(type: TopPanelButton, page: Page) {
   await selectButtonByTitle(type, page);
 }
 
-/**
- * Usage: await selectAtomInToolbar(AtomButton.Carbon, page)
- * Select an atom from Atom toolbar
- * **/
-export async function selectAtomInToolbar(atomName: AtomButton, page: Page) {
-  const atomButton = page.locator(`button[title*="${atomName}"]`);
-  await atomButton.click();
-}
-
 export async function openLayoutModeMenu(page: Page) {
   const modeSelectorButton = page.getByTestId('layout-mode');
   await modeSelectorButton.click();

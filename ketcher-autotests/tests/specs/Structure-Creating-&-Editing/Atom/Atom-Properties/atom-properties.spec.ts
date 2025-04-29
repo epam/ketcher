@@ -62,6 +62,8 @@ import {
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -260,13 +262,15 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1595
       Description: The appeared symbol is colored with the same color as in the Periodic Table.
     */
+    const atomToolbar = rightToolbar(page);
+
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
     await selectAllStructuresOnCanvas(page);
 
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await takeEditorScreenshot(page);
   });
 
@@ -1299,7 +1303,9 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-4730
       Description: Bond attached to atom of Phosphorus.
     */
-    await selectAtomInToolbar(AtomButton.Phosphorus, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Phosphorus);
     await clickInTheMiddleOfTheScreen(page);
 
     await bondSelectionTool(page, MicroBondType.Single);

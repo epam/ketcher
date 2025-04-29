@@ -27,6 +27,7 @@ import {
 } from '../utils';
 import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 
 async function setListOfAtoms(page: Page, atomLabels: string[]) {
   await selectAtomType(page, 'List');
@@ -221,7 +222,9 @@ test.describe('Checking if atoms are displayed correctly', () => {
     */
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     const pixelsToMoveMouse = 100;
-    await page.getByTestId('period-table').click();
+    const periodicTableButton = rightToolbar(page).periodicTableButton;
+
+    await periodicTableButton.click();
     await page.getByTestId('Ti-button').click();
     await page.getByRole('button', { name: 'Add', exact: true }).click();
     await clickOnCanvas(page, point.x, point.y);

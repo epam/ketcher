@@ -1,5 +1,7 @@
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@playwright/test';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -27,10 +29,12 @@ test.describe('Click Atom on canvas', () => {
       Test case: EPMLSOPKET-10102
       Description: when clicking with an atom on an atom it should replace it
     */
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -43,10 +47,12 @@ test.describe('Click Atom on canvas', () => {
       Test case: EPMLSOPKET-10100
       Description: when clicking with an atom on a FG template it should replace it
     */
+    const atomToolbar = rightToolbar(page);
+
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Sulfur, page);
+    await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -57,10 +63,12 @@ test.describe('Click Atom on canvas', () => {
       Test case: EPMLSOPKET-10101
       Description: when clicking with an atom on a Salts and Solvents it should replace it
     */
+    const atomToolbar = rightToolbar(page);
+
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Sulfur, page);
+    await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -71,16 +79,18 @@ test.describe('Click Atom on canvas', () => {
       Test case: EPMLSOPKET-10103
       Description: when clicking with an atom on an atom connected with bond to another atom  it should replace it
     */
-    await selectAtomInToolbar(AtomButton.Chlorine, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Chlorine);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Bromine, page);
+    await atomToolbar.clickAtom(Atom.Bromine);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
 
-    await selectAtomInToolbar(AtomButton.Iodine, page);
+    await atomToolbar.clickAtom(Atom.Iodine);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -91,7 +101,9 @@ test.describe('Click Atom on canvas', () => {
       Test case: EPMLSOPKET-10104
       Description: when clicking with an atom on a FG connected with bond to atom  it should replace it
     */
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
@@ -100,7 +112,7 @@ test.describe('Click Atom on canvas', () => {
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
 
-    await selectAtomInToolbar(AtomButton.Fluorine, page);
+    await atomToolbar.clickAtom(Atom.Fluorine);
     await clickOnCanvas(page, coordinatesWithShift, y);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);

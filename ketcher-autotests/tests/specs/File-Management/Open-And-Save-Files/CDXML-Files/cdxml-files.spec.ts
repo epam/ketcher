@@ -31,6 +31,8 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
 } from '@tests/pages/common/TopLeftToolbar';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -62,19 +64,21 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4712
      * Description: Open/Import structure while openning a CDXML file
      */
-    await selectAtomInToolbar(AtomButton.Hydrogen, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Hydrogen);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Hydrogen, page);
+    await atomToolbar.clickAtom(Atom.Hydrogen);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

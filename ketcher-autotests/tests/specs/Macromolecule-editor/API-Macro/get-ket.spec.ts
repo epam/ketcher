@@ -15,6 +15,8 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 test.describe('getKet', () => {
   test.beforeEach(async ({ page }) => {
@@ -153,7 +155,9 @@ test.describe('getKet', () => {
   Test case: https://github.com/epam/ketcher/issues/4238
   Description: getKet function return ket file with selection flags in Micro mode
   */
-    await selectAtomInToolbar(AtomButton.Hydrogen, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Hydrogen);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
 

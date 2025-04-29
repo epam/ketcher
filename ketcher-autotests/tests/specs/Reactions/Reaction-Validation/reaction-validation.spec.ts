@@ -1,5 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   AtomButton,
   clickOnAtom,
@@ -114,8 +116,10 @@ test.describe('Reaction validation', () => {
     Description: Reaction with combination of products can be edited after opening
     */
     const anyAtom = 0;
+    const atomToolbar = rightToolbar(page);
+
     await openFileAndAddToCanvas('KET/combination-of-products.ket', page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -126,8 +130,10 @@ test.describe('Reaction validation', () => {
     Description: Reaction with combination of reactants can be edited after opening
     */
     const anyAtom = 0;
+    const atomToolbar = rightToolbar(page);
+
     await openFileAndAddToCanvas('KET/combination-of-reactants.ket', page);
-    await selectAtomInToolbar(AtomButton.Fluorine, page);
+    await atomToolbar.clickAtom(Atom.Fluorine);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });

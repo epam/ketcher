@@ -30,6 +30,8 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 let point: { x: number; y: number };
 
 async function addNameToSuperatom(
@@ -135,8 +137,10 @@ test.describe('Superatom S-Group tool', () => {
       Description: User is unable to add atom on structure with Superatom S-group.
       EDIT ABBREVIATION modal appears.
     */
+    const atomToolbar = rightToolbar(page);
+
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });
@@ -202,8 +206,10 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-12989
       Description: User is able select atom by hotkey after Remove Abbreviation on Chain with Superatom S-Group.
     */
+    const atomToolbar = rightToolbar(page);
+
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', 3);
     await pressButton(page, 'Remove Abbreviation');
     await page.keyboard.press('o');

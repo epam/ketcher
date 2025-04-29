@@ -15,6 +15,8 @@ import {
 } from '@utils';
 import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,10 +25,12 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
 
   test('drawing atom, then dragging other atom', async ({ page }) => {
     const xDelta = 100;
-    await selectAtomInToolbar(AtomButton.Carbon, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Carbon);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await moveMouseToTheMiddleOfTheScreen(page);
 
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);

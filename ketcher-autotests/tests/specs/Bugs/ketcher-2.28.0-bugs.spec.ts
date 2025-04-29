@@ -70,6 +70,8 @@ import {
   saveStructureDialog,
 } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 declare global {
   interface Window {
@@ -138,6 +140,7 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
    * 5. Take a screenshot to validate the exception is not thrown and replacement is successful
    */
   await turnOnMicromoleculesEditor(page);
+  const atomToolbar = rightToolbar(page);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let changeEventSubscriber: any;
   await page.evaluate(() => {
@@ -148,7 +151,7 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
 
   await selectFunctionalGroups(FunctionalGroups.CF3, page);
   await clickInTheMiddleOfTheScreen(page);
-  await selectAtomInToolbar(AtomButton.Bromine, page);
+  await atomToolbar.clickAtom(Atom.Bromine);
 
   await clickInTheMiddleOfTheScreen(page);
   await takeEditorScreenshot(page, {

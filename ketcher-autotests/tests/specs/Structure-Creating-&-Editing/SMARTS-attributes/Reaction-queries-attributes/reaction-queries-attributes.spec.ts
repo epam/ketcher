@@ -25,14 +25,17 @@ import {
 import { checkSmartsValue } from '../utils';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 async function drawStructureWithArrowOpenAngle(page: Page) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const shiftForHydrogen = 25;
   const shiftForCoordinatesToResetArrowOpenAngleTool = 100;
   const shiftForOxygen = 125;
+  const atomToolbar = rightToolbar(page);
 
-  await selectAtomInToolbar(AtomButton.Hydrogen, page);
+  await atomToolbar.clickAtom(Atom.Nitrogen);
   await clickInTheMiddleOfTheScreen(page);
   await resetCurrentTool(page);
 

@@ -6,6 +6,7 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Page, expect } from '@playwright/test';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   LeftPanelButton,
   Monomer,
@@ -411,7 +412,9 @@ export async function selectAtomsFromPeriodicTable(
   selectlisting: 'List' | 'Not List',
   elements: ElementLabel[],
 ) {
-  await page.getByTestId('period-table').click();
+  const periodicTableButton = rightToolbar(page).periodicTableButton;
+
+  await periodicTableButton.click();
   await page.getByText(selectlisting, { exact: true }).click();
 
   for (const element of elements) {

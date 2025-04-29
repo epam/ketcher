@@ -1,5 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 import { commonLeftToolbarLocators } from '@tests/pages/common/CommonLeftToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   AtomButton,
   clickInTheMiddleOfTheScreen,
@@ -169,7 +171,9 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     const shiftForSecondHydrogen = 200;
 
     async function addAndMoveHydrogen() {
-      await selectAtomInToolbar(AtomButton.Hydrogen, page);
+      const atomToolbar = rightToolbar(page);
+
+      await atomToolbar.clickAtom(Atom.Hydrogen);
       await clickInTheMiddleOfTheScreen(page);
       await moveElement(page, 'H', 0, shiftForHydrogen, 0);
     }
@@ -185,7 +189,9 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     }
 
     async function addAndMoveOxygen() {
-      await selectAtomInToolbar(AtomButton.Oxygen, page);
+      const atomToolbar = rightToolbar(page);
+
+      await atomToolbar.clickAtom(Atom.Oxygen);
       await clickInTheMiddleOfTheScreen(page);
       await moveElement(page, 'O', 0, shiftForOxygen, 0);
     }
@@ -197,7 +203,9 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     }
 
     async function addSecondHydrogen() {
-      await selectAtomInToolbar(AtomButton.Hydrogen, page);
+      const atomToolbar = rightToolbar(page);
+
+      await atomToolbar.clickAtom(Atom.Hydrogen);
       await clickOnCanvas(page, x + shiftForSecondHydrogen, y, {
         button: 'left',
       });

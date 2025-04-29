@@ -1,4 +1,5 @@
 import { Page, test } from '@playwright/test';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -26,7 +27,9 @@ async function setHydrogenLabelsOn(page: Page) {
   await pressButton(page, 'Apply');
 }
 async function selectExtendedTableElements(page: Page, element: string) {
-  await page.getByTestId('extended-table').click();
+  const extendedTableButton = rightToolbar(page).extendedTableButton;
+
+  await extendedTableButton.click();
   await page.getByRole('button', { name: element, exact: true }).click();
   await page.getByRole('button', { name: 'Add', exact: true }).click();
 }

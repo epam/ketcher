@@ -38,6 +38,8 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 const X_DELTA_ONE = 100;
 
@@ -74,7 +76,9 @@ test.describe('Atom Tool', () => {
     - "Cancel" and "Add" buttons are at the right bottom corner of the window: "Cancel" is always active, "Add" becomes active when any symbol is selected;
     - "x" button is at the top right corner of the window.
     */
-    await page.getByTestId('extended-table').click();
+    const extendedTableButton = rightToolbar(page).extendedTableButton;
+
+    await extendedTableButton.click();
     await takeEditorScreenshot(page);
   });
 
@@ -99,9 +103,11 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1450
     Description: The structure is illustrated as H3Si-SH.
     */
-    await selectAtomInToolbar(AtomButton.Sulfur, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAtomInToolbar(AtomButton.Sulfur, page);
+    await atomToolbar.clickAtom(Atom.Sulfur);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
@@ -173,7 +179,9 @@ test.describe('Atom Tool', () => {
     Description: The selected button is highlighted. Several dialog buttons can`t be selected.
     The "Add" button becomes enabled when any generic group is selected.
     */
-    await page.getByTestId('extended-table').click();
+    const extendedTableButton = rightToolbar(page).extendedTableButton;
+
+    await extendedTableButton.click();
     await page.getByRole('button', { name: 'AH', exact: true }).click();
     await takeEditorScreenshot(page);
   });
@@ -299,12 +307,14 @@ test.describe('Atom Tool', () => {
       Test case: EPMLSOPKET-1581
       Description: when drag & drop an atom on an atom it should replace it
     */
+    const atomToolbar = rightToolbar(page);
+
     await drawBenzeneRing(page);
 
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     const bromineCoordinates = { x: x + X_DELTA_ONE, y };
 
-    await selectAtomInToolbar(AtomButton.Bromine, page);
+    await atomToolbar.clickAtom(Atom.Bromine);
     await clickOnCanvas(page, bromineCoordinates.x, bromineCoordinates.y);
 
     await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
@@ -429,9 +439,11 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-12982
     Description: Atoms appears on selected part of structure.
     */
+    const atomToolbar = rightToolbar(page);
+
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectPartOfMolecules(page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await takeEditorScreenshot(page);
   });
 
@@ -443,9 +455,11 @@ test.describe('Atom Tool', () => {
     Description: Only one atom should be removed and the other should remain
     */
     const numberOfAtom = 0;
-    await selectAtomInToolbar(AtomButton.Bromine, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Bromine);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
@@ -519,6 +533,7 @@ test.describe('Atom Tool', () => {
     Description: The additional button with the selected atom symbol appears on the Atom Palette.
     Additional atom can be added to structure.
     */
+    const atomToolbar = rightToolbar(page);
     const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn'];
 
     for (const elementName of elementNames) {
@@ -529,7 +544,7 @@ test.describe('Atom Tool', () => {
 
     const anyAtom = 0;
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectAtomInToolbar(AtomButton.Gold, page);
+    await atomToolbar.clickAtom(Atom.Aurum);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });

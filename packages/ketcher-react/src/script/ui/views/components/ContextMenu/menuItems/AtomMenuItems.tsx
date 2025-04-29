@@ -18,7 +18,7 @@ import {
   Atom,
   ketcherProvider,
 } from 'ketcher-core';
-import { atom } from 'src/script/ui/data/schema/struct-schema';
+import { atom } from '../../../../data/schema/struct-schema';
 import styles from '../ContextMenu.module.less';
 import useAddAttachmentPoint from '../hooks/useAddAttachmentPoint';
 import { isNumber } from 'lodash';

@@ -2,7 +2,7 @@ import { fromBondsAttrs, ketcherProvider } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
-import tools from 'src/script/ui/action/tools';
+import tools from '../../../../action/tools';
 import { BondsContextMenuProps, ItemEventParams } from '../contextMenu.types';
 
 type Params = ItemEventParams<BondsContextMenuProps>;

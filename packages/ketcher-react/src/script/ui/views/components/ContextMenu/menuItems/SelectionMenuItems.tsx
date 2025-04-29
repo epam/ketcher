@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Item, Submenu } from 'react-contexify';
-import tools from 'src/script/ui/action/tools';
+import tools from '../../../../action/tools';
 import styles from '../ContextMenu.module.less';
 import useAtomEdit from '../hooks/useAtomEdit';
 import useAtomStereo from '../hooks/useAtomStereo';

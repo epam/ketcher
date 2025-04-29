@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from 'react';
 import { Item, Submenu } from 'react-contexify';
 import Editor from 'src/script/editor';
-import tools from 'src/script/ui/action/tools';
+import tools from '../../../../action/tools';
 import styles from '../ContextMenu.module.less';
 import useBondEdit from '../hooks/useBondEdit';
 import useBondSGroupAttach from '../hooks/useBondSGroupAttach';

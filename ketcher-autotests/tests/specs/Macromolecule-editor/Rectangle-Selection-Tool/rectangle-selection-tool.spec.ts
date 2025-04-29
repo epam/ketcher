@@ -11,27 +11,27 @@ import {
   selectSnakeLayoutModeTool,
   moveMouseAway,
   selectAllStructuresOnCanvas,
-  selectMacroBond,
   clickOnCanvas,
   selectMonomer,
   clickInTheMiddleOfTheScreen,
 } from '@utils';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   pressRedoButton,
   pressUndoButton,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Chem } from '@constants/monomers/Chem';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import {
+  bondSelectionTool,
   selectAreaSelectionTool,
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 /* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(
@@ -92,7 +92,7 @@ test.describe('Rectangle Selection Tool', () => {
     );
 
     // Select bond tool
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -150,7 +150,7 @@ test.describe('Rectangle Selection Tool', () => {
     const peptide4 = peptides.nth(3);
 
     // Select bond tool
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -227,7 +227,7 @@ test.describe('Rectangle Selection Tool', () => {
     );
 
     // Select bond tool
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);

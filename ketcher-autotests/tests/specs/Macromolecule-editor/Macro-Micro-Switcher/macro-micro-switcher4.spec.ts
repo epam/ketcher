@@ -1,7 +1,7 @@
 /* eslint-disable no-self-compare */
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { chooseFileFormat, chooseTab, Tabs } from '@utils/macromolecules';
+import { chooseTab, Tabs } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -34,14 +34,18 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
   selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import {
   selectAreaSelectionTool,
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
 
@@ -289,7 +293,10 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await takeEditorScreenshot(page);
 
   await selectSaveTool(page);
-  await chooseFileFormat(page, 'Sequence (1-letter code)');
+  await chooseFileFormat(
+    page,
+    MacromoleculesFileFormatType.Sequence1LetterCode,
+  );
   await takeEditorScreenshot(page);
 
   await closeErrorMessage(page);
@@ -314,7 +321,10 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await takeEditorScreenshot(page);
 
   await selectSaveTool(page);
-  await chooseFileFormat(page, 'Sequence (3-letter code)');
+  await chooseFileFormat(
+    page,
+    MacromoleculesFileFormatType.Sequence3LetterCode,
+  );
   await takeEditorScreenshot(page);
 
   // await closeErrorMessage(page);
@@ -344,7 +354,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await takeEditorScreenshot(page);
 
   await selectSaveTool(page);
-  await chooseFileFormat(page, 'IDT');
+  await chooseFileFormat(page, MacromoleculesFileFormatType.IDT);
   await takeEditorScreenshot(page);
 
   // await closeErrorMessage(page);
@@ -460,7 +470,7 @@ test(`Verify that deleting a bond in macromolecules mode removes only the select
   ];
 
   for (const bond of bondsToDelete) {
-    const bondLocator = await getBondLocator(page, bond);
+    const bondLocator = getBondLocator(page, bond);
     await bondLocator.first().click({ force: true });
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -505,7 +515,7 @@ test(`Verify that undo/redo functionality restores deleted bonds correctly in ma
   ];
 
   for (const bond of bondsToDelete) {
-    const bondLocator = await getBondLocator(page, bond);
+    const bondLocator = getBondLocator(page, bond);
     await bondLocator.first().click({ force: true });
   }
 
@@ -618,7 +628,7 @@ test(`Verify the behavior when bonds are dragged and moved in macromolecules mod
   ];
 
   for (const bond of bondsToDrag) {
-    const bondLocator = await getBondLocator(page, bond);
+    const bondLocator = getBondLocator(page, bond);
     await selectAllStructuresOnCanvas(page);
     await bondLocator.first().hover({ force: true });
     await dragMouseTo(400, 400, page);
@@ -664,7 +674,7 @@ test(`Verify that selecting a bond highlights it properly, even in complex struc
   ];
 
   for (const bond of bondsToDrag) {
-    const bondLocator = await getBondLocator(page, bond);
+    const bondLocator = getBondLocator(page, bond);
     await bondLocator.first().click({ force: true });
     await takeEditorScreenshot(page);
   }

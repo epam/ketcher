@@ -95,6 +95,7 @@ const SubMenu = ({
             name="dropdown"
             onClick={handleDropDownClick}
             isActive={isActive(visibleItemId)}
+            dataTestId="dropdown-expand"
           />
         )}
       </VisibleItem>
@@ -108,6 +109,7 @@ const SubMenu = ({
           <OptionsContainer
             isVertical={vertical}
             islayoutModeButton={layoutModeButton}
+            data-testId="multi-tool-dropdown"
           >
             {subComponents.map((component) => component)}
           </OptionsContainer>

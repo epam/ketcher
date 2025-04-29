@@ -1,18 +1,18 @@
 import { Locator, Page } from '@playwright/test';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
   dragMouseTo,
   Monomer,
   MonomerType,
-  selectMacroBond,
   SymbolType,
   waitForRender,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
+  bondSelectionTool,
   selectAreaSelectionTool,
   selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 export async function moveMonomer(
   page: Page,
@@ -43,7 +43,7 @@ export async function connectMonomersWithBonds(
   page: Page,
   monomerNames: string[],
 ) {
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
 
   for (let i = 0; i < monomerNames.length - 1; i++) {
     const currentMonomer = monomerNames[i];
@@ -92,7 +92,7 @@ export function getMonomerLocatorById(page: Page, id: number | string) {
     .first();
 }
 
-type MonomerLocatorOptions = {
+export type MonomerLocatorOptions = {
   numberOfAttachmentPoints?: string;
   rValues?: boolean[];
   hydrogenConnectionNumber?: string | number;
@@ -247,6 +247,23 @@ export async function createRNAAntisenseChain(page: Page, monomer: Locator) {
     .first();
 
   await createAntisenseStrandOption.click();
+}
+
+export async function createAntisenseStrandByButton(
+  page: Page,
+  chosenType?: 'RNA' | 'DNA',
+) {
+  const dropdownTrigger = page.getByTestId('Create Antisense Strand').first();
+  await dropdownTrigger.click();
+
+  if (!chosenType) return;
+
+  const optionTestId =
+    chosenType === 'RNA' ? 'antisenseRnaStrand' : 'antisenseDnaStrand';
+
+  const optionButton = page.getByTestId(optionTestId).first();
+  await optionButton.waitFor({ state: 'visible' });
+  await optionButton.click();
 }
 
 export async function modifyInRnaBuilder(page: Page, symbolLocator: Locator) {

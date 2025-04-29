@@ -9,10 +9,8 @@ import {
   MonomerType,
   waitForPageInit,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,
@@ -259,7 +257,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       baseMonomers['(R1,R3,R4)'],
       'R3',
       'R1',
-      MacroBondTool.SINGLE,
+      MacroBondType.Single,
     );
   });
   test(`temporary test for debug purposes2`, async () => {
@@ -269,7 +267,7 @@ test.describe('Connection rules for Base monomers: ', () => {
       baseMonomers['(R1,R3,R4)'],
       'R3',
       'R4',
-      MacroBondTool.SINGLE,
+      MacroBondType.Single,
     );
   });
   */

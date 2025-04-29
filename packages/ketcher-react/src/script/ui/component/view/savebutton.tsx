@@ -37,6 +37,7 @@ type Props = {
   className?: string;
   title?: string;
   disabled?: boolean;
+  testId?: string;
 };
 
 type SaveButtonProps = PropsWithChildren<Props>;
@@ -55,6 +56,7 @@ const SaveButton = (props: SaveButtonProps) => {
     className,
     title,
     disabled,
+    testId,
   } = props;
   const { ketcherId } = useAppContext();
 
@@ -105,6 +107,7 @@ const SaveButton = (props: SaveButtonProps) => {
       title={title}
       className={className}
       disabled={disabled}
+      data-testid={testId}
       onClick={(event) => {
         save(event);
       }}

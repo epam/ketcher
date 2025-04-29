@@ -4,12 +4,12 @@ import {
   addSingleMonomerToCanvas,
   waitForPageInit,
   takeEditorScreenshot,
-  selectMacroBond,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 test.describe('Check attachment point hover', () => {
   test.beforeEach(async ({ page }) => {
@@ -38,7 +38,7 @@ test.describe('Check attachment point hover', () => {
       1,
     );
 
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await bondTwoMonomers(page, peptide1, peptide2);
 
     const bondLine = page

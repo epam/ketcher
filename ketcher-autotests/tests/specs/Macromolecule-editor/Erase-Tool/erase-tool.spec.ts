@@ -13,18 +13,21 @@ import {
   clickOnTheCanvas,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectMacroBond,
-  selectZoomInTool,
-  selectZoomOutTool,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { hideMonomerPreview, zoomWithMouseWheel } from '@utils/macromolecules';
-import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
+import {
+  bondTwoMonomers,
+  getBondLocator,
+} from '@utils/macromolecules/polymerBond';
 import {
   pressUndoButton,
   selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectZoomInTool,
+  selectZoomOutTool,
+  turnOnMacromoleculesEditor,
+} from '@tests/pages/common/TopRightToolbar';
 import {
   FileType,
   verifyFileExport,
@@ -36,10 +39,15 @@ import { Sugars } from '@constants/monomers/Sugars';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import {
+  bondSelectionTool,
   selectAreaSelectionTool,
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import {
+  MacroBondDataIds,
+  MacroBondType,
+} from '@tests/pages/constants/bondSelectionTool/Constants';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {
@@ -86,7 +94,7 @@ test.describe('Erase Tool', () => {
     );
 
     // Select bond tool
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -158,14 +166,16 @@ test.describe('Erase Tool', () => {
     Test case: Erase Tool
     Description: Bond between two CHEMs are deleted.
     */
-    const bondLine = page.locator('g[pointer-events="stroke"]').first();
+    const bondLine = getBondLocator(page, {
+      bondType: MacroBondDataIds.Single,
+    }).first();
     await openFileAndAddToCanvasAsNewProject(
       `KET/two-chems-connected.ket`,
       page,
     );
     await takeEditorScreenshot(page);
     await selectEraseTool(page);
-    await bondLine.click();
+    await bondLine.click({ force: true });
     await takeEditorScreenshot(page);
   });
 

@@ -1,49 +1,45 @@
 /* eslint-disable no-magic-numbers */
-import { Page, chromium, test, expect } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
-  MacromoleculesTopPanelButton,
   openStructurePasteFromClipboard,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   selectFlexLayoutModeTool,
-  selectMacromoleculesPanelButton,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
-  waitForIndigoToLoad,
-  waitForKetcherInit,
   moveMouseAway,
   MacroFileType,
-  SequenceType,
-  PeptideType,
   resetZoomLevelToDefault,
+  waitForPageInit,
 } from '@utils';
 import {
   selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
+  selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import { zoomWithMouseWheel } from '@utils/macromolecules';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import { zoomWithMouseWheel, chooseTab, Tabs } from '@utils/macromolecules';
+import { keyboardPressOnCanvas } from '@utils/keyboard/index';
+import {
+  PeptideLetterCodeType,
+  SequenceMonomerType,
+} from '@tests/pages/constants/monomers/Constants';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatName } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
 
+async function configureInitialState(page: Page) {
+  await chooseTab(page, Tabs.Rna);
+}
+
 test.beforeAll(async ({ browser }) => {
-  let sharedContext;
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
+  const context = await browser.newContext();
+  page = await context.newPage();
 
-  // Reminder: do not pass page as async
-  page = await sharedContext.newPage();
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
+  await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
+  await configureInitialState(page);
 });
 
 test.afterEach(async () => {
@@ -52,13 +48,7 @@ test.afterEach(async () => {
 });
 
 test.afterAll(async ({ browser }) => {
-  const cntxt = page.context();
-  await page.close();
-  await cntxt.close();
-  await browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
-  // await browser.close();
+  await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
 test.describe('Import/export sequence:', () => {
@@ -81,65 +71,71 @@ test.describe('Import/export sequence:', () => {
         it should display the additional options "RNA", "DNA", "Peptide"
 
     */
+    const contentTypeSelector =
+      pasteFromClipboardDialog(page).contentTypeSelector;
+    const monomerTypeSelector =
+      pasteFromClipboardDialog(page).monomerTypeSelector;
+
     await selectSequenceLayoutModeTool(page);
     await openStructurePasteFromClipboard(page);
 
-    const fileFormatComboBox = page
-      .getByTestId('dropdown-select')
-      .getByRole('combobox');
-
-    const defaultValue = await fileFormatComboBox
+    const defaultValue = await contentTypeSelector
       .locator('span')
       .first()
       .innerText();
     expect(defaultValue).toBe('Ket');
 
-    await fileFormatComboBox.click();
+    await contentTypeSelector.click();
 
     const options = page.getByRole('option');
     const values = await options.allTextContents();
 
     const expectedValues = [
-      'Ket',
-      'MDL Molfile V3000',
-      'Sequence',
-      'FASTA',
-      'IDT',
+      MacroFileType.Ket,
+      MacroFileType.MOLv3000,
+      MacroFileType.Sequence,
+      MacroFileType.FASTA,
+      MacroFileType.IDT,
     ];
     for (const value of expectedValues) {
       expect(values).toContain(value);
     }
     // Case 2
-    await page.getByText('Sequence').click();
+    await page.getByText(MacroFileType.Sequence).click();
 
-    const typeSelectorComboBox = page
-      .getByTestId('dropdown-select-type')
-      .getByRole('combobox');
-    await typeSelectorComboBox.click();
+    await monomerTypeSelector.click();
 
     const options2 = page.getByRole('option');
     const values2 = await options2.allTextContents();
 
-    const expectedValues2 = ['RNA', 'DNA', 'Peptide'];
+    const expectedValues2 = [
+      SequenceMonomerType.RNA,
+      SequenceMonomerType.DNA,
+      SequenceMonomerType.Peptide,
+    ];
     for (const value2 of expectedValues2) {
       expect(values2).toContain(value2);
     }
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
 
     // Case 30
-    await fileFormatComboBox.click();
-    await page.getByText('FASTA').click();
-    await typeSelectorComboBox.click();
+    await contentTypeSelector.click();
+    await page.getByText(MacroFileType.FASTA).click();
+    await monomerTypeSelector.click();
     const options3 = page.getByRole('option');
     const values3 = await options3.allTextContents();
 
-    const expectedValues3 = ['RNA', 'DNA', 'Peptide'];
+    const expectedValues3 = [
+      SequenceMonomerType.RNA,
+      SequenceMonomerType.DNA,
+      SequenceMonomerType.Peptide,
+    ];
     for (const value3 of expectedValues3) {
       expect(values3).toContain(value3);
     }
 
-    await page.keyboard.press('Escape');
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
   });
 
   test('It is possible to paste from clipboard A, T, C, G, U for RNA open structure', async () => {
@@ -154,7 +150,7 @@ test.describe('Import/export sequence:', () => {
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      [MacroFileType.Sequence, SequenceType.RNA],
+      [MacroFileType.Sequence, SequenceMonomerType.RNA],
       'ATCGUatcgu',
     );
 
@@ -175,7 +171,7 @@ test.describe('Import/export sequence:', () => {
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      [MacroFileType.Sequence, SequenceType.RNA],
+      [MacroFileType.Sequence, SequenceMonomerType.RNA],
       'ATCGUatcgu',
     );
 
@@ -198,7 +194,7 @@ test.describe('Import/export sequence:', () => {
       page,
       [
         MacroFileType.Sequence,
-        [SequenceType.PEPTIDE, PeptideType.oneLetterCode],
+        [SequenceMonomerType.Peptide, PeptideLetterCodeType.oneLetterCode],
       ],
       'ACDEFGHIKLMNPQRSTVWYacdefghiklmnpqrstcwy',
     );
@@ -272,38 +268,38 @@ test.describe('Import/export sequence:', () => {
         Confirm that the dropdown now includes the option "Sequence.
         Case 31: Check option "FASTA" to dropdown 'File format' of modal window 'Save Structure'
     */
+
+    const fileFormatDropdonwList =
+      saveStructureDialog(page).fileFormatDropdonwList;
+    const cancelButton = saveStructureDialog(page).cancelButton;
+
     await selectSequenceLayoutModeTool(page);
-    await selectMacromoleculesPanelButton(
-      MacromoleculesTopPanelButton.Save,
-      page,
-    );
+    await selectSaveTool(page);
 
-    const fileFormatComboBox = page.getByRole('combobox');
-
-    const defaultValue = await fileFormatComboBox
+    const defaultValue = await fileFormatDropdonwList
       .locator('span')
       .first()
       .innerText();
-    expect(defaultValue).toBe('Ket');
+    expect(defaultValue).toBe(MacromoleculesFileFormatName.Ket);
 
-    await fileFormatComboBox.click();
+    await fileFormatDropdonwList.click();
 
     const options = page.getByRole('option');
     const values = await options.allTextContents();
 
     const expectedValues = [
-      'Ket',
-      'MDL Molfile V3000',
-      'Sequence (1-letter code)',
-      'Sequence (3-letter code)',
-      'FASTA',
-      'IDT',
+      MacromoleculesFileFormatName.Ket,
+      MacromoleculesFileFormatName.MDLMolfileV3000,
+      MacromoleculesFileFormatName.Sequence1LetterCode,
+      MacromoleculesFileFormatName.Sequence3LetterCode,
+      MacromoleculesFileFormatName.FASTA,
+      MacromoleculesFileFormatName.IDT,
     ];
     for (const value of expectedValues) {
       expect(values).toContain(value);
     }
 
-    await page.keyboard.press('Escape');
-    await page.keyboard.press('Escape');
+    await options.first().click();
+    await cancelButton.click();
   });
 });

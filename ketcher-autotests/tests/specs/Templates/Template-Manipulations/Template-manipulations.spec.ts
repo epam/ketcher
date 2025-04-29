@@ -34,8 +34,6 @@ import {
   FunctionalGroups,
   selectFunctionalGroups,
   selectAtom,
-  pasteFromClipboard,
-  waitForLoad,
   openDropdown,
   selectDropdownTool,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -46,8 +44,8 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectUndoByKeyboard,
-  selectZoomOutTool,
   waitForElementInCanvas,
+  pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import {
@@ -58,13 +56,16 @@ import {
   pressRedoButton,
   pressUndoButton,
   selectClearCanvasTool,
-  selectOpenFileTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectAreaSelectionTool,
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import {
+  selectZoomOutTool,
+  topRightToolbarLocators,
+} from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -226,12 +227,10 @@ test.describe('Template Manupulations', () => {
     await selectAtomInToolbar(AtomButton.Iodine, page);
     await clickOnAtom(page, 'C', anyAtom);
 
-    await selectOpenFileTool(page);
-    await page.getByText('Paste from clipboard').click();
-    await pasteFromClipboard(page, 'CCCCC/CC/C:CC.C(C)CCCCCCCCCC');
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      'CCCCC/CC/C:CC.C(C)CCCCCCCCCC',
+    );
     await clickInTheMiddleOfTheScreen(page);
     await selectRing(RingButton.Benzene, page);
     await moveOnAtom(page, 'C', anyAtom);
@@ -343,6 +342,7 @@ test.describe('Template Manupulations', () => {
     Click the Zoom In button several times.
     Click the Zoom Out button several times.
     */
+    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
     await selectZoomOutTool(page);
     await clickInTheMiddleOfTheScreen(page);
     await drawBenzeneRing(page);
@@ -355,7 +355,7 @@ test.describe('Template Manupulations', () => {
     await openDropdown(page, 'reaction-arrow-open-angle');
     await clickOnTheCanvas(page, 1, 0);
     await takePageScreenshot(page);
-    await page.getByTestId('zoom-input').click();
+    await zoomSelector.click();
     await takeEditorScreenshot(page);
   });
 

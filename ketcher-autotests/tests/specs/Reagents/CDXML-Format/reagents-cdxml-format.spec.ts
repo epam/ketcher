@@ -1,33 +1,18 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   FILE_TEST_DATA,
-  waitForLoad,
   waitForPageInit,
+  pasteFromClipboardAndAddToCanvas,
 } from '@utils';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import { clickOnFileFormatDropdown } from '@utils/formats';
-
-async function previewCDXML(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'CDXML' }).click();
-}
-
-async function pasteCDXML(page: Page, fileFormat: string) {
-  await selectOpenFileTool(page);
-  await page.getByText('Paste from clipboard').click();
-  await page.getByRole('dialog').getByRole('textbox').fill(fileFormat);
-  await waitForLoad(page, async () => {
-    await pressButton(page, 'Add to Canvas');
-  });
-}
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
 
 test.describe('Reagents CDXML format', () => {
   test.beforeEach(async ({ page }) => {
@@ -45,7 +30,8 @@ test.describe('Reagents CDXML format', () => {
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
-    await previewCDXML(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
     await takeEditorScreenshot(page);
   });
 
@@ -61,7 +47,8 @@ test.describe('Reagents CDXML format', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await previewCDXML(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
     await takeEditorScreenshot(page);
   });
 
@@ -74,7 +61,8 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect text NH3 as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
     await openFileAndAddToCanvas('KET/reagent-nh3-text-above-arrow.ket', page);
-    await previewCDXML(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
     await takeEditorScreenshot(page);
   });
 
@@ -87,7 +75,8 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect text HCl below arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
     await openFileAndAddToCanvas('KET/reagent-hcl-text-below-arrow.ket', page);
-    await previewCDXML(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
     await takeEditorScreenshot(page);
   });
 
@@ -96,15 +85,15 @@ test.describe('Reagents CDXML format', () => {
     Test case: EPMLSOPKET-4721
     Description: File saved in format (e.g. "ketcher.cdxml")
     */
+    const saveButton = saveStructureDialog(page).saveButton;
     await openFileAndAddToCanvas(
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
 
     await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'CDXML' }).click();
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
+    await saveButton.click();
     await takeEditorScreenshot(page);
   });
 
@@ -113,7 +102,11 @@ test.describe('Reagents CDXML format', () => {
       Test case: EPMLSOPKET-4722
       Description: Reagent 'NH3' displays above reaction arrow
       */
-    await pasteCDXML(page, FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3);
+    // await pasteCDXML(page, FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3);
+    await pasteFromClipboardAndAddToCanvas(
+      page,
+      FILE_TEST_DATA.benzeneArrowBenzeneReagentNh3,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

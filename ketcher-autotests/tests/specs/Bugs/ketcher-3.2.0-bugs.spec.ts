@@ -15,19 +15,14 @@ import {
   openFileAndAddToCanvasAsNewProject,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
-  SequenceType,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   FILE_TEST_DATA,
   resetZoomLevelToDefault,
-  selectSaveFileFormat,
-  FileFormatOption,
-  setZoomInputValue,
   resetCurrentTool,
   clickOnCanvas,
   setMolecule,
 } from '@utils';
-import { chooseFileFormat } from '@utils/macromolecules';
 import {
   waitForPageInit,
   waitForRender,
@@ -41,9 +36,12 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
   selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
+  setZoomInputValue,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import {
   createDNAAntisenseChain,
   createRNAAntisenseChain,
@@ -53,18 +51,18 @@ import {
   turnSyncEditModeOff,
   turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
-import {
-  doubleClickOnSequenceSymbol,
-  switchToPeptideMode,
-} from '@utils/macromolecules/sequence';
+import { switchToPeptideMode } from '@utils/macromolecules/sequence';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
+import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 let page: Page;
-
-async function openSaveToHELMDialog(page: Page) {
-  await selectSaveTool(page);
-  await chooseFileFormat(page, 'HELM');
-}
 
 async function callContexMenu(page: Page, locatorText: string) {
   const canvasLocator = page.getByTestId('ketcher-canvas');
@@ -194,7 +192,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await selectSequenceLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
-      [MacroFileType.Sequence, SequenceType.RNA],
+      [MacroFileType.Sequence, SequenceMonomerType.RNA],
       'ACGTUNBDHKWYMRSV',
     );
     await selectAllStructuresOnCanvas(page);
@@ -260,7 +258,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await getSymbolLocator(page, { symbolAlias: 'U' }).nth(1).click();
-    await page.keyboard.press('Delete');
+    await keyboardPressOnCanvas(page, 'Delete');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -291,8 +289,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await getSymbolLocator(page, { symbolAlias: 'U' }).nth(2).dblclick();
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('Delete');
+    await keyboardPressOnCanvas(page, 'ArrowDown');
+    await keyboardPressOnCanvas(page, 'Delete');
     await pressUndoButton(page);
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, {
@@ -326,13 +324,13 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     });
     await turnSyncEditModeOff(page);
     await getSymbolLocator(page, { symbolAlias: 'U' }).nth(1).dblclick();
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.type('UU');
+    await keyboardPressOnCanvas(page, 'ArrowDown');
+    await keyboardTypeOnCanvas(page, 'UU');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -404,7 +402,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await openSaveToHELMDialog(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MacromoleculesFileFormatType.HELM);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -455,9 +454,12 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)P.R(A)}|RNA2{P.R(U)}$RNA1,RNA2,2:pair-3:pair|RNA1,RNA2,8:pair-1:pair$$$V2.0',
     );
-    await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 2 });
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.type('C');
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 2,
+    }).dblclick();
+    await keyboardPressOnCanvas(page, 'ArrowRight');
+    await keyboardPressOnCanvas(page, 'C');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -481,9 +483,12 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'CHEM1{[4aPEGMal]}|RNA1{R(U)P}|CHEM2{[4aPEGMal]}|CHEM3{[4aPEGMal]}|RNA2{R(A)P}|RNA3{P}$RNA1,CHEM2,3:R2-1:R1|CHEM3,CHEM2,1:pair-1:pair|CHEM1,RNA1,1:R2-1:R1|RNA2,RNA3,3:R2-1:R1|RNA2,CHEM3,1:R1-1:R2|CHEM1,RNA3,1:pair-1:pair|RNA1,RNA2,2:pair-2:pair$$$V2.0',
     );
-    await doubleClickOnSequenceSymbol(page, 'U', { nthNumber: 0 });
-    await page.keyboard.press('ArrowLeft');
-    await page.keyboard.type('C');
+    await getSymbolLocator(page, {
+      symbolAlias: 'U',
+      nodeIndexOverall: 1,
+    }).dblclick();
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
+    await keyboardPressOnCanvas(page, 'C');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -546,9 +551,12 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
     );
-    await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 0 });
-    await page.keyboard.press('ArrowLeft');
-    await page.keyboard.type('C');
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 0,
+    }).dblclick();
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
+    await keyboardPressOnCanvas(page, 'C');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -576,8 +584,11 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       'RNA1{R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)}$RNA1,RNA2,8:pair-2:pair|RNA1,RNA2,2:pair-8:pair|RNA1,RNA2,5:pair-5:pair$$$V2.0',
     );
     await turnSyncEditModeOff(page);
-    await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 0 });
-    await page.keyboard.press('ArrowDown');
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 0,
+    }).dblclick();
+    await keyboardPressOnCanvas(page, 'ArrowDown');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -587,7 +598,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await page.keyboard.type('AAAAA');
+    await keyboardTypeOnCanvas(page, 'AAAAA');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -615,17 +626,20 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       'RNA1{R(A)P.R(A)P.R(A)P.R(A)}|RNA2{R(U)P.R(U)P.R(U)P.R(U)}$RNA1,RNA2,11:pair-2:pair|RNA1,RNA2,8:pair-5:pair|RNA1,RNA2,5:pair-8:pair|RNA1,RNA2,2:pair-11:pair$$$V2.0',
     );
     await turnSyncEditModeOff(page);
-    await doubleClickOnSequenceSymbol(page, 'U', { nthNumber: 2 });
-    await page.keyboard.press('ArrowDown');
-    await page.keyboard.press('ArrowLeft');
-    await page.keyboard.type('U');
+    await getSymbolLocator(page, {
+      symbolAlias: 'U',
+      nodeIndexOverall: 2,
+    }).dblclick();
+    await keyboardPressOnCanvas(page, 'ArrowDown');
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
+    await keyboardPressOnCanvas(page, 'U');
     await turnSyncEditModeOn(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectClearCanvasTool(page);
-    await page.keyboard.type('AAAAA');
+    await keyboardTypeOnCanvas(page, 'AAAAA');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -649,10 +663,13 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P.R(A)}|RNA2{R(U)P.R(U)}$RNA1,RNA2,5:pair-2:pair|RNA1,RNA2,2:pair-5:pair$$$V2.0',
     );
-    await doubleClickOnSequenceSymbol(page, 'A', { nthNumber: 1 });
-    await page.keyboard.press('ArrowLeft');
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 1,
+    }).dblclick();
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
     await switchToPeptideMode(page);
-    await page.keyboard.type('E');
+    await keyboardPressOnCanvas(page, 'E');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -676,10 +693,13 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)}|RNA2{R(U)P.R(U)}|RNA3{R(A)}$RNA1,RNA2,2:pair-2:pair|RNA2,RNA3,5:pair-2:pair$$$V2.0',
     );
-    await doubleClickOnSequenceSymbol(page, 'U', { nthNumber: 0 });
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('ArrowLeft');
-    await page.keyboard.type('C');
+    await getSymbolLocator(page, {
+      symbolAlias: 'U',
+      nodeIndexOverall: 0,
+    }).dblclick();
+    await keyboardPressOnCanvas(page, 'ArrowRight');
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
+    await keyboardPressOnCanvas(page, 'C');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -859,7 +879,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       'KET/Bugs/Elliptical arrows can be saved to the png.ket',
       page,
     );
-    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 
@@ -878,7 +899,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       'CDXML/Bugs/stereochemistry.cdxml',
       page,
     );
-    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
     await takeEditorScreenshot(page);
   });
 
@@ -894,7 +916,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 4. Take a screenshot.
      */
     await selectSequenceLayoutModeTool(page);
-    await page.keyboard.type('AA');
+    await keyboardTypeOnCanvas(page, 'AA');
     await turnOnMicromoleculesEditor(page);
     await selectAllStructuresOnCanvas(page);
     await expandMonomer(page, 'P');

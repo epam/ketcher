@@ -1,20 +1,23 @@
 import { type Page } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
-import { SelectionToolType } from '../constants/selectionTool/Constants';
+import { SelectionToolType } from '../constants/areaSelectionTool/Constants';
+import {
+  MacroBondType,
+  MicroBondType,
+} from '../constants/bondSelectionTool/Constants';
 
 export const commonLeftToolbarLocators = (page: Page) => ({
-  // LeftPanelButton.HandTool
   handToolButton: page.getByTestId('hand'),
   areaSelectionDropdownButton: page.getByTestId('select-rectangle'),
   areaSelectionDropdownExpandButton: page
     .getByTestId('select-drop-down-button')
     .getByTestId('dropdown-expand'),
   eraseButton: page.getByTestId('erase'),
-  // bonds-in-toolbar - micro
-  // bonds-drop-down-button - macro
-
-  // bond-tool-submenu - macro
-  bondSelector: page.getByTestId('undo'),
+  bondSelectionDropdownButton: page.getByTestId('bonds-drop-down-button'),
+  bondSelectionDropdownExpandButton: page
+    .getByTestId('bonds-drop-down-button')
+    .getByTestId('dropdown-expand'),
+  bondMultiToolSection: page.getByTestId('multi-tool-dropdown').first(),
 });
 
 export async function selectHandTool(page: Page) {
@@ -42,8 +45,50 @@ export async function selectAreaSelectionTool(
 }
 
 export async function selectEraseTool(page: Page) {
-  const bondToolButton = commonLeftToolbarLocators(page).eraseButton;
+  const eraseToolButton = commonLeftToolbarLocators(page).eraseButton;
   await waitForRender(page, async () => {
-    await bondToolButton.click();
+    await eraseToolButton.click();
   });
+}
+
+export async function expandBondSelectionDropdown(page: Page) {
+  const bondSelectionDropdownExpandButton =
+    commonLeftToolbarLocators(page).bondSelectionDropdownExpandButton;
+  const bondSelectionDropdownButton =
+    commonLeftToolbarLocators(page).bondSelectionDropdownButton;
+  const bondMultiToolSection =
+    commonLeftToolbarLocators(page).bondMultiToolSection;
+
+  try {
+    await bondSelectionDropdownExpandButton.click({ force: true });
+    await bondMultiToolSection.waitFor({ state: 'visible', timeout: 5000 });
+  } catch (error) {
+    console.warn(
+      "Bond Multi Tool Section didn't appeared after click in 5 seconds, trying alternative way...",
+    );
+    // alternative way to open the dropdown (doesn't work on Macro mode)
+    await selectHandTool(page);
+    await bondSelectionDropdownButton.click({ force: true });
+    await bondSelectionDropdownButton.click({ force: true });
+  }
+}
+
+export async function bondSelectionTool(
+  page: Page,
+  bondType: MacroBondType | MicroBondType,
+) {
+  let attempts = 0;
+  const maxAttempts = 5;
+  const bondTypeButton = page.getByTestId(bondType).first();
+  while (attempts < maxAttempts) {
+    try {
+      await expandBondSelectionDropdown(page);
+      await bondTypeButton.waitFor({ state: 'visible', timeout: 1000 });
+      await bondTypeButton.click({ force: true });
+      return;
+    } catch (error) {
+      attempts++;
+      console.warn('Unable to click on the bond type button, retrying...');
+    }
+  }
 }

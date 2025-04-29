@@ -8,7 +8,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   clickInTheMiddleOfTheScreen,
   moveMouseAway,
-  selectMacroBond,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   selectSequenceLayoutModeTool,
@@ -17,23 +16,26 @@ import {
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
-  selectZoomInTool,
-  selectZoomReset,
-  selectZoomOutTool,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import { pageReload } from '@utils/common/helpers';
 import {
   zoomWithMouseWheel,
   waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import {
+  bondSelectionTool,
+  selectAreaSelectionTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  selectZoomReset,
+  selectZoomOutTool,
+  turnOnMacromoleculesEditor,
+  selectZoomInTool,
+} from '@tests/pages/common/TopRightToolbar';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -76,9 +78,8 @@ test.describe('Zoom Tool', () => {
   const peptideCoordinates = { x: 300, y: 300 };
   let peptide: Locator;
   test.beforeEach(async () => {
-    // await waitForPageInit(page);
-    // await turnOnMacromoleculesEditor(page);
     await goToPeptidesTab(page);
+    // First monomer at the center of the screen
     peptide = await addSingleMonomerToCanvas(
       page,
       Peptides.C,
@@ -125,7 +126,7 @@ test.describe('Zoom Tool', () => {
     const zoomInCount = 2;
     await selectZoomInTool(page, zoomInCount);
     await clickInTheMiddleOfTheScreen(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await peptide.hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -147,7 +148,7 @@ test.describe('Zoom Tool', () => {
   test('Zoom In & Out attachment points with mouse wheel and CTRL', async () => {
     await page.keyboard.down('Control');
     await page.mouse.wheel(deltas.x, deltas.y);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await peptide.hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -168,7 +169,7 @@ test.describe('Zoom Tool', () => {
     const zoomInCount = 2;
     await selectZoomInTool(page, zoomInCount);
     await clickInTheMiddleOfTheScreen(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
@@ -195,7 +196,7 @@ test.describe('Zoom Tool', () => {
     await page.keyboard.down('Control');
     const bondCoordinates = { x: 400, y: 400 };
     await page.mouse.wheel(deltas.x, deltas.y);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await peptide.hover();
     await page.mouse.down();
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
@@ -360,9 +361,6 @@ test.describe('Zoom Tool', () => {
     await selectZoomReset(page);
     await selectZoomOutTool(page, numberOfZooms);
     await takeEditorScreenshot(page);
-
-    // await page.getByTestId('zoom-selector').click();
-    // await selectFlexLayoutModeTool(page);
   });
 
   test('Verify that when zooming in/zooming out by buttons, the zoom is relative to the top left corner of the most top and left monomer in the sequence(Sequence m)', async () => {

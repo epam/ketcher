@@ -1,35 +1,32 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import {
-  clickInTheMiddleOfTheScreen,
   clickOnCanvas,
-  MacromoleculesTopPanelButton,
-  selectOption,
   SequenceType,
   waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
-import { DropdownToolIds } from '@utils/clicks/types';
-import { clickOnFileFormatDropdown } from '@utils/formats';
 import {
   AtomButton,
-  BondIds,
   LeftPanelButton,
   MacromoleculesLeftPanelButton,
   RingButton,
   TopPanelButton,
 } from '@utils/selectors';
-import { MacroBondTool } from './selectNestedTool/types';
 import {
   selectOpenFileTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
+import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import {
-  commonLeftToolbarLocators,
-  selectAreaSelectionTool,
-} from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 /**
  * Selects an atom from Atom toolbar
@@ -43,10 +40,7 @@ export async function selectAtom(type: AtomButton, page: Page) {
  *  Select button from left panel
  * Usage: await selectTool(LeftPanelButton.HandTool, page)
  */
-export async function selectTool(
-  type: LeftPanelButton | MacromoleculesTopPanelButton,
-  page: Page,
-) {
+export async function selectTool(type: LeftPanelButton, page: Page) {
   await selectButtonByTitle(type, page);
 }
 
@@ -65,32 +59,6 @@ export async function selectAction(type: TopPanelButton, page: Page) {
 export async function selectAtomInToolbar(atomName: AtomButton, page: Page) {
   const atomButton = page.locator(`button[title*="${atomName}"]`);
   await atomButton.click();
-}
-
-export async function selectSingleBondTool(page: Page) {
-  const handToolButton = commonLeftToolbarLocators(page).handToolButton;
-  // to reset Bond tool state
-  await handToolButton.click();
-
-  const bondToolDropdown = page.getByTestId('bonds').locator('path').nth(1);
-  await bondToolDropdown.click();
-
-  const bondToolButton = page.getByTestId(MacroBondTool.SINGLE).first();
-  await bondToolButton.click();
-}
-
-export async function selectMacroBond(
-  page: Page,
-  bondType: DropdownToolIds = MacroBondTool.SINGLE,
-) {
-  const handToolButton = commonLeftToolbarLocators(page).handToolButton;
-  // to reset Bond tool state
-  await handToolButton.click();
-  const bondToolDropdown = page.getByTestId('bonds').locator('path').nth(1);
-  await bondToolDropdown.click();
-
-  const hydrogenBondButton = page.getByTestId(bondType).first();
-  await hydrogenBondButton.click();
 }
 
 export async function openLayoutModeMenu(page: Page) {
@@ -170,10 +138,10 @@ export async function selectImageTool(page: Page) {
 }
 
 export async function openStructurePasteFromClipboard(page: Page) {
+  const pasteFromClipboardButton =
+    openStructureDialog(page).pasteFromClipboardButton;
+
   await selectOpenFileTool(page);
-  const pasteFromClipboardButton = page.getByTestId(
-    'paste-from-clipboard-button',
-  );
   await pasteFromClipboardButton.click();
 }
 
@@ -213,43 +181,41 @@ export async function selectLeftPanelButton(
 }
 
 export async function selectMacromoleculesPanelButton(
-  buttonName: MacromoleculesLeftPanelButton | MacromoleculesTopPanelButton,
+  buttonName: MacromoleculesLeftPanelButton,
   page: Page,
 ) {
   const topPanelButton = page.locator(`button[title*="${buttonName}"]`);
   await topPanelButton.click();
 }
 
-export async function selectButtonById(buttonId: BondIds | 'OK', page: Page) {
+export async function selectButtonById(buttonId: 'OK', page: Page) {
   const element = page.getByTestId(buttonId);
   await element.click();
 }
 
-export async function saveStructureWithReaction(page: Page, format?: string) {
+export async function saveStructureWithReaction(
+  page: Page,
+  format?: MoleculesFileFormatType,
+) {
+  const saveButton = saveStructureDialog(page).saveButton;
+
   await selectSaveTool(page);
   if (format) {
-    await clickOnFileFormatDropdown(page);
-    await selectOption(page, format);
+    await chooseFileFormat(page, format);
   }
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await saveButton.click();
 }
 
 export async function typeAllEnglishAlphabet(page: Page) {
-  await page.keyboard.type('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  await keyboardTypeOnCanvas(page, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 }
 
 export async function typeRNADNAAlphabet(page: Page) {
-  await page.keyboard.type('ATGCU');
+  await keyboardTypeOnCanvas(page, 'ATGCU');
 }
 
 export async function typePeptideAlphabet(page: Page) {
-  await page.keyboard.type('ACDEFGHIKLMNPQRSTVWY');
-}
-
-export async function setZoomInputValue(page: Page, value: string) {
-  await page.getByTestId('zoom-input').click();
-  await page.getByTestId('zoom-value').fill(value);
-  await page.keyboard.press('Enter');
+  await keyboardTypeOnCanvas(page, 'ACDEFGHIKLMNPQRSTVWY');
 }
 
 export async function selectWithLasso(
@@ -269,8 +235,10 @@ export async function selectWithLasso(
 }
 
 export async function saveToTemplates(page: Page, templateName: string) {
+  const saveToTemplatesButton = saveStructureDialog(page).saveToTemplatesButton;
+
   await selectSaveTool(page);
-  await page.getByRole('button', { name: 'Save to Templates' }).click();
+  await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill(templateName);
   await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -281,8 +249,11 @@ export async function selectFormatForSaving(page: Page, templateName: string) {
 }
 
 export async function clickOnSaveFileAndOpenDropdown(page: Page) {
+  const fileFormatDropdonwList =
+    saveStructureDialog(page).fileFormatDropdonwList;
+
   await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
+  await fileFormatDropdonwList.click();
 }
 
 export async function openSettings(page: Page) {
@@ -461,34 +432,6 @@ export async function scrollToDownInSetting(page: Page) {
   const scrollToDown = page.getByTestId('Options for Debugging-accordion');
   await scrollToDown.scrollIntoViewIfNeeded();
   await scrollToDown.hover({ force: true });
-}
-
-export async function selectZoomInTool(page: Page, count = 1) {
-  await page.getByTestId('zoom-selector').click();
-  for (let i = 0; i < count; i++) {
-    await waitForRender(page, async () => {
-      await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomIn, page);
-    });
-  }
-  await clickInTheMiddleOfTheScreen(page);
-}
-
-export async function selectZoomReset(page: Page) {
-  await page.getByTestId('zoom-selector').click();
-  await waitForRender(page, async () => {
-    await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomReset, page);
-  });
-  await clickInTheMiddleOfTheScreen(page);
-}
-
-export async function selectZoomOutTool(page: Page, count = 1) {
-  await page.getByTestId('zoom-selector').click();
-  for (let i = 0; i < count; i++) {
-    await waitForRender(page, async () => {
-      await selectButtonByTitle(MacromoleculesTopPanelButton.ZoomOut, page);
-    });
-  }
-  await clickInTheMiddleOfTheScreen(page);
 }
 
 export async function selectAddRemoveExplicitHydrogens(page: Page) {

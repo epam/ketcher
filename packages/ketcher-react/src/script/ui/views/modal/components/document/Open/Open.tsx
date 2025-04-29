@@ -52,7 +52,11 @@ const FooterContent = ({
 }) => {
   return (
     <div className={classes.footerContent}>
-      <button onClick={onCancel} className={classes.cancelButton}>
+      <button
+        onClick={onCancel}
+        className={classes.cancelButton}
+        data-testid="cancel-button"
+      >
         Cancel
       </button>
       <div className={classes.buttonsContainer}>
@@ -62,6 +66,7 @@ const FooterContent = ({
           clickHandler={openHandler}
           styles={classes.openButton}
           label="Open as New Project"
+          testId="open-as-new-button"
         />
         <DialogActionButton
           key="copyButton"
@@ -70,6 +75,7 @@ const FooterContent = ({
           styles={classes.copyButton}
           label="Add to Canvas"
           title="Structure will be loaded as fragment and added to Clipboard"
+          testId="add-to-canvas-button"
         />
       </div>
     </div>

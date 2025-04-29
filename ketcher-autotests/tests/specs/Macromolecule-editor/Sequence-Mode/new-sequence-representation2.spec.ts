@@ -2,7 +2,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
-  clickInTheMiddleOfTheScreen,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
@@ -14,15 +13,14 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
   getSymbolLocator,
   turnSyncEditModeOff,
   turnSyncEditModeOn,
 } from '@utils/macromolecules/monomer';
+import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 
 let page: Page;
 
@@ -147,10 +145,12 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
 
   await firstSymbol.dblclick();
 
-  await page.keyboard.press('ArrowLeft');
+  await keyboardPressOnCanvas(page, 'ArrowLeft', { waitForRenderTimeOut: 0 });
 
   for (let i = 1; i < position; i++) {
-    await page.keyboard.press('ArrowRight');
+    await keyboardPressOnCanvas(page, 'ArrowRight', {
+      waitForRenderTimeOut: 0,
+    });
   }
 
   if (syncEditMode) {
@@ -160,7 +160,7 @@ async function turnIntoEditModeAndPlaceCursorToThePosition(
   }
 
   if (senseOrAntisense === SequenceChainType.Antisense) {
-    await page.keyboard.press('ArrowDown');
+    await keyboardPressOnCanvas(page, 'ArrowDown', { waitForRenderTimeOut: 0 });
   }
 }
 
@@ -371,11 +371,9 @@ for (const sequence of sequencesForAddingDash) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Minus');
-    });
-
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Minus');
+    // Exit from edit mode
+    await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -421,11 +419,9 @@ for (const sequence of sequencesForAddingDash) {
       syncEditMode: false,
     });
 
-    await waitForRender(page, async () => {
-      await page.keyboard.press('Minus');
-    });
-
-    await clickInTheMiddleOfTheScreen(page);
+    await keyboardPressOnCanvas(page, 'Minus');
+    // Exit from edit mode
+    await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
 
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -474,10 +470,9 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     senseOrAntisense: SequenceChainType.Sense,
     syncEditMode: false,
   });
-  await waitForRender(page, async () => {
-    await page.keyboard.press('Minus');
-  });
-  await clickInTheMiddleOfTheScreen(page);
+  await keyboardPressOnCanvas(page, 'Minus');
+  // Exit from edit mode
+  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
@@ -485,10 +480,9 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     senseOrAntisense: SequenceChainType.Sense,
     syncEditMode: false,
   });
-  await waitForRender(page, async () => {
-    await page.keyboard.press('Minus');
-  });
-  await clickInTheMiddleOfTheScreen(page);
+  await keyboardPressOnCanvas(page, 'Minus');
+  // Exit from edit mode
+  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
@@ -496,10 +490,9 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     senseOrAntisense: SequenceChainType.Antisense,
     syncEditMode: false,
   });
-  await waitForRender(page, async () => {
-    await page.keyboard.press('Minus');
-  });
-  await clickInTheMiddleOfTheScreen(page);
+  await keyboardPressOnCanvas(page, 'Minus');
+  // Exit from edit mode
+  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await turnIntoEditModeAndPlaceCursorToThePosition(page, {
@@ -507,10 +500,9 @@ test(`Case 44. Check that a line can not be added if at any of the four position
     senseOrAntisense: SequenceChainType.Antisense,
     syncEditMode: false,
   });
-  await waitForRender(page, async () => {
-    await page.keyboard.press('Minus');
-  });
-  await clickInTheMiddleOfTheScreen(page);
+  await keyboardPressOnCanvas(page, 'Minus');
+  // Exit from edit mode
+  await keyboardPressOnCanvas(page, 'Escape', { waitForRenderTimeOut: 0 });
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 

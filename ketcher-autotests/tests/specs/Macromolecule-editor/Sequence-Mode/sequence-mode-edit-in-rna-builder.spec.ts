@@ -16,9 +16,8 @@ import {
   selectMonomer,
   selectMonomers,
 } from '@utils';
-import { enterSequence, waitForMonomerPreview } from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { SUGAR } from '@constants/testIdConstants';
-import { clickOnSequenceSymbol } from '@utils/macromolecules/sequence';
 import {
   modifyInRnaBuilder,
   getSymbolLocator,
@@ -27,7 +26,11 @@ import { pressSaveButton } from '@utils/macromolecules/rnaBuilder';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Bases } from '@constants/monomers/Bases';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 test.describe('Sequence mode edit in RNA Builder', () => {
   test.beforeEach(async ({ page }) => {
@@ -148,19 +151,25 @@ test.describe('Sequence mode edit in RNA Builder', () => {
     await takeEditorScreenshot(page);
     await page.getByText('Yes').click();
     // should see updated nucleotides in chain
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('Select entire chain and see enabled modify_in_rna_builder button', async ({
     page,
   }) => {
     await page.keyboard.down('Control');
-    await clickOnSequenceSymbol(page, 'T');
+    await getSymbolLocator(page, {
+      symbolAlias: 'T',
+      nodeIndexOverall: 1,
+    }).click();
     await page.keyboard.up('Control');
     // should see the whole chain selected
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-    await clickOnSequenceSymbol(page, 'T', { button: 'right' });
+    await getSymbolLocator(page, {
+      symbolAlias: 'T',
+      nodeIndexOverall: 1,
+    }).click({ button: 'right' });
     // should see correct context menu title and enabled 'modify_in_rna_builder' button
     await takeEditorScreenshot(page);
   });
@@ -182,8 +191,8 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: RNA Builder switched to edit mode.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'acgtu');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'acgtu');
+    await keyboardPressOnCanvas(page, 'Escape');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
     await modifyInRnaBuilder(page, symbolG);
@@ -198,8 +207,8 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: Sugars that have no R2 or R3 are disabled.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'acgtu');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'acgtu');
+    await keyboardPressOnCanvas(page, 'Escape');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
     await modifyInRnaBuilder(page, symbolG);
@@ -215,8 +224,8 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: Number of selected nucleotides is indicated within RNA Builder interface when several monomers are selected.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'acgtu');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'acgtu');
+    await keyboardPressOnCanvas(page, 'Escape');
     await page.keyboard.down('Shift');
     await getSymbolLocator(page, { symbolAlias: 'C' }).first().click();
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
@@ -234,8 +243,8 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     Description: Name of nucleotide consist of names selected Sugar, Base, Phosphates in RNA Builder.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'acgtu');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'acgtu');
+    await keyboardPressOnCanvas(page, 'Escape');
     const symbolG = getSymbolLocator(page, { symbolAlias: 'G' }).first();
     await symbolG.click();
     await modifyInRnaBuilder(page, symbolG);
@@ -330,11 +339,20 @@ test.describe('Modify nucleotides from sequence in RNA builder', () => {
     */
     await openFileAndAddToCanvasMacro('KET/modified-agtcup.ket', page);
     await page.keyboard.down('Shift');
-    await clickOnSequenceSymbol(page, 'G');
-    await clickOnSequenceSymbol(page, 'p');
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 1,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'p',
+      nodeIndexOverall: 5,
+    }).click();
     await page.keyboard.up('Shift');
-    await clickOnSequenceSymbol(page, 'G', { button: 'right' });
-    await takeEditorScreenshot(page);
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 1,
+    }).click({ button: 'right' });
+    await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
   test('RNA builder highlighted in Edit mode. Canvas disabled', async ({

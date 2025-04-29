@@ -2,7 +2,7 @@ import { Bases } from '@constants/monomers/Bases';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
-import { Page, test, expect, BrowserContext, chromium } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   addSingleMonomerToCanvas,
   addRnaPresetOnCanvas,
@@ -18,26 +18,29 @@ import {
   moveMouseAway,
   scrollDown,
   scrollUp,
-  waitForIndigoToLoad,
-  waitForKetcherInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectMacroBond,
   resetZoomLevelToDefault,
+  waitForPageInit,
 } from '@utils';
 import {
   pressRedoButton,
   pressUndoButton,
   selectClearCanvasTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { waitForMonomerPreview } from '@utils/macromolecules';
+} from '@tests/pages/common/TopRightToolbar';
+import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
 import { goToPeptidesTab, goToRNATab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  bondSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 /* eslint-disable no-magic-numbers */
 
 async function createBondedMonomers(page: Page) {
@@ -68,33 +71,24 @@ async function createBondedMonomers(page: Page) {
     0,
   );
 
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await bondTwoMonomers(page, peptide1, peptide2);
   await bondTwoMonomers(page, peptide3, peptide4);
 }
 
 let page: Page;
-let sharedContext: BrowserContext;
+
+async function configureInitialState(page: Page) {
+  await chooseTab(page, Tabs.Rna);
+}
 
 test.beforeAll(async ({ browser }) => {
-  // let sharedContext;
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
+  const context = await browser.newContext();
+  page = await context.newPage();
 
-  // Reminder: do not pass page as async
-  page = await sharedContext.newPage();
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
+  await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
+  await configureInitialState(page);
 });
 
 test.afterEach(async () => {
@@ -104,11 +98,7 @@ test.afterEach(async () => {
 });
 
 test.afterAll(async ({ browser }) => {
-  await page.close();
-  await sharedContext.close();
-  await browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
+  await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
 test.describe('Snake Bond Tool', () => {
@@ -144,7 +134,7 @@ test.describe('Snake Bond Tool', () => {
       3,
     );
 
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     await bondTwoMonomers(page, peptide2, peptide3);
     await bondTwoMonomers(page, peptide3, peptide4);
@@ -228,7 +218,7 @@ test.describe('Snake Bond Tool', () => {
       2,
     );
 
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     await bondTwoMonomers(page, phosphate, sugar1);
     await bondTwoMonomers(page, phosphate1, sugar2);
@@ -321,7 +311,7 @@ test.describe('Snake Bond Tool', () => {
       9,
     );
 
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     await bondTwoMonomers(page, phosphate, sugar1);
     await bondTwoMonomers(page, phosphate1, sugar2);
@@ -379,7 +369,7 @@ test.describe('Snake Bond Tool', () => {
       2,
     );
 
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     await bondTwoMonomers(page, phosphate, sugar1);
     await bondTwoMonomers(page, phosphate1, sugar2);
@@ -432,7 +422,7 @@ test.describe('Snake Bond Tool', () => {
       1,
     );
 
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
     await bondTwoMonomers(page, phosphate, sugarOfNucleoside);
     await bondTwoMonomers(page, sugarOfNucleoside, sugar);
@@ -456,6 +446,7 @@ test.describe('Snake Bond Tool', () => {
   });
 
   test('Create snake bond for chain with side chains', async () => {
+    await selectFlexLayoutModeTool(page);
     await goToRNATab(page);
 
     if (await page.getByTestId(Presets.C.testId).isHidden()) {
@@ -541,7 +532,7 @@ test.describe('Snake Bond Tool', () => {
       2,
     );
 
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
     await bondTwoMonomers(page, baseOfNucleoside, peptide, 'R2', 'R1');
 
@@ -584,7 +575,7 @@ test.describe('Snake Bond Tool', () => {
       0,
     );
 
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await bondTwoMonomers(page, sugarOfNucleoside, baseOfNucleoside);
 
     await takeEditorScreenshot(page);

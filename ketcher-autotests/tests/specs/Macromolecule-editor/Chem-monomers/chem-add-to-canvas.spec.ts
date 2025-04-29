@@ -4,15 +4,15 @@ import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pressButton,
-  selectMacroBond,
   selectMonomer,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { hideMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 /* 
 Test case: #2497 - Add chem to canvas
@@ -45,7 +45,7 @@ test.describe('Actions with CHEM', () => {
     Description: CHEM name fits in its icon when placed on canvas.
     */
     await openFileAndAddToCanvasMacro('KET/all-chems.ket', page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await takeEditorScreenshot(page);
   });
 
@@ -58,7 +58,7 @@ test.describe('Actions with CHEM', () => {
     Description: APs are not redrawn incorrectly after opening the modal window.
     */
     await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, Chem.Test_6_Ch).hover();
     await page.mouse.down();
     await getMonomerLocator(page, Chem.A6OH).hover();

@@ -15,7 +15,6 @@ import {
   TopPanelButton,
   openFile,
   moveOnAtom,
-  setZoomInputValue,
   resetCurrentTool,
   clickOnAtom,
   pressButton,
@@ -44,7 +43,14 @@ import {
   commonLeftToolbarLocators,
   selectAreaSelectionTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import {
+  setZoomInputValue,
+  topRightToolbarLocators,
+} from '@tests/pages/common/TopRightToolbar';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { aboutDialogLocators } from '@tests/pages/molecules/canvas/AboutDialog';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -235,10 +241,12 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The help, about and fullscreen mode are enabled in view-only mode 
     */
+    const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
+    const aboutButton = aboutDialogLocators(page).aboutButton;
     await enableViewOnlyModeBySetOptions(page);
     await expect(page.getByTestId('help-button')).toBeEnabled();
-    await expect(page.getByTestId('about-button')).toBeEnabled();
-    await expect(page.getByTestId('fullscreen-mode-button')).toBeEnabled();
+    await expect(aboutButton).toBeEnabled();
+    await expect(fullScreenButton).toBeEnabled();
     await takeTopToolbarScreenshot(page);
   });
 
@@ -271,7 +279,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       async () => await selectTopPanelButton(TopPanelButton.Check, page),
     );
     await takeEditorScreenshot(page, {
-      masks: [page.locator('[class*="Check-module_checkInfo"] > span')],
+      mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
     });
     await closeErrorAndInfoModals(page);
     await waitForSpinnerFinishedWork(
@@ -294,11 +302,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The "Add to Canvas" button is disabled in the "Open structure" dialog window
     */
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+    const openAsNewButton = pasteFromClipboardDialog(page).openAsNewButton;
     await enableViewOnlyModeBySetOptions(page);
     await selectOpenFileTool(page);
     await openFile(`KET/images-png-50-with-50-structures.ket`, page);
-    await expect(page.getByText('Add to Canvas')).toBeDisabled();
-    await expect(page.getByText('Open as New Project')).toBeEnabled();
+    await expect(addToCanvasButton).toBeDisabled();
+    await expect(openAsNewButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
 
@@ -326,6 +336,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
       test(`Verify that hotkey ${hotkey.keys} triggers ${hotkey.action}`, async ({
         page,
       }) => {
+        const saveStructureTextarea =
+          saveStructureDialog(page).saveStructureTextarea;
+
         await selectRingButton(RingButton.Benzene, page);
         await clickInTheMiddleOfTheScreen(page);
         await enableViewOnlyModeBySetOptions(page);
@@ -338,9 +351,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
           async () => await page.keyboard.press(hotkey.keys),
         );
         await takePageScreenshot(page, {
-          masks: [
+          mask: [
             page.locator('[class*="Check-module_checkInfo"] > span'),
-            page.getByTestId('mol-preview-area-text'),
+            saveStructureTextarea,
           ],
         });
         await closeErrorAndInfoModals(page);

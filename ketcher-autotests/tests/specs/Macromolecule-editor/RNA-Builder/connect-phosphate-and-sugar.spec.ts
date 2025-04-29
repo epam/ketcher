@@ -1,14 +1,11 @@
 import { test } from '@playwright/test';
 import { waitForPageInit } from '@utils/common';
-import {
-  openFileAndAddToCanvasMacro,
-  selectMacroBond,
-  takeEditorScreenshot,
-} from '@utils';
+import { openFileAndAddToCanvasMacro, takeEditorScreenshot } from '@utils';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 test.describe('Macromolecules connect phosphate and sugar', () => {
   test.beforeEach(async ({ page }) => {
@@ -22,7 +19,7 @@ test.describe('Macromolecules connect phosphate and sugar', () => {
       page,
     );
 
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     const firstRsp = page.locator('use[href="#phosphate"]').first();
     const sugar = page.locator('use[href="#sugar"]');

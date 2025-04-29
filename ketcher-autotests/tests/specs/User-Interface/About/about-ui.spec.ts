@@ -1,11 +1,10 @@
 import { test } from '@playwright/test';
 import {
-  selectTopPanelButton,
-  takeEditorScreenshot,
-  TopPanelButton,
-  clickByLink,
-  waitForPageInit,
-} from '@utils';
+  aboutDialogLocators,
+  closeAboutDialogByOkButton,
+  selectAboutButton,
+} from '@tests/pages/molecules/canvas/AboutDialog';
+import { takeEditorScreenshot, clickByLink, waitForPageInit } from '@utils';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -17,14 +16,12 @@ test.describe('Open Ketcher', () => {
     Test case: EPMLSOPKET-12191
     Description: 'About' floating window appears
     */
-    await selectTopPanelButton(TopPanelButton.About, page);
-
+    const buildVersion = aboutDialogLocators(page).buildVersion;
+    const buildTime = aboutDialogLocators(page).buildTime;
+    const buildIndigoVersion = aboutDialogLocators(page).buildIndigoVersion;
+    await selectAboutButton(page);
     await takeEditorScreenshot(page, {
-      masks: [
-        page.getByTestId('build-version'),
-        page.getByTestId('build-time'),
-        page.getByTestId('build-indigo-version'),
-      ],
+      mask: [buildVersion, buildTime, buildIndigoVersion],
     });
   });
 
@@ -33,7 +30,7 @@ test.describe('Open Ketcher', () => {
     Test case: EPMLSOPKET-12193
     Description: 'About' floating window links check
     */
-    await selectTopPanelButton(TopPanelButton.About, page);
+    await selectAboutButton(page);
 
     await clickByLink(
       page,
@@ -56,7 +53,7 @@ test.describe('Open Ketcher', () => {
   test('Close About floating window', async ({ page }) => {
     /* Test case: EPMLSOPKET-12192
     Description: Close 'About' window */
-    await selectTopPanelButton(TopPanelButton.About, page);
-    await page.getByRole('banner').getByRole('button').click();
+    await selectAboutButton(page);
+    await closeAboutDialogByOkButton(page);
   });
 });

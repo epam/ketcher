@@ -1,7 +1,6 @@
 import { Page, test } from '@playwright/test';
 import {
   AtomButton,
-  BondTypeName,
   LeftPanelButton,
   RingButton,
   clickInTheMiddleOfTheScreen,
@@ -12,22 +11,20 @@ import {
   getCoordinatesTopAtomOfBenzeneRing,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
-  pasteFromClipboard,
-  pressButton,
   resetCurrentTool,
   selectAllStructuresOnCanvas,
   selectAtomInToolbar,
-  selectBond,
   selectDropdownTool,
   selectLeftPanelButton,
   selectRingButton,
   takeEditorScreenshot,
-  waitForLoad,
   waitForPageInit,
   clickOnCanvas,
+  pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import { checkSmartsValue } from '../utils';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 
 async function drawStructureWithArrowOpenAngle(page: Page) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -74,7 +71,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   });
 
   test('Checking SMARTS with reaction mapping tool', async ({ page }) => {
-    await selectBond(BondTypeName.Single, page);
+    await bondSelectionTool(page, MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
 
@@ -183,12 +180,7 @@ test.describe('Checking pasting S-Group as SMARTS', () => {
 
   testCases.forEach(({ smarts, description }) => {
     test(description, async ({ page }) => {
-      await selectOpenFileTool(page);
-      await page.getByText('Paste from clipboard').click();
-      await pasteFromClipboard(page, smarts);
-      await waitForLoad(page, async () => {
-        await pressButton(page, 'Add to Canvas');
-      });
+      await pasteFromClipboardAndAddToCanvas(page, smarts);
       await takeEditorScreenshot(page);
     });
   });

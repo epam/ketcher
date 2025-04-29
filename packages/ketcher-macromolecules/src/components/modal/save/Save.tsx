@@ -209,6 +209,7 @@ export const Save = ({
                 id="filename"
                 onChange={handleInputChange}
                 label="File name:"
+                data-testid="filename-input"
               />
             </div>
             <StyledDropdown
@@ -217,6 +218,7 @@ export const Save = ({
               currentSelection={currentFileFormat}
               selectionHandler={handleSelectChange}
               customStylesForExpanded={stylesForExpanded}
+              testId="file-format-list"
             />
           </Row>
           {svgData ? (
@@ -245,12 +247,14 @@ export const Save = ({
           label="Cancel"
           styleType="secondary"
           clickHandler={onClose}
+          data-testid="cancel-button"
         />
 
         <ActionButton
           label="Save"
           clickHandler={handleSave}
           disabled={!currentFileName}
+          data-testid="save-button"
         />
       </Modal.Footer>
     </StyledModal>

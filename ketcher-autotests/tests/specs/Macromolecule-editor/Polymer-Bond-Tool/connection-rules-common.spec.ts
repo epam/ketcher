@@ -2,7 +2,7 @@
 import { Chem } from '@constants/monomers/Chem';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';
-import { Page, chromium, expect, test } from '@playwright/test';
+import { Page, chromium, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasMacro,
@@ -12,19 +12,13 @@ import {
   waitForRender,
   selectFlexLayoutModeTool,
   selectSnakeLayoutModeTool,
-  selectRectangleArea,
-  saveToFile,
-  getKet,
-  receiveFileComparisonData,
-  getMolfile,
   clickOnCanvas,
-  selectMacroBond,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
   Monomer,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
+import { selectRectangleArea } from '@utils/canvas/tools';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -36,12 +30,20 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Bases } from '@constants/monomers/Bases';
+import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
-  selectClearCanvasTool,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
+import {
+  bondSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -91,7 +93,7 @@ test.describe('Common connection rules: ', () => {
     x: number,
     y: number,
   ) {
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, monomer).first().hover();
     await page.mouse.down();
     await waitForRender(page, async () => {
@@ -104,12 +106,12 @@ test.describe('Common connection rules: ', () => {
     leftMonomer: Monomer,
     rightMonomer: Monomer,
   ) {
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
-    const leftMmonomerLocator = getMonomerLocator(page, leftMonomer).first();
+    const leftMonomerLocator = getMonomerLocator(page, leftMonomer).first();
     const rightMonomerLocator = getMonomerLocator(page, rightMonomer).first();
 
-    await leftMmonomerLocator.hover();
+    await leftMonomerLocator.hover();
     await page.mouse.down();
     await waitForRender(page, async () => {
       await rightMonomerLocator.hover();
@@ -121,7 +123,7 @@ test.describe('Common connection rules: ', () => {
     monomer: Monomer,
     n: number,
   ) {
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
 
     const monomerLocator = getMonomerLocator(page, monomer).first();
 
@@ -132,7 +134,7 @@ test.describe('Common connection rules: ', () => {
   }
 
   async function hoverMouseOverMonomer(page: Page, monomer: Monomer) {
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await getMonomerLocator(page, monomer).first().hover();
   }
 
@@ -157,35 +159,6 @@ test.describe('Common connection rules: ', () => {
 
     await monomerLocator.click();
     await selectEraseTool(page);
-  }
-
-  async function saveToKet(page: Page, fileName: string) {
-    const expectedKetFile = await getKet(page);
-    await saveToFile(`KET/Common-Bond-Tests/${fileName}`, expectedKetFile);
-
-    const { fileExpected: ketFileExpected, file: ketFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: `tests/test-data/KET/Common-Bond-Tests/${fileName}`,
-      });
-
-    expect(ketFile).toEqual(ketFileExpected);
-  }
-
-  async function saveToMol(page: Page, fileName: string) {
-    const ignoredLineIndigo = 1;
-    const expectedMolFile = await getMolfile(page, 'v3000');
-    await saveToFile(`KET/Common-Bond-Tests/${fileName}`, expectedMolFile);
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: `tests/test-data/KET/Common-Bond-Tests/${fileName}`,
-        metaDataIndexes: [ignoredLineIndigo],
-        fileFormat: 'v3000',
-      });
-
-    expect(molFile).toEqual(molFileExpected);
   }
 
   /*
@@ -372,10 +345,21 @@ test.describe('Common connection rules: ', () => {
     });
 
     // Check that 4 connected by Bond A6OH monomers are possible to Save Structure
-    await saveToKet(page, '4 connected by Bond A6OH-expected.ket');
-
+    // await saveToKet(page, '4 connected by Bond A6OH-expected.ket');
+    await verifyFileExport(
+      page,
+      'KET/Common-Bond-Tests/4 connected by Bond A6OH-expected.ket',
+      FileType.KET,
+    );
     // Check that 4 connected by Bond A6OH monomers are possible to Save Structure in Mol Format
-    await saveToMol(page, '4 connected by Bond A6OH-expected.mol');
+
+    await verifyFileExport(
+      page,
+      'KET/Common-Bond-Tests/4 connected by Bond A6OH-expected.mol',
+      FileType.MOL,
+      'v3000',
+      [1],
+    );
   });
 
   async function bondTwoMonomersByCenterToCenterByNames(

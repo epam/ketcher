@@ -46,6 +46,7 @@ Object {
             <span>
               <button
                 class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-78trlr-MuiButtonBase-root-MuiIconButton-root"
+                data-testid="close-window-button"
                 tabindex="0"
                 title="Close window"
                 type="button"
@@ -90,6 +91,7 @@ Object {
                     </span>
                     <input
                       class="css-1w4st8l"
+                      data-testid="filename-input"
                       id="filename"
                       type="text"
                       value="ketcher"
@@ -106,7 +108,7 @@ Object {
                   </label>
                   <div
                     class="MuiInputBase-root MuiOutlinedInput-root MuiInputBase-colorPrimary MuiInputBase-fullWidth MuiInputBase-formControl css-1h8rp84-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root"
-                    data-testid="dropdown-select"
+                    data-testid="file-format-list"
                   >
                     <div
                       aria-controls=":r1:"
@@ -200,6 +202,7 @@ Object {
           >
             <button
               class="MuiButtonBase-root css-fevlc0-MuiButtonBase-root"
+              data-testid="cancel-button"
               role="button"
               tabindex="0"
               title="Cancel"
@@ -212,6 +215,7 @@ Object {
             </button>
             <button
               class="MuiButtonBase-root css-1gvl3mi-MuiButtonBase-root"
+              data-testid="save-button"
               role="button"
               tabindex="0"
               title="Save"

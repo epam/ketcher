@@ -1,10 +1,10 @@
 import { Page, test, TestInfo } from '@playwright/test';
-import { selectFlexLayoutModeTool } from '@utils/canvas';
+import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { chooseTab, Tabs } from '@utils/macromolecules';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 
 const resetStateTypes = {
   defaultLayout: async (page: Page) => {
@@ -57,7 +57,7 @@ export const processResetToDefaultState = async (
   testInfo: TestInfo,
   page: Page,
 ) => {
-  if (testInfo.status != 'passed') {
+  if (testInfo.status !== 'passed') {
     return;
   }
 

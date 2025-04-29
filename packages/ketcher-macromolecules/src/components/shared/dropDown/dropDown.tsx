@@ -161,7 +161,11 @@ export const DropDown = ({
         }}
       >
         {options.map((item: Option) => (
-          <DropDownItem key={item.id} value={item.id}>
+          <DropDownItem
+            key={item.id}
+            value={item.id}
+            data-testid={`${item.label}-option`}
+          >
             <ListItemText primary={item.label} />
           </DropDownItem>
         ))}

@@ -9,25 +9,26 @@ import {
   scrollDown,
   selectRectangleArea,
   moveMouseAway,
-  openPasteFromClipboard,
-  readFileContents,
   startNewSequence,
   selectSnakeLayoutModeTool,
   waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectAllStructuresOnCanvas,
+  readFileContent,
+  copyContentToClipboard,
 } from '@utils';
+import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
-  pressUndoButton,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
-import { enterSequence, waitForMonomerPreview } from '@utils/macromolecules';
-import {
-  clickOnSequenceSymbol,
   getSequenceSymbolLocator,
   selectSequenceRangeInEditMode,
 } from '@utils/macromolecules/sequence';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
+import { getSymbolLocator } from '@utils/macromolecules/monomer';
 
 const ZOOM_OUT_VALUE = 400;
 const SCROLL_DOWN_VALUE = 250;
@@ -125,20 +126,18 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     },
     async ({ page }) => {
       test.slow();
-      const fileContent = await readFileContents(
-        'tests/test-data/KET/single-fragment-for-paste.ket',
+      const fileContent = await readFileContent(
+        'KET/single-fragment-for-paste.ket',
       );
-      await openPasteFromClipboard(page, fileContent);
-      await selectAllStructuresOnCanvas(page);
-      await copyToClipboardByKeyboard(page);
-      await page.getByTitle('Close window').click();
-
-      await clickOnSequenceSymbol(page, 'G', { nthNumber: 2 });
-
+      await copyContentToClipboard(page, fileContent);
+      await getSymbolLocator(page, {
+        symbolAlias: 'G',
+        nodeIndexOverall: 23,
+      }).dblclick();
       const arrowCount = 8;
       await page.keyboard.down('Shift');
       for (let i = 0; i < arrowCount; i++) {
-        await page.keyboard.press('ArrowLeft');
+        await keyboardPressOnCanvas(page, 'ArrowLeft');
       }
       await page.keyboard.up('Shift');
       await takeEditorScreenshot(page);
@@ -156,12 +155,8 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
   // test('Select letters with Shift & ArrowRight then paste sequence from clipboard and undo', async ({
   //   page,
   // }) => {
-  //   await openPasteFromClipboard(page, 'atc');
-  //   await selectAllStructuresOnCanvas(page);
-  //   await copyToClipboardByKeyboard(page);
-  //   await page.getByTitle('Close window').click();
-  //
-  //   await clickOnSequenceSymbol(page, 'G');
+  //   await copyContentToClipboard(page, 'atc');
+  //   await getSymbolLocator(page, { symbolAlias: 'G', nodeIndexOverall: 0 }).dblclick();
   //   const arrowCount = 10;
   //   await page.keyboard.down('Shift');
   //   for (let i = 0; i < arrowCount; i++) {
@@ -196,13 +191,16 @@ test.describe('Sequence-edit mode', () => {
     Description: Pasted fragment is considered as new chain.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'tcgtuctucc');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'tcgtuctucc');
+    await keyboardPressOnCanvas(page, 'Escape');
     await page.keyboard.down('Control');
-    await clickOnSequenceSymbol(page, 'G');
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 2,
+    }).click();
     await page.keyboard.up('Control');
     await copyToClipboardByKeyboard(page);
-    await page.keyboard.press('Enter');
+    await keyboardPressOnCanvas(page, 'Enter');
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -219,10 +217,7 @@ test.describe('Sequence-edit mode', () => {
   //   Test case: #3894
   //   Description: Pasted fragment is considered as new chain.
   //   */
-  //   await openPasteFromClipboard(page, '>');
-  //   await selectAllStructuresOnCanvas(page);
-  //   await copyToClipboardByKeyboard(page);
-  //   await page.getByTitle('Close window').click();
+  //   await copyContentToClipboard(page, '>');
   //   await startNewSequence(page);
   //   await pasteFromClipboardByKeyboard(page);
   //   await takeEditorScreenshot(page);
@@ -236,13 +231,10 @@ test.describe('Sequence-edit mode', () => {
   //   Test case: #3894
   //   Description: Sequence pasted on canvas.
   //   */
-  //   const fileContent = await readFileContents(
-  //     'tests/test-data/Sequence/sequence-500-symbols.seq',
+  //   const fileContent = await readFileContent(
+  //     'Sequence/sequence-500-symbols.seq',
   //   );
-  //   await openPasteFromClipboard(page, fileContent);
-  //   await selectAllStructuresOnCanvas(page);
-  //   await copyToClipboardByKeyboard(page);
-  //   await page.getByTitle('Close window').click();
+  //   await copyContentToClipboard(page, fileContent);
   //   await startNewSequence(page);
   //   await pasteFromClipboardByKeyboard(page);
   //   await waitForRender(page, async () => {
@@ -258,13 +250,25 @@ test.describe('Sequence-edit mode', () => {
     Description: Multiple unconnected fragments are pasted as separate chains in view mode.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'aaaaaaagaaaaaataaaaaauaaaaaacaaaaa');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'aaaaaaagaaaaaataaaaaauaaaaaacaaaaa');
+    await keyboardPressOnCanvas(page, 'Escape');
     await page.keyboard.down('Shift');
-    await clickOnSequenceSymbol(page, 'G');
-    await clickOnSequenceSymbol(page, 'T');
-    await clickOnSequenceSymbol(page, 'U');
-    await clickOnSequenceSymbol(page, 'C');
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 7,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'T',
+      nodeIndexOverall: 14,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'U',
+      nodeIndexOverall: 21,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'C',
+      nodeIndexOverall: 28,
+    }).click();
     await page.keyboard.up('Shift');
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
@@ -283,18 +287,30 @@ test.describe('Sequence-edit mode', () => {
     Description: Pasting several separate monomers are prohibited in text-editing mode.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'aaaaaaagaaaaaataaaaaauaaaaaacaaaaa');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'aaaaaaagaaaaaataaaaaauaaaaaacaaaaa');
+    await keyboardPressOnCanvas(page, 'Escape');
     await page.keyboard.down('Shift');
-    await clickOnSequenceSymbol(page, 'G');
-    await clickOnSequenceSymbol(page, 'T');
-    await clickOnSequenceSymbol(page, 'U');
-    await clickOnSequenceSymbol(page, 'C');
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 7,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'T',
+      nodeIndexOverall: 14,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'U',
+      nodeIndexOverall: 21,
+    }).click();
+    await getSymbolLocator(page, {
+      symbolAlias: 'C',
+      nodeIndexOverall: 28,
+    }).click();
     await page.keyboard.up('Shift');
     await copyToClipboardByKeyboard(page);
     await getSequenceSymbolLocator(page, 'G').click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await page.keyboard.press('ArrowLeft');
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
@@ -307,16 +323,22 @@ test.describe('Sequence-edit mode', () => {
     Description: Bond R2-R1 between them is broken,and pasted fragment is merged with existing chain.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'aaagtgtuaaaaaauaaaaaacaaaaa');
-    await clickOnSequenceSymbol(page, 'G');
+    await keyboardTypeOnCanvas(page, 'aaagtgtuaaaaaauaaaaaacaaaaa');
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 3,
+    }).click();
     await page.keyboard.down('Shift');
     for (let i = 0; i < 4; i++) {
-      await page.keyboard.press('ArrowRight');
+      await keyboardPressOnCanvas(page, 'ArrowRight');
     }
     await page.keyboard.up('Shift');
     await copyToClipboardByKeyboard(page);
-    await clickOnSequenceSymbol(page, 'G');
-    await page.keyboard.press('ArrowLeft');
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 3,
+    }).click();
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
     await waitForRender(page, async () => {

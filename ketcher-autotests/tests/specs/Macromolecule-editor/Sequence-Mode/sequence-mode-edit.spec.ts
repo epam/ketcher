@@ -20,7 +20,6 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   selectFlexLayoutModeTool,
-  selectMacroBond,
   selectMonomer,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
@@ -32,14 +31,12 @@ import {
   typePeptideAlphabet,
   typeRNADNAAlphabet,
   waitForPageInit,
-  waitForRender,
 } from '@utils';
-import { MacroBondTool } from '@utils/canvas/tools/selectNestedTool/types';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { enterSequence, waitForMonomerPreview } from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   createDNAAntisenseChain,
@@ -50,8 +47,6 @@ import {
 } from '@utils/macromolecules/monomer';
 import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
 import {
-  clickOnSequenceSymbol,
-  doubleClickOnSequenceSymbol,
   hoverOnSequenceSymbol,
   switchToDNAMode,
   switchToPeptideMode,
@@ -61,13 +56,26 @@ import {
   pressRedoButton,
   pressUndoButton,
   selectClearCanvasTool,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import {
+  bondSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
-  await selectMacroBond(page, MacroBondTool.SINGLE);
+  await bondSelectionTool(page, MacroBondType.Single);
   await getMonomerLocator(page, monomer).nth(nth).hover();
+}
+
+async function callContextMenuForAnySymbol(page: Page) {
+  const anySymbol = getSymbolLocator(page, {}).first();
+  await anySymbol.click({ button: 'right', force: true });
 }
 
 test.describe('Sequence edit mode', () => {
@@ -101,26 +109,25 @@ test.describe('Sequence edit mode', () => {
     await clickOnCanvas(page, x, y, { button: 'right' });
     await takeEditorScreenshot(page);
     await page.getByTestId('start_new_sequence').click();
-    await enterSequence(page, 'acgtu');
-    await page.keyboard.press('Escape');
+    await keyboardTypeOnCanvas(page, 'acgtu');
+    await keyboardPressOnCanvas(page, 'Escape');
     await page
       .locator('g.drawn-structures')
       .locator('g', { has: page.locator('text="G"') })
       .first()
       .click({ button: 'right' });
-
-    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 
   test('Add/edit sequence', async ({ page }) => {
+    test.slow();
     await startNewSequence(page);
     await typeRNADNAAlphabet(page);
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     await typeRNADNAAlphabet(page);
     await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     await typePeptideAlphabet(page);
-    await page.keyboard.press('Enter');
+    await keyboardPressOnCanvas(page, 'Enter');
     await typePeptideAlphabet(page);
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
@@ -138,7 +145,7 @@ test.describe('Sequence edit mode', () => {
     const x = 400;
     const y = 400;
     await startNewSequence(page);
-    await enterSequence(page, 'acgtu');
+    await keyboardTypeOnCanvas(page, 'acgtu');
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
@@ -152,9 +159,9 @@ test.describe('Sequence edit mode', () => {
     Description: Exiting text-editing mode occurs with a click Escape on keyboard.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'acgtu');
+    await keyboardTypeOnCanvas(page, 'acgtu');
     await takeEditorScreenshot(page);
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
   });
 
@@ -166,7 +173,7 @@ test.describe('Sequence edit mode', () => {
     Description: After entering, only letters allowed for RNA are present on the canvas.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'atgcuqweropzxc');
+    await keyboardTypeOnCanvas(page, 'atgcuqweropzxc');
     await takeEditorScreenshot(page);
   });
 
@@ -179,7 +186,7 @@ test.describe('Sequence edit mode', () => {
     */
     await startNewSequence(page);
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
-    await enterSequence(page, 'atgcuqweropzxc');
+    await keyboardTypeOnCanvas(page, 'atgcuqweropzxc');
     await takeEditorScreenshot(page);
   });
 
@@ -190,7 +197,7 @@ test.describe('Sequence edit mode', () => {
     */
     await startNewSequence(page);
     await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
-    await enterSequence(page, 'abcdefghijklmnopqrstuvwxyz');
+    await keyboardTypeOnCanvas(page, 'abcdefghijklmnopqrstuvwxyz');
     await takeEditorScreenshot(page);
   });
 
@@ -202,11 +209,11 @@ test.describe('Sequence edit mode', () => {
     Description: Enter starts a new chain aligned at the beginning of a new row.
     */
     await startNewSequence(page);
-    await enterSequence(page, 'atgcu');
-    await page.keyboard.press('Enter');
-    await enterSequence(page, 'ucgta');
-    await page.keyboard.press('Enter');
-    await enterSequence(page, 'tacgu');
+    await keyboardTypeOnCanvas(page, 'atgcu');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await keyboardTypeOnCanvas(page, 'ucgta');
+    await keyboardPressOnCanvas(page, 'Enter');
+    await keyboardTypeOnCanvas(page, 'tacgu');
     await takeEditorScreenshot(page);
   });
 
@@ -224,8 +231,8 @@ test.describe('Sequence edit mode', () => {
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await enterSequence(page, 'u');
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'u');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
@@ -246,8 +253,8 @@ test.describe('Sequence edit mode', () => {
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await enterSequence(page, 'u');
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'u');
+    await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
@@ -263,10 +270,13 @@ test.describe('Sequence edit mode', () => {
     */
     await openFileAndAddToCanvasMacro('KET/atuc.ket', page);
     await takeEditorScreenshot(page);
-    await clickOnSequenceSymbol(page, 'T', { button: 'right' });
-    await page.keyboard.press('ArrowLeft');
+    await getSymbolLocator(page, {
+      symbolAlias: 'T',
+      nodeIndexOverall: 4,
+    }).click({ button: 'right' });
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
     await page.getByTestId('edit_sequence').click();
-    await enterSequence(page, 'u');
+    await keyboardPressOnCanvas(page, 'u');
     await takeEditorScreenshot(page);
   });
 
@@ -285,8 +295,8 @@ test.describe('Sequence edit mode', () => {
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await enterSequence(page, 'u');
-    await page.keyboard.press('Escape');
+    await keyboardPressOnCanvas(page, 'u');
+    await keyboardPressOnCanvas(page, 'Escape');
     await selectSnakeLayoutModeTool(page);
     await takeEditorScreenshot(page);
   });
@@ -304,8 +314,8 @@ test.describe('Sequence edit mode', () => {
       .first()
       .click({ button: 'right' });
     await page.getByTestId('edit_sequence').click();
-    await page.keyboard.press('ArrowRight');
-    await enterSequence(page, 'a');
+    await keyboardPressOnCanvas(page, 'ArrowRight');
+    await keyboardPressOnCanvas(page, 'a');
     await takeEditorScreenshot(page);
   });
 
@@ -320,10 +330,10 @@ test.describe('Sequence edit mode', () => {
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await startNewSequence(page);
-    await enterSequence(page, 'aaaaaaaaaa');
+    await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
 
-    await page.keyboard.press('ArrowLeft');
-    await page.keyboard.press('ArrowLeft');
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
 
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
@@ -393,6 +403,7 @@ test.describe('Sequence edit mode', () => {
     Description: Preview tooltip for Peptide type of monomer in the library appears.
     */
     await selectMonomer(page, Peptides.A);
+    await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
 
@@ -490,7 +501,6 @@ test.describe('Sequence edit mode', () => {
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
   });
-
   test('Validate that it is possible to start new sequence by using UI that appears if user hover mouse between squences', async ({
     page,
   }) => {
@@ -498,8 +508,57 @@ test.describe('Sequence edit mode', () => {
     Test case: #4887
     Description: It is possible to start new sequence by using UI that appears if user hover mouse between squences or below bottom sequence or above the top sequence.
     */
-    await enterSequence(page, 'aaaaaaaaaa');
-    await page.getByTestId('ketcher-canvas').locator('div').click();
+    await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
+    await page.getByTestId('NewSequencePlusButtonIcon').click();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Verify activation area of the plus for adding sequences in sequence mode', async ({
+    page,
+  }) => {
+    /**
+     * Test task: https://github.com/epam/ketcher/issues/6948
+     * Description: Verify activation area of the plus for adding sequences in sequence mode
+     * Scenario:
+     *    1. Type few symbols on the canvas to proceed with edit triangle jump
+     *    2. Hover mouse over Plus icon center
+     *    3. Take a screenshot to validate it's appearence
+     *    4. Hover mouse outside Plus icon area but inside 1+1/4 of icons size (horizontally, one pixel inside the border)
+     *    5. Take a screenshot to validate it's appearence
+     *    6. Hover mouse outside Plus icon area but outside 1+1/4 of icons size (horizontally, one pixel outside the border)
+     *    7. Take a screenshot to validate it's absense
+     **/
+    await keyboardTypeOnCanvas(page, 'aaa');
+    const plusButtonIcon = page
+      .getByTestId('NewSequencePlusButtonIcon')
+      .first();
+    await plusButtonIcon.hover();
+    const box = await plusButtonIcon.boundingBox();
+    await takeEditorScreenshot(page);
+
+    if (!box) {
+      throw new Error('Plus button not visible or not found');
+    }
+    const plusWidth = box.width;
+    const plusHeight = box.height;
+
+    const centerPlus = {
+      x: box.x + plusWidth / 2,
+      y: box.y + plusHeight / 2,
+    };
+
+    await page.mouse.move(
+      centerPlus.x + (3 / 4) * plusWidth - 1,
+      centerPlus.y,
+      { steps: 3 },
+    );
+    await takeEditorScreenshot(page);
+
+    await page.mouse.move(
+      centerPlus.x + (3 / 4) * plusWidth + 10,
+      centerPlus.y,
+      { steps: 3 },
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -511,7 +570,7 @@ test.describe('Sequence edit mode', () => {
     Description: Hover mouse over any letter in sequence, cursor displayed as a arrow.
     */
     await switchToRNAMode(page);
-    await enterSequence(page, 'aaaaaaaaaa');
+    await keyboardTypeOnCanvas(page, 'aaaaaaaaaa');
     await hoverOnSequenceSymbol(page, 'A', 0);
     await waitForMonomerPreview(page);
     await takePageScreenshot(page);
@@ -524,8 +583,11 @@ test.describe('Sequence edit mode', () => {
     Test case: #4888
     Description: Hover mouse between two letters in sequence, cursor displayed as a caret.
     */
-    await enterSequence(page, 'aaaagaaaaaa');
-    await clickOnSequenceSymbol(page, 'G');
+    await keyboardTypeOnCanvas(page, 'aaaagaaaaaa');
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 4,
+    }).click();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -539,7 +601,10 @@ test.describe('Sequence edit mode', () => {
     placed in corresponding cell of the grid before the symbol AND that symbol highlighted.
     */
     await openFileAndAddToCanvasMacro('KET/sequence-with-monomers.ket', page);
-    await doubleClickOnSequenceSymbol(page, 'G');
+    await getSymbolLocator(page, {
+      symbolAlias: 'G',
+      nodeIndexOverall: 4,
+    }).dblclick();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
@@ -554,7 +619,7 @@ test.describe('Sequence edit mode', () => {
     */
     const sequenceSymbols = ['a', 'c', 'g', 'u', 't'];
     for (const symbol of sequenceSymbols) {
-      await enterSequence(page, symbol);
+      await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
       await selectClearCanvasTool(page);
     }
@@ -569,7 +634,7 @@ test.describe('Sequence edit mode', () => {
     */
     const sequenceSymbols = ['d', 'e', 'f'];
     for (const symbol of sequenceSymbols) {
-      await enterSequence(page, symbol);
+      await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
       await selectClearCanvasTool(page);
     }
@@ -586,7 +651,7 @@ test.describe('Sequence edit mode', () => {
     const sequenceSymbols = ['a', 'c', 'g', 'u', 't'];
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     for (const symbol of sequenceSymbols) {
-      await enterSequence(page, symbol);
+      await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
       await selectClearCanvasTool(page);
     }
@@ -602,7 +667,7 @@ test.describe('Sequence edit mode', () => {
     const sequenceSymbols = ['d', 'e', 'f'];
     await switchSequenceEnteringButtonType(page, SequenceType.DNA);
     for (const symbol of sequenceSymbols) {
-      await enterSequence(page, symbol);
+      await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
       await selectClearCanvasTool(page);
     }
@@ -640,7 +705,7 @@ test.describe('Sequence edit mode', () => {
     ];
     await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     for (const symbol of sequenceSymbols) {
-      await enterSequence(page, symbol);
+      await keyboardPressOnCanvas(page, symbol);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
       await selectClearCanvasTool(page);
@@ -657,7 +722,7 @@ test.describe('Sequence edit mode', () => {
     const sequenceSymbols = ['b', 'j', 'z'];
     await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
     for (const symbol of sequenceSymbols) {
-      await enterSequence(page, symbol);
+      await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
       await selectClearCanvasTool(page);
     }
@@ -674,9 +739,7 @@ test.describe('Sequence edit mode', () => {
      * 2. Start typing "p" (or "P") in the sequence at the beginning, middle, and end of the chain
      * 3. Take a screenshot
      */
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPAAApPAAAPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPAAApPAAAPp');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -700,9 +763,7 @@ test.describe('Sequence edit mode', () => {
      * 3. Take a screenshot
      */
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPAAApPAAAPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPAAApPAAAPp');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -726,9 +787,7 @@ test.describe('Sequence edit mode', () => {
      * 3. Take a screenshot
      */
     await switchToPeptideMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPAAApPAAAPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPAAApPAAAPp');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -753,13 +812,9 @@ test.describe('Sequence edit mode', () => {
      * 4. Start typing "p" (or "P") in the sequence
      * 5. Take a screenshot
      */
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPPppPPpPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPPppPPpPp');
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPPppPPpPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPPppPPpPp');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -784,13 +839,9 @@ test.describe('Sequence edit mode', () => {
      * 4. Start typing "p" (or "P") in the sequence
      * 5. Take a screenshot
      */
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPAAApPAAAPp');
-    });
-    await page.keyboard.press('Control+Alt+D');
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPAAApPAAAPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPAAApPAAAPp');
+    await keyboardPressOnCanvas(page, 'Control+Alt+D');
+    await keyboardTypeOnCanvas(page, 'pPAAApPAAAPp');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -818,17 +869,11 @@ test.describe('Sequence edit mode', () => {
      * 7. Clear canvas and make undo/redo
      * 8. Take a screenshot
      */
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPPppPPpPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPPppPPpPp');
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPPppPPpPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPPppPPpPp');
     await switchToPeptideMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPPppPPpPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPPppPPpPp');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -866,17 +911,11 @@ test.describe('Sequence edit mode', () => {
      * 7. Save and open the KET file
      * 8. Take a screenshot
      */
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPPppPPpPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPPppPPpPp');
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPPppPPpPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPPppPPpPp');
     await switchToPeptideMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPPppPPpPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPPppPPpPp');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -912,17 +951,11 @@ test.describe('Sequence edit mode', () => {
      * 7. Save and open the MOL V3000 file
      * 8. Take a screenshot
      */
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPPppPPpPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPPppPPpPp');
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPPppPPpPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPPppPPpPp');
     await switchToPeptideMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPPppPPpPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPPppPPpPp');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -959,23 +992,17 @@ test.describe('Sequence edit mode', () => {
      * 7. Delete all typed phosphates by Backspace and make Undo action
      * 8. Take a screenshot
      */
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPPppPPpPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPPppPPpPp');
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPPppPPpPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPPppPPpPp');
     await switchToPeptideMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('pPPppPPpPp');
-    });
+    await keyboardTypeOnCanvas(page, 'pPPppPPpPp');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectAllStructuresOnCanvas(page);
-    await page.keyboard.press('Backspace');
+    await keyboardPressOnCanvas(page, 'Backspace');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1002,9 +1029,7 @@ test.describe('Sequence edit mode', () => {
      * 6. Take screenshot.
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
-    await waitForRender(page, async () => {
-      await page.keyboard.type('AAAAAA');
-    });
+    await keyboardTypeOnCanvas(page, 'AAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
     await takeEditorScreenshot(page, {
@@ -1012,7 +1037,7 @@ test.describe('Sequence edit mode', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectFlexLayoutModeTool(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await hoverMouseOverMonomer(page, Sugars.R, 11);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1036,9 +1061,7 @@ test.describe('Sequence edit mode', () => {
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('AAAAAA');
-    });
+    await keyboardTypeOnCanvas(page, 'AAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createDNAAntisenseChain(page, anySymbolA);
     await takeEditorScreenshot(page, {
@@ -1046,7 +1069,7 @@ test.describe('Sequence edit mode', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectFlexLayoutModeTool(page);
-    await selectMacroBond(page, MacroBondTool.SINGLE);
+    await bondSelectionTool(page, MacroBondType.Single);
     await hoverMouseOverMonomer(page, Sugars.dR, 11);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1094,9 +1117,7 @@ test.describe('Sequence edit mode', () => {
      * 6. Take screenshot.
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
-    await waitForRender(page, async () => {
-      await page.keyboard.type('AAAAAA');
-    });
+    await keyboardTypeOnCanvas(page, 'AAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
     await takeEditorScreenshot(page, {
@@ -1129,9 +1150,7 @@ test.describe('Sequence edit mode', () => {
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('AAAAAA');
-    });
+    await keyboardTypeOnCanvas(page, 'AAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createDNAAntisenseChain(page, anySymbolA);
     await takeEditorScreenshot(page, {
@@ -1163,9 +1182,7 @@ test.describe('Sequence edit mode', () => {
      * 6. Take screenshot.
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
-    await waitForRender(page, async () => {
-      await page.keyboard.type('AAAAAA');
-    });
+    await keyboardTypeOnCanvas(page, 'AAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
     await selectFlexLayoutModeTool(page);
@@ -1203,9 +1220,7 @@ test.describe('Sequence edit mode', () => {
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('AAAAAA');
-    });
+    await keyboardTypeOnCanvas(page, 'AAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createDNAAntisenseChain(page, anySymbolA);
     await selectFlexLayoutModeTool(page);
@@ -1241,9 +1256,7 @@ test.describe('Sequence edit mode', () => {
      * 5. Take screenshot.
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
-    await waitForRender(page, async () => {
-      await page.keyboard.type('AAAAAA');
-    });
+    await keyboardTypeOnCanvas(page, 'AAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
     await verifyFileExport(
@@ -1276,9 +1289,7 @@ test.describe('Sequence edit mode', () => {
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('AAAAAA');
-    });
+    await keyboardTypeOnCanvas(page, 'AAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createDNAAntisenseChain(page, anySymbolA);
     await verifyFileExport(
@@ -1310,9 +1321,7 @@ test.describe('Sequence edit mode', () => {
      * 5. Take screenshot.
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
-    await waitForRender(page, async () => {
-      await page.keyboard.type('AAAAAA');
-    });
+    await keyboardTypeOnCanvas(page, 'AAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
     await verifyFileExport(
@@ -1346,9 +1355,7 @@ test.describe('Sequence edit mode', () => {
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
     await switchToDNAMode(page);
-    await waitForRender(page, async () => {
-      await page.keyboard.type('AAAAAA');
-    });
+    await keyboardTypeOnCanvas(page, 'AAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createDNAAntisenseChain(page, anySymbolA);
     await verifyFileExport(
@@ -1454,16 +1461,14 @@ test.describe('Sequence edit mode', () => {
      * 5. Take a screenshot
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
-    await waitForRender(page, async () => {
-      await page.keyboard.type('AAAAAAAAAA');
-    });
+    await keyboardTypeOnCanvas(page, 'AAAAAAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await page.keyboard.press('ArrowLeft');
+    await keyboardPressOnCanvas(page, 'ArrowLeft');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1485,9 +1490,7 @@ test.describe('Sequence edit mode', () => {
      * 5. Take a screenshot
      */
     const anySymbolA = getSymbolLocator(page, { symbolAlias: 'A' }).first();
-    await waitForRender(page, async () => {
-      await page.keyboard.type('AAAAAAAAAA');
-    });
+    await keyboardTypeOnCanvas(page, 'AAAAAAAAAA');
     await selectAllStructuresOnCanvas(page);
     await createRNAAntisenseChain(page, anySymbolA);
     await takeEditorScreenshot(page, {
@@ -1495,6 +1498,235 @@ test.describe('Sequence edit mode', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await turnSyncEditModeOff(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Verify that options "Copy", "Paste" and "Delete" added to the r-click drop down menu', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6472
+     * Description: Options "Copy", "Paste" and "Delete" added to the r-click drop down menu.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "ACGTU" in the sequence
+     * 3. Right click on the monomer
+     * 4. Take a screenshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that when monomers are selected "Copy" will copy the selected monomers, "Paste" will replace them by the pasted monomers, and "Delete" will delete them', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6472
+     * Description: When monomers are selected "Copy" will copy the selected monomers, "Paste" will replace them by the pasted monomers, and "Delete" will delete them.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "ACGTU" in the sequence
+     * 3. Right click on the monomer
+     * 4. Select "Copy"
+     * 5. Paste the copied monomers, then select all monomers
+     * 6. Delete the selected monomers through the r-click drop down menu
+     * 7. Take a screenshot
+     * After fix https://github.com/epam/ketcher/issues/6824 we should update snapshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('copy').click();
+    await keyboardPressOnCanvas(page, 'Escape');
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('paste').click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('delete').click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that R-clicking on a sequence when no monomers are selected "Copy" and "Delete" are disabled', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6472
+     * Description: R-clicking on a sequence when no monomers are selected "Copy" and "Delete" are disabled.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "ACGTU" in the sequence
+     * 3. Right click on the any monomer without selection it
+     * 4. Take a screenshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await callContextMenuForAnySymbol(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that when r-clicking outside of the sequence "Copy" and "Delete" disabled, and "Paste" enabled', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6472
+     * Description: When r-clicking outside of the sequence "Copy" and "Delete" disabled, and "Paste" enabled.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "ACGTU" in the sequence
+     * 3. Right click on the canvas
+     * 4. Take a screenshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await clickOnCanvas(page, 400, 400, { button: 'right' });
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that copied and pasted structures through r-click menu can be saved and then opened (KET)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6472
+     * Description: Copied and pasted structures through r-click menu can be saved and then opened (KET).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "ACGTU" in the sequence
+     * 3. Right click on the monomer
+     * 4. Select "Copy"
+     * 5. Paste the copied monomers, then select all monomers
+     * 6. Save to KET and open saved file
+     * 7. Take a screenshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('copy').click();
+    await keyboardPressOnCanvas(page, 'Escape');
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('paste').click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await verifyFileExport(
+      page,
+      'KET/acgtu-monomers-copied-by-right-click-menu-expected.ket',
+      FileType.KET,
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/acgtu-monomers-copied-by-right-click-menu-expected.ket',
+      page,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that copied and pasted structures through r-click menu can be saved and then opened (MOL V3000)', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6472
+     * Description: Copied and pasted structures through r-click menu can be saved and then opened (MOL V3000).
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "ACGTU" in the sequence
+     * 3. Right click on the monomer
+     * 4. Select "Copy"
+     * 5. Paste the copied monomers, then select all monomers
+     * 6. Save to MOL V3000 and open saved file
+     * 7. Take a screenshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('copy').click();
+    await keyboardPressOnCanvas(page, 'Escape');
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('paste').click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/acgtu-monomers-copied-by-right-click-menu-expected.mol',
+      FileType.MOL,
+      'v3000',
+    );
+
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/acgtu-monomers-copied-by-right-click-menu-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Check that deleted structures through r-click menu can be undo and redo', async ({
+    page,
+  }) => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6472
+     * Description: Deleted structures through r-click menu can be undo and redo.
+     * Scenario:
+     * 1. Go to Macro - Sequence mode - RNA
+     * 2. Start typing "ACGTU" in the sequence
+     * 3. Right click on the monomer
+     * 4. Select "Copy"
+     * 5. Clear the canvas
+     * 6. Paste the copied monomers, then select all monomers
+     * 7. Delete the selected monomers through the r-click drop down menu
+     * 8. Undo the deletion and Redo it
+     * 9. Take a screenshot
+     */
+    await keyboardTypeOnCanvas(page, 'ACGTU');
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('copy').click();
+    await keyboardPressOnCanvas(page, 'Escape');
+    await selectClearCanvasTool(page);
+    await clickOnCanvas(page, 400, 400, { button: 'right' });
+    await page.getByTestId('paste').click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectAllStructuresOnCanvas(page);
+    await callContextMenuForAnySymbol(page);
+    await page.getByTestId('delete').click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await pressUndoButton(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await pressRedoButton(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

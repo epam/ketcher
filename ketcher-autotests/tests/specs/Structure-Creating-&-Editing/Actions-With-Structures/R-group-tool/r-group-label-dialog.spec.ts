@@ -15,8 +15,6 @@ import {
   cutAndPaste,
   receiveFileComparisonData,
   saveToFile,
-  BondTypeName,
-  selectBond,
   waitForRender,
   waitForPageInit,
   selectAllStructuresOnCanvas,
@@ -35,10 +33,12 @@ import {
   pressUndoButton,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
+  bondSelectionTool,
   selectAreaSelectionTool,
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -431,7 +431,7 @@ test.describe('R-Group Label Tool', () => {
       'Rxn-V2000/chain-with-three-r-groups.rxn',
       page,
     );
-    await selectBond(BondTypeName.Single, page);
+    await bondSelectionTool(page, MicroBondType.Single);
     await page.getByText('R8').hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -535,8 +535,7 @@ test.describe('R-Group Label Tool', () => {
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName:
-          'tests/test-data/SMILES/chain-with-r-group-expected.smi',
+        expectedFileName: 'SMILES/chain-with-r-group-expected.smi',
       });
 
     expect(smiFile).toEqual(smiFileExpected);

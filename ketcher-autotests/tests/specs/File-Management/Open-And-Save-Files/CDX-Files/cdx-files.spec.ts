@@ -6,9 +6,8 @@ import {
   pasteFromClipboardAndAddToCanvas,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  readFileContents,
-  openPasteFromClipboard,
-  pressButton,
+  pasteFromClipboardAndOpenAsNewProject,
+  readFileContent,
 } from '@utils';
 import {
   FileType,
@@ -354,11 +353,10 @@ test.describe('CDX files without screenshots', () => {
       'CDX/reactant-single-reaction-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContents(
-      'tests/test-data/CDX/reactant-single-reaction-expected.cdx',
+    const fileContent = await readFileContent(
+      'CDX/reactant-single-reaction-expected.cdx',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Open as New Project');
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
   });
 
@@ -379,11 +377,10 @@ test.describe('CDX files without screenshots', () => {
       'CDX/products-single-reaction-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContents(
-      'tests/test-data/CDX/products-single-reaction-expected.cdx',
+    const fileContent = await readFileContent(
+      'CDX/products-single-reaction-expected.cdx',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Open as New Project');
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
   });
 
@@ -404,11 +401,10 @@ test.describe('CDX files without screenshots', () => {
       'CDX/ket-cascade-reaction-3-1-2-1-1-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContents(
-      'tests/test-data/CDX/ket-cascade-reaction-3-1-2-1-1-expected.cdx',
+    const fileContent = await readFileContent(
+      'CDX/ket-cascade-reaction-3-1-2-1-1-expected.cdx',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Open as New Project');
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
   });
 
@@ -429,11 +425,10 @@ test.describe('CDX files without screenshots', () => {
       'CDX/multiple-individual-reactions-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContents(
-      'tests/test-data/CDX/multiple-individual-reactions-expected.cdx',
+    const fileContent = await readFileContent(
+      'CDX/multiple-individual-reactions-expected.cdx',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Open as New Project');
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
   });
 
@@ -454,11 +449,10 @@ test.describe('CDX files without screenshots', () => {
       'CDX/several-cascade-reactions-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContents(
-      'tests/test-data/CDX/several-cascade-reactions-expected.cdx',
+    const fileContent = await readFileContent(
+      'CDX/several-cascade-reactions-expected.cdx',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Open as New Project');
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
   });
 
@@ -479,11 +473,10 @@ test.describe('CDX files without screenshots', () => {
       'CDX/combination-of-single-and-cascade-reactions-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContents(
-      'tests/test-data/CDX/combination-of-single-and-cascade-reactions-expected.cdx',
+    const fileContent = await readFileContent(
+      'CDX/combination-of-single-and-cascade-reactions-expected.cdx',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Open as New Project');
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
   });
 
@@ -504,11 +497,10 @@ test.describe('CDX files without screenshots', () => {
       'CDX/cascade-of-multiple-reactions-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContents(
-      'tests/test-data/CDX/cascade-of-multiple-reactions-expected.cdx',
+    const fileContent = await readFileContent(
+      'CDX/cascade-of-multiple-reactions-expected.cdx',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Open as New Project');
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
   });
 
@@ -529,11 +521,10 @@ test.describe('CDX files without screenshots', () => {
       'CDX/pathway-with-mixed-single-reactions-and-cascades-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContents(
-      'tests/test-data/CDX/pathway-with-mixed-single-reactions-and-cascades-expected.cdx',
+    const fileContent = await readFileContent(
+      'CDX/pathway-with-mixed-single-reactions-and-cascades-expected.cdx',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Open as New Project');
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
   });
 });

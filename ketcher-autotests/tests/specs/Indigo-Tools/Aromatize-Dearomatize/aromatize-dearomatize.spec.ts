@@ -250,8 +250,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName:
-          'tests/test-data/SMILES/aromatic-benzene-smiles-expected.smi',
+        expectedFileName: 'SMILES/aromatic-benzene-smiles-expected.smi',
       });
 
     expect(smiFile).toEqual(smiFileExpected);

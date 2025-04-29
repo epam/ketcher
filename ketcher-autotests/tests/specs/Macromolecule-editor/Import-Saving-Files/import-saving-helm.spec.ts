@@ -1,13 +1,11 @@
 /* eslint-disable no-magic-numbers */
-import { chooseFileFormat } from '@utils/macromolecules';
-import { Page, test, BrowserContext, chromium, expect } from '@playwright/test';
+import { chooseTab, Tabs } from '@utils/macromolecules';
+import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  waitForIndigoToLoad,
-  waitForKetcherInit,
-  openStructurePasteFromClipboard,
-  waitForSpinnerFinishedWork,
-  pressButton,
+  waitForPageInit,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  MacroFileType,
 } from '@utils';
 import {
   closeErrorMessage,
@@ -17,30 +15,28 @@ import {
 import {
   selectClearCanvasTool,
   selectSaveTool,
-  turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
+import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import {
+  chooseFileFormat,
+  getTextAreaValue,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
-let sharedContext: BrowserContext;
+
+async function configureInitialState(page: Page) {
+  await chooseTab(page, Tabs.Rna);
+}
 
 test.beforeAll(async ({ browser }) => {
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
+  const context = await browser.newContext();
+  page = await context.newPage();
 
-  // Reminder: do not pass page as async
-  page = await sharedContext.newPage();
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
+  await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
+  await configureInitialState(page);
 });
 
 test.afterEach(async () => {
@@ -52,27 +48,8 @@ test.afterEach(async () => {
 });
 
 test.afterAll(async ({ browser }) => {
-  await page.close();
-  await sharedContext.close();
-  browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
+  await Promise.all(browser.contexts().map((context) => context.close()));
 });
-
-async function loadHELMFromClipboard(page: Page, helmString: string) {
-  await openStructurePasteFromClipboard(page);
-  await chooseFileFormat(page, 'HELM');
-  await page.getByTestId('open-structure-textarea').fill(helmString);
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await page.getByTestId('add-to-canvas-button').click(),
-  );
-}
-
-async function openSaveToHELMDialog(page: Page) {
-  await selectSaveTool(page);
-  await chooseFileFormat(page, 'HELM');
-}
 
 interface IHELMString {
   helmDescription: string;
@@ -459,9 +436,13 @@ test.describe('Import correct HELM sequence: ', () => {
         1. Load correct HELM via paste from clipboard way
         2. Take screenshot of the canvas to compare it with example
     */
-      test.setTimeout(35000);
+      test.setTimeout(25000);
 
-      await loadHELMFromClipboard(page, correctHELMString.HELMString);
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        correctHELMString.HELMString,
+      );
 
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -487,19 +468,24 @@ test.describe('Export to HELM: ', () => {
         2. Export canvas to HELM
         2. Compare export result with source HELM string
     */
-      test.setTimeout(35000);
+      test.setTimeout(25000);
       // Test should be skipped if related bug exists
       test.fixme(
         correctHELMString.shouldFail === true,
         `That test fails because of ${correctHELMString.issueNumber} issue.`,
       );
       if (correctHELMString.pageReloadNeeded) await pageReload(page);
+      const cancelButton = saveStructureDialog(page).cancelButton;
 
-      await loadHELMFromClipboard(page, correctHELMString.HELMString);
-      await openSaveToHELMDialog(page);
-      const HELMExportResult = await page
-        .getByTestId('preview-area-text')
-        .textContent();
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        correctHELMString.HELMString,
+      );
+      await selectSaveTool(page);
+      await chooseFileFormat(page, MacromoleculesFileFormatType.HELM);
+
+      const HELMExportResult = await getTextAreaValue(page);
 
       if (correctHELMString.differentHELMExport) {
         expect(HELMExportResult).toEqual(correctHELMString.differentHELMExport);
@@ -507,7 +493,7 @@ test.describe('Export to HELM: ', () => {
         expect(HELMExportResult).toEqual(correctHELMString.HELMString);
       }
 
-      await pressButton(page, 'Cancel');
+      await cancelButton.click();
     });
   }
 });
@@ -898,8 +884,15 @@ test.describe('Import incorrect HELM sequence: ', () => {
         3. Take screenshot to compare it with example
       */
       test.setTimeout(20000);
+      const errorExpected = true;
 
-      await loadHELMFromClipboard(page, incorrectHELMString.HELMString);
+      await pasteFromClipboardAndAddToMacromoleculesCanvas(
+        page,
+        MacroFileType.HELM,
+        incorrectHELMString.HELMString,
+        errorExpected,
+      );
+
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });

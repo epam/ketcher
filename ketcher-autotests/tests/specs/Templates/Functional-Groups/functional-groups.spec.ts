@@ -40,7 +40,8 @@ import {
   selectAreaSelectionTool,
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
@@ -51,8 +52,10 @@ const MAX_BOND_LENGTH = 50;
 const anyAtom = 3;
 
 async function saveToTemplates(page: Page) {
+  const saveToTemplatesButton = saveStructureDialog(page).saveToTemplatesButton;
+
   await selectSaveTool(page);
-  await page.getByRole('button', { name: 'Save to Templates' }).click();
+  await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My Template');
   await page.getByRole('button', { name: 'Save', exact: true }).click();

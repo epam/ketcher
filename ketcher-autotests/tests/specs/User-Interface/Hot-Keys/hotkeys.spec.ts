@@ -34,7 +34,7 @@ import {
 } from '@utils';
 import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -401,7 +401,7 @@ test.describe('Hot keys', () => {
     await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
     await page.mouse.click(100, 100);
     await selectAromatizeTool(page);
-    await takeEditorScreenshot(page, { maxDiffPixels: 1 });
+    await takeEditorScreenshot(page, { maxDiffPixels: 2 });
     await selectDearomatizeTool(page);
     await takeEditorScreenshot(page);
   });

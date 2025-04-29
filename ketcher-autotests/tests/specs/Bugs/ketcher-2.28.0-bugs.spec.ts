@@ -14,7 +14,6 @@ import {
   copyToClipboardByKeyboard,
   FunctionalGroups,
   getBondLengthValue,
-  MacroBondType,
   MacroFileType,
   openBondsSettingsSection,
   openFileAndAddToCanvas,
@@ -44,7 +43,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { chooseFileFormat, zoomWithMouseWheel } from '@utils/macromolecules';
+import { zoomWithMouseWheel } from '@utils/macromolecules';
 import {
   createRNAAntisenseChain,
   getMonomerLocator,
@@ -54,11 +53,23 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
   selectSaveTool,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopLeftToolbar';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  keyboardPressOnCanvas,
+  keyboardTypeOnCanvas,
+} from '@utils/keyboard/index';
+import {
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopRightToolbar';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 declare global {
   interface Window {
@@ -176,7 +187,7 @@ test(`Case 3: Ketcher doesn't trigger change event in macromolecule mode`, async
     );
   });
 
-  await page.keyboard.press('A');
+  await keyboardPressOnCanvas(page, 'A');
 
   const consoleMessage = await consoleMessagePromise;
 
@@ -233,8 +244,8 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
    * 3. Save them in the SVG file format
    * 4. Take a screenshot to validate the names are displayed correctly
    */
+  const cancelButton = saveStructureDialog(page).cancelButton;
   await selectFlexLayoutModeTool(page);
-
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -242,12 +253,12 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
   );
 
   await selectSaveTool(page);
-  await chooseFileFormat(page, 'SVG Document');
+  await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await pressButton(page, 'Cancel');
+  await cancelButton.click();
 });
 
 test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for atom in bonds too)`, async () => {
@@ -315,10 +326,8 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
   await selectClearCanvasTool(page);
 
   await selectSequenceLayoutModeTool(page);
-  await page.keyboard.press('U');
-  await page.keyboard.press('U');
-  await page.keyboard.press('U');
-  await page.keyboard.press('ArrowDown');
+  await keyboardTypeOnCanvas(page, 'UUU');
+  await keyboardPressOnCanvas(page, 'ArrowDown');
   await pasteFromClipboardByKeyboard(page);
 
   await takeEditorScreenshot(page, {
@@ -562,7 +571,7 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
   );
 
   const hydrogenBond = getBondLocator(page, {
-    bondType: MacroBondType.Hydrogen,
+    bondType: MacroBondDataIds.Hydrogen,
   }).first();
 
   await selectEraseTool(page);
@@ -649,7 +658,7 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
   );
 
   const hydrogenBond = getBondLocator(page, {
-    bondType: MacroBondType.Hydrogen,
+    bondType: MacroBondDataIds.Hydrogen,
   }).first();
 
   await selectEraseTool(page);

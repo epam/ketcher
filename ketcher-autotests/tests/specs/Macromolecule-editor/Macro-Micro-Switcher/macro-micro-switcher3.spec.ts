@@ -17,7 +17,6 @@ import {
   clickOnAtomById,
   clickOnCanvas,
   waitForRender,
-  setZoomInputValue,
   resetCurrentTool,
   resetZoomLevelToDefault,
 } from '@utils';
@@ -25,9 +24,12 @@ import {
   pressRedoButton,
   pressUndoButton,
   selectClearCanvasTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
+  setZoomInputValue,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 
@@ -873,7 +875,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 //       await takeEditorScreenshot(page);
 //       await pressCancelAtEditAbbreviationDialog(page);
 
-//       await selectBond(BondTypeName.Triple, page);
+//       await bondSelectionTool(page, MicroBondType.Triple);
 //       await clickOnBondOfExpandedMonomer(page, 1);
 //       await takeEditorScreenshot(page);
 //       await pressCancelAtEditAbbreviationDialog(page);

@@ -249,7 +249,7 @@ export const RnaEditorExpanded = ({
      * Then scroll to the selected item in the library will be possible, otherwise it won't be present in the DOM
      * Perhaps not the best approach, consider refactoring
      */
-    setTimeout(() => scrollToActiveItemInLibrary(selectedGroup), 0);
+    setTimeout(() => scrollToActiveItemInLibrary(selectedGroup), 100);
   };
 
   const onChangeName = (event: ChangeEvent<HTMLInputElement>) => {
@@ -336,7 +336,9 @@ export const RnaEditorExpanded = ({
         event.preventDefault();
         event.stopPropagation();
       } else if (event.key === 'Enter') {
-        isSequenceEditInRNABuilderMode ? onUpdateSequence() : onSave();
+        isSequenceEditInRNABuilderMode
+          ? onUpdateSequence()
+          : editor.events.startNewSequence.dispatch({});
         event.preventDefault();
         event.stopPropagation();
       }

@@ -75,11 +75,19 @@ export async function clickOnCanvas(
      * Time to wait between `mousedown` and `mouseup` in milliseconds. Defaults to 0.
      */
     delay?: number;
+    waitForRenderTimeOut?: number;
+    /**
+     *      * Time to wait canvas event for for waitForRenderTimeOut.
+     */
   },
 ) {
-  await waitForRender(page, async () => {
-    await page.mouse.click(x, y, options);
-  });
+  await waitForRender(
+    page,
+    async () => {
+      await page.mouse.click(x, y, options);
+    },
+    options?.waitForRenderTimeOut,
+  );
 }
 
 export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {

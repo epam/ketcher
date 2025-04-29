@@ -1,36 +1,22 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  pasteFromClipboard,
-  waitForLoad,
   waitForPageInit,
   moveMouseAway,
+  pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import {
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   verifyFileExport,
   FileType,
 } from '@utils/files/receiveFileComparisonData';
-import { clickOnFileFormatDropdown } from '@utils/formats';
-
-async function saveSmarts(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-
-async function previewSmarts(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
-}
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
 
 test.describe('Reagents SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
@@ -57,7 +43,8 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await previewSmarts(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMARTS);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -84,7 +71,8 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await previewSmarts(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMARTS);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -94,15 +82,10 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4687
     Description: Reagent 'Cl' displays above reaction arrow
     */
-    await selectOpenFileTool(page);
-    await page.getByText('Paste from clipboard').click();
-    await pasteFromClipboard(
+    await pasteFromClipboardAndAddToCanvas(
       page,
       '[#6]-[#6]1-[#6](-[#8])=[#6]-[#6](-[#16])=[#6](-[#7])-[#6]=1>[#17]>[#6]-[#6]1-[#6](-,:[#35])=[#6]-[#6](-[#8])=[#6](-,:[#53])-[#6]=1',
     );
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Add to Canvas');
-    });
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -138,6 +121,8 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4685
     Description: File saved in format (e.g. "ketcher.smarts")
     */
+    const saveButton = saveStructureDialog(page).saveButton;
+
     await openFileAndAddToCanvas(
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
@@ -149,6 +134,8 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await saveSmarts(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMARTS);
+    await saveButton.click();
   });
 });

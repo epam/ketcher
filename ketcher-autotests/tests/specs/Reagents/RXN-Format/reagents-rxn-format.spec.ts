@@ -1,39 +1,23 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   FILE_TEST_DATA,
-  waitForLoad,
   waitForPageInit,
   moveMouseAway,
+  pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import {
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { clickOnFileFormatDropdown } from '@utils/formats';
-
-async function saveAsMdlRxnV3000(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'MDL Rxnfile V3000' }).click();
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-
-async function pasteFromClipboard(page: Page, fileFormats: string) {
-  await selectOpenFileTool(page);
-  await page.getByText('Paste from clipboard').click();
-  await page.getByRole('dialog').getByRole('textbox').fill(fileFormats);
-  await waitForLoad(page, async () => {
-    await pressButton(page, 'Add to Canvas');
-  });
-}
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
 
 test.describe('Reagents RXN format', () => {
   test.beforeEach(async ({ page }) => {
@@ -83,6 +67,8 @@ test.describe('Reagents RXN format', () => {
     Test case: EPMLSOPKET-4675
     Description: File saved in format (e.g. "ketcher.rxn")
     */
+    const saveButton = saveStructureDialog(page).saveButton;
+
     await openFileAndAddToCanvas(
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
@@ -95,7 +81,7 @@ test.describe('Reagents RXN format', () => {
     );
 
     await selectSaveTool(page);
-    await page.getByRole('button', { name: 'Save', exact: true }).click();
+    await saveButton.click();
   });
 
   test('File saves in "MDL rxnfile V3000" format', async ({ page }) => {
@@ -103,6 +89,7 @@ test.describe('Reagents RXN format', () => {
     Test case: EPMLSOPKET-4676
     Description: File saved in format (e.g. "ketcher.rxn")
     */
+    const saveButton = saveStructureDialog(page).saveButton;
     await openFileAndAddToCanvas(
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
@@ -114,7 +101,9 @@ test.describe('Reagents RXN format', () => {
       'v3000',
     );
 
-    await saveAsMdlRxnV3000(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.MDLRxnfileV3000);
+    await saveButton.click();
   });
 });
 
@@ -158,7 +147,7 @@ test.describe('Reagents RXN format', () => {
       Test case: EPMLSOPKET-4677
       Description: Reagent 'Cl' displays below reaction arrow
       */
-    await pasteFromClipboard(
+    await pasteFromClipboardAndAddToCanvas(
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV2000,
     );
@@ -173,7 +162,7 @@ test.describe('Reagents RXN format', () => {
       Description: Reagent 'Cl' displays below reaction arrow
       We have a bug https://github.com/epam/Indigo/issues/2591
       */
-    await pasteFromClipboard(
+    await pasteFromClipboardAndAddToCanvas(
       page,
       FILE_TEST_DATA.benzeneArrowBenzeneReagentHclV3000,
     );

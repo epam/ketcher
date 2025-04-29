@@ -29,7 +29,9 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
+import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -43,12 +45,6 @@ const setupEllipse = async (page: Page) => {
   return ellipseCoordinates;
 };
 
-async function setZoomInputValue(page: Page, value: string) {
-  await page.getByTestId('zoom-input').click();
-  await page.getByTestId('zoom-value').fill(value);
-  await page.keyboard.press('Enter');
-}
-
 async function selectAndMoveSimpleObjects(page: Page) {
   const point = { x: 727, y: 359 };
   const point1 = { x: 83, y: 207 };
@@ -60,8 +56,10 @@ async function selectAndMoveSimpleObjects(page: Page) {
 }
 
 async function saveToTemplates(page: Page) {
+  const saveToTemplates = saveStructureDialog(page).saveToTemplatesButton;
+
   await selectSaveTool(page);
-  await page.getByRole('button', { name: 'Save to Templates' }).click();
+  await saveToTemplates.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My New Template');
   await page.getByRole('button', { name: 'Save', exact: true }).click();

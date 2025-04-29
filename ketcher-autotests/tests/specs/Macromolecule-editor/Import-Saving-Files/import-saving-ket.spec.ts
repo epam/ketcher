@@ -9,24 +9,14 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFile,
-  pressButton,
   selectSnakeLayoutModeTool,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasAsNewProject,
-  selectZoomOutTool,
   selectMonomer,
 } from '@utils';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectOpenFileTool,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
 import { selectAllStructuresOnCanvas } from '@utils/canvas';
-import { pageReload } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
@@ -40,6 +30,20 @@ import {
   markResetToDefaultState,
   processResetToDefaultState,
 } from '@utils/testAnnotations/resetToDefaultState';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  pressUndoButton,
+  selectClearCanvasTool,
+  selectOpenFileTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
+  selectZoomOutTool,
+  turnOnMacromoleculesEditor,
+  turnOnMicromoleculesEditor,
+} from '@tests/pages/common/TopRightToolbar';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { closeErrorMessage } from '@utils/common/helpers';
 
 let page: Page;
 
@@ -102,8 +106,6 @@ test.describe('Import-Saving .ket Files', () => {
     The structure does not fit on the canvas when opened, and to
     see the whole picture in this test and in future ones, zoom is used
     */
-    // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-
     await openFileAndAddToCanvasMacro('KET/fifty-monomers.ket', page);
 
     await verifyFileExport(
@@ -125,8 +127,6 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: Structure in center of canvas after opening
     */
-    // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-
     await openFileAndAddToCanvasMacro('KET/hundred-monomers.ket', page);
 
     await verifyFileExport(
@@ -157,8 +157,6 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #3827 #3757
     Description: The monomer name is present in the preview after opening the saved file.
     */
-    // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-    await pageReload(page);
     await selectMonomer(page, Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/monomer-expected.ket', FileType.KET);
@@ -197,7 +195,6 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #3846
     Description: Fields "class" and "classHELM" are presents into .ket file.
     */
-    // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
     markResetToDefaultState('tabSelection');
 
     test.slow();
@@ -211,7 +208,6 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files #4172
     Description: "leavingGroup" section contain information about number of atoms.
     */
-    // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
     await selectMonomer(page, Peptides.D_2Nal);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/D-2Nal-expected.ket', FileType.KET);
@@ -222,9 +218,13 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: System does not let importing empty .ket file
     */
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
+
     await selectOpenFileTool(page);
     await openFile('KET/empty-file.ket', page);
-    await expect(page.getByText('Add to Canvas')).toBeDisabled();
+    await expect(addToCanvasButton).toBeDisabled();
+    await closeWindowButton.click();
   });
 
   test('Check that system does not let uploading corrupted .ket file', async () => {
@@ -232,10 +232,13 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: System does not let uploading corrupted .ket file
     */
+    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+
     await selectOpenFileTool(page);
     await openFile('KET/corrupted-file.ket', page);
-    await pressButton(page, 'Add to Canvas');
+    await addToCanvasButton.click();
     await takeEditorScreenshot(page);
+    await closeErrorMessage(page);
   });
 
   test('Validate correct displaying of snake viewed peptide chain loaded from .ket file format', async () => {
@@ -298,8 +301,6 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: There should be possible to load monomers which not found in Monomer library
     */
-    // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-
     await openFileAndAddToCanvasMacro('KET/unresolved-monomers.ket', page);
 
     await verifyFileExport(
@@ -314,8 +315,6 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: .ket file with macro structures is exported and imported correctly .
     */
-    // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-
     await openFileAndAddToCanvasMacro(
       'KET/unsplit-nucleotides-connected-with-another-monomers.ket',
       page,
@@ -379,14 +378,11 @@ test.describe('Base monomers on the canvas, their connection points and preview 
 
   for (const data of testData) {
     test(`for ${data.fileName}`, async () => {
-      // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-      await pageReload(page);
-
       await openFileAndAddToCanvasMacro(
         `KET/Base-Templates/${data.fileName}.ket`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -409,14 +405,11 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
   */
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
-      // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-      await pageReload(page);
-
       await openFileAndAddToCanvasMacro(
         `KET/CHEM-Templates/${data.fileName}.ket`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -439,14 +432,11 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
   */
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
-      // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-      await pageReload(page);
-
       await openFileAndAddToCanvasMacro(
         `KET/Peptide-Templates/${data.fileName}.ket`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -469,14 +459,11 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
   */
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
-      // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-      await pageReload(page);
-
       await openFileAndAddToCanvasMacro(
         `KET/Phosphate-Templates/${data.fileName}.ket`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -499,14 +486,11 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
   */
   for (const data of fileTestData) {
     test(`for ${data.fileName}`, async () => {
-      // Reload needed as monomer IDs increment in prior tests, affecting data comparasion
-      await pageReload(page);
-
       await openFileAndAddToCanvasMacro(
         `KET/Sugar-Templates/${data.fileName}.ket`,
         page,
       );
-      await page.getByTestId('single-bond').click();
+      await bondSelectionTool(page, MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -520,7 +504,6 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
   }
 });
 
-// Commented out because of we have BUG - https://github.com/epam/ketcher/issues/5873
 interface IMonomer {
   monomerDescription: string;
   KETFile: string;

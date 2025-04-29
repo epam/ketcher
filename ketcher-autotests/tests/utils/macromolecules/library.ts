@@ -14,6 +14,8 @@ export type Tabs =
   | typeof RNA_TAB
   | typeof CHEM_TAB;
 
+export const FavoriteStarSymbol = '★' as const;
+
 export const goToFavoritesTab = async (page: Page) =>
   goToTab(page, FAVORITES_TAB);
 

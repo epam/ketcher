@@ -300,8 +300,7 @@ test.describe('SRU Polymer tool', () => {
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName:
-          'tests/test-data/Molfiles-V2000/sru-polymer-data-expected.mol',
+        expectedFileName: 'Molfiles-V2000/sru-polymer-data-expected.mol',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);

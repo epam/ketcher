@@ -5,32 +5,6 @@
  *
  **/
 
-export enum BondTypeId {
-  BondSingle = 'bond-single',
-  BondDouble = 'bond-double',
-  BondTriple = 'bond-triple',
-  BondDown = 'bond-down',
-}
-
-export type BondIds =
-  | BondTypeId.BondSingle
-  | BondTypeId.BondDouble
-  | BondTypeId.BondTriple
-  | 'bond-dative'
-  | 'bond-stereo'
-  | 'bond-up'
-  | BondTypeId.BondDown
-  | 'bond-updown'
-  | 'bond-crossed'
-  | 'bond-query'
-  | 'bond-special'
-  | 'bond-any'
-  | 'bond-hydrogen'
-  | 'bond-aromatic'
-  | 'bond-singledouble'
-  | 'bond-singlearomatic'
-  | 'bond-doublearomatic';
-
 export enum AtomButton {
   Hydrogen = 'Hydrogen',
   Carbon = 'Carbon',
@@ -110,22 +84,10 @@ export enum RingButton {
 
 export const STRUCTURE_LIBRARY_BUTTON_NAME = 'Structure Library';
 
-export enum MacromoleculesTopPanelButton {
-  Clear = 'Clear',
-  Undo = 'Undo',
-  Redo = 'Redo',
-  Open = 'Open...',
-  Save = 'Save',
-  ZoomIn = 'Zoom In',
-  ZoomOut = 'Zoom Out',
-  ZoomReset = 'Zoom 100%',
-}
-
 export type ToolbarButton =
   | AtomButton
   | TopPanelButton
   | LeftPanelButton
-  | MacromoleculesTopPanelButton
   | RingButton
   | typeof STRUCTURE_LIBRARY_BUTTON_NAME;
 

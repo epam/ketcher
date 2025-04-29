@@ -1,7 +1,5 @@
 /* eslint-disable no-magic-numbers */
 import { test, Page } from '@playwright/test';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
 import {
   BondType,
   clickOnCanvas,
@@ -21,6 +19,8 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 async function selectOption(
   page: Page,

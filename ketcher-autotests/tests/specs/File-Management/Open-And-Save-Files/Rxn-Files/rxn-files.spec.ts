@@ -40,12 +40,14 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  getTextAreaValue,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await selectSaveTool(page);
-  const textareaSelector = 'textarea[class^="Save-module_previewArea"]';
-  const textareaElement = await page.$(textareaSelector);
-  const textareaText = await textareaElement?.textContent();
+  const textareaText = await getTextAreaValue(page);
   const expectedSentence = '$RXN';
   wantedResult
     ? expect(textareaText?.startsWith(expectedSentence)).toBeTruthy()
@@ -79,6 +81,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Description: Reaction from file that contains Rgroup
      */
     test.slow();
+    const saveButton = saveStructureDialog(page).saveButton;
+    const cancelButton = saveStructureDialog(page).cancelButton;
+
     const xOffsetFromCenter = 40;
     await drawBenzeneRing(page);
     await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
@@ -88,13 +93,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
     await clickOnTheCanvas(page, xOffsetFromCenter, 0);
     await selectSaveTool(page);
-    const saveButtonOne = page.getByRole('button', {
-      name: 'Save',
-      exact: true,
-    });
-    await expect(saveButtonOne).not.toHaveAttribute('disabled', 'disabled');
+    await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
 
-    await pressButton(page, 'Cancel');
+    await cancelButton.click();
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await setAttachmentPoints(
       page,
@@ -103,24 +104,16 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'Apply',
     );
     await selectSaveTool(page);
-    const saveButtonTwo = page.getByRole('button', {
-      name: 'Save',
-      exact: true,
-    });
-    await expect(saveButtonTwo).not.toHaveAttribute('disabled', 'disabled');
+    await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
 
-    await page.getByRole('button', { name: 'Cancel' }).click();
+    await cancelButton.click();
     await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
     await page.getByRole('button', { name: 'R22' }).click();
     await page.getByRole('button', { name: 'Apply' }).click();
     await selectSaveTool(page);
-    const saveButtonThree = page.getByRole('button', {
-      name: 'Save',
-      exact: true,
-    });
-    await expect(saveButtonThree).not.toHaveAttribute('disabled', 'disabled');
+    await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
   });
 
   test('Open and Save file - Reaction from file that contains Sgroup', async ({

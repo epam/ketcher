@@ -1,4 +1,4 @@
-import { Page, test, expect, BrowserContext, chromium } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
@@ -7,12 +7,6 @@ import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   waitForRender,
-  getKet,
-  saveToFile,
-  receiveFileComparisonData,
-  getMolfile,
-  waitForIndigoToLoad,
-  waitForKetcherInit,
   hideLibrary,
   showLibrary,
   copyToClipboardByKeyboard,
@@ -20,44 +14,47 @@ import {
   selectAllStructuresOnCanvas,
   resetZoomLevelToDefault,
   ZoomOutByKeyboard,
+  waitForPageInit,
 } from '@utils';
 import {
   pressUndoButton,
   selectClearCanvasTool,
   selectSaveTool,
+} from '@tests/pages/common/TopLeftToolbar';
+import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopLeftToolbar';
+} from '@tests/pages/common/TopRightToolbar';
 import { pageReload } from '@utils/common/helpers';
-import { waitForMonomerPreview } from '@utils/macromolecules';
+import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
 import {
   selectAreaSelectionTool,
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/selectionTool/Constants';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
-let sharedContext: BrowserContext;
+
+async function configureInitialState(page: Page) {
+  await chooseTab(page, Tabs.Rna);
+}
 
 test.beforeAll(async ({ browser }) => {
-  // let sharedContext;
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
+  const context = await browser.newContext();
+  page = await context.newPage();
 
-  // Reminder: do not pass page as async
-  page = await sharedContext.newPage();
-
-  await page.goto('', { waitUntil: 'domcontentloaded' });
-  await waitForKetcherInit(page);
-  await waitForIndigoToLoad(page);
+  await waitForPageInit(page);
   await turnOnMacromoleculesEditor(page);
+  await configureInitialState(page);
 });
 
 test.afterEach(async () => {
@@ -67,65 +64,12 @@ test.afterEach(async () => {
 });
 
 test.afterAll(async ({ browser }) => {
-  await page.close();
-  await sharedContext.close();
-  await browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
-  // await browser.close();
+  await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
 async function clickNthConnectionLine(page: Page, n: number) {
   const bondLine = page.locator('g[pointer-events="stroke"]').nth(n);
   await bondLine.click();
-}
-
-enum FileFormat {
-  SVGDocument = 'SVG Document',
-  PNGImage = 'PNG Image',
-}
-
-async function clickOnFileFormatDropdown(page: Page) {
-  await page.getByRole('combobox').click();
-}
-
-async function closeSaveStrutureDialog(page: Page) {
-  await page.getByRole('button', { name: 'Cancel' }).click();
-}
-
-async function saveFileAsPngOrSvgFormat(page: Page, FileFormat: string) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: FileFormat }).click();
-}
-
-async function saveToKet(page: Page, fileName: string) {
-  const expectedKetFile = await getKet(page);
-  await saveToFile(`KET/Side-Chain-Connections/${fileName}`, expectedKetFile);
-
-  const { fileExpected: ketFileExpected, file: ketFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName: `tests/test-data/KET/Side-Chain-Connections/${fileName}`,
-    });
-
-  expect(ketFile).toEqual(ketFileExpected);
-}
-
-async function saveToMol(page: Page, fileName: string) {
-  const ignoredLineIndigo = 1;
-  const expectedMolFile = await getMolfile(page, 'v3000');
-  await saveToFile(`KET/Side-Chain-Connections/${fileName}`, expectedMolFile);
-
-  const { fileExpected: molFileExpected, file: molFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName: `tests/test-data/KET/Side-Chain-Connections/${fileName}`,
-      metaDataIndexes: [ignoredLineIndigo],
-      fileFormat: 'v3000',
-    });
-
-  expect(molFile).toEqual(molFileExpected);
 }
 
 test.describe('Side chain connections', () => {
@@ -1109,16 +1053,18 @@ test.describe('Side chain connections', () => {
     /*  
       Case 16: Verify saving structure with side-chain connections in SVG Document format
     */
+    const cancelButton = saveStructureDialog(page).cancelButton;
     await showLibrary(page);
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       `KET/Side-Chain-Connections/16.ket`,
       page,
     );
-    await saveFileAsPngOrSvgFormat(page, FileFormat.SVGDocument);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
     await takeEditorScreenshot(page);
     // Closing Save dialog
-    await closeSaveStrutureDialog(page);
+    await cancelButton.click();
   });
 
   test('17. Verify saving structure with side-chain connections in SVG Document format', async () => {
@@ -1181,7 +1127,11 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/19.ket`,
       page,
     );
-    await saveToKet(page, '19-expected.ket');
+    await verifyFileExport(
+      page,
+      'KET/Side-Chain-Connections/19-expected.ket',
+      FileType.KET,
+    );
   });
 
   test('20. Verify saving and opening structure with side-chain connections in MOL V3000 format', async () => {
@@ -1194,6 +1144,12 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/20.ket`,
       page,
     );
-    await saveToMol(page, '20-expected.mol');
+    await verifyFileExport(
+      page,
+      'KET/Side-Chain-Connections/20-expected.mol',
+      FileType.MOL,
+      'v3000',
+      [1],
+    );
   });
 });

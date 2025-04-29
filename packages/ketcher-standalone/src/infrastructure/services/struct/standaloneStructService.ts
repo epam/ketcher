@@ -652,11 +652,11 @@ class IndigoService implements StructService {
             (acc, curr) => {
               const [key, value] = curr;
               const mappedPropertyName = mapWarningGroup(key);
-              acc[mappedPropertyName] = value;
+              acc[mappedPropertyName] = value as string;
 
               return acc;
             },
-            {},
+            {} as CheckResult,
           );
           resolve(result);
         } else {

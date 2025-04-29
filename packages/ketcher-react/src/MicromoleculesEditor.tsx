@@ -42,8 +42,7 @@ const mediaSizes = {
 
 export interface EditorProps extends Omit<Config, 'element' | 'appRoot'> {
   onInit?: (ketcher: Ketcher) => void;
-  onSetKetcherId: (ketcherId: string) => void;
-  ketcherId: string;
+  onSetKetcherId?: (ketcherId: string) => void;
 }
 
 function MicromoleculesEditor(props: EditorProps) {
@@ -85,7 +84,7 @@ function MicromoleculesEditor(props: EditorProps) {
       cleanupRef.current = cleanup;
       ketcherBuilderRef.current = builder;
       setServerRef.current = setServer;
-      props.onSetKetcherId(ketcher.id);
+      props.onSetKetcherId?.(ketcher.id);
 
       if (typeof props.onInit === 'function' && ketcher) {
         props.onInit(ketcher);

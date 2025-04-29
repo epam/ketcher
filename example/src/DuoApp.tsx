@@ -14,7 +14,7 @@ const getHiddenButtonsConfig = (): ButtonsConfig => {
     if (button) acc[button] = { hidden: true };
 
     return acc;
-  }, {});
+  }, {} as { [val: string]: { hidden: boolean } });
 };
 
 const DuoApp = () => {

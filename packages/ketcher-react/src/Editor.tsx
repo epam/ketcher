@@ -5,7 +5,7 @@ import { LoadingCircles } from './script/ui/views/components';
 
 import styles from './Editor.module.less';
 
-type Props = EditorProps & {
+type Props = Omit<EditorProps, 'ketcherId'> & {
   disableMacromoleculesEditor?: boolean;
 };
 

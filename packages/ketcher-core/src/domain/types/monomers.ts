@@ -47,6 +47,7 @@ export type MonomerItemType = MonomerItemBase & {
   struct: Struct;
   props: {
     id?: string;
+    MonomerNaturalAnalogThreeLettersCode: string;
     MonomerNaturalAnalogCode: string;
     MonomerName: string;
     MonomerFullName?: string;

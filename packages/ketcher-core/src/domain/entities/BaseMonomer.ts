@@ -592,7 +592,13 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public get isModification() {
-    return this.monomerItem.props.MonomerNaturalAnalogCode !== this.label;
+    const naturalAnalogThreeLettersCode =
+      this.monomerItem.props.MonomerNaturalAnalogThreeLettersCode;
+    const naturalAnalogCode = this.monomerItem.props.MonomerNaturalAnalogCode;
+
+    return naturalAnalogThreeLettersCode
+      ? naturalAnalogThreeLettersCode !== this.monomerItem.props.MonomerName
+      : naturalAnalogCode !== this.label;
   }
 
   public get sideConnections() {

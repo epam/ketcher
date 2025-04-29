@@ -268,7 +268,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
       page,
     );
     await selectAllStructuresOnCanvas(page);
-    await cutToClipboardByKeyboard(page);
+    await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, x, y);
     await selectAtomInToolbar(AtomButton.Nitrogen, page);

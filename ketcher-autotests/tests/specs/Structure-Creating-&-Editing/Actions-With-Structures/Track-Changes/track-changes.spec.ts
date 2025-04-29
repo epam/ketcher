@@ -1,11 +1,5 @@
 import { test } from '@playwright/test';
-import {
-  takeEditorScreenshot,
-  waitForPageInit,
-  selectAtomInToolbar,
-  AtomButton,
-  clickOnCanvas,
-} from '@utils';
+import { takeEditorScreenshot, waitForPageInit, clickOnCanvas } from '@utils';
 import {
   pressRedoButton,
   pressUndoButton,

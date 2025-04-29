@@ -8,7 +8,6 @@ import { Sugars } from '@constants/monomers/Sugars';
 import { FAVORITES_TAB } from '@constants/testIdConstants';
 import { Page, expect, test } from '@playwright/test';
 import {
-  AtomButton,
   FILE_TEST_DATA,
   FunctionalGroups,
   LeftPanelButton,
@@ -34,7 +33,6 @@ import {
   pressButton,
   readFileContent,
   selectAromatizeTool,
-  selectAtomInToolbar,
   selectCleanTool,
   selectDearomatizeTool,
   selectDropdownTool,

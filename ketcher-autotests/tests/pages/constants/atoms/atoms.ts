@@ -10,4 +10,5 @@ export enum Atom {
   Bromine = 'Br-button',
   Iodine = 'I-button',
   Aurum = 'Au-button',
+  Platinum = 'Pl-button',
 }

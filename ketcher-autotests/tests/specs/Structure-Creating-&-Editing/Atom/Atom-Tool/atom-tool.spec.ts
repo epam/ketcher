@@ -4,8 +4,6 @@ import {
   pressButton,
   takeEditorScreenshot,
   waitForPageInit,
-  selectAtomInToolbar,
-  AtomButton,
   clickInTheMiddleOfTheScreen,
   takeRightToolbarScreenshot,
   openFileAndAddToCanvas,
@@ -27,7 +25,6 @@ import {
   clickOnCanvas,
   ZoomInByKeyboard,
 } from '@utils';
-import { atomsNames } from '@utils/canvas/atoms/excludedAtoms';
 import {
   FileType,
   verifyFileExport,
@@ -59,7 +56,9 @@ test.describe('Atom Tool', () => {
     Description: The "Periodic table" modal dialog is opened.
     Periodic table' window is closed. No symbols appear on the canvas.
     */
-    await selectAtomInToolbar(AtomButton.Periodic, page);
+    const periodicTableButton = rightToolbar(page).periodicTableButton;
+
+    await periodicTableButton.click();
     await takeEditorScreenshot(page);
     await pressButton(page, 'Cancel');
     await takeEditorScreenshot(page);
@@ -88,7 +87,9 @@ test.describe('Atom Tool', () => {
     Description: Pop-up windows appear with Si element.
     After pressing 'Add' button Si element added to canvas.
     */
-    await selectAtomInToolbar(AtomButton.Periodic, page);
+    const periodicTableButton = rightToolbar(page).periodicTableButton;
+
+    await periodicTableButton.click();
     await page.getByRole('button', { name: 'Si 14' }).click();
     await takeEditorScreenshot(page);
     await page.getByTestId('OK').click();
@@ -104,6 +105,7 @@ test.describe('Atom Tool', () => {
     Description: The structure is illustrated as H3Si-SH.
     */
     const atomToolbar = rightToolbar(page);
+    const periodicTableButton = rightToolbar(page).periodicTableButton;
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
@@ -112,7 +114,7 @@ test.describe('Atom Tool', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
-    await selectAtomInToolbar(AtomButton.Periodic, page);
+    await periodicTableButton.click();
     await page.getByRole('button', { name: 'Si 14' }).click();
     await page.getByTestId('OK').click();
     await clickInTheMiddleOfTheScreen(page);
@@ -498,9 +500,10 @@ test.describe('Atom Tool', () => {
     Description: The additional button with the selected atom symbol appears on the Atom Palette
     */
     const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn'];
+    const periodicTableButton = rightToolbar(page).periodicTableButton;
 
     for (const elementName of elementNames) {
-      await selectAtomInToolbar(AtomButton.Periodic, page);
+      await periodicTableButton.click();
       await page.click(`button[data-testid="${elementName}-button"]`);
       await page.getByTestId('OK').click();
     }
@@ -515,9 +518,10 @@ test.describe('Atom Tool', () => {
     The 8th button isn't added. In our test 'Si' replaces by 'Db'.
     */
     const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn', 'Db'];
+    const periodicTableButton = rightToolbar(page).periodicTableButton;
 
     for (const elementName of elementNames) {
-      await selectAtomInToolbar(AtomButton.Periodic, page);
+      await periodicTableButton.click();
       await page.click(`button[data-testid="${elementName}-button"]`);
       await page.getByTestId('OK').click();
     }
@@ -534,10 +538,12 @@ test.describe('Atom Tool', () => {
     Additional atom can be added to structure.
     */
     const atomToolbar = rightToolbar(page);
+    const periodicTableButton = rightToolbar(page).periodicTableButton;
+
     const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn'];
 
     for (const elementName of elementNames) {
-      await selectAtomInToolbar(AtomButton.Periodic, page);
+      await periodicTableButton.click();
       await page.click(`button[data-testid="${elementName}-button"]`);
       await page.getByTestId('OK').click();
     }
@@ -589,13 +595,19 @@ test.describe('Atom Tool', () => {
     EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
     Description: Atom added to Benzene ring.
     */
+  const atomsNames: Atom[] = Object.values(Atom).filter(
+    (name) => ![Atom.Aurum, Atom.Platinum].includes(name),
+  );
+
   for (const atomName of atomsNames) {
     const anyAtom = 0;
     test(`Add ${atomName} from right toolbar to Benzene ring`, async ({
       page,
     }) => {
+      const atomToolbar = rightToolbar(page);
+
       await drawBenzeneRing(page);
-      await selectAtomInToolbar(atomName, page);
+      await atomToolbar.clickAtom(atomName);
       await clickOnAtom(page, 'C', anyAtom);
       await resetCurrentTool(page);
       await takeEditorScreenshot(page);
@@ -626,8 +638,10 @@ test.describe('Atom Tool', () => {
       Description: Atom added to Benzene ring.
       */
       const anyAtom = 2;
+      const atomToolbar = rightToolbar(page);
+
       await drawBenzeneRing(page);
-      await selectAtomInToolbar(atomName, page);
+      await atomToolbar.clickAtom(atomName);
       await moveOnAtom(page, 'C', anyAtom);
       const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
       const coordinatesWithShift = y - MAX_BOND_LENGTH;

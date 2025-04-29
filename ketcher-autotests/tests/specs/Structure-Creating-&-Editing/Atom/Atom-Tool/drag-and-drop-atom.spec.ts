@@ -1,7 +1,6 @@
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@playwright/test';
 import {
-  AtomButton,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   moveMouseToTheMiddleOfTheScreen,
@@ -10,7 +9,6 @@ import {
   FunctionalGroups,
   SaltsAndSolvents,
   getCoordinatesOfTheMiddleOfTheScreen,
-  selectAtomInToolbar,
   takeEditorScreenshot,
   resetCurrentTool,
   waitForPageInit,

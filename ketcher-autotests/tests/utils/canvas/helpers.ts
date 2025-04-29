@@ -15,7 +15,6 @@ import {
 import { ELEMENT_TITLE } from './types';
 import { getControlModifier } from '@utils/keyboard';
 import {
-  AtomButton,
   RingButton,
   TemplateLibrary,
   TopPanelButton,
@@ -24,11 +23,7 @@ import {
   selectRing,
 } from '@utils/selectors';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
-import {
-  openSettings,
-  selectAtomInToolbar,
-  selectTopPanelButton,
-} from './tools';
+import { openSettings, selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';
@@ -41,6 +36,8 @@ import { Monomer } from '@utils/types';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 export async function drawBenzeneRing(page: Page) {
   await selectRing(RingButton.Benzene, page);
@@ -86,7 +83,9 @@ export async function selectAnyStructuresFromAromaticsTable(
 }
 
 export async function addCyclopentadieneRingWithTwoAtoms(page: Page) {
-  await selectAtomInToolbar(AtomButton.Nitrogen, page);
+  const atomToolbar = rightToolbar(page);
+
+  await atomToolbar.clickAtom(Atom.Nitrogen);
   await clickOnAtom(page, 'C', 0);
   const anyAtom = 3;
   await clickOnAtom(page, 'C', anyAtom);

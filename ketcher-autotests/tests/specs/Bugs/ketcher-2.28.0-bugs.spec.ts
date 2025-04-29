@@ -9,7 +9,6 @@ import { Sugars } from '@constants/monomers/Sugars';
 import { Page, test, expect } from '@playwright/test';
 import {
   addMonomerToCenterOfCanvas,
-  AtomButton,
   clickInTheMiddleOfTheScreen,
   copyToClipboardByKeyboard,
   FunctionalGroups,
@@ -27,7 +26,6 @@ import {
   resetZoomLevelToDefault,
   RingButton,
   selectAllStructuresOnCanvas,
-  selectAtomInToolbar,
   selectCanvasArea,
   selectFlexLayoutModeTool,
   selectFunctionalGroups,

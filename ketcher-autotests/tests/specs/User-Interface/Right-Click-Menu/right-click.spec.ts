@@ -6,8 +6,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   BondType,
-  selectAtomInToolbar,
-  AtomButton,
   resetCurrentTool,
   selectLeftPanelButton,
   LeftPanelButton,
@@ -27,6 +25,8 @@ import {
   selectAreaSelectionTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 test.describe('Right-click menu', () => {
   test.beforeEach(async ({ page }) => {
@@ -102,8 +102,10 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5877
     Description: Bond is deleted
     */
+    const atomToolbar = rightToolbar(page);
+
     await openFileAndAddToCanvas('KET/chain.ket', page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, 0, 'right');
     });
@@ -289,8 +291,10 @@ test.describe('Right-click menu', () => {
     */
     const canvasClickX = 300;
     const canvasClickY = 300;
+    const atomToolbar = rightToolbar(page);
+
     await openFileAndAddToCanvas('KET/chain.ket', page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await clickOnCanvas(page, canvasClickX, canvasClickY);

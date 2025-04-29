@@ -13,8 +13,6 @@ import {
   RingButton,
   clickInTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
-  selectAtomInToolbar,
-  AtomButton,
   waitForPageInit,
   waitForSpinnerFinishedWork,
   clickOnCanvas,

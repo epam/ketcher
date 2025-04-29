@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  selectAtomInToolbar,
-  AtomButton,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
   clickInTheMiddleOfTheScreen,
@@ -45,8 +45,9 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
       const originalTimeout = 10000;
       const longerTimeout = 30000;
       page.setDefaultTimeout(longerTimeout);
+      const atomToolbar = rightToolbar(page);
 
-      await selectAtomInToolbar(AtomButton.Carbon, page);
+      await atomToolbar.clickAtom(Atom.Carbon);
       await clickInTheMiddleOfTheScreen(page);
       await putAceticAcidOnCanvasByClickingInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
@@ -69,7 +70,9 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
   test('Verify if Methan Sulphonic Acid replace the Nitrogen atom', async ({
     page,
   }) => {
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);

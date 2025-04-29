@@ -9,8 +9,6 @@ import {
   pressButton,
   selectLeftPanelButton,
   LeftPanelButton,
-  selectAtomInToolbar,
-  AtomButton,
   doubleClickOnAtom,
   doubleClickOnBond,
   BondType,
@@ -50,6 +48,8 @@ import {
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -149,9 +149,11 @@ test.describe('Undo/Redo Actions', () => {
     Undo: heteroatom is removed;
     Redo: heteroatom is restored.
     */
+    const atomToolbar = rightToolbar(page);
+
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAtomInToolbar(AtomButton.Chlorine, page);
+    await atomToolbar.clickAtom(Atom.Chlorine);
 
     await clickOnAtom(page, 'C', 0);
 

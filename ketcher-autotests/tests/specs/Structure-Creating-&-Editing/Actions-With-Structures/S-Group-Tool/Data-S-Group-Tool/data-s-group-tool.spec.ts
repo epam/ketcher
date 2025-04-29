@@ -10,8 +10,6 @@ import {
   pressButton,
   receiveFileComparisonData,
   moveMouseToTheMiddleOfTheScreen,
-  selectAtomInToolbar,
-  AtomButton,
   resetCurrentTool,
   BondType,
   selectRingButton,

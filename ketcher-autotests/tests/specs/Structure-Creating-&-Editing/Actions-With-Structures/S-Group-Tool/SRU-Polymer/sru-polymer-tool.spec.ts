@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@playwright/test';
 import {
-  AtomButton,
   BondType,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
@@ -18,7 +17,6 @@ import {
   saveToFile,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
-  selectAtomInToolbar,
   selectLeftPanelButton,
   selectRingButton,
   selectUndoByKeyboard,

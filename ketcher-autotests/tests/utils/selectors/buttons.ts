@@ -1,12 +1,3 @@
-export type Atoms = Exclude<
-  AtomButton,
-  | AtomButton.Gold
-  | AtomButton.Platinum
-  | AtomButton.Periodic
-  | AtomButton.Any
-  | AtomButton.Extended
->;
-
 export enum TopPanelButton {
   Copy = 'Copy',
   Paste = 'Paste',
@@ -60,7 +51,6 @@ export enum RingButton {
 export const STRUCTURE_LIBRARY_BUTTON_NAME = 'Structure Library';
 
 export type ToolbarButton =
-  | AtomButton
   | TopPanelButton
   | LeftPanelButton
   | RingButton

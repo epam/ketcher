@@ -2,12 +2,10 @@
 import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  AtomButton,
   dragMouseTo,
   drawBenzeneRing,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  selectAtomInToolbar,
   takeEditorScreenshot,
   resetCurrentTool,
   clickOnAtom,

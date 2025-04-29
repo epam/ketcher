@@ -8,7 +8,6 @@ import {
 } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import {
-  AtomButton,
   LeftPanelButton,
   MacromoleculesLeftPanelButton,
   RingButton,
@@ -27,14 +26,6 @@ import {
   saveStructureDialog,
 } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-
-/**
- * Selects an atom from Atom toolbar
- * Usage: await selectAtom(AtomButton.Carbon, page)
- **/
-export async function selectAtom(type: AtomButton, page: Page) {
-  await selectButtonByTitle(type, page);
-}
 
 /**
  *  Select button from left panel

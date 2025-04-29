@@ -1,6 +1,5 @@
 import { Page, test } from '@playwright/test';
 import {
-  AtomButton,
   LeftPanelButton,
   RingButton,
   clickInTheMiddleOfTheScreen,
@@ -13,7 +12,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   resetCurrentTool,
   selectAllStructuresOnCanvas,
-  selectAtomInToolbar,
   selectDropdownTool,
   selectLeftPanelButton,
   selectRingButton,
@@ -50,7 +48,7 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
   await page.mouse.move(x, y + shiftForCoordinatesToResetArrowOpenAngleTool);
   await clickOnCanvas;
 
-  await selectAtomInToolbar(AtomButton.Oxygen, page);
+  await atomToolbar.clickAtom(Atom.Oxygen);
   await clickOnCanvas(page, x + shiftForOxygen, y, {
     button: 'left',
   });
@@ -112,11 +110,12 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
      */
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const shiftValue = 50;
+    const atomToolbar = rightToolbar(page);
 
     await selectRingButton(RingButton.Cyclopropane, page);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
-    await selectAtomInToolbar(AtomButton.Carbon, page);
+    await atomToolbar.clickAtom(Atom.Carbon);
     await clickOnCanvas(page, x + shiftValue, y);
 
     await selectAllStructuresOnCanvas(page);
@@ -136,9 +135,11 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const shiftValue = 50;
     const delta = 30;
-    await selectAtomInToolbar(AtomButton.Carbon, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Carbon);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAtomInToolbar(AtomButton.Fluorine, page);
+    await atomToolbar.clickAtom(Atom.Fluorine);
     await clickOnCanvas(page, x + shiftValue, y);
     await page.keyboard.press('Escape');
 

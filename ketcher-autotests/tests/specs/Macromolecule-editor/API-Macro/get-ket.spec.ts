@@ -5,8 +5,6 @@ import {
   waitForPageInit,
   layout,
   recognize,
-  selectAtomInToolbar,
-  AtomButton,
   clickInTheMiddleOfTheScreen,
   selectAllStructuresOnCanvas,
 } from '@utils';

@@ -5,8 +5,6 @@ import {
   selectRing,
   RingButton,
   clickInTheMiddleOfTheScreen,
-  selectAtomInToolbar,
-  AtomButton,
   pressButton,
   resetCurrentTool,
   selectLeftPanelButton,

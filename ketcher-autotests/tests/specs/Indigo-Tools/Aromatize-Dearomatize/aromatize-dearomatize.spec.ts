@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
 import {
-  AtomButton,
   RingButton,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -13,7 +12,6 @@ import {
   saveToFile,
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
-  selectAtomInToolbar,
   selectDearomatizeTool,
   selectRing,
   takeEditorScreenshot,

@@ -1,12 +1,10 @@
 import { test } from '@playwright/test';
 import {
-  AtomButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   TopPanelButton,
   selectTopPanelButton,
-  selectAtomInToolbar,
   selectLeftPanelButton,
   LeftPanelButton,
   waitForPageInit,

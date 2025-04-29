@@ -26,12 +26,3 @@ export const rightToolbar = (page: Page) => {
     },
   };
 };
-
-/**
- * Usage: await selectAtomInToolbar(AtomButton.Carbon, page)
- * Select an atom from Atom toolbar
- * **/
-export async function selectAtomInToolbar(atomName: AtomButton, page: Page) {
-  const atomButton = page.locator(`button[title*="${atomName}"]`);
-  await atomButton.click();
-}

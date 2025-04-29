@@ -6,8 +6,6 @@ import {
   openFileAndAddToCanvas,
   moveOnAtom,
   dragMouseTo,
-  selectAtomInToolbar,
-  AtomButton,
   clickOnAtom,
   waitForPageInit,
   takeTopToolbarScreenshot,

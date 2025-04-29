@@ -8,8 +8,6 @@ import {
   openFileAndAddToCanvas,
   pressButton,
   receiveFileComparisonData,
-  selectAtomInToolbar,
-  AtomButton,
   resetCurrentTool,
   BondType,
   copyAndPaste,

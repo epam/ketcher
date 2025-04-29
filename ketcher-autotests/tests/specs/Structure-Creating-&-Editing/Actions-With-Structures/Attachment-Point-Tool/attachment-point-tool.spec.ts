@@ -6,8 +6,6 @@ import {
   openFileAndAddToCanvas,
   selectNestedTool,
   RgroupTool,
-  selectAtomInToolbar,
-  AtomButton,
   LeftPanelButton,
   selectLeftPanelButton,
   dragMouseTo,

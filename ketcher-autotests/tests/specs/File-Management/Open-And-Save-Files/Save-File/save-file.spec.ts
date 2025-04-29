@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import {
-  AtomButton,
   FILE_TEST_DATA,
   RingButton,
   clickInTheMiddleOfTheScreen,
@@ -11,7 +10,6 @@ import {
   pasteFromClipboardAndAddToCanvas,
   receiveFileComparisonData,
   saveToFile,
-  selectAtomInToolbar,
   selectRingButton,
   takeEditorScreenshot,
   waitForIndigoToLoad,

@@ -56,7 +56,9 @@ const Tabs = (props: Props) => {
             label={tabPanel.caption}
             title={tabPanel.tooltip}
             key={index}
+            isLayoutToRight={isLayoutToRight}
             data-testid={tabPanel.testId}
+            data-tab={tabPanel.tooltip}
             {...a11yProps(index)}
           />
         ))}

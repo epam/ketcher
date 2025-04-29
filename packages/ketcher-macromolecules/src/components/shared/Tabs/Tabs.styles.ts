@@ -28,7 +28,10 @@ export const StyledTabs = styled(Tabs)<{ isLayoutToRight?: boolean }>`
   }
 `;
 
-export const StyledTab = styled(Tab)`
+export const StyledTab = styled(Tab)<{
+  isLayoutToRight?: boolean;
+  isFirstTabFavorite?: boolean;
+}>`
   min-height: 24px;
   min-width: 0;
   position: relative;
@@ -42,6 +45,7 @@ export const StyledTab = styled(Tab)`
   list-style-type: none;
   margin-left: 1px;
   align-items: center;
+  flex: ${({ isLayoutToRight }) => (isLayoutToRight ? undefined : '1 1 auto;')};
   border: 1px solid transparent;
   border-bottom: none;
   border-radius: 4px 4px 0 0;
@@ -73,7 +77,7 @@ export const StyledTab = styled(Tab)`
     }
   }
 
-  &:first-of-type {
+  &[data-tab='Favorites'] {
     font-size: 16px;
     color: #faa500;
   }

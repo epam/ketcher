@@ -169,6 +169,11 @@ const RnaBasicPropertiesWrapper = styled('div')(() => ({
   justifyContent: 'space-between',
 }));
 
+const PeptideBasicPropertiesWrapper = styled('div')(() => ({
+  display: 'grid',
+  gridTemplateColumns: '2fr 1fr',
+}));
+
 const StyledBasicProperty = styled('div')<{ disabled?: boolean }>(
   ({ disabled }) => ({
     display: 'flex',
@@ -258,7 +263,7 @@ const StyledMonomersCountPanelItemName = styled('div')(() => ({
 
 interface BasicPropertyProps {
   name: string;
-  value: string | number;
+  value?: string | number;
   hint?: string;
   options?: string[];
   selectedOption?: string;
@@ -300,7 +305,10 @@ const MonomersCountPanel = (props: MonomersCountPanelProps) => {
 const BasicProperty = (props: BasicPropertyProps) => {
   return (
     <StyledBasicProperty disabled={props.disabled}>
-      <BasicPropertyName>{props.name}:</BasicPropertyName>
+      <BasicPropertyName>
+        {props.name}
+        {props.value !== undefined && ':'}
+      </BasicPropertyName>
       <BasicPropertyValue>{props.value}</BasicPropertyValue>
       {props.hint && (
         <PropertyHintIconWrapper title={props.hint}>
@@ -512,26 +520,29 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
     </TabContentErrorWrapper>
   ) : (
     <TabContentWrapper>
-      <BasicPropertiesWrapper>
-        <BasicProperty
-          name="Isoelectric Point"
-          value={
-            isNumber(props.macromoleculesProperties.pKa)
-              ? _round(props.macromoleculesProperties.pKa, 2)
-              : '–'
-          }
-          hint="The isoelectric point is calculated as the median of all pKa values for the structure."
-        />
-        <BasicProperty
-          name="Extinction Coef.(1/Mcm)"
-          value={
-            isNumber(props.macromoleculesProperties.extinctionCoefficient)
-              ? _round(props.macromoleculesProperties.extinctionCoefficient)
-              : '–'
-          }
-          hint="The extinction coefficient for wavelength of 280nm is calculated using the method from Gill, S.C. and von Hippel, P.H. (1989). Only amino acid natural analogues are used in the calculation."
-        ></BasicProperty>
-      </BasicPropertiesWrapper>
+      <PeptideBasicPropertiesWrapper>
+        <BasicPropertiesWrapper>
+          <BasicProperty
+            name="Isoelectric Point"
+            value={
+              isNumber(props.macromoleculesProperties.pKa)
+                ? _round(props.macromoleculesProperties.pKa, 2)
+                : '–'
+            }
+            hint="The isoelectric point is calculated as the median of all pKa values for the structure."
+          />
+          <BasicProperty
+            name="Extinction Coef.(1/Mcm)"
+            value={
+              isNumber(props.macromoleculesProperties.extinctionCoefficient)
+                ? _round(props.macromoleculesProperties.extinctionCoefficient)
+                : '–'
+            }
+            hint="The extinction coefficient for wavelength of 280nm is calculated using the method from Gill, S.C. and von Hippel, P.H. (1989). Only amino acid natural analogues are used in the calculation."
+          ></BasicProperty>
+        </BasicPropertiesWrapper>
+        <BasicProperty name="Hydrophobicity" />
+      </PeptideBasicPropertiesWrapper>
       <PeptidePropertiesBottomPart>
         {props.macromoleculesProperties.monomerCount.peptides && (
           <MonomersCountPanel

@@ -880,18 +880,23 @@ export class CoreEditor {
     history.destroy();
     const struct = this.micromoleculesEditor.struct();
     const reStruct = this.micromoleculesEditor.render.ctab;
+
     const { conversionErrorMessage } =
       MacromoleculesConverter.convertDrawingEntitiesToStruct(
         this.drawingEntitiesManager,
         struct,
         reStruct,
       );
-    reStruct.render.setMolecule(struct);
+
     if (conversionErrorMessage) {
       const ketcher = ketcherProvider.getKetcher();
 
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
+
+    struct.applyMonomersTransformations();
+    reStruct.render.setMolecule(struct);
+
     this._monomersLibraryParsedJson = null;
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();

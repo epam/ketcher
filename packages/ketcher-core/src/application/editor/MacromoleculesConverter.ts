@@ -342,7 +342,6 @@ export class MacromoleculesConverter {
       {
         struct: fragmentStruct,
         label: 'F' + fragmentNumber,
-        expanded: false,
         colorScheme: undefined,
         favorite: false,
         props: {

@@ -273,8 +273,6 @@ export function fromRotate(restruct, selection, center, angle: number) {
     if (!selection.sgroupData) {
       const sgroups = getRelSGroupsBySelection(struct, selection.atoms);
 
-      console.log(angle);
-
       sgroups.forEach((sg) => {
         if (!sg.pp) {
           return;

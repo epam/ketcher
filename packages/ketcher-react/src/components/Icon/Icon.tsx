@@ -22,7 +22,8 @@ const Icon = ({ name, className, title, onClick, dataTestId }: IIconProps) => {
   return (
     <Component
       className={className}
-     title={title} onClick={onClick}
+      title={title}
+      onClick={onClick}
       data-testid={dataTestId}
     />
   );

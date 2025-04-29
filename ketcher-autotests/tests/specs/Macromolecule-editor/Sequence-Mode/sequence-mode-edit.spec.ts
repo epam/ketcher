@@ -116,8 +116,6 @@ test.describe('Sequence edit mode', () => {
       .locator('g', { has: page.locator('text="G"') })
       .first()
       .click({ button: 'right' });
-
-    await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
   });
 

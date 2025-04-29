@@ -42,6 +42,7 @@ import {
   destroyEditor,
   selectEditor,
   selectIsHandToolSelected,
+  setContextMenuActive,
 } from 'state/common';
 import {
   useAppDispatch,
@@ -185,6 +186,8 @@ function Editor({
   useEffect(() => {
     editor?.events.rightClickSequence.add(([event, selections]) => {
       setSelections(selections);
+      window.dispatchEvent(new Event('hidePreview'));
+      dispatch(setContextMenuActive(true));
       showSequenceContextMenu({
         event,
         props: {

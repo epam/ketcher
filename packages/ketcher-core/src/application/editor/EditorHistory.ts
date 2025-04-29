@@ -73,7 +73,7 @@ export class EditorHistory {
     if (this.historyPointer === this.historyStack.length) {
       return;
     }
-    ketcherProvider.getKetcher(this.editor.ketcherId).changeEvent.dispatch();
+    ketcherProvider.getKetcher(this.editor.ketcherId)?.changeEvent.dispatch();
     assert(this.editor);
 
     const lastCommand = this.historyStack[this.historyPointer];

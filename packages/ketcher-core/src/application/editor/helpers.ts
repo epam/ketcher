@@ -8,7 +8,7 @@ import {
 import { KetSerializer } from 'domain/serializers';
 
 export const initializeMode = (
-  ketcherId: string,
+  ketcherId?: string,
   mode?: BaseMode,
 ): BaseMode => {
   if (mode) {

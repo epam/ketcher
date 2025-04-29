@@ -90,9 +90,7 @@ describe('Drawing Entities Manager', () => {
   });
 
   it('should delete peptide', () => {
-    const ketcherId = '1';
     const editor = new CoreEditor({
-      ketcherId,
       canvas: createPolymerEditorCanvas(),
       theme: {},
       mode: new FlexMode(),
@@ -110,9 +108,7 @@ describe('Drawing Entities Manager', () => {
   });
 
   it('should delete polymer bond', () => {
-    const ketcherId = '1';
     const editor = new CoreEditor({
-      ketcherId,
       canvas: createPolymerEditorCanvas(),
       theme: {},
       mode: new FlexMode(),

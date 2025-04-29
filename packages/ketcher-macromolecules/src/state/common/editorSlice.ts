@@ -82,7 +82,6 @@ export const editorSlice: Slice = createSlice({
       }>,
     ) => {
       state.editor = new CoreEditor({
-        ketcherId: state.ketcherId,
         theme: action.payload.theme,
         canvas: action.payload.canvas,
         mode: state.editorLayoutMode

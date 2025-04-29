@@ -23,11 +23,19 @@ class KetcherProvider {
     this.ketcherInstances.delete(id);
   }
 
-  getKetcher(id: string) {
+  getKetcher(id?: string) {
+    if (!id) {
+      return [...this.ketcherInstances.values()][
+        this.ketcherInstances.size - 1
+      ];
+    }
+
     const ketcher = this.ketcherInstances.get(id);
+
     if (!ketcher) {
       throw Error(`couldnt find ketcher instance ${id}`);
     }
+
     return ketcher;
   }
 }

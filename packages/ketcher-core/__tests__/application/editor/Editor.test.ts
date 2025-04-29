@@ -4,11 +4,9 @@ import { createPolymerEditorCanvas } from '../../helpers/dom';
 
 describe('CoreEditor', () => {
   it('should track dom events and trigger handlers', () => {
-    const ketcherId = '1';
     const canvas = createPolymerEditorCanvas();
     const mode = new FlexMode();
     const editor: CoreEditor = new CoreEditor({
-      ketcherId,
       canvas,
       theme: {},
       mode,

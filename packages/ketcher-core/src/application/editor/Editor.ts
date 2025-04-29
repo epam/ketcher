@@ -69,7 +69,7 @@ import { TransientDrawingView } from 'application/render/renderers/TransientView
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 
 interface ICoreEditorConstructorParams {
-  ketcherId: string;
+  ketcherId?: string;
   theme;
   canvas: SVGSVGElement;
   mode?: BaseMode;
@@ -84,7 +84,7 @@ let editor;
 
 export class CoreEditor {
   public events: IEditorEvents;
-  public ketcherId: string;
+  public ketcherId?: string;
 
   public _type: EditorType;
   public renderersContainer: RenderersManager;

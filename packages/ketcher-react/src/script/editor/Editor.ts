@@ -292,12 +292,15 @@ class Editor implements KetcherEditor {
     y?: number,
   ): Struct {
     const action = fromNewCanvas(this.render.ctab, struct);
+
     this.update(action);
+
     if (needToCenterStruct) {
       this.centerStruct();
     } else if (x != null && y != null) {
       this.positionStruct(x, y);
     }
+
     return this.render.ctab.molecule;
   }
 

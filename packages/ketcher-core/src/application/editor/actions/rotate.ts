@@ -24,13 +24,20 @@ import {
   SGroupDataMove,
   TextMove,
 } from '../operations';
-import { Bond, Fragment, Struct, Vec2 } from 'domain/entities';
+import {
+  Bond,
+  Fragment,
+  MonomerMicromolecule,
+  Struct,
+  Vec2,
+} from 'domain/entities';
 import { ReStruct } from 'application/render';
 import { getRelSGroupsBySelection, structSelection } from './utils';
 import { Action } from './action';
 import { EditorSelection } from '../editor.types';
-
-export type FlipDirection = 'horizontal' | 'vertical';
+import { FlipMonomerOperation } from 'application/editor/operations/monomer/FlipMonomerOperation';
+import type { FlipDirection } from '../shared/utils.types';
+import { flipPointByCenter, rotateDelta } from '../shared/utils';
 
 export function fromFlip(
   reStruct: ReStruct,
@@ -148,6 +155,33 @@ function fromTextFlip(
   return action.perform(reStruct);
 }
 
+export const flipBonds = (
+  bondIds: number[],
+  struct: Struct,
+  action: Action,
+) => {
+  bondIds.forEach((bondId) => {
+    const bond = struct.bonds.get(bondId);
+
+    if (!bond) {
+      return;
+    }
+
+    if (bond.type !== Bond.PATTERN.TYPE.SINGLE) {
+      return;
+    }
+
+    if (bond.stereo === Bond.PATTERN.STEREO.UP) {
+      action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.DOWN));
+      return;
+    }
+
+    if (bond.stereo === Bond.PATTERN.STEREO.DOWN) {
+      action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.UP));
+    }
+  });
+};
+
 function fromStructureFlip(
   reStruct: ReStruct,
   selection: EditorSelection | null,
@@ -174,6 +208,15 @@ function fromStructureFlip(
     }
     const difference = flipPointByCenter(sGroup.pp, center, flipDirection);
     action.addOp(new SGroupDataMove(sGroup.id, difference));
+
+    if (sGroup instanceof MonomerMicromolecule) {
+      action.addOp(
+        new FlipMonomerOperation({
+          id: sGroup.id,
+          value: flipDirection,
+        }),
+      );
+    }
   });
 
   if (selection?.bonds) {
@@ -183,51 +226,7 @@ function fromStructureFlip(
   return action.perform(reStruct);
 }
 
-function flipBonds(bondIds: number[], struct: Struct, action: Action) {
-  bondIds.forEach((bondId) => {
-    const bond = struct.bonds.get(bondId);
-
-    if (!bond) {
-      return;
-    }
-
-    if (bond.type !== Bond.PATTERN.TYPE.SINGLE) {
-      return;
-    }
-
-    if (bond.stereo === Bond.PATTERN.STEREO.UP) {
-      action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.DOWN));
-      return;
-    }
-
-    if (bond.stereo === Bond.PATTERN.STEREO.DOWN) {
-      action.addOp(new BondAttr(bondId, 'stereo', Bond.PATTERN.STEREO.UP));
-    }
-  });
-}
-
-function flipPointByCenter(
-  pointToFlip: Vec2,
-  center: Vec2,
-  flipDirection: FlipDirection,
-) {
-  const d = new Vec2();
-  if (flipDirection === 'horizontal') {
-    d.x =
-      center.x > pointToFlip.x
-        ? 2 * (center.x - pointToFlip.x)
-        : -2 * (pointToFlip.x - center.x);
-  } else {
-    // 'vertical'
-    d.y =
-      center.y > pointToFlip.y
-        ? 2 * (center.y - pointToFlip.y)
-        : -2 * (pointToFlip.y - center.y);
-  }
-  return d;
-}
-
-export function fromRotate(restruct, selection, center, angle) {
+export function fromRotate(restruct, selection, center, angle: number) {
   // eslint-disable-line
   const struct = restruct.molecule;
 
@@ -247,6 +246,10 @@ export function fromRotate(restruct, selection, center, angle) {
       const sgroups = getRelSGroupsBySelection(struct, selection.atoms);
 
       sgroups.forEach((sg) => {
+        if (!sg.pp) {
+          return;
+        }
+
         action.addOp(
           new SGroupDataMove(sg.id, rotateDelta(sg.pp, center, angle)),
         );
@@ -304,11 +307,4 @@ export function fromRotate(restruct, selection, center, angle) {
   }
 
   return action.perform(restruct);
-}
-
-function rotateDelta(v, center, angle) {
-  let v1 = v.sub(center);
-  v1 = v1.rotate(angle);
-  v1.add_(center); // eslint-disable-line no-underscore-dangle
-  return v1.sub(v);
 }

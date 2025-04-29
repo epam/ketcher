@@ -14,13 +14,22 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './AttachmentPointHoverOperation';
-export * from './FlipMonomerOperation';
-export * from './MonomerAddOperation';
-export * from './MonomerDeleteOperation';
-export * from './monomerFactory';
-export * from './MonomerHoverOperation';
-export * from './MonomerItemModifyOperation';
-export * from './MonomerMoveOperation';
-export * from './RotateMonomerOperation';
-export * from './ShiftMonomerOperation';
+import { Operation } from 'domain/entities/Operation';
+import { BaseMonomer } from 'domain/entities';
+import { RenderersManager } from 'application/render/renderers/RenderersManager';
+
+export class MonomerHoverOperation implements Operation {
+  constructor(
+    private peptide: BaseMonomer,
+    private needRedrawAttachmentPoints: boolean,
+  ) {}
+
+  public execute(renderersManager: RenderersManager) {
+    renderersManager.hoverMonomer(
+      this.peptide,
+      this.needRedrawAttachmentPoints,
+    );
+  }
+
+  public invert() {}
+}

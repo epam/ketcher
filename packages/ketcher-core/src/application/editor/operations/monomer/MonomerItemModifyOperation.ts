@@ -14,13 +14,25 @@
  * limitations under the License.
  ***************************************************************************/
 
-export * from './AttachmentPointHoverOperation';
-export * from './FlipMonomerOperation';
-export * from './MonomerAddOperation';
-export * from './MonomerDeleteOperation';
-export * from './monomerFactory';
-export * from './MonomerHoverOperation';
-export * from './MonomerItemModifyOperation';
-export * from './MonomerMoveOperation';
-export * from './RotateMonomerOperation';
-export * from './ShiftMonomerOperation';
+import { Operation } from 'domain/entities/Operation';
+import { BaseMonomer } from 'domain/entities';
+
+export class MonomerItemModifyOperation implements Operation {
+  monomer: BaseMonomer;
+  constructor(
+    monomer: BaseMonomer,
+    public updateMonomerItem: () => BaseMonomer,
+    public revertMonomerItem: () => BaseMonomer,
+  ) {
+    this.monomer = monomer;
+    this.execute();
+  }
+
+  public execute() {
+    this.monomer = this.updateMonomerItem();
+  }
+
+  public invert() {
+    this.monomer = this.revertMonomerItem();
+  }
+}

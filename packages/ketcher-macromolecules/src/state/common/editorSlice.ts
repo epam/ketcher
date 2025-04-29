@@ -30,6 +30,7 @@ interface EditorState {
   editorLayoutMode: LayoutMode | undefined;
   preview: EditorStatePreview;
   position: PresetPosition | undefined;
+  isContextMenuActive: boolean;
 }
 
 const initialState: EditorState = {
@@ -43,6 +44,7 @@ const initialState: EditorState = {
     style: {},
   },
   position: undefined,
+  isContextMenuActive: false,
 };
 
 export const editorSlice: Slice = createSlice({
@@ -93,6 +95,9 @@ export const editorSlice: Slice = createSlice({
     ) => {
       state.preview = action.payload || { monomer: undefined, style: '' };
     },
+    setContextMenuActive: (state, action: PayloadAction<boolean>) => {
+      state.isContextMenuActive = action.payload;
+    },
   },
 });
 
@@ -101,10 +106,11 @@ export const {
   initSuccess,
   initFailure,
   selectTool,
-  createEditor,
-  showPreview,
-  destroyEditor,
   setPosition,
+  createEditor,
+  destroyEditor,
+  showPreview,
+  setContextMenuActive,
 } = editorSlice.actions;
 
 export const selectEditorIsReady = (state: RootState) => state.editor.isReady;
@@ -144,5 +150,8 @@ export const selectIsHandToolSelected = (state: RootState) =>
 
 export const hasAntisenseChains = (state: RootState): CoreEditor =>
   state.editor.editor?.drawingEntitiesManager?.hasAntisenseChains;
+
+export const selectIsContextMenuActive = (state: RootState): boolean =>
+  state.editor.isContextMenuActive;
 
 export const editorReducer = editorSlice.reducer;

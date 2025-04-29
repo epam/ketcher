@@ -16,6 +16,13 @@ import {
   openDropdown,
   openFileAndAddToCanvasAsNewProject,
   takeLeftToolbarMacromoleculeScreenshot,
+  selectLeftPanelButton,
+  LeftPanelButton,
+  pressButton,
+  openSettings,
+  openBondsSettingsSection,
+  scrollToDownInSetting,
+  setHashSpacingValue,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
@@ -381,5 +388,68 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
+  });
+
+  test('Case 13: Applying Enhanced Stereochemistry to monomers not causes its disappear from the canvas', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6802
+     * Bug: https://github.com/epam/ketcher/issues/4936
+     * Description: Applying Enhanced Stereochemistry to monomers not causes its disappear from the canvas.
+     * Scenario:
+     * 1. Go to Molecules mode
+     * 2. Load from file
+     * 3. Press Stereochemistry button and press Apply button in appeared dialog
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/Two nucleotides.ket',
+      page,
+    );
+    await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 14: Apply new hash spacing setting to canvas', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6802
+     * Bug: https://github.com/epam/ketcher/issues/5354
+     * Description: Apply new hash spacing setting to canvas.
+     * Scenario:
+     * 1. Go to Molecules mode
+     * 2. Load from file
+     * 3. Apply new hash spacing setting to canvas
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/bond-with-hash-spacing.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await openSettings(page);
+    await openBondsSettingsSection(page);
+    await scrollToDownInSetting(page);
+    await setHashSpacingValue(page, '10');
+    await pressButton(page, 'Apply');
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 15: Preview tooltip work for monomers at Molecules mode', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6802
+     * Bug: https://github.com/epam/ketcher/issues/5793
+     * Description: Preview tooltip work for monomers at Molecules mode.
+     * Scenario:
+     * 1. Go to Molecules mode
+     * 2. Load from file
+     * 3. Hover mouse over label
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
+      page,
+    );
+    await page.getByText('X').hover();
+    await takeEditorScreenshot(page);
   });
 });

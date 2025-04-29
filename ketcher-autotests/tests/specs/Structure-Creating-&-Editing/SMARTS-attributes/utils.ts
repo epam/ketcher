@@ -1,5 +1,10 @@
 import { Page, expect } from '@playwright/test';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
 import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 type queryNumberValues =
   | '0'
@@ -158,20 +163,21 @@ export async function setReactionFlagExactChange(page: Page) {
 // Other
 
 export async function checkSmartsValue(page: Page, value: string) {
+  const saveStructureTextarea = saveStructureDialog(page).saveStructureTextarea;
+
   await selectSaveTool(page);
-  await page.getByTestId('file-format-list').first().click();
-  await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
-  const smartsInput = page.getByTestId('smarts-preview-area-text');
-  await expect(smartsInput).toHaveValue(value);
+  await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMARTS);
+  await expect(saveStructureTextarea).toHaveValue(value);
 }
 
 export async function checkSmartsWarnings(page: Page) {
   const value =
     'Structure contains query properties of atoms and bonds that are not supported in the SMARTS. Query properties will not be reflected in the file saved.';
-  await page.getByTestId('warnings-tab').click();
-  const warningSmartsTextArea = page
-    .getByTestId('WarningTextArea')
-    .filter({ hasText: 'SMARTS' });
+  const warningsTab = saveStructureDialog(page).warningsTab;
+  const warningTextarea = saveStructureDialog(page).warningTextarea;
+
+  await warningsTab.click();
+  const warningSmartsTextArea = warningTextarea.filter({ hasText: 'SMARTS' });
   const warningText = await warningSmartsTextArea.evaluate(
     (node) => node.textContent,
   );

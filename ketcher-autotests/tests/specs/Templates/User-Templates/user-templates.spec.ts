@@ -22,6 +22,7 @@ import {
   selectClearCanvasTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
+import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -31,8 +32,10 @@ async function openStructureLibrary(page: Page) {
 }
 
 async function saveToTemplates(page: Page, shouldSave = true) {
+  const saveToTemplatesButton = saveStructureDialog(page).saveToTemplatesButton;
+
   await selectSaveTool(page);
-  await page.getByRole('button', { name: 'Save to Templates' }).click();
+  await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My Template');
   if (shouldSave) {
@@ -69,10 +72,13 @@ test.describe('Click User Templates on canvas', () => {
       Test case: EPMLSOPKET-10073(3)
       Description: spaces in Molecule name field validation
     */
+    const saveToTemplatesButton =
+      saveStructureDialog(page).saveToTemplatesButton;
+
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
     await selectSaveTool(page);
     await clickInTheMiddleOfTheScreen(page);
-    await pressButton(page, 'Save to Templates');
+    await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill(' name ');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -89,12 +95,15 @@ test.describe('Click User Templates on canvas', () => {
       Test case: EPMLSOPKET-39948
       Description: delete user template validation
     */
+    const saveToTemplatesButton =
+      saveStructureDialog(page).saveToTemplatesButton;
+
     await selectUserTemplatesAndPlaceInTheMiddle(
       TemplateLibrary.Naphtalene,
       page,
     );
     await selectSaveTool(page);
-    await pressButton(page, 'Save to Templates');
+    await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('to_delete');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -114,12 +123,15 @@ test.describe('Click User Templates on canvas', () => {
     Test case: EPMLSOPKET-2941
     Description: Creating Template with Simple Objects validation
     */
+    const saveToTemplatesButton =
+      saveStructureDialog(page).saveToTemplatesButton;
+
     await openFileAndAddToCanvas(
       'Molfiles-V2000/create-template-with-simple-objects.mol',
       page,
     );
     await selectSaveTool(page);
-    await pressButton(page, 'Save to Templates');
+    await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('simple_object_template');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -138,12 +150,15 @@ test.describe('Click User Templates on canvas', () => {
     Test case: EPMLSOPKET-12942
     Description: Creating Template with Reaction arrow validation.
     */
+    const saveToTemplatesButton =
+      saveStructureDialog(page).saveToTemplatesButton;
+
     await openFileAndAddToCanvas(
       'Rxn-V2000/create-template-with-reaction-arrow.rxn',
       page,
     );
     await selectSaveTool(page);
-    await pressButton(page, 'Save to Templates');
+    await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('reaction_arrow_template');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -213,13 +228,16 @@ test.describe('Create and Save Templates', () => {
       Test case: EPMLSOPKET-1722
       Description: saving user template validation
     */
+    const saveToTemplatesButton =
+      saveStructureDialog(page).saveToTemplatesButton;
+
     await selectUserTemplatesAndPlaceInTheMiddle(
       TemplateLibrary.Naphtalene,
       page,
     );
     await selectSaveTool(page);
     await clickInTheMiddleOfTheScreen(page);
-    await pressButton(page, 'Save to Templates');
+    await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('user_template_1');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -303,17 +321,21 @@ test.describe('Templates field lenght validations', () => {
       Test case: EPMLSOPKET-39948
       Description: warning message validation
     */
+    const saveToTemplatesButton =
+      saveStructureDialog(page).saveToTemplatesButton;
+
     await selectUserTemplatesAndPlaceInTheMiddle(
       TemplateLibrary.Naphtalene,
       page,
     );
     await selectSaveTool(page);
-    await pressButton(page, 'Save to Templates');
+    await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('user_template_1');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
+
     await selectSaveTool(page);
-    await pressButton(page, 'Save to Templates');
+    await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('user_template_1');
     await getEditorScreenshot(page);

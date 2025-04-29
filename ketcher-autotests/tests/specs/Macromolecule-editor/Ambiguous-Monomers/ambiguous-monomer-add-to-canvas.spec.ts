@@ -5,6 +5,7 @@ import {
   clickOnTheCanvas,
   selectMonomer,
   takeEditorScreenshot,
+  waitForMonomerPreview,
   waitForPageInit,
 } from '@utils';
 import { Monomer } from '@utils/types';
@@ -122,9 +123,7 @@ test.describe('Put ambiguous monomer on the canvas from library:', () => {
         */
       await selectMonomer(page, AmbiguousMonomer.AmbiguousMonomer);
       await clickOnTheCanvas(page, 0, 0);
-      await page
-        .getByTestId('polymer-library-preview')
-        .waitFor({ state: 'visible' });
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       // Test should be skipped if related bug exists

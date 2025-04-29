@@ -5,7 +5,11 @@ import {
   selectSaveTool,
   topLeftToolbarLocators,
 } from '@tests/pages/common/TopLeftToolbar';
-import { clickOnFileFormatDropdown } from '@utils/formats';
+import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import {
+  MoleculesFileFormatName,
+  MoleculesFileFormatType,
+} from '@tests/pages/constants/fileFormats/microFileFormats';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -32,35 +36,63 @@ test.describe('Open Ketcher', () => {
 
   test('Save button UI', async ({ page }) => {
     // Test case: EPMLSOPKET-1843
+    const saveStructureTextarea =
+      saveStructureDialog(page).saveStructureTextarea;
+
     await selectSaveTool(page);
     await takeEditorScreenshot(page, {
-      mask: [page.getByTestId('mol-preview-area-text')],
+      mask: [saveStructureTextarea],
     });
   });
 
   const fileFormats = [
-    'Ket Format-option',
-    'MDL Molfile V2000-option',
-    'MDL Molfile V3000-option',
-    'SDF V2000-option',
-    'SDF V3000-option',
-    'Daylight SMARTS-option',
-    'Extended SMILES-option',
-    'CML-option',
-    'InChI-option',
-    'InChI AuxInfo-option',
-    'InChIKey-option',
-    'SVG Document-option',
-    'PNG Image-option',
-    'CDXML-option',
-    'Base64 CDX-option',
-    'CDX-option',
+    [MoleculesFileFormatType.KetFormat, MoleculesFileFormatName.KetFormat],
+    [
+      MoleculesFileFormatType.MDLMolfileV2000,
+      MoleculesFileFormatName.MDLMolfileV2000,
+    ],
+    [
+      MoleculesFileFormatType.MDLMolfileV3000,
+      MoleculesFileFormatName.MDLMolfileV3000,
+    ],
+    [MoleculesFileFormatType.SDFV2000, MoleculesFileFormatName.SDFV2000],
+    [MoleculesFileFormatType.SDFV3000, MoleculesFileFormatName.SDFV3000],
+    [MoleculesFileFormatType.RDFV2000, MoleculesFileFormatName.RDFV2000],
+    [MoleculesFileFormatType.RDFV3000, MoleculesFileFormatName.RDFV3000],
+    [
+      MoleculesFileFormatType.DaylightSMARTS,
+      MoleculesFileFormatName.DaylightSMARTS,
+    ],
+    [
+      MoleculesFileFormatType.DaylightSMILES,
+      MoleculesFileFormatName.DaylightSMILES,
+    ],
+    [
+      MoleculesFileFormatType.ExtendedSMILES,
+      MoleculesFileFormatName.ExtendedSMILES,
+    ],
+    [MoleculesFileFormatType.CML, MoleculesFileFormatName.CML],
+    [MoleculesFileFormatType.InChI, MoleculesFileFormatName.InChI],
+    [
+      MoleculesFileFormatType.InChIAuxInfo,
+      MoleculesFileFormatName.InChIAuxInfo,
+    ],
+    [MoleculesFileFormatType.InChIKey, MoleculesFileFormatName.InChIKey],
+    [MoleculesFileFormatType.SVGDocument, MoleculesFileFormatName.SVGDocument],
+    [MoleculesFileFormatType.PNGImage, MoleculesFileFormatName.PNGImage],
+    [MoleculesFileFormatType.CDXML, MoleculesFileFormatName.CDXML],
+    [MoleculesFileFormatType.Base64CDX, MoleculesFileFormatName.Base64CDX],
+    [MoleculesFileFormatType.CDX, MoleculesFileFormatName.CDX],
   ];
+
   for (const fileFormat of fileFormats) {
-    test(`dropdown options check_${fileFormat}`, async ({ page }) => {
+    test(`dropdown options check_${fileFormat[1]}`, async ({ page }) => {
+      const fileFormatDropdonwList =
+        saveStructureDialog(page).fileFormatDropdonwList;
       await selectSaveTool(page);
-      await clickOnFileFormatDropdown(page);
-      const option = page.getByTestId(fileFormat);
+      await fileFormatDropdonwList.click();
+
+      const option = page.getByTestId(fileFormat[0]);
       await expect(option).toBeVisible();
     });
   }

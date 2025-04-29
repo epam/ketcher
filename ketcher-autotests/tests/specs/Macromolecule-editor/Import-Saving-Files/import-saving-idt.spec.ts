@@ -6,7 +6,6 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { chromium, expect, Page, test } from '@playwright/test';
 import {
-  chooseFileFormat,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   copyToClipboardByKeyboard,
@@ -80,36 +79,16 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
+import {
+  MacromoleculesFileFormatName,
+  MacromoleculesFileFormatType,
+} from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
-
-// async function pasteFromClipboardAndAddToMacromoleculesCanvas(
-//   structureFormat: string,
-//   fillStructure: string,
-//   needToWait = true,
-// ) {
-//   const pasteFromClipboardButton =
-//     openStructureDialog(page).pasteFromClipboardButton;
-//   const openStructureTextarea =
-//     pasteFromClipboardDialog(page).openStructureTextarea;
-//   const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-
-//   await selectOpenFileTool(page);
-//   await pasteFromClipboardButton.click();
-//   if (!(structureFormat === 'Ket')) {
-//     await page.getByRole('combobox').click();
-//     await page.getByText(structureFormat).click();
-//   }
-
-//   await openStructureTextarea.fill(fillStructure);
-//   if (needToWait) {
-//     await waitForLoad(page, async () => {
-//       await addToCanvasButton.click();
-//     });
-//   } else {
-//     await addToCanvasButton.click();
-//   }
-// }
 
 test.beforeAll(async ({ browser }) => {
   let sharedContext;
@@ -176,26 +155,24 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/#4495
     Description: Option "IDT" to dropdown File format of modal window Save Structure is exist.
     */
+    const fileFormatDropdonwList =
+      saveStructureDialog(page).fileFormatDropdonwList;
+
     await selectSaveTool(page);
-
-    const fileFormatComboBox = page
-      .getByTestId('dropdown-select')
-      .getByRole('combobox');
-
-    await fileFormatComboBox.click();
+    await fileFormatDropdonwList.click();
 
     const options = page.getByRole('option');
     const values = await options.allTextContents();
 
     const expectedValues = [
-      'Ket',
-      'MDL Molfile V3000',
-      'Sequence (1-letter code)',
-      'Sequence (3-letter code)',
-      'FASTA',
-      'IDT',
-      'SVG Document',
-      'HELM',
+      MacromoleculesFileFormatName.Ket,
+      MacromoleculesFileFormatName.MDLMolfileV3000,
+      MacromoleculesFileFormatName.Sequence1LetterCode,
+      MacromoleculesFileFormatName.Sequence3LetterCode,
+      MacromoleculesFileFormatName.FASTA,
+      MacromoleculesFileFormatName.IDT,
+      MacromoleculesFileFormatName.SVGDocument,
+      MacromoleculesFileFormatName.HELM,
     ];
     for (const value of expectedValues) {
       expect(values).toContain(value);
@@ -210,7 +187,7 @@ test.describe('Import-Saving .idt Files', () => {
     await selectMonomer(page, Peptides._1Nal);
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'IDT');
+    await chooseFileFormat(page, MacromoleculesFileFormatType.IDT);
     await takeEditorScreenshot(page);
   });
 
@@ -625,7 +602,7 @@ test.describe('Import-Saving .idt Files', () => {
     // Reload needed as monomer IDs increment in prior tests, affecting screenshots
     await openFileAndAddToCanvasMacro('KET/5formD-form5C-cm.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'IDT');
+    await chooseFileFormat(page, MacromoleculesFileFormatType.IDT);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -1038,26 +1015,30 @@ test.describe('Import-Saving .idt Files', () => {
     await takeEditorScreenshot(page);
   });
 
-  const testFormats: Array<'FASTA' | 'Sequence (1-letter code)'> = [
-    'FASTA',
-    'Sequence (1-letter code)',
+  const testFormats = [
+    {
+      name: MacromoleculesFileFormatName.FASTA,
+      testId: MacromoleculesFileFormatType.FASTA,
+    },
+    {
+      name: MacromoleculesFileFormatName.Sequence1LetterCode,
+      testId: MacromoleculesFileFormatType.Sequence1LetterCode,
+    },
   ];
 
   for (const format of testFormats) {
-    test(`Verify error message when saving macromolecules with unresolved monomers to non-IDT/KET format ${format}`, async () => {
+    test(`Verify error message when saving macromolecules with unresolved monomers to non-IDT/KET format ${format.name}`, async () => {
       /*
     Test case: Import/Saving files/#4431
     Description: Error message appears when saving macromolecules with unresolved monomers to non-IDT/KET formats.
     */
-      // Reload needed as monomer IDs increment in prior tests, affecting screenshots
-
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.IDT,
         `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
       );
       await selectSaveTool(page);
-      await chooseFileFormat(page, format as 'FASTA' | 'Sequence');
+      await chooseFileFormat(page, format.testId);
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -1659,6 +1640,7 @@ test.describe('Ambiguous monomers: ', () => {
              (Error message should occur)
           4. Take screenshot to make sure export is correct
     */
+    const cancelButton = saveStructureDialog(page).cancelButton;
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/Peptides (that have mapping to library, alternatives).ket',
       page,
@@ -1668,11 +1650,11 @@ test.describe('Ambiguous monomers: ', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'IDT');
+    await chooseFileFormat(page, MacromoleculesFileFormatType.IDT);
     await takeEditorScreenshot(page);
 
     await closeErrorMessage(page);
-    await pressButton(page, 'Cancel');
+    await cancelButton.click();
     await zoomWithMouseWheel(page, 600);
   });
 
@@ -1686,6 +1668,7 @@ test.describe('Ambiguous monomers: ', () => {
              (Error message should occur)
           4. Take screenshot to make sure export is correct
     */
+    const cancelButton = saveStructureDialog(page).cancelButton;
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/Peptides (that have mapping to library, mixed).ket',
       page,
@@ -1695,13 +1678,13 @@ test.describe('Ambiguous monomers: ', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'IDT');
+    await chooseFileFormat(page, MacromoleculesFileFormatType.IDT);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
 
     await closeErrorMessage(page);
-    await pressButton(page, 'Cancel');
+    await cancelButton.click();
     await zoomWithMouseWheel(page, 600);
   });
 
@@ -1715,6 +1698,7 @@ test.describe('Ambiguous monomers: ', () => {
             (Error should occure)
           4. Take screenshot to make sure export is correct
     */
+    const cancelButton = saveStructureDialog(page).cancelButton;
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/Peptides (that have no mapping to library, alternatives).ket',
       page,
@@ -1725,11 +1709,11 @@ test.describe('Ambiguous monomers: ', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'IDT');
+    await chooseFileFormat(page, MacromoleculesFileFormatType.IDT);
     await takeEditorScreenshot(page);
 
     await closeErrorMessage(page);
-    await pressButton(page, 'Cancel');
+    await cancelButton.click();
     await zoomWithMouseWheel(page, 200);
   });
 
@@ -1743,6 +1727,7 @@ test.describe('Ambiguous monomers: ', () => {
             (Error should occure)
           4. Take screenshot to make sure export is correct
     */
+    const cancelButton = saveStructureDialog(page).cancelButton;
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/Peptides (that have no mapping to library, mixed).ket',
       page,
@@ -1753,13 +1738,13 @@ test.describe('Ambiguous monomers: ', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'IDT');
+    await chooseFileFormat(page, MacromoleculesFileFormatType.IDT);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
 
     await closeErrorMessage(page);
-    await pressButton(page, 'Cancel');
+    await cancelButton.click();
     await zoomWithMouseWheel(page, 200);
   });
 
@@ -1773,6 +1758,7 @@ test.describe('Ambiguous monomers: ', () => {
              (Error should occure)
           4. Take screenshot to make sure export is correct
     */
+    const cancelButton = saveStructureDialog(page).cancelButton;
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/Ambiguous DNA Bases (alternatives).ket',
       page,
@@ -1783,11 +1769,11 @@ test.describe('Ambiguous monomers: ', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'IDT');
+    await chooseFileFormat(page, MacromoleculesFileFormatType.IDT);
     await takeEditorScreenshot(page);
 
     await closeErrorMessage(page);
-    await pressButton(page, 'Cancel');
+    await cancelButton.click();
     await zoomWithMouseWheel(page, 100);
   });
 
@@ -1833,6 +1819,7 @@ test.describe('Ambiguous monomers: ', () => {
              (Error message should occure)
           4. Take screenshot to make sure export is correct
     */
+    const cancelButton = saveStructureDialog(page).cancelButton;
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/Ambiguous RNA Bases (alternatives).ket',
       page,
@@ -1843,11 +1830,11 @@ test.describe('Ambiguous monomers: ', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'IDT');
+    await chooseFileFormat(page, MacromoleculesFileFormatType.IDT);
     await takeEditorScreenshot(page);
 
     await closeErrorMessage(page);
-    await pressButton(page, 'Cancel');
+    await cancelButton.click();
     await zoomWithMouseWheel(page, 100);
   });
 
@@ -1892,6 +1879,7 @@ test.describe('Ambiguous monomers: ', () => {
              (Error message should occure)
           4. Take screenshot to make sure export is correct
     */
+    const cancelButton = saveStructureDialog(page).cancelButton;
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/Ambiguous (common) Bases (alternatives).ket',
       page,
@@ -1899,10 +1887,10 @@ test.describe('Ambiguous monomers: ', () => {
     await zoomWithMouseWheel(page, -200);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'IDT');
+    await chooseFileFormat(page, MacromoleculesFileFormatType.IDT);
     await takeEditorScreenshot(page);
     await closeErrorMessage(page);
-    await pressButton(page, 'Cancel');
+    await cancelButton.click();
     await zoomWithMouseWheel(page, 200);
   });
 
@@ -1945,6 +1933,7 @@ test.describe('Ambiguous monomers: ', () => {
              (Error message occurs)
           4. Take screenshot to make sure export is correct
     */
+    const cancelButton = saveStructureDialog(page).cancelButton;
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Ambiguous-monomers/RNA ambigous bases connected to DNA sugar (mixed).ket',
       page,
@@ -1955,13 +1944,13 @@ test.describe('Ambiguous monomers: ', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'IDT');
+    await chooseFileFormat(page, MacromoleculesFileFormatType.IDT);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
 
     await closeErrorMessage(page);
-    await pressButton(page, 'Cancel');
+    await cancelButton.click();
     await zoomWithMouseWheel(page, 100);
 
     test.fixme(true, `Error message should be different`);
@@ -1987,7 +1976,7 @@ test.describe('Ambiguous monomers: ', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'IDT');
+    await chooseFileFormat(page, MacromoleculesFileFormatType.IDT);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });

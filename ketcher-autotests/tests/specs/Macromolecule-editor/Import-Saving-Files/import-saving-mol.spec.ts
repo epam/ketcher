@@ -4,16 +4,16 @@ import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasMacro,
-  openFromFileViaClipboard,
   takeEditorScreenshot,
   waitForPageInit,
   openFile,
-  selectOptionInDropdown,
   selectSnakeLayoutModeTool,
-  delay,
   selectFlexLayoutModeTool,
   moveMouseAway,
   resetZoomLevelToDefault,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  MacroFileType,
+  readFileContent,
 } from '@utils';
 import {
   selectClearCanvasTool,
@@ -32,7 +32,6 @@ import {
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
   FileType,
@@ -85,10 +84,14 @@ test.describe('Import-Saving .mol Files', () => {
   });
 
   test('Import monomers and chem with clipboard', async () => {
-    await selectOpenFileTool(page);
-    await openFromFileViaClipboard(
-      'tests/test-data/Molfiles-V3000/monomers-and-chem.mol',
+    const fileContent = await readFileContent(
+      'Molfiles-V3000/monomers-and-chem.mol',
+    );
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
+      MacroFileType.MOLv3000,
+      fileContent,
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -96,16 +99,14 @@ test.describe('Import-Saving .mol Files', () => {
 
   test('Import incorrect data', async () => {
     const randomText = 'asjfnsalkfl';
-    const pasteFromClipboardButton =
-      openStructureDialog(page).pasteFromClipboardButton;
-    const openStructureTextarea =
-      pasteFromClipboardDialog(page).openStructureTextarea;
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
 
-    await selectOpenFileTool(page);
-    await pasteFromClipboardButton.click();
-    await openStructureTextarea.fill(randomText);
-    await addToCanvasButton.click();
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.Ket,
+      randomText,
+      // error expected
+      true,
+    );
     await takeEditorScreenshot(page);
 
     await closeErrorAndInfoModals(page);
@@ -350,16 +351,9 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: System does not let uploading corrupted .mol file
     */
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
     const filename = 'Molfiles-V3000/corrupted-file.mol';
 
-    await selectOpenFileTool(page);
-    await openFile(filename, page);
-    await selectOptionInDropdown(filename, page);
-    await addToCanvasButton.click();
-
-    // Experimental delay - must be removed after waitForSpinnerFinishedWork refactor
-    await delay(2);
+    await openFileAndAddToCanvasMacro(filename, page, undefined, true);
     await takeEditorScreenshot(page);
 
     // Closing page since test expects it to have closed at the end

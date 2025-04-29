@@ -1,6 +1,7 @@
+import * as path from 'path';
 import { Page, expect } from '@playwright/test';
 import { Ketcher, MolfileFormat } from 'ketcher-core';
-import { readFileContents, saveToFile } from './readFile';
+import { getTestDataDirectory, readFileContent, saveToFile } from './readFile';
 import {
   getCdx,
   getCdxml,
@@ -17,9 +18,13 @@ import {
   getSmiles,
   getFasta,
 } from '@utils/formats';
-import { pressButton } from '@utils/clicks';
-import { chooseFileFormat } from '@utils/macromolecules';
 import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import {
+  chooseFileFormat,
+  getTextAreaValue,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
 
 export enum FileType {
   KET = 'ket',
@@ -86,14 +91,17 @@ export async function verifyFileExport(
   format?: MolfileFormat,
   metaDataIndexes: number[] = [],
 ) {
+  const testDataDir = getTestDataDirectory();
+  const resolvedExpectedFilename = path.resolve(testDataDir, expectedFilename);
+
   // This two lines for creating from scratch or for updating exampled files
   const expectedFileContent = await getFileContent(page, fileType, format);
-  await saveToFile(expectedFilename, expectedFileContent);
+  await saveToFile(resolvedExpectedFilename, expectedFileContent);
   // This line for filtering out example file content (named as fileExpected)
   // and file content from memory (named as file) from unnessusary data
   const { fileExpected, file } = await receiveFileComparisonData({
     page,
-    expectedFileName: `tests/test-data/${expectedFilename}`,
+    expectedFileName: resolvedExpectedFilename,
     fileFormat: format,
     metaDataIndexes,
   });
@@ -206,7 +214,7 @@ export async function receiveFileComparisonData({
   file: string[];
   fileExpected: string[];
 }> {
-  const fileExpected = (await readFileContents(expectedFileName)).split('\n');
+  const fileExpected = (await readFileContent(expectedFileName)).split('\n');
 
   const file = await receiveFile({
     page,
@@ -221,13 +229,14 @@ export async function receiveFileComparisonData({
 }
 
 export async function verifyHELMExport(page: Page, HELMExportExpected = '') {
+  const cancelButton = saveStructureDialog(page).cancelButton;
+
   await selectSaveTool(page);
-  await chooseFileFormat(page, 'HELM');
-  const HELMExportResult = await page
-    .getByTestId('preview-area-text')
-    .textContent();
+
+  await chooseFileFormat(page, MacromoleculesFileFormatType.HELM);
+  const HELMExportResult = await getTextAreaValue(page);
 
   expect(HELMExportResult).toEqual(HELMExportExpected);
 
-  await pressButton(page, 'Cancel');
+  await cancelButton.click();
 }

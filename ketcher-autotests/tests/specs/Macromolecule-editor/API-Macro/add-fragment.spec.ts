@@ -1,7 +1,6 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { Page, test } from '@playwright/test';
 import {
-  readFileContents,
   waitForPageInit,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
@@ -10,6 +9,7 @@ import {
   openFileAndAddToCanvasMacro,
   dragMouseTo,
   clickInTheMiddleOfTheScreen,
+  readFileContent,
 } from '@utils';
 import {
   selectZoomOutTool,
@@ -41,8 +41,8 @@ test.describe('addFragment', () => {
   });
 
   test('mol with two monomers bonded', async ({ page }) => {
-    const fileContents = await readFileContents(
-      'tests/test-data/Molfiles-V3000/alanine-monomers-bonded-expected.mol',
+    const fileContents = await readFileContent(
+      'Molfiles-V3000/alanine-monomers-bonded-expected.mol',
     );
     await waitForSpinnerFinishedWork(
       page,
@@ -55,7 +55,7 @@ test.describe('addFragment', () => {
   });
 
   test('ket with two monomers bonded', async ({ page }) => {
-    const fileContents = await readFileContents(`tests/test-data/${fileName}`);
+    const fileContents = await readFileContent(`${fileName}`);
     await waitForSpinnerFinishedWork(
       page,
       async () => await addFragment(page, fileContents),

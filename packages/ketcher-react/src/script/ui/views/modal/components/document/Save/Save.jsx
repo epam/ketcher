@@ -391,7 +391,7 @@ class SaveDialog extends Component {
       </div>
     );
 
-    const PreviewContent = ({ format }) => {
+    const PreviewContent = () => {
       return (
         <div className={classes.previewBackground}>
           <textarea
@@ -399,7 +399,7 @@ class SaveDialog extends Component {
             className={classes.previewArea}
             readOnly
             ref={this.textAreaRef}
-            data-testid={`${format}-preview-area-text`}
+            data-testid="preview-area-text"
           />
           <IconButton
             onClick={this.handleCopy}
@@ -490,7 +490,7 @@ class SaveDialog extends Component {
           key="save-image-button"
           type={`image/${format}+xml`}
           onSave={this.props.onOk}
-          testId="save-image-button"
+          testId="save-button"
           disabled={
             disableControls ||
             !formState.valid ||

@@ -15,10 +15,8 @@ import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
-  openPasteFromClipboard,
   pasteFromClipboardByKeyboard,
   pressButton,
-  readFileContents,
   selectAddRemoveExplicitHydrogens,
   resetCurrentTool,
   RingButton,
@@ -39,17 +37,15 @@ import {
   waitForRender,
   getCoordinatesOfTheMiddleOfTheScreen,
   pasteFromClipboardAndAddToCanvas,
+  pasteFromClipboardAndOpenAsNewProject,
+  readFileContent,
+  copyContentToClipboard,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  clickOnFileFormatDropdown,
-  FileFormatOption,
-  selectSaveFileFormat,
-} from '@utils/formats';
 import { openStructureLibrary } from '@utils/templates';
 import {
   pressRedoButton,
@@ -70,9 +66,16 @@ import {
   setZoomInputValue,
 } from '@tests/pages/common/TopRightToolbar';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 async function saveToTemplates(page: Page) {
-  await pressButton(page, 'Save to Templates');
+  const saveToTemplatesButton = saveStructureDialog(page).saveToTemplatesButton;
+
+  await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
   await page
     .getByPlaceholder('template')
@@ -433,8 +436,8 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Three different Multi-Tailed Arrows are copied from .ket format and added to selected place on Canvas
      * with correct positions and parameters using "PASTE FROM CLIPBOARD - Add to Canvas"
      */
-    const fileContent = await readFileContents(
-      'tests/test-data/KET/three-different-multi-tail-arrows.ket',
+    const fileContent = await readFileContent(
+      'KET/three-different-multi-tail-arrows.ket',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
@@ -448,11 +451,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5104
      * Description: Three different Multi-Tailed Arrows are copied from .ket format and added to the center of Canvas using "PASTE FROM CLIPBOARD - Open as New Project"
      */
-    const fileContent = await readFileContents(
-      'tests/test-data/KET/three-different-multi-tail-arrows.ket',
+    const fileContent = await readFileContent(
+      'KET/three-different-multi-tail-arrows.ket',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await pressButton(page, 'Open as New Project');
+    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -465,13 +467,10 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Three different Multi-Tailed Arrows are copied from .ket format and added from clipboard directly to selected place on Canvas
      * with correct positions and sizes of spines, tails and heads
      */
-    const fileContent = await readFileContents(
-      'tests/test-data/KET/three-different-multi-tail-arrows.ket',
+    const fileContent = await readFileContent(
+      'KET/three-different-multi-tail-arrows.ket',
     );
-    await openPasteFromClipboard(page, fileContent);
-    await selectAllStructuresOnCanvas(page);
-    await copyToClipboardByKeyboard(page);
-    await pressButton(page, 'Cancel');
+    await copyContentToClipboard(page, fileContent);
     await pasteFromClipboardByKeyboard(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -503,8 +502,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByTestId('Ket Format-option').click();
+    await chooseFileFormat(page, MoleculesFileFormatType.KetFormat);
     await takeEditorScreenshot(page);
   });
 
@@ -987,6 +985,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5055
      * Description: Multi-Tailed Arrows can't be saved to template - "Save to Template" button is disabled
      */
+    const saveToTemplatesButton =
+      saveStructureDialog(page).saveToTemplatesButton;
+    const saveStructureTextarea =
+      saveStructureDialog(page).saveStructureTextarea;
+
     await selectDropdownTool(
       page,
       'reaction-arrow-open-angle',
@@ -994,9 +997,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickOnCanvas(page, 500, 600);
     await selectSaveTool(page);
-    await expect(page.getByText('Save to Templates')).toBeDisabled();
+    await expect(saveToTemplatesButton).toBeDisabled();
     await takeEditorScreenshot(page, {
-      mask: [page.getByTestId('rxn-preview-area-text')],
+      mask: [saveStructureTextarea],
     });
   });
 
@@ -3478,10 +3481,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
-    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 
@@ -3499,10 +3504,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
-    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 
@@ -3518,10 +3525,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
-    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
     await selectClearCanvasTool(page);

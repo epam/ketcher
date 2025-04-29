@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -12,20 +12,11 @@ import {
   verifyFileExport,
   FileType,
 } from '@utils/files/receiveFileComparisonData';
-import { clickOnFileFormatDropdown } from '@utils/formats';
-
-async function saveSmarts(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-
-async function previewSmarts(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
-}
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
 
 test.describe('Reagents SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
@@ -52,7 +43,8 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await previewSmarts(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMARTS);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -79,7 +71,8 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await previewSmarts(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMARTS);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -128,6 +121,8 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4685
     Description: File saved in format (e.g. "ketcher.smarts")
     */
+    const saveButton = saveStructureDialog(page).saveButton;
+
     await openFileAndAddToCanvas(
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
@@ -139,6 +134,8 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await saveSmarts(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMARTS);
+    await saveButton.click();
   });
 });

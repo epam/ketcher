@@ -8,7 +8,6 @@ import {
   receiveFileComparisonData,
   pressButton,
   selectSnakeLayoutModeTool,
-  chooseFileFormat,
   getFasta,
   moveMouseAway,
   selectSequenceLayoutModeTool,
@@ -33,6 +32,8 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 // function removeNotComparableData(file: string) {
 //   return file.replaceAll('\r', '');
@@ -74,7 +75,7 @@ test.describe('Import-Saving .fasta Files', () => {
     const { fileExpected: fastaFileExpected, file: fastaFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/FASTA/fasta-rna-a-expected.fasta',
+        expectedFileName: 'FASTA/fasta-rna-a-expected.fasta',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 
@@ -94,7 +95,7 @@ test.describe('Import-Saving .fasta Files', () => {
     const { fileExpected: fastaFileExpected, file: fastaFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'tests/test-data/FASTA/fasta-empty.fasta',
+        expectedFileName: 'FASTA/fasta-empty.fasta',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 
@@ -144,8 +145,7 @@ test.describe('Import-Saving .fasta Files', () => {
     const { fileExpected: fastaFileExpected, file: fastaFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName:
-          'tests/test-data/FASTA/fasta-snake-mode-rna-expected.fasta',
+        expectedFileName: 'FASTA/fasta-snake-mode-rna-expected.fasta',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 
@@ -170,7 +170,7 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'FASTA');
+    await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
 
     await takeEditorScreenshot(page);
   });
@@ -181,7 +181,7 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'FASTA');
+    await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
 
     await takeEditorScreenshot(page);
   });
@@ -351,7 +351,7 @@ test.describe('Import-Saving .fasta Files', () => {
     */
       await openFileAndAddToCanvasMacro('KET/rna-sequence-and-chems.ket', page);
       await selectSaveTool(page);
-      await chooseFileFormat(page, 'FASTA');
+      await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
       await takeEditorScreenshot(page);
     },
   );
@@ -367,7 +367,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await openFileAndAddToCanvasMacro('KET/peptides-chain-cycled.ket', page);
       await selectSequenceLayoutModeTool(page);
       await selectSaveTool(page);
-      await chooseFileFormat(page, 'FASTA');
+      await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
       await takeEditorScreenshot(page);
     },
   );
@@ -396,7 +396,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'tests/test-data/FASTA/unsplit-nucleotides-connected-with-nucleotides.fasta',
+          'FASTA/unsplit-nucleotides-connected-with-nucleotides.fasta',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 
@@ -448,7 +448,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(page, 'FASTA');
+      await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -485,7 +485,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'FASTA');
+    await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
     await takeEditorScreenshot(page);
 
     test.fixme(
@@ -522,7 +522,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(page, 'FASTA');
+      await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -578,7 +578,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(page, 'FASTA');
+      await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -634,7 +634,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(page, 'FASTA');
+      await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -690,7 +690,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(page, 'FASTA');
+      await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
       await takeEditorScreenshot(page);
 
       test.fixme(

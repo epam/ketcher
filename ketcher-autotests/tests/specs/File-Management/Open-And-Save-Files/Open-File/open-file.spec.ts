@@ -1,15 +1,13 @@
 import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  openFile,
-  pressButton,
   takeEditorScreenshot,
-  openFromFileViaClipboard,
-  waitForLoad,
   openFileAndAddToCanvas,
   waitForPageInit,
+  openFileAndAddToCanvasAsNewProject,
+  readFileContent,
+  pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 
 const X_OFFSET = 200;
 
@@ -53,11 +51,9 @@ test.describe('open files with different formats', () => {
      * Description: Two structures are added to canvas - one opened from clipboard, another from file
      */
     // add first stucture from clipboard to canvas
-    await selectOpenFileTool(page);
-    await openFromFileViaClipboard(
-      'tests/test-data/Txt/1840225-mol-1.txt',
-      page,
-    );
+    const fileContent = await readFileContent('Txt/1840225-mol-1.txt');
+
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
 
     // add second structure from file to canvas
@@ -76,11 +72,9 @@ test.describe('open files with different formats', () => {
      * Description: Two structures are added to canvas - one opened from clipboard, another from file
      */
     // add first stucture from clipboard to canvas
-    await selectOpenFileTool(page);
-    await openFromFileViaClipboard(
-      'tests/test-data/Txt/1879938-rxn-1[1].txt',
-      page,
-    );
+    const fileContent = await readFileContent('Txt/1879938-rxn-1[1].txt');
+
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     // add second structure from file to canvas
     await openFileAndAddToCanvas(
       'Rxn-V2000/rxn-reaction.rxn',
@@ -97,11 +91,9 @@ test.describe('open files with different formats', () => {
      * Description: Open structures from InChi string
      */
     // add first stucture from clipboard to canvas
-    await selectOpenFileTool(page);
-    await openFromFileViaClipboard(
-      'tests/test-data/Txt/1837-inchi-1.txt',
-      page,
-    );
+    const fileContent = await readFileContent('Txt/1837-inchi-1.txt');
+
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -112,11 +104,9 @@ test.describe('open files with different formats', () => {
      * Description: Open structures from InChi string
      */
     // add first stucture from clipboard to canvas
-    await selectOpenFileTool(page);
-    await openFromFileViaClipboard(
-      'tests/test-data/Txt/1837-inchi-2.txt',
-      page,
-    );
+    const fileContent = await readFileContent('Txt/1837-inchi-2.txt');
+
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -127,11 +117,9 @@ test.describe('open files with different formats', () => {
      * Description: Open structures from InChi string
      */
     // add first structure from clipboard to canvas
-    await selectOpenFileTool(page);
-    await openFromFileViaClipboard(
-      'tests/test-data/Txt/1837-inchi-3.txt',
-      page,
-    );
+    const fileContent = await readFileContent('Txt/1837-inchi-3.txt');
+
+    await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -142,11 +130,10 @@ test.describe('open files with different formats', () => {
      * Description: Open structures from mol file
      */
     // add first structure from clipboard to canvas
-    await selectOpenFileTool(page);
-    await openFile('Molfiles-V3000/a-query-notList.mol', page);
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/a-query-notList.mol',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -156,11 +143,10 @@ test.describe('open files with different formats', () => {
      * Description: Open structures from mol file
      */
     // add first stucture from clipboard to canvas
-    await selectOpenFileTool(page);
-    await openFile('Molfiles-V3000/dhis-prohibit-atoms.mol', page);
-    await waitForLoad(page, async () => {
-      await pressButton(page, 'Open as New Project');
-    });
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/dhis-prohibit-atoms.mol',
+      page,
+    );
     await takeEditorScreenshot(page);
   });
 

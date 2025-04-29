@@ -515,8 +515,7 @@ test.describe('Attachment Point Tool', () => {
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName:
-          'tests/test-data/SMILES/chain-with-attachment-points-expected.smi',
+        expectedFileName: 'SMILES/chain-with-attachment-points-expected.smi',
       });
     expect(smiFile).toEqual(smiFileExpected);
     await takeEditorScreenshot(page);
@@ -541,8 +540,7 @@ test.describe('Attachment Point Tool', () => {
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName:
-          'tests/test-data/SMILES/chain-with-attachment-points-expected.smi',
+        expectedFileName: 'SMILES/chain-with-attachment-points-expected.smi',
       });
     expect(smiFile).toEqual(smiFileExpected);
     await takeEditorScreenshot(page);

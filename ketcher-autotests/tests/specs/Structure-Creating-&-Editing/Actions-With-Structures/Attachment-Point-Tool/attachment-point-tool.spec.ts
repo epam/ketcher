@@ -299,11 +299,13 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1644
     Description: The Not List atom, Any Atom, Group Generics is attached to attachment points.
     */
+    const anyAtomButton = rightToolbar(page).anyAtomButton;
+
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await selectNotListAtoms(page);
     await clickOnAtom(page, 'C', 2);
 
-    await page.getByTestId('any-atom').click();
+    await anyAtomButton.click();
     await clickOnAtom(page, 'C', 2);
 
     await selectExtendedTableElements(page, 'G');

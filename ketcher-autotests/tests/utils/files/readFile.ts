@@ -196,18 +196,21 @@ export async function openImageAndAddToCanvas(
 
   await selectImageTool(page);
 
+  const fileChooserPromise = page.waitForEvent('filechooser');
   if (x !== undefined && y !== undefined) {
     await clickOnCanvas(page, x, y);
   } else {
     await clickInTheMiddleOfTheScreen(page);
   }
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles(resolvedFilePath);
 
-  const inputFile = await page.$('input[type="file"]');
-  if (inputFile) {
-    await inputFile.setInputFiles(resolvedFilePath);
-  } else {
-    throw new Error('Input file element not found');
-  }
+  // const inputFile = await page.$('input[type="file"]');
+  // if (inputFile) {
+  //   await inputFile.setInputFiles(resolvedFilePath);
+  // } else {
+  //   throw new Error('Input file element not found');
+  // }
 }
 
 export async function filteredFile(

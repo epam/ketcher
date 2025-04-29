@@ -43,6 +43,8 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 const xOffsetFromCenter = -35;
 const idToTitle: {
@@ -81,15 +83,15 @@ const idToTitle: {
 
 const formatsForSave = [
   {
-    name: 'Daylight SMILES',
+    name: MoleculesFileFormatType.DaylightSMILES,
     fileExtension: 'smi',
   },
   {
-    name: 'Extended SMILES',
+    name: MoleculesFileFormatType.ExtendedSMILES,
     fileExtension: 'cxsmi',
   },
   {
-    name: 'CML',
+    name: MoleculesFileFormatType.CML,
     fileExtension: 'cml',
   },
 ];
@@ -483,17 +485,18 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: EPMLSOPKET-1793
      * Description: Save plus sign and arrow
      */
+    const cancelButton = saveStructureDialog(page).cancelButton;
 
     await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
-    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await cancelButton.click();
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
     const offsetFromCenter = -35;
     await clickOnTheCanvas(page, offsetFromCenter, 0);
     await selectSaveTool(page);
-    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await cancelButton.click();
   });
 
   test.describe('Save multiple reaction arrows', () => {
@@ -510,7 +513,7 @@ test.describe('Plus and Arrows tools ', () => {
       const offsetFromCenter = -35;
       await clickOnTheCanvas(page, offsetFromCenter, 0);
       await clickOnTheCanvas(page, offsetFromCenter, offsetFromCenter);
-      await saveStructureWithReaction(page, 'Ket Format');
+      await saveStructureWithReaction(page, MoleculesFileFormatType.KetFormat);
     });
 
     test('open file', async ({ page }) => {
@@ -535,7 +538,7 @@ test.describe('Plus and Arrows tools ', () => {
       const offsetFromCenter = -35;
       await clickOnTheCanvas(page, offsetFromCenter, 0);
       await clickOnTheCanvas(page, offsetFromCenter, offsetFromCenter);
-      await saveStructureWithReaction(page, 'Ket Format');
+      await saveStructureWithReaction(page, MoleculesFileFormatType.KetFormat);
     });
 
     test('open file', async ({ page }) => {
@@ -636,7 +639,7 @@ test.describe('Plus and Arrows tools ', () => {
       await page.mouse.move(x - 35, y - 1);
       await dragMouseTo(x - 25, y - 50, page);
       await saveStructureWithReaction(page);
-      await saveStructureWithReaction(page, 'Ket Format');
+      await saveStructureWithReaction(page, MoleculesFileFormatType.KetFormat);
     });
 
     test('open files', async ({ page }) => {

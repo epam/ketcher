@@ -19,11 +19,9 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   clickOnCanvas,
-  clickOnFileFormatDropdown,
   dragMouseTo,
   drawBenzeneRing,
   getControlModifier,
-  hideLibrary,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
@@ -59,6 +57,7 @@ import {
   waitForRender,
   waitForSpinnerFinishedWork,
 } from '@utils';
+import { hideLibrary, showLibrary } from '@utils/canvas/tools';
 import {
   selectClearCanvasTool,
   selectOpenFileTool,
@@ -111,6 +110,8 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 const topLeftCorner = {
   x: -325,
@@ -162,17 +163,6 @@ async function setAtomAndBondSettings(page: Page) {
     .nth(2)
     .fill('05');
   await page.getByTestId('OK').click();
-}
-
-enum FileFormat {
-  SVGDocument = 'SVG Document',
-  PNGImage = 'PNG Image',
-}
-
-async function saveFileAsPngOrSvgFormat(page: Page, FileFormat: string) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: FileFormat }).click();
 }
 
 async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
@@ -277,6 +267,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await hideLibrary(page);
     await takePageScreenshot(page);
     expect(page.getByTestId('show-monomer-library')).toBeVisible();
+    await showLibrary(page);
   });
 
   test('Check that the Mol-structure opened from the file in Macro mode is visible on Micro mode', async () => {
@@ -330,6 +321,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: Abbreviation of monomer expanded without errors.
     Now test working not properly because we have bug https://github.com/epam/ketcher/issues/3659
     */
+    await turnOnMacromoleculesEditor(page);
     await openFileAndAddToCanvasMacro(
       'KET/three-monomers-connected-with-bonds.ket',
       page,
@@ -472,7 +464,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Mol-structure pasted from the clipboard in Macro mode  is visible in Micro mode
     */
-
+    await turnOnMacromoleculesEditor(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.MOLv3000,
@@ -496,7 +488,7 @@ test.describe('Macro-Micro-Switcher', () => {
       Test case: Macro-Micro-Switcher/3712
       Description: Pressing Layout or Clean Up button not erase all macromolecules from canvas
       */
-
+      await turnOnMacromoleculesEditor(page);
       await selectMonomer(page, Peptides.A);
       await clickInTheMiddleOfTheScreen(page);
       await moveMouseAway(page);
@@ -1751,7 +1743,8 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
-      await saveFileAsPngOrSvgFormat(page, FileFormat.SVGDocument);
+      await selectSaveTool(page);
+      await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
       await takeEditorScreenshot(page);
     },
   );
@@ -1770,7 +1763,8 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
-      await saveFileAsPngOrSvgFormat(page, FileFormat.PNGImage);
+      await selectSaveTool(page);
+      await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
       await takeEditorScreenshot(page);
     },
   );
@@ -2881,6 +2875,7 @@ test('Switch to Macro mode, verify that user cant open reactions from RDF RXN V2
   Test case: https://github.com/epam/Indigo/issues/2102
   Description: In Macro mode, user can't open reactions from RDF RXN V2000/V3000 - error message is displayed. 
   */
+  await turnOnMacromoleculesEditor(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
     'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf',
     page,

@@ -5,7 +5,8 @@ import {
   waitForPageInit,
 } from '@utils';
 import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
-import { clickOnFileFormatDropdown } from '@utils/formats';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
 
 test.describe('Reagents molecule below arrow', () => {
   test.beforeEach(async ({ page }) => {
@@ -50,8 +51,7 @@ test.describe('Reagents molecule below arrow', () => {
       page,
     );
     await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'SVG Document' }).click();
+    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
     await takeEditorScreenshot(page);
   });
 
@@ -66,8 +66,7 @@ test.describe('Reagents molecule below arrow', () => {
     );
 
     await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'PNG Image' }).click();
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 });

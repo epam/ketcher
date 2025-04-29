@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect, Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
   takeEditorScreenshot,
@@ -8,7 +8,6 @@ import {
   selectOptionInDropdown,
   pressButton,
   selectSnakeLayoutModeTool,
-  chooseFileFormat,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -31,6 +30,11 @@ import {
   PeptideLetterCodeType,
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import {
+  chooseFileFormat,
+  getTextAreaValue,
+} from '@tests/pages/common/SaveStructureDialog';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
@@ -160,7 +164,10 @@ test.describe('Import-Saving .seq Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'Sequence (1-letter code)');
+    await chooseFileFormat(
+      page,
+      MacromoleculesFileFormatType.Sequence1LetterCode,
+    );
 
     await takeEditorScreenshot(page);
   });
@@ -171,7 +178,10 @@ test.describe('Import-Saving .seq Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'Sequence (1-letter code)');
+    await chooseFileFormat(
+      page,
+      MacromoleculesFileFormatType.Sequence1LetterCode,
+    );
 
     await takeEditorScreenshot(page);
   });
@@ -269,7 +279,10 @@ test.describe('Import-Saving .seq Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(page, 'Sequence (1-letter code)');
+      await chooseFileFormat(
+        page,
+        MacromoleculesFileFormatType.Sequence1LetterCode,
+      );
 
       test.fixme(
         true,
@@ -307,7 +320,10 @@ test.describe('Import-Saving .seq Files', () => {
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       await selectSaveTool(page);
-      await chooseFileFormat(page, 'Sequence (1-letter code)');
+      await chooseFileFormat(
+        page,
+        MacromoleculesFileFormatType.Sequence1LetterCode,
+      );
       test.fixme(
         true,
         `That test fails because of https://github.com/epam/ketcher/issues/6635 issue.`,
@@ -345,7 +361,10 @@ test.describe('Import-Saving .seq Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(page, 'Sequence (1-letter code)');
+      await chooseFileFormat(
+        page,
+        MacromoleculesFileFormatType.Sequence1LetterCode,
+      );
 
       test.fixme(
         true,
@@ -409,7 +428,10 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'Sequence (1-letter code)');
+    await chooseFileFormat(
+      page,
+      MacromoleculesFileFormatType.Sequence1LetterCode,
+    );
     await takeEditorScreenshot(page);
 
     await closeErrorMessage(page);
@@ -467,7 +489,10 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'Sequence (1-letter code)');
+    await chooseFileFormat(
+      page,
+      MacromoleculesFileFormatType.Sequence1LetterCode,
+    );
     await takeEditorScreenshot(page);
 
     await closeErrorMessage(page);
@@ -523,7 +548,10 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, 'Sequence (1-letter code)');
+    await chooseFileFormat(
+      page,
+      MacromoleculesFileFormatType.Sequence1LetterCode,
+    );
     await takeEditorScreenshot(page);
 
     await closeErrorMessage(page);
@@ -854,14 +882,6 @@ const sequencesToExport: ISequenceString[] = [
   },
 ];
 
-async function openSaveToSequenceDialog(
-  page: Page,
-  seqeunceType: PeptideLetterCodeType,
-) {
-  await selectSaveTool(page);
-  await chooseFileFormat(page, `Sequence (${seqeunceType})`);
-}
-
 for (const sequenceToExport of sequencesToExport) {
   test(`${sequenceToExport.testCaseDescription} with ${sequenceToExport.sequenceDescription}`, async ({
     page,
@@ -882,10 +902,12 @@ for (const sequenceToExport of sequencesToExport) {
       sequenceToExport.sequenceString,
     );
 
-    await openSaveToSequenceDialog(page, PeptideLetterCodeType.threeLetterCode);
-    const sequenceExportResult = await page
-      .getByTestId('preview-area-text')
-      .textContent();
+    await selectSaveTool(page);
+    await chooseFileFormat(
+      page,
+      MacromoleculesFileFormatType.Sequence3LetterCode,
+    );
+    const sequenceExportResult = await getTextAreaValue(page);
 
     if (sequenceToExport.differentSequenceExport) {
       expect(sequenceExportResult).toEqual(
@@ -1005,7 +1027,11 @@ for (const sequenceToExport of nonStandardAmbiguousPeptides) {
       );
     }
 
-    await openSaveToSequenceDialog(page, PeptideLetterCodeType.threeLetterCode);
+    await selectSaveTool(page);
+    await chooseFileFormat(
+      page,
+      MacromoleculesFileFormatType.Sequence3LetterCode,
+    );
 
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -1367,10 +1393,12 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
       sequenceToExport.sequenceString,
     );
 
-    await openSaveToSequenceDialog(page, PeptideLetterCodeType.threeLetterCode);
-    const sequenceExportResult = await page
-      .getByTestId('preview-area-text')
-      .textContent();
+    await selectSaveTool(page);
+    await chooseFileFormat(
+      page,
+      MacromoleculesFileFormatType.Sequence3LetterCode,
+    );
+    const sequenceExportResult = await getTextAreaValue(page);
 
     if (sequenceToExport.differentSequenceExport) {
       expect(sequenceExportResult).toEqual(

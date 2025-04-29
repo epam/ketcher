@@ -1,9 +1,8 @@
 /* eslint-disable no-magic-numbers */
-import { chooseFileFormat, chooseTab, Tabs } from '@utils/macromolecules';
+import { chooseTab, Tabs } from '@utils/macromolecules';
 import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  pressButton,
   waitForPageInit,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
@@ -18,6 +17,12 @@ import {
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import {
+  chooseFileFormat,
+  getTextAreaValue,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
 
@@ -45,11 +50,6 @@ test.afterEach(async () => {
 test.afterAll(async ({ browser }) => {
   await Promise.all(browser.contexts().map((context) => context.close()));
 });
-
-async function openSaveToHELMDialog(page: Page) {
-  await selectSaveTool(page);
-  await chooseFileFormat(page, 'HELM');
-}
 
 interface IHELMString {
   helmDescription: string;
@@ -475,16 +475,17 @@ test.describe('Export to HELM: ', () => {
         `That test fails because of ${correctHELMString.issueNumber} issue.`,
       );
       if (correctHELMString.pageReloadNeeded) await pageReload(page);
+      const cancelButton = saveStructureDialog(page).cancelButton;
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
         correctHELMString.HELMString,
       );
-      await openSaveToHELMDialog(page);
-      const HELMExportResult = await page
-        .getByTestId('preview-area-text')
-        .textContent();
+      await selectSaveTool(page);
+      await chooseFileFormat(page, MacromoleculesFileFormatType.HELM);
+
+      const HELMExportResult = await getTextAreaValue(page);
 
       if (correctHELMString.differentHELMExport) {
         expect(HELMExportResult).toEqual(correctHELMString.differentHELMExport);
@@ -492,7 +493,7 @@ test.describe('Export to HELM: ', () => {
         expect(HELMExportResult).toEqual(correctHELMString.HELMString);
       }
 
-      await pressButton(page, 'Cancel');
+      await cancelButton.click();
     });
   }
 });

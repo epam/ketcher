@@ -36,6 +36,11 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
 
@@ -65,25 +70,6 @@ test.afterAll(async ({ browser }) => {
 async function clickNthConnectionLine(page: Page, n: number) {
   const bondLine = page.locator('g[pointer-events="stroke"]').nth(n);
   await bondLine.click();
-}
-
-enum FileFormat {
-  SVGDocument = 'SVG Document',
-  PNGImage = 'PNG Image',
-}
-
-async function clickOnFileFormatDropdown(page: Page) {
-  await page.getByRole('combobox').click();
-}
-
-async function closeSaveStrutureDialog(page: Page) {
-  await page.getByRole('button', { name: 'Cancel' }).click();
-}
-
-async function saveFileAsPngOrSvgFormat(page: Page, FileFormat: string) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: FileFormat }).click();
 }
 
 test.describe('Side chain connections', () => {
@@ -1067,16 +1053,18 @@ test.describe('Side chain connections', () => {
     /*  
       Case 16: Verify saving structure with side-chain connections in SVG Document format
     */
+    const cancelButton = saveStructureDialog(page).cancelButton;
     await showLibrary(page);
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       `KET/Side-Chain-Connections/16.ket`,
       page,
     );
-    await saveFileAsPngOrSvgFormat(page, FileFormat.SVGDocument);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
     await takeEditorScreenshot(page);
     // Closing Save dialog
-    await closeSaveStrutureDialog(page);
+    await cancelButton.click();
   });
 
   test('17. Verify saving structure with side-chain connections in SVG Document format', async () => {

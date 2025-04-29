@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -8,18 +8,13 @@ import {
   pasteFromClipboardAndAddToCanvas,
   moveMouseAway,
 } from '@utils';
-import { clickOnFileFormatDropdown } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
-
-async function saveFileAsCmlFormat(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'CML' }).click();
-}
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
 
 test.describe('Reagents CML format', () => {
   test.beforeEach(async ({ page }) => {
@@ -70,7 +65,8 @@ test.describe('Reagents CML format', () => {
       'CML/reagents-below-and-above-arrow.cml',
       page,
     );
-    await saveFileAsCmlFormat(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.CML);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });

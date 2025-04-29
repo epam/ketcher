@@ -3,16 +3,21 @@ import { Page, chromium, expect, test } from '@playwright/test';
 import {
   waitForKetcherInit,
   waitForIndigoToLoad,
-  openStructurePasteFromClipboard,
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
 } from '@utils';
+import { openStructurePasteFromClipboard } from '@utils/canvas/tools';
 import {
   selectClearCanvasTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 test.describe('Open/save file tests: ', () => {
   let page: Page;
@@ -80,28 +85,20 @@ test.describe('Open/save file tests: ', () => {
     await expect(openStructureTextarea).toHaveValue('');
   });
 
-  async function selectFASTAFileFormat(page: Page) {
-    await page.getByRole('combobox').click();
-    await page.getByText('FASTA').click();
-  }
-
-  async function closeSaveStrutureDialog(page: Page) {
-    await page.getByRole('button', { name: 'Cancel' }).click();
-  }
-
   test(`Check that in case of multiple types sequences on canvas, error "Error during sequence type recognition(RNA, DNA or Peptide)" should appear`, async () => {
     /*
      *  Test case2: https://github.com/epam/ketcher/issues/4422 - Cases 32
      *  Check that in case of multiple types sequences on canvas, error "Error during sequence type recognition(RNA, DNA or Peptide)" should appear
      */
     test.setTimeout(20000);
+    const cancelButton = saveStructureDialog(page).cancelButton;
     await openFileAndAddToCanvasAsNewProject(
       'KET/Open-Save-Tests/Multiple types sequences on canvas.ket',
       page,
     );
 
     await selectSaveTool(page);
-    await selectFASTAFileFormat(page);
+    await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
 
     const errorMessageDialog = page.getByRole('dialog');
     const errorMessageText =
@@ -110,7 +107,8 @@ test.describe('Open/save file tests: ', () => {
     await expect(page.getByText(errorMessageText)).toBeVisible();
 
     await page.keyboard.press('Escape');
-    await closeSaveStrutureDialog(page);
+
+    await cancelButton.click();
   });
 
   // async function toggleFullScreenOn(page: Page) {

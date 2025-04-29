@@ -17,7 +17,6 @@ import {
   cutAndPaste,
   moveOnAtom,
   dragMouseTo,
-  clickOnFileFormatDropdown,
   clickOnCanvas,
   selectRing,
   RingButton,
@@ -42,6 +41,8 @@ import {
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
+import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 async function addTail(page: Page, x: number, y: number) {
   await page.mouse.click(x, y, { button: 'right' });
@@ -1701,19 +1702,20 @@ test.describe('Cascade Reactions', () => {
     },
   );
 
-  ['RDF V2000', 'RDF V3000'].forEach((format) => {
-    test(`Canvas is empty, click on Save as..., verify that ${format} option is placed under SDF V2000, SDF V3000 in a File format dropdown`, async () => {
-      /**
-       * Test case: https://github.com/epam/Indigo/issues/2237
-       * Description: Canvas is empty, click on Save as..., verify that ${format} option is placed under SDF V2000, SDF V3000
-       * in a File format dropdown, empty canvas can't be saved to ${format}, error "Convert error! core: <molecule> is not a base reaction" is displayed.
-       */
-      await selectSaveTool(page);
-      await clickOnFileFormatDropdown(page);
-      await page.getByTestId(`${format}-option`).click();
-      await takeEditorScreenshot(page);
-    });
-  });
+  [MoleculesFileFormatType.RDFV2000, MoleculesFileFormatType.RDFV3000].forEach(
+    (format) => {
+      test(`Canvas is empty, click on Save as..., verify that ${format} is placed under SDF V2000, SDF V3000 in a File format dropdown`, async () => {
+        /**
+         * Test case: https://github.com/epam/Indigo/issues/2237
+         * Description: Canvas is empty, click on Save as..., verify that ${format} option is placed under SDF V2000, SDF V3000
+         * in a File format dropdown, empty canvas can't be saved to ${format}, error "Convert error! core: <molecule> is not a base reaction" is displayed.
+         */
+        await selectSaveTool(page);
+        await chooseFileFormat(page, format);
+        await takeEditorScreenshot(page);
+      });
+    },
+  );
 
   const testCases24 = [
     {

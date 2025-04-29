@@ -1,4 +1,4 @@
-import { Page, expect, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -14,28 +14,12 @@ import {
   getSmiles,
   setMolecule,
   enableDearomatizeOnLoad,
-  clickOnFileFormatDropdown,
 } from '@utils/formats';
-
-async function getPreviewForSmiles(page: Page, smileType: string) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: smileType }).click();
-}
-
-async function saveDaylightSmiles(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'Daylight SMILES' }).click();
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-
-async function saveExtendedSmiles(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'Extended SMILES' }).click();
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import {
+  chooseFileFormat,
+  saveStructureDialog,
+} from '@tests/pages/common/SaveStructureDialog';
 
 test.describe('Reagents SMILES format', () => {
   test.beforeEach(async ({ page }) => {
@@ -63,7 +47,8 @@ test.describe('Reagents SMILES format', () => {
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
 
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -89,7 +74,8 @@ test.describe('Reagents SMILES format', () => {
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
 
-    await getPreviewForSmiles(page, 'Daylight SMILES');
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -109,7 +95,8 @@ test.describe('Reagents SMILES format', () => {
       page,
     );
 
-    await getPreviewForSmiles(page, 'Extended SMILES');
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.ExtendedSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -129,7 +116,8 @@ test.describe('Reagents SMILES format', () => {
       page,
     );
 
-    await getPreviewForSmiles(page, 'Extended SMILES');
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.ExtendedSMILES);
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -202,6 +190,8 @@ test.describe('Reagents SMILES format', () => {
     Test case: EPMLSOPKET-4665
     Description: File saved in format (e.g. "ketcher.smi")
     */
+    const saveButton = saveStructureDialog(page).saveButton;
+
     await openFileAndAddToCanvas(
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
@@ -213,7 +203,9 @@ test.describe('Reagents SMILES format', () => {
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
 
-    await saveDaylightSmiles(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMILES);
+    await saveButton.click();
   });
 
   test('File saves in "Extended SMILES" format', async ({ page }) => {
@@ -221,6 +213,8 @@ test.describe('Reagents SMILES format', () => {
     Test case: EPMLSOPKET-4666
     Description: File saved in format (e.g. "ketcher.cxsmi")
     */
+    const saveButton = saveStructureDialog(page).saveButton;
+
     await openFileAndAddToCanvas(
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
@@ -232,6 +226,8 @@ test.describe('Reagents SMILES format', () => {
     const smiFile = await getExtendedSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
 
-    await saveExtendedSmiles(page);
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.ExtendedSMILES);
+    await saveButton.click();
   });
 });

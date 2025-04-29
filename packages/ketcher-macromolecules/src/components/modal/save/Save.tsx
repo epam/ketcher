@@ -218,7 +218,7 @@ export const Save = ({
               currentSelection={currentFileFormat}
               selectionHandler={handleSelectChange}
               customStylesForExpanded={stylesForExpanded}
-              data-testid="file-format-dropdown"
+              testId="file-format-list"
             />
           </Row>
           {svgData ? (

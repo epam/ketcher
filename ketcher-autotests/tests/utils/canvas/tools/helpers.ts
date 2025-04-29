@@ -244,18 +244,6 @@ export async function saveToTemplates(page: Page, templateName: string) {
   await page.getByRole('button', { name: 'Save', exact: true }).click();
 }
 
-export async function selectFormatForSaving(page: Page, templateName: string) {
-  await page.getByRole('option', { name: templateName }).click();
-}
-
-export async function clickOnSaveFileAndOpenDropdown(page: Page) {
-  const fileFormatDropdonwList =
-    saveStructureDialog(page).fileFormatDropdonwList;
-
-  await selectSaveTool(page);
-  await fileFormatDropdonwList.click();
-}
-
 export async function openSettings(page: Page) {
   await selectTopPanelButton(TopPanelButton.Settings, page);
   // Wait while system loads list of values (i.e. Arial in particular) in Font combobox

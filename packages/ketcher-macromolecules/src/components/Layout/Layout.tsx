@@ -83,9 +83,11 @@ const Top = styled.div<{ shortened?: boolean }>(
   }),
 );
 
-const Bottom = styled.div<{ shortened?: boolean }>(() => ({
-  marginBottom: '15px',
-}));
+const Bottom = styled.div`
+  &:not(:empty) {
+    margin-bottom: 15px;
+  }
+`;
 
 const Main = styled.div({
   height: '100%',

@@ -145,7 +145,10 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       'Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: ' +
       "'molecule auto loader: SMILES loader: cycle number 0 is not allowed', " +
       "'scanner: BufferScanner::read() error', 'scanner: BufferScanner::read() error', " +
-      "'molecule auto loader: SMILES loader: cycle number 0 is not allowed'";
+      "'molecule auto loader: SMILES loader: cycle number 0 is not allowed', " +
+      "'molecule auto loader: SMILES loader: cycle number 0 is not allowed', " +
+      "'scanner: BufferScanner::read() error'";
+
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
     await takeEditorScreenshot(page);
   });

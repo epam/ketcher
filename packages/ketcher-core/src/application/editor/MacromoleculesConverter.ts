@@ -483,6 +483,7 @@ export class MacromoleculesConverter {
               isotope: atom.isotope,
               radical: atom.radical,
               alias: atom.alias,
+              cip: atom.cip,
             },
           );
 
@@ -509,6 +510,7 @@ export class MacromoleculesConverter {
               bond.type,
               bond.stereo,
               bondId,
+              bond.cip,
             ),
           );
         });

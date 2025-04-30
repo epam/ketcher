@@ -22,6 +22,7 @@ import {
   SubChainNode,
   Sugar,
 } from 'domain/entities';
+import { BondCIP } from 'domain/entities/types';
 import {
   AttachmentPointHoverOperation,
   MonomerAddOperation,
@@ -1871,6 +1872,7 @@ export class DrawingEntitiesManager {
         bond.type,
         bond.stereo,
         bond.bondIdInMicroMode,
+        bond.cip,
       );
       const addedBond = bondAddCommand.operations[0].bond as Bond;
 
@@ -2359,6 +2361,7 @@ export class DrawingEntitiesManager {
     stereo: number,
     bondIdInMicroMode: number,
     _bond?: Bond,
+    cip?: BondCIP | null,
   ) {
     if (_bond) {
       this.bonds.set(_bond.id, _bond);
@@ -2372,6 +2375,7 @@ export class DrawingEntitiesManager {
       bondIdInMicroMode,
       type,
       stereo,
+      cip,
     );
 
     this.bonds.set(bond.id, bond);
@@ -2387,6 +2391,7 @@ export class DrawingEntitiesManager {
     type: number,
     stereo: number,
     bondIdInMicroMode: number,
+    cip?: BondCIP | null,
   ) {
     const command = new Command();
     const bondAddOperation = new BondAddOperation(
@@ -2398,6 +2403,7 @@ export class DrawingEntitiesManager {
           stereo,
           bondIdInMicroMode,
           bond,
+          cip,
         ),
       (bond: Bond) => this.deleteBondChangeModel(bond),
     );

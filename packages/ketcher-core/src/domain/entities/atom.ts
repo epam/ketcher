@@ -26,6 +26,7 @@ import {
 } from 'domain/entities/BaseMicromoleculeEntity';
 import { isNumber } from 'lodash';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
+import { AtomCIP } from './types';
 
 /**
  * Return unions of Pick.
@@ -53,13 +54,6 @@ export enum StereoLabel {
   Abs = 'abs',
   And = '&',
   Or = 'or',
-}
-
-enum CIP {
-  S = 'S',
-  R = 'R',
-  s = 's',
-  r = 'r',
 }
 
 export type Aromaticity = 'aromatic' | 'aliphatic';
@@ -98,7 +92,7 @@ export interface AtomAttributes {
   rglabel?: string | null;
   charge?: number | null;
   radical?: number;
-  cip?: CIP | null;
+  cip?: AtomCIP | null;
   isotope?: number | null;
   alias?: string | null;
   pseudo?: string;
@@ -178,7 +172,7 @@ export class Atom extends BaseMicromoleculeEntity {
   isPreview: boolean;
   hCount: number;
   radical: number;
-  cip: CIP | null;
+  cip: AtomCIP | null;
   charge: number | null;
   explicitValence: number;
   ringBondCount: number;

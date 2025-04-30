@@ -36,7 +36,9 @@ test.describe('Open Ketcher', () => {
   ];
 
   for (const atom of atoms) {
-    test(`Check atoms ${atom}`, async ({ page }) => {
+    test(`Check atoms ${
+      Object.entries(Atom).find(([, value]) => value === atom)?.[0]
+    }`, async ({ page }) => {
       const atomToolbar = rightToolbar(page);
 
       await atomToolbar.clickAtom(atom);

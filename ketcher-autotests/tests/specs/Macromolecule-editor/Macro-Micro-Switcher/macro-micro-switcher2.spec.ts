@@ -12,12 +12,10 @@ import {
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
   waitForPageInit,
-  selectSnakeLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,
   selectDropdownTool,
   clickInTheMiddleOfTheScreen,
   moveMouseAway,
-  selectRingButton,
   RingButton,
   moveMouseToTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -37,6 +35,10 @@ import {
   selectSequenceTypeMode,
   hideLibrary,
 } from '@utils';
+import {
+  selectRingButton,
+  selectSnakeLayoutModeTool,
+} from '@utils/canvas/tools';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   FileType,

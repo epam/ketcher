@@ -8,13 +8,13 @@ import {
   selectRectangleArea,
   takeEditorScreenshot,
   waitForPageInit,
-  selectSnakeLayoutModeTool,
   moveMouseAway,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   selectMonomer,
   clickInTheMiddleOfTheScreen,
 } from '@utils';
+import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
 import {

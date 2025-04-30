@@ -595,10 +595,18 @@ export abstract class BaseMonomer extends DrawingEntity {
     const naturalAnalogThreeLettersCode =
       this.monomerItem.props.MonomerNaturalAnalogThreeLettersCode;
     const naturalAnalogCode = this.monomerItem.props.MonomerNaturalAnalogCode;
+    const namesToCompareNaturalAnalog = [
+      ...([this.label] || []),
+      ...([this.monomerItem.props.MonomerName] || []),
+    ];
+    const naturalAnaloguesToCompare = [
+      ...([naturalAnalogThreeLettersCode] || []),
+      ...([naturalAnalogCode] || []),
+    ];
 
-    return naturalAnalogThreeLettersCode
-      ? naturalAnalogThreeLettersCode !== this.monomerItem.props.MonomerName
-      : naturalAnalogCode !== this.label;
+    return namesToCompareNaturalAnalog.every(
+      (nameToCompare) => !naturalAnaloguesToCompare.includes(nameToCompare),
+    );
   }
 
   public get sideConnections() {

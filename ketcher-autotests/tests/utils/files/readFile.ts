@@ -8,6 +8,7 @@ import {
   selectImageTool,
   clickOnCanvas,
   MacroFileType,
+  delay,
 } from '@utils';
 import { waitForLoad } from '@utils/common';
 import { MolfileFormat } from 'ketcher-core';
@@ -193,15 +194,18 @@ export async function openImageAndAddToCanvas(
 ) {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
+  const debugDelay = 0.15;
 
   await selectImageTool(page);
 
   const fileChooserPromise = page.waitForEvent('filechooser');
+
   if (x !== undefined && y !== undefined) {
     await clickOnCanvas(page, x, y);
   } else {
     await clickInTheMiddleOfTheScreen(page);
   }
+  await delay(debugDelay);
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(resolvedFilePath);
 

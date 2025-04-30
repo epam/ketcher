@@ -599,16 +599,14 @@ async function expandMonomer(page: Page, locatorText: string) {
 async function collapseMonomer(page: Page) {
   // await clickInTheMiddleOfTheScreen(page, 'right');
   const canvasLocator = page.getByTestId('ketcher-canvas');
-  const attachmentPoint = canvasLocator
-    .getByText('R1', { exact: true })
-    .first();
+  const attachmentPoint = canvasLocator.getByText('H', { exact: true }).first();
 
   if (await attachmentPoint.isVisible()) {
     await attachmentPoint.click({
       button: 'right',
     });
   } else {
-    await canvasLocator.getByText('R2', { exact: true }).first().click({
+    await canvasLocator.getByText('O', { exact: true }).first().click({
       button: 'right',
     });
   }

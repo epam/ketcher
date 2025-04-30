@@ -60,7 +60,6 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async ({ context: _ }, testInfo) => {
   await selectClearCanvasTool(page);
-  // await selectFlexLayoutModeTool(page);
   await resetZoomLevelToDefault(page);
   await processResetToDefaultState(testInfo, page);
 });

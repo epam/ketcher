@@ -51,6 +51,8 @@ export async function getTextAreaValue(page: Page) {
   if (await loadingSpinner.isVisible()) {
     await loadingSpinner.waitFor({ state: 'detached' });
   }
+  await saveStructureTextarea.waitFor({ state: 'attached' });
+
   return saveStructureTextarea.inputValue();
 }
 

@@ -3,7 +3,7 @@ import { Vec2 } from 'domain/entities/vec2';
 import { Atom } from 'domain/entities/CoreAtom';
 import { BaseRenderer } from 'application/render';
 import { BondRenderer } from 'application/render/renderers/BondRenderer';
-import { CIP } from 'domain/entities/atom';
+import { BondCIP } from 'domain/entities/types';
 
 export enum BondType {
   None,
@@ -37,7 +37,7 @@ export class Bond extends DrawingEntity {
     public bondIdInMicroMode: number,
     public type: BondType = BondType.Single,
     public stereo: BondStereo = BondStereo.None,
-    public cip: CIP | null = null,
+    public cip: BondCIP | null = null,
   ) {
     super(firstAtom.position);
     this.endPosition = secondAtom.position;

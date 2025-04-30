@@ -12,7 +12,6 @@ import assert from 'assert';
 import {
   BaseMonomer,
   Chem,
-  CIP,
   LinkerSequenceNode,
   MonomerSequenceNode,
   Phosphate,
@@ -23,6 +22,7 @@ import {
   SubChainNode,
   Sugar,
 } from 'domain/entities';
+import { BondCIP } from 'domain/entities/types';
 import {
   AttachmentPointHoverOperation,
   MonomerAddOperation,
@@ -2361,7 +2361,7 @@ export class DrawingEntitiesManager {
     stereo: number,
     bondIdInMicroMode: number,
     _bond?: Bond,
-    cip: CIP | null = null,
+    cip?: BondCIP | null,
   ) {
     if (_bond) {
       this.bonds.set(_bond.id, _bond);
@@ -2391,7 +2391,7 @@ export class DrawingEntitiesManager {
     type: number,
     stereo: number,
     bondIdInMicroMode: number,
-    cip: CIP | null,
+    cip?: BondCIP | null,
   ) {
     const command = new Command();
     const bondAddOperation = new BondAddOperation(

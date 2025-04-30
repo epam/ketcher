@@ -7,7 +7,7 @@ import { AtomLabel, Elements } from 'domain/constants';
 import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { isNumber } from 'lodash';
 import { MonomerToAtomBond } from './MonomerToAtomBond';
-import { CIP } from './atom';
+import { AtomCIP } from './types';
 
 export enum AtomRadical {
   None,
@@ -22,7 +22,7 @@ export interface AtomProperties {
   isotope?: number | null;
   radical?: AtomRadical;
   alias?: string | null;
-  cip?: CIP | null;
+  cip?: AtomCIP | null;
 }
 
 export class Atom extends DrawingEntity {

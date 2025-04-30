@@ -815,6 +815,7 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
       });
     });
   });

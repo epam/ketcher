@@ -128,6 +128,12 @@ class ReAtom extends ReObject {
     const restruct = render.ctab;
     const struct = restruct.molecule;
     const aid = struct.atoms.keyOf(this.a) || undefined;
+    const sgroup = struct.getGroupFromAtomId(aid);
+
+    if (!(sgroup instanceof MonomerMicromolecule)) {
+      return;
+    }
+
     let style: RenderOptionStyles | undefined;
 
     if (Atom.isSuperatomAttachmentAtom(struct, aid)) {
@@ -146,6 +152,8 @@ class ReAtom extends ReObject {
       const path = this.makeHighlightePlate(restruct, style);
 
       restruct.addReObjectPath(LayerMap.atom, this.visel, path);
+
+      return path;
     }
   }
 

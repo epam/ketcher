@@ -33,7 +33,7 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
   const shiftForOxygen = 125;
   const atomToolbar = rightToolbar(page);
 
-  await atomToolbar.clickAtom(Atom.Nitrogen);
+  await atomToolbar.clickAtom(Atom.Hydrogen);
   await clickInTheMiddleOfTheScreen(page);
   await resetCurrentTool(page);
 

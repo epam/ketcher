@@ -8,7 +8,6 @@ import {
 } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import {
-  AtomButton,
   LeftPanelButton,
   MacromoleculesLeftPanelButton,
   RingButton,
@@ -29,14 +28,6 @@ import {
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 /**
- * Selects an atom from Atom toolbar
- * Usage: await selectAtom(AtomButton.Carbon, page)
- **/
-export async function selectAtom(type: AtomButton, page: Page) {
-  await selectButtonByTitle(type, page);
-}
-
-/**
  *  Select button from left panel
  * Usage: await selectTool(LeftPanelButton.HandTool, page)
  */
@@ -50,15 +41,6 @@ export async function selectTool(type: LeftPanelButton, page: Page) {
  */
 export async function selectAction(type: TopPanelButton, page: Page) {
   await selectButtonByTitle(type, page);
-}
-
-/**
- * Usage: await selectAtomInToolbar(AtomButton.Carbon, page)
- * Select an atom from Atom toolbar
- * **/
-export async function selectAtomInToolbar(atomName: AtomButton, page: Page) {
-  const atomButton = page.locator(`button[title*="${atomName}"]`);
-  await atomButton.click();
 }
 
 export async function openLayoutModeMenu(page: Page) {

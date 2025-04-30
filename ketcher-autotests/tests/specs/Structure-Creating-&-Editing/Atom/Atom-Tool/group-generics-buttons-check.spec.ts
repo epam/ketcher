@@ -1,9 +1,8 @@
 import { Page, test } from '@playwright/test';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  selectAtomInToolbar,
-  AtomButton,
   clickOnAtom,
   waitForPageInit,
 } from '@utils';
@@ -14,7 +13,9 @@ async function selectExtendedAtom(
   extendedAtom: AtomExtendedType,
   atomToClick: AtomLabelType,
 ) {
-  await selectAtomInToolbar(AtomButton.Extended, page);
+  const extendedTableButton = rightToolbar(page).extendedTableButton;
+
+  await extendedTableButton.click();
   await page.getByRole('button', { name: extendedAtom, exact: true }).click();
   await page.getByTestId('OK').click();
   await clickOnAtom(page, atomToClick, 0);

@@ -12,7 +12,10 @@ import {
   selectAreaSelectionTool,
   selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
-import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import {
+  MacroBondType,
+  MicroBondType,
+} from '@tests/pages/constants/bondSelectionTool/Constants';
 
 export async function moveMonomer(
   page: Page,
@@ -42,8 +45,9 @@ export async function moveMonomerOnMicro(
 export async function connectMonomersWithBonds(
   page: Page,
   monomerNames: string[],
+  bondType: MacroBondType | MicroBondType = MacroBondType.Single,
 ) {
-  await bondSelectionTool(page, MacroBondType.Single);
+  await bondSelectionTool(page, bondType);
 
   for (let i = 0; i < monomerNames.length - 1; i++) {
     const currentMonomer = monomerNames[i];

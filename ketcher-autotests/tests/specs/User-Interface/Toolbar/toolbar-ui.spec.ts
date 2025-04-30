@@ -4,7 +4,9 @@ import {
   selectAreaSelectionTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -18,8 +20,6 @@ import {
   drawBenzeneRing,
   clickOnAtom,
   waitForRender,
-  selectAtomInToolbar,
-  AtomButton,
   selectAromatizeTool,
   selectDearomatizeTool,
   selectAddRemoveExplicitHydrogens,
@@ -156,7 +156,8 @@ test.describe('Open Ketcher', () => {
     Description: 
     Atom tool icon 'F' is highlighted in the right-hand panel
     */
-    await selectAtomInToolbar(AtomButton.Fluorine, page);
+    const atomToolbar = rightToolbar(page);
+    await atomToolbar.clickAtom(Atom.Fluorine);
     await takeRightToolbarScreenshot(page);
   });
 

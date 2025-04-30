@@ -16,6 +16,7 @@ import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 
 async function editText(page: Page, text: string) {
   await page.getByTestId('openStructureModal').getByRole('textbox').click();
@@ -118,7 +119,9 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4010
       Description: verify visual representation of "Extended" table 
     */
-    await page.getByTestId('extended-table').click();
+    const extendedTableButton = rightToolbar(page).extendedTableButton;
+
+    await extendedTableButton.click();
     await takeEditorScreenshot(page);
   });
 

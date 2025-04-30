@@ -8,6 +8,7 @@ import {
   selectImageTool,
   clickOnCanvas,
   MacroFileType,
+  delay,
 } from '@utils';
 import { waitForLoad } from '@utils/common';
 import { MolfileFormat } from 'ketcher-core';
@@ -23,6 +24,7 @@ import {
   PeptideLetterCodeType,
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
+import { selectHandTool } from '@tests/pages/common/CommonLeftToolbar';
 
 export function getTestDataDirectory() {
   const projectRoot = path.resolve(__dirname, '../../..');
@@ -193,7 +195,11 @@ export async function openImageAndAddToCanvas(
 ) {
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
+  const debugDelay = 0.15;
 
+  const fileChooserPromise = page.waitForEvent('filechooser');
+  await delay(debugDelay);
+  await selectHandTool(page);
   await selectImageTool(page);
 
   if (x !== undefined && y !== undefined) {
@@ -202,12 +208,15 @@ export async function openImageAndAddToCanvas(
     await clickInTheMiddleOfTheScreen(page);
   }
 
-  const inputFile = await page.$('input[type="file"]');
-  if (inputFile) {
-    await inputFile.setInputFiles(resolvedFilePath);
-  } else {
-    throw new Error('Input file element not found');
-  }
+  const fileChooser = await fileChooserPromise;
+  await fileChooser.setFiles(resolvedFilePath);
+
+  // const inputFile = await page.$('input[type="file"]');
+  // if (inputFile) {
+  //   await inputFile.setInputFiles(resolvedFilePath);
+  // } else {
+  //   throw new Error('Input file element not found');
+  // }
 }
 
 export async function filteredFile(

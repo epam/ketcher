@@ -64,11 +64,14 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { Bases } from '@constants/monomers/Bases';
+import { topRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
 let page: Page;
 
 async function setRotationStep(page: Page, value: string) {
-  await page.getByTestId('settings-button').click();
+  const settingsButton = topRightToolbar(page).settingsButton;
+
+  await settingsButton.click();
   await page.getByTestId('rotationStep-input').click();
   await page.getByTestId('rotationStep-input').fill(value);
   await page.getByTestId('OK').click();

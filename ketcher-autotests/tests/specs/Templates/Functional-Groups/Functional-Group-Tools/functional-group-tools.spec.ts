@@ -14,8 +14,6 @@ import {
   LeftPanelButton,
   selectRingButton,
   RingButton,
-  selectAtomInToolbar,
-  AtomButton,
   resetCurrentTool,
   selectLeftPanelToolClick,
   attachOnTopOfBenzeneBonds,
@@ -49,6 +47,8 @@ import {
   selectHandTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 const X_DELTA = 300;
 
@@ -250,9 +250,10 @@ test.describe('Templates - Functional Group Tools', () => {
     Description: EDIT ABBREVIATION window appears after click by Chain on expanded FG.
     After click Remove abbreviation in modal window user can add Chain to structure.
    */
+    const atomToolbar = rightToolbar(page);
     await openFileAndAddToCanvas('Molfiles-V2000/expanded-fg-CO2Et.mol', page);
 
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
       await pressButton(page, 'Remove Abbreviation');
@@ -611,10 +612,12 @@ test.describe('Templates - Functional Group Tools2', () => {
     Test case: EPMLSOPKET-3994
     Description: The FG is replaced by Nitrogen atom
    */
+    const atomToolbar = rightToolbar(page);
+
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -656,6 +659,8 @@ test.describe('Templates - Functional Group Tools3', () => {
    */
     const timeout = 120_000;
     test.setTimeout(timeout);
+    const atomToolbar = rightToolbar(page);
+
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
 
@@ -700,7 +705,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
   });

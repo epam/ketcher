@@ -45,12 +45,17 @@ export async function clickInTheMiddleOfTheScreen(
   page: Page,
   button: 'left' | 'right' = 'left',
 ) {
-  const body = (await page.locator('body').boundingBox()) as BoundingBox;
+  await page.waitForSelector('body', { state: 'attached' });
+  const boundingBox = await page.locator('body').boundingBox();
+  if (!boundingBox) {
+    throw new Error('Unable to get boundingBox for <body>');
+  }
+
   await waitForRender(page, async () => {
     await clickAfterItemsToMergeInitialization(
       page,
-      body.x + body?.width / HALF_DIVIDER,
-      body.y + body?.height / HALF_DIVIDER,
+      boundingBox.x + boundingBox?.width / HALF_DIVIDER,
+      boundingBox.y + boundingBox?.height / HALF_DIVIDER,
       button,
     );
   });

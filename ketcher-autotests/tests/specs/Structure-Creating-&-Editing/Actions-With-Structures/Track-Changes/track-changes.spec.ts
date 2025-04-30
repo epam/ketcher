@@ -1,15 +1,11 @@
 import { test } from '@playwright/test';
-import {
-  takeEditorScreenshot,
-  waitForPageInit,
-  selectAtomInToolbar,
-  AtomButton,
-  clickOnCanvas,
-} from '@utils';
+import { takeEditorScreenshot, waitForPageInit, clickOnCanvas } from '@utils';
 import {
   pressRedoButton,
   pressUndoButton,
 } from '@tests/pages/common/TopLeftToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 
 test.describe('Track Changes', () => {
   test.beforeEach(async ({ page }) => {
@@ -22,11 +18,11 @@ test.describe('Track Changes', () => {
     Description: Add Nitrogen atom to canvas 35 times and then press Undo 32 times
     */
     test.slow();
-
-    const atomType = AtomButton.Nitrogen;
+    const atomToolbar = rightToolbar(page);
+    const atomType = Atom.Nitrogen;
 
     const addAtom = async (x: number, y: number) => {
-      await selectAtomInToolbar(atomType, page);
+      await atomToolbar.clickAtom(atomType);
       await clickOnCanvas(page, x, y);
     };
 

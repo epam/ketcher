@@ -8,8 +8,6 @@ import {
   moveOnBond,
   BondType,
   dragMouseTo,
-  selectAtomInToolbar,
-  AtomButton,
   clickOnAtom,
   selectPartOfChain,
   selectPartOfMolecules,
@@ -19,6 +17,8 @@ import {
 } from '@utils';
 import { getMolfile } from '@utils/formats/formats';
 import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 test.describe('Indigo Tools - Clean Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -333,12 +333,14 @@ test.describe('Indigo Tools - Clean Tools', () => {
     const x = 300;
     const y = 300;
     const anyAtom = 0;
+    const atomToolbar = rightToolbar(page);
+
     await openFileAndAddToCanvas('Molfiles-V2000/toluene.mol', page);
     await selectCleanTool(page);
     await moveOnBond(page, BondType.SINGLE, 0);
     await dragMouseTo(x, y, page);
     await selectCleanTool(page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });

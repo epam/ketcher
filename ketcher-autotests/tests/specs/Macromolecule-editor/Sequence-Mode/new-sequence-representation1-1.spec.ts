@@ -6,12 +6,12 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
   selectFlexLayoutModeTool,
-  selectSequenceLayoutModeTool,
   SequenceChainType,
   SequenceModeType,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { selectSequenceLayoutModeTool } from '@utils/canvas/tools';
 import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {

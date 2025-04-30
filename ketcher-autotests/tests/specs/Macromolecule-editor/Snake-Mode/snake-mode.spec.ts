@@ -328,6 +328,7 @@ test('6. Switching from Flex to Sequence and back to Flex mode does not change l
         2. Switch to Sequence mode and back to Flex
         3. Take screenshot to withness layour remain unchanged
     */
+  await turnOnMacromoleculesEditor(page);
   await selectFlexLayoutModeTool(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
     'KET/Snake-mode/SnakeModeBypassCheck.ket',
@@ -381,6 +382,7 @@ test('8. Switching from Micro mode to Sequence and back to Micromolecules mode d
         3. Take screenshot to withness monomer
     */
   // switching to Sequence to change default Macro mode
+  await turnOnMacromoleculesEditor(page);
   await selectSequenceLayoutModeTool(page);
   await turnOnMicromoleculesEditor(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
@@ -548,6 +550,7 @@ test(
         2. Switch to Snake mode, Sequence mode and back to Flex
         3. Take screenshot to withness layour remain unchanged
     */
+    await turnOnMacromoleculesEditor(page);
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Snake-mode/SnakeModeBypassCheck.ket',
@@ -608,6 +611,7 @@ test(
         3. Switch to Macro-Snake mode, Sequence mode and back to Flex
         4. Take screenshot to withness layour remain unchanged
     */
+    await turnOnMacromoleculesEditor(page);
     await selectSequenceLayoutModeTool(page);
     await turnOnMicromoleculesEditor(page);
     await openFileAndAddToCanvasAsNewProjectMacro(

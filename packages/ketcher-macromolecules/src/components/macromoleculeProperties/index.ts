@@ -13,20 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
-import { IIconProps } from './types';
-import { getIconByName } from './utils/getIconByName';
 
-const Icon = ({ name, className, title, onClick, dataTestId }: IIconProps) => {
-  const Component = getIconByName(name);
-
-  return (
-    <Component
-      className={className}
-      title={title}
-      onClick={onClick}
-      data-testid={dataTestId}
-    />
-  );
-};
-
-export default Icon;
+export * from './MacromoleculePropertiesWindow';
+export * from './CalculateMacromoleculePropertiesButton';

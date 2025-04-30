@@ -1655,7 +1655,6 @@ export class DrawingEntitiesManager {
 
       const snakeLayoutMatrix =
         this.calculateSnakeLayoutMatrix(chainsCollection);
-
       this.snakeLayoutMatrix = snakeLayoutMatrix;
 
       command.merge(
@@ -1903,6 +1902,57 @@ export class DrawingEntitiesManager {
     );
 
     return { command, mergedDrawingEntities };
+  }
+
+  public filterSelection() {
+    const filteredDrawingEntitiesManager = new DrawingEntitiesManager();
+
+    this.selectedEntities.forEach(([, entity]) => {
+      if (entity instanceof BaseMonomer) {
+        filteredDrawingEntitiesManager.addMonomerChangeModel(
+          entity.monomerItem,
+          entity.position,
+          entity,
+        );
+      } else if (entity instanceof Atom) {
+        filteredDrawingEntitiesManager.addMonomerChangeModel(
+          entity.monomer.monomerItem,
+          entity.monomer.position,
+          entity.monomer,
+        );
+      } else if (entity instanceof PolymerBond && entity.secondMonomer) {
+        const firstAttachmentPoint =
+          entity.firstMonomer.getAttachmentPointByBond(entity);
+        const secondAttachmentPoint =
+          entity.secondMonomer?.getAttachmentPointByBond(entity);
+        if (
+          firstAttachmentPoint &&
+          secondAttachmentPoint &&
+          entity.firstMonomer.selected &&
+          entity.secondMonomer?.selected
+        ) {
+          filteredDrawingEntitiesManager.finishPolymerBondCreationModelChange(
+            entity.firstMonomer,
+            entity.secondMonomer,
+            firstAttachmentPoint,
+            secondAttachmentPoint,
+            undefined,
+            entity,
+          );
+        }
+      } else if (entity instanceof HydrogenBond && entity.secondMonomer) {
+        filteredDrawingEntitiesManager.finishPolymerBondCreationModelChange(
+          entity.firstMonomer,
+          entity.secondMonomer,
+          AttachmentPointName.HYDROGEN,
+          AttachmentPointName.HYDROGEN,
+          MACROMOLECULES_BOND_TYPES.HYDROGEN,
+          entity,
+        );
+      }
+    });
+
+    return filteredDrawingEntitiesManager;
   }
 
   public centerMacroStructure() {

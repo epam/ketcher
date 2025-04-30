@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
 import { Tab, Tabs } from '@mui/material';
 
-export const StyledTabs = styled(Tabs)`
+export const StyledTabs = styled(Tabs, {
+  shouldForwardProp: (propName) => propName !== 'isLayoutToRight',
+})<{ isLayoutToRight?: boolean }>`
   height: 32px;
   min-height: 32px;
   list-style-type: none;
@@ -17,12 +19,22 @@ export const StyledTabs = styled(Tabs)`
     overflow: unset !important;
   }
 
+  & .MuiTabs-flexContainer {
+    justify-content: ${({ isLayoutToRight }) =>
+      isLayoutToRight ? 'flex-end' : 'flex-start'};
+    padding-right: ${({ isLayoutToRight }) => (isLayoutToRight ? '16px' : '0')};
+  }
+
   & .MuiTabs-indicator {
     display: none;
   }
 `;
 
-export const StyledTab = styled(Tab)`
+export const StyledTab = styled(Tab, {
+  shouldForwardProp: (propName) => propName !== 'isLayoutToRight',
+})<{
+  isLayoutToRight?: boolean;
+}>`
   min-height: 24px;
   min-width: 0;
   position: relative;
@@ -35,8 +47,8 @@ export const StyledTab = styled(Tab)`
   color: ${({ theme }) => theme.ketcher.color.text.light};
   list-style-type: none;
   margin-left: 1px;
-  flex: 1 1 auto;
   align-items: center;
+  flex: ${({ isLayoutToRight }) => (isLayoutToRight ? undefined : '1 1 auto;')};
   border: 1px solid transparent;
   border-bottom: none;
   border-radius: 4px 4px 0 0;
@@ -68,10 +80,20 @@ export const StyledTab = styled(Tab)`
     }
   }
 
-  &:first-of-type {
+  &[data-tab='Favorites'] {
     font-size: 16px;
     color: #faa500;
   }
+`;
+
+export const HiddenTab = styled(Tab)`
+  width: 0;
+  height: 0;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+  visibility: hidden;
 `;
 
 export const TabPanelContent = styled.div`

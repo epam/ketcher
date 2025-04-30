@@ -18,7 +18,11 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Tabs } from 'components/shared/Tabs';
 import { tabsContent } from 'components/monomerLibrary/tabsContent';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { setSearchFilter } from 'state/library';
+import {
+  selectCurrentTabIndex,
+  setSearchFilter,
+  setSelectedTabIndex,
+} from 'state/library';
 import { IRnaPreset } from './RnaBuilder/types';
 import {
   selectAllPresets,
@@ -46,6 +50,7 @@ type Props = {
 const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
   const presetsRef = useRef<IRnaPreset[]>([]);
   const dispatch = useAppDispatch();
+  const selectedTabIndex = useAppSelector(selectCurrentTabIndex);
 
   useEffect(() => {
     dispatch(setSearchFilter(''));
@@ -108,6 +113,13 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
     [duplicatePreset, editPreset],
   );
 
+  const handleTabChange = useCallback(
+    (_event, newTabIndex) => {
+      dispatch(setSelectedTabIndex(newTabIndex));
+    },
+    [dispatch],
+  );
+
   return (
     <MonomerLibraryContainer data-testid="monomer-library">
       <MonomerLibraryHeader>
@@ -128,7 +140,11 @@ const MonomerLibrary = ({ toggleLibraryVisibility }: Props) => {
           <Icon name="arrows-right" />
         </MonomerLibraryToggle>
       </MonomerLibraryHeader>
-      <Tabs tabs={tabs} />
+      <Tabs
+        tabs={tabs}
+        selectedTabIndex={selectedTabIndex}
+        onChange={handleTabChange}
+      />
     </MonomerLibraryContainer>
   );
 };

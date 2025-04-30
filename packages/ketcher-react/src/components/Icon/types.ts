@@ -28,6 +28,7 @@ export type IconName = keyof typeof iconNameToIcon;
 export interface IIconProps {
   name: IconName;
   className?: string;
+  title?: string;
   onClick?: (e: MouseEvent) => void;
   dataTestId?: string;
 }

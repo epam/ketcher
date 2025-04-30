@@ -165,6 +165,7 @@ export type EditorTheme = {
   };
   shadow: {
     regular: string;
+    mainLayoutBlocks: string;
   };
   outline: {
     small: string;

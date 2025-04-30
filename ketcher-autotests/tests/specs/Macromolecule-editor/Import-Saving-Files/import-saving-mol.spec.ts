@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { test, expect, Page, chromium } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
@@ -29,7 +29,6 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
-import { closeErrorAndInfoModals, pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   bondSelectionTool,
@@ -44,45 +43,34 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
+import { pageReload } from '@utils/common/helpers';
 
 let page: Page;
 
 test.beforeAll(async ({ browser }) => {
-  let sharedContext;
-  try {
-    sharedContext = await browser.newContext();
-  } catch (error) {
-    console.error('Error on creation browser context:', error);
-    console.log('Restarting browser...');
-    await browser.close();
-    browser = await chromium.launch();
-    sharedContext = await browser.newContext();
-  }
-
-  // Reminder: do not pass page as async paramenter to test
-  page = await sharedContext.newPage();
+  const context = await browser.newContext();
+  page = await context.newPage();
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await turnOnMacromoleculesEditor(page, {
+    enableFlexMode: false,
+    goToPeptides: false,
+  });
 });
 
-test.afterEach(async () => {
-  await resetZoomLevelToDefault(page);
+test.afterEach(async ({ context: _ }, testInfo) => {
   await selectClearCanvasTool(page);
-  await selectFlexLayoutModeTool(page);
+  await resetZoomLevelToDefault(page);
+  await processResetToDefaultState(testInfo, page);
 });
 
 test.afterAll(async ({ browser }) => {
-  const cntxt = page.context();
-  await page.close();
-  await cntxt.close();
-  await browser.contexts().forEach((someContext) => {
-    someContext.close();
-  });
-  // await browser.close();
+  await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
 test.describe('Import-Saving .mol Files', () => {
   test('Import monomers and chem', async () => {
+    await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       'Molfiles-V3000/monomers-and-chem.mol',
       page,
@@ -94,7 +82,7 @@ test.describe('Import-Saving .mol Files', () => {
     const fileContent = await readFileContent(
       'Molfiles-V3000/monomers-and-chem.mol',
     );
-
+    await selectFlexLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.MOLv3000,
@@ -115,14 +103,6 @@ test.describe('Import-Saving .mol Files', () => {
       true,
     );
     await takeEditorScreenshot(page);
-
-    await closeErrorAndInfoModals(page);
-    // Closing page since test expects it to have closed at the end
-    const context = page.context();
-    await page.close();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
   });
 
   test('Export monomers and chem', async () => {
@@ -133,13 +113,6 @@ test.describe('Import-Saving .mol Files', () => {
       FileType.MOL,
       'v3000',
     );
-
-    // Closing page since test expects it to have closed at the end
-    const context = page.context();
-    await page.close();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
   });
 
   test('After opening a file in macro mode, structure is in center of the screen and no need scroll to find it', async () => {
@@ -147,15 +120,9 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: https://github.com/epam/ketcher/issues/3666
     Description: Structure in center of canvas after opening
     */
+    await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro('Molfiles-V3000/peptide-bzl.mol', page);
     await takeEditorScreenshot(page);
-
-    // Closing page since test expects it to have closed at the end
-    const context = page.context();
-    await page.close();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
   });
 
   test('Monomers are not stacked, easy to read, colors and preview match with Ketcher library after importing a file', async () => {
@@ -168,13 +135,6 @@ test.describe('Import-Saving .mol Files', () => {
     await getMonomerLocator(page, { monomerAlias: 'K' }).first().hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
-
-    // Closing page since test expects it to have closed at the end
-    const context = page.context();
-    await page.close();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
   });
 
   test('After importing a file with modified monomers, it is clear which monomer is modified, and when hovering, preview display changes made during modification', async () => {
@@ -204,6 +164,7 @@ test.describe('Import-Saving .mol Files', () => {
     In RNA, thymine (T) is replaced by uracil (U).
     We have bug https://github.com/epam/ketcher/issues/3383
     */
+      await selectFlexLayoutModeTool(page);
       await openFileAndAddToCanvasMacro(`Molfiles-V3000/${fileType}.mol`, page);
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -264,13 +225,6 @@ test.describe('Import-Saving .mol Files', () => {
       });
 
     expect(molFile).toEqual(molFileExpected);
-
-    // Closing page since test expects it to have closed at the end
-    const context = page.context();
-    await page.close();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
   });
 
   const monomersToDelete = [
@@ -349,13 +303,6 @@ test.describe('Import-Saving .mol Files', () => {
 
     await openFileAndAddToCanvasMacro(filename, page, undefined, true);
     await takeEditorScreenshot(page);
-
-    // Closing page since test expects it to have closed at the end
-    const context = page.context();
-    await page.close();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
   });
 
   test('Validate correct displaying of snake viewed peptide chain loaded from .mol file format', async () => {
@@ -370,13 +317,6 @@ test.describe('Import-Saving .mol Files', () => {
     await selectSnakeLayoutModeTool(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-
-    // Closing page since test expects it to have closed at the end
-    const context = page.context();
-    await page.close();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
   });
 
   test('Check that you can save snake viewed chain of peptides in a Mol v3000 file', async () => {
@@ -414,6 +354,7 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: .mol file with macro structures is imported correctly in macro mode when saving it in micro mode
     */
+    await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       'Molfiles-V3000/monomers-saved-in-micro-mode.mol',
       page,
@@ -432,13 +373,6 @@ test.describe('Import-Saving .mol Files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-
-    // Closing page since test expects it to have closed at the end
-    const context = page.context();
-    await page.close();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
   });
 
   test('Check that RNA preset in not changing after saving and importing it as .mol file', async () => {
@@ -446,6 +380,7 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: .mol file with macro structures is imported correctly in macro mode
     */
+    await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro('Molfiles-V3000/three-presets.mol', page);
     await takeEditorScreenshot(page);
   });
@@ -455,6 +390,7 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: .mol file with macro structures is imported correctly in macro mode.
     */
+    await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       'Molfiles-V3000/three-chems-connected.mol',
       page,
@@ -646,28 +582,17 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: #4382
     Description: Validate that unsplit nucleotides connected with peptides could be saved to mol 3000 file and loaded back
     */
+    await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
     );
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/unsplit-nucleotides-connected-with-peptides.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
     );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'Molfiles-V3000/unsplit-nucleotides-connected-with-peptides.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(molFile).toEqual(molFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V3000/unsplit-nucleotides-connected-with-peptides.mol',
       page,
@@ -720,6 +645,7 @@ test.describe('Import modified .mol files from external editor', () => {
       });
     } else {
       test(`for ${fileName}`, async () => {
+        await selectFlexLayoutModeTool(page);
         await openFileAndAddToCanvasMacro(`Molfiles-V3000/${fileName}`, page);
         const numberOfPressZoomOut = 4;
         await selectZoomOutTool(page, numberOfPressZoomOut);

@@ -55,6 +55,10 @@ export class BondRenderer extends BaseRenderer {
     };
   }
 
+  private get scaledCenter() {
+    return Scale.modelToCanvas(this.bond.center, this.editorSettings);
+  }
+
   private getDoubleBondShiftForChain(
     firstHalfEdge?: HalfEdge,
     secondHalfEdge?: HalfEdge,
@@ -177,6 +181,10 @@ export class BondRenderer extends BaseRenderer {
     return position.addScaled(halfEdge.direction, BOND_WIDTH + shiftValue);
   }
 
+  private get cipElementId() {
+    return `cip-bond-${this.bond.id}`;
+  }
+
   public appendSelection() {
     const pathShape = this.getSelectionContour();
 
@@ -189,11 +197,19 @@ export class BondRenderer extends BaseRenderer {
         .attr('fill', '#57ff8f')
         .attr('class', 'dynamic-element');
     }
+
+    this.rootElement
+      ?.select(`#${this.cipElementId} rect`)
+      ?.attr('fill', '#57ff8f');
   }
 
   public removeSelection() {
     this.selectionElement?.remove();
     this.selectionElement = undefined;
+
+    this.rootElement
+      ?.select(`#${this.cipElementId} rect`)
+      ?.attr('fill', '#f5f5f5');
   }
 
   public appendHover() {
@@ -580,16 +596,19 @@ export class BondRenderer extends BaseRenderer {
 
     this.createBondHoverablePath(bondSVGPaths);
 
-    this.appendCIPLabel();
+    this.appendStereochemistry();
   }
 
-  private appendCIPLabel() {
-    if (!this.bond.cip) {
+  private appendStereochemistry() {
+    const cipValue = this.bond.cip;
+
+    if (!cipValue) {
       return;
     }
 
-    const cipValue = this.bond.cip;
-    const cipGroup = this.rootElement?.append('g');
+    const cipGroup = this.rootElement
+      ?.append('g')
+      ?.attr('id', this.cipElementId);
 
     const cipText = cipGroup
       ?.append('text')
@@ -598,31 +617,34 @@ export class BondRenderer extends BaseRenderer {
       .attr('font-size', '13px')
       .attr('pointer-events', 'none');
 
-    // Calculate the bounding box of the text element
     const textNode = cipText?.node();
     if (textNode) {
       const box = textNode.getBBox();
+      cipText?.attr('x', 0)?.attr('y', -box.y);
 
-      // Insert rectangle before text (so text appears on top)
+      const rectWidth = box.width + 2;
+      const rectHeight = box.height + 2;
       cipGroup
         ?.insert('rect', 'text')
-        .attr('x', box.x - 1)
-        .attr('y', box.y - 1)
-        .attr('width', box.width + 2)
-        .attr('height', box.height + 2)
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', rectWidth)
+        .attr('height', rectHeight)
         .attr('rx', 3)
         .attr('ry', 3)
-        .attr('fill', '#f5f5f5')
-        .attr('stroke', '#f5f5f5');
+        .attr('fill', '#f5f5f5');
 
-      // Position the group appropriately (offset from the atom)
       cipGroup?.attr(
         'transform',
-        `translate(${0.5 * box.width}, ${-0.5 * box.height})`,
+        `
+        translate(${-this.scaledPosition.startPosition.x}, ${-this
+          .scaledPosition.startPosition.y})
+        translate(${this.scaledCenter.x - rectWidth / 2}, ${
+          this.scaledCenter.y - rectHeight / 2
+        })
+        `,
       );
     }
-
-    return cipGroup;
   }
 
   public remove() {

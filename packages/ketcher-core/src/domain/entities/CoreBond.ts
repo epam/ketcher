@@ -53,7 +53,7 @@ export class Bond extends DrawingEntity {
   }
 
   public get center() {
-    return this.position;
+    return Vec2.centre(this.startPosition, this.endPosition);
   }
 
   public moveBondStartAbsolute(x, y) {

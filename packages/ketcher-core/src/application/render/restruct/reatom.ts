@@ -114,14 +114,45 @@ class ReAtom extends ReObject {
 
   drawHover(render: Render) {
     const ret = this.makeHoverPlate(render);
+
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
+
+    if (!this.selected) {
+      this.makeMonomerAttachmentPointHighlightPlate(render);
+    }
+
     return ret;
+  }
+
+  public makeMonomerAttachmentPointHighlightPlate(render: Render) {
+    const restruct = render.ctab;
+    const struct = restruct.molecule;
+    const aid = struct.atoms.keyOf(this.a) || undefined;
+    let style: RenderOptionStyles | undefined;
+
+    if (Atom.isSuperatomAttachmentAtom(struct, aid)) {
+      style = { fill: 'none', stroke: '#4da3f8', 'stroke-width': '2px' };
+    }
+
+    if (Atom.isSuperatomLeavingGroupAtom(struct, aid)) {
+      style = {
+        fill: '#fff8c5',
+        stroke: '#f8dc8f',
+        'stroke-width': '2px',
+      };
+    }
+
+    if (style) {
+      const path = this.makeHighlightePlate(restruct, style);
+
+      restruct.addReObjectPath(LayerMap.atom, this.visel, path);
+    }
   }
 
   getLabeledSelectionContour(render: Render, isHighlight: boolean) {
     const { paper, ctab: restruct, options } = render;
     const { fontszInPx, radiusScaleFactor } = options;
-    const highlightPadding = isHighlight ? -2 : 0;
+    const highlightPadding = isHighlight ? -3 : 0;
     const padding = fontszInPx * radiusScaleFactor + highlightPadding;
     const radius = fontszInPx * radiusScaleFactor * 2 + highlightPadding;
     const box = this.getVBoxObj(restruct.render)!;
@@ -141,7 +172,7 @@ class ReAtom extends ReObject {
   getUnlabeledSelectionContour(render: Render, isHighlight: boolean) {
     const { paper, options } = render;
     const { atomSelectionPlateRadius } = options;
-    const highlightPadding = isHighlight ? -2 : 0;
+    const highlightPadding = isHighlight ? -3 : 0;
     const ps = Scale.modelToCanvas(this.a.pp, options);
     return paper.circle(
       ps.x,
@@ -1005,6 +1036,13 @@ function getLabelText(atom, atomId: number, sgroup?: SGroup) {
         // eslint-disable-line max-depth
         text += 'R' + (rgi + 1).toString();
       }
+    }
+
+    if (
+      sgroup instanceof MonomerMicromolecule &&
+      Atom.isSuperatomLeavingGroupAtom(sgroup, atomId)
+    ) {
+      text = sgroup.monomer.monomerItem.props.MonomerCaps[text];
     }
 
     return text;

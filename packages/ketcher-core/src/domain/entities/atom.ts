@@ -27,6 +27,7 @@ import {
 import { isNumber } from 'lodash';
 import { MonomerMicromolecule } from 'domain/entities/monomerMicromolecule';
 import { AtomCIP } from './types';
+import { SGroup } from 'domain/entities/sgroup';
 
 /**
  * Return unions of Pick.
@@ -726,22 +727,29 @@ export class Atom extends BaseMicromoleculeEntity {
   }
 
   public static getSuperAtomAttachmentPointByLeavingGroup(
-    struct: Struct,
+    structOrSgroup: Struct | SGroup,
     atomId: number,
   ) {
-    const sgroup = struct.getGroupFromAtomId(atomId);
+    const sgroup =
+      structOrSgroup instanceof SGroup
+        ? structOrSgroup
+        : structOrSgroup.getGroupFromAtomId(atomId);
+
     return sgroup
       ?.getAttachmentPoints()
       .find((attachmentPoint) => attachmentPoint.leaveAtomId === atomId);
   }
 
-  public static isSuperatomLeavingGroupAtom(struct: Struct, atomId?: number) {
+  public static isSuperatomLeavingGroupAtom(
+    structOrSgroup: Struct | SGroup,
+    atomId?: number,
+  ) {
     if (atomId === undefined) {
       return false;
     }
 
     return Boolean(
-      Atom.getSuperAtomAttachmentPointByLeavingGroup(struct, atomId),
+      Atom.getSuperAtomAttachmentPointByLeavingGroup(structOrSgroup, atomId),
     );
   }
 

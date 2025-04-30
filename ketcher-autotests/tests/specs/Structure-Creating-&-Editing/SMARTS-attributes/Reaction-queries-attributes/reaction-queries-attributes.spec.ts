@@ -14,12 +14,12 @@ import {
   selectAllStructuresOnCanvas,
   selectDropdownTool,
   selectLeftPanelButton,
-  selectRingButton,
   takeEditorScreenshot,
   waitForPageInit,
   clickOnCanvas,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
+import { selectRingButton } from '@utils/canvas/tools';
 import { checkSmartsValue } from '../utils';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';

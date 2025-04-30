@@ -595,9 +595,18 @@ test.describe('Atom Tool', () => {
     EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402
     Description: Atom added to Benzene ring.
     */
-  const atomsNames: Atom[] = Object.values(Atom).filter(
-    (name) => ![Atom.Aurum, Atom.Platinum].includes(name),
-  );
+  const atomsNames: Atom[] = [
+    Atom.Hydrogen,
+    Atom.Carbon,
+    Atom.Nitrogen,
+    Atom.Oxygen,
+    Atom.Sulfur,
+    Atom.Phosphorus,
+    Atom.Fluorine,
+    Atom.Chlorine,
+    Atom.Bromine,
+    Atom.Iodine,
+  ];
 
   for (const atomName of atomsNames) {
     const anyAtom = 0;
@@ -631,7 +640,9 @@ test.describe('Atom Tool', () => {
   }
 
   for (const atomName of atomsNames) {
-    test(`Select ${atomName} and drag on Benzene ring`, async ({ page }) => {
+    test(`Select ${
+      Object.entries(Atom).find(([, value]) => value === atomName)?.[0]
+    } and drag on Benzene ring`, async ({ page }) => {
       /*
       Test case: EPMLSOPKET-1354, EPMLSOPKET-1361, EPMLSOPKET-1369, EPMLSOPKET-1370,
       EPMLSOPKET-1372, EPMLSOPKET-1373, EPMLSOPKET-1379, EPMLSOPKET-1387, EPMLSOPKET-1388, EPMLSOPKET-1402

@@ -3,13 +3,13 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   doubleClickOnAtom,
-  getAtomByIndex,
   pressButton,
   takeEditorScreenshot,
   waitForAtomPropsModal,
   waitForPageInit,
   waitForRender,
 } from '@utils';
+import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
   setAromaticity,
   setChirality,

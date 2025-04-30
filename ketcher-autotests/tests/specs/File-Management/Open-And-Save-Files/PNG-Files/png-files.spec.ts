@@ -3,12 +3,13 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvas,
-  selectFormatForSaving,
-  clickOnSaveFileAndOpenDropdown,
   openSettings,
   pressButton,
   selectLayoutTool,
 } from '@utils';
+import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 test.describe('Saving in .png files', () => {
   test.beforeEach(async ({ page }) => {
@@ -47,8 +48,8 @@ test.describe('Saving in .png files', () => {
     }) => {
       await openFileAndAddToCanvas(filename, page);
       await takeEditorScreenshot(page);
-      await clickOnSaveFileAndOpenDropdown(page);
-      await selectFormatForSaving(page, 'PNG Image');
+      await selectSaveTool(page);
+      await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
       await takeEditorScreenshot(page);
     });
   }
@@ -65,8 +66,8 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'PNG Image');
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 
@@ -82,8 +83,8 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'PNG Image');
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 
@@ -98,8 +99,8 @@ test.describe('Saving in .png files', () => {
       'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       page,
     );
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'PNG Image');
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 
@@ -115,8 +116,8 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'PNG Image');
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 
@@ -132,8 +133,8 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'PNG Image');
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 
@@ -149,8 +150,8 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'PNG Image');
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 
@@ -171,8 +172,8 @@ test.describe('Saving in .png files', () => {
     await pressButton(page, 'OK');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'PNG Image');
+    await selectSaveTool(page);
+    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
     await takeEditorScreenshot(page);
   });
 });

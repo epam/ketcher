@@ -135,30 +135,33 @@ const InfoPanel: FC<InfoPanelProps> = (props) => {
     !SGroup.isDataSGroup(sGroup) &&
     !SGroup.isQuerySGroup(sGroup);
 
-  const isAmbiguousMonomer =
-    sGroup instanceof MonomerMicromolecule &&
-    sGroup.monomer instanceof AmbiguousMonomer;
+  if (sGroup instanceof MonomerMicromolecule) {
+    const monomer = sGroup.monomer;
+    if (monomer instanceof AmbiguousMonomer) {
+      return (
+        <AmbiguousMonomerPreview
+          preview={{
+            type: PreviewType.AmbiguousMonomer,
+            monomer: monomer.variantMonomerItem,
+          }}
+          style={{
+            position: 'absolute',
+            left: `${clientX - 50}px`,
+            top: calculateAmbiguousMonomerPreviewTop(
+              monomer.variantMonomerItem,
+            )({
+              left: clientX - 50,
+              top: clientY - 65,
+              bottom: clientY - 25,
+            }),
+            transform: 'translate(-50%, 0)',
+          }}
+        />
+      );
+    }
+  }
 
-  return isAmbiguousMonomer ? (
-    <AmbiguousMonomerPreview
-      preview={{
-        type: PreviewType.AmbiguousMonomer,
-        monomer: sGroup.monomer.variantMonomerItem,
-      }}
-      style={{
-        position: 'absolute',
-        left: `${clientX - 50}px`,
-        top: calculateAmbiguousMonomerPreviewTop(
-          sGroup.monomer.variantMonomerItem,
-        )({
-          left: clientX - 50,
-          top: clientY - 65,
-          bottom: clientY - 25,
-        }),
-        transform: 'translate(-50%, 0)',
-      }}
-    />
-  ) : showMolecule ? (
+  return showMolecule ? (
     <div
       style={{
         left: x + 'px',

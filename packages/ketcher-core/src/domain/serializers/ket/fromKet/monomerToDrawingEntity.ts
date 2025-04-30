@@ -38,15 +38,25 @@ export function monomerToDrawingEntity(
   const position: Vec2 = switchIntoChemistryCoordSystem(
     new Vec2(node.position.x, node.position.y),
   );
+
+  const { alias, id } = template;
+  const { seqid, expanded, transformation } = node;
+
   return drawingEntitiesManager.addMonomer(
     {
       struct,
-      label: template.alias || template.id,
+      label: alias || id,
       colorScheme: undefined,
       favorite: false,
       props: templateToMonomerProps(template),
       attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
-      seqId: node.seqid,
+      seqId: seqid,
+      ...(expanded !== undefined && {
+        expanded,
+      }),
+      ...(transformation !== undefined && {
+        transformation,
+      }),
     },
     position,
   );
@@ -62,6 +72,7 @@ export function createMonomersForVariantMonomer(
   const monomers = monomerTemplates.map((monomerTemplate) => {
     const monomerItem = {
       label: monomerTemplate.alias,
+      expanded: false,
       struct: KetSerializer.convertMonomerTemplateToStruct(monomerTemplate),
       props: templateToMonomerProps(monomerTemplate),
       attachmentPoints: monomerTemplate.attachmentPoints,
@@ -101,6 +112,7 @@ export function variantMonomerToDrawingEntity(
       options: template.options,
       idtAliases: template.idtAliases,
       isAmbiguous: true,
+      transformation: node.transformation,
     },
     position,
   );

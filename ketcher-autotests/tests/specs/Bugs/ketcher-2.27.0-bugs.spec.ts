@@ -23,6 +23,11 @@ import {
   openBondsSettingsSection,
   scrollToDownInSetting,
   setHashSpacingValue,
+  takeMonomerLibraryScreenshot,
+  selectAllStructuresOnCanvas,
+  copyToClipboardByKeyboard,
+  pasteFromClipboardByKeyboard,
+  clickOnCanvas,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
@@ -36,12 +41,16 @@ import {
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import {
+  bondSelectionTool,
+  selectEraseTool,
+} from '@tests/pages/common/CommonLeftToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -451,5 +460,144 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     );
     await page.getByText('X').hover();
     await takeEditorScreenshot(page);
+  });
+
+  test('Case 16: Search of ambiguous monomers work correct', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6802
+     * Bug: https://github.com/epam/ketcher/issues/5564
+     * Description: Search of ambiguous monomers work correct.
+     * Scenario:
+     * 1. Toggle to Macro - Flex mode
+     * 2. Open Library, go to Peptides tab
+     * 3. Search J
+     */
+    await turnOnMacromoleculesEditor(page);
+    await goToPeptidesTab(page);
+    const rnaLibrarySearch = page.getByTestId('monomer-library-input');
+    await rnaLibrarySearch.fill('J');
+    await takeMonomerLibraryScreenshot(page);
+  });
+
+  test('Case 17: Hydrogen bonds are not missed after Copy/paste', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6802
+     * Bug: https://github.com/epam/ketcher/issues/5940
+     * Description: Hydrogen bonds are not missed after Copy/paste.
+     * Scenario:
+     * 1. Go to Macro - Flex mode
+     * 2. Load from file
+     * 3. Press Ctrl+A to select all
+     * 4. Press Ctrl+C to copy
+     * 5. Press Ctrl+V to paste
+     * 6. Check that hydrogen bonds are not missed
+     */
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/Copy_paste operation works wrong (copy only two hydrogen bonds and drops others).ket',
+      page,
+    );
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await pasteFromClipboardByKeyboard(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 18: Deleting a monomer also deletes its hydrogen bonds', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6802
+     * Bug: https://github.com/epam/ketcher/issues/5941
+     * Description: Deleting a monomer also deletes its hydrogen bonds.
+     * Scenario:
+     * 1. Go to Macro - Flex mode
+     * 2. Load from file
+     * 3. Deleted peptides
+     */
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/Copy_paste operation works wrong (copy only two hydrogen bonds and drops others).ket',
+      page,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectEraseTool(page);
+    await getMonomerLocator(page, Peptides._1Nal).click();
+    await getMonomerLocator(page, Peptides.A).click();
+    await getMonomerLocator(page, Peptides.D).first().click();
+    await getMonomerLocator(page, Peptides.C).first().click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 19: Ability to focus on the drawing entity within expanded S-group/monomer bounding box', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6802
+     * Bug: https://github.com/epam/ketcher/issues/5910
+     * Description: Ability to focus on the drawing entity within expanded S-group/monomer bounding box.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Click on the monomer 2Nal and expand it
+     */
+    await turnOnMicromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/Bugs/circle-peptides-one-expanded.ket',
+      page,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await page.getByText('2Nal').click({ button: 'right' });
+    await page.getByText('Expand monomer').click();
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 20: Delete of micromolecules bonds in macro mode works correct', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6802
+     * Bug: https://github.com/epam/ketcher/issues/5949
+     * Description: Delete of micromolecules bonds in macro mode works correct.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Load from file
+     * 3. Delete few bonds
+     * We have a bug https://github.com/epam/ketcher/issues/6993
+     * After fixing it we need to update screenshots
+     */
+    await turnOnMacromoleculesEditor(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Bugs/Delete of micromolecules bonds works wrong (or doesnt work).ket',
+      page,
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await selectEraseTool(page);
+    await clickOnCanvas(page, 570, 400);
+    await clickOnCanvas(page, 600, 360);
+    await clickOnCanvas(page, 600, 420);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+    await turnOnMicromoleculesEditor(page);
+    await takeEditorScreenshot(page);
+    await turnOnMacromoleculesEditor(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 });

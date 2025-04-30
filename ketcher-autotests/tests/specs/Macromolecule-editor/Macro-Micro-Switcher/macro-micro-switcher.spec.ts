@@ -112,6 +112,7 @@ import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { topRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
 const topLeftCorner = {
   x: -325,
@@ -145,7 +146,9 @@ async function addToFavoritesMonomers(page: Page) {
 }
 
 async function setAtomAndBondSettings(page: Page) {
-  await page.getByTestId('settings-button').click();
+  const settingsButton = topRightToolbar(page).settingsButton;
+
+  await settingsButton.click();
   await page.getByText('Atoms', { exact: true }).click();
   await page.getByText('Terminal and Hetero').click();
   await page.getByTestId('On-option').click();

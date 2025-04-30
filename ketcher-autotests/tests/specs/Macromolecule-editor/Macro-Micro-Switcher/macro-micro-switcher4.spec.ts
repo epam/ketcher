@@ -13,11 +13,11 @@ import {
   pasteFromClipboardByKeyboard,
   moveMouseToTheMiddleOfTheScreen,
   selectSnakeLayoutModeTool,
-  selectSequenceLayoutModeTool,
   selectFlexLayoutModeTool,
   dragMouseTo,
   moveMouseAway,
 } from '@utils';
+import { selectSequenceLayoutModeTool } from '@utils/canvas/tools';
 import {
   BondType,
   BondStereo,

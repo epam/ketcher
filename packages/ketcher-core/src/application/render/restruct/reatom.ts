@@ -1042,7 +1042,7 @@ function getLabelText(atom, atomId: number, sgroup?: SGroup) {
       sgroup instanceof MonomerMicromolecule &&
       Atom.isSuperatomLeavingGroupAtom(sgroup, atomId)
     ) {
-      text = sgroup.monomer.monomerItem.props.MonomerCaps[text] || text;
+      text = sgroup?.monomer.monomerItem.props.MonomerCaps[text] || text;
     }
 
     return text;

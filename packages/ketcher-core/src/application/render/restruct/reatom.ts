@@ -152,7 +152,7 @@ class ReAtom extends ReObject {
   getLabeledSelectionContour(render: Render, isHighlight: boolean) {
     const { paper, ctab: restruct, options } = render;
     const { fontszInPx, radiusScaleFactor } = options;
-    const highlightPadding = isHighlight ? -3 : 0;
+    const highlightPadding = isHighlight ? -2 : 0;
     const padding = fontszInPx * radiusScaleFactor + highlightPadding;
     const radius = fontszInPx * radiusScaleFactor * 2 + highlightPadding;
     const box = this.getVBoxObj(restruct.render)!;
@@ -172,7 +172,7 @@ class ReAtom extends ReObject {
   getUnlabeledSelectionContour(render: Render, isHighlight: boolean) {
     const { paper, options } = render;
     const { atomSelectionPlateRadius } = options;
-    const highlightPadding = isHighlight ? -3 : 0;
+    const highlightPadding = isHighlight ? -2 : 0;
     const ps = Scale.modelToCanvas(this.a.pp, options);
     return paper.circle(
       ps.x,

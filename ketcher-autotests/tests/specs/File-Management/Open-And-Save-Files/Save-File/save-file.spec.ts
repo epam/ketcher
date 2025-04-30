@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
 import {
-  AtomButton,
   FILE_TEST_DATA,
   RingButton,
   clickInTheMiddleOfTheScreen,
@@ -11,7 +10,6 @@ import {
   pasteFromClipboardAndAddToCanvas,
   receiveFileComparisonData,
   saveToFile,
-  selectAtomInToolbar,
   selectRingButton,
   takeEditorScreenshot,
   waitForIndigoToLoad,
@@ -30,6 +28,8 @@ import {
   getTextAreaValue,
   saveStructureDialog,
 } from '@tests/pages/common/SaveStructureDialog';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 const RING_OFFSET = 150;
 const ARROW_OFFSET = 20;
@@ -187,7 +187,9 @@ test.describe('Save files', () => {
       Description: In the save window that opens, in the preview section, 
       the atom or structure has no coordinates because they were not added to the canvas.
     */
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Hydrogen);
     await selectSaveTool(page);
 
     const expectedFile = await getMolfile(page, 'v2000');

@@ -10,8 +10,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
-  selectAtomInToolbar,
-  AtomButton,
   selectRing,
   RingButton,
   moveMouseToTheMiddleOfTheScreen,
@@ -42,6 +40,8 @@ import {
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
@@ -298,11 +298,13 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-5238
     Description: When Adding 'Atom' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
+    const atomToolbar = rightToolbar(page);
     await openFileAndAddToCanvas(
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });

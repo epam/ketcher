@@ -4,9 +4,9 @@ import {
   delay,
   MacroFileType,
   selectAllStructuresOnCanvas,
-  selectSequenceLayoutModeTool,
   takeMonomerLibraryScreenshot,
 } from '@utils/canvas';
+import { selectSequenceLayoutModeTool } from '@utils/canvas/tools';
 import { switchToRNAMode } from '@utils/macromolecules/sequence';
 import { waitForPageInit } from '@utils/common/loaders';
 import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';

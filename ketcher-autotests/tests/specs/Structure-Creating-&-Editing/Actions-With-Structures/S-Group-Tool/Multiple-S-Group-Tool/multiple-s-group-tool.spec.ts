@@ -8,8 +8,6 @@ import {
   openFileAndAddToCanvas,
   pressButton,
   receiveFileComparisonData,
-  selectAtomInToolbar,
-  AtomButton,
   resetCurrentTool,
   BondType,
   copyAndPaste,
@@ -33,6 +31,8 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -137,8 +137,10 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1521
       Description: User is able to add atom on structure with Multiple S-group.
     */
+    const atomToolbar = rightToolbar(page);
+
     await openFileAndAddToCanvas('KET/multiple-group.ket', page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);

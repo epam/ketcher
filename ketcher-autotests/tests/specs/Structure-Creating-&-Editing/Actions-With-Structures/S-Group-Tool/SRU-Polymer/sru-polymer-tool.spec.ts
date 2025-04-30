@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@playwright/test';
 import {
-  AtomButton,
   BondType,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
@@ -18,7 +17,6 @@ import {
   saveToFile,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
-  selectAtomInToolbar,
   selectLeftPanelButton,
   selectRingButton,
   selectUndoByKeyboard,
@@ -33,6 +31,8 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -189,8 +189,10 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1532
       Description: User is able to add atom on structure with SRU polymer S-group.
     */
+    const atomToolbar = rightToolbar(page);
+
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);

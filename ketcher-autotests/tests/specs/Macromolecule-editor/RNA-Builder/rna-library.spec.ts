@@ -1115,7 +1115,10 @@ test.describe('RNA Library', () => {
     await getMonomerLocator(page, Nucleotides.AmMC6T).click();
     await getMonomerLocator(page, { monomerAlias: 'Super G' }).click();
     await getMonomerLocator(page, { monomerAlias: '5-Bromo dU' }).click();
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   const rnaNucleotides1 = [
@@ -1134,10 +1137,14 @@ test.describe('RNA Library', () => {
     Test case: Import/Saving files/#4382
     Description: Unsplit nucleotide on the canvas from library can be selected, moved and deleted.
     */
+      const x = 300;
+      const y = 500;
+
       await selectMonomer(page, monomer);
-      await clickInTheMiddleOfTheScreen(page);
+      await clickOnCanvas(page, x, y);
       await page.keyboard.press('Escape');
-      await clickInTheMiddleOfTheScreen(page);
+      await clickOnCanvas(page, x, y);
+      await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 
       // Reset to default state

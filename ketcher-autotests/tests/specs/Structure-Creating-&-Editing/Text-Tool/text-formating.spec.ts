@@ -9,11 +9,11 @@ import {
   copyAndPaste,
   cutAndPaste,
   waitForRender,
-  selectAllStructuresOnCanvas,
   clickOnCanvas,
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
+import { selectAllStructuresOnCanvas } from '@utils/canvas';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import {
   pressRedoButton,

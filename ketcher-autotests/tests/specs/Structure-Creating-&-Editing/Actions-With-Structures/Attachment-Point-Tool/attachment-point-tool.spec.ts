@@ -6,8 +6,6 @@ import {
   openFileAndAddToCanvas,
   selectNestedTool,
   RgroupTool,
-  selectAtomInToolbar,
-  AtomButton,
   LeftPanelButton,
   selectLeftPanelButton,
   dragMouseTo,
@@ -45,12 +43,16 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
 
 async function selectNotListAtoms(page: Page) {
-  await page.getByTestId('period-table').click();
+  const periodicTableButton = rightToolbar(page).periodicTableButton;
+
+  await periodicTableButton.click();
   await page.getByText('Not List').click();
   await pressButton(page, 'U 92');
   await pressButton(page, 'Np 93');
@@ -59,7 +61,9 @@ async function selectNotListAtoms(page: Page) {
 }
 
 async function selectExtendedTableElements(page: Page, element: string) {
-  await page.getByTestId('extended-table').click();
+  const extendedTableButton = rightToolbar(page).extendedTableButton;
+
+  await extendedTableButton.click();
   await page.getByRole('button', { name: element, exact: true }).click();
   await page.getByRole('button', { name: 'Add', exact: true }).click();
 }
@@ -274,14 +278,16 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1644
     Description: The attachment point's asterisk is colored with the same color as the atom symbol.
     */
+    const atomToolbar = rightToolbar(page);
+
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', 2);
 
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 2);
 
-    await selectAtomInToolbar(AtomButton.Sulfur, page);
+    await atomToolbar.clickAtom(Atom.Sulfur);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });
@@ -293,11 +299,13 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1644
     Description: The Not List atom, Any Atom, Group Generics is attached to attachment points.
     */
+    const anyAtomButton = rightToolbar(page).anyAtomButton;
+
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await selectNotListAtoms(page);
     await clickOnAtom(page, 'C', 2);
 
-    await page.getByTestId('any-atom').click();
+    await anyAtomButton.click();
     await clickOnAtom(page, 'C', 2);
 
     await selectExtendedTableElements(page, 'G');
@@ -678,12 +686,14 @@ test.describe('Attachment Point Tool', () => {
       Description: New bond is created, the attachment point isn't removed.
     */
     const yDelta = 100;
+    const atomToolbar = rightToolbar(page);
+
     await openFileAndAddToCanvas(
       'Molfiles-V2000/chain-attachment-list.mol',
       page,
     );
 
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     const coordinatesWithShift = point.y + yDelta;

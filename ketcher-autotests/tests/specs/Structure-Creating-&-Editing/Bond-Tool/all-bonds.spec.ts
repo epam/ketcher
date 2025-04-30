@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect, Page } from '@playwright/test';
 import {
-  AtomButton,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -9,7 +8,6 @@ import {
   LeftPanelButton,
   moveMouseToTheMiddleOfTheScreen,
   RingButton,
-  selectAtom,
   selectRing,
   selectTool,
   takeEditorScreenshot,
@@ -23,7 +21,6 @@ import {
   selectRingButton,
   clickOnBond,
   takeLeftToolbarScreenshot,
-  selectAtomInToolbar,
   moveOnAtom,
   drawBenzeneRing,
   rightClickOnBond,
@@ -61,6 +58,8 @@ import {
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -340,6 +339,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         test.setTimeout(120000);
         const DELTA_X = 100;
         point = await getCoordinatesOfTheMiddleOfTheScreen(page);
+        const atomToolbar = rightToolbar(page);
 
         await bondSelectionTool(page, bondType);
         await clickInTheMiddleOfTheScreen(page);
@@ -382,7 +382,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
 
         await pressUndoButton(page);
 
-        await selectAtom(AtomButton.Oxygen, page);
+        await atomToolbar.clickAtom(Atom.Oxygen);
         point = await getCoordinatesTopAtomOfBenzeneRing(page);
 
         await clickOnCanvas(page, point.x, point.y, {
@@ -480,10 +480,12 @@ test.describe('Bond Tool', () => {
      *Description: Bond Tool - Drawing bonds in one direction does not change the bond created in the other direction
      */
     const point = { x: -50, y: 0 };
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnTheCanvas(page, point.x, point.y);
     await bondSelectionTool(page, MicroBondType.Single);
     await moveOnAtom(page, 'N', 0);
@@ -519,10 +521,12 @@ test.describe('Bond Tool', () => {
      */
     const point1 = { x: -50, y: 0 };
     const yDelta = 100;
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnTheCanvas(page, point1.x, point1.y);
     await bondSelectionTool(page, MicroBondType.Single);
     await moveOnAtom(page, 'N', 0);

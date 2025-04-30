@@ -8,7 +8,6 @@ import { Sugars } from '@constants/monomers/Sugars';
 import { FAVORITES_TAB } from '@constants/testIdConstants';
 import { Page, expect, test } from '@playwright/test';
 import {
-  AtomButton,
   FILE_TEST_DATA,
   FunctionalGroups,
   LeftPanelButton,
@@ -34,7 +33,6 @@ import {
   pressButton,
   readFileContent,
   selectAromatizeTool,
-  selectAtomInToolbar,
   selectCleanTool,
   selectDearomatizeTool,
   selectDropdownTool,
@@ -112,6 +110,8 @@ import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 
 const topLeftCorner = {
   x: -325,
@@ -1073,7 +1073,9 @@ test.describe('Macro-Micro-Switcher', () => {
       const y = 200;
       const x1 = 600;
       const y1 = 600;
-      await selectAtomInToolbar(AtomButton.Oxygen, page);
+      const atomToolbar = rightToolbar(page);
+
+      await atomToolbar.clickAtom(Atom.Oxygen);
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
@@ -2049,7 +2051,9 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: AP attached to single atom.
     */
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    const atomToolbar = rightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
     await addSuperatomAttachmentPoint(page, 'O', 0);
     await takeEditorScreenshot(page);

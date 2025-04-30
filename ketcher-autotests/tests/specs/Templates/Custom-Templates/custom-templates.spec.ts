@@ -12,13 +12,13 @@ import {
   openEditDialogForTemplate,
   selectAzuleneOnTemplateLibrary,
   clickOnTheCanvas,
-  AtomButton,
-  selectAtomInToolbar,
   clickOnAtom,
 } from '@utils';
 import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -199,6 +199,8 @@ test.describe('Open Ketcher', () => {
     Test case: EPMLSOPKET-1720
     Description: The template is attached to the structure by the defined attachment bond.
     */
+    const atomToolbar = rightToolbar(page);
+
     await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
     await page.getByPlaceholder('template').click();
     await page.getByRole('dialog').getByTestId('canvas').click();
@@ -209,7 +211,7 @@ test.describe('Open Ketcher', () => {
     await page.getByTitle('Azulene').click();
     await clickOnTheCanvas(page, 0, 1);
     const point = { x: -50, y: 0 };
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnTheCanvas(page, point.x, point.y);
     await bondSelectionTool(page, MicroBondType.Single);
     await clickOnAtom(page, 'C', 0);

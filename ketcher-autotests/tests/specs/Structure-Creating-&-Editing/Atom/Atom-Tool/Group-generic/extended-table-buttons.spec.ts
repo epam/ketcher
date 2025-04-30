@@ -1,10 +1,6 @@
 import { test } from '@playwright/test';
-import {
-  takeEditorScreenshot,
-  AtomButton,
-  selectAtomInToolbar,
-  waitForPageInit,
-} from '@utils';
+import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { takeEditorScreenshot, waitForPageInit } from '@utils';
 
 test.describe('Open and validate Extended table', () => {
   test.beforeEach(async ({ page }) => {
@@ -15,7 +11,9 @@ test.describe('Open and validate Extended table', () => {
     /* 
       Test cases: EPMLSOPKET-1507, EPMLSOPKET-1509, EPMLSOPKET-1515, EPMLSOPKET-1519, EPMLSOPKET-1525, EPMLSOPKET-1504, EPMLSOPKET-1501
       */
-    await selectAtomInToolbar(AtomButton.Extended, page);
+    const extendedTableButton = rightToolbar(page).extendedTableButton;
+
+    await extendedTableButton.click();
     await takeEditorScreenshot(page);
   });
 });

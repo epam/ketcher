@@ -6,19 +6,18 @@ import {
   waitForRender,
   drawBenzeneRing,
   resetCurrentTool,
-  selectLeftPanelButton,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  copyAndPaste,
   pressButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   cutAndPaste,
   clickOnCanvas,
   ZoomInByKeyboard,
 } from '@utils';
-import { selectAllStructuresOnCanvas } from '@utils/canvas';
+import { selectLeftPanelButton } from '@utils/canvas/tools';
+import { selectAllStructuresOnCanvas, copyAndPaste } from '@utils/canvas';
 import {
   pressUndoButton,
   selectClearCanvasTool,

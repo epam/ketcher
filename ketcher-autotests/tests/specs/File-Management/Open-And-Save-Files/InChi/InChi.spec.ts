@@ -479,7 +479,9 @@ test.describe('Open and Save InChI file', () => {
       'Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: ' +
       "'molecule auto loader: SMILES loader: 'h' specifier is allowed only for query molecules', " +
       "'scanner: BufferScanner::read() error', 'scanner: BufferScanner::read() error', " +
-      "'molecule auto loader: graph: already have edge between vertices 4 and 3'";
+      "'molecule auto loader: graph: already have edge between vertices 4 and 3', " +
+      "'molecule auto loader: SMILES loader: 'h' specifier is allowed only for query molecules', " +
+      "'scanner: BufferScanner::read() error'";
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
   });
 

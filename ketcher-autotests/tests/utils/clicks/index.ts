@@ -45,7 +45,7 @@ export async function clickInTheMiddleOfTheScreen(
   page: Page,
   button: 'left' | 'right' = 'left',
 ) {
-  await page.waitForSelector('body', { state: 'attached' });
+  await page.waitForSelector('body', { state: 'attached', timeout: 10000 });
   const boundingBox = await page.locator('body').boundingBox();
   if (!boundingBox) {
     throw new Error('Unable to get boundingBox for <body>');

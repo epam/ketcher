@@ -148,6 +148,7 @@ test.describe('Snake Bond Tool', () => {
     Description: Snake bond tool
     */
     await selectFlexLayoutModeTool(page);
+    await goToPeptidesTab(page);
 
     await addBondedMonomersToCanvas(page, Peptides.Tza, 100, 100, 25, 25, 18);
 
@@ -663,6 +664,7 @@ test.describe('Snake Bond Tool', () => {
     Description: Check that switch to Flex mode on a snake chain change it into a chain with 
     straight lines press it again change it into curved lines.
     */
+    await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
       `KET/long-peptide-chain.ket`,
       page,

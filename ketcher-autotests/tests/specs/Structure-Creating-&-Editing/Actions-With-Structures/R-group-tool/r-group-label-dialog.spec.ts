@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   LeftPanelButton,
@@ -13,8 +13,6 @@ import {
   clickOnAtom,
   copyAndPaste,
   cutAndPaste,
-  receiveFileComparisonData,
-  saveToFile,
   waitForRender,
   waitForPageInit,
   selectAllStructuresOnCanvas,
@@ -27,7 +25,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getSmiles } from '@utils/formats';
 import {
   pressRedoButton,
   pressUndoButton,

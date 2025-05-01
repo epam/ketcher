@@ -3,12 +3,9 @@ import { test, expect } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
-  saveToFile,
   openFile,
-  receiveFileComparisonData,
   pressButton,
   selectSnakeLayoutModeTool,
-  getFasta,
   moveMouseAway,
   selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProject,

@@ -6,8 +6,6 @@ import {
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
-  saveToFile,
-  receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
 } from '@utils';
@@ -15,7 +13,6 @@ import {
   selectClearCanvasTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import { getExtendedSmiles, getSmiles } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,

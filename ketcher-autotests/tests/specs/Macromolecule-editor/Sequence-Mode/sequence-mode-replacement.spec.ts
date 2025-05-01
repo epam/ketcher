@@ -3,9 +3,7 @@ import { expect, Page, test } from '@playwright/test';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
-  getFasta,
   getMolfile,
-  getSequence,
   Monomer,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,

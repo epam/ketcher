@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   RingButton,
   clickInTheMiddleOfTheScreen,
@@ -8,8 +8,6 @@ import {
   cutAndPaste,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  receiveFileComparisonData,
-  saveToFile,
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
   selectDearomatizeTool,
@@ -21,7 +19,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getSmiles } from '@utils/formats';
 import {
   pressRedoButton,
   pressUndoButton,

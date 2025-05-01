@@ -16,7 +16,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
-import { getMolfile, getSmiles } from '@utils/formats';
+import { getMolfile } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,

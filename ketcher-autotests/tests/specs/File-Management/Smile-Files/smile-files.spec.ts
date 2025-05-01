@@ -583,22 +583,11 @@ test.describe('SMILES files', () => {
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
     );
-    const expectedFile = await getExtendedSmiles(page);
-    await saveToFile(
-      'Extended-SMILES/unsplit-nucleotides-connected-with-nucleotides.cxsmi',
-      expectedFile,
-    );
-    const {
-      fileExpected: extendedsmilesFileExpected,
-      file: extendedsmilesFile,
-    } = await receiveFileComparisonData({
+    await verifyFileExport(
       page,
-      expectedFileName:
-        'Extended-SMILES/unsplit-nucleotides-connected-with-nucleotides.cxsmi',
-    });
-
-    expect(extendedsmilesFile).toEqual(extendedsmilesFileExpected);
-
+      'Extended-SMILES/unsplit-nucleotides-connected-with-nucleotides.cxsmi',
+      FileType.ExtendedSMILES,
+    );
     await openFileAndAddToCanvasAsNewProject(
       'Extended-SMILES/uunsplit-nucleotides-connected-with-nucleotides.cxsmi',
       page,
@@ -621,22 +610,11 @@ test.describe('SMILES files', () => {
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
     );
-    const expectedFile = await getExtendedSmiles(page);
-    await saveToFile(
-      'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
-      expectedFile,
-    );
-    const {
-      fileExpected: extendedsmilesFileExpected,
-      file: extendedsmilesFile,
-    } = await receiveFileComparisonData({
+    await verifyFileExport(
       page,
-      expectedFileName:
-        'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
-    });
-
-    expect(extendedsmilesFile).toEqual(extendedsmilesFileExpected);
-
+      'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
+      FileType.ExtendedSMILES,
+    );
     await openFileAndAddToCanvasAsNewProject(
       'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
       page,

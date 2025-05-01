@@ -67,39 +67,18 @@ test.describe('Import-Saving .fasta Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-a.ket', page);
-    const expectedFile = await getFasta(page);
-    await saveToFile('FASTA/fasta-rna-a-expected.fasta', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: fastaFileExpected, file: fastaFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'FASTA/fasta-rna-a-expected.fasta',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(fastaFile).toEqual(fastaFileExpected);
-
+    await verifyFileExport(
+      page,
+      'FASTA/fasta-rna-a-expected.fasta',
+      FileType.FASTA,
+    );
     await takeEditorScreenshot(page);
   });
 
   test('Check that empty file can be saved in .fasta format', async ({
     page,
   }) => {
-    const expectedFile = await getFasta(page);
-    await saveToFile('FASTA/fasta-empty.fasta', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: fastaFileExpected, file: fastaFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'FASTA/fasta-empty.fasta',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(fastaFile).toEqual(fastaFileExpected);
+    await verifyFileExport(page, 'FASTA/fasta-empty.fasta', FileType.FASTA);
   });
 
   test('Check that system does not let importing empty .fasta file', async ({
@@ -137,19 +116,11 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('FASTA/fasta-snake-mode-rna.fasta', page);
     await selectSnakeLayoutModeTool(page);
-    const expectedFile = await getFasta(page);
-    await saveToFile('FASTA/fasta-snake-mode-rna-expected.fasta', expectedFile);
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: fastaFileExpected, file: fastaFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'FASTA/fasta-snake-mode-rna-expected.fasta',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(fastaFile).toEqual(fastaFileExpected);
+    await verifyFileExport(
+      page,
+      'FASTA/fasta-snake-mode-rna-expected.fasta',
+      FileType.FASTA,
+    );
   });
 
   test('Should open .ket file and modify to .fasta format in save modal textarea', async ({
@@ -384,23 +355,11 @@ test.describe('Import-Saving .fasta Files', () => {
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
     );
-    const expectedFile = await getFasta(page);
-    await saveToFile(
-      'FASTA//unsplit-nucleotides-connected-with-nucleotides.fasta',
-      expectedFile,
+    await verifyFileExport(
+      page,
+      'FASTA/unsplit-nucleotides-connected-with-nucleotides.fasta',
+      FileType.FASTA,
     );
-
-    const METADATA_STRING_INDEX = [1];
-
-    const { fileExpected: fastaFileExpected, file: fastaFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'FASTA/unsplit-nucleotides-connected-with-nucleotides.fasta',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-
-    expect(fastaFile).toEqual(fastaFileExpected);
     await openFileAndAddToCanvasAsNewProject(
       'FASTA/unsplit-nucleotides-connected-with-nucleotides.fasta',
       page,

@@ -2348,23 +2348,11 @@ test(`31. Verify saving and reopening a structure with replaced monomers in FAST
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  const expectedFile = await getFasta(page);
-  await saveToFile(
+  await verifyFileExport(
+    page,
     'Common/Sequence-Mode-Replacement/replacement-expected.fasta',
-    expectedFile,
+    FileType.FASTA,
   );
-
-  const METADATA_STRING_INDEX = [1];
-
-  const { fileExpected: fastaFileExpected, file: fastaFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'Common/Sequence-Mode-Replacement/replacement-expected.fasta',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(fastaFile).toEqual(fastaFileExpected);
 
   await checkForKnownBugs(
     replaceMonomer,

@@ -2305,23 +2305,11 @@ test(`30. Verify saving and reopening a structure with replaced monomers in Sequ
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  const expectedFile = await getSequence(page);
-  await saveToFile(
+  await verifyFileExport(
+    page,
     'Common/Sequence-Mode-Replacement/replacement-expected.seq',
-    expectedFile,
+    FileType.SEQ,
   );
-
-  const METADATA_STRING_INDEX = [1];
-
-  const { fileExpected: sequenceFileExpected, file: sequenceFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'Common/Sequence-Mode-Replacement/replacement-expected.seq',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(sequenceFile).toEqual(sequenceFileExpected);
   await checkForKnownBugs(
     replaceMonomer,
     sequence,

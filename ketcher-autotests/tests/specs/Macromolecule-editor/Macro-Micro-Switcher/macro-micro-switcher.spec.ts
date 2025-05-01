@@ -601,6 +601,7 @@ test.describe('Macro-Micro-Switcher', () => {
 test.describe('Macro-Micro-Switcher', () => {
   test.beforeEach(async () => {
     await turnOnMicromoleculesEditor(page);
+    await selectClearCanvasTool(page);
   });
 
   test.skip(

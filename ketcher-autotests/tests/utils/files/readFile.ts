@@ -437,8 +437,10 @@ export async function receiveRxnFileComparisonData(
 // of canvas when opened. So when comparing files, the coordinates
 // always match and there is no difference between the results when comparing.
 export async function saveToFile(filename: string, data: string) {
+  const testDataDirectory = getTestDataDirectory();
+  const resolvedFilePath = path.resolve(testDataDirectory, filename);
   if (process.env.GENERATE_DATA === 'true') {
-    return await fs.promises.writeFile(filename, data, 'utf-8');
+    return await fs.promises.writeFile(resolvedFilePath, data, 'utf-8');
   }
 }
 

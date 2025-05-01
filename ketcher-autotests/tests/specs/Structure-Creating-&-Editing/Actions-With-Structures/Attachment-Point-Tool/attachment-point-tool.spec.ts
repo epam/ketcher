@@ -529,17 +529,11 @@ test.describe('Attachment Point Tool', () => {
     Description: Structure with attachment points saved as .smi file
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/chain-with-attachment-points-expected.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smiFileExpected, file: smiFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/chain-with-attachment-points-expected.smi',
-      });
-    expect(smiFile).toEqual(smiFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -554,17 +548,11 @@ test.describe('Attachment Point Tool', () => {
     Open the saved *.cml file and edit it in any way.
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/chain-with-attachment-points-expected.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smiFileExpected, file: smiFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/chain-with-attachment-points-expected.smi',
-      });
-    expect(smiFile).toEqual(smiFileExpected);
     await takeEditorScreenshot(page);
   });
 

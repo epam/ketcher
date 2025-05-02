@@ -69,7 +69,7 @@ import {
 } from '@utils/keyboard/index';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
-  await bondSelectionTool(page, MacroBondType.Single);
+  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await getMonomerLocator(page, monomer).nth(nth).hover();
 }
 
@@ -1037,7 +1037,7 @@ test.describe('Sequence edit mode', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectFlexLayoutModeTool(page);
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await hoverMouseOverMonomer(page, Sugars.R, 11);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1069,7 +1069,7 @@ test.describe('Sequence edit mode', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectFlexLayoutModeTool(page);
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await hoverMouseOverMonomer(page, Sugars.dR, 11);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -1187,7 +1187,7 @@ test.describe('Sequence edit mode', () => {
     await createRNAAntisenseChain(page, anySymbolA);
     await selectFlexLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1225,7 +1225,7 @@ test.describe('Sequence edit mode', () => {
     await createDNAAntisenseChain(page, anySymbolA);
     await selectFlexLayoutModeTool(page);
     await selectAllStructuresOnCanvas(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

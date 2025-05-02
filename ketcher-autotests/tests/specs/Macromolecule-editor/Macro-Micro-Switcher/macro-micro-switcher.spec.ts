@@ -97,10 +97,7 @@ import {
   bondTwoMonomersPointToPoint,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
-import {
-  bondSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
   MacroBondDataIds,
   MacroBondType,
@@ -914,7 +911,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -933,7 +930,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await keyboardPressOnCanvas(page, `${modifier}+a`);
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
     await keyboardPressOnCanvas(page, `${modifier}+a`);
@@ -952,7 +949,7 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -971,7 +968,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await removeSuperatomAttachmentPoint(page, 'C', 2);
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -1017,7 +1014,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/chain-with-eight-attachment-points.ket',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('R2').click();
     await addSuperatomAttachmentPoint(page, 'C', 2);
     await takeEditorScreenshot(page);
@@ -1033,7 +1030,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/structure-with-two-attachment-points.ket',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('R2').click({ button: 'right' });
     await takeEditorScreenshot(page);
   });
@@ -1355,7 +1352,7 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.first,
         data.bondEndpoints.second,
       );
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       const bondLine = getBondLocator(page, {
         bondType: MacroBondDataIds.Single,
       }).first();
@@ -1389,7 +1386,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'R1',
       'R3',
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     const bondLine = getBondLocator(page, {
       bondType: MacroBondDataIds.Single,
     }).first();
@@ -1442,7 +1439,7 @@ test.describe('Macro-Micro-Switcher', () => {
         data.bondEndpoints.second,
       );
       await turnOnMicromoleculesEditor(page);
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await page.getByText(data.monomer.alias).click();
       await takeEditorScreenshot(page);
       await pressUndoButton(page);
@@ -1475,7 +1472,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'R3',
     );
     await turnOnMicromoleculesEditor(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     const canvasLocator = page.getByTestId('ketcher-canvas');
     await canvasLocator.locator('path').nth(5).click();
     await takeEditorScreenshot(page);
@@ -1508,7 +1505,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'R3',
     );
     await turnOnMicromoleculesEditor(page);
-    await bondSelectionTool(page, MicroBondType.Double);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
     const canvasLocator = page.getByTestId('ketcher-canvas');
     await canvasLocator.locator('path').nth(5).click();
     await takeEditorScreenshot(page);
@@ -1521,7 +1518,7 @@ test.describe('Macro-Micro-Switcher', () => {
       AP label disappear if we delete bond between AP label and atom (stand alone AP label is not possible)
     */
     await openFileAndAddToCanvas('KET/oxygen-on-attachment-point.ket', page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 645, 318);
     await takeEditorScreenshot(page);
   });
@@ -1915,7 +1912,7 @@ test.describe('Macro-Micro-Switcher', () => {
         await keyboardPressOnCanvas(page, 'a');
         await keyboardPressOnCanvas(page, 'Escape');
         await selectSnakeLayoutModeTool(page);
-        await bondSelectionTool(page, MacroBondType.Single);
+        await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
         await getMonomerLocator(page, {
           monomerAlias: 'F1',
         }).hover();

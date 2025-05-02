@@ -38,10 +38,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -592,7 +589,9 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     const coordinatesWithShift = point.y + yDelta;
@@ -623,7 +622,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'N', 0);
 
     await clickOnAtom(page, 'L#', 0);
@@ -649,7 +648,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     point = await getAtomByIndex(page, { label: 'N' }, 0);
     await page.mouse.move(point.x, point.y);
     await page.keyboard.press('Delete');

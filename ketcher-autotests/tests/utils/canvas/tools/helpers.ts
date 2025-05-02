@@ -17,7 +17,7 @@ import {
   selectOpenFileTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
@@ -134,7 +134,9 @@ export async function selectRectangleArea(
   endX: number,
   endY: number,
 ) {
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await page.mouse.move(startX, startY);
   await page.mouse.down();
   await page.mouse.move(endX, endY);

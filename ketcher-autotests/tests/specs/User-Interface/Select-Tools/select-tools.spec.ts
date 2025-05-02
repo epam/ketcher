@@ -26,7 +26,9 @@ test.describe('Select tools tests', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await page.mouse.move(point.x, point.y);
 
@@ -44,7 +46,9 @@ test.describe('Select tools tests', () => {
       Place two 'Benzene' on the canvas and drag one onto the other
     */
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     const atomWithQueryFeatures = 4;
     await clickOnAtom(page, 'C', atomWithQueryFeatures);
     await takeEditorScreenshot(page);

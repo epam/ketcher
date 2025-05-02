@@ -68,7 +68,7 @@ test.describe('Undo Redo', () => {
     );
 
     // Select bond tool
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -168,7 +168,7 @@ test.describe('Undo-Redo tests', () => {
     Description: Entities(Peptides, RNA, CHEM, Bonds) are deleted and then Undo and Redo actions.
     */
     await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
-    await await selectEraseTool(page);
+    await await CommonLeftToolbar(page).selectEraseTool();
     const entitiesToDelete = [
       Peptides.D_aIle,
       Peptides.SertBu,
@@ -288,7 +288,7 @@ test.describe('Undo-Redo tests', () => {
     Description: Short key "Control + Z" and "Control+Y" are working.
     */
     await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
-    await await selectEraseTool(page);
+    await await CommonLeftToolbar(page).selectEraseTool();
     const entitiesToDelete = [
       Peptides.SertBu,
       Peptides.TyrabD,
@@ -465,12 +465,14 @@ test.describe('Undo-Redo tests', () => {
     await selectMonomer(page, Peptides.X);
     await clickOnTheCanvas(page, 0, 0);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 
     await clickOnTheCanvas(page, 0, 0);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
 
     await takeEditorScreenshot(page);
 
@@ -504,12 +506,14 @@ test.describe('Undo-Redo tests', () => {
     await selectMonomer(page, Bases.DNA_N);
     await clickOnTheCanvas(page, 0, 0);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 
     await clickOnTheCanvas(page, 0, 0);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
 
     await takeEditorScreenshot(page);
 

@@ -14,7 +14,7 @@ import {
   clickOnTheCanvas,
   clickOnAtom,
 } from '@utils';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -213,7 +213,7 @@ test.describe('Open Ketcher', () => {
     const point = { x: -50, y: 0 };
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnTheCanvas(page, point.x, point.y);
-    await bondSelectionTool(page, MicroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', 0);
     await takeEditorScreenshot(page);
   });

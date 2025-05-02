@@ -382,7 +382,7 @@ test.describe('Zoom Tool', () => {
         1,
       );
     }
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, { monomerAlias: '(R1,R2,R3,R4,R5)' }).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);

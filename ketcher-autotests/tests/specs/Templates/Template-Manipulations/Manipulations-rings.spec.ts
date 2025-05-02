@@ -57,7 +57,9 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
     selectionRange + selectionRange,
   );
   point = await getLeftBondByAttributes(page, { reactingCenterStatus: 0 });
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await clickOnCanvas(page, point.x + selectionRange, point.y + selectionRange);
   await dragMouseTo(point.x - selectionRange, point.y - selectionRange, page);
 

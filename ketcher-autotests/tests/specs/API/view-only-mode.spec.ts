@@ -39,10 +39,7 @@ import {
   enableViewOnlyMode,
   enableViewOnlyModeBySetOptions,
 } from '@utils/formats';
-import {
-  commonLeftToolbarLocators,
-  selectAreaSelectionTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
   setZoomInputValue,
@@ -188,9 +185,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: Hand and selection tools are enabled in view-only mode
     */
     await enableViewOnlyModeBySetOptions(page);
-    await expect(commonLeftToolbarLocators(page).handToolButton).toBeEnabled();
+    await expect(CommonLeftToolbar(page).handToolButton).toBeEnabled();
     await expect(
-      commonLeftToolbarLocators(page).areaSelectionDropdownButton,
+      CommonLeftToolbar(page).areaSelectionDropdownButton,
     ).toBeEnabled();
     await takeLeftToolbarScreenshot(page);
   });
@@ -459,7 +456,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const timeout = 2000;
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await moveOnAtom(page, 'C', 1);
     await page.mouse.down();
     await page.waitForTimeout(timeout);
@@ -481,7 +480,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await takeLeftToolbarScreenshot(page);
     await enableViewOnlyModeBySetOptions(page);
     await takeLeftToolbarScreenshot(page);
@@ -498,7 +499,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await disableViewOnlyModeBySetOptions(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await selectAllStructuresOnCanvas(page);
     await moveOnAtom(page, 'C', 1);
     await dragMouseTo(300, 300, page);

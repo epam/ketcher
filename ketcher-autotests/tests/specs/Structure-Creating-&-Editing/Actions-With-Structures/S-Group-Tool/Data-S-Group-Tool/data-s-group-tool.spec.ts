@@ -31,7 +31,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 
@@ -317,7 +317,7 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to delete and undo/redo atom on structure with Data S-group.
     */
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
 

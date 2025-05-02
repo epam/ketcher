@@ -39,7 +39,7 @@ test.describe('Peptide', () => {
     */
     await selectMonomer(page, Peptides.A);
     await clickInTheMiddleOfTheScreen(page);
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await moveMouseToTheMiddleOfTheScreen(page);
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);

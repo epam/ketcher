@@ -77,7 +77,7 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('TEST');
     await pressButton(page, 'Apply');
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('TEST').click();
     await performUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -88,7 +88,9 @@ test.describe('Text tools test cases', () => {
     page,
   }) => {
     await openFileAndAddToCanvas('KET/text-object-for-test.ket', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     await page.getByText('TEXT').hover();
     await page.getByText('TEXT').click();
     await page.keyboard.press('Delete');
@@ -196,7 +198,7 @@ test.describe('Text tools test cases', () => {
 
   test('Text tool - Delete with Erase tool', async ({ page }) => {
     await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('&&&').hover();
     await page.getByText('&&&').click();
     await performUndoRedo(page);
@@ -208,7 +210,9 @@ test.describe('Text tools test cases', () => {
   }) => {
     const text2 = 'Ketcher is a cool tool';
     await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     await page.getByText(text2).hover();
     await page.getByText(text2).click();
     await page.keyboard.press('Delete');
@@ -225,7 +229,9 @@ test.describe('Text tools test cases', () => {
     await page.getByTestId('erase').click();
     await performUndoRedo(page);
     await takeEditorScreenshot(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     await selectStructureWithSelectionTool(page);
     await page.keyboard.press('Delete');
     await performUndoRedo(page);
@@ -291,7 +297,9 @@ test.describe('Text tools test cases', () => {
       await page.getByTestId('canvas').click({ position: { x, y } });
     });
     await takeEditorScreenshot(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     await selectStructureWithSelectionTool(page);
     await waitForRender(page, async () => {
       await moveStructureToNewPosition(page);

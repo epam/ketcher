@@ -34,7 +34,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import { Monomer } from '@utils/types';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -397,7 +397,9 @@ export async function addMonomerToCenterOfCanvas(
 ) {
   await selectMonomer(page, monomerType);
   await clickInTheMiddleOfTheScreen(page);
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
 }
 
 export async function addPeptideOnCanvas(page: Page, peptide: Monomer) {
@@ -577,7 +579,9 @@ export async function selectCanvasArea(
   firstCorner: { x: number; y: number },
   secondCorner: { x: number; y: number },
 ) {
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await page.mouse.move(firstCorner.x, firstCorner.y);
   await dragMouseTo(secondCorner.x, secondCorner.y, page);
 }

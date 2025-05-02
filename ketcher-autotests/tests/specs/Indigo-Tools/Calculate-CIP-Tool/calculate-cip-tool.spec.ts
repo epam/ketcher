@@ -369,7 +369,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
     );
     await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
     await clickOnCanvas(page, point.x, point.y);
 
@@ -426,7 +426,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
-    await bondSelectionTool(page, MicroBondType.SingleUp);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
     await clickOnCanvas(page, point.x, point.y);
     await takeEditorScreenshot(page);

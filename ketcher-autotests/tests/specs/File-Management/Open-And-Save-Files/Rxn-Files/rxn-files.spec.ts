@@ -172,7 +172,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await savedFileInfoStartsWithRxn(page);
 
     await pressButton(page, 'Cancel');
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, xCoordinatesWithShiftHalf, yCoordinatesWithShift);
     await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
     const yArrowStart = y + yDelta20;
@@ -379,7 +379,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);
@@ -410,7 +410,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);
@@ -441,7 +441,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
     await page.mouse.move(100, 500);
     await dragMouseTo(700, 100, page);
@@ -472,7 +472,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);
@@ -502,7 +502,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);
@@ -533,7 +533,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);

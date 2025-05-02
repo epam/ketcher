@@ -135,7 +135,9 @@ test.describe('Plus and Arrows tools ', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 100, y + 100, page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await takeEditorScreenshot(page);
     await page.mouse.move(x + 98, y + 98);
     await dragMouseTo(x + 150, y + 150, page);
@@ -177,7 +179,7 @@ test.describe('Plus and Arrows tools ', () => {
     await clickOnTheCanvas(page, -80, 0);
     await takeEditorScreenshot(page);
 
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnTheCanvas(page, -60, 0);
     await takeEditorScreenshot(page);
 
@@ -204,7 +206,9 @@ test.describe('Plus and Arrows tools ', () => {
     let point: Point;
     test.beforeEach(async ({ page }) => {
       await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
-      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+      await CommonLeftToolbar(page).selectAreaSelectionTool(
+        SelectionToolType.Rectangle,
+      );
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });
 
@@ -290,7 +294,7 @@ test.describe('Plus and Arrows tools ', () => {
       await takeEditorScreenshot(page);
       await pressUndoButton(page);
       await takeEditorScreenshot(page);
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await page.mouse.move(point.x - 300, point.y - 100);
       await dragMouseTo(point.x - 140, point.y + 100, page);
     });
@@ -303,7 +307,9 @@ test.describe('Plus and Arrows tools ', () => {
     let point: Point;
     test.beforeEach(async ({ page }) => {
       await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
-      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+      await CommonLeftToolbar(page).selectAreaSelectionTool(
+        SelectionToolType.Rectangle,
+      );
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });
 
@@ -359,7 +365,7 @@ test.describe('Plus and Arrows tools ', () => {
       await takeEditorScreenshot(page);
       await pressUndoButton(page);
       await takeEditorScreenshot(page);
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await page.mouse.move(point.x - 300, point.y - 100);
       await dragMouseTo(point.x - 140, point.y + 100, page);
     });
@@ -382,7 +388,9 @@ test.describe('Plus and Arrows tools ', () => {
       await selectNestedTool(page, ArrowTool.ARROW_EQUILIBRIUM_FILLED_HALF_BOW);
       await clickOnTheCanvas(page, -40, 0);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+      await CommonLeftToolbar(page).selectAreaSelectionTool(
+        SelectionToolType.Rectangle,
+      );
     }
 
     test('Select the reaction arrow and move it', async ({ page }) => {
@@ -444,12 +452,12 @@ test.describe('Plus and Arrows tools ', () => {
     test('Click the equilibrium arrow with the Erase tool, Undo, Erase for part of reaction, Undo/Redo', async ({
       page,
     }) => {
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await clickOnTheCanvas(page, -OFFSET_FROM_ARROW, 0);
       await takeEditorScreenshot(page);
       await pressUndoButton(page);
       await takeEditorScreenshot(page);
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await page.mouse.move(point.x - 40, point.y - 300);
       await dragMouseTo(point.x + 400, point.y + 100, page);
       await moveMouseToTheMiddleOfTheScreen(page);
@@ -676,7 +684,9 @@ test.describe('Plus and Arrows tools ', () => {
     await selectNestedTool(page, ArrowTool.ARROW_EQUILIBRIUM_OPEN_ANGLE);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });

@@ -166,7 +166,9 @@ test.describe('Sequence mode selection for view mode', () => {
     test(`Ensure that ${data.description}`, async ({ page }) => {
       await openFileAndAddToCanvasMacro(data.file, page);
       await selectSequenceLayoutModeTool(page);
-      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+      await CommonLeftToolbar(page).selectAreaSelectionTool(
+        SelectionToolType.Rectangle,
+      );
       await page
         .locator('g.drawn-structures')
         .locator('g', { has: page.locator('text="G"') })

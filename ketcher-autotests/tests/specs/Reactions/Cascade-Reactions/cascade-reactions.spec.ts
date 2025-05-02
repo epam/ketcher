@@ -35,10 +35,7 @@ import {
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { addTextToCanvas } from '@utils/selectors/addTextBoxToCanvas';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
 import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
@@ -893,7 +890,7 @@ test.describe('Cascade Reactions', () => {
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
       await selectPartOfMolecules(page);
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await takeEditorScreenshot(page);
       await screenshotBetweenUndoRedo(page);
       await takeEditorScreenshot(page);
@@ -1762,11 +1759,13 @@ test.describe('Cascade Reactions', () => {
           await clickOnCanvas(page, 500, 600);
           await selectRing(RingButton.Benzene, page);
           await clickOnCanvas(page, 200, 600);
-          await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+          await CommonLeftToolbar(page).selectAreaSelectionTool(
+            SelectionToolType.Rectangle,
+          );
           await addTail(page, 482, 464);
           await takeEditorScreenshot(page);
           await selectPartOfMolecules(page);
-          await selectEraseTool(page);
+          await CommonLeftToolbar(page).selectEraseTool();
           await takeEditorScreenshot(page);
           await pressUndoButton(page);
           await takeEditorScreenshot(page);

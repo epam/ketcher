@@ -637,10 +637,10 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await bondSelectionTool(page, MicroBondType.SingleUp);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
     await clickOnAtom(page, 'C', 1);
 
-    await bondSelectionTool(page, MicroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });
@@ -654,7 +654,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await bondSelectionTool(page, MicroBondType.SingleUp);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
     await clickOnAtom(page, 'C', 1);
     await takeEditorScreenshot(page);
   });

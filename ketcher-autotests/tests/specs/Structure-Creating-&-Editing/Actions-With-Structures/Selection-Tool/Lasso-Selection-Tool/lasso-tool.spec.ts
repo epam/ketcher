@@ -91,7 +91,9 @@ test.describe('Lasso Selection tool', () => {
      */
     const selectCoords = { x: 100, y: 100 };
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     const point = await selectObjects(page, selectCoords.x, selectCoords.y);
     const atomIndex = 5;
     await clickOnAtom(page, 'C', atomIndex);
@@ -107,7 +109,9 @@ test.describe('Lasso Selection tool', () => {
     const yShift = 5;
     const shiftCoords = { x: 270, y: 10 };
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(point.x - shiftCoords.x, point.y + shiftCoords.y);
     await page.mouse.down();
@@ -135,7 +139,9 @@ test.describe('Lasso Selection tool', () => {
      * Description: Selected structures and components are moved to the another place.
      */
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     const point = await selectObjects(page, xAxis, yAxis);
     const atomIndex = 10;
     const xShift = 100;
@@ -150,7 +156,9 @@ test.describe('Lasso Selection tool', () => {
      * Description: Atoms are fused.
      */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     const atomIndex = 4;
     await clickOnAtom(page, 'C', atomIndex);
     const aimAtomIndex = 7;
@@ -169,10 +177,12 @@ test.describe('Lasso Selection tool', () => {
     const selectCoords = { x: 50, y: 50 };
     const shiftCoords = { x: 10, y: 10 };
     await drawBenzeneRing(page);
-    await bondSelectionTool(page, MicroBondType.SingleAromatic);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleAromatic);
     const coordinates = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, coordinates.x + xDelta, coordinates.y - yDelta);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     await selectObjects(page, selectCoords.x, selectCoords.y);
     const bondIndex = 3;
     const bondPoint = await getBondByIndex(page, {}, bondIndex);
@@ -206,7 +216,9 @@ test.describe('Lasso Selection tool', () => {
      * Description: The selected part of the structure or reaction should disappear after pressing the "Delete" button.
      */
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     await selectObjects(page, yAxis, yAxis);
     await page.keyboard.press('Delete');
 
@@ -225,7 +237,9 @@ test.describe('Lasso Selection tool', () => {
     const shiftCoords = { x: 70, y: 50 };
     const centerPoint = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
 
     await clickOnAtom(page, 'C', 0);
     const atomPoint = await getAtomByIndex(page, { label: 'C' }, 0);
@@ -315,9 +329,11 @@ test.describe('Lasso Selection tool', () => {
      */
     const yShift = 100;
     const xShift = 500;
-    await bondSelectionTool(page, MicroBondType.SingleAromatic);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleAromatic);
     await clickOnCanvas(page, xAxis, yAxis);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     // 'Shift+Tab' used for switch from Rectangle selection to Lasso
     await page.keyboard.press('Shift+Tab');
     await page.mouse.move(xAxis - xDelta, yAxis - yDelta);

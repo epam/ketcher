@@ -67,10 +67,7 @@ import {
   switchToPeptideMode,
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
-import {
-  bondSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
@@ -267,11 +264,11 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await page.getByTestId('canvas').getByText('O').click();
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -621,7 +618,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
     );
     await selectAllStructuresOnCanvas(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -629,7 +626,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
     await selectAllStructuresOnCanvas(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedoInMacro(page);
     await takeEditorScreenshot(page);

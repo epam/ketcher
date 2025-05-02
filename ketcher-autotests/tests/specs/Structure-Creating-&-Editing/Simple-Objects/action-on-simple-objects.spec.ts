@@ -27,10 +27,10 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
 import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -115,7 +115,9 @@ test.describe('Action on simples objects', () => {
     await dragMouseTo(point1.x, point1.y, page);
     await drawBenzeneRing(page);
     await takeEditorScreenshot(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     await clickOnCanvas(page, point2.x, point2.y);
     await waitForRender(page, async () => {
       await dragMouseTo(point3.x, point3.y, page);

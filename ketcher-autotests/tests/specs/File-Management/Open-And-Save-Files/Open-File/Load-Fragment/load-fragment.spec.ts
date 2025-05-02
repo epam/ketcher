@@ -1,5 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
-import { commonLeftToolbarLocators } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
@@ -57,7 +57,7 @@ async function moveElement(
   const pointXToMoveElement = x - xShiftForElement;
   const pointYToMoveElement = y - yShiftForElement;
 
-  await commonLeftToolbarLocators(page).handToolButton.click();
+  await CommonLeftToolbar(page).handToolButton.click();
   await moveOnAtom(page, atomLabel, atomNumber);
   await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
 }

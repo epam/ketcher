@@ -31,7 +31,7 @@ import {
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
@@ -787,7 +787,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 
   for (const monomer of monomers) {
     await expandMonomer(page, monomer.name);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -876,7 +876,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 //       await takeEditorScreenshot(page);
 //       await pressCancelAtEditAbbreviationDialog(page);
 
-//       await bondSelectionTool(page, MicroBondType.Triple);
+//       await CommonLeftToolbar(page).selectBondTool(MicroBondType.Triple);
 //       await clickOnBondOfExpandedMonomer(page, 1);
 //       await takeEditorScreenshot(page);
 //       await pressCancelAtEditAbbreviationDialog(page);
@@ -926,7 +926,7 @@ test(
     for (const monomer of monomers) {
       await expandMonomer(page, monomer.name);
       await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       // Pic 2, 5, 8, 11, 14, 17
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,

@@ -20,10 +20,7 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import {
-  commonLeftToolbarLocators,
-  selectAreaSelectionTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -147,7 +144,7 @@ test.describe('Right-click menu', () => {
     await page.getByRole('button', { name: 'aliphatic' }).click();
     await page.getByText('Unsaturated').first().click();
     await takeEditorScreenshot(page);
-    await commonLeftToolbarLocators(page).areaSelectionDropdownButton.click();
+    await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
     await takeEditorScreenshot(page);
   });
 
@@ -440,7 +437,9 @@ test.describe('Right-click menu', () => {
       3. Observes the "Highlight" option
     */
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.keyboard.down('Shift');
     await clickOnBond(page, BondType.DOUBLE, 1);
     await clickOnAtom(page, 'C', 2);
@@ -479,7 +478,9 @@ test.describe('Right-click menu', () => {
         4. Select each color individually and verify the highlights.
     */
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     const colors = [
       '.css-cyxjjb', // Red
       '.css-55t14h', // Orange
@@ -512,7 +513,9 @@ test.describe('Right-click menu', () => {
         4. Select each color individually and verify the highlights.
     */
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     const colors = [
       '.css-cyxjjb', // Red
       '.css-55t14h', // Orange

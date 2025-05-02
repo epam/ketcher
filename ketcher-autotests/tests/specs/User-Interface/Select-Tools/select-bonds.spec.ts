@@ -28,10 +28,12 @@ test.describe('Bonds plus atoms selection ', () => {
 
   for (const bond of BondTypeId) {
     test(`Bond selection with id ${bond} check`, async ({ page }) => {
-      await bondSelectionTool(page, bond);
+      await CommonLeftToolbar(page).selectBondTool(bond);
       await clickInTheMiddleOfTheScreen(page);
 
-      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+      await CommonLeftToolbar(page).selectAreaSelectionTool(
+        SelectionToolType.Rectangle,
+      );
 
       const point = await getBondByIndex(page, {}, 0);
       await clickOnCanvas(page, point.x, point.y);

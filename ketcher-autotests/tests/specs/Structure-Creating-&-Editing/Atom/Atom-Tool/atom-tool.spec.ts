@@ -30,13 +30,10 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 const X_DELTA_ONE = 100;
 
@@ -216,7 +213,7 @@ test.describe('Atom Tool', () => {
       'Molfiles-V2000/structure-list-notlist.mol',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('AH').click();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -234,7 +231,7 @@ test.describe('Atom Tool', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -319,7 +316,9 @@ test.describe('Atom Tool', () => {
     await atomToolbar.clickAtom(Atom.Bromine);
     await clickOnCanvas(page, bromineCoordinates.x, bromineCoordinates.y);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.mouse.move(bromineCoordinates.x, bromineCoordinates.y);
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -466,7 +465,7 @@ test.describe('Atom Tool', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'Br', numberOfAtom);
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
@@ -483,7 +482,7 @@ test.describe('Atom Tool', () => {
     */
     const numberOfAtom = 0;
     await openFileAndAddToCanvas('KET/three-bonded-atoms.ket', page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'N', numberOfAtom);
     await takeEditorScreenshot(page);
   });

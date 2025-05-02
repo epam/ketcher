@@ -47,7 +47,9 @@ test.describe('Rectangle selection tool', () => {
   }) => {
     // Test case: EPMLSOPKET-1347
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickCanvas(page);
     await selectObjects(page, selectionCoords.x, selectionCoords.y);
     await takeEditorScreenshot(page);
@@ -58,7 +60,9 @@ test.describe('Rectangle selection tool', () => {
     const objectSelection = 100;
     const atomNumber = 5;
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     const point = await selectObjects(page, objectSelection, objectSelection);
     await clickOnAtom(page, 'C', atomNumber);
     await dragMouseTo(point.x + xDelta, point.y - yDelta, page);
@@ -71,7 +75,9 @@ test.describe('Rectangle selection tool', () => {
     const moveMouseCoordinatesY = 10;
     const moveMouseCoordinatesX = 270;
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     const point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await clickCanvas(page);
 
@@ -94,7 +100,9 @@ test.describe('Rectangle selection tool', () => {
     const objectSelection = 100;
     const moveMouseCoordinatesY = 10;
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickCanvas(page);
     const point = await selectObjects(
       page,
@@ -115,7 +123,9 @@ test.describe('Rectangle selection tool', () => {
     const firstAtomNumber = 4;
     const secondAtomNumber = 9;
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnAtom(page, 'C', firstAtomNumber);
     const atomPoint = await getAtomByIndex(
       page,
@@ -131,7 +141,9 @@ test.describe('Rectangle selection tool', () => {
     const firstBondNumber = 3;
     const secondBondnumber = 8;
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnBond(page, BondType.SINGLE, firstBondNumber);
     const bondPoint = await getBondByIndex(
       page,
@@ -154,7 +166,9 @@ test.describe('Rectangle selection tool', () => {
     }
     const atomOnTheRightSide = 14;
     await openFileAndAddToCanvas('Rxn-V2000/benzene-chain-reaction.rxn', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await selectReactionLeftPart();
     await page.keyboard.press('Delete');
     await clickOnAtom(page, 'C', atomOnTheRightSide);

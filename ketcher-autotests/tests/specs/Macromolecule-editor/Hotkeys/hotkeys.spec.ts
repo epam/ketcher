@@ -87,7 +87,7 @@ test.describe('Hotkeys', () => {
     */
     await page.keyboard.press('Delete');
     await takeLeftToolbarMacromoleculeScreenshot(page);
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await page.keyboard.press('Backspace');
     await takeLeftToolbarMacromoleculeScreenshot(page);
     await page.keyboard.press('Shift+Tab');

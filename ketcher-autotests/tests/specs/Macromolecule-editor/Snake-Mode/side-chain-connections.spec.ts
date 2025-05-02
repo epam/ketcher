@@ -27,10 +27,7 @@ import {
 } from '@tests/pages/common/TopRightToolbar';
 import { pageReload } from '@utils/common/helpers';
 import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
   FileType,
@@ -964,7 +961,7 @@ test.describe('Side chain connections', () => {
     const randomSideBondToSelect = 12;
     await clickNthConnectionLine(page, randomSideBondToSelect);
     // await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
@@ -985,13 +982,15 @@ test.describe('Side chain connections', () => {
 
     // Selectiong ALL 60 available bonds
     const numberOfBondsToSelectAndDelete = 60;
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     for (let i = 0; i < numberOfBondsToSelectAndDelete; i = i + 1) {
       await page.keyboard.down('Shift');
       await clickNthConnectionLine(page, i);
       await page.keyboard.up('Shift');
     }
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);
@@ -1013,13 +1012,15 @@ test.describe('Side chain connections', () => {
 
     // Selecting ALL 53 available bonds
     const numberOfBondsToSelectAndDelete = 53;
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     for (let i = 0; i < numberOfBondsToSelectAndDelete; i = i + 1) {
       await page.keyboard.down('Shift');
       await clickNthConnectionLine(page, i);
       await page.keyboard.up('Shift');
     }
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
 
     await pressUndoButton(page);

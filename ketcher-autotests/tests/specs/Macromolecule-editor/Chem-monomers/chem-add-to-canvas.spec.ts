@@ -45,7 +45,7 @@ test.describe('Actions with CHEM', () => {
     Description: CHEM name fits in its icon when placed on canvas.
     */
     await openFileAndAddToCanvasMacro('KET/all-chems.ket', page);
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await takeEditorScreenshot(page);
   });
 
@@ -58,7 +58,7 @@ test.describe('Actions with CHEM', () => {
     Description: APs are not redrawn incorrectly after opening the modal window.
     */
     await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.Test_6_Ch).hover();
     await page.mouse.down();
     await getMonomerLocator(page, Chem.A6OH).hover();

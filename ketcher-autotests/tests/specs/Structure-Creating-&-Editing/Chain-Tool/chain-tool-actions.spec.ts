@@ -41,7 +41,9 @@ test.describe('Chain Tool verification', () => {
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(center.x + DELTA, center.y, page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     await clickOnAtom(page, 'C', 0);
     await page.keyboard.press('n');
     await takeEditorScreenshot(page);
@@ -84,7 +86,9 @@ test.describe('Chain Tool verification', () => {
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(center.x + DELTA, center.y, page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'C', 0);
     await clickOnAtom(page, 'C', bondNumber);

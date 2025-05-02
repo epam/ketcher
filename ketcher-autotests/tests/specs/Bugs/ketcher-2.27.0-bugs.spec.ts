@@ -154,7 +154,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       'KET/Bugs/Unable to connect monomer to molecule in snake mode.ket',
       page,
     );
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -525,7 +525,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Peptides._1Nal).click();
     await getMonomerLocator(page, Peptides.A).click();
     await getMonomerLocator(page, Peptides.D).first().click();
@@ -584,7 +584,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 570, 400);
     await clickOnCanvas(page, 600, 360);
     await clickOnCanvas(page, 600, 420);

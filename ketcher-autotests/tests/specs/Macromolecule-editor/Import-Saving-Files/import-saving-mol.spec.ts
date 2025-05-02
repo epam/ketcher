@@ -30,11 +30,7 @@ import {
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -62,6 +58,7 @@ test.afterEach(async ({ context: _ }, testInfo) => {
   await selectClearCanvasTool(page);
   await resetZoomLevelToDefault(page);
   await processResetToDefaultState(testInfo, page);
+  await turnOnMacromoleculesEditor(page);
 });
 
 test.afterAll(async ({ browser }) => {
@@ -147,7 +144,9 @@ test.describe('Import-Saving .mol Files', () => {
       'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
       page,
     );
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await getMonomerLocator(page, { monomerAlias: `cdaC` }).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -237,12 +236,13 @@ test.describe('Import-Saving .mol Files', () => {
   */
   for (const monomer of monomersToDelete) {
     test(`Open file from .mol V3000 and Delete ${monomer.text} monomer`, async () => {
+      await turnOnMacromoleculesEditor(page);
       await selectFlexLayoutModeTool(page);
       await openFileAndAddToCanvasMacro(
         'Molfiles-V3000/monomers-connected-with-bonds.mol',
         page,
       );
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await page.getByText(monomer.text).locator('..').first().click();
       await takeEditorScreenshot(page);
     });
@@ -688,7 +688,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
         `Molfiles-V3000/Base-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerType: MonomerType.Base }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -749,7 +749,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
         `Molfiles-V3000/CHEM-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await page.getByText('(R').locator('..').first().hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -810,7 +810,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
         `Molfiles-V3000/Peptide-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, {
         monomerType: MonomerType.Peptide,
       }).hover();
@@ -874,7 +874,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
         `Molfiles-V3000/Phosphate-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, {
         monomerType: MonomerType.Phosphate,
       }).hover();
@@ -938,7 +938,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
         `Molfiles-V3000/Sugar-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, {
         monomerType: MonomerType.Sugar,
       }).hover();

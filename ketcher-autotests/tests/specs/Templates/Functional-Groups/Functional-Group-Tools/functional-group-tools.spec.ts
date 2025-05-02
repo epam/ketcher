@@ -40,12 +40,7 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import {
-  commonLeftToolbarLocators,
-  selectAreaSelectionTool,
-  selectEraseTool,
-  selectHandTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -94,11 +89,14 @@ test.describe('Templates - Functional Group Tools', () => {
     Description: All the Functional Group elements are selected and highlighted on the canvas
    */
     const anyAtom = 0;
+
     await openFileAndAddToCanvas(
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -118,7 +116,9 @@ test.describe('Templates - Functional Group Tools', () => {
       page,
     );
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await selectAllStructuresOnCanvas(page);
     const coordinates = await getRotationHandleCoordinates(page);
     const { x: rotationHandleX, y: rotationHandleY } = coordinates;
@@ -148,7 +148,9 @@ test.describe('Templates - Functional Group Tools', () => {
       page,
     );
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await selectAllStructuresOnCanvas(page);
 
     const coordinates = await getRotationHandleCoordinates(page);
@@ -195,7 +197,9 @@ test.describe('Templates - Functional Group Tools', () => {
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + X_DELTA;
@@ -276,7 +280,9 @@ test.describe('Templates - Functional Group Tools', () => {
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.getByText('CO2Et').first().click({ button: 'right' });
     await waitForRender(page, async () => {
       await page.getByText('Remove Abbreviation').click();
@@ -338,7 +344,9 @@ test.describe('Templates - Functional Group Tools2', () => {
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
 
     await pressButton(page, 'Vertical Flip (Alt+V)');
@@ -365,7 +373,9 @@ test.describe('Templates - Functional Group Tools2', () => {
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
 
     await pressButton(page, 'Horizontal Flip (Alt+H)');
@@ -385,7 +395,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('Boc').first().click();
 
     await resetCurrentTool(page);
@@ -393,7 +403,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await pressUndoButton(page);
     await page.getByText('Boc').first().click();
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
 
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -448,7 +458,9 @@ test.describe('Templates - Functional Group Tools2', () => {
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page, 'right');
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();
@@ -482,7 +494,9 @@ test.describe('Templates - Functional Group Tools2', () => {
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page, 'right');
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();
@@ -515,7 +529,9 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
     );
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -527,7 +543,9 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
     );
 
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -660,15 +678,16 @@ test.describe('Templates - Functional Group Tools3', () => {
     const timeout = 120_000;
     test.setTimeout(timeout);
     const atomToolbar = rightToolbar(page);
+    const commonLeftToolbar = CommonLeftToolbar(page);
 
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectHandTool(page);
-    await commonLeftToolbarLocators(page).areaSelectionDropdownButton.click();
+    await commonLeftToolbar.selectHandTool();
+    await commonLeftToolbar.areaSelectionDropdownButton.click();
     await takeEditorScreenshot(page);
 
-    await commonLeftToolbarLocators(page).eraseButton.click();
+    await commonLeftToolbar.eraseButton.click();
     await takeEditorScreenshot(page);
 
     await selectLeftPanelToolClick(LeftPanelButton.SingleBond, page);
@@ -776,7 +795,9 @@ test.describe('Templates - Functional Group Tools3', () => {
     await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2);
     await resetCurrentTool(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.getByText('Bn').click({ button: 'right' });
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();
@@ -813,7 +834,9 @@ test.describe('Templates - Functional Group Tools3', () => {
     await clickOnCanvas(page, clickCoordines.x2, clickCoordines.y2);
     await resetCurrentTool(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.getByText('CCl3').click({ button: 'right' });
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();

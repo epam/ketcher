@@ -70,11 +70,6 @@ import {
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
-import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
@@ -86,6 +81,7 @@ import {
   saveStructureDialog,
 } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 
@@ -223,7 +219,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
     await takeEditorScreenshot(page);
   });
@@ -284,7 +280,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P}$$$$V2.0',
     );
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     const baseLocator = getMonomerLocator(page, Bases.A).first();
     await baseLocator.hover({ force: true });
     await takeEditorScreenshot(page, {
@@ -417,7 +413,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      */
     await turnOnMicromoleculesEditor(page);
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnAtom(page, 'C', 0);
     await page.keyboard.press('O');
     await moveOnAtom(page, 'C', 1);
@@ -442,7 +440,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
     );
     await selectAllStructuresOnCanvas(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);
@@ -574,7 +572,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

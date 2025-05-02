@@ -58,10 +58,6 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { openStructureLibrary } from '@utils/templates';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
 import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
@@ -70,6 +66,7 @@ import {
   chooseFileFormat,
   saveStructureDialog,
 } from '@tests/pages/common/SaveStructureDialog';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 test.describe('Image files', () => {
   let page: Page;
@@ -578,7 +575,9 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
@@ -600,7 +599,9 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -623,7 +624,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 200, 200);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -836,7 +837,9 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.mouse.move(100, 100);
     await dragMouseTo(800, 800, page);
     await takeEditorScreenshot(page);
@@ -849,7 +852,9 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.keyboard.press('Shift+Tab');
     await selectWithLasso(page, 100, 100, [
       { x: 800, y: 800 },
@@ -885,7 +890,9 @@ test.describe('Image files', () => {
     await pageReloadMicro(page);
 
     await openImageAndAddToCanvas('Images/image-png.png', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -994,7 +1001,9 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
@@ -1021,7 +1030,9 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
@@ -1046,7 +1057,9 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
@@ -1079,7 +1092,9 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 200, 200);
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
@@ -1109,7 +1124,9 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 200, 200);
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
@@ -1138,7 +1155,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1164,7 +1181,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1190,7 +1207,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -2552,7 +2569,7 @@ test.describe('Image files', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
   });
 
@@ -2567,7 +2584,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
   });
 
@@ -2666,7 +2683,9 @@ test.describe('Image files', () => {
     );
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
@@ -2698,7 +2717,9 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
 
     // Ensure the element is in view
@@ -2732,11 +2753,13 @@ test.describe('Image files', () => {
     );
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
@@ -2838,7 +2861,9 @@ test.describe('Image files', () => {
     );
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
@@ -2870,7 +2895,9 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
 
     // Ensure the element is in view
@@ -2904,11 +2931,13 @@ test.describe('Image files', () => {
     );
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
@@ -3073,7 +3102,9 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png-demo.png', page);
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await page.mouse.move(300, 300);
@@ -3098,7 +3129,9 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png-demo.png', page);
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await page.mouse.move(300, 300);
@@ -3125,7 +3158,9 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 300, 300);
 
     // Ensure the element is in view
@@ -3156,7 +3191,9 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 300, 300);
 
     // Ensure the element is in view
@@ -3185,10 +3222,12 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png-demo.png', page, 600, 500);
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -3210,10 +3249,12 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png-demo.png', page, 600, 500);
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 

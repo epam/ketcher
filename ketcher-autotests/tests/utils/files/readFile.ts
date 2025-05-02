@@ -24,7 +24,7 @@ import {
   PeptideLetterCodeType,
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
-import { selectHandTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 export function getTestDataDirectory() {
   const projectRoot = path.resolve(__dirname, '../../..');
@@ -199,7 +199,7 @@ export async function openImageAndAddToCanvas(
 
   const fileChooserPromise = page.waitForEvent('filechooser');
   await delay(debugDelay);
-  await selectHandTool(page);
+  await CommonLeftToolbar(page).selectHandTool();
   await selectImageTool(page);
 
   if (x !== undefined && y !== undefined) {

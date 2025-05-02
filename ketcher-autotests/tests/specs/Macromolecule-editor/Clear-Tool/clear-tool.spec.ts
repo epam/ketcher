@@ -68,7 +68,7 @@ test.describe('Clear Canvas Tool', () => {
     );
 
     // Select bond tool
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);

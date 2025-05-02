@@ -19,7 +19,7 @@ test.describe('Macromolecules connect phosphate and sugar', () => {
       page,
     );
 
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
 
     const firstRsp = page.locator('use[href="#phosphate"]').first();
     const sugar = page.locator('use[href="#sugar"]');

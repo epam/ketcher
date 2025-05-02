@@ -53,7 +53,6 @@ import {
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
@@ -70,6 +69,7 @@ import {
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 declare global {
   interface Window {
@@ -575,7 +575,7 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
     bondType: MacroBondDataIds.Hydrogen,
   }).first();
 
-  await selectEraseTool(page);
+  await CommonLeftToolbar(page).selectEraseTool();
   await hydrogenBond.click({ force: true });
 
   const leftEndSugarfR = getMonomerLocator(page, {
@@ -662,7 +662,7 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
     bondType: MacroBondDataIds.Hydrogen,
   }).first();
 
-  await selectEraseTool(page);
+  await await CommonLeftToolbar(page).selectEraseTool();
   await hydrogenBond.click({ force: true });
 
   await selectSnakeLayoutModeTool(page);

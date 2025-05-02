@@ -25,7 +25,7 @@ import {
   setCharge,
   setValence,
 } from '../utils';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 
@@ -105,7 +105,7 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
   test.beforeEach(async ({ page }) => {
     const numberOfAtom = 0;
     await waitForPageInit(page);
-    await bondSelectionTool(page, MicroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
     await doubleClickOnAtom(page, 'C', numberOfAtom);
@@ -210,7 +210,7 @@ test.describe('Checking if preview of attributes is displayed correctly after ho
 test.describe('Checking if atoms are displayed correctly', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await bondSelectionTool(page, MicroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
   });

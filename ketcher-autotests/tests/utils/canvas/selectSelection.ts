@@ -10,7 +10,9 @@ import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 
 export async function cutAndPaste(page: Page) {
   const modifier = getControlModifier();
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
   await keyboardPressOnCanvas(page, `${modifier}+KeyA`, { delay: INPUT_DELAY });
@@ -20,7 +22,9 @@ export async function cutAndPaste(page: Page) {
 
 export async function copyAndPaste(page: Page) {
   const modifier = getControlModifier();
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
   await moveMouseAway(page);

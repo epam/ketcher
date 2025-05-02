@@ -29,11 +29,7 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@tests/pages/common/TopLeftToolbar';
-import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
@@ -117,7 +113,7 @@ test.describe('R-Group Label Tool', () => {
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
 
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await waitForRender(page, async () => {
       await page.getByText('R5').click();
     });
@@ -293,7 +289,9 @@ test.describe('R-Group Label Tool', () => {
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.getByText('R5').click();
     await waitForRender(page, async () => {
       await page.keyboard.press('Delete');
@@ -309,7 +307,9 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 200;
     await openFileAndAddToCanvas('Molfiles-V2000/chain-r1.mol', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.getByText('R1').click();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -345,7 +345,9 @@ test.describe('R-Group Label Tool', () => {
     await clickOnAtom(page, 'C', anyAtom);
     await pressButton(page, 'R8');
     await pressButton(page, 'Apply');
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.getByText('R8').click();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -428,7 +430,7 @@ test.describe('R-Group Label Tool', () => {
       'Rxn-V2000/chain-with-three-r-groups.rxn',
       page,
     );
-    await bondSelectionTool(page, MicroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await page.getByText('R8').hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);

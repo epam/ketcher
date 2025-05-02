@@ -17,7 +17,7 @@ import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 const expectedSmarts = '[#6](-[#6])(-[#6])-[#6]';
 
 async function drawStructure(page: Page, numberOfClicks: number) {
-  await bondSelectionTool(page, MicroBondType.Single);
+  await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
   for (let i = 0; i < numberOfClicks; i++) {
     await clickInTheMiddleOfTheScreen(page);
   }

@@ -29,7 +29,7 @@ test.describe('Erase Tool', () => {
       page,
     );
 
-    await await selectEraseTool(page);
+    await await CommonLeftToolbar(page).selectEraseTool();
   });
 
   test('Erase atom and bond', async ({ page }) => {

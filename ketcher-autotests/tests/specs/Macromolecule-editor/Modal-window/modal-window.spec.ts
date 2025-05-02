@@ -36,7 +36,7 @@ test.describe('Modal window', () => {
     );
 
     // Select bond tool
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   });
 
   test('"Connect" button is disabled', async ({ page }) => {

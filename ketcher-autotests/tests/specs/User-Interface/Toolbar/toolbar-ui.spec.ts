@@ -1,8 +1,5 @@
 import { test, expect } from '@playwright/test';
-import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -61,7 +58,9 @@ test.describe('Open Ketcher', () => {
     await takeTopToolbarScreenshot(page);
     await resetCurrentTool(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeTopToolbarScreenshot(page);
   });
@@ -140,7 +139,7 @@ test.describe('Open Ketcher', () => {
     const anyAtom = 2;
     const secondAtom = 4;
     await drawBenzeneRing(page);
-    await bondSelectionTool(page, MicroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', anyAtom);
     await waitForRender(page, async () => {
       await page.keyboard.press('n');

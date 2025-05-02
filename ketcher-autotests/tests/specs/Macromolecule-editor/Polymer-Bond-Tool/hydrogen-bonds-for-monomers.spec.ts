@@ -32,15 +32,10 @@ import {
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
 import {
-  bondSelectionTool,
-  commonLeftToolbarLocators,
-  selectEraseTool,
-  selectHandTool,
-} from '@tests/pages/common/CommonLeftToolbar';
-import {
   MacroBondDataIds,
   MacroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 test.setTimeout(40000);
@@ -768,7 +763,7 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       expect(await bondLine.count()).toEqual(1);
 
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await clickOnConnectionLine(page);
 
       expect(await bondLine.count()).toEqual(0);
@@ -870,17 +865,16 @@ Object.entries(MacroBondType).forEach(([key, dataTestId]) => {
    */
   test(`11. ${key} bond tool: verification`, async () => {
     test.setTimeout(25000);
+    const commonLeftToolbar = CommonLeftToolbar(page);
     // to reset Bond tool state
-    await selectHandTool(page);
-    await commonLeftToolbarLocators(
-      page,
-    ).bondSelectionDropdownExpandButton.click();
+    await commonLeftToolbar.selectHandTool();
+    await commonLeftToolbar.bondSelectionDropdownExpandButton.click();
 
     const button = page.getByTestId(dataTestId).first();
     await expect(button).toHaveAttribute('title', buttonIdToTitle[dataTestId]);
 
-    await selectHandTool(page);
-    await bondSelectionTool(page, dataTestId);
+    await commonLeftToolbar.selectHandTool();
+    await commonLeftToolbar.selectBondTool(dataTestId);
     await expect(button).toHaveAttribute('class', /active/);
   });
 });

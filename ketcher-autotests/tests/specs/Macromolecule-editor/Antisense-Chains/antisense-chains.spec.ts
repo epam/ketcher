@@ -46,16 +46,14 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Sugars } from '@constants/monomers/Sugars';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Bases } from '@constants/monomers/Bases';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Chem } from '@constants/monomers/Chem';
 import { Nucleotides } from '@constants/monomers/Nucleotides';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 let page: Page;
 
@@ -3341,12 +3339,16 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
 
   const sugarRs = getMonomerLocator(page, Sugars.R);
 
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await sugarRs.nth(2).click();
-  await selectEraseTool(page);
+  await CommonLeftToolbar(page).selectEraseTool();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await sugarRs.nth(1).click();
   await dragMouseTo(200, 200, page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });

@@ -25,11 +25,7 @@ import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar'
 import { Peptides } from '@constants/monomers/Peptides';
 import { Chem } from '@constants/monomers/Chem';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
-import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 /* eslint-disable no-magic-numbers */
@@ -42,7 +38,9 @@ async function moveMonomersToNewPosition(
   y: number,
 ) {
   await openFileAndAddToCanvasMacro(filePath, page);
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await selectAllStructuresOnCanvas(page);
   await getMonomerLocator(page, { monomerAlias: monomerName }).click();
   await dragMouseTo(x, y, page);
@@ -92,7 +90,7 @@ test.describe('Rectangle Selection Tool', () => {
     );
 
     // Select bond tool
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -104,7 +102,9 @@ test.describe('Rectangle Selection Tool', () => {
     await page.mouse.move(coords[0], coords[1]);
     await takeEditorScreenshot(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
 
     // Coordinates for rectangle selection
     const startX = 100;
@@ -119,7 +119,7 @@ test.describe('Rectangle Selection Tool', () => {
     await takeEditorScreenshot(page);
 
     // Erase selected elements
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
 
     // Get rid of flakiness because of preview
     await page.mouse.move(coords[0], coords[1]);
@@ -150,7 +150,7 @@ test.describe('Rectangle Selection Tool', () => {
     const peptide4 = peptides.nth(3);
 
     // Select bond tool
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -227,7 +227,7 @@ test.describe('Rectangle Selection Tool', () => {
     );
 
     // Select bond tool
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -237,7 +237,9 @@ test.describe('Rectangle Selection Tool', () => {
     await takeEditorScreenshot(page);
 
     // Select rectangle selection tool
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
 
     // Select monomers pointly by clicking Shift+LClick
     await page.keyboard.down('Shift');
@@ -262,7 +264,9 @@ test.describe('Rectangle Selection Tool', () => {
     const x = 200;
     const y = 200;
     await addPeptideOnCanvas(page, Peptides.meD);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await getMonomerLocator(page, Peptides.meD).click();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -301,7 +305,9 @@ test.describe('Rectangle Selection Tool', () => {
     await selectMonomer(page, Chem.A6OH);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await getMonomerLocator(page, Chem.A6OH).click();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page, {
@@ -390,7 +396,9 @@ test.describe('Rectangle Selection Tool', () => {
     const x = 200;
     const y = 200;
     await addPeptideOnCanvas(page, Peptides._2Nal);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await getMonomerLocator(page, Peptides._2Nal).hover();
     await dragMouseTo(x, y, page);
     await pressUndoButton(page);
@@ -440,7 +448,7 @@ test.describe('Rectangle Selection Tool', () => {
     */
     await openFileAndAddToCanvasMacro('KET/all-kind-of-monomers.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
     await pressUndoButton(page);
     await takeEditorScreenshot(page);

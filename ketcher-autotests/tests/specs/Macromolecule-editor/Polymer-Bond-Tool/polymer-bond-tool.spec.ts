@@ -9,11 +9,7 @@ import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvasMacro,
   pressButton,
-  saveToFile,
-  receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
-  getSequence,
-  getFasta,
   openFileAndAddToCanvasAsNewProjectMacro,
   moveMouseAway,
   clickOnCanvas,
@@ -514,21 +510,11 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
-  const expectedFile = await getSequence(page);
-  await saveToFile(
+  await verifyFileExport(
+    page,
     'Sequence/two-peptides-connected-expected.seq',
-    expectedFile,
+    FileType.SEQ,
   );
-  const METADATA_STRING_INDEX = [1];
-  const { fileExpected: sequenceFileExpected, file: sequenceFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName: 'Sequence/two-peptides-connected-expected.seq',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(sequenceFile).toEqual(sequenceFileExpected);
-
   await openFileAndAddToCanvasAsNewProjectMacro(
     'Sequence/two-peptides-connected-expected.seq',
     page,
@@ -553,20 +539,11 @@ test('Verify that changes made in the "Edit Connection Points" dialog are saved 
   await page.getByRole('button', { name: 'R1' }).first().click();
   await page.getByRole('button', { name: 'R2' }).nth(1).click();
   await pressButton(page, 'Reconnect');
-  const expectedFile = await getFasta(page);
-  await saveToFile('FASTA/two-peptides-connected-expected.fasta', expectedFile);
-
-  const METADATA_STRING_INDEX = [1];
-
-  const { fileExpected: fastaFileExpected, file: fastaFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName: 'FASTA/two-peptides-connected-expected.fasta',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(fastaFile).toEqual(fastaFileExpected);
-
+  await verifyFileExport(
+    page,
+    'FASTA/two-peptides-connected-expected.fasta',
+    FileType.FASTA,
+  );
   await openFileAndAddToCanvasAsNewProjectMacro(
     'FASTA/two-peptides-connected-expected.fasta',
     page,

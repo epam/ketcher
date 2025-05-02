@@ -1,4 +1,4 @@
-import { expect, Page, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -11,8 +11,6 @@ import {
   openFileAndAddToCanvas,
   pressButton,
   clickOnAtom,
-  receiveFileComparisonData,
-  saveToFile,
   copyAndPaste,
   cutAndPaste,
   waitForPageInit,
@@ -26,7 +24,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getExtendedSmiles } from '@utils/formats';
 import {
   pressUndoButton,
   selectClearCanvasTool,
@@ -373,19 +370,10 @@ test.describe('R-Group Fragment Tool', () => {
       'Extended-SMILES/r1-several-structures.cxsmi',
       page,
     );
-    const expectedFile = await getExtendedSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Extended-SMILES/r1-several-structures-expected.cxsmi',
-      expectedFile,
+      FileType.ExtendedSMILES,
     );
-
-    const { fileExpected: smiFileExpected, file: smiFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'Extended-SMILES/r1-several-structures-expected.cxsmi',
-      });
-
-    expect(smiFile).toEqual(smiFileExpected);
   });
 });

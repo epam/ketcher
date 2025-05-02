@@ -6,8 +6,6 @@ import {
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
-  saveToFile,
-  receiveFileComparisonData,
   openFileAndAddToCanvasAsNewProject,
   moveMouseAway,
 } from '@utils';
@@ -15,7 +13,6 @@ import {
   selectClearCanvasTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import { getExtendedSmiles, getSmiles } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
@@ -409,19 +406,11 @@ test.describe('SMILES files', () => {
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
     );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/unsplit-nucleotides-connected-with-chems.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/unsplit-nucleotides-connected-with-chems.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
       'SMILES/unsplit-nucleotides-connected-with-chems.smi',
       page,
@@ -441,20 +430,11 @@ test.describe('SMILES files', () => {
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
     );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
       'SMILES/unsplit-nucleotides-connected-with-nucleotides.smi',
       page,
@@ -474,19 +454,11 @@ test.describe('SMILES files', () => {
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
     );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/unsplit-nucleotides-connected-with-bases.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/unsplit-nucleotides-connected-with-bases.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
       'SMILES/unsplit-nucleotides-connected-with-bases.smi',
       page,
@@ -506,20 +478,11 @@ test.describe('SMILES files', () => {
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
     );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/unsplit-nucleotides-connected-with-sugars.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'SMILES/unsplit-nucleotides-connected-with-sugars.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
       'SMILES/unsplit-nucleotides-connected-with-sugars.smi',
       page,
@@ -539,20 +502,11 @@ test.describe('SMILES files', () => {
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
     );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/unsplit-nucleotides-connected-with-peptides.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'SMILES/unsplit-nucleotides-connected-with-peptides.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
       'SMILES/unsplit-nucleotides-connected-with-peptides.smi',
       page,
@@ -572,20 +526,11 @@ test.describe('SMILES files', () => {
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
     );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
       'SMILES/unsplit-nucleotides-connected-with-phosphates.smi',
       page,
@@ -608,22 +553,11 @@ test.describe('SMILES files', () => {
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
     );
-    const expectedFile = await getExtendedSmiles(page);
-    await saveToFile(
-      'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
-      expectedFile,
-    );
-    const {
-      fileExpected: extendedsmilesFileExpected,
-      file: extendedsmilesFile,
-    } = await receiveFileComparisonData({
+    await verifyFileExport(
       page,
-      expectedFileName:
-        'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
-    });
-
-    expect(extendedsmilesFile).toEqual(extendedsmilesFileExpected);
-
+      'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
+      FileType.SMILES,
+    );
     await openFileAndAddToCanvasAsNewProject(
       'Extended-SMILES/unsplit-nucleotides-connected-with-chems.cxsmi',
       page,
@@ -646,22 +580,11 @@ test.describe('SMILES files', () => {
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
     );
-    const expectedFile = await getExtendedSmiles(page);
-    await saveToFile(
-      'Extended-SMILES/unsplit-nucleotides-connected-with-nucleotides.cxsmi',
-      expectedFile,
-    );
-    const {
-      fileExpected: extendedsmilesFileExpected,
-      file: extendedsmilesFile,
-    } = await receiveFileComparisonData({
+    await verifyFileExport(
       page,
-      expectedFileName:
-        'Extended-SMILES/unsplit-nucleotides-connected-with-nucleotides.cxsmi',
-    });
-
-    expect(extendedsmilesFile).toEqual(extendedsmilesFileExpected);
-
+      'Extended-SMILES/unsplit-nucleotides-connected-with-nucleotides.cxsmi',
+      FileType.ExtendedSMILES,
+    );
     await openFileAndAddToCanvasAsNewProject(
       'Extended-SMILES/uunsplit-nucleotides-connected-with-nucleotides.cxsmi',
       page,
@@ -684,22 +607,11 @@ test.describe('SMILES files', () => {
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
     );
-    const expectedFile = await getExtendedSmiles(page);
-    await saveToFile(
-      'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
-      expectedFile,
-    );
-    const {
-      fileExpected: extendedsmilesFileExpected,
-      file: extendedsmilesFile,
-    } = await receiveFileComparisonData({
+    await verifyFileExport(
       page,
-      expectedFileName:
-        'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
-    });
-
-    expect(extendedsmilesFile).toEqual(extendedsmilesFileExpected);
-
+      'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
+      FileType.ExtendedSMILES,
+    );
     await openFileAndAddToCanvasAsNewProject(
       'Extended-SMILES/unsplit-nucleotides-connected-with-bases.cxsmi',
       page,
@@ -719,19 +631,11 @@ test.describe('SMILES files', () => {
       'KET/simple-schema-with-retrosynthetic-arrow.ket',
       page,
     );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
       'SMILES/simple-schema-with-retrosynthetic-arrow.smi',
       page,
@@ -752,20 +656,11 @@ test.describe('SMILES files', () => {
         'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
         page,
       );
-      const expectedFile = await getSmiles(page);
-      await saveToFile(
+      await verifyFileExport(
+        page,
         'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
-        expectedFile,
+        FileType.SMILES,
       );
-      const { fileExpected: smilesFileExpected, file: smilesFile } =
-        await receiveFileComparisonData({
-          page,
-          expectedFileName:
-            'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
-        });
-
-      expect(smilesFile).toEqual(smilesFileExpected);
-
       await openFileAndAddToCanvasAsNewProject(
         'SMILES/schema-with-retrosynthetic-angel-arrows-and-plus.smi',
         page,
@@ -786,20 +681,11 @@ test.describe('SMILES files', () => {
       'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       page,
     );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
       'SMILES/schema-with-vertical-retrosynthetic-arrow.smi',
       page,
@@ -819,19 +705,11 @@ test.describe('SMILES files', () => {
       'KET/schema-with-two-retrosynthetic-arrows.ket',
       page,
     );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/schema-with-two-retrosynthetic-arrows.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/schema-with-two-retrosynthetic-arrows.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
       'SMILES/schema-with-two-retrosynthetic-arrows.smi',
       page,
@@ -851,20 +729,11 @@ test.describe('SMILES files', () => {
       'KET/schema-with-diagonal-retrosynthetic-arrow.ket',
       page,
     );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
       'SMILES/schema-with-diagonal-retrosynthetic-arrow.smi',
       page,
@@ -884,20 +753,11 @@ test.describe('SMILES files', () => {
       'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       page,
     );
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smilesFileExpected, file: smilesFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
-      });
-
-    expect(smilesFile).toEqual(smilesFileExpected);
-
     await openFileAndAddToCanvasAsNewProject(
       'SMILES/schema-with-reverse-retrosynthetic-arrow-and-pluses.smi',
       page,

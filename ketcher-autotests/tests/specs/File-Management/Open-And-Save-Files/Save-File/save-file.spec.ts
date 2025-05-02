@@ -16,7 +16,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
-import { getMolfile, getSmiles } from '@utils/formats';
+import { getMolfile } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
@@ -102,14 +102,11 @@ test.describe('Save files', () => {
     Description: Click the 'Save As' button, save as Smiles file ('Daylight SMILES' format).
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
-    const expectedFile = await getSmiles(page);
-    await saveToFile('KET/two-benzene-connected-expected.smi', expectedFile);
-    const { fileExpected: smiFileExpected, file: smiFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'KET/two-benzene-connected-expected.smi',
-      });
-    expect(smiFile).toEqual(smiFileExpected);
+    await verifyFileExport(
+      page,
+      'KET/two-benzene-connected-expected.smi',
+      FileType.SMILES,
+    );
   });
 
   test('Save as a .rxn file if reaction consists of two or more reaction arrows', async ({

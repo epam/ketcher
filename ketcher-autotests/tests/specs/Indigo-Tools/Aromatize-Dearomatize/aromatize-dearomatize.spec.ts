@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   RingButton,
   clickInTheMiddleOfTheScreen,
@@ -8,8 +8,6 @@ import {
   cutAndPaste,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  receiveFileComparisonData,
-  saveToFile,
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
   selectDearomatizeTool,
@@ -21,7 +19,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getSmiles } from '@utils/formats';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -243,19 +240,11 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     with the circle inside the cycles.
     */
     await openFileAndAddToCanvas('SMILES/aromatic-benzene-smiles.smi', page);
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/aromatic-benzene-smiles-expected.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-
-    const { fileExpected: smiFileExpected, file: smiFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/aromatic-benzene-smiles-expected.smi',
-      });
-
-    expect(smiFile).toEqual(smiFileExpected);
     await takeEditorScreenshot(page);
   });
 

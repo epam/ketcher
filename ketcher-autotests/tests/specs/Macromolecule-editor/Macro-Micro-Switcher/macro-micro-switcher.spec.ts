@@ -511,6 +511,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher
     Description: Remove abbreviation restricted for CHEMs in micro mode.
     */
+    await turnOnMacromoleculesEditor(page);
     await selectMonomer(page, Chem.Test_6_Ch);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);

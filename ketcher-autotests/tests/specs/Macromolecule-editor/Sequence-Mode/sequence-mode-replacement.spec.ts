@@ -3,9 +3,7 @@ import { expect, Page, test } from '@playwright/test';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
-  getFasta,
   getMolfile,
-  getSequence,
   Monomer,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
@@ -2305,23 +2303,11 @@ test(`30. Verify saving and reopening a structure with replaced monomers in Sequ
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  const expectedFile = await getSequence(page);
-  await saveToFile(
+  await verifyFileExport(
+    page,
     'Common/Sequence-Mode-Replacement/replacement-expected.seq',
-    expectedFile,
+    FileType.SEQ,
   );
-
-  const METADATA_STRING_INDEX = [1];
-
-  const { fileExpected: sequenceFileExpected, file: sequenceFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'Common/Sequence-Mode-Replacement/replacement-expected.seq',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(sequenceFile).toEqual(sequenceFileExpected);
   await checkForKnownBugs(
     replaceMonomer,
     sequence,
@@ -2360,23 +2346,11 @@ test(`31. Verify saving and reopening a structure with replaced monomers in FAST
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  const expectedFile = await getFasta(page);
-  await saveToFile(
+  await verifyFileExport(
+    page,
     'Common/Sequence-Mode-Replacement/replacement-expected.fasta',
-    expectedFile,
+    FileType.FASTA,
   );
-
-  const METADATA_STRING_INDEX = [1];
-
-  const { fileExpected: fastaFileExpected, file: fastaFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'Common/Sequence-Mode-Replacement/replacement-expected.fasta',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(fastaFile).toEqual(fastaFileExpected);
 
   await checkForKnownBugs(
     replaceMonomer,

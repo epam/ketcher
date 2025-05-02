@@ -17,6 +17,7 @@ import {
   getSequence,
   getSmiles,
   getFasta,
+  getExtendedSmiles,
 } from '@utils/formats';
 import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
@@ -32,6 +33,7 @@ export enum FileType {
   CDXML = 'cdxml',
   SMARTS = 'smarts',
   SMILES = 'smi',
+  ExtendedSMILES = 'cxsmi',
   MOL = 'mol',
   RXN = 'rxn',
   CML = 'cml',
@@ -53,6 +55,7 @@ const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.CDXML]: getCdxml,
   [FileType.SMARTS]: getSmarts,
   [FileType.SMILES]: getSmiles,
+  [FileType.ExtendedSMILES]: getExtendedSmiles,
   [FileType.MOL]: getMolfile,
   [FileType.RXN]: getRxn,
   [FileType.RDF]: getRdf,

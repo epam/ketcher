@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   LeftPanelButton,
@@ -13,8 +13,6 @@ import {
   clickOnAtom,
   copyAndPaste,
   cutAndPaste,
-  receiveFileComparisonData,
-  saveToFile,
   waitForRender,
   waitForPageInit,
   selectAllStructuresOnCanvas,
@@ -27,7 +25,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getSmiles } from '@utils/formats';
 import {
   pressRedoButton,
   pressUndoButton,
@@ -529,15 +526,10 @@ test.describe('R-Group Label Tool', () => {
     Description: User is able to save the structure with R-group label as .smi file
     */
     await openFileAndAddToCanvas('SMILES/chain-with-r-group.smi', page);
-    const expectedFile = await getSmiles(page);
-    await saveToFile('SMILES/chain-with-r-group-expected.smi', expectedFile);
-
-    const { fileExpected: smiFileExpected, file: smiFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/chain-with-r-group-expected.smi',
-      });
-
-    expect(smiFile).toEqual(smiFileExpected);
+    await verifyFileExport(
+      page,
+      'SMILES/chain-with-r-group-expected.smi',
+      FileType.SMILES,
+    );
   });
 });

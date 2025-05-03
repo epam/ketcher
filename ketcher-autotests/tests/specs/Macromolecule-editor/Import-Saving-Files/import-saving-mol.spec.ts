@@ -99,7 +99,9 @@ test.describe('Import-Saving .mol Files', () => {
       // error expected
       true,
     );
-    await takeEditorScreenshot(page);
+    await expect(
+      page.getByText('Convert error! Error during file parsing.'),
+    ).toBeVisible();
   });
 
   test('Export monomers and chem', async () => {

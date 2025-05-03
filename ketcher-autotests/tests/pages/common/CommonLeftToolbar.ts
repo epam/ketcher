@@ -55,10 +55,39 @@ export const CommonLeftToolbar = (page: Page) => {
 
     async expandBondSelectionDropdown() {
       await locators.bondSelectionDropdownExpandButton.click();
+
+      try {
+        await locators.bondSelectionDropdownExpandButton.click({ force: true });
+        await locators.bondMultiToolSection.waitFor({
+          state: 'visible',
+          timeout: 5000,
+        });
+      } catch (error) {
+        console.warn(
+          "Bond Multi Tool Section didn't appeared after click in 5 seconds, trying alternative way...",
+        );
+        // alternative way to open the dropdown (doesn't work on Macro mode)
+        await this.selectHandTool();
+        await locators.bondSelectionDropdownButton.click({ force: true });
+        await locators.bondSelectionDropdownButton.click({ force: true });
+      }
     },
 
-    async selectBondTool(toolType: MacroBondType | MicroBondType) {
-      await page.getByTestId(toolType).first().click();
+    async selectBondTool(bondType: MacroBondType | MicroBondType) {
+      let attempts = 0;
+      const maxAttempts = 5;
+      const bondTypeButton = page.getByTestId(bondType).first();
+      while (attempts < maxAttempts) {
+        try {
+          await this.expandBondSelectionDropdown();
+          await bondTypeButton.waitFor({ state: 'visible', timeout: 1000 });
+          await bondTypeButton.click({ force: true });
+          return;
+        } catch (error) {
+          attempts++;
+          console.warn('Unable to click on the bond type button, retrying...');
+        }
+      }
     },
   };
 };

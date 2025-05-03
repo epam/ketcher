@@ -26,7 +26,7 @@ import {
   getSequenceSymbolLocator,
   selectSequenceRangeInEditMode,
 } from '@utils/macromolecules/sequence';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 

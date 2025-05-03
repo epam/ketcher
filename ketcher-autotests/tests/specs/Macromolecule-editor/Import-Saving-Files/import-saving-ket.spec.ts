@@ -31,7 +31,7 @@ import {
   processResetToDefaultState,
 } from '@utils/testAnnotations/resetToDefaultState';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
   pressUndoButton,
   selectClearCanvasTool,

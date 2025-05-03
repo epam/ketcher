@@ -1,0 +1,51 @@
+{
+  "testCases": [
+    {
+      "testCaseId": "test_0",
+      "expectedFragmentId": "1",
+      "suggestions": [
+        {
+          "id": "1",
+          "name": "Benzene",
+          "smiles": "c1ccccc1",
+          "similarity": 0.95
+        },
+        {
+          "id": "3",
+          "name": "Pyridine",
+          "smiles": "c1ccncc1",
+          "similarity": 0.85
+        },
+        {
+          "id": "9",
+          "name": "Phenol",
+          "smiles": "c1ccc(cc1)O",
+          "similarity": 0.82
+        },
+        {
+          "id": "10",
+          "name": "Aniline",
+          "smiles": "c1ccc(cc1)N",
+          "similarity": 0.78
+        },
+        {
+          "id": "2",
+          "name": "Cyclohexane",
+          "smiles": "C1CCCCC1",
+          "similarity": 0.75
+        }
+      ],
+      "rank": 1
+    }
+  ],
+  "metrics": {
+    "meanRank": 1.54,
+    "meanReciprocalRank": 0.78,
+    "topKAccuracy": {
+      "top1": 0.8,
+      "top3": 0.9,
+      "top5": 0.96,
+      "top10": 1.0
+    }
+  }
+}

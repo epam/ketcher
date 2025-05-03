@@ -19,7 +19,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 test.describe('Mapping Tools', () => {
   test.beforeEach(async ({ page }) => {

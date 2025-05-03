@@ -23,10 +23,7 @@ import {
   waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
-import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {

@@ -1,8 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
-import {
-  bondSelectionTool,
-  commonLeftToolbarLocators,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   BondType,
@@ -46,8 +43,8 @@ test.describe('Left toolbar UI tests', () => {
   test('left toolbar bonds verification', async ({ page }) => {
     // Test case: EPMLSOPKET-4268
     await CommonLeftToolbar(page).handToolButton.click();
-    await commonLeftToolbarLocators(page).bondSelectionDropdownButton.click();
-    await commonLeftToolbarLocators(page).bondSelectionDropdownButton.click();
+    await CommonLeftToolbar(page).bondSelectionDropdownButton.click();
+    await CommonLeftToolbar(page).bondSelectionDropdownButton.click();
     const selectionToolDropdownWidth = 700;
     await takeDropdownScreenshot(page, selectionToolDropdownWidth);
   });

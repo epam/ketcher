@@ -14,7 +14,7 @@ import {
 import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
 import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 function checkElementExists(element: RxnPlus | RxnArrow, errorMsg: string) {
   if (!element) {
     throw new Error(errorMsg);

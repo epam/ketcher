@@ -18,11 +18,8 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@tests/pages/common/TopLeftToolbar';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 async function selectStructureWithSelectionTool(page: Page) {
   const point = { x: 97, y: 79 };

@@ -22,8 +22,8 @@ import {
   pressUndoButton,
   selectClearCanvasTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 async function checkTooltip(type: RingButton, page: Page) {
   const templateButton = page.getByRole('button', { name: type });

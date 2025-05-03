@@ -39,11 +39,7 @@ import {
   pressUndoButton,
 } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
-import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';

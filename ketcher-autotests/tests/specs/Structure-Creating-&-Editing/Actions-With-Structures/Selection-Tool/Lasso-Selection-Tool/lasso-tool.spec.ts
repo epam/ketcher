@@ -19,10 +19,7 @@ import {
   pressRedoButton,
   pressUndoButton,
 } from '@tests/pages/common/TopLeftToolbar';
-import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 

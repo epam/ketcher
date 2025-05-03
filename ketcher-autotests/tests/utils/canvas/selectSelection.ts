@@ -4,7 +4,7 @@ import { getControlModifier } from '@utils/keyboard';
 import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import { INPUT_DELAY } from '@utils/globals';
 import { moveMouseAway, waitForRender } from '..';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 

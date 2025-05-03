@@ -8,14 +8,10 @@ import {
   waitForRender,
 } from '@utils';
 import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-  selectHandTool,
-} from '@tests/pages/common/CommonLeftToolbar';
-import {
   MacroBondType,
   MicroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 export async function moveMonomer(
   page: Page,

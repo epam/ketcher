@@ -2,7 +2,7 @@
 import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
 import { clickOnCanvas, MonomerType, moveMouseAway } from '..';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
   MacroBondDataIds,
   MacroBondType,

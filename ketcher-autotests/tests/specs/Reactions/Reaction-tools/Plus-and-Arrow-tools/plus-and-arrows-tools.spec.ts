@@ -38,10 +38,7 @@ import {
   selectClearCanvasTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';

@@ -39,7 +39,7 @@ import {
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { goToRNATab } from '@utils/macromolecules/library';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 

@@ -6,7 +6,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { selectHandTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 async function mouseMovement(page: Page, endPoint: { x: number; y: number }) {
   const startPoint = { x: 300, y: 300 };

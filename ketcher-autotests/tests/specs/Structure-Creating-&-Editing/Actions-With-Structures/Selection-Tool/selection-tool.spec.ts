@@ -21,10 +21,7 @@ import {
   drawBenzeneRing,
   selectAllStructuresOnCanvas,
 } from '@utils';
-import {
-  commonLeftToolbarLocators,
-  selectAreaSelectionTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 test.describe('Selection tools', () => {

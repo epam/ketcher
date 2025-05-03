@@ -13,7 +13,7 @@ import {
 import { clickOnArrow } from '@utils/canvas/arrow-signes/getArrow';
 import { getAtomByIndex, getRightAtomByAttributes } from '@utils/canvas/atoms';
 import { clickOnPlus } from '@utils/canvas/plus-signes/getPluses';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 const xMark = 300;

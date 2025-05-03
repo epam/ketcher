@@ -16,7 +16,7 @@ import {
   setRadical,
   setValence,
 } from '../utils';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 async function drawStructure(page: Page, numberOfClicks: number) {

@@ -60,7 +60,7 @@ import {
 import { openStructureLibrary } from '@utils/templates';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
   chooseFileFormat,
@@ -369,11 +369,9 @@ test.describe('Image files', () => {
        * Test case: #4911
        * Description: Error message is displayed - "Cannot deserialize input JSON."
        */
-      const addToCanvasButton =
-        pasteFromClipboardDialog(page).addToCanvasButton;
       await selectOpenFileTool(page);
       await openFile(`KET/${fileName}.ket`, page);
-      await addToCanvasButton.click();
+      await PasteFromClipboardDialog(page).addToCanvasButton.click();
       await takeEditorScreenshot(page);
     });
   }
@@ -400,7 +398,7 @@ test.describe('Image files', () => {
        * Description: Error message is displayed - "Cannot deserialize input JSON."
        */
       const addToCanvasButton =
-        pasteFromClipboardDialog(page).addToCanvasButton;
+        PasteFromClipboardDialog(page).addToCanvasButton;
       await selectOpenFileTool(page);
       await openFile(`KET/${file}`, page);
       await addToCanvasButton.click();
@@ -413,7 +411,7 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Error message is displayed - "Cannot deserialize input JSON."
      */
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
     await selectOpenFileTool(page);
     await openFile(`KET/image-png-159-symbols.ket`, page);
     await addToCanvasButton.click();
@@ -2170,10 +2168,9 @@ test.describe('Image files', () => {
      * Description: Image can't be loaded from CDX/CDXML/Base 64 CDX file if the length of bitmap is less than 160 symbols and error message
      *  is displayed - "Cannot deserialize input JSON.".
      */
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
     await selectOpenFileTool(page);
     await openFile(`CDXML/image-png-169-symbols.cdxml`, page);
-    await addToCanvasButton.click();
+    await PasteFromClipboardDialog(page).addToCanvasButton.click();
     await takeEditorScreenshot(page);
   });
 

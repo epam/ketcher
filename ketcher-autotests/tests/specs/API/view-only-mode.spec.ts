@@ -45,7 +45,7 @@ import {
   setZoomInputValue,
   topRightToolbarLocators,
 } from '@tests/pages/common/TopRightToolbar';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { topRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
@@ -301,8 +301,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The "Add to Canvas" button is disabled in the "Open structure" dialog window
     */
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-    const openAsNewButton = pasteFromClipboardDialog(page).openAsNewButton;
+    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
+    const openAsNewButton = PasteFromClipboardDialog(page).openAsNewButton;
     await enableViewOnlyModeBySetOptions(page);
     await selectOpenFileTool(page);
     await openFile(`KET/images-png-50-with-50-structures.ket`, page);

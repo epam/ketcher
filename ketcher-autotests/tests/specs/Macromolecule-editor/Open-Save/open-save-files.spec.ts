@@ -12,7 +12,7 @@ import {
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
   chooseFileFormat,
   saveStructureDialog,
@@ -71,7 +71,7 @@ test.describe('Open/save file tests: ', () => {
     await openStructurePasteFromClipboard(page);
 
     const openStructureTextarea =
-      pasteFromClipboardDialog(page).openStructureTextarea;
+      PasteFromClipboardDialog(page).openStructureTextarea;
 
     const textToPaste = 'Random text to past from clipboard';
     // IMPORTANT: It is not possible to use clipboard to paste some data from since it is shared with other test threads and tests can interfere

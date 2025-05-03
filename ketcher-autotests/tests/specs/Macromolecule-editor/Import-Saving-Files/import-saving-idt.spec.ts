@@ -74,7 +74,7 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
   chooseFileFormat,
   saveStructureDialog,
@@ -133,7 +133,7 @@ test.describe('Import-Saving .idt Files', () => {
     Description: Option "IDT" to the format dropdown menu of modal window Paste from the clipboard is exist.
     */
     const contentTypeSelector =
-      pasteFromClipboardDialog(page).contentTypeSelector;
+      PasteFromClipboardDialog(page).contentTypeSelector;
 
     await openStructurePasteFromClipboard(page);
     await contentTypeSelector.click();
@@ -200,13 +200,12 @@ test.describe('Import-Saving .idt Files', () => {
   });
 
   test('Check that system does not let importing empty .idt file', async () => {
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
+    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
     await selectOpenFileTool(page);
     await openFile('IDT/idt-empty.idt', page);
     await expect(addToCanvasButton).toBeDisabled();
-    await closeWindowButton.click();
+    await PasteFromClipboardDialog(page).closeWindowButton.click();
   });
 
   test('Check IDT aliases, where defined in the preview window for Phosphates section', async () => {

@@ -42,7 +42,7 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { closeErrorMessage } from '@utils/common/helpers';
 
 let page: Page;
@@ -218,13 +218,12 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: System does not let importing empty .ket file
     */
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
+    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
     await selectOpenFileTool(page);
     await openFile('KET/empty-file.ket', page);
     await expect(addToCanvasButton).toBeDisabled();
-    await closeWindowButton.click();
+    await PasteFromClipboardDialog(page).closeWindowButton.click();
   });
 
   test('Check that system does not let uploading corrupted .ket file', async () => {
@@ -232,7 +231,7 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: System does not let uploading corrupted .ket file
     */
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
     await selectOpenFileTool(page);
     await openFile('KET/corrupted-file.ket', page);

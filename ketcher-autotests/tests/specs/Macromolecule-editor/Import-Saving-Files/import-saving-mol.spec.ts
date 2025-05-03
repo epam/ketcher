@@ -34,7 +34,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
   FileType,
   verifyFileExport,
@@ -280,7 +280,7 @@ test.describe('Import-Saving .mol Files', () => {
     */
       test.setTimeout(20);
       const addToCanvasButton =
-        pasteFromClipboardDialog(page).addToCanvasButton;
+        PasteFromClipboardDialog(page).addToCanvasButton;
 
       await selectOpenFileTool(page);
       await openFile('Molfiles-V2000/empty-file.mol', page);

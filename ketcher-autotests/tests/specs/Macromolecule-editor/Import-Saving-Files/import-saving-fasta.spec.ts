@@ -28,7 +28,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
@@ -81,7 +81,7 @@ test.describe('Import-Saving .fasta Files', () => {
   test('Check that system does not let importing empty .fasta file', async ({
     page,
   }) => {
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
     await selectOpenFileTool(page);
     await openFile('FASTA/fasta-empty.fasta', page);
     await expect(addToCanvasButton).toBeDisabled();

@@ -25,7 +25,7 @@ import {
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
   PeptideLetterCodeType,
   SequenceMonomerType,
@@ -101,7 +101,7 @@ test.describe('Import-Saving .seq Files', () => {
   test('Check that system does not let importing empty .seq file', async ({
     page,
   }) => {
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
     await selectOpenFileTool(page);
     await openFile('Sequence/sequence-empty.seq', page);
@@ -112,13 +112,12 @@ test.describe('Import-Saving .seq Files', () => {
   test('Check that system does not let uploading corrupted .seq file', async ({
     page,
   }) => {
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
     const filename = 'Sequence/sequence-corrupted.seq';
 
     await selectOpenFileTool(page);
     await openFile(filename, page);
     await selectOptionInDropdown(filename, page);
-    await addToCanvasButton.click();
+    await PasteFromClipboardDialog(page).addToCanvasButton.click();
 
     const errorDialog = page.getByLabel('Unsupported symbols').first();
     await errorDialog.waitFor({ state: 'visible' });

@@ -62,7 +62,7 @@ import {
   selectZoomInTool,
   setZoomInputValue,
 } from '@tests/pages/common/TopRightToolbar';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
   chooseFileFormat,
   saveStructureDialog,
@@ -415,12 +415,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
        * Test case: https://github.com/epam/ketcher/issues/5104
        * Description: ${detailedDescription}
        */
-      const addToCanvasButton =
-        pasteFromClipboardDialog(page).addToCanvasButton;
-
       await selectOpenFileTool(page);
       await openFile(file, page);
-      await addToCanvasButton.click();
+      await PasteFromClipboardDialog(page).addToCanvasButton.click();
 
       await takeEditorScreenshot(page);
       await closeErrorAndInfoModals(page);

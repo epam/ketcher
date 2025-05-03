@@ -33,7 +33,7 @@ import {
   selectOpenFileTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 
@@ -1183,16 +1183,15 @@ test.describe('Copy/Cut/Paste Actions', () => {
       '[#6]-[#6]-[#6]-[#6]-[!#40!#79!#30]-[#6]-[#6]-[#6]-[#6]';
     const pasteFromClipboardButton =
       openStructureDialog(page).pasteFromClipboardButton;
-    const openStructureTextarea =
-      pasteFromClipboardDialog(page).openStructureTextarea;
-    const cancelButton = pasteFromClipboardDialog(page).cancelButton;
 
     await selectOpenFileTool(page);
     await pasteFromClipboardButton.click();
-    await openStructureTextarea.fill(smartsString);
+    await PasteFromClipboardDialog(page).openStructureTextarea.fill(
+      smartsString,
+    );
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await cancelButton.click();
+    await PasteFromClipboardDialog(page).cancelButton.click();
     await page.keyboard.press('Control+Alt+v');
     await clickInTheMiddleOfTheScreen(page);
     await expect(page).toHaveScreenshot();

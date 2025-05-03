@@ -104,7 +104,7 @@ import {
   MicroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -577,7 +577,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: The pop-up window appear in fullscreen mode after clicking the “Open/Save” button.
     */
     const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
-    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
 
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
@@ -590,7 +589,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await fullScreenButton.click();
     await selectOpenFileTool(page);
     await takeEditorScreenshot(page);
-    await closeWindowButton.click();
+    await PasteFromClipboardDialog(page).closeWindowButton.click();
     await selectSaveTool(page);
     await takeEditorScreenshot(page);
   });

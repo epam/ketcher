@@ -23,7 +23,7 @@ import {
   PeptideLetterCodeType,
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatName } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
@@ -72,9 +72,7 @@ test.describe('Import/export sequence:', () => {
 
     */
     const contentTypeSelector =
-      pasteFromClipboardDialog(page).contentTypeSelector;
-    const monomerTypeSelector =
-      pasteFromClipboardDialog(page).monomerTypeSelector;
+      PasteFromClipboardDialog(page).contentTypeSelector;
 
     await selectSequenceLayoutModeTool(page);
     await openStructurePasteFromClipboard(page);
@@ -103,7 +101,7 @@ test.describe('Import/export sequence:', () => {
     // Case 2
     await page.getByText(MacroFileType.Sequence).click();
 
-    await monomerTypeSelector.click();
+    await PasteFromClipboardDialog(page).monomerTypeSelector.click();
 
     const options2 = page.getByRole('option');
     const values2 = await options2.allTextContents();
@@ -119,9 +117,9 @@ test.describe('Import/export sequence:', () => {
     await keyboardPressOnCanvas(page, 'Escape');
 
     // Case 30
-    await contentTypeSelector.click();
+    await PasteFromClipboardDialog(page).contentTypeSelector.click();
     await page.getByText(MacroFileType.FASTA).click();
-    await monomerTypeSelector.click();
+    await PasteFromClipboardDialog(page).monomerTypeSelector.click();
     const options3 = page.getByRole('option');
     const values3 = await options3.allTextContents();
 

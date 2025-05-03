@@ -19,7 +19,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
   chooseFileFormat,
@@ -368,7 +368,6 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1927
      * Description: Open and Save file - InChi for structure
      */
-    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
     const saveStructureTextarea =
       saveStructureDialog(page).saveStructureTextarea;
 
@@ -378,7 +377,7 @@ test.describe('Open and Save InChI file', () => {
 
     const inChistring = await saveStructureTextarea.inputValue();
     await copyToClipboardByKeyboard(page);
-    await closeWindowButton.click();
+    await PasteFromClipboardDialog(page).closeWindowButton.click();
     await selectClearCanvasTool(page);
     await pasteFromClipboardAndAddToCanvas(page, inChistring);
   });

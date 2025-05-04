@@ -2,6 +2,7 @@
 import { Chem } from '@constants/monomers/Chem';
 import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import {
   addSingleMonomerToCanvas,
   BondType,
@@ -12,10 +13,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 import { addSuperatomAttachmentPoint } from '@utils/canvas/atoms/superatomAttachmentPoints';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';

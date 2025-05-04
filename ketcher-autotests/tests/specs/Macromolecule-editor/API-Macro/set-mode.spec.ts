@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import {
   waitForPageInit,
   openFileAndAddToCanvasMacro,
@@ -9,7 +10,6 @@ import {
   setZoom,
   moveMouseAway,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('setMode', () => {
   test.beforeEach(async ({ page }) => {

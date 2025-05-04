@@ -1,5 +1,6 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import {
   addMonomerToFavorites,
   clickInTheMiddleOfTheScreen,
@@ -7,7 +8,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { hideMonomerPreview } from '@utils/macromolecules';
 
 test('Add molecule to favorites, switch to Favorites tab and drag it to the canvas', async ({

@@ -9,7 +9,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { Monomer } from '@utils/types';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 interface IAmbiguousMonomerName {
   testDescription: string;

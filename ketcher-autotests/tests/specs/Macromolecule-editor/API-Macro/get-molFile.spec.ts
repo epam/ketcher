@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
@@ -6,7 +7,6 @@ import {
   getMolfile,
   receiveFileComparisonData,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('getMolfile', () => {
   test.beforeEach(async ({ page }) => {

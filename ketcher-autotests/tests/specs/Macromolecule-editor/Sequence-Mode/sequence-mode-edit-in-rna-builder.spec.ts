@@ -26,11 +26,11 @@ import { pressSaveButton } from '@utils/macromolecules/rnaBuilder';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Bases } from '@constants/monomers/Bases';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Sequence mode edit in RNA Builder', () => {
   test.beforeEach(async ({ page }) => {

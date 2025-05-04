@@ -35,7 +35,7 @@ async function shiftStructure(page: Page) {
 test.describe('addFragment', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasMacro(fileName, page);
     await shiftStructure(page);
   });
@@ -49,7 +49,7 @@ test.describe('addFragment', () => {
       async () => await addFragment(page, fileContents),
     );
     const numberOfPressZoomOut = 6;
-    await selectZoomOutTool(page, numberOfPressZoomOut);
+    await TopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await page.mouse.move(0, 0);
     await takeEditorScreenshot(page);
   });
@@ -61,7 +61,7 @@ test.describe('addFragment', () => {
       async () => await addFragment(page, fileContents),
     );
     const numberOfPressZoomOut = 6;
-    await selectZoomOutTool(page, numberOfPressZoomOut);
+    await TopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await page.mouse.move(0, 0);
     await takeEditorScreenshot(page);

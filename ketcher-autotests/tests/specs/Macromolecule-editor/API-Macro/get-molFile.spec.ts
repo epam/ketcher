@@ -11,7 +11,7 @@ import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar'
 test.describe('getMolfile', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('with two monomers bonded', async ({ page }) => {

@@ -14,7 +14,7 @@ import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar'
 test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     await goToRNATab(page);
     await toggleRnaBuilderAccordion(page);
   });

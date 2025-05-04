@@ -23,14 +23,6 @@ import {
   ZoomInByKeyboard,
   selectMonomer,
 } from '@utils';
-import {
-  selectZoomReset,
-  selectZoomOutTool,
-  topRightToolbarLocators,
-  turnOnMacromoleculesEditor,
-  zoomDropdownLocators,
-  selectZoomInTool,
-} from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   connectMonomersWithBonds,
@@ -41,6 +33,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
@@ -57,7 +50,7 @@ async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
 test.describe('Zoom Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Check tooltip for a Zoom in, Zoom out, Reset buttons', async ({
@@ -69,19 +62,19 @@ test.describe('Zoom Tool', () => {
     */
     const buttons = [
       {
-        locator: zoomDropdownLocators(page).zoomInButton,
+        locator: TopRightToolbar(page).zoomInButton,
         title: 'Zoom In',
       },
       {
-        locator: zoomDropdownLocators(page).zoomOutButton,
+        locator: TopRightToolbar(page).zoomOutButton,
         title: 'Zoom Out',
       },
       {
-        locator: zoomDropdownLocators(page).zoomDefaultButton,
+        locator: TopRightToolbar(page).zoomDefaultButton,
         title: 'Zoom 100%',
       },
     ];
-    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+    const zoomSelector = TopRightToolbar(page).zoomSelector;
     await zoomSelector.click();
     for (const button of buttons) {
       await expect(button.locator).toHaveAttribute('title', button.title);
@@ -102,10 +95,10 @@ test.describe('Zoom Tool', () => {
       'KET/peptides-connected-with-bonds.ket',
       page,
     );
-    await selectZoomInTool(page, 10);
+    await TopRightToolbar(page).selectZoomInTool(10);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectZoomOutTool(page, 10);
+    await TopRightToolbar(page).selectZoomOutTool(10);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -117,22 +110,22 @@ test.describe('Zoom Tool', () => {
     Test case: Zoom Tool
     Description: Minimum value for zoom out is 20% and maximum value for zoom in is 400%
     */
-    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+    const zoomSelector = TopRightToolbar(page).zoomSelector;
 
     await goToRNATab(page);
     await openFileAndAddToCanvasMacro(
       'KET/peptides-connected-with-bonds.ket',
       page,
     );
-    await selectZoomOutTool(page, 10);
+    await TopRightToolbar(page).selectZoomOutTool(10);
 
     await clickInTheMiddleOfTheScreen(page);
     let zoomValue = await zoomSelector.textContent();
     expect(zoomValue).toBe('20%');
     await takePageScreenshot(page);
 
-    await selectZoomReset(page);
-    await selectZoomInTool(page, 30);
+    await TopRightToolbar(page).resetZoom();
+    await TopRightToolbar(page).selectZoomInTool(30);
     await clickInTheMiddleOfTheScreen(page);
     zoomValue = await zoomSelector.textContent();
     expect(zoomValue).toBe('400%');
@@ -172,7 +165,7 @@ test.describe('Zoom Tool', () => {
     }
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectZoomReset(page);
+    await TopRightToolbar(page).resetZoom();
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });

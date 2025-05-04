@@ -23,10 +23,10 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -85,13 +85,13 @@ test.describe('Action on simples objects', () => {
 
   test('Simple Object - Action with zoom tool', async ({ page }) => {
     // Test case: EPMLSOPKET-1980
-    await setZoomInputValue(page, '20');
+    await TopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await setupEllipse(page);
-    await setZoomInputValue(page, '200');
+    await TopRightToolbar(page).setZoomInputValue('200');
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
-      await setZoomInputValue(page, '100');
+      await TopRightToolbar(page).setZoomInputValue('100');
     });
     await takeEditorScreenshot(page);
   });

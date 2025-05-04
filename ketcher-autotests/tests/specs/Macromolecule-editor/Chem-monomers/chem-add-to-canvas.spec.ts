@@ -8,11 +8,11 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { hideMonomerPreview } from '@utils/macromolecules';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 /* 
 Test case: #2497 - Add chem to canvas
@@ -22,7 +22,7 @@ test('Select chem and drag it to canvas', async ({ page }) => {
   await waitForPageInit(page);
 
   // Click on POLYMER_TOGGLER
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await selectMonomer(page, Chem.sDBL);
   // Click on <svg> #polymer-editor-canvas
   await clickInTheMiddleOfTheScreen(page);
@@ -34,7 +34,7 @@ test('Select chem and drag it to canvas', async ({ page }) => {
 test.describe('Actions with CHEM', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Check that CHEM name fits in its icon when placed on canvas', async ({

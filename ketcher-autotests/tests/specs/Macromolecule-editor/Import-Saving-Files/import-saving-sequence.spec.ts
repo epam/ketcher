@@ -19,7 +19,6 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { closeErrorMessage } from '@utils/common/helpers';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
   PeptideLetterCodeType,
@@ -28,10 +27,11 @@ import {
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.describe('Import-Saving .seq Files', () => {

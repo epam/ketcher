@@ -32,10 +32,6 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Bases } from '@constants/monomers/Bases';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
@@ -43,6 +39,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -67,7 +64,7 @@ test.describe('Common connection rules: ', () => {
     await page.goto('', { waitUntil: 'domcontentloaded' });
     await waitForKetcherInit(page);
     await waitForIndigoToLoad(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test.afterEach(async () => {
@@ -481,11 +478,11 @@ test.describe('Common connection rules: ', () => {
       'Molfiles-V3000/Common-Bond-Tests/C___Cysteine on the canvas.mol',
       page,
     );
-    await turnOnMicromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMicromoleculesEditor();
     await page.getByText('C', { exact: true }).first().hover();
     await waitForMonomerPreviewMicro(page);
     await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test(`Check that system marks availiable connection point as avaliable in Select Connection Point dialog (use attached files)`, async () => {

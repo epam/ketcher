@@ -14,7 +14,7 @@ test('Add molecule to favorites, switch to Favorites tab and drag it to the canv
   page,
 }) => {
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
 
   await addMonomerToFavorites(page, Peptides.A);
   await selectMonomer(page, Peptides.A, true);

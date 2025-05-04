@@ -40,7 +40,7 @@ async function expandRnaBuilder(page: Page) {
 test.describe('Macromolecules custom presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     await createRNA(page);
   });
 
@@ -65,7 +65,7 @@ test.describe('Macromolecules custom presets', () => {
     await waitForPageInit(page);
 
     // Click on POLYMER_TOGGLER
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
 
     // Click on <button> "RNA"
     await goToRNATab(page);

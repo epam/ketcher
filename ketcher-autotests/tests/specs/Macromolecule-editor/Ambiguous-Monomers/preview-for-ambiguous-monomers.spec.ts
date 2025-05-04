@@ -12,14 +12,11 @@ import {
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
-import {
   getMonomerLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -32,7 +29,7 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
@@ -507,7 +504,7 @@ test.describe('Preview tooltips checks: ', () => {
         MacroFileType.HELM,
         ambiguousMonomer.HELMString,
       );
-      await turnOnMicromoleculesEditor(page);
+      await TopRightToolbar(page).turnOnMicromoleculesEditor();
 
       await hoverMouseOverMicroMonomer(
         page,
@@ -516,7 +513,7 @@ test.describe('Preview tooltips checks: ', () => {
       await waitForMonomerPreview(page);
 
       await takeEditorScreenshot(page);
-      await turnOnMacromoleculesEditor(page);
+      await TopRightToolbar(page).turnOnMacromoleculesEditor();
 
       // Test should be skipped if related bug exists
       test.fixme(

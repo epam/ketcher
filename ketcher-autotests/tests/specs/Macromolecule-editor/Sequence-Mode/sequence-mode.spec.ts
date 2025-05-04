@@ -19,11 +19,6 @@ import {
   takeTopToolbarScreenshot,
   selectAllStructuresOnCanvas,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  selectZoomOutTool,
-  selectZoomInTool,
-} from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   keyboardPressOnCanvas,
@@ -32,6 +27,7 @@ import {
 import { createAntisenseStrandByButton } from '@utils/macromolecules/monomer';
 import { switchToDNAMode } from '@utils/macromolecules/sequence';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 export async function clickOnTriangle(page: Page) {
   const expandButton = page
@@ -43,7 +39,7 @@ export async function clickOnTriangle(page: Page) {
 test.describe('Sequence Mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Open monomers chains and switch to sequence mode', async ({ page }) => {
@@ -459,10 +455,10 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
-    await selectZoomOutTool(page, 3);
+    await TopRightToolbar(page).selectZoomOutTool(3);
     await keyboardTypeOnCanvas(page, 'ac');
     await takeEditorScreenshot(page);
-    await selectZoomInTool(page, 2);
+    await TopRightToolbar(page).selectZoomInTool(2);
     await keyboardPressOnCanvas(page, 'g');
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);

@@ -20,11 +20,6 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
-  selectZoomInTool,
-  selectZoomOutTool,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
-import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
@@ -41,12 +36,13 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     await goToPeptidesTab(page);
   });
 
@@ -334,11 +330,11 @@ test.describe('Erase Tool', () => {
       page,
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await selectZoomInTool(page, 5);
+    await TopRightToolbar(page).selectZoomInTool(5);
     await clickInTheMiddleOfTheScreen(page);
     await getMonomerLocator(page, Peptides.Bal).click();
     await takeEditorScreenshot(page);
-    await selectZoomOutTool(page, 8);
+    await TopRightToolbar(page).selectZoomOutTool(8);
     await clickInTheMiddleOfTheScreen(page);
     await getMonomerLocator(page, Peptides.D_2Nal).click();
     await takeEditorScreenshot(page);

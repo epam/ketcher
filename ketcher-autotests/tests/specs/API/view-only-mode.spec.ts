@@ -38,13 +38,10 @@ import {
 } from '@utils/formats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import {
-  setZoomInputValue,
-  topRightToolbarLocators,
-} from '@tests/pages/common/TopRightToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { topRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -235,7 +232,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The help, about and fullscreen mode are enabled in view-only mode 
     */
-    const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
+    const fullScreenButton = TopRightToolbar(page).fullScreenButton;
     const aboutButton = topRightToolbar(page).aboutButton;
     const helpButton = topRightToolbar(page).helpButton;
 
@@ -400,13 +397,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await setZoomInputValue(page, '20');
+    await TopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '100');
+    await TopRightToolbar(page).setZoomInputValue('100');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '350');
+    await TopRightToolbar(page).setZoomInputValue('350');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

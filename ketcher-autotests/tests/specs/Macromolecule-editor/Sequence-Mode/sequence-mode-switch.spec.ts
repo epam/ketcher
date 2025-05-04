@@ -11,7 +11,7 @@ import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar'
 test.describe('Sequence edit mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectSequenceLayoutModeTool(page);
   });
 

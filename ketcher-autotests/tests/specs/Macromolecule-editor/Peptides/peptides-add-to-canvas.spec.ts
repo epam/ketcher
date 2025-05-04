@@ -11,9 +11,9 @@ import {
   waitForMonomerPreview,
 } from '@utils/macromolecules';
 import { Peptides } from '@constants/monomers/Peptides';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
@@ -22,7 +22,7 @@ Test case: #3063 - Add e2e tests for Macromolecule editor
 test.describe('Peptide', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Select peptide and drag it to canvas', async ({ page }) => {

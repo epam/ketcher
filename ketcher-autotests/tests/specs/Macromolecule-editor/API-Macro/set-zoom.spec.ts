@@ -15,7 +15,7 @@ import {
 test.describe('setZoom', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Should zoom drawn structures', async ({ page }) => {
@@ -40,7 +40,7 @@ test.describe('setZoom', () => {
       await takeEditorScreenshot(page);
 
       if (adjustZoom) {
-        await selectZoomInTool(page, 3);
+        await TopRightToolbar(page).selectZoomInTool(3);
         await clickInTheMiddleOfTheScreen(page);
         await takeEditorScreenshot(page);
       }

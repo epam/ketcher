@@ -15,7 +15,7 @@ import {
 test.describe('setMolecule', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('mol with two monomers bonded', async ({ page }) => {
@@ -27,7 +27,7 @@ test.describe('setMolecule', () => {
       async () => await setMolecule(page, fileContents),
     );
     const numberOfPressZoomOut = 6;
-    await selectZoomOutTool(page, numberOfPressZoomOut);
+    await TopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -41,7 +41,7 @@ test.describe('setMolecule', () => {
       async () => await setMolecule(page, fileContents),
     );
     const numberOfPressZoomOut = 6;
-    await selectZoomOutTool(page, numberOfPressZoomOut);
+    await TopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

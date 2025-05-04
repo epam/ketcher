@@ -16,14 +16,11 @@ import {
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import {
-  topRightToolbarLocators,
-  zoomDropdownLocators,
-} from '@tests/pages/common/TopRightToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 async function checkZoomLevel(page: Page, zoomLevel: string) {
-  const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+  const zoomSelector = TopRightToolbar(page).zoomSelector;
   await expect(zoomSelector).toContainText(zoomLevel);
 }
 
@@ -85,8 +82,8 @@ test.describe('Zoom changes', () => {
     /*
     Test case: EPMLSOPKET-1761
     */
-    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
-    const zoomInButton = zoomDropdownLocators(page).zoomInButton;
+    const zoomSelector = TopRightToolbar(page).zoomSelector;
+    const zoomInButton = TopRightToolbar(page).zoomInButton;
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -104,8 +101,8 @@ test.describe('Zoom changes', () => {
     /*
     Test case: EPMLSOPKET-1762
     */
-    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
-    const zoomOut = zoomDropdownLocators(page).zoomOutButton;
+    const zoomSelector = TopRightToolbar(page).zoomSelector;
+    const zoomOut = TopRightToolbar(page).zoomOutButton;
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -123,8 +120,8 @@ test.describe('Zoom changes', () => {
     /*
     Test case: EPMLSOPKET-1763, EPMLSOPKET-1764
     */
-    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
-    const zoomInButton = zoomDropdownLocators(page).zoomInButton;
+    const zoomSelector = TopRightToolbar(page).zoomSelector;
+    const zoomInButton = TopRightToolbar(page).zoomInButton;
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
     await resetCurrentTool(page);
 
@@ -147,8 +144,8 @@ test.describe('Zoom changes', () => {
     /*
       Test case: EPMLSOPKET-1763, EPMLSOPKET-1764
       */
-    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
-    const zoomInButton = zoomDropdownLocators(page).zoomInButton;
+    const zoomSelector = TopRightToolbar(page).zoomSelector;
+    const zoomInButton = TopRightToolbar(page).zoomInButton;
     await selectFunctionalGroups(FunctionalGroups.CO2Et, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -164,8 +161,8 @@ test.describe('Zoom changes', () => {
     /*
       Test case: EPMLSOPKET-18056
       */
-    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
-    const zoomOutButton = zoomDropdownLocators(page).zoomOutButton;
+    const zoomSelector = TopRightToolbar(page).zoomSelector;
+    const zoomOutButton = TopRightToolbar(page).zoomOutButton;
     await drawBenzeneRing(page);
     await resetCurrentTool(page);
 
@@ -180,9 +177,9 @@ test.describe('Zoom changes', () => {
     /*
     Test case: EPMLSOPKET-1765
     */
-    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
-    const zoomInButton = zoomDropdownLocators(page).zoomInButton;
-    const zoomOutButton = zoomDropdownLocators(page).zoomOutButton;
+    const zoomSelector = TopRightToolbar(page).zoomSelector;
+    const zoomInButton = TopRightToolbar(page).zoomInButton;
+    const zoomOutButton = TopRightToolbar(page).zoomOutButton;
     await openFileAndAddToCanvas(
       'Molfiles-V2000/clean-diff-properties.mol',
       page,
@@ -205,9 +202,9 @@ test.describe('Zoom changes', () => {
     /*
     Test case: EPMLSOPKET-1766
     */
-    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
-    const zoomInButton = zoomDropdownLocators(page).zoomInButton;
-    const zoomOutButton = zoomDropdownLocators(page).zoomOutButton;
+    const zoomSelector = TopRightToolbar(page).zoomSelector;
+    const zoomInButton = TopRightToolbar(page).zoomInButton;
+    const zoomOutButton = TopRightToolbar(page).zoomOutButton;
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/all-kind-of-r-group.mol',

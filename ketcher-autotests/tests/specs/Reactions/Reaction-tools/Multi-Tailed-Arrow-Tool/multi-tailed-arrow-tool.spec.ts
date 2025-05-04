@@ -49,16 +49,11 @@ import {
 import { openStructureLibrary } from '@utils/templates';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import {
-  selectZoomReset,
-  selectZoomOutTool,
-  selectZoomInTool,
-  setZoomInputValue,
-} from '@tests/pages/common/TopRightToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -507,13 +502,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '20');
+    await TopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '400');
+    await TopRightToolbar(page).setZoomInputValue('400');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '100');
+    await TopRightToolbar(page).setZoomInputValue('100');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -566,13 +561,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectZoomOutTool(page, 8);
+    await TopRightToolbar(page).selectZoomOutTool(8);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectZoomInTool(page, 19);
+    await TopRightToolbar(page).selectZoomInTool(19);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectZoomReset(page);
+    await TopRightToolbar(page).resetZoom();
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -3609,7 +3604,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.svg',
       page,
     );
-    await setZoomInputValue(page, '20');
+    await TopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await TopLeftToolbar(page).clearCanvas();
@@ -3617,7 +3612,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.png',
       page,
     );
-    await setZoomInputValue(page, '20');
+    await TopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

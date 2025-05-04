@@ -41,7 +41,7 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await addSuperatomAttachmentPoint(page, 'C', 3);
     await takeEditorScreenshot(page);
 
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     await goToPeptidesTab(page);
     const firstAlanine = await addSingleMonomerToCanvas(
       page,
@@ -78,7 +78,7 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await bondTwoMonomersPointToPoint(page, molecule, thirdAlanine, 'R4', 'R2');
 
     await takeEditorScreenshot(page);
-    await turnOnMicromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 
@@ -96,9 +96,9 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await clickOnAtom(page, 'C', 10, 'right');
     await page.getByText('Delete').click();
     await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
-    await turnOnMicromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 
@@ -114,9 +114,9 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await clickOnBond(page, BondType.SINGLE, 18, 'right');
     await page.getByText('Delete').click();
     await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
-    await turnOnMicromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 });

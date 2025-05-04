@@ -9,7 +9,6 @@ import {
 import { selectSequenceLayoutModeTool } from '@utils/canvas/tools';
 import { switchToRNAMode } from '@utils/macromolecules/sequence';
 import { waitForPageInit } from '@utils/common/loaders';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
   selectBaseSlot,
   selectPhosphateSlot,
@@ -33,6 +32,7 @@ import {
   modifyInRnaBuilder,
 } from '@utils/macromolecules/monomer';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -49,7 +49,7 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 

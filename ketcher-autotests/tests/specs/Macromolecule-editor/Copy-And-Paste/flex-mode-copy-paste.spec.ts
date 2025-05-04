@@ -10,9 +10,9 @@ import {
   pasteFromClipboardByKeyboard,
   moveMouseAway,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 const startX = 300;
 const startY = 300;
@@ -21,7 +21,7 @@ const endY = 600;
 test.describe('Flex mode copy&paste', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     const ZOOM_OUT_VALUE = 400;
 
     await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);

@@ -3,14 +3,14 @@ import { waitForPageInit } from '@utils/common';
 import { openFileAndAddToCanvasMacro, takeEditorScreenshot } from '@utils';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Macromolecules connect phosphate and sugar', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Open file and connect phosphate and sugar', async ({ page }) => {

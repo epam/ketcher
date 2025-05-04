@@ -44,13 +44,10 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -63,7 +60,7 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
   // Creation of custom presets needed for testing
   await createTestPresets(page);
@@ -2153,9 +2150,9 @@ test(`27. Verify switching from Macro mode to Micro mode and back without data l
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await checkForKnownBugs(

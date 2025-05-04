@@ -73,7 +73,7 @@ export async function toggleRnaAccordionItem(
 }
 
 export async function gotoRNA(page: Page) {
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await page.getByTestId(RNA_TAB).click();
   await toggleRnaBuilderAccordion(page);
 }

@@ -28,15 +28,12 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { closeErrorMessage, pageReload } from '@utils/common/helpers';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -49,7 +46,7 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
@@ -98,10 +95,10 @@ test(`Verify that connections between monomers and molecules are maintained corr
   );
   await takeEditorScreenshot(page);
 
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page);
 
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test(`Verify that switching between micro and macro modes displays molecules without structural changes`, async () => {
@@ -115,14 +112,14 @@ test(`Verify that switching between micro and macro modes displays molecules wit
    *       4. Take screenshot to witness canvas was rendered correct at micro
    *       Canvases should be equal
    */
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/Complicated structures on the canvas.ket',
     page,
   );
   await takeEditorScreenshot(page);
 
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await takeEditorScreenshot(page);
 });
 
@@ -191,13 +188,13 @@ test(`Verify that small molecules with any bond type retain their representation
    * https://github.com/epam/ketcher/issues/6236
    * Will require to update screens after fix
    */
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
     page,
   );
   await takeEditorScreenshot(page);
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await takeEditorScreenshot(page);
 });
 
@@ -384,7 +381,7 @@ test(`Verify that all 16 types of bonds saved in macro mode can be opened in mic
     'v3000',
   );
 
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All 16 types of bonds-expected.mol',
@@ -392,7 +389,7 @@ test(`Verify that all 16 types of bonds saved in macro mode can be opened in mic
   );
   await takeEditorScreenshot(page);
 
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test(`Verify that switching back from macromolecules mode to molecules mode does not corrupt or change bond types`, async () => {
@@ -412,19 +409,19 @@ test(`Verify that switching back from macromolecules mode to molecules mode does
    * https://github.com/epam/ketcher/issues/6236
    * Will require to update screens after fix
    */
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
     page,
   );
   await takeEditorScreenshot(page);
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await takeEditorScreenshot(page);
 
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page);
 
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test(`Verify that deleting a bond in macromolecules mode removes only the selected bond without affecting adjacent structures`, async () => {
@@ -538,7 +535,7 @@ test(`Verify that copying and pasting structures with all bond types in macromol
    * https://github.com/epam/ketcher/issues/6236
    * Will require to update screens after fix
    */
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All 16 types of bonds.ket',
     page,
@@ -547,7 +544,7 @@ test(`Verify that copying and pasting structures with all bond types in macromol
   await cutToClipboardByKeyboard(page);
   await takeEditorScreenshot(page);
 
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await moveMouseToTheMiddleOfTheScreen(page);
   await pasteFromClipboardByKeyboard(page);
 

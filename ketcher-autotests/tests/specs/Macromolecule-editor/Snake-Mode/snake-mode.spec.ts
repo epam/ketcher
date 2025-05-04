@@ -11,16 +11,13 @@ import {
   selectSequenceLayoutModeTool,
 } from '@utils';
 import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
-import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -29,7 +26,7 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await selectSnakeLayoutModeTool(page);
 });
 
@@ -275,7 +272,7 @@ test(
       page,
     );
     await selectSnakeLayoutModeTool(page);
-    await turnOnMicromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -298,13 +295,13 @@ test('5. Switching from Micro mode to Snake and back to Micromolecules mode does
     */
   // switching to Snake to change default Macro mode
   await selectSnakeLayoutModeTool(page);
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
     'KET/Snake-mode/SnakeModeBypassCheck.ket',
     page,
   );
-  await turnOnMacromoleculesEditor(page);
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -322,7 +319,7 @@ test('6. Switching from Flex to Sequence and back to Flex mode does not change l
         2. Switch to Sequence mode and back to Flex
         3. Take screenshot to withness layour remain unchanged
     */
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await selectFlexLayoutModeTool(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
     'KET/Snake-mode/SnakeModeBypassCheck.ket',
@@ -355,7 +352,7 @@ test('7. Switching from Flex mode to Sequence and to Micromolecules mode does no
     page,
   );
   await selectSequenceLayoutModeTool(page);
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -376,15 +373,15 @@ test('8. Switching from Micro mode to Sequence and back to Micromolecules mode d
         3. Take screenshot to withness monomer
     */
   // switching to Sequence to change default Macro mode
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await selectSequenceLayoutModeTool(page);
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
     'KET/Snake-mode/SnakeModeBypassCheck.ket',
     page,
   );
-  await turnOnMacromoleculesEditor(page);
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -454,12 +451,12 @@ test('11. Switching from Micro to Snake, Sequence and to Flex does not change la
         4. Take screenshot to withness layour remain unchanged
     */
   await selectSnakeLayoutModeTool(page);
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
     'KET/Snake-mode/SnakeModeBypassCheck.ket',
     page,
   );
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   // Here we are at the Snake mode
   await selectSequenceLayoutModeTool(page);
   await selectFlexLayoutModeTool(page);
@@ -487,12 +484,12 @@ test(
         4. Take screenshot to withness layour remain unchanged
     */
     await selectSequenceLayoutModeTool(page);
-    await turnOnMicromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Snake-mode/SnakeModeBypassCheck.ket',
       page,
     );
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     // Here we are at the Sequence mode
     await selectSnakeLayoutModeTool(page);
     await selectFlexLayoutModeTool(page);
@@ -521,7 +518,7 @@ test('13. Switching from Flex to Snake, Sequence and to Micro does not change la
   );
   await selectSnakeLayoutModeTool(page);
   await selectSequenceLayoutModeTool(page);
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -544,7 +541,7 @@ test(
         2. Switch to Snake mode, Sequence mode and back to Flex
         3. Take screenshot to withness layour remain unchanged
     */
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Snake-mode/SnakeModeBypassCheck.ket',
@@ -552,7 +549,7 @@ test(
     );
     await selectSequenceLayoutModeTool(page);
     await selectSnakeLayoutModeTool(page);
-    await turnOnMicromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -573,15 +570,15 @@ test('15. Switching from Micro to Snake, Sequence and to Micro does not change l
         4. Take screenshot to withness layour remain unchanged
     */
   await selectSnakeLayoutModeTool(page);
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProjectMacro(
     'KET/Snake-mode/SnakeModeBypassCheck.ket',
     page,
   );
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   // Here we are at the Snake mode
   await selectSequenceLayoutModeTool(page);
-  await turnOnMicromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
@@ -605,17 +602,17 @@ test(
         3. Switch to Macro-Snake mode, Sequence mode and back to Flex
         4. Take screenshot to withness layour remain unchanged
     */
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectSequenceLayoutModeTool(page);
-    await turnOnMicromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Snake-mode/SnakeModeBypassCheck.ket',
       page,
     );
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     // Here we are at the Sequence mode
     await selectSnakeLayoutModeTool(page);
-    await turnOnMicromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

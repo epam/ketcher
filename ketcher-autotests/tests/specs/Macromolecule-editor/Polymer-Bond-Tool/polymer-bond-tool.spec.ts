@@ -37,16 +37,13 @@ import {
   bondTwoMonomersPointToPoint,
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
-import {
-  topRightToolbarLocators,
-  turnOnMacromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -59,7 +56,7 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
@@ -212,7 +209,7 @@ test('Check in full-screen mode it is possible to add a bond between a Peptide m
     */
   const x = 800;
   const y = 350;
-  const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
+  const fullScreenButton = TopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
   await selectMonomer(page, Peptides.bAla);
   await clickInTheMiddleOfTheScreen(page);
@@ -232,7 +229,7 @@ test('Check in full-screen mode it is possible to add a bond between a RNA monom
     */
   const x = 800;
   const y = 350;
-  const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
+  const fullScreenButton = TopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
   await selectMonomer(page, Presets.MOE_A_P);
   await clickInTheMiddleOfTheScreen(page);
@@ -252,7 +249,7 @@ test('Check in full-screen mode it is possible to add a bond between a CHEM mono
     */
   const x = 800;
   const y = 350;
-  const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
+  const fullScreenButton = TopRightToolbar(page).fullScreenButton;
   await fullScreenButton.click();
   await selectMonomer(page, Chem.A6OH);
   await clickInTheMiddleOfTheScreen(page);

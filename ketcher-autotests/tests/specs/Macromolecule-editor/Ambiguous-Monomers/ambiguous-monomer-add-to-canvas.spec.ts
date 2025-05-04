@@ -24,7 +24,7 @@ interface IAmbiguousMonomerName {
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 const AmbiguousMonomers: IAmbiguousMonomerName[] = [

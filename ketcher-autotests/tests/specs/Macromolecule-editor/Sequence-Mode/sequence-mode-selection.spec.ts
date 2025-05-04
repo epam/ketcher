@@ -15,11 +15,6 @@ import {
   clickOnCanvas,
   moveMouseAway,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  selectZoomOutTool,
-  selectZoomInTool,
-} from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   getSequenceSymbolLocator,
@@ -29,11 +24,12 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 250;
 
@@ -75,7 +71,7 @@ test.describe('Sequence mode selection for view mode', () => {
 test.describe('Sequence mode selection for edit mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 250;
 
@@ -141,7 +137,7 @@ test.describe('Sequence mode selection for edit mode', () => {
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await TopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   const testData = [
@@ -249,9 +245,9 @@ test.describe('Sequence mode selection for view mode', () => {
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectZoomOutTool(page, 8);
+    await TopRightToolbar(page).selectZoomOutTool(8);
     await takeEditorScreenshot(page);
-    await selectZoomInTool(page, 5);
+    await TopRightToolbar(page).selectZoomInTool(5);
     await takeEditorScreenshot(page);
   });
 

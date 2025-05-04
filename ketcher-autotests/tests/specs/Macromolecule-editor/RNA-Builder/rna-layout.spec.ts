@@ -9,7 +9,7 @@ import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar'
 Test case: #3063 - Add e2e tests for Macromolecule editor
 */
 async function createRNA(page: Page) {
-  await turnOnMacromoleculesEditor(page);
+  await TopRightToolbar(page).turnOnMacromoleculesEditor();
   await page.getByTestId(RNA_TAB).click();
   await toggleRnaBuilderAccordion(page);
   await page.fill('[placeholder="Name your structure"]', 'MyRNA');

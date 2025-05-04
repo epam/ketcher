@@ -54,8 +54,6 @@ export const CommonLeftToolbar = (page: Page) => {
     },
 
     async expandBondSelectionDropdown() {
-      await locators.bondSelectionDropdownExpandButton.click();
-
       try {
         await locators.bondSelectionDropdownExpandButton.click({ force: true });
         await locators.bondMultiToolSection.waitFor({

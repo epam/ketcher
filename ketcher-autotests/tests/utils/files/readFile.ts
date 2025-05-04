@@ -13,7 +13,7 @@ import {
 import { waitForLoad } from '@utils/common';
 import { MolfileFormat } from 'ketcher-core';
 import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
   PeptideLetterCodeType,
@@ -34,13 +34,11 @@ export async function readFileContent(filePath: string) {
 }
 
 export async function openFile(filename: string, page: Page) {
-  const openFromFileButton = openStructureDialog(page).openFromFileButton;
-
   const testDataDirectory = getTestDataDirectory();
   const resolvedFilePath = path.resolve(testDataDirectory, filename);
   // Start waiting for file chooser before clicking. Note no await.
   const fileChooserPromise = page.waitForEvent('filechooser');
-  await openFromFileButton.click();
+  await OpenStructureDialog(page).openFromFile();
   const fileChooser = await fileChooserPromise;
   await fileChooser.setFiles(resolvedFilePath);
 }
@@ -217,11 +215,8 @@ export async function pasteFromClipboardAndAddToCanvas(
   fillStructure: string,
   needToWait = true,
 ) {
-  const pasteFromClipboardButton =
-    openStructureDialog(page).pasteFromClipboardButton;
-
   await selectOpenFileTool(page);
-  await pasteFromClipboardButton.click();
+  await OpenStructureDialog(page).pasteFromClipboard();
   await PasteFromClipboardDialog(page).openStructureTextarea.fill(
     fillStructure,
   );
@@ -238,11 +233,8 @@ export async function pasteFromClipboardAndOpenAsNewProject(
   fillStructure: string,
   needToWait = true,
 ) {
-  const pasteFromClipboardButton =
-    openStructureDialog(page).pasteFromClipboardButton;
-
   await selectOpenFileTool(page);
-  await pasteFromClipboardButton.click();
+  await OpenStructureDialog(page).pasteFromClipboard();
   await PasteFromClipboardDialog(page).openStructureTextarea.fill(
     fillStructure,
   );
@@ -305,8 +297,6 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   fillStructure: string,
   errorExpected = false,
 ) {
-  const pasteFromClipboardButton =
-    openStructureDialog(page).pasteFromClipboardButton;
   const monomerTypeSelector =
     PasteFromClipboardDialog(page).monomerTypeSelector;
   const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
@@ -333,7 +323,7 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
   }
 
   await selectOpenFileTool(page);
-  await pasteFromClipboardButton.click();
+  await OpenStructureDialog(page).pasteFromClipboard();
 
   if (structureFormat !== MacroFileType.Ket) {
     await PasteFromClipboardDialog(page).selectContentType(structureType);
@@ -427,13 +417,11 @@ export async function openPasteFromClipboard(
   page: Page,
   fillStructure: string,
 ) {
-  const pasteFromClipboardButton =
-    openStructureDialog(page).pasteFromClipboardButton;
   const openStructureTextarea =
     PasteFromClipboardDialog(page).openStructureTextarea;
 
   await selectOpenFileTool(page);
-  await pasteFromClipboardButton.click();
+  await OpenStructureDialog(page).pasteFromClipboard();
   await openStructureTextarea.fill(fillStructure);
   // The 'Add to Canvas' button step is removed.
   // If you need to use this function in another context and include the button press, you can do so separately.

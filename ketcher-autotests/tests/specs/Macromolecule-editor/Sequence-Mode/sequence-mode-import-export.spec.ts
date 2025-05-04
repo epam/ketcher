@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@playwright/test';
 import {
-  openStructurePasteFromClipboard,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
@@ -14,6 +13,7 @@ import {
 } from '@utils';
 import {
   selectClearCanvasTool,
+  selectOpenFileTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
@@ -26,6 +26,7 @@ import {
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatName } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 let page: Page;
 
@@ -75,7 +76,8 @@ test.describe('Import/export sequence:', () => {
       PasteFromClipboardDialog(page).contentTypeSelector;
 
     await selectSequenceLayoutModeTool(page);
-    await openStructurePasteFromClipboard(page);
+    await selectOpenFileTool(page);
+    await OpenStructureDialog(page).pasteFromClipboard();
 
     const defaultValue = await contentTypeSelector
       .locator('span')

@@ -13,14 +13,10 @@ import {
   RingButton,
   TopPanelButton,
 } from '@utils/selectors';
-import {
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
+import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import {
   chooseFileFormat,
   saveStructureDialog,
@@ -117,14 +113,6 @@ export async function selectFlexLayoutModeTool(page: Page) {
 export async function selectImageTool(page: Page) {
   const bondToolButton = page.getByTestId('images');
   await bondToolButton.click();
-}
-
-export async function openStructurePasteFromClipboard(page: Page) {
-  const pasteFromClipboardButton =
-    openStructureDialog(page).pasteFromClipboardButton;
-
-  await selectOpenFileTool(page);
-  await pasteFromClipboardButton.click();
 }
 
 export async function selectRectangleArea(

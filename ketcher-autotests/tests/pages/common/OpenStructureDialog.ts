@@ -1,8 +1,43 @@
-import { type Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
-export const openStructureDialog = (page: Page) => ({
-  pasteFromClipboardButton: page.getByTestId('paste-from-clipboard-button'),
-  openFromFileButton: page.getByTestId('open-from-file-button'),
-  openFromImageButton: page.getByTestId('open-from-image-button'),
-  closeWindowButton: page.getByTestId('close-window-button'),
-});
+type OpenStructureDialogLocators = {
+  pasteFromClipboardButton: Locator;
+  openFromFileButton: Locator;
+  openFromImageButton: Locator;
+  closeWindowButton: Locator;
+};
+
+export const OpenStructureDialog = (page: Page) => {
+  const locators: OpenStructureDialogLocators = {
+    pasteFromClipboardButton: page.getByTestId('paste-from-clipboard-button'),
+    openFromFileButton: page.getByTestId('open-from-file-button'),
+    openFromImageButton: page.getByTestId('open-from-image-button'),
+    closeWindowButton: page.getByTestId('close-window-button'),
+  };
+
+  return {
+    ...locators,
+
+    async close() {
+      await locators.closeWindowButton.click();
+    },
+
+    async pasteFromClipboard() {
+      await locators.pasteFromClipboardButton.click();
+    },
+
+    async openFromFile() {
+      await locators.openFromFileButton.click();
+    },
+
+    async openFromClipboard() {
+      await locators.pasteFromClipboardButton.click();
+    },
+
+    async openFromImage() {
+      await locators.openFromImageButton.click();
+    },
+  };
+};
+
+export type OpenStructureDialogType = ReturnType<typeof OpenStructureDialog>;

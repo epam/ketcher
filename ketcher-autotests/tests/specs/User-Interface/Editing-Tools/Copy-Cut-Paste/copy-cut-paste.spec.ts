@@ -32,7 +32,7 @@ import {
   pressUndoButton,
   selectOpenFileTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -1181,11 +1181,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const smartsString =
       '[#6]-[#6]-[#6]-[#6]-[!#40!#79!#30]-[#6]-[#6]-[#6]-[#6]';
-    const pasteFromClipboardButton =
-      openStructureDialog(page).pasteFromClipboardButton;
 
     await selectOpenFileTool(page);
-    await pasteFromClipboardButton.click();
+    await OpenStructureDialog(page).pasteFromClipboard();
     await PasteFromClipboardDialog(page).openStructureTextarea.fill(
       smartsString,
     );

@@ -500,7 +500,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await enableViewOnlyModeBySetOptions(page);
     await disableViewOnlyModeBySetOptions(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
+      SelectionToolType.Rectangle,
     );
     await selectAllStructuresOnCanvas(page);
     await moveOnAtom(page, 'C', 1);

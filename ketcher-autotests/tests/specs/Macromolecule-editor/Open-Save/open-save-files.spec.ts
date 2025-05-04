@@ -6,9 +6,9 @@ import {
   openFileAndAddToCanvasAsNewProject,
   resetZoomLevelToDefault,
 } from '@utils';
-import { openStructurePasteFromClipboard } from '@utils/canvas/tools';
 import {
   selectClearCanvasTool,
+  selectOpenFileTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
@@ -18,6 +18,7 @@ import {
   saveStructureDialog,
 } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 test.describe('Open/save file tests: ', () => {
   let page: Page;
@@ -68,7 +69,8 @@ test.describe('Open/save file tests: ', () => {
      */
     test.setTimeout(25000);
 
-    await openStructurePasteFromClipboard(page);
+    await selectOpenFileTool(page);
+    await OpenStructureDialog(page).pasteFromClipboard();
 
     const openStructureTextarea =
       PasteFromClipboardDialog(page).openStructureTextarea;

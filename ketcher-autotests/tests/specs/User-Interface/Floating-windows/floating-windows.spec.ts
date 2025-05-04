@@ -13,7 +13,7 @@ import {
   readFileContent,
 } from '@utils';
 import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -32,12 +32,9 @@ test.describe('Floating windows', () => {
   test('Open structure: Opening the text file', async ({ page }) => {
     // Test case: EPMLSOPKET-4004
     // Verify adding text file and ability of editing it
-    const pasteFromClipboardButton =
-      openStructureDialog(page).pasteFromClipboardButton;
-
     await selectOpenFileTool(page);
     const fileContent = await readFileContent('Txt/kecther-text.txt');
-    await pasteFromClipboardButton.click();
+    await OpenStructureDialog(page).pasteFromClipboard();
     await PasteFromClipboardDialog(page).openStructureTextarea.fill(
       fileContent,
     );

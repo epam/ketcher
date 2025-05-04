@@ -14,7 +14,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   takePageScreenshot,
   moveMouseAway,
-  openStructurePasteFromClipboard,
   dragMouseTo,
   clickOnMiddleOfCanvas,
   zoomWithMouseWheel,
@@ -41,7 +40,7 @@ import {
 import { goToRNATab } from '@utils/macromolecules/library';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
@@ -398,11 +397,9 @@ test.describe('Zoom Tool', () => {
     Paste from Clipboard window not change their position and not overlap each other.
     After fix bug https://github.com/epam/ketcher/issues/4174 need to update snapshot.
     */
-    const pasteFromClipboardButton =
-      openStructureDialog(page).pasteFromClipboardButton;
     await goToRNATab(page);
     await selectOpenFileTool(page);
-    await pasteFromClipboardButton.click();
+    await OpenStructureDialog(page).pasteFromClipboard();
     await browser.newContext({ deviceScaleFactor: 2.5 });
     await page.setViewportSize({ width: 435, height: 291 });
     await takePageScreenshot(page);
@@ -414,7 +411,8 @@ test.describe('Zoom Tool', () => {
     Description: When zoomed out to 25%, buttons and toolbars have the correct appearance
     */
     await goToRNATab(page);
-    await openStructurePasteFromClipboard(page);
+    await selectOpenFileTool(page);
+    await OpenStructureDialog(page).pasteFromClipboard();
     await browser.newContext({ deviceScaleFactor: 0.2 });
     await page.setViewportSize({ width: 4358, height: 2918 });
     await takePageScreenshot(page);
@@ -426,7 +424,8 @@ test.describe('Zoom Tool', () => {
     Description: When zoomed to maximum, buttons in Paste from Clipboard window not change their position and not overlap each other
     */
     await goToRNATab(page);
-    await openStructurePasteFromClipboard(page);
+    await selectOpenFileTool(page);
+    await OpenStructureDialog(page).pasteFromClipboard();
     await browser.newContext({ deviceScaleFactor: 4 });
     await page.setViewportSize({ width: 435, height: 291 });
     await takePageScreenshot(page);

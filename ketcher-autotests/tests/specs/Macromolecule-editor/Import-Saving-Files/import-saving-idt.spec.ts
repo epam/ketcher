@@ -15,7 +15,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasMacro,
-  openStructurePasteFromClipboard,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   pasteFromClipboardByKeyboard,
   pressButton,
@@ -84,6 +83,7 @@ import {
   MacromoleculesFileFormatType,
 } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
 let page: Page;
 
@@ -135,7 +135,8 @@ test.describe('Import-Saving .idt Files', () => {
     const contentTypeSelector =
       PasteFromClipboardDialog(page).contentTypeSelector;
 
-    await openStructurePasteFromClipboard(page);
+    await selectOpenFileTool(page);
+    await OpenStructureDialog(page).pasteFromClipboard();
     await contentTypeSelector.click();
 
     const options = page.getByRole('option');

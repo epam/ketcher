@@ -5,8 +5,8 @@ import {
   waitForPageInit,
 } from '@utils';
 import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
-import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 test.describe('Reagents molecule above arrow', () => {
   test.beforeEach(async ({ page }) => {
@@ -51,7 +51,9 @@ test.describe('Reagents molecule above arrow', () => {
       page,
     );
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -65,7 +67,9 @@ test.describe('Reagents molecule above arrow', () => {
       page,
     );
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -81,7 +85,9 @@ test.describe('Reagents molecule above arrow', () => {
       page,
     );
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -97,7 +103,9 @@ test.describe('Reagents molecule above arrow', () => {
       page,
     );
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -110,7 +118,9 @@ test.describe('Reagents molecule above arrow', () => {
     */
     await openFileAndAddToCanvas('KET/text-nodes-on-reaction.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 });

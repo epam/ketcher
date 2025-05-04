@@ -17,11 +17,7 @@ import {
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
-import {
-  chooseFileFormat,
-  getTextAreaValue,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
@@ -475,7 +471,6 @@ test.describe('Export to HELM: ', () => {
         `That test fails because of ${correctHELMString.issueNumber} issue.`,
       );
       if (correctHELMString.pageReloadNeeded) await pageReload(page);
-      const cancelButton = saveStructureDialog(page).cancelButton;
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
@@ -483,9 +478,13 @@ test.describe('Export to HELM: ', () => {
         correctHELMString.HELMString,
       );
       await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.HELM);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.HELM,
+      );
 
-      const HELMExportResult = await getTextAreaValue(page);
+      const HELMExportResult = await SaveStructureDialog(
+        page,
+      ).getTextAreaValue();
 
       if (correctHELMString.differentHELMExport) {
         expect(HELMExportResult).toEqual(correctHELMString.differentHELMExport);
@@ -493,7 +492,7 @@ test.describe('Export to HELM: ', () => {
         expect(HELMExportResult).toEqual(correctHELMString.HELMString);
       }
 
-      await cancelButton.click();
+      await SaveStructureDialog(page).cancel();
     });
   }
 });

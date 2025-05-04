@@ -21,11 +21,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-  setFileName,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 test.describe('', () => {
   test.beforeEach(async ({ page }) => {
@@ -369,11 +365,13 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChi for structure
      */
     const saveStructureTextarea =
-      saveStructureDialog(page).saveStructureTextarea;
+      SaveStructureDialog(page).saveStructureTextarea;
 
     await openFileAndAddToCanvas('KET/nonone-chain-structure.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.InChI);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.InChI,
+    );
 
     const inChistring = await saveStructureTextarea.inputValue();
     await copyToClipboardByKeyboard(page);
@@ -412,7 +410,9 @@ test.describe('Open and Save InChI file', () => {
       page,
     );
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.InChI);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.InChI,
+    );
     const convertErrorMessage = await page
       .getByTestId('info-modal-body')
       .textContent();
@@ -426,12 +426,14 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1937
      * Description: Open and Save file - InChi string for Sgroup
      */
-    const warningsTab = saveStructureDialog(page).warningsTab;
-    const warningTextarea = saveStructureDialog(page).warningTextarea;
+    const warningsTab = SaveStructureDialog(page).warningsTab;
+    const warningTextarea = SaveStructureDialog(page).warningTextarea;
 
     await openFileAndAddToCanvas('KET/chain-with-s-group.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.InChI);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.InChI,
+    );
     await warningsTab.click();
 
     const warningText = await warningTextarea.evaluate(
@@ -447,14 +449,14 @@ test.describe('Open and Save InChI file', () => {
      * Test case: EPMLSOPKET-1961
      * Description: Open and Save file - InChI String - Alias
      */
-    const saveButton = saveStructureDialog(page).saveButton;
-
     await openFileAndAddToCanvas('KET/chain-with-alias.ket', page);
     await selectSaveTool(page);
-    await setFileName(page, 'Alias');
-    await chooseFileFormat(page, MoleculesFileFormatType.InChI);
+    await SaveStructureDialog(page).setFileName('Alias');
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.InChI,
+    );
 
-    await saveButton.click();
+    await SaveStructureDialog(page).save();
     await openFileAndAddToCanvas('InChI/alias.inchi', page);
   });
 
@@ -491,7 +493,9 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('KET/chain-with-generic-group.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.InChI);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.InChI,
+    );
     const convertErrorMessage = await page
       .getByTestId('info-modal-body')
       .textContent();
@@ -509,7 +513,9 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('KET/chain-with-generic-group.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.InChI);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.InChI,
+    );
     const convertErrorMessage = await page
       .getByTestId('info-modal-body')
       .textContent();
@@ -540,7 +546,9 @@ test.describe('Open and Save InChI file', () => {
      */
     await openFileAndAddToCanvas('KET/structure-with-R-Group.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.InChI);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.InChI,
+    );
     const convertErrorMessage = await page
       .getByTestId('info-modal-body')
       .textContent();

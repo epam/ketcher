@@ -22,7 +22,7 @@ import {
   selectClearCanvasTool,
   selectSaveTool,
 } from '@tests/pages/common/TopLeftToolbar';
-import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -32,7 +32,7 @@ async function openStructureLibrary(page: Page) {
 }
 
 async function saveToTemplates(page: Page, shouldSave = true) {
-  const saveToTemplatesButton = saveStructureDialog(page).saveToTemplatesButton;
+  const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
 
   await selectSaveTool(page);
   await saveToTemplatesButton.click();
@@ -73,7 +73,7 @@ test.describe('Click User Templates on canvas', () => {
       Description: spaces in Molecule name field validation
     */
     const saveToTemplatesButton =
-      saveStructureDialog(page).saveToTemplatesButton;
+      SaveStructureDialog(page).saveToTemplatesButton;
 
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
     await selectSaveTool(page);
@@ -96,7 +96,7 @@ test.describe('Click User Templates on canvas', () => {
       Description: delete user template validation
     */
     const saveToTemplatesButton =
-      saveStructureDialog(page).saveToTemplatesButton;
+      SaveStructureDialog(page).saveToTemplatesButton;
 
     await selectUserTemplatesAndPlaceInTheMiddle(
       TemplateLibrary.Naphtalene,
@@ -124,7 +124,7 @@ test.describe('Click User Templates on canvas', () => {
     Description: Creating Template with Simple Objects validation
     */
     const saveToTemplatesButton =
-      saveStructureDialog(page).saveToTemplatesButton;
+      SaveStructureDialog(page).saveToTemplatesButton;
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/create-template-with-simple-objects.mol',
@@ -151,7 +151,7 @@ test.describe('Click User Templates on canvas', () => {
     Description: Creating Template with Reaction arrow validation.
     */
     const saveToTemplatesButton =
-      saveStructureDialog(page).saveToTemplatesButton;
+      SaveStructureDialog(page).saveToTemplatesButton;
 
     await openFileAndAddToCanvas(
       'Rxn-V2000/create-template-with-reaction-arrow.rxn',
@@ -229,7 +229,7 @@ test.describe('Create and Save Templates', () => {
       Description: saving user template validation
     */
     const saveToTemplatesButton =
-      saveStructureDialog(page).saveToTemplatesButton;
+      SaveStructureDialog(page).saveToTemplatesButton;
 
     await selectUserTemplatesAndPlaceInTheMiddle(
       TemplateLibrary.Naphtalene,
@@ -322,7 +322,7 @@ test.describe('Templates field lenght validations', () => {
       Description: warning message validation
     */
     const saveToTemplatesButton =
-      saveStructureDialog(page).saveToTemplatesButton;
+      SaveStructureDialog(page).saveToTemplatesButton;
 
     await selectUserTemplatesAndPlaceInTheMiddle(
       TemplateLibrary.Naphtalene,

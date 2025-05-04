@@ -23,11 +23,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import {
-  chooseFileFormat,
-  getTextAreaValue,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 
@@ -166,12 +162,14 @@ test.describe('Save files', () => {
     Description: File formats in the Save Structure window match the mockup
     */
     const fileFormatDropdonwList =
-      saveStructureDialog(page).fileFormatDropdonwList;
+      SaveStructureDialog(page).fileFormatDropdownList;
 
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.KetFormat);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.KetFormat,
+    );
     await fileFormatDropdonwList.click();
     await takeEditorScreenshot(page);
   });
@@ -219,8 +217,10 @@ test.describe('Save files', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.InChIKey);
-    const inChistring = await getTextAreaValue(page);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.InChIKey,
+    );
+    const inChistring = await SaveStructureDialog(page).getTextAreaValue();
     expect(inChistring).toEqual('UHOVQNZJYSORNB-UHFFFAOYSA-N');
   });
 
@@ -323,7 +323,9 @@ test.describe('Open/Save/Paste files', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -334,7 +336,9 @@ test.describe('Open/Save/Paste files', () => {
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -347,8 +351,10 @@ test.describe('Open/Save/Paste files', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMILES);
-    await saveStructureDialog(page).warningsTab.click();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMILES,
+    );
+    await SaveStructureDialog(page).warningsTab.click();
     await takeEditorScreenshot(page);
   });
 

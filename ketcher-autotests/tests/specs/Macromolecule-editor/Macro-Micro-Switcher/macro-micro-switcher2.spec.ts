@@ -74,8 +74,8 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [
@@ -353,7 +353,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.KetFormat);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.KetFormat,
+    );
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -369,7 +371,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMacromoleculesEditor(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MacromoleculesFileFormatType.Ket);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.Ket,
+    );
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -384,7 +388,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.KetFormat);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.KetFormat,
+    );
     await moveMouseToTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -404,7 +410,9 @@ test.describe('Macro-Micro-Switcher2', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.KetFormat);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.KetFormat,
+    );
     await moveMouseToTheMiddleOfTheScreen(page);
     await copyToClipboardByIcon(page);
     await closeErrorAndInfoModals(page);
@@ -533,7 +541,9 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
     );
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 

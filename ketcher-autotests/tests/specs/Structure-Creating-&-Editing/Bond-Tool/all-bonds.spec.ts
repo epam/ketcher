@@ -50,7 +50,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -286,13 +286,11 @@ test.describe(`Bond tool:`, () => {
        */
       const fileName = `Molfiles-V2000/saving-and-rendering-${bondTypeName}-bond-(refactored).mol`;
       test(`${bondTypeName}: Save to file`, async () => {
-        const saveButton = saveStructureDialog(page).saveButton;
-
         await CommonLeftToolbar(page).selectBondTool(bondType);
         await clickOnTheCanvas(page, -200, 0);
         await clickInTheMiddleOfTheScreen(page);
         await selectSaveTool(page);
-        await saveButton.click();
+        await SaveStructureDialog(page).save();
       });
 
       test(`${bondTypeName}: Open and edit`, async () => {

@@ -14,10 +14,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 test.describe('Reagents RXN format', () => {
   test.beforeEach(async ({ page }) => {
@@ -67,8 +64,6 @@ test.describe('Reagents RXN format', () => {
     Test case: EPMLSOPKET-4675
     Description: File saved in format (e.g. "ketcher.rxn")
     */
-    const saveButton = saveStructureDialog(page).saveButton;
-
     await openFileAndAddToCanvas(
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
@@ -81,7 +76,7 @@ test.describe('Reagents RXN format', () => {
     );
 
     await selectSaveTool(page);
-    await saveButton.click();
+    await SaveStructureDialog(page).save();
   });
 
   test('File saves in "MDL rxnfile V3000" format', async ({ page }) => {
@@ -89,7 +84,6 @@ test.describe('Reagents RXN format', () => {
     Test case: EPMLSOPKET-4676
     Description: File saved in format (e.g. "ketcher.rxn")
     */
-    const saveButton = saveStructureDialog(page).saveButton;
     await openFileAndAddToCanvas(
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
@@ -102,8 +96,10 @@ test.describe('Reagents RXN format', () => {
     );
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.MDLRxnfileV3000);
-    await saveButton.click();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.MDLRxnfileV3000,
+    );
+    await SaveStructureDialog(page).save();
   });
 });
 

@@ -4,7 +4,6 @@ import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
   openFile,
-  pressButton,
   selectSnakeLayoutModeTool,
   moveMouseAway,
   selectSequenceLayoutModeTool,
@@ -29,8 +28,8 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 // function removeNotComparableData(file: string) {
 //   return file.replaceAll('\r', '');
@@ -138,7 +137,9 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.FASTA,
+    );
 
     await takeEditorScreenshot(page);
   });
@@ -149,7 +150,9 @@ test.describe('Import-Saving .fasta Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.FASTA,
+    );
 
     await takeEditorScreenshot(page);
   });
@@ -319,7 +322,9 @@ test.describe('Import-Saving .fasta Files', () => {
     */
       await openFileAndAddToCanvasMacro('KET/rna-sequence-and-chems.ket', page);
       await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.FASTA,
+      );
       await takeEditorScreenshot(page);
     },
   );
@@ -335,7 +340,9 @@ test.describe('Import-Saving .fasta Files', () => {
       await openFileAndAddToCanvasMacro('KET/peptides-chain-cycled.ket', page);
       await selectSequenceLayoutModeTool(page);
       await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.FASTA,
+      );
       await takeEditorScreenshot(page);
     },
   );
@@ -404,7 +411,9 @@ test.describe('Import-Saving .fasta Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.FASTA,
+      );
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -414,7 +423,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
       await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 600);
     },
   );
@@ -441,7 +450,9 @@ test.describe('Import-Saving .fasta Files', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.FASTA,
+    );
     await takeEditorScreenshot(page);
 
     test.fixme(
@@ -451,7 +462,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
     await closeErrorMessage(page);
 
-    await pressButton(page, 'Cancel');
+    await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 200);
   });
 
@@ -478,7 +489,9 @@ test.describe('Import-Saving .fasta Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.FASTA,
+      );
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -488,7 +501,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
       await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 200);
     },
   );
@@ -534,7 +547,9 @@ test.describe('Import-Saving .fasta Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.FASTA,
+      );
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -544,7 +559,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
       await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 100);
     },
   );
@@ -590,7 +605,9 @@ test.describe('Import-Saving .fasta Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.FASTA,
+      );
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -600,7 +617,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
       await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 100);
     },
   );
@@ -646,7 +663,9 @@ test.describe('Import-Saving .fasta Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.FASTA,
+      );
       await takeEditorScreenshot(page);
 
       test.fixme(
@@ -656,7 +675,7 @@ test.describe('Import-Saving .fasta Files', () => {
 
       await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 200);
     },
   );

@@ -13,10 +13,7 @@ import {
   FileType,
 } from '@utils/files/receiveFileComparisonData';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 test.describe('Reagents SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
@@ -44,7 +41,9 @@ test.describe('Reagents SMARTS format', () => {
     );
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMARTS);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMARTS,
+    );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -72,7 +71,9 @@ test.describe('Reagents SMARTS format', () => {
     );
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMARTS);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMARTS,
+    );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -121,8 +122,6 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4685
     Description: File saved in format (e.g. "ketcher.smarts")
     */
-    const saveButton = saveStructureDialog(page).saveButton;
-
     await openFileAndAddToCanvas(
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
@@ -135,7 +134,9 @@ test.describe('Reagents SMARTS format', () => {
     );
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMARTS);
-    await saveButton.click();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMARTS,
+    );
+    await SaveStructureDialog(page).save();
   });
 });

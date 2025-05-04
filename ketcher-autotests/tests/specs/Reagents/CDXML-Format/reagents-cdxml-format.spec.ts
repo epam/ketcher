@@ -9,10 +9,7 @@ import {
 } from '@utils';
 import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 test.describe('Reagents CDXML format', () => {
   test.beforeEach(async ({ page }) => {
@@ -31,7 +28,9 @@ test.describe('Reagents CDXML format', () => {
       page,
     );
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.CDXML,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -48,7 +47,9 @@ test.describe('Reagents CDXML format', () => {
       page,
     );
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.CDXML,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -62,7 +63,9 @@ test.describe('Reagents CDXML format', () => {
     */
     await openFileAndAddToCanvas('KET/reagent-nh3-text-above-arrow.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.CDXML,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -76,7 +79,9 @@ test.describe('Reagents CDXML format', () => {
     */
     await openFileAndAddToCanvas('KET/reagent-hcl-text-below-arrow.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.CDXML,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -85,15 +90,16 @@ test.describe('Reagents CDXML format', () => {
     Test case: EPMLSOPKET-4721
     Description: File saved in format (e.g. "ketcher.cdxml")
     */
-    const saveButton = saveStructureDialog(page).saveButton;
     await openFileAndAddToCanvas(
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
-    await saveButton.click();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.CDXML,
+    );
+    await SaveStructureDialog(page).save();
     await takeEditorScreenshot(page);
   });
 

@@ -6,7 +6,6 @@ import {
   waitForPageInit,
   openFile,
   selectOptionInDropdown,
-  pressButton,
   selectSnakeLayoutModeTool,
   moveMouseAway,
   openFileAndAddToCanvasAsNewProjectMacro,
@@ -31,10 +30,7 @@ import {
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import {
-  chooseFileFormat,
-  getTextAreaValue,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
@@ -163,8 +159,7 @@ test.describe('Import-Saving .seq Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(
-      page,
+    await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
 
@@ -177,8 +172,7 @@ test.describe('Import-Saving .seq Files', () => {
   }) => {
     await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
     await selectSaveTool(page);
-    await chooseFileFormat(
-      page,
+    await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
 
@@ -278,8 +272,7 @@ test.describe('Import-Saving .seq Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(
-        page,
+      await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.Sequence1LetterCode,
       );
 
@@ -291,7 +284,7 @@ test.describe('Import-Saving .seq Files', () => {
       await takeEditorScreenshot(page);
       await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 600);
     },
   );
@@ -319,8 +312,7 @@ test.describe('Import-Saving .seq Files', () => {
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
       await selectSaveTool(page);
-      await chooseFileFormat(
-        page,
+      await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.Sequence1LetterCode,
       );
       test.fixme(
@@ -332,7 +324,7 @@ test.describe('Import-Saving .seq Files', () => {
 
       await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 200);
     },
   );
@@ -360,8 +352,7 @@ test.describe('Import-Saving .seq Files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(
-        page,
+      await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.Sequence1LetterCode,
       );
 
@@ -373,7 +364,7 @@ test.describe('Import-Saving .seq Files', () => {
       await takeEditorScreenshot(page);
       await closeErrorMessage(page);
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
       await zoomWithMouseWheel(page, 200);
     },
   );
@@ -427,15 +418,14 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
 
     await selectSaveTool(page);
-    await chooseFileFormat(
-      page,
+    await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
     await takeEditorScreenshot(page);
 
     await closeErrorMessage(page);
 
-    await pressButton(page, 'Cancel');
+    await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 100);
   });
 
@@ -488,14 +478,13 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
 
     await selectSaveTool(page);
-    await chooseFileFormat(
-      page,
+    await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
     await takeEditorScreenshot(page);
 
     await closeErrorMessage(page);
-    await pressButton(page, 'Cancel');
+    await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 100);
   });
 
@@ -547,14 +536,13 @@ test.describe('Import-Saving .seq Files', () => {
     await takeEditorScreenshot(page);
 
     await selectSaveTool(page);
-    await chooseFileFormat(
-      page,
+    await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
     await takeEditorScreenshot(page);
 
     await closeErrorMessage(page);
-    await pressButton(page, 'Cancel');
+    await SaveStructureDialog(page).cancel();
     await zoomWithMouseWheel(page, 200);
   });
 });
@@ -902,11 +890,12 @@ for (const sequenceToExport of sequencesToExport) {
     );
 
     await selectSaveTool(page);
-    await chooseFileFormat(
-      page,
+    await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );
-    const sequenceExportResult = await getTextAreaValue(page);
+    const sequenceExportResult = await SaveStructureDialog(
+      page,
+    ).getTextAreaValue();
 
     if (sequenceToExport.differentSequenceExport) {
       expect(sequenceExportResult).toEqual(
@@ -916,7 +905,7 @@ for (const sequenceToExport of sequencesToExport) {
       expect(sequenceExportResult).toEqual(sequenceToExport.sequenceString);
     }
 
-    await pressButton(page, 'Cancel');
+    await SaveStructureDialog(page).cancel();
   });
 }
 
@@ -1027,8 +1016,7 @@ for (const sequenceToExport of nonStandardAmbiguousPeptides) {
     }
 
     await selectSaveTool(page);
-    await chooseFileFormat(
-      page,
+    await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );
 
@@ -1393,11 +1381,12 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
     );
 
     await selectSaveTool(page);
-    await chooseFileFormat(
-      page,
+    await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );
-    const sequenceExportResult = await getTextAreaValue(page);
+    const sequenceExportResult = await SaveStructureDialog(
+      page,
+    ).getTextAreaValue();
 
     if (sequenceToExport.differentSequenceExport) {
       expect(sequenceExportResult).toEqual(
@@ -1407,6 +1396,6 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
       expect(sequenceExportResult).toEqual(sequenceToExport.sequenceString);
     }
 
-    await pressButton(page, 'Cancel');
+    await SaveStructureDialog(page).cancel();
   });
 }

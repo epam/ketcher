@@ -7,9 +7,9 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
 import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 test.describe('Saving in .svg files', () => {
   test.beforeEach(async ({ page }) => {
@@ -29,7 +29,9 @@ test.describe('Saving in .svg files', () => {
     );
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -46,7 +48,9 @@ test.describe('Saving in .svg files', () => {
     );
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -63,7 +67,9 @@ test.describe('Saving in .svg files', () => {
     );
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -80,7 +86,9 @@ test.describe('Saving in .svg files', () => {
     );
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -97,7 +105,9 @@ test.describe('Saving in .svg files', () => {
     );
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -113,7 +123,9 @@ test.describe('Saving in .svg files', () => {
       page,
     );
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -132,7 +144,9 @@ test.describe('Saving in .svg files', () => {
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 });

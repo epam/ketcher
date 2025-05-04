@@ -8,7 +8,6 @@ import {
   selectSequenceLayoutModeTool,
   switchSequenceEnteringButtonType,
   SequenceType,
-  pressButton,
 } from '@utils';
 import {
   selectClearCanvasTool,
@@ -19,8 +18,8 @@ import {
   markResetToDefaultState,
   processResetToDefaultState,
 } from '@utils/testAnnotations/resetToDefaultState';
-import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 let page: Page;
 
@@ -51,7 +50,9 @@ test.describe('Saving in .svg files', () => {
     await selectRectangleArea(page, startX, startY, endX, endY);
     await takeEditorScreenshot(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.SVGDocument,
+    );
     // Should clean up dynamic svg elements (selections...) in drawn structure
     await takeEditorScreenshot(page);
   });
@@ -167,13 +168,15 @@ test.describe('Saving in .svg files', () => {
       await takeEditorScreenshot(page);
 
       await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.SVGDocument,
+      );
 
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
     });
   }
 
@@ -211,7 +214,9 @@ test.describe('Saving in .svg files', () => {
       await selectSnakeLayoutModeTool(page);
       await takeEditorScreenshot(page);
       await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.SVGDocument,
+      );
       await takeEditorScreenshot(page);
     });
   }
@@ -251,7 +256,9 @@ test.describe('Saving in .svg files', () => {
       await switchSequenceEnteringButtonType(page, SequenceType.RNA);
       await takeEditorScreenshot(page);
       await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.SVGDocument,
+      );
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -296,7 +303,9 @@ test.describe('Saving in .svg files', () => {
       await switchSequenceEnteringButtonType(page, SequenceType.DNA);
       await takeEditorScreenshot(page);
       await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.SVGDocument,
+      );
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -340,7 +349,9 @@ test.describe('Saving in .svg files', () => {
       await switchSequenceEnteringButtonType(page, SequenceType.PEPTIDE);
       await takeEditorScreenshot(page);
       await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.SVGDocument,
+      );
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -379,7 +390,9 @@ test.describe('Saving in .svg files', () => {
       await openFileAndAddToCanvasMacro(filename, page);
       await takeEditorScreenshot(page);
       await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.SVGDocument,
+      );
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });

@@ -38,7 +38,7 @@ import { addTextToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
-import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 async function addTail(page: Page, x: number, y: number) {
@@ -1708,7 +1708,7 @@ test.describe('Cascade Reactions', () => {
          * in a File format dropdown, empty canvas can't be saved to ${format}, error "Convert error! core: <molecule> is not a base reaction" is displayed.
          */
         await selectSaveTool(page);
-        await chooseFileFormat(page, format);
+        await SaveStructureDialog(page).chooseFileFormat(format);
         await takeEditorScreenshot(page);
       });
     },

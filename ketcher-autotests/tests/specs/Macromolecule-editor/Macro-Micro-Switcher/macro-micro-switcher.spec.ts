@@ -105,11 +105,11 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { topRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 const topLeftCorner = {
   x: -325,
@@ -1747,7 +1747,9 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
       );
       await selectSaveTool(page);
-      await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.SVGDocument,
+      );
       await takeEditorScreenshot(page);
     },
   );
@@ -1767,7 +1769,9 @@ test.describe('Macro-Micro-Switcher', () => {
         page,
       );
       await selectSaveTool(page);
-      await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.PNGImage,
+      );
       await takeEditorScreenshot(page);
     },
   );

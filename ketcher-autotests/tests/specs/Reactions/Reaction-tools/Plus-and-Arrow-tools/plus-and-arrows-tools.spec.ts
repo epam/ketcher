@@ -40,7 +40,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 const xOffsetFromCenter = -35;
@@ -490,18 +490,16 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: EPMLSOPKET-1793
      * Description: Save plus sign and arrow
      */
-    const cancelButton = saveStructureDialog(page).cancelButton;
-
     await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
-    await cancelButton.click();
+    await SaveStructureDialog(page).cancel();
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
     const offsetFromCenter = -35;
     await clickOnTheCanvas(page, offsetFromCenter, 0);
     await selectSaveTool(page);
-    await cancelButton.click();
+    await SaveStructureDialog(page).cancel();
   });
 
   test.describe('Save multiple reaction arrows', () => {

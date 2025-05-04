@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
   waitForPageInit,
-  pressButton,
   selectAllStructuresOnCanvas,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -41,8 +40,8 @@ import {
 } from '@tests/pages/common/TopRightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 let page: Page;
 
@@ -290,14 +289,13 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await takeEditorScreenshot(page);
 
   await selectSaveTool(page);
-  await chooseFileFormat(
-    page,
+  await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence1LetterCode,
   );
   await takeEditorScreenshot(page);
 
   await closeErrorMessage(page);
-  await pressButton(page, 'Cancel');
+  await SaveStructureDialog(page).cancel();
 });
 
 test(`Verify that all 16 bond types can't be saved correctly in macromolecules mode into Sequence (3-letter code)`, async () => {
@@ -318,14 +316,13 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await takeEditorScreenshot(page);
 
   await selectSaveTool(page);
-  await chooseFileFormat(
-    page,
+  await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence3LetterCode,
   );
   await takeEditorScreenshot(page);
 
   // await closeErrorMessage(page);
-  await pressButton(page, 'Cancel');
+  await SaveStructureDialog(page).cancel();
   test.fixme(
     true,
     `Works wrong because of https://github.com/epam/ketcher/issues/6314 issue(s).
@@ -351,11 +348,13 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   await takeEditorScreenshot(page);
 
   await selectSaveTool(page);
-  await chooseFileFormat(page, MacromoleculesFileFormatType.IDT);
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.IDT,
+  );
   await takeEditorScreenshot(page);
 
   // await closeErrorMessage(page);
-  await pressButton(page, 'Cancel');
+  await SaveStructureDialog(page).cancel();
   test.fixme(
     true,
     `Works wrong because of https://github.com/epam/ketcher/issues/6314 issue(s).

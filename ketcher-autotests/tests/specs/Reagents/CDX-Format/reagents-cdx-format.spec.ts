@@ -12,7 +12,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
-import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 test.describe('Reagents CDX format', () => {
@@ -68,7 +68,9 @@ test.describe('Reagents CDX format', () => {
     */
     await openFileAndAddToCanvas('CDX/two-reagents.cdx', page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.CDX);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.CDX,
+    );
     await takeEditorScreenshot(page);
   });
 });

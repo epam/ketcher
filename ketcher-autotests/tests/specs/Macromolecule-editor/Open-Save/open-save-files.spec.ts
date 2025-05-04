@@ -13,10 +13,7 @@ import {
 } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
@@ -93,14 +90,15 @@ test.describe('Open/save file tests: ', () => {
      *  Check that in case of multiple types sequences on canvas, error "Error during sequence type recognition(RNA, DNA or Peptide)" should appear
      */
     test.setTimeout(20000);
-    const cancelButton = saveStructureDialog(page).cancelButton;
     await openFileAndAddToCanvasAsNewProject(
       'KET/Open-Save-Tests/Multiple types sequences on canvas.ket',
       page,
     );
 
     await selectSaveTool(page);
-    await chooseFileFormat(page, MacromoleculesFileFormatType.FASTA);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.FASTA,
+    );
 
     const errorMessageDialog = page.getByRole('dialog');
     const errorMessageText =
@@ -110,7 +108,7 @@ test.describe('Open/save file tests: ', () => {
 
     await page.keyboard.press('Escape');
 
-    await cancelButton.click();
+    await SaveStructureDialog(page).cancel();
   });
 
   // async function toggleFullScreenOn(page: Page) {

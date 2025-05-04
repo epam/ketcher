@@ -36,7 +36,7 @@ import {
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 let point: { x: number; y: number };
@@ -49,7 +49,7 @@ const MAX_BOND_LENGTH = 50;
 const anyAtom = 3;
 
 async function saveToTemplates(page: Page) {
-  const saveToTemplatesButton = saveStructureDialog(page).saveToTemplatesButton;
+  const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
 
   await selectSaveTool(page);
   await saveToTemplatesButton.click();

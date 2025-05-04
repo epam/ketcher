@@ -33,10 +33,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
@@ -1054,7 +1051,6 @@ test.describe('Side chain connections', () => {
     /*  
       Case 16: Verify saving structure with side-chain connections in SVG Document format
     */
-    const cancelButton = saveStructureDialog(page).cancelButton;
     await showLibrary(page);
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
@@ -1062,10 +1058,12 @@ test.describe('Side chain connections', () => {
       page,
     );
     await selectSaveTool(page);
-    await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
     // Closing Save dialog
-    await cancelButton.click();
+    await SaveStructureDialog(page).cancel();
   });
 
   test('17. Verify saving structure with side-chain connections in SVG Document format', async () => {

@@ -17,10 +17,7 @@ import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 /**
@@ -169,13 +166,11 @@ export async function saveStructureWithReaction(
   page: Page,
   format?: MoleculesFileFormatType,
 ) {
-  const saveButton = saveStructureDialog(page).saveButton;
-
   await selectSaveTool(page);
   if (format) {
-    await chooseFileFormat(page, format);
+    await SaveStructureDialog(page).chooseFileFormat(format);
   }
-  await saveButton.click();
+  await SaveStructureDialog(page).save();
 }
 
 export async function typeAllEnglishAlphabet(page: Page) {
@@ -207,7 +202,7 @@ export async function selectWithLasso(
 }
 
 export async function saveToTemplates(page: Page, templateName: string) {
-  const saveToTemplatesButton = saveStructureDialog(page).saveToTemplatesButton;
+  const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
 
   await selectSaveTool(page);
   await saveToTemplatesButton.click();

@@ -5,7 +5,7 @@ import {
   selectSaveTool,
   topLeftToolbarLocators,
 } from '@tests/pages/common/TopLeftToolbar';
-import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import {
   MoleculesFileFormatName,
   MoleculesFileFormatType,
@@ -37,7 +37,7 @@ test.describe('Open Ketcher', () => {
   test('Save button UI', async ({ page }) => {
     // Test case: EPMLSOPKET-1843
     const saveStructureTextarea =
-      saveStructureDialog(page).saveStructureTextarea;
+      SaveStructureDialog(page).saveStructureTextarea;
 
     await selectSaveTool(page);
     await takeEditorScreenshot(page, {
@@ -88,7 +88,7 @@ test.describe('Open Ketcher', () => {
   for (const fileFormat of fileFormats) {
     test(`dropdown options check_${fileFormat[1]}`, async ({ page }) => {
       const fileFormatDropdonwList =
-        saveStructureDialog(page).fileFormatDropdonwList;
+        SaveStructureDialog(page).fileFormatDropdownList;
       await selectSaveTool(page);
       await fileFormatDropdonwList.click();
 

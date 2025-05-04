@@ -59,7 +59,7 @@ import {
 } from '@utils/keyboard/index';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 let page: Page;
@@ -403,7 +403,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     await selectSaveTool(page);
-    await chooseFileFormat(page, MacromoleculesFileFormatType.HELM);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.HELM,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -880,7 +882,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       page,
     );
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -900,7 +904,9 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       page,
     );
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 

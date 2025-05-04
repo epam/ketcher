@@ -40,14 +40,11 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import {
-  getTextAreaValue,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await selectSaveTool(page);
-  const textareaText = await getTextAreaValue(page);
+  const textareaText = await SaveStructureDialog(page).getTextAreaValue();
   const expectedSentence = '$RXN';
   wantedResult
     ? expect(textareaText?.startsWith(expectedSentence)).toBeTruthy()
@@ -81,8 +78,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Description: Reaction from file that contains Rgroup
      */
     test.slow();
-    const saveButton = saveStructureDialog(page).saveButton;
-    const cancelButton = saveStructureDialog(page).cancelButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     const xOffsetFromCenter = 40;
     await drawBenzeneRing(page);
@@ -95,7 +91,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await selectSaveTool(page);
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
 
-    await cancelButton.click();
+    await SaveStructureDialog(page).cancel();
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await setAttachmentPoints(
       page,
@@ -106,7 +102,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await selectSaveTool(page);
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
 
-    await cancelButton.click();
+    await SaveStructureDialog(page).cancel();
     await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);

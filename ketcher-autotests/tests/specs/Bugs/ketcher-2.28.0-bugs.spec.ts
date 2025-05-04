@@ -62,10 +62,7 @@ import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
@@ -245,7 +242,6 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
    * 3. Save them in the SVG file format
    * 4. Take a screenshot to validate the names are displayed correctly
    */
-  const cancelButton = saveStructureDialog(page).cancelButton;
   await selectFlexLayoutModeTool(page);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -254,12 +250,14 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
   );
 
   await selectSaveTool(page);
-  await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.SVGDocument,
+  );
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await cancelButton.click();
+  await SaveStructureDialog(page).cancel();
 });
 
 test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for atom in bonds too)`, async () => {

@@ -22,10 +22,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 
 let page: Page;
@@ -640,7 +637,6 @@ test('17. Check that when the user exports the canvas in snake mode, the exporte
         2. Switch to Snake mode and back to Flex
         3. Take screenshot to withness layour remain unchanged
     */
-  const cancelButton = saveStructureDialog(page).cancelButton;
   await selectFlexLayoutModeTool(page);
   await openFileAndAddToCanvasAsNewProjectMacro(
     'KET/Snake-mode/SnakeModeBypassExport.ket',
@@ -661,11 +657,13 @@ test('17. Check that when the user exports the canvas in snake mode, the exporte
   );
 
   await selectSaveTool(page);
-  await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.SVGDocument,
+  );
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
 
-  await cancelButton.click();
+  await SaveStructureDialog(page).cancel();
 });

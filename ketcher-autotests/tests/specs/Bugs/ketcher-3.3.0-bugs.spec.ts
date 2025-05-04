@@ -55,7 +55,7 @@ import {
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 let page: Page;
 
@@ -826,7 +826,9 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await selectMonomer(page, Bases.DNA_N);
     await pressSaveButton(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MacromoleculesFileFormatType.HELM);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.HELM,
+    );
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

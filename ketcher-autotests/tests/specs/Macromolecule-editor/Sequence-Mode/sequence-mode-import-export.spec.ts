@@ -24,7 +24,7 @@ import {
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatName } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 
@@ -270,8 +270,7 @@ test.describe('Import/export sequence:', () => {
     */
 
     const fileFormatDropdonwList =
-      saveStructureDialog(page).fileFormatDropdonwList;
-    const cancelButton = saveStructureDialog(page).cancelButton;
+      SaveStructureDialog(page).fileFormatDropdownList;
 
     await selectSequenceLayoutModeTool(page);
     await selectSaveTool(page);
@@ -300,6 +299,6 @@ test.describe('Import/export sequence:', () => {
     }
 
     await options.first().click();
-    await cancelButton.click();
+    await SaveStructureDialog(page).cancel();
   });
 });

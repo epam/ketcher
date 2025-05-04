@@ -46,7 +46,7 @@ import {
   topRightToolbarLocators,
 } from '@tests/pages/common/TopRightToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { topRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
@@ -336,7 +336,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         page,
       }) => {
         const saveStructureTextarea =
-          saveStructureDialog(page).saveStructureTextarea;
+          SaveStructureDialog(page).saveStructureTextarea;
 
         await selectRingButton(RingButton.Benzene, page);
         await clickInTheMiddleOfTheScreen(page);

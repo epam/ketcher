@@ -63,14 +63,11 @@ import {
   setZoomInputValue,
 } from '@tests/pages/common/TopRightToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 async function saveToTemplates(page: Page) {
-  const saveToTemplatesButton = saveStructureDialog(page).saveToTemplatesButton;
+  const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
 
   await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
@@ -498,7 +495,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.KetFormat);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.KetFormat,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -984,9 +983,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Multi-Tailed Arrows can't be saved to template - "Save to Template" button is disabled
      */
     const saveToTemplatesButton =
-      saveStructureDialog(page).saveToTemplatesButton;
+      SaveStructureDialog(page).saveToTemplatesButton;
     const saveStructureTextarea =
-      saveStructureDialog(page).saveStructureTextarea;
+      SaveStructureDialog(page).saveStructureTextarea;
 
     await selectDropdownTool(
       page,
@@ -3528,11 +3527,15 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -3551,11 +3554,15 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -3572,11 +3579,15 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
     await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
     await selectClearCanvasTool(page);

@@ -457,7 +457,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
-      SelectionToolType.Fragment,
+      SelectionToolType.Rectangle,
     );
     await moveOnAtom(page, 'C', 1);
     await page.mouse.down();

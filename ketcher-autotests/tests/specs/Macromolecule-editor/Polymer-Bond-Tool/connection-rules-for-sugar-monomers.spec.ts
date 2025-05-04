@@ -9,13 +9,13 @@ import {
   waitForPageInit,
   MonomerType,
 } from '@utils';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
   bondMonomerPointToMoleculeAtom,
   bondTwoMonomersPointToPoint,
 } from '@utils/macromolecules/polymerBond';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Connection rules for sugars: ', () => {
   let page: Page;

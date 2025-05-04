@@ -10,9 +10,9 @@ import {
   pasteFromClipboardByKeyboard,
   moveMouseAway,
 } from '@utils';
-import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 const startX = 300;
 const startY = 300;

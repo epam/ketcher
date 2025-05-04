@@ -8,7 +8,6 @@ import {
   waitForPageInit,
   MonomerType,
 } from '@utils';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
@@ -16,6 +15,7 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Connection rules for RNAs: ', () => {
   let page: Page;

@@ -8,10 +8,7 @@ import {
   takeEditorScreenshot,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 export const COORDINATES_TO_PERFORM_ROTATION = {
   x: 20,

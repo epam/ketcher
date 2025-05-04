@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import {
   pressButton,
   takeEditorScreenshot,
@@ -9,12 +10,6 @@ import {
   waitForPageInit,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/addTextBoxToCanvas';
-import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-  topLeftToolbarLocators,
-} from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Clear canvas', () => {
   test.beforeEach(async ({ page }) => {

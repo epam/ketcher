@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, chromium, test } from '@playwright/test';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
@@ -7,7 +8,6 @@ import {
   resetZoomLevelToDefault,
   selectAddRemoveExplicitHydrogens,
 } from '@utils';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 

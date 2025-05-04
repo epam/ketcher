@@ -20,10 +20,6 @@ import {
   selectAllStructuresOnCanvas,
 } from '@utils';
 import {
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   turnOnMacromoleculesEditor,
   selectZoomOutTool,
   selectZoomInTool,
@@ -35,6 +31,7 @@ import {
 } from '@utils/keyboard/index';
 import { createAntisenseStrandByButton } from '@utils/macromolecules/monomer';
 import { switchToDNAMode } from '@utils/macromolecules/sequence';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 export async function clickOnTriangle(page: Page) {
   const expandButton = page

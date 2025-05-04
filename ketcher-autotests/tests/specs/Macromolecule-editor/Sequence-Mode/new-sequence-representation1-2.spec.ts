@@ -21,7 +21,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
   getMonomerLocator,
@@ -45,6 +44,7 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { logTestWarning } from '@utils/testLogging';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 

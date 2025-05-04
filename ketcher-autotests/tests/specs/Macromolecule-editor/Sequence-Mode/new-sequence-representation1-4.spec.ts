@@ -12,7 +12,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
   getSymbolLocator,
@@ -25,6 +24,7 @@ import {
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 

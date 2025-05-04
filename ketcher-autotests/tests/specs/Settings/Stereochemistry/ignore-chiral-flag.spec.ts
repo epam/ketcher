@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -12,7 +13,6 @@ import {
   waitForPageInit,
 } from '@utils';
 import { scrollSettingBar } from '@utils/scrollSettingBar';
-import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 
 async function openStructureLibrary(page: Page) {
   await page.getByTestId('template-lib').click();

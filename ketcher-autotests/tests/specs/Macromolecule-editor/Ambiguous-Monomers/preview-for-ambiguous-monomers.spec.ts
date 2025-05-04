@@ -11,7 +11,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -20,6 +19,7 @@ import {
   getMonomerLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 

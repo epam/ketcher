@@ -17,13 +17,10 @@ import {
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import {
-  pressUndoButton,
-  pressRedoButton,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   topRightToolbarLocators,
   zoomDropdownLocators,
 } from '@tests/pages/common/TopRightToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 async function checkZoomLevel(page: Page, zoomLevel: string) {
   const zoomSelector = topRightToolbarLocators(page).zoomSelector;

@@ -17,10 +17,6 @@ import {
 import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Chem } from '@constants/monomers/Chem';
@@ -28,6 +24,7 @@ import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 /* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(
@@ -401,9 +398,9 @@ test.describe('Rectangle Selection Tool', () => {
     );
     await getMonomerLocator(page, Peptides._2Nal).hover();
     await dragMouseTo(x, y, page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -450,7 +447,7 @@ test.describe('Rectangle Selection Tool', () => {
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 });

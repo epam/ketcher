@@ -24,12 +24,9 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 async function openRGroupModalForTopAtom(page: Page) {
   await selectRingButton(RingButton.Benzene, page);
@@ -256,16 +253,16 @@ test.describe('Open Ketcher', () => {
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('R8').click();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await selectAllStructuresOnCanvas(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 

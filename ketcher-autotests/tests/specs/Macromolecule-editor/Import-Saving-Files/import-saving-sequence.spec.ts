@@ -19,10 +19,6 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { closeErrorMessage } from '@utils/common/helpers';
 import { zoomWithMouseWheel } from '@utils/macromolecules';
-import {
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
@@ -31,6 +27,7 @@ import {
 } from '@tests/pages/constants/monomers/Constants';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
@@ -99,7 +96,7 @@ test.describe('Import-Saving .seq Files', () => {
   }) => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await openFile('Sequence/sequence-empty.seq', page);
     await expect(addToCanvasButton).toBeDisabled();
     await closeErrorMessage(page);
@@ -110,7 +107,7 @@ test.describe('Import-Saving .seq Files', () => {
   }) => {
     const filename = 'Sequence/sequence-corrupted.seq';
 
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await openFile(filename, page);
     await selectOptionInDropdown(filename, page);
     await PasteFromClipboardDialog(page).addToCanvasButton.click();
@@ -158,7 +155,7 @@ test.describe('Import-Saving .seq Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
@@ -171,7 +168,7 @@ test.describe('Import-Saving .seq Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
@@ -271,7 +268,7 @@ test.describe('Import-Saving .seq Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectSaveTool(page);
+      await TopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.Sequence1LetterCode,
       );
@@ -311,7 +308,7 @@ test.describe('Import-Saving .seq Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-      await selectSaveTool(page);
+      await TopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.Sequence1LetterCode,
       );
@@ -351,7 +348,7 @@ test.describe('Import-Saving .seq Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await selectSaveTool(page);
+      await TopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.Sequence1LetterCode,
       );
@@ -417,7 +414,7 @@ test.describe('Import-Saving .seq Files', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
@@ -477,7 +474,7 @@ test.describe('Import-Saving .seq Files', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
@@ -535,7 +532,7 @@ test.describe('Import-Saving .seq Files', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence1LetterCode,
     );
@@ -817,7 +814,7 @@ test(`7. Verify export option includes both single-letter and three-letter seque
    * Case: 1. Open Save structure dialog
    *       2. Verify File format list contains single-letter and three-letter Sequence options
    */
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
 
   // Click on "File format" dropdown
   await page.getByRole('combobox').click();
@@ -889,7 +886,7 @@ for (const sequenceToExport of sequencesToExport) {
       sequenceToExport.sequenceString,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );
@@ -1015,7 +1012,7 @@ for (const sequenceToExport of nonStandardAmbiguousPeptides) {
       );
     }
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );
@@ -1380,7 +1377,7 @@ for (const sequenceToExport of nonNaturalPeptideSequences) {
       sequenceToExport.sequenceString,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );

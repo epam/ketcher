@@ -11,10 +11,7 @@ import {
   openFileAndAddToCanvasAsNewProject,
   readFileContent,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
   verifyFileExport,
@@ -368,7 +365,7 @@ test.describe('Open and Save InChI file', () => {
       SaveStructureDialog(page).saveStructureTextarea;
 
     await openFileAndAddToCanvas('KET/nonone-chain-structure.ket', page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
     );
@@ -376,7 +373,7 @@ test.describe('Open and Save InChI file', () => {
     const inChistring = await saveStructureTextarea.inputValue();
     await copyToClipboardByKeyboard(page);
     await PasteFromClipboardDialog(page).closeWindowButton.click();
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToCanvas(page, inChistring);
   });
 
@@ -409,7 +406,7 @@ test.describe('Open and Save InChI file', () => {
       'KET/cyclohexane-connecting-arrow-with-benzene.ket',
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
     );
@@ -430,7 +427,7 @@ test.describe('Open and Save InChI file', () => {
     const warningTextarea = SaveStructureDialog(page).warningTextarea;
 
     await openFileAndAddToCanvas('KET/chain-with-s-group.ket', page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
     );
@@ -450,7 +447,7 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChI String - Alias
      */
     await openFileAndAddToCanvas('KET/chain-with-alias.ket', page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).setFileName('Alias');
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
@@ -492,7 +489,7 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChI String - Pseudoatom
      */
     await openFileAndAddToCanvas('KET/chain-with-generic-group.ket', page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
     );
@@ -512,7 +509,7 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChI String for invalid atom symbol or special symbol
      */
     await openFileAndAddToCanvas('KET/chain-with-generic-group.ket', page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
     );
@@ -545,7 +542,7 @@ test.describe('Open and Save InChI file', () => {
      * Description: Open and Save file - InChi string for Rgroup
      */
     await openFileAndAddToCanvas('KET/structure-with-R-Group.ket', page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChI,
     );

@@ -12,7 +12,6 @@ import {
 } from '@utils';
 import { waitForLoad } from '@utils/common';
 import { MolfileFormat } from 'ketcher-core';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
@@ -20,6 +19,7 @@ import {
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 export function getTestDataDirectory() {
   const projectRoot = path.resolve(__dirname, '../../..');
@@ -83,7 +83,7 @@ export async function openFileAndAddToCanvas(
   xOffsetFromCenter?: number,
   yOffsetFromCenter?: number,
 ) {
-  await selectOpenFileTool(page);
+  await TopLeftToolbar(page).openFile();
   await openFile(filename, page);
 
   // to stabilize the test
@@ -110,7 +110,7 @@ export async function openFileAndAddToCanvasMacro(
   typeDropdownOption?: SequenceMonomerType,
   errorExpected = false,
 ) {
-  await selectOpenFileTool(page);
+  await TopLeftToolbar(page).openFile();
   await openFile(filename, page);
 
   // to stabilize the test
@@ -136,7 +136,7 @@ export async function openFileAndAddToCanvasAsNewProjectMacro(
 ) {
   const openAsNewButton = PasteFromClipboardDialog(page).openAsNewButton;
 
-  await selectOpenFileTool(page);
+  await TopLeftToolbar(page).openFile();
   await openFile(filename, page);
 
   // to stabilize the test
@@ -160,7 +160,7 @@ export async function openFileAndAddToCanvasAsNewProject(
   page: Page,
   errorExpected = false,
 ) {
-  await selectOpenFileTool(page);
+  await TopLeftToolbar(page).openFile();
   await openFile(filename, page);
 
   await selectOptionInDropdown(filename, page);
@@ -215,7 +215,7 @@ export async function pasteFromClipboardAndAddToCanvas(
   fillStructure: string,
   needToWait = true,
 ) {
-  await selectOpenFileTool(page);
+  await TopLeftToolbar(page).openFile();
   await OpenStructureDialog(page).pasteFromClipboard();
   await PasteFromClipboardDialog(page).openStructureTextarea.fill(
     fillStructure,
@@ -233,7 +233,7 @@ export async function pasteFromClipboardAndOpenAsNewProject(
   fillStructure: string,
   needToWait = true,
 ) {
-  await selectOpenFileTool(page);
+  await TopLeftToolbar(page).openFile();
   await OpenStructureDialog(page).pasteFromClipboard();
   await PasteFromClipboardDialog(page).openStructureTextarea.fill(
     fillStructure,
@@ -322,7 +322,7 @@ export async function pasteFromClipboardAndAddToMacromoleculesCanvas(
     structureType = structureFormat;
   }
 
-  await selectOpenFileTool(page);
+  await TopLeftToolbar(page).openFile();
   await OpenStructureDialog(page).pasteFromClipboard();
 
   if (structureFormat !== MacroFileType.Ket) {
@@ -420,7 +420,7 @@ export async function openPasteFromClipboard(
   const openStructureTextarea =
     PasteFromClipboardDialog(page).openStructureTextarea;
 
-  await selectOpenFileTool(page);
+  await TopLeftToolbar(page).openFile();
   await OpenStructureDialog(page).pasteFromClipboard();
   await openStructureTextarea.fill(fillStructure);
   // The 'Add to Canvas' button step is removed.

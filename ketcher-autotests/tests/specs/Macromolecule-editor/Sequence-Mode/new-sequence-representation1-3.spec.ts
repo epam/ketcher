@@ -38,7 +38,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
   await selectFlexLayoutModeTool(page);
 });

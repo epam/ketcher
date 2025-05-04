@@ -29,12 +29,6 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { closeErrorMessage, pageReload } from '@utils/common/helpers';
 import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
@@ -42,6 +36,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -59,7 +54,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -288,7 +283,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   );
   await takeEditorScreenshot(page);
 
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence1LetterCode,
   );
@@ -315,7 +310,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   );
   await takeEditorScreenshot(page);
 
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.Sequence3LetterCode,
   );
@@ -347,7 +342,7 @@ test(`Verify that all 16 bond types can't be saved correctly in macromolecules m
   );
   await takeEditorScreenshot(page);
 
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.IDT,
   );
@@ -516,12 +511,12 @@ test(`Verify that undo/redo functionality restores deleted bonds correctly in ma
   }
 
   for (let i = bondsToDelete.length - 1; i >= 0; i--) {
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   }
 
   for (let i = bondsToDelete.length - 1; i >= 0; i--) {
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   }
 });

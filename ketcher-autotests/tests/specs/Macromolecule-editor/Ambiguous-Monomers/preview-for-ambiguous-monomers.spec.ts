@@ -37,7 +37,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {

@@ -27,10 +27,6 @@ import {
   selectLayoutTool,
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile } from '@utils/formats';
@@ -42,6 +38,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -154,12 +151,12 @@ test.describe('Attachment Point Tool', () => {
     );
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -605,7 +602,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -630,7 +627,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -660,7 +657,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -694,7 +691,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 4; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -719,7 +716,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -752,7 +749,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -884,7 +881,7 @@ test.describe('Attachment Point Tool', () => {
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });

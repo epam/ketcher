@@ -33,17 +33,13 @@ import {
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectOpenFileTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   selectZoomOutTool,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { closeErrorMessage } from '@utils/common/helpers';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -76,7 +72,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async ({ context: _ }, testInfo) => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await processResetToDefaultState(testInfo, page);
 });
 
@@ -160,7 +156,7 @@ test.describe('Import-Saving .ket Files', () => {
     await selectMonomer(page, Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/monomer-expected.ket', FileType.KET);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await openFileAndAddToCanvasMacro('KET/monomer-expected.ket', page);
     await getMonomerLocator(page, Peptides.bAla).hover();
     await waitForMonomerPreview(page);
@@ -182,7 +178,7 @@ test.describe('Import-Saving .ket Files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await selectAllStructuresOnCanvas(page);
     await getMonomerLocator(page, { monomerAlias: 'Ph' }).first().hover();
     await dragMouseTo(400, 400, page);
@@ -220,7 +216,7 @@ test.describe('Import-Saving .ket Files', () => {
     */
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await openFile('KET/empty-file.ket', page);
     await expect(addToCanvasButton).toBeDisabled();
     await PasteFromClipboardDialog(page).closeWindowButton.click();
@@ -233,7 +229,7 @@ test.describe('Import-Saving .ket Files', () => {
     */
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await openFile('KET/corrupted-file.ket', page);
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);

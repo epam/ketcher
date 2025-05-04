@@ -29,11 +29,6 @@ import {
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { waitForPageInit } from '@utils/common';
 import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   createRNAAntisenseChain,
   getMonomerLocator,
   getSymbolLocator,
@@ -56,6 +51,7 @@ import {
 } from '@tests/pages/common/TopRightToolbar';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -76,7 +72,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
     await processResetToDefaultState(testInfo, page);
   });
@@ -493,7 +489,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     for (let i = 0; i < 3; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -783,8 +779,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectClearCanvasTool(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).clearCanvas();
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -825,7 +821,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await selectBaseSlot(page);
     await selectMonomer(page, Bases.DNA_N);
     await pressSaveButton(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.HELM,
     );

@@ -20,10 +20,6 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   selectZoomInTool,
   selectZoomOutTool,
   turnOnMacromoleculesEditor,
@@ -44,6 +40,7 @@ import {
   MacroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {
@@ -190,7 +187,7 @@ test.describe('Erase Tool', () => {
     await CommonLeftToolbar(page).selectEraseTool();
     await bondLine.click();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -268,7 +265,7 @@ test.describe('Erase Tool', () => {
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Chem.A6OH).click();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -286,7 +283,7 @@ test.describe('Erase Tool', () => {
     await selectPartOfMolecules(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -305,7 +302,7 @@ test.describe('Erase Tool', () => {
     await selectPartOfMolecules(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -385,7 +382,7 @@ test.describe('Erase Tool', () => {
       FileType.KET,
     );
 
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
 
     await openFileAndAddToCanvasMacro(
       'KET/peptides-flex-chain-expected.ket',
@@ -413,7 +410,7 @@ test.describe('Erase Tool', () => {
       'v3000',
     );
 
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
 
     await openFileAndAddToCanvasMacro(
       'Molfiles-V3000/peptides-flex-chain-expected.mol',

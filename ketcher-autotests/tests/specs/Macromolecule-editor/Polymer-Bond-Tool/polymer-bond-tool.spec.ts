@@ -38,11 +38,6 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   topRightToolbarLocators,
   turnOnMacromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
@@ -51,6 +46,7 @@ import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -71,7 +67,7 @@ test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
   // await resetZoomLevelToDefault(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   // await resetZoomLevelToDefault(page);
 });
 
@@ -432,13 +428,13 @@ test('Verify that changes made in the "Edit Connection Points" dialog can be und
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
   });
-  await pressRedoButton(page);
+  await TopLeftToolbar(page).redo();
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await bondLine.hover({ force: true });
   await takeEditorScreenshot(page, {
@@ -719,9 +715,9 @@ test('Delete long bonds and perform Undo/Redo actions', async () => {
   await CommonLeftToolbar(page).selectEraseTool();
   await page.mouse.click(517, 364);
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
-  await pressRedoButton(page);
+  await TopLeftToolbar(page).redo();
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 });
 
@@ -754,9 +750,9 @@ test('Delete monomer in structure with long bonds and perform Undo/Redo actions'
   await CommonLeftToolbar(page).selectEraseTool();
   await firstMonomer.click();
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
-  await pressRedoButton(page);
+  await TopLeftToolbar(page).redo();
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 });
 

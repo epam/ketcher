@@ -13,9 +13,9 @@ import {
   RingButton,
   clickOnCanvas,
 } from '@utils';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import { TopPanelButton } from '@utils/selectors';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Paste Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -52,7 +52,7 @@ test.describe('Paste Tool', () => {
 
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);

@@ -19,12 +19,9 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -125,9 +122,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     );
     await selectAromatizeTool(page);
     await selectDearomatizeTool(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

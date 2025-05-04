@@ -21,7 +21,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
@@ -166,7 +166,7 @@ test.describe('Save files', () => {
 
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
     );
@@ -185,7 +185,7 @@ test.describe('Save files', () => {
     const atomToolbar = rightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Hydrogen);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
 
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(
@@ -216,7 +216,7 @@ test.describe('Save files', () => {
     await waitForIndigoToLoad(page);
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.InChIKey,
     );
@@ -322,7 +322,7 @@ test.describe('Open/Save/Paste files', () => {
       Description: File is shown in the preview
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -335,7 +335,7 @@ test.describe('Open/Save/Paste files', () => {
       Description: File is shown in the preview
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -350,7 +350,7 @@ test.describe('Open/Save/Paste files', () => {
     Query properties will not be reflected in the file saved."
     */
     await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.DaylightSMILES,
     );

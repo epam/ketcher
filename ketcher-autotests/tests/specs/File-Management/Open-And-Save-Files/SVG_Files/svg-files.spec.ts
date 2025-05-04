@@ -7,7 +7,7 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
@@ -28,7 +28,7 @@ test.describe('Saving in .svg files', () => {
       page,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -47,7 +47,7 @@ test.describe('Saving in .svg files', () => {
       page,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -66,7 +66,7 @@ test.describe('Saving in .svg files', () => {
       page,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -85,7 +85,7 @@ test.describe('Saving in .svg files', () => {
       page,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -104,7 +104,7 @@ test.describe('Saving in .svg files', () => {
       page,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -122,7 +122,7 @@ test.describe('Saving in .svg files', () => {
       'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -143,7 +143,7 @@ test.describe('Saving in .svg files', () => {
     await pressButton(page, 'OK');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );

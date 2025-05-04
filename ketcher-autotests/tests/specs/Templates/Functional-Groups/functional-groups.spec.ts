@@ -29,16 +29,13 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
@@ -51,7 +48,7 @@ const anyAtom = 3;
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
 
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My Template');
@@ -204,7 +201,7 @@ test.describe('Functional Groups', () => {
 
     await saveToTemplates(page);
 
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('0OOCH3CCl3OO').click();

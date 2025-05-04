@@ -8,11 +8,6 @@ import {
   waitForPageInit,
 } from '@utils';
 import {
-  selectClearCanvasTool,
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
@@ -21,6 +16,7 @@ import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Clear Canvas Tool', () => {
@@ -82,7 +78,7 @@ test.describe('Clear Canvas Tool', () => {
     await takeEditorScreenshot(page);
 
     // Click Clear Canvas Tool
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
 
     await takeEditorScreenshot(page);
   });
@@ -130,7 +126,7 @@ test.describe('Clear Canvas Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -149,7 +145,7 @@ test.describe('Clear Canvas Tool', () => {
         );
       }
     });
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
   });
 
   test('Check that after creating a monomer structure and click Clear Canvas button and then Undo structure back for same place', async ({
@@ -160,9 +156,9 @@ test.describe('Clear Canvas Tool', () => {
     Description: After click Undo structure back for same place.
     */
     await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -174,11 +170,11 @@ test.describe('Clear Canvas Tool', () => {
     Description: Undo/Redo functionality works properly.
     */
     await openFileAndAddToCanvasAsNewProject(`KET/chems-connected.ket`, page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -195,7 +191,7 @@ test.describe('Clear Canvas Tool', () => {
     );
     await selectPartOfMolecules(page);
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -212,7 +208,7 @@ test.describe('Clear Canvas Tool', () => {
     );
     await takeEditorScreenshot(page);
     await turnOnMicromoleculesEditor(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);

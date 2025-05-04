@@ -1,6 +1,6 @@
 import { Page, expect } from '@playwright/test';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 
 type queryNumberValues =
@@ -162,7 +162,7 @@ export async function setReactionFlagExactChange(page: Page) {
 export async function checkSmartsValue(page: Page, value: string) {
   const saveStructureTextarea = SaveStructureDialog(page).saveStructureTextarea;
 
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(
     MoleculesFileFormatType.DaylightSMARTS,
   );

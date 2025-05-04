@@ -12,7 +12,6 @@ import {
   waitForPageInit,
 } from '@utils';
 import { selectSequenceLayoutModeTool } from '@utils/canvas/tools';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
   getSymbolLocator,
@@ -25,6 +24,7 @@ import {
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -38,7 +38,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
   await selectFlexLayoutModeTool(page);
 });

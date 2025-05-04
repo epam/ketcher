@@ -80,7 +80,7 @@ test.describe('Ignore Chiral Flag', () => {
     await applyIgnoreChiralFlag(page);
     await templateFromLAminoAcidsCategory(page);
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 

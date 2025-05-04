@@ -28,13 +28,13 @@ import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
 import { getMolfile } from '@utils/formats';
-import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -106,7 +106,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -307,7 +307,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await selectAromatizeTool(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -349,7 +349,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -372,7 +372,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 

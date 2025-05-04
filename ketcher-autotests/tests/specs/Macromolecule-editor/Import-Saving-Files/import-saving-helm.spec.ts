@@ -12,13 +12,10 @@ import {
   closeOpenStructure,
   pageReload,
 } from '@utils/common/helpers';
-import {
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -38,9 +35,7 @@ test.beforeAll(async ({ browser }) => {
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
-  // await resetZoomLevelToDefault(page);
-  await selectClearCanvasTool(page);
-  // await resetZoomLevelToDefault(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -477,7 +472,7 @@ test.describe('Export to HELM: ', () => {
         MacroFileType.HELM,
         correctHELMString.HELMString,
       );
-      await selectSaveTool(page);
+      await TopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.HELM,
       );

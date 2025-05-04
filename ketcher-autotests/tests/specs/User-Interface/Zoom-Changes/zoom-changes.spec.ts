@@ -136,12 +136,12 @@ test.describe('Zoom changes', () => {
     await checkZoomLevel(page, '110%');
 
     await resetCurrentTool(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
 
     await resetCurrentTool(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
   });

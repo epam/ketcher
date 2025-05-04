@@ -60,17 +60,13 @@ import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -189,7 +185,7 @@ test.describe('RNA Library', () => {
   });
 
   test.afterEach(async ({ context: _ }) => {
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
   });
 
   test.afterAll(async ({ browser }) => {
@@ -961,7 +957,7 @@ test.describe('RNA Library', () => {
     Description: Canvas is cleared
     */
     await drawThreeMonomersConnectedWithBonds(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -974,7 +970,7 @@ test.describe('RNA Library', () => {
       'KET/monomers-connected-with-bonds.ket',
       page,
     );
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -1183,13 +1179,13 @@ test.describe('RNA Library', () => {
       await clickInTheMiddleOfTheScreen(page);
       await dragMouseTo(x, y, page);
       await takeEditorScreenshot(page);
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
       await CommonLeftToolbar(page).selectEraseTool();
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
 
       // Reset to default state

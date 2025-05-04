@@ -50,10 +50,7 @@ import {
   switchToPeptideMode,
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -89,7 +86,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await processResetToDefaultState(testInfo, page);
   });
 
@@ -281,7 +278,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     await clickOnCanvas(page, 600, 600);
     await setRotationStep(page, '20');
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -682,7 +679,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     }).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'Backspace');
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

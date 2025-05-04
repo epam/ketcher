@@ -13,9 +13,9 @@ import {
   clickOnAtom,
   waitForSpinnerFinishedWork,
 } from '@utils';
-import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Verifying buttons on reaction am tool dropdown', () => {
   test.beforeEach(async ({ page }) => {
@@ -82,7 +82,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
         const atomNumber2 = 2;
         await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
         await applyAutoMapMode(page, mode);
-        await pressUndoButton(page);
+        await TopLeftToolbar(page).undo();
         await takeEditorScreenshot(page);
         await selectLeftPanelButton(LeftPanelButton.ReactionMappingTool, page);
         await clickOnAtom(page, 'C', atomNumber1);
@@ -103,9 +103,9 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       );
       await takeEditorScreenshot(page);
       await applyAutoMapMode(page, 'Discard');
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       await applyAutoMapMode(page, 'Keep');
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       await applyAutoMapMode(page, 'Alter', false);
     });
     test('After the manual mapping with incorrect ordering', async ({

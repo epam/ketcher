@@ -13,12 +13,12 @@ import {
   RingButton,
   TopPanelButton,
 } from '@utils/selectors';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 /**
  *  Select button from left panel
@@ -166,7 +166,7 @@ export async function saveStructureWithReaction(
   page: Page,
   format?: MoleculesFileFormatType,
 ) {
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   if (format) {
     await SaveStructureDialog(page).chooseFileFormat(format);
   }
@@ -204,7 +204,7 @@ export async function selectWithLasso(
 export async function saveToTemplates(page: Page, templateName: string) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
 
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill(templateName);

@@ -200,7 +200,7 @@ test.describe('Sequence Mode', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await selectSequenceLayoutModeTool(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -1135,7 +1135,7 @@ test.describe('Sequence Mode', () => {
         modifiedAminoAcid,
       );
       await takeEditorScreenshot(page);
-      await selectClearCanvasTool(page);
+      await TopLeftToolbar(page).clearCanvas();
     }
   });
 });

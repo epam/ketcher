@@ -6,11 +6,11 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
@@ -61,7 +61,7 @@ const fileNames: string[] = [
 //         hideMonomerPreview: true,
 //       });
 //     }
-//     await selectClearCanvasTool(page);
+//     await TopLeftToolbar(page).clearCanvas();
 //   }
 // });
 
@@ -101,7 +101,7 @@ test(
         await waitForMonomerPreview(page);
         await takeEditorScreenshot(page);
       }
-      await selectClearCanvasTool(page);
+      await TopLeftToolbar(page).clearCanvas();
     }
   },
 );

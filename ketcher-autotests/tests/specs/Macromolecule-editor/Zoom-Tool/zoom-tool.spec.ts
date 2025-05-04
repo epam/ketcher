@@ -32,7 +32,7 @@ import {
   turnOnMacromoleculesEditor,
   selectZoomInTool,
 } from '@tests/pages/common/TopRightToolbar';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -56,7 +56,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await resetZoomLevelToDefault(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -314,7 +314,7 @@ test.describe('Zoom Tool', () => {
      *        6. Zoom Out using button 5 times
      *        7. Take screenshot to witness the result
      */
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -346,7 +346,7 @@ test.describe('Zoom Tool', () => {
      *        6. Zoom out using button 5 times
      *        7. Take screenshot to witness the result
      */
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await selectSnakeLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -379,7 +379,7 @@ test.describe('Zoom Tool', () => {
      *        6. Zoom out using button 5 times
      *        7. Take screenshot to witness the result
      */
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await selectSequenceLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -416,7 +416,7 @@ test.describe('Zoom Tool', () => {
      */
     await pageReload(page);
 
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -451,7 +451,7 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
    *        6. Zoom Out using keyboard shortcut "Ctrl+-" 5 times
    *        7. Take screenshot to witness the result
    */
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
     MacroFileType.HELM,
@@ -487,7 +487,7 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
    *        7. Zoom Out using keyboard shortcut "Ctrl+-" 5 times
    *        8. Take screenshot to witness the result
    */
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await selectSnakeLayoutModeTool(page);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -525,7 +525,7 @@ test('Test the zoom-in/zoom-out function using hotkeys (Ctrl+ for zoom in and Ct
    *        7. Zoom Out using keyboard shortcut "Ctrl+-" 5 times
    *        8. Take screenshot to witness the result
    */
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await selectSequenceLayoutModeTool(page);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,

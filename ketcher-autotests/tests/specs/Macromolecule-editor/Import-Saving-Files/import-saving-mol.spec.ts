@@ -21,10 +21,6 @@ import {
   readFileContent,
 } from '@utils';
 import {
-  selectClearCanvasTool,
-  selectOpenFileTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   selectZoomOutTool,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -41,6 +37,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { pageReload } from '@utils/common/helpers';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -55,7 +52,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async ({ context: _ }, testInfo) => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
   await processResetToDefaultState(testInfo, page);
   await turnOnMacromoleculesEditor(page);
@@ -284,7 +281,7 @@ test.describe('Import-Saving .mol Files', () => {
       const addToCanvasButton =
         PasteFromClipboardDialog(page).addToCanvasButton;
 
-      await selectOpenFileTool(page);
+      await TopLeftToolbar(page).openFile();
       await openFile('Molfiles-V2000/empty-file.mol', page);
       await expect(addToCanvasButton).toBeDisabled();
 
@@ -618,7 +615,7 @@ test.describe('Import modified .mol files from external editor', () => {
   test.afterEach(async () => {
     await takeEditorScreenshot(page);
     await resetZoomLevelToDefault(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
   });
 
   const temporaryFailedTestsFileNames = [

@@ -25,13 +25,10 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -213,9 +210,9 @@ test.describe('R-Group Label Tool', () => {
     await pressButton(page, 'R7');
     await pressButton(page, 'R8');
     await pressButton(page, 'Apply');
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

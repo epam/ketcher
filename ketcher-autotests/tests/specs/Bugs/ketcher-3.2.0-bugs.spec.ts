@@ -33,11 +33,6 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   setZoomInputValue,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -61,6 +56,7 @@ import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -90,7 +86,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
     await processResetToDefaultState(testInfo, page);
   });
@@ -291,7 +287,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await getSymbolLocator(page, { symbolAlias: 'U' }).nth(2).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowDown');
     await keyboardPressOnCanvas(page, 'Delete');
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -402,7 +398,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.HELM,
     );
@@ -595,7 +591,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -640,7 +636,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await keyboardTypeOnCanvas(page, 'AAAAA');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -881,7 +877,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       'KET/Bugs/Elliptical arrows can be saved to the png.ket',
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -903,7 +899,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       'CDXML/Bugs/stereochemistry.cdxml',
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );

@@ -37,15 +37,12 @@ import {
   ZoomInByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -585,12 +582,12 @@ test.describe('Undo/Redo Actions', () => {
     await pressButton(page, 'Apply');
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -696,12 +693,12 @@ test.describe('Undo/Redo Actions', () => {
     const coordinatesWithShift = point.y + yDelta;
     await dragMouseTo(point.x, coordinatesWithShift, page);
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -723,9 +720,9 @@ test.describe('Undo/Redo Actions', () => {
     */
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await expect(page).toHaveScreenshot();
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await expect(page).toHaveScreenshot();
   });
 

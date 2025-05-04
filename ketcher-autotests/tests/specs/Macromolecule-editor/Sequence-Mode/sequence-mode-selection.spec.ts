@@ -15,7 +15,6 @@ import {
   clickOnCanvas,
   moveMouseAway,
 } from '@utils';
-import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 import {
   turnOnMacromoleculesEditor,
   selectZoomOutTool,
@@ -29,6 +28,7 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -130,7 +130,7 @@ test.describe('Sequence mode selection for edit mode', () => {
     await keyboardPressOnCanvas(page, 'Backspace');
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
 
     await keyboardPressOnCanvas(page, 'Escape');

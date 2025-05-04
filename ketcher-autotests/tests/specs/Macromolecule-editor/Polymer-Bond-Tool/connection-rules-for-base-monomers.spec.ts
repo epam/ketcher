@@ -33,7 +33,7 @@ test.afterAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await resetZoomLevelToDefault(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.describe('Connection rules for Base monomers: ', () => {

@@ -1,11 +1,8 @@
 import { test } from '@playwright/test';
 import { takeEditorScreenshot, waitForPageInit, clickOnCanvas } from '@utils';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Track Changes', () => {
   test.beforeEach(async ({ page }) => {
@@ -43,13 +40,13 @@ test.describe('Track Changes', () => {
 
     const maxUndoHistorySize = 32;
     for (let i = 0; i < maxUndoHistorySize; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     const maxRedoHistorySize = 32;
     for (let i = 0; i < maxRedoHistorySize; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });

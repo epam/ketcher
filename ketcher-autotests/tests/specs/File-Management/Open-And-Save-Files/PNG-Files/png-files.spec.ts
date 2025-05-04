@@ -7,7 +7,7 @@ import {
   pressButton,
   selectLayoutTool,
 } from '@utils';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
@@ -48,7 +48,7 @@ test.describe('Saving in .png files', () => {
     }) => {
       await openFileAndAddToCanvas(filename, page);
       await takeEditorScreenshot(page);
-      await selectSaveTool(page);
+      await TopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );
@@ -68,7 +68,7 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -87,7 +87,7 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -105,7 +105,7 @@ test.describe('Saving in .png files', () => {
       'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -124,7 +124,7 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -143,7 +143,7 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -162,7 +162,7 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -186,7 +186,7 @@ test.describe('Saving in .png files', () => {
     await pressButton(page, 'OK');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );

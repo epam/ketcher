@@ -42,18 +42,13 @@ import {
   getTopBondByAttributes,
 } from '@utils/canvas/bonds';
 import { BondType } from '@utils/canvas/types';
-import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -82,7 +77,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await CommonLeftToolbar(page).selectHandTool();
 });
 
@@ -123,7 +118,7 @@ test.describe(`Bond tool:`, () => {
 
       expect(countBonds).toEqual(drawnBonds);
 
-      await selectClearCanvasTool(page);
+      await TopLeftToolbar(page).clearCanvas();
 
       await selectRing(RingButton.Benzene, page);
       await clickInTheMiddleOfTheScreen(page);
@@ -159,7 +154,7 @@ test.describe(`Bond tool:`, () => {
 
       expect(sizeWithRingAndBond).toEqual(drawnBondsWithRing);
       await takeEditorScreenshot(page);
-      await selectClearCanvasTool(page);
+      await TopLeftToolbar(page).clearCanvas();
     });
 
     test(`click on an existing bond using ${bondTypeName}`, async () => {
@@ -176,7 +171,7 @@ test.describe(`Bond tool:`, () => {
       point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
       await clickOnCanvas(page, point.x, point.y);
 
-      await selectClearCanvasTool(page);
+      await TopLeftToolbar(page).clearCanvas();
 
       await selectRing(RingButton.Benzene, page);
       await clickInTheMiddleOfTheScreen(page);
@@ -192,7 +187,7 @@ test.describe(`Bond tool:`, () => {
       });
       await clickOnCanvas(page, singleBond.x, singleBond.y);
       await takeEditorScreenshot(page);
-      await selectClearCanvasTool(page);
+      await TopLeftToolbar(page).clearCanvas();
     });
 
     test(`Undo/Redo ${bondTypeName} creation`, async () => {
@@ -217,7 +212,7 @@ test.describe(`Bond tool:`, () => {
       });
       expect(chainSize).toEqual(chainSizeWithBond);
 
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
 
       const chainSizeAfterUndo = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
@@ -239,35 +234,35 @@ test.describe(`Bond tool:`, () => {
       });
       expect(editedChain).toEqual(chainSizeAfterMultipleEditing);
 
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
 
       const editedChainUndo = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainUndo).toEqual(chainSizeWithBond);
 
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
 
       const editedChainUndoTwice = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainUndoTwice).toEqual(chainSizeWithoutBondAfterUndo);
 
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
 
       const editedChainRedo = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainRedo).toEqual(chainSizeWithBond);
 
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
 
       const editedChainRedoTwice = await page.evaluate(() => {
         return window.ketcher.editor.struct().bonds.size;
       });
       expect(editedChainRedoTwice).toEqual(chainSizeAfterMultipleEditing);
       await takeEditorScreenshot(page);
-      await selectClearCanvasTool(page);
+      await TopLeftToolbar(page).clearCanvas();
     });
 
     test(`Check highlight absence after ${bondTypeName} Bond creation`, async () => {
@@ -277,7 +272,7 @@ test.describe(`Bond tool:`, () => {
       await CommonLeftToolbar(page).selectBondTool(bondType);
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
-      await selectClearCanvasTool(page);
+      await TopLeftToolbar(page).clearCanvas();
     });
 
     test.describe('Saving and rendering', () => {
@@ -289,7 +284,7 @@ test.describe(`Bond tool:`, () => {
         await CommonLeftToolbar(page).selectBondTool(bondType);
         await clickOnTheCanvas(page, -200, 0);
         await clickInTheMiddleOfTheScreen(page);
-        await selectSaveTool(page);
+        await TopLeftToolbar(page).saveFile();
         await SaveStructureDialog(page).save();
       });
 
@@ -342,7 +337,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
 
         await moveMouseToTheMiddleOfTheScreen(page);
         await dragMouseTo(point.x + DELTA_X, point.y, page);
-        await pressUndoButton(page);
+        await TopLeftToolbar(page).undo();
 
         await CommonLeftToolbar(page).selectAreaSelectionTool(
           SelectionToolType.Rectangle,
@@ -362,7 +357,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await clickOnCanvas(page, point.x + DELTA_X, point.y, {
           waitForRenderTimeOut: 100,
         });
-        await pressUndoButton(page);
+        await TopLeftToolbar(page).undo();
 
         await clickInTheMiddleOfTheScreen(page);
         await cutToClipboardByKeyboard(page);
@@ -370,13 +365,13 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await clickOnCanvas(page, point.x + DELTA_X, point.y, {
           waitForRenderTimeOut: 100,
         });
-        await pressUndoButton(page);
-        await pressUndoButton(page);
+        await TopLeftToolbar(page).undo();
+        await TopLeftToolbar(page).undo();
 
         await CommonLeftToolbar(page).selectEraseTool();
         await clickInTheMiddleOfTheScreen(page);
 
-        await pressUndoButton(page);
+        await TopLeftToolbar(page).undo();
 
         await atomToolbar.clickAtom(Atom.Oxygen);
         point = await getCoordinatesTopAtomOfBenzeneRing(page);
@@ -384,7 +379,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         await clickOnCanvas(page, point.x, point.y, {
           waitForRenderTimeOut: 100,
         });
-        await pressUndoButton(page);
+        await TopLeftToolbar(page).undo();
 
         await selectRing(RingButton.Cyclohexane, page);
         await clickOnCanvas(page, point.x, point.y, {

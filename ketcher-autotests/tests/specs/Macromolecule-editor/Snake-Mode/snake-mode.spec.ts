@@ -11,10 +11,6 @@ import {
   selectSequenceLayoutModeTool,
 } from '@utils';
 import {
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
@@ -24,6 +20,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -37,7 +34,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -220,7 +217,7 @@ test('2. Check that in snake mode all modifid monomers are marked', async () => 
       modifiedMonomer,
     );
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
   }
 });
 
@@ -656,7 +653,7 @@ test('17. Check that when the user exports the canvas in snake mode, the exporte
     FileType.MOL,
   );
 
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.SVGDocument,
   );

@@ -23,7 +23,6 @@ import {
   ZoomInByKeyboard,
   selectMonomer,
 } from '@utils';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   selectZoomReset,
   selectZoomOutTool,
@@ -41,6 +40,7 @@ import { goToRNATab } from '@utils/macromolecules/library';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
@@ -398,7 +398,7 @@ test.describe('Zoom Tool', () => {
     After fix bug https://github.com/epam/ketcher/issues/4174 need to update snapshot.
     */
     await goToRNATab(page);
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
     await browser.newContext({ deviceScaleFactor: 2.5 });
     await page.setViewportSize({ width: 435, height: 291 });
@@ -411,7 +411,7 @@ test.describe('Zoom Tool', () => {
     Description: When zoomed out to 25%, buttons and toolbars have the correct appearance
     */
     await goToRNATab(page);
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
     await browser.newContext({ deviceScaleFactor: 0.2 });
     await page.setViewportSize({ width: 4358, height: 2918 });
@@ -424,7 +424,7 @@ test.describe('Zoom Tool', () => {
     Description: When zoomed to maximum, buttons in Paste from Clipboard window not change their position and not overlap each other
     */
     await goToRNATab(page);
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
     await browser.newContext({ deviceScaleFactor: 4 });
     await page.setViewportSize({ width: 435, height: 291 });

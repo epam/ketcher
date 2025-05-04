@@ -11,11 +11,6 @@ import {
   resetZoomLevelToDefault,
   waitForPageInit,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { zoomWithMouseWheel, chooseTab, Tabs } from '@utils/macromolecules';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
@@ -27,6 +22,7 @@ import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatName } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -45,7 +41,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await resetZoomLevelToDefault(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -76,7 +72,7 @@ test.describe('Import/export sequence:', () => {
       PasteFromClipboardDialog(page).contentTypeSelector;
 
     await selectSequenceLayoutModeTool(page);
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
 
     const defaultValue = await contentTypeSelector
@@ -273,7 +269,7 @@ test.describe('Import/export sequence:', () => {
       SaveStructureDialog(page).fileFormatDropdownList;
 
     await selectSequenceLayoutModeTool(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
 
     const defaultValue = await fileFormatDropdonwList
       .locator('span')

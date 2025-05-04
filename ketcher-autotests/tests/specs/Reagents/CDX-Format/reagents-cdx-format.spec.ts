@@ -11,9 +11,9 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Reagents CDX format', () => {
   test.beforeEach(async ({ page }) => {
@@ -67,7 +67,7 @@ test.describe('Reagents CDX format', () => {
     Description: 'Can not display binary content' in Preview window.
     */
     await openFileAndAddToCanvas('CDX/two-reagents.cdx', page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.CDX,
     );

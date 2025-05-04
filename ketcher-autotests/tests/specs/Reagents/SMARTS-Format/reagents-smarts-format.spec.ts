@@ -7,13 +7,13 @@ import {
   moveMouseAway,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   verifyFileExport,
   FileType,
 } from '@utils/files/receiveFileComparisonData';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Reagents SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
@@ -40,7 +40,7 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.DaylightSMARTS,
     );
@@ -70,7 +70,7 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.DaylightSMARTS,
     );
@@ -133,7 +133,7 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.DaylightSMARTS,
     );

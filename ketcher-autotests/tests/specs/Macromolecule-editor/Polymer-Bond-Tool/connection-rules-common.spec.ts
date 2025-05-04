@@ -32,7 +32,6 @@ import {
 } from '@utils/macromolecules/polymerBond';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Bases } from '@constants/monomers/Bases';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -43,6 +42,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -73,7 +73,7 @@ test.describe('Common connection rules: ', () => {
   test.afterEach(async () => {
     await page.keyboard.press('Escape');
     await resetZoomLevelToDefault(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
   });
 
   test.afterAll(async ({ browser }) => {

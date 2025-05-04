@@ -93,8 +93,8 @@ export async function addStructureAndSelect(
 }
 
 export async function checkUndoRedo(page: Page) {
-  await pressUndoButton(page);
-  await pressRedoButton(page);
+  await TopLeftToolbar(page).undo();
+  await TopLeftToolbar(page).redo();
   await takeEditorScreenshot(page);
 }
 

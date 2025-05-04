@@ -30,7 +30,6 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   connectMonomersWithBonds,
   getMonomerLocator,
@@ -48,6 +47,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -76,7 +76,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
     await processResetToDefaultState(testInfo, page);
   });

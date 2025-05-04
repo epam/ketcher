@@ -8,7 +8,6 @@ import {
   moveMouseAway,
   readFileContent,
 } from '@utils';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   getExtendedSmiles,
   getSmiles,
@@ -17,6 +16,7 @@ import {
 } from '@utils/formats';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Reagents SMILES format', () => {
   test.beforeEach(async ({ page }) => {
@@ -44,7 +44,7 @@ test.describe('Reagents SMILES format', () => {
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.DaylightSMILES,
     );
@@ -73,7 +73,7 @@ test.describe('Reagents SMILES format', () => {
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.DaylightSMILES,
     );
@@ -96,7 +96,7 @@ test.describe('Reagents SMILES format', () => {
       page,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.ExtendedSMILES,
     );
@@ -119,7 +119,7 @@ test.describe('Reagents SMILES format', () => {
       page,
     );
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.ExtendedSMILES,
     );
@@ -206,7 +206,7 @@ test.describe('Reagents SMILES format', () => {
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.DaylightSMILES,
     );
@@ -229,7 +229,7 @@ test.describe('Reagents SMILES format', () => {
     const smiFile = await getExtendedSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.ExtendedSMILES,
     );

@@ -47,10 +47,6 @@ import {
   selectConnectivityOption,
 } from './utils';
 import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
@@ -59,6 +55,7 @@ import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -1032,12 +1029,12 @@ test.describe('Atom Properties', () => {
     await selectRingBondCount(page, '3', 'Apply');
 
     for (let i = 0; i < numberOfPress; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < numberOfPress; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });

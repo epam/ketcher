@@ -17,11 +17,6 @@ import {
   waitForPageInit,
 } from '@utils';
 import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
@@ -35,6 +30,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -54,7 +50,7 @@ test.beforeAll(async ({ browser }) => {
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await resetZoomLevelToDefault(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -960,7 +956,7 @@ test.describe('Side chain connections', () => {
     // await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -990,7 +986,7 @@ test.describe('Side chain connections', () => {
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -1020,7 +1016,7 @@ test.describe('Side chain connections', () => {
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -1057,7 +1053,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/16.ket`,
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.SVGDocument,
     );

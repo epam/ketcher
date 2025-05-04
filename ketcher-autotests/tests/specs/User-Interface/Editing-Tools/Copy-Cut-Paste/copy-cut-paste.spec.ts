@@ -27,15 +27,11 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
-import {
-  pressRedoButton,
-  pressUndoButton,
-  selectOpenFileTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;
@@ -107,9 +103,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -201,10 +197,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await cutToClipboardByKeyboard(page);
     // 2. Empty canvas - We removed all from canvas by Cut to clipboard
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     // 3. Reaction on the canvas - We returned all back to canvas
     await takeEditorScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     // 4. Emty canvas - We Undo previus Redo
     await takeEditorScreenshot(page);
   });
@@ -1182,7 +1178,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const smartsString =
       '[#6]-[#6]-[#6]-[#6]-[!#40!#79!#30]-[#6]-[#6]-[#6]-[#6]';
 
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
     await PasteFromClipboardDialog(page).openStructureTextarea.fill(
       smartsString,

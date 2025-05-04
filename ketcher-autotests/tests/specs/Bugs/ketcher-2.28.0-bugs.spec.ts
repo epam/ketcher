@@ -47,11 +47,7 @@ import {
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
@@ -86,7 +82,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await turnOnMacromoleculesEditor(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
 });
 
@@ -249,7 +245,7 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
     'RNA1{[2-damdA].[5Br-dU].[5hMedC]}$$$$V2.0',
   );
 
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.SVGDocument,
   );
@@ -322,7 +318,7 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
   await addMonomerToCenterOfCanvas(page, Presets.T);
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 
   await selectSequenceLayoutModeTool(page);
   await keyboardTypeOnCanvas(page, 'UUU');
@@ -786,7 +782,7 @@ test(`Case 30: Undo operation creates unremovable bonds on the canvas (clear can
     'RNA1{P}|RNA2{R(C)}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
   );
 
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

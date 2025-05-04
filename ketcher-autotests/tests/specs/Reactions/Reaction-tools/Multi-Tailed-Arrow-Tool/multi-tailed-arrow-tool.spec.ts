@@ -47,13 +47,6 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { openStructureLibrary } from '@utils/templates';
-import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
@@ -65,6 +58,7 @@ import {
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -412,7 +406,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
        * Test case: https://github.com/epam/ketcher/issues/5104
        * Description: ${detailedDescription}
        */
-      await selectOpenFileTool(page);
+      await TopLeftToolbar(page).openFile();
       await openFile(file, page);
       await PasteFromClipboardDialog(page).addToCanvasButton.click();
 
@@ -476,7 +470,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5104
      * Description: Multi-Tailed Arrow is correctly displayed in .ket format in Open Structure Preview.
      */
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await openFile('KET/multi-tailed-arrow-to-compare.ket', page);
     await takeEditorScreenshot(page);
   });
@@ -494,7 +488,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickInTheMiddleOfTheScreen(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
     );
@@ -613,11 +607,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -635,11 +629,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -659,12 +653,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
@@ -689,12 +683,12 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Backspace');
@@ -993,7 +987,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickOnCanvas(page, 500, 600);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await expect(saveToTemplatesButton).toBeDisabled();
     await takeEditorScreenshot(page, {
       mask: [saveStructureTextarea],
@@ -1011,9 +1005,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/three-different-multi-tail-arrows-with-elements.ket',
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await saveToTemplates(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
 
     await openStructureLibrary(page);
     await selectFromSaveToTemplates(page);
@@ -1079,7 +1073,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 500, 600);
     await takeEditorScreenshot(page);
     await waitForRender(page, async () => {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     });
     await takeEditorScreenshot(page);
     await copyAndPaste(page);
@@ -1626,11 +1620,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -1835,11 +1829,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -1882,11 +1876,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -2318,11 +2312,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(900, 500, page);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -2359,11 +2353,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(900, 500, page);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 6; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 6; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -2482,11 +2476,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(900, 500, page);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -2530,11 +2524,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(900, 500, page);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 6; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 6; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -2959,11 +2953,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 4; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 4; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -3001,11 +2995,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 6; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 6; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -3137,11 +3131,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 4; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 4; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -3187,11 +3181,11 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 6; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 6; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -3526,13 +3520,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -3553,13 +3547,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -3578,25 +3572,25 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await openImageAndAddToCanvas(
       'Images/multi-tailed-arrows-with-elements.svg',
       page,
     );
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await openImageAndAddToCanvas(
       'Images/multi-tailed-arrows-with-elements.png',
       page,
@@ -3618,7 +3612,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await setZoomInputValue(page, '20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await openImageAndAddToCanvas(
       'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.png',
       page,

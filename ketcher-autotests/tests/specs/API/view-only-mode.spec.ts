@@ -23,10 +23,7 @@ import {
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
 } from '@utils';
-import {
-  selectOpenFileTool,
-  topLeftToolbarLocators,
-} from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { waitForOpenButtonEnabled } from '@utils/common/loaders/waitForElementState';
 import {
@@ -171,8 +168,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
-    await expect(topLeftToolbarLocators(page).openButton).toBeEnabled();
-    await expect(topLeftToolbarLocators(page).saveButton).toBeEnabled();
+    await expect(TopLeftToolbar(page).openButton).toBeEnabled();
+    await expect(TopLeftToolbar(page).saveButton).toBeEnabled();
     await expect(page.getByTitle('Copy (Ctrl+C)')).toBeEnabled();
     await takeTopToolbarScreenshot(page);
   });
@@ -304,7 +301,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
     const openAsNewButton = PasteFromClipboardDialog(page).openAsNewButton;
     await enableViewOnlyModeBySetOptions(page);
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await openFile(`KET/images-png-50-with-50-structures.ket`, page);
     await expect(addToCanvasButton).toBeDisabled();
     await expect(openAsNewButton).toBeEnabled();

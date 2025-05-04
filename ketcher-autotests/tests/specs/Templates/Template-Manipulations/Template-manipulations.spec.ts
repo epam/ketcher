@@ -49,11 +49,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
@@ -62,6 +57,7 @@ import {
 } from '@tests/pages/common/TopRightToolbar';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -262,7 +258,7 @@ test.describe('Template Manupulations', () => {
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByTestId('canvas').getByText('S').first().click();
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('tab', { name: 'Template Library' }).click();
     await takeEditorScreenshot(page);
@@ -314,12 +310,12 @@ test.describe('Template Manupulations', () => {
     await clickOnAtom(page, 'C', anyAnotherAtom);
     const numberOfPressingUndo = 2;
     for (let i = 0; i < numberOfPressingUndo; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     const numberOfPressingRedo = 2;
     for (let i = 0; i < numberOfPressingRedo; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -553,7 +549,7 @@ test.describe('Open Ketcher', () => {
     await moveOnAtom(page, 'C', 1);
     await moveOnAtom(page, 'C', 0);
     await takePageScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
   });
 
   test('The different templates are attached to the atoms of existing benzene-2', async ({
@@ -576,7 +572,7 @@ test.describe('Open Ketcher', () => {
     await waitForElementInCanvas(page, 'A=Test');
 
     await takePageScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
   });
 
   test('The different templates are attached to the atoms of existing benzene-3', async ({

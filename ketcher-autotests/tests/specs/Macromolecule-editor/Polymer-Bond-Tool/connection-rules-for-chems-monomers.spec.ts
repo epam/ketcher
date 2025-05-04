@@ -32,7 +32,7 @@ test.describe('Connection rules for chems: ', () => {
 
   test.afterEach(async () => {
     await resetZoomLevelToDefault(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
   });
 
   test.afterAll(async ({ browser }) => {

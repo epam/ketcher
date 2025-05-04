@@ -12,11 +12,11 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
 } from '@utils';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 async function editText(page: Page, text: string) {
   await page.getByTestId('openStructureModal').getByRole('textbox').click();
@@ -32,7 +32,7 @@ test.describe('Floating windows', () => {
   test('Open structure: Opening the text file', async ({ page }) => {
     // Test case: EPMLSOPKET-4004
     // Verify adding text file and ability of editing it
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     const fileContent = await readFileContent('Txt/kecther-text.txt');
     await OpenStructureDialog(page).pasteFromClipboard();
     await PasteFromClipboardDialog(page).openStructureTextarea.fill(
@@ -48,7 +48,7 @@ test.describe('Floating windows', () => {
     // Verify if adding incorrect text file triggers Error message
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await openFile('Txt/incorect-text.txt', page);
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);
@@ -107,7 +107,7 @@ test.describe('Floating windows', () => {
       Description: verify floating window for 
       open/drag file or paste from clipboard 
     */
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await takeEditorScreenshot(page);
   });
 
@@ -143,7 +143,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4005, EPMLSOPKET-4009
       Description: open text file via "open file" 
     */
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await openFile('CML/cml-molecule.cml', page);
     await takeEditorScreenshot(page);
   });

@@ -19,9 +19,9 @@ import {
   getFasta,
   getExtendedSmiles,
 } from '@utils/formats';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 export enum FileType {
   KET = 'ket',
@@ -228,7 +228,7 @@ export async function receiveFileComparisonData({
 }
 
 export async function verifyHELMExport(page: Page, HELMExportExpected = '') {
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(
     MacromoleculesFileFormatType.HELM,
   );

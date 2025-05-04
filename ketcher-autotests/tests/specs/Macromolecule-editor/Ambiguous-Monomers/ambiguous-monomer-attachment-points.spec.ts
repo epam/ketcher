@@ -9,7 +9,6 @@ import {
   MacroFileType,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -17,6 +16,7 @@ import {
   getMonomerLocator,
   MonomerLocatorOptions,
 } from '@utils/macromolecules/monomer';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -37,7 +37,7 @@ test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
   // await resetZoomLevelToDefault(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   // await resetZoomLevelToDefault(page)
 });
 

@@ -23,11 +23,6 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
@@ -36,6 +31,7 @@ import {
   MacroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 test.setTimeout(40000);
@@ -49,7 +45,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
 });
 
@@ -717,12 +713,12 @@ Object.values(monomers).forEach((leftMonomer) => {
         hideMonomerPreview: true,
       });
 
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
       });
 
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
       });

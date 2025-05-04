@@ -4,9 +4,9 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
 } from '@utils';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Open UTF-8 and save as SVG and PNG', () => {
   test.beforeEach(async ({ page }) => {
@@ -19,7 +19,7 @@ test.describe('Open UTF-8 and save as SVG and PNG', () => {
     Description: A file with UTF-8 encoding opens and, when saved in a SVG preview, contains all characters
   */
     await openFileAndAddToCanvas('KET/utf-8-svg-png.ket', page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -34,7 +34,7 @@ test.describe('Open UTF-8 and save as SVG and PNG', () => {
   */
     await openFileAndAddToCanvas('KET/utf-8-svg-png.ket', page);
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );

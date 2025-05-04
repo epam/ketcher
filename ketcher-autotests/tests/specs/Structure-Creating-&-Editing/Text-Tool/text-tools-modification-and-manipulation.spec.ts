@@ -14,12 +14,9 @@ import {
   ZoomInByKeyboard,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 async function selectStructureWithSelectionTool(page: Page) {
   const point = { x: 97, y: 79 };
@@ -44,9 +41,9 @@ async function moveStructureToNewPosition(page: Page) {
 }
 
 async function performUndoRedo(page: Page) {
-  await pressUndoButton(page);
-  await pressRedoButton(page);
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
+  await TopLeftToolbar(page).redo();
+  await TopLeftToolbar(page).undo();
 }
 
 test.describe('Text tools test cases', () => {
@@ -242,8 +239,8 @@ test.describe('Text tools test cases', () => {
     const text3 = 'Test123';
     await page.getByRole('dialog').getByRole('textbox').fill(text3);
     await pressButton(page, 'Apply');
-    await pressUndoButton(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).undo();
+    await TopLeftToolbar(page).redo();
     await selectAllStructuresOnCanvas(page);
     await page.getByText(text3).hover();
     await waitForRender(page, async () => {
@@ -262,8 +259,8 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill(text4);
     await pressButton(page, 'Apply');
-    await pressUndoButton(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).undo();
+    await TopLeftToolbar(page).redo();
     await selectAllStructuresOnCanvas(page);
     await page.getByText(text4).click();
     await moveStructureToNewPosition(page);

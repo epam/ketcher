@@ -9,7 +9,6 @@ import {
 import { selectSequenceLayoutModeTool } from '@utils/canvas/tools';
 import { switchToRNAMode } from '@utils/macromolecules/sequence';
 import { waitForPageInit } from '@utils/common/loaders';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
   selectBaseSlot,
@@ -33,6 +32,7 @@ import {
   getSymbolLocator,
   modifyInRnaBuilder,
 } from '@utils/macromolecules/monomer';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -54,7 +54,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {

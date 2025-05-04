@@ -4,9 +4,9 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
 } from '@utils';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Reagents molecule above arrow', () => {
   test.beforeEach(async ({ page }) => {
@@ -50,7 +50,7 @@ test.describe('Reagents molecule above arrow', () => {
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -66,7 +66,7 @@ test.describe('Reagents molecule above arrow', () => {
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -84,7 +84,7 @@ test.describe('Reagents molecule above arrow', () => {
       'KET/text-reagents-below-and-above-arrow.ket',
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -102,7 +102,7 @@ test.describe('Reagents molecule above arrow', () => {
       'KET/text-reagents-below-and-above-arrow.ket',
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -117,7 +117,7 @@ test.describe('Reagents molecule above arrow', () => {
       Description: File is shown in the preview with correct text nodes.
     */
     await openFileAndAddToCanvas('KET/text-nodes-on-reaction.ket', page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );

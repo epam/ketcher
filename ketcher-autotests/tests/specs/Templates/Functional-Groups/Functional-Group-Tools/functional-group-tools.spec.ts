@@ -35,15 +35,11 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
-import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 const X_DELTA = 300;
 
@@ -288,9 +284,9 @@ test.describe('Templates - Functional Group Tools', () => {
       await page.getByText('Remove Abbreviation').click();
     });
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await resetCurrentTool(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -401,7 +397,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await page.getByText('Boc').first().click();
     await CommonLeftToolbar(page).selectEraseTool();
 
@@ -511,8 +507,8 @@ test.describe('Templates - Functional Group Tools2', () => {
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).undo();
+    await TopLeftToolbar(page).redo();
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -536,7 +532,7 @@ test.describe('Templates - Functional Group Tools2', () => {
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
 
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/functional-group-expanded.mol',

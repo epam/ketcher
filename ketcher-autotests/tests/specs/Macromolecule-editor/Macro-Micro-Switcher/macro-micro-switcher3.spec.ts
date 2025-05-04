@@ -21,17 +21,13 @@ import {
   resetZoomLevelToDefault,
 } from '@utils';
 import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   setZoomInputValue,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
 } from '@tests/pages/common/TopRightToolbar';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
@@ -82,7 +78,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
 });
 
@@ -296,7 +292,7 @@ interface IMonomer {
 //       await moveMouseToTheMiddleOfTheScreen(page);
 //       await takeEditorScreenshot(page);
 
-//       await pressUndoButton(page);
+//       await TopLeftToolbar(page).undo();
 //       await takeEditorScreenshot(page);
 
 //       // Test should be skipped if related bug exists
@@ -423,7 +419,7 @@ test.describe('Move expanded monomer on Micro and Undo: ', () => {
       await moveMouseToTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
 
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -460,9 +456,9 @@ test(`Verify that the system supports undo/redo functionality for expanding and 
   await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
   await expandMonomer(page, expandableMonomer.monomerLocatorText);
   await takeEditorScreenshot(page);
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
   await takeEditorScreenshot(page);
-  await pressRedoButton(page);
+  await TopLeftToolbar(page).redo();
   await takeEditorScreenshot(page);
 });
 
@@ -793,7 +789,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
       hideMacromoleculeEditorScrollBars: true,
     });
     await pressCancelAtEditAbbreviationDialog(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
   }
 });
 
@@ -931,12 +927,12 @@ test(
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       // Pic 3, 6, 9, 12, 15, 18
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       // Pic 4, 6, 10, 13, 16, 19
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,

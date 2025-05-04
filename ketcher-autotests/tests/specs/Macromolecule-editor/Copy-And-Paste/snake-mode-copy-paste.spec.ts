@@ -43,7 +43,7 @@ test.describe('Snake mode copy&paste', () => {
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -60,7 +60,7 @@ test.describe('Snake mode copy&paste', () => {
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 });

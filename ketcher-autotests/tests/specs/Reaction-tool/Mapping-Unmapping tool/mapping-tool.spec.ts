@@ -18,8 +18,8 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Mapping Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -91,7 +91,7 @@ test.describe('Mapping Tools', () => {
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
   });
 
   test.describe('Mapping reactions', () => {
@@ -107,7 +107,7 @@ test.describe('Mapping Tools', () => {
       await page.keyboard.press('Delete');
       await takeEditorScreenshot(page);
 
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     });
 
     test('Unmap the mapped reaction', async ({ page }) => {

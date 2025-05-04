@@ -68,7 +68,7 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -115,7 +115,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -145,8 +145,8 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
       await copyToClipboardByKeyboard(page);
       await takeEditorScreenshot(page);
 
-      await pressUndoButton(page);
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
+      await TopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
     },
   );
@@ -170,8 +170,8 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
   //   await pasteFromClipboardByKeyboard(page);
   //   await takeEditorScreenshot(page);
   //
-  //   await pressUndoButton(page);
-  //   await pressUndoButton(page);
+  //   await TopLeftToolbar(page).undo();
+  //   await TopLeftToolbar(page).undo();
   //   await takeEditorScreenshot(page);
   // });
 });

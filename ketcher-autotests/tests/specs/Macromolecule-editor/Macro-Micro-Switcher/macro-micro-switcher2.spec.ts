@@ -46,12 +46,6 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { goToFavoritesTab } from '@utils/macromolecules/library';
 import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   setZoomInputValue,
   turnOnMacromoleculesEditor,
   turnOnMicromoleculesEditor,
@@ -76,6 +70,7 @@ import {
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 async function addToFavoritesMonomers(page: Page) {
   await addMonomersToFavorites(page, [
@@ -318,7 +313,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -338,7 +333,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await turnOnMicromoleculesEditor(page);
     await takeEditorScreenshot(page);
   });
@@ -352,7 +347,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       */
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
     );
@@ -370,7 +365,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await turnOnMacromoleculesEditor(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Ket,
     );
@@ -387,7 +382,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       */
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
     );
@@ -409,7 +404,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       */
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
     );
@@ -540,7 +535,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/single-atom-properties.ket',
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -632,7 +627,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
     await selectAllStructuresOnCanvas(page);
@@ -1036,10 +1031,10 @@ test.describe('Macro-Micro-Switcher2', () => {
       enableFlexMode: false,
       goToPeptides: false,
     });
-    await selectClearCanvasTool(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).clearCanvas();
+    await TopLeftToolbar(page).undo();
     await takePageScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takePageScreenshot(page);
   });
 });

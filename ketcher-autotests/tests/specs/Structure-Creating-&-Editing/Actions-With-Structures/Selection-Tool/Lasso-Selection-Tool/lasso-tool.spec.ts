@@ -15,13 +15,10 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Lasso Selection tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -191,7 +188,7 @@ test.describe('Lasso Selection tool', () => {
     );
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     const point = await getBondByIndex(
       page,
       { type: BondType.SINGLE_OR_AROMATIC },
@@ -246,8 +243,8 @@ test.describe('Lasso Selection tool', () => {
       page,
     );
 
-    await pressUndoButton(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).undo();
+    await TopLeftToolbar(page).redo();
 
     const bondIndex = 5;
     const bondPoint = await getBondByIndex(
@@ -274,7 +271,7 @@ test.describe('Lasso Selection tool', () => {
       centerPoint.y - randomCoords.y,
       page,
     );
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     const plusSignCoords = [
       { x: 270, y: 10 },
@@ -308,10 +305,10 @@ test.describe('Lasso Selection tool', () => {
 
     const loopCount = 3;
     for (let index = 0; index < loopCount; index++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     for (let index = 0; index < loopCount; index++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });

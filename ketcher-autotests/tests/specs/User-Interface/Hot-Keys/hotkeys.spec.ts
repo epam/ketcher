@@ -32,9 +32,9 @@ import {
   selectDearomatizeTool,
   selectAddRemoveExplicitHydrogens,
 } from '@utils';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -547,7 +547,7 @@ test.describe('Hot key Del', () => {
     });
     await page.keyboard.press('Delete');
     await page.mouse.move(x, y);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 });

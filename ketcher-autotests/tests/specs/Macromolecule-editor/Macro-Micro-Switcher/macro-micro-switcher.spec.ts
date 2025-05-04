@@ -57,12 +57,6 @@ import {
 } from '@utils';
 import { hideLibrary, showLibrary } from '@utils/canvas/tools';
 import {
-  selectClearCanvasTool,
-  selectOpenFileTool,
-  pressUndoButton,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   selectZoomReset,
   selectZoomOutTool,
   topRightToolbarLocators,
@@ -110,6 +104,7 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { topRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 const topLeftCorner = {
   x: -325,
@@ -190,7 +185,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -587,10 +582,10 @@ test.describe('Macro-Micro-Switcher', () => {
       }
     });
     await fullScreenButton.click();
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await takeEditorScreenshot(page);
     await PasteFromClipboardDialog(page).closeWindowButton.click();
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await takeEditorScreenshot(page);
   });
 });
@@ -598,7 +593,7 @@ test.describe('Macro-Micro-Switcher', () => {
 test.describe('Macro-Micro-Switcher', () => {
   test.beforeEach(async () => {
     await turnOnMicromoleculesEditor(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
   });
 
   test.skip(
@@ -1357,7 +1352,7 @@ test.describe('Macro-Micro-Switcher', () => {
       }).first();
       await bondLine.click({ force: true });
       await takeEditorScreenshot(page);
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
     });
   }
@@ -1391,7 +1386,7 @@ test.describe('Macro-Micro-Switcher', () => {
     }).first();
     await bondLine.click({ force: true });
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -1441,7 +1436,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await CommonLeftToolbar(page).selectEraseTool();
       await page.getByText(data.monomer.alias).click();
       await takeEditorScreenshot(page);
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
     });
   }
@@ -1475,7 +1470,7 @@ test.describe('Macro-Micro-Switcher', () => {
     const canvasLocator = page.getByTestId('ketcher-canvas');
     await canvasLocator.locator('path').nth(5).click();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -1746,7 +1741,7 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
-      await selectSaveTool(page);
+      await TopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
@@ -1768,7 +1763,7 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
-      await selectSaveTool(page);
+      await TopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );

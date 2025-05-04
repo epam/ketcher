@@ -19,11 +19,6 @@ import {
 import { selectLeftPanelButton } from '@utils/canvas/tools';
 import { selectAllStructuresOnCanvas, copyAndPaste } from '@utils/canvas';
 import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
@@ -31,6 +26,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -57,7 +53,7 @@ async function selectAndMoveSimpleObjects(page: Page) {
 async function saveToTemplates(page: Page) {
   const saveToTemplates = SaveStructureDialog(page).saveToTemplatesButton;
 
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   await saveToTemplates.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My New Template');
@@ -163,13 +159,13 @@ test.describe('Action on simples objects', () => {
     await clickOnCanvas(page, anyPointX, anyPointY);
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await cutAndPaste(page);
     await clickOnCanvas(page, anyPointX, anyPointY);
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -204,7 +200,7 @@ test.describe('Action on simples objects', () => {
     await clickInTheMiddleOfTheScreen(page);
     await drawBenzeneRing(page);
     await saveToTemplates(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await takeEditorScreenshot(page);

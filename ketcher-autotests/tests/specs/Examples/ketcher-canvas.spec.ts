@@ -12,7 +12,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
@@ -23,7 +23,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
 
   test('drawing atom, then dragging other atom', async ({ page }) => {
     const xDelta = 100;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Carbon);
     await clickInTheMiddleOfTheScreen(page);

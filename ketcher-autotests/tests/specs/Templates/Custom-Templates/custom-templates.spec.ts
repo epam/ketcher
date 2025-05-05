@@ -17,7 +17,7 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 test.describe('Open Ketcher', () => {
@@ -196,7 +196,7 @@ test.describe('Open Ketcher', () => {
     Test case: EPMLSOPKET-1720
     Description: The template is attached to the structure by the defined attachment bond.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
     await page.getByPlaceholder('template').click();

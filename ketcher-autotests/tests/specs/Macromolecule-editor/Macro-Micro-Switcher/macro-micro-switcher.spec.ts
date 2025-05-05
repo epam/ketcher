@@ -93,7 +93,7 @@ import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
@@ -1060,7 +1060,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const y = 200;
       const x1 = 600;
       const y1 = 600;
-      const atomToolbar = rightToolbar(page);
+      const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(Atom.Oxygen);
       await clickOnCanvas(page, x, y);
@@ -2042,7 +2042,7 @@ test.describe('Macro-Micro-Switcher', () => {
     Test case: Macro-Micro-Switcher/#4530
     Description: AP attached to single atom.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);

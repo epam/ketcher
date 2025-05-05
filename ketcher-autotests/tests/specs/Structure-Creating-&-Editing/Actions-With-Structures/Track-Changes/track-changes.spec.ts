@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import { takeEditorScreenshot, waitForPageInit, clickOnCanvas } from '@utils';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Track Changes', () => {
@@ -15,7 +15,7 @@ test.describe('Track Changes', () => {
     Description: Add Nitrogen atom to canvas 35 times and then press Undo 32 times
     */
     test.slow();
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
     const atomType = Atom.Nitrogen;
 
     const addAtom = async (x: number, y: number) => {

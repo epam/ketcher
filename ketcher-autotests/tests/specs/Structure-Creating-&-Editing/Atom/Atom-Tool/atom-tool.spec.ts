@@ -30,7 +30,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
@@ -53,7 +53,7 @@ test.describe('Atom Tool', () => {
     Description: The "Periodic table" modal dialog is opened.
     Periodic table' window is closed. No symbols appear on the canvas.
     */
-    const periodicTableButton = rightToolbar(page).periodicTableButton;
+    const periodicTableButton = RightToolbar(page).periodicTableButton;
 
     await periodicTableButton.click();
     await takeEditorScreenshot(page);
@@ -72,7 +72,7 @@ test.describe('Atom Tool', () => {
     - "Cancel" and "Add" buttons are at the right bottom corner of the window: "Cancel" is always active, "Add" becomes active when any symbol is selected;
     - "x" button is at the top right corner of the window.
     */
-    const extendedTableButton = rightToolbar(page).extendedTableButton;
+    const extendedTableButton = RightToolbar(page).extendedTableButton;
 
     await extendedTableButton.click();
     await takeEditorScreenshot(page);
@@ -84,7 +84,7 @@ test.describe('Atom Tool', () => {
     Description: Pop-up windows appear with Si element.
     After pressing 'Add' button Si element added to canvas.
     */
-    const periodicTableButton = rightToolbar(page).periodicTableButton;
+    const periodicTableButton = RightToolbar(page).periodicTableButton;
 
     await periodicTableButton.click();
     await page.getByRole('button', { name: 'Si 14' }).click();
@@ -101,8 +101,8 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1450
     Description: The structure is illustrated as H3Si-SH.
     */
-    const atomToolbar = rightToolbar(page);
-    const periodicTableButton = rightToolbar(page).periodicTableButton;
+    const atomToolbar = RightToolbar(page);
+    const periodicTableButton = RightToolbar(page).periodicTableButton;
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
@@ -178,7 +178,7 @@ test.describe('Atom Tool', () => {
     Description: The selected button is highlighted. Several dialog buttons can`t be selected.
     The "Add" button becomes enabled when any generic group is selected.
     */
-    const extendedTableButton = rightToolbar(page).extendedTableButton;
+    const extendedTableButton = RightToolbar(page).extendedTableButton;
 
     await extendedTableButton.click();
     await page.getByRole('button', { name: 'AH', exact: true }).click();
@@ -306,7 +306,7 @@ test.describe('Atom Tool', () => {
       Test case: EPMLSOPKET-1581
       Description: when drag & drop an atom on an atom it should replace it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await drawBenzeneRing(page);
 
@@ -440,7 +440,7 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-12982
     Description: Atoms appears on selected part of structure.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectPartOfMolecules(page);
@@ -456,7 +456,7 @@ test.describe('Atom Tool', () => {
     Description: Only one atom should be removed and the other should remain
     */
     const numberOfAtom = 0;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Bromine);
     await clickInTheMiddleOfTheScreen(page);
@@ -499,7 +499,7 @@ test.describe('Atom Tool', () => {
     Description: The additional button with the selected atom symbol appears on the Atom Palette
     */
     const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn'];
-    const periodicTableButton = rightToolbar(page).periodicTableButton;
+    const periodicTableButton = RightToolbar(page).periodicTableButton;
 
     for (const elementName of elementNames) {
       await periodicTableButton.click();
@@ -517,7 +517,7 @@ test.describe('Atom Tool', () => {
     The 8th button isn't added. In our test 'Si' replaces by 'Db'.
     */
     const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn', 'Db'];
-    const periodicTableButton = rightToolbar(page).periodicTableButton;
+    const periodicTableButton = RightToolbar(page).periodicTableButton;
 
     for (const elementName of elementNames) {
       await periodicTableButton.click();
@@ -536,8 +536,8 @@ test.describe('Atom Tool', () => {
     Description: The additional button with the selected atom symbol appears on the Atom Palette.
     Additional atom can be added to structure.
     */
-    const atomToolbar = rightToolbar(page);
-    const periodicTableButton = rightToolbar(page).periodicTableButton;
+    const atomToolbar = RightToolbar(page);
+    const periodicTableButton = RightToolbar(page).periodicTableButton;
 
     const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn'];
 
@@ -612,7 +612,7 @@ test.describe('Atom Tool', () => {
     test(`Add ${atomName} from right toolbar to Benzene ring`, async ({
       page,
     }) => {
-      const atomToolbar = rightToolbar(page);
+      const atomToolbar = RightToolbar(page);
 
       await drawBenzeneRing(page);
       await atomToolbar.clickAtom(atomName);
@@ -648,7 +648,7 @@ test.describe('Atom Tool', () => {
       Description: Atom added to Benzene ring.
       */
       const anyAtom = 2;
-      const atomToolbar = rightToolbar(page);
+      const atomToolbar = RightToolbar(page);
 
       await drawBenzeneRing(page);
       await atomToolbar.clickAtom(atomName);

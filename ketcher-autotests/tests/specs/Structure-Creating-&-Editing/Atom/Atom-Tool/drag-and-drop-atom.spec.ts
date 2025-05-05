@@ -15,7 +15,7 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
@@ -32,7 +32,7 @@ test.describe('Drag and drop Atom on canvas', () => {
       Test case: EPMLSOPKET-11831
       Description: when drag & drop an atom on an atom it should replace it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
@@ -59,7 +59,7 @@ test.describe('Drag and drop Atom on canvas', () => {
       Test case: EPMLSOPKET-11832
       Description: when drag & drop an atom on a FG it should replace it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -84,7 +84,7 @@ test.describe('Drag and drop Atom on canvas', () => {
       Test case: EPMLSOPKET-11833
       Description: when drag & drop an atom on a Salts and Solvents it should replace it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -110,7 +110,7 @@ test.describe('Drag and drop Atom on canvas', () => {
       Description: when drag & drop with an atom on an atom connected
       with bond to another atom  it should replace it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Chlorine);
     await clickInTheMiddleOfTheScreen(page);
@@ -143,7 +143,7 @@ test.describe('Drag and drop Atom on canvas', () => {
       Description: when drag & drop with an atom on a FG connected
       with bond to another FG it should replace it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);

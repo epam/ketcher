@@ -1,7 +1,7 @@
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   selectFunctionalGroups,
   FunctionalGroups,
@@ -29,7 +29,7 @@ test.describe('Click and drag Atom on canvas', () => {
       Test case: EPMLSOPKET-10115
       Description: when click & drag with an atom on atom it should forms a bond between it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
@@ -50,7 +50,7 @@ test.describe('Click and drag Atom on canvas', () => {
       Test case: EPMLSOPKET-10116
       Description: when click & drag with an atom on functional group it should forms a bond between it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -72,7 +72,7 @@ test.describe('Click and drag Atom on canvas', () => {
       Description: when click & drag with an atom on salts
       and solvents atom appears where the left mouse button was released without a connection
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -91,7 +91,7 @@ test.describe('Click and drag Atom on canvas', () => {
       Test case: EPMLSOPKET-10118
       Description: when click & drag with an atom on an atom connected with bond to another atom it should forms a bond
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
@@ -117,7 +117,7 @@ test.describe('Click and drag Atom on canvas', () => {
       Description: when click & drag with an atom on a
       functional group connected with bond to another atom it should forms a bond
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Bromine);
     await clickInTheMiddleOfTheScreen(page);
@@ -149,7 +149,7 @@ test.describe('Click and drag Atom on canvas', () => {
       { x: 0, y: MAX_BOND_LENGTH },
       { x: MAX_BOND_LENGTH, y: 0 },
     ];
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Phosphorus);
     await clickInTheMiddleOfTheScreen(page);

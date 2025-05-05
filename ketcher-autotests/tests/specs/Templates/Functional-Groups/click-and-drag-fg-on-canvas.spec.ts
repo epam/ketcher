@@ -1,7 +1,7 @@
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   selectFunctionalGroups,
   FunctionalGroups,
@@ -30,7 +30,7 @@ test.describe('Click and drag FG on canvas', () => {
       Test case: EPMLSOPKET-11550
       Description: when click & drag with an FG on atom it should forms a bond between
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
@@ -75,7 +75,7 @@ test.describe('Click and drag FG on canvas', () => {
       Description: when click & drag with an FG on an atom connected with bond to another atom
       it should forms a bond
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);

@@ -1,7 +1,7 @@
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -27,7 +27,7 @@ test.describe('Click Atom on canvas', () => {
       Test case: EPMLSOPKET-10102
       Description: when clicking with an atom on an atom it should replace it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
@@ -45,7 +45,7 @@ test.describe('Click Atom on canvas', () => {
       Test case: EPMLSOPKET-10100
       Description: when clicking with an atom on a FG template it should replace it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await selectFunctionalGroups(FunctionalGroups.FMOC, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -61,7 +61,7 @@ test.describe('Click Atom on canvas', () => {
       Test case: EPMLSOPKET-10101
       Description: when clicking with an atom on a Salts and Solvents it should replace it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -77,7 +77,7 @@ test.describe('Click Atom on canvas', () => {
       Test case: EPMLSOPKET-10103
       Description: when clicking with an atom on an atom connected with bond to another atom  it should replace it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Chlorine);
     await clickInTheMiddleOfTheScreen(page);
@@ -99,7 +99,7 @@ test.describe('Click Atom on canvas', () => {
       Test case: EPMLSOPKET-10104
       Description: when clicking with an atom on a FG connected with bond to atom  it should replace it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);

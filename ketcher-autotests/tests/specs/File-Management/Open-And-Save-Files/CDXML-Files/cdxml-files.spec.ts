@@ -25,7 +25,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
@@ -59,7 +59,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: EPMLSOPKET-4712
      * Description: Open/Import structure while openning a CDXML file
      */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Hydrogen);
     await clickInTheMiddleOfTheScreen(page);

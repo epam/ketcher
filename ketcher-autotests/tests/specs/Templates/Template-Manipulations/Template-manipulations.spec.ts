@@ -51,7 +51,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
@@ -84,7 +84,7 @@ test.describe('Template Manupulations', () => {
     Choose any element from the left panel or Periodic Table and click on any atom of the created structure.
     */
     const anyAtom = 0;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await drawBenzeneRing(page);
     await atomToolbar.clickAtom(Atom.Oxygen);
@@ -184,7 +184,7 @@ test.describe('Template Manupulations', () => {
     Select any part of the structure (or whole structure) and click the 'Delete' keyboard button.
     with Ctrl+A hot key select all ojects on canvas and click the 'Delete' keyboard button.
     */
-      const atomToolbar = rightToolbar(page);
+      const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(Atom.Fluorine);
       await clickInTheMiddleOfTheScreen(page);
@@ -213,7 +213,7 @@ test.describe('Template Manupulations', () => {
     const x = 300;
     const y = 300;
     const anyAtom = 0;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -241,7 +241,7 @@ test.describe('Template Manupulations', () => {
     With the 'Erase' tool press, hold and drag around (or click) any atom/bond/part of structure/whole structure.
     Select the 'Fragment Selection' tool, click the structure, and then select 'Erase' tool and click the template structure.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
@@ -267,7 +267,7 @@ test.describe('Template Manupulations', () => {
     Description:
     With Selection Tool (Rectangle) click any atom of the template structure and type any correct atom symbol.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
@@ -299,7 +299,7 @@ test.describe('Template Manupulations', () => {
     */
     const anyAtom = 0;
     const anyAnotherAtom = 4;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await drawBenzeneRing(page);
     await atomToolbar.clickAtom(Atom.Fluorine);
@@ -325,7 +325,7 @@ test.describe('Template Manupulations', () => {
     Select the structure and flip it vertically with the 'Vertical Flip' tool.
     */
     const anyAtom = 0;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await drawBenzeneRing(page);
     await atomToolbar.clickAtom(Atom.Fluorine);
@@ -435,7 +435,7 @@ test.describe('Template Manupulations', () => {
     Add Cyclohexane ring on canvas and add double bond on it and atom
     Add cyclopentadiene ring to a single bond with two atoms, but one atom is connected with a single bond and another with a double bond
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await drawCyclohexaneRing(page);
     await atomToolbar.clickAtom(Atom.Nitrogen);
@@ -454,7 +454,7 @@ test.describe('Template Manupulations', () => {
     Add Cyclohexane ring on canvas and add on it an atom
     Add cyclopentadiene ring to a single bond
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await drawCyclohexaneRing(page);
     await atomToolbar.clickAtom(Atom.Nitrogen);

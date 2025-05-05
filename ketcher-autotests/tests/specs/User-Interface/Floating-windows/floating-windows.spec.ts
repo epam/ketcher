@@ -15,7 +15,7 @@ import {
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 async function editText(page: Page, text: string) {
@@ -116,7 +116,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4010
       Description: verify visual representation of "Extended" table 
     */
-    const extendedTableButton = rightToolbar(page).extendedTableButton;
+    const extendedTableButton = RightToolbar(page).extendedTableButton;
 
     await extendedTableButton.click();
     await takeEditorScreenshot(page);

@@ -29,7 +29,7 @@ import {
 } from '@utils';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
@@ -119,7 +119,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 500;
     const y = 200;
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/clean-diff-properties.mol',
@@ -261,7 +261,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 400;
     const y = 300;
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/clean-diff-properties.mol',
@@ -397,7 +397,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 500;
     const y = 200;
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/generic-groups.mol', page);
     await selectAllStructuresOnCanvas(page);
@@ -418,7 +418,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 300;
     const y = 200;
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await selectAllStructuresOnCanvas(page);
@@ -440,7 +440,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 300;
     const y = 200;
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await selectAllStructuresOnCanvas(page);
@@ -479,7 +479,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 500;
     const y = 300;
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/R-Group-structure.mol', page);
     await selectAllStructuresOnCanvas(page);
@@ -520,7 +520,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 500;
     const y = 300;
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/s-group-features.mol', page);
     await selectAllStructuresOnCanvas(page);
@@ -559,7 +559,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Nitrogen atom can't attach to structure
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/attached.mol', page);
     await selectAllStructuresOnCanvas(page);
@@ -596,7 +596,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     The structure is cut (and then is pasted) with the Chiral flag.
     */
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/chiral-structure.mol', page);
     await selectAllStructuresOnCanvas(page);
@@ -632,7 +632,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Nitrogen atom can't attach to structure.
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Rxn-V2000/reaction.rxn', page);
     await selectAllStructuresOnCanvas(page);
@@ -653,7 +653,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Select the whole reaction. Cut/Paste it into the canvas.
     */
     const anyAtom = 8;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Rxn-V2000/rxn-reaction.rxn', page);
     await selectAllStructuresOnCanvas(page);
@@ -697,7 +697,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: Cut reaction has Failed Arrow with default size and position.
     */
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Rxn-V2000/structure-with-failed-arrow.rxn',
@@ -738,7 +738,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: Cut reaction has plus sign and one arrow.
     */
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Rxn-V2000/arrows-in-different-directions.rxn',
@@ -779,7 +779,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Can't attach atom of Nitrogen to structure.
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/structure-with-all-kinds-of-s-groups.mol',
@@ -818,7 +818,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 300;
     const y = 200;
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Rxn-V2000/mapped-structure.rxn', page);
     await selectAllStructuresOnCanvas(page);
@@ -871,7 +871,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: Cut objects are pasted as one object and correctly displayed without data loss.
     */
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('KET/stereo-test-structures.ket', page);
     await selectAllStructuresOnCanvas(page);
@@ -913,7 +913,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Error message when run under docker. But manual test is working.
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/complex-r-group-structure.mol',
@@ -961,7 +961,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Can't attach atom of Nitrogen to structure.
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'KET/structure-with-simple-objects-and-text.ket',
@@ -1003,7 +1003,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is able to edit the pasted structure.
     */
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/aromatic-structures.mol',
@@ -1047,7 +1047,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is not able to edit the pasted Functional Groups.
     */
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('KET/expanded-and-contracted-fg.ket', page);
     await selectAllStructuresOnCanvas(page);
@@ -1090,7 +1090,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is not able to edit the pasted Functional Groups.
     */
     const anyAtom = 0;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/expanded-and-contracted-salts.mol',

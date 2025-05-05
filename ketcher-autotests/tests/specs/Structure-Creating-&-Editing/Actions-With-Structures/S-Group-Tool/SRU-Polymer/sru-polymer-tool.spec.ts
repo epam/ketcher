@@ -30,7 +30,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
@@ -189,7 +189,7 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1532
       Description: User is able to add atom on structure with SRU polymer S-group.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
     await atomToolbar.clickAtom(Atom.Oxygen);

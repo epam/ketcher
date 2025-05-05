@@ -16,7 +16,7 @@ import {
   selectLayoutTool,
 } from '@utils';
 import { getMolfile } from '@utils/formats/formats';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
@@ -333,7 +333,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     const x = 300;
     const y = 300;
     const anyAtom = 0;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/toluene.mol', page);
     await selectCleanTool(page);

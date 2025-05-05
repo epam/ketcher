@@ -24,7 +24,7 @@ import {
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 const RING_OFFSET = 150;
@@ -182,7 +182,7 @@ test.describe('Save files', () => {
       Description: In the save window that opens, in the preview section, 
       the atom or structure has no coordinates because they were not added to the canvas.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Hydrogen);
     await TopLeftToolbar(page).saveFile();

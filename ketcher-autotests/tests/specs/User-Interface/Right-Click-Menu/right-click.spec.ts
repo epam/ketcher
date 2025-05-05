@@ -22,7 +22,7 @@ import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 test.describe('Right-click menu', () => {
@@ -99,7 +99,7 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5877
     Description: Bond is deleted
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('KET/chain.ket', page);
     await atomToolbar.clickAtom(Atom.Oxygen);
@@ -288,7 +288,7 @@ test.describe('Right-click menu', () => {
     */
     const canvasClickX = 300;
     const canvasClickY = 300;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('KET/chain.ket', page);
     await atomToolbar.clickAtom(Atom.Oxygen);

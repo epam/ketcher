@@ -46,7 +46,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
@@ -326,7 +326,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         test.setTimeout(120000);
         const DELTA_X = 100;
         point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-        const atomToolbar = rightToolbar(page);
+        const atomToolbar = RightToolbar(page);
 
         await CommonLeftToolbar(page).selectBondTool(bondType);
         await clickInTheMiddleOfTheScreen(page);
@@ -471,7 +471,7 @@ test.describe('Bond Tool', () => {
      *Description: Bond Tool - Drawing bonds in one direction does not change the bond created in the other direction
      */
     const point = { x: -50, y: 0 };
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
@@ -512,7 +512,7 @@ test.describe('Bond Tool', () => {
      */
     const point1 = { x: -50, y: 0 };
     const yDelta = 100;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);

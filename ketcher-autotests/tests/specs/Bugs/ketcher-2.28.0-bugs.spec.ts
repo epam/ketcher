@@ -56,7 +56,7 @@ import {
 } from '@utils/keyboard/index';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
@@ -128,7 +128,7 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
    * 5. Take a screenshot to validate the exception is not thrown and replacement is successful
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  const atomToolbar = rightToolbar(page);
+  const atomToolbar = RightToolbar(page);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let changeEventSubscriber: any;
   await page.evaluate(() => {

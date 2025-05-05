@@ -1,7 +1,7 @@
 import { test, expect, Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -172,7 +172,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     const shiftForSecondHydrogen = 200;
 
     async function addAndMoveHydrogen() {
-      const atomToolbar = rightToolbar(page);
+      const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(Atom.Hydrogen);
       await clickInTheMiddleOfTheScreen(page);
@@ -190,7 +190,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     }
 
     async function addAndMoveOxygen() {
-      const atomToolbar = rightToolbar(page);
+      const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(Atom.Oxygen);
       await clickInTheMiddleOfTheScreen(page);
@@ -204,7 +204,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     }
 
     async function addSecondHydrogen() {
-      const atomToolbar = rightToolbar(page);
+      const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(Atom.Hydrogen);
       await clickOnCanvas(page, x + shiftForSecondHydrogen, y, {

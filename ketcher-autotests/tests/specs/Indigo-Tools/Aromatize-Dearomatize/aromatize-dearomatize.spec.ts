@@ -19,7 +19,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
@@ -173,7 +173,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Description: Atom added to the structure.
     The structures are rendered with a circle inside the cycle during any manipulations.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);

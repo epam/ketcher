@@ -861,7 +861,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 //       );
 //       await expandMonomer(page, tryToChangeMonomer.monomerLocatorText);
 //       await takeEditorScreenshot(page);
-//       const atomToolbar = rightToolbar(page);
+//       const atomToolbar = RightToolbar(page);
 
 //       await atomToolbar.clickAtom(Atom.Bromine);
 //       await clickOnAtomOfExpandedMonomer(page, 1);

@@ -32,7 +32,7 @@ import { Monomer } from '@utils/types';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
@@ -80,7 +80,7 @@ export async function selectAnyStructuresFromAromaticsTable(
 }
 
 export async function addCyclopentadieneRingWithTwoAtoms(page: Page) {
-  const atomToolbar = rightToolbar(page);
+  const atomToolbar = RightToolbar(page);
 
   await atomToolbar.clickAtom(Atom.Nitrogen);
   await clickOnAtom(page, 'C', 0);

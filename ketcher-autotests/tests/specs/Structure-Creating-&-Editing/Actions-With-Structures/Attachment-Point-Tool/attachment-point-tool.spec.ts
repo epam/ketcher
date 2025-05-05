@@ -36,7 +36,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
@@ -44,7 +44,7 @@ const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
 
 async function selectNotListAtoms(page: Page) {
-  const periodicTableButton = rightToolbar(page).periodicTableButton;
+  const periodicTableButton = RightToolbar(page).periodicTableButton;
 
   await periodicTableButton.click();
   await page.getByText('Not List').click();
@@ -55,7 +55,7 @@ async function selectNotListAtoms(page: Page) {
 }
 
 async function selectExtendedTableElements(page: Page, element: string) {
-  const extendedTableButton = rightToolbar(page).extendedTableButton;
+  const extendedTableButton = RightToolbar(page).extendedTableButton;
 
   await extendedTableButton.click();
   await page.getByRole('button', { name: element, exact: true }).click();
@@ -272,7 +272,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1644
     Description: The attachment point's asterisk is colored with the same color as the atom symbol.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await atomToolbar.clickAtom(Atom.Nitrogen);
@@ -293,7 +293,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1644
     Description: The Not List atom, Any Atom, Group Generics is attached to attachment points.
     */
-    const anyAtomButton = rightToolbar(page).anyAtomButton;
+    const anyAtomButton = RightToolbar(page).anyAtomButton;
 
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await selectNotListAtoms(page);
@@ -670,7 +670,7 @@ test.describe('Attachment Point Tool', () => {
       Description: New bond is created, the attachment point isn't removed.
     */
     const yDelta = 100;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/chain-attachment-list.mol',

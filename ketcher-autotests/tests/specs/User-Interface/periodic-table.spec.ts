@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -17,7 +17,7 @@ test.describe('Open Ketcher', () => {
       Test case: EPMLSOPKET-4234
       Description: Open periodic table
       */
-    const periodicTableButton = rightToolbar(page).periodicTableButton;
+    const periodicTableButton = RightToolbar(page).periodicTableButton;
     await periodicTableButton.click();
     await takeEditorScreenshot(page);
   });
@@ -39,7 +39,7 @@ test.describe('Open Ketcher', () => {
     test(`Check atoms ${
       Object.entries(Atom).find(([, value]) => value === atom)?.[0]
     }`, async ({ page }) => {
-      const atomToolbar = rightToolbar(page);
+      const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(atom);
       await clickInTheMiddleOfTheScreen(page);

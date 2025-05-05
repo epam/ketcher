@@ -31,19 +31,11 @@ import {
   processResetToDefaultState,
 } from '@utils/testAnnotations/resetToDefaultState';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectOpenFileTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  selectZoomOutTool,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { closeErrorMessage } from '@utils/common/helpers';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -72,11 +64,11 @@ test.beforeAll(async ({ browser }) => {
   const context = await browser.newContext();
   page = await context.newPage();
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.afterEach(async ({ context: _ }, testInfo) => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await processResetToDefaultState(testInfo, page);
 });
 
@@ -115,7 +107,7 @@ test.describe('Import-Saving .ket Files', () => {
     );
 
     const numberOfPressZoomOut = 6;
-    await selectZoomOutTool(page, numberOfPressZoomOut);
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -136,7 +128,7 @@ test.describe('Import-Saving .ket Files', () => {
     );
 
     const numberOfPressZoomOut = 7;
-    await selectZoomOutTool(page, numberOfPressZoomOut);
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -160,7 +152,7 @@ test.describe('Import-Saving .ket Files', () => {
     await selectMonomer(page, Peptides.bAla);
     await clickInTheMiddleOfTheScreen(page);
     await verifyFileExport(page, 'KET/monomer-expected.ket', FileType.KET);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await openFileAndAddToCanvasMacro('KET/monomer-expected.ket', page);
     await getMonomerLocator(page, Peptides.bAla).hover();
     await waitForMonomerPreview(page);
@@ -182,7 +174,7 @@ test.describe('Import-Saving .ket Files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await selectAllStructuresOnCanvas(page);
     await getMonomerLocator(page, { monomerAlias: 'Ph' }).first().hover();
     await dragMouseTo(400, 400, page);
@@ -218,13 +210,12 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: System does not let importing empty .ket file
     */
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
+    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await openFile('KET/empty-file.ket', page);
     await expect(addToCanvasButton).toBeDisabled();
-    await closeWindowButton.click();
+    await PasteFromClipboardDialog(page).closeWindowButton.click();
   });
 
   test('Check that system does not let uploading corrupted .ket file', async () => {
@@ -232,9 +223,9 @@ test.describe('Import-Saving .ket Files', () => {
     Test case: Import/Saving files
     Description: System does not let uploading corrupted .ket file
     */
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
 
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await openFile('KET/corrupted-file.ket', page);
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);
@@ -273,7 +264,7 @@ test.describe('Import-Saving .ket Files', () => {
     */
     markResetToDefaultState('macromoleculesEditor');
 
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvas('KET/monomers-saved-in-macro-mode.ket', page);
     await takeEditorScreenshot(page);
   });
@@ -382,7 +373,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
         `KET/Base-Templates/${data.fileName}.ket`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -409,7 +400,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
         `KET/CHEM-Templates/${data.fileName}.ket`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -436,7 +427,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
         `KET/Peptide-Templates/${data.fileName}.ket`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -463,7 +454,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
         `KET/Phosphate-Templates/${data.fileName}.ket`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -490,7 +481,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
         `KET/Sugar-Templates/${data.fileName}.ket`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerAlias: data.alias }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -721,7 +712,7 @@ for (const monomer of allTypesOfMonomers) {
      *       6. Take screenshot to witness saved state
      */
 
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -731,7 +722,7 @@ for (const monomer of allTypesOfMonomers) {
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 }
 
@@ -744,7 +735,7 @@ test(`Verify that user can save/load macromolecule structures with hydrogen bond
    *       3. Save canvas to KET
    *       4. Verify that export result equal to template
    */
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   const KETFile =
     'KET/Hydrogen-bonds/Hydrogen bonds between all type of monomers.ket';
   const KETFileExpected =

@@ -8,14 +8,10 @@ import {
   waitForRender,
 } from '@utils';
 import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-  selectHandTool,
-} from '@tests/pages/common/CommonLeftToolbar';
-import {
   MacroBondType,
   MicroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 export async function moveMonomer(
   page: Page,
@@ -23,7 +19,9 @@ export async function moveMonomer(
   x: number,
   y: number,
 ) {
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await monomer.click();
   await dragMouseTo(x, y, page);
 }
@@ -34,8 +32,10 @@ export async function moveMonomerOnMicro(
   x: number,
   y: number,
 ) {
-  await selectHandTool(page);
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectHandTool();
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await waitForRender(page, async () => {
     await monomer.click();
   });
@@ -47,7 +47,7 @@ export async function connectMonomersWithBonds(
   monomerNames: string[],
   bondType: MacroBondType | MicroBondType = MacroBondType.Single,
 ) {
-  await bondSelectionTool(page, bondType);
+  await CommonLeftToolbar(page).selectBondTool(bondType);
 
   for (let i = 0; i < monomerNames.length - 1; i++) {
     const currentMonomer = monomerNames[i];

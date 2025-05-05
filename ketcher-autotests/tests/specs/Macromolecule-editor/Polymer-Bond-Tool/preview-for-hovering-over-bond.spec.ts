@@ -6,15 +6,15 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 async function hoverOverBond(page: Page, bondNumber: number) {
@@ -43,7 +43,9 @@ const fileNames: string[] = [
 //             2. Take screenshot of the canvas to compare it with example
 //         */
 //   test.slow();
-//   await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+//   await CommonLeftToolbar(page).selectAreaSelectionTool(
+//      SelectionToolType.Rectangle,
+//    );
 
 //   for (const fileWithPairs of fileNames) {
 //     await openFileAndAddToCanvasAsNewProjectMacro(fileWithPairs, page);
@@ -59,7 +61,7 @@ const fileNames: string[] = [
 //         hideMonomerPreview: true,
 //       });
 //     }
-//     await selectClearCanvasTool(page);
+//     await TopLeftToolbar(page).clearCanvas();
 //   }
 // });
 
@@ -82,7 +84,9 @@ test(
         Will require to update screens after fix
         */
     test.setTimeout(240000);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
 
     for (const fileWithPairs of fileNames) {
       await openFileAndAddToCanvasAsNewProjectMacro(fileWithPairs, page);
@@ -97,7 +101,7 @@ test(
         await waitForMonomerPreview(page);
         await takeEditorScreenshot(page);
       }
-      await selectClearCanvasTool(page);
+      await TopLeftToolbar(page).clearCanvas();
     }
   },
 );
@@ -124,7 +128,9 @@ test(
         Will require to update screens after fix
         */
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
 
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Preview-For-Hovering-Over-Bond/BondPreviewToolTipPositions.ket',

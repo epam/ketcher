@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -89,7 +89,7 @@ test.describe('Indigo Tools - Layout', () => {
     const x = 300;
     const y = 300;
     const anyAtom = 0;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/toluene.mol', page);
     await selectLayoutTool(page);

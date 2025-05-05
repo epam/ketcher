@@ -20,31 +20,20 @@ import {
   MacroFileType,
   readFileContent,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  selectOpenFileTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  selectZoomOutTool,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
-import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { pageReload } from '@utils/common/helpers';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -52,16 +41,17 @@ test.beforeAll(async ({ browser }) => {
   const context = await browser.newContext();
   page = await context.newPage();
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page, {
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
     enableFlexMode: false,
     goToPeptides: false,
   });
 });
 
 test.afterEach(async ({ context: _ }, testInfo) => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
   await processResetToDefaultState(testInfo, page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -102,7 +92,9 @@ test.describe('Import-Saving .mol Files', () => {
       // error expected
       true,
     );
-    await takeEditorScreenshot(page);
+    await expect(
+      page.getByText('Convert error! Error during file parsing.'),
+    ).toBeVisible();
   });
 
   test('Export monomers and chem', async () => {
@@ -147,7 +139,9 @@ test.describe('Import-Saving .mol Files', () => {
       'Molfiles-V3000/dna-mod-base-sugar-phosphate-example.mol',
       page,
     );
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await getMonomerLocator(page, { monomerAlias: `cdaC` }).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -197,7 +191,7 @@ test.describe('Import-Saving .mol Files', () => {
     expect(molFile).toEqual(molFileExpected);
 
     const numberOfPressZoomOut = 6;
-    await selectZoomOutTool(page, numberOfPressZoomOut);
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -237,12 +231,13 @@ test.describe('Import-Saving .mol Files', () => {
   */
   for (const monomer of monomersToDelete) {
     test(`Open file from .mol V3000 and Delete ${monomer.text} monomer`, async () => {
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await selectFlexLayoutModeTool(page);
       await openFileAndAddToCanvasMacro(
         'Molfiles-V3000/monomers-connected-with-bonds.mol',
         page,
       );
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await page.getByText(monomer.text).locator('..').first().click();
       await takeEditorScreenshot(page);
     });
@@ -280,9 +275,9 @@ test.describe('Import-Saving .mol Files', () => {
     */
       test.setTimeout(20);
       const addToCanvasButton =
-        pasteFromClipboardDialog(page).addToCanvasButton;
+        PasteFromClipboardDialog(page).addToCanvasButton;
 
-      await selectOpenFileTool(page);
+      await TopLeftToolbar(page).openFile();
       await openFile('Molfiles-V2000/empty-file.mol', page);
       await expect(addToCanvasButton).toBeDisabled();
 
@@ -291,7 +286,7 @@ test.describe('Import-Saving .mol Files', () => {
       await page.close();
       page = await context.newPage();
       await waitForPageInit(page);
-      await turnOnMacromoleculesEditor(page);
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     },
   );
 
@@ -368,7 +363,7 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: .mol file imported in micro mode
     */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvas(
       'Molfiles-V3000/monomers-saved-in-macro-mode.mol',
       page,
@@ -608,7 +603,7 @@ test.describe('Import modified .mol files from external editor', () => {
   /*
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
   We have opened feature request https://github.com/epam/ketcher/issues/4532
   After closing the ticket, you need to delete two files from temporaryFailedTestsFileNames
@@ -616,7 +611,7 @@ test.describe('Import modified .mol files from external editor', () => {
   test.afterEach(async () => {
     await takeEditorScreenshot(page);
     await resetZoomLevelToDefault(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
   });
 
   const temporaryFailedTestsFileNames = [
@@ -649,7 +644,9 @@ test.describe('Import modified .mol files from external editor', () => {
         await selectFlexLayoutModeTool(page);
         await openFileAndAddToCanvasMacro(`Molfiles-V3000/${fileName}`, page);
         const numberOfPressZoomOut = 4;
-        await selectZoomOutTool(page, numberOfPressZoomOut);
+        await CommonTopRightToolbar(page).selectZoomOutTool(
+          numberOfPressZoomOut,
+        );
         await clickInTheMiddleOfTheScreen(page);
       });
     }
@@ -666,7 +663,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
   /*
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
   */
 
@@ -688,7 +685,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
         `Molfiles-V3000/Base-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, { monomerType: MonomerType.Base }).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -721,7 +718,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
   /*
     test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
   */
   const fileNames = [
@@ -749,7 +746,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
         `Molfiles-V3000/CHEM-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await page.getByText('(R').locator('..').first().hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
@@ -782,7 +779,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
   /*
     test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
   */
   const fileNames = [
@@ -810,7 +807,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
         `Molfiles-V3000/Peptide-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, {
         monomerType: MonomerType.Peptide,
       }).hover();
@@ -845,7 +842,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
   /*
     test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
   */
 
@@ -874,7 +871,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
         `Molfiles-V3000/Phosphate-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, {
         monomerType: MonomerType.Phosphate,
       }).hover();
@@ -910,7 +907,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
   /*
     test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
   */
   const fileNames = [
@@ -938,7 +935,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
         `Molfiles-V3000/Sugar-Templates/${fileName}.mol`,
         page,
       );
-      await bondSelectionTool(page, MacroBondType.Single);
+      await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
       await getMonomerLocator(page, {
         monomerType: MonomerType.Sugar,
       }).hover();

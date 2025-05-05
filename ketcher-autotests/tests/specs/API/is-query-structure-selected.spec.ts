@@ -1,5 +1,5 @@
 import { Page, expect, test } from '@playwright/test';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   BondType,
   BondTypeName,
@@ -69,7 +69,7 @@ test.describe('API isQueryStructureSelected for atoms', () => {
   });
 
   test('returns true, when structure has "Any" atom', async ({ page }) => {
-    const anyAtomButton = rightToolbar(page).anyAtomButton;
+    const anyAtomButton = RightToolbar(page).anyAtomButton;
 
     await pressButton(page, 'Cancel');
     await anyAtomButton.click();

@@ -11,10 +11,10 @@ import {
   clickOnAtom,
   waitForPageInit,
 } from '@utils';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,7 +23,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
 
   test('drawing atom, then dragging other atom', async ({ page }) => {
     const xDelta = 100;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Carbon);
     await clickInTheMiddleOfTheScreen(page);
@@ -40,7 +40,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
   test('drawing benzene ring, then adding single bond', async ({ page }) => {
     await drawBenzeneRing(page);
 
-    await bondSelectionTool(page, MicroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
 
     await clickOnAtom(page, 'C', 2);
     await resetCurrentTool(page);
@@ -52,7 +52,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
      *   Test case: EPMLSOPKET-1371
      */
 
-    await bondSelectionTool(page, MicroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
 
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -63,7 +63,7 @@ test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
     /*
      *   Test case: EPMLSOPKET-1380
      */
-    await bondSelectionTool(page, MicroBondType.Double);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
 
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);

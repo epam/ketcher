@@ -17,13 +17,9 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 async function checkTooltip(type: RingButton, page: Page) {
   const templateButton = page.getByRole('button', { name: type });
@@ -57,7 +53,9 @@ async function mergeDistantRingByABond(type: RingButton, page: Page) {
     selectionRange + selectionRange,
   );
   point = await getLeftBondByAttributes(page, { reactingCenterStatus: 0 });
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await clickOnCanvas(page, point.x + selectionRange, point.y + selectionRange);
   await dragMouseTo(point.x - selectionRange, point.y - selectionRange, page);
 
@@ -77,13 +75,13 @@ async function deleteRightBondInRing(page: Page) {
 }
 
 async function checkHistoryForBondDeletion(page: Page) {
-  await pressUndoButton(page);
-  await pressUndoButton(page);
-  await pressRedoButton(page);
-  await pressUndoButton(page);
-  await pressRedoButton(page);
-  await pressRedoButton(page);
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
+  await TopLeftToolbar(page).undo();
+  await TopLeftToolbar(page).redo();
+  await TopLeftToolbar(page).undo();
+  await TopLeftToolbar(page).redo();
+  await TopLeftToolbar(page).redo();
+  await TopLeftToolbar(page).undo();
 }
 
 async function manipulateRingsByName(type: RingButton, page: Page) {
@@ -91,14 +89,14 @@ async function manipulateRingsByName(type: RingButton, page: Page) {
   await placeTwoRingsMergedByAtom(type, page);
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 
   await placeTwoRingsMergedByAtom(type, page);
   await mergeRingByBond(type, page);
   await mergeDistantRingByABond(type, page);
   await moveMouseAway(page);
   await takeEditorScreenshot(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 
   await selectButtonByTitle(type, page);
   await clickInTheMiddleOfTheScreen(page);

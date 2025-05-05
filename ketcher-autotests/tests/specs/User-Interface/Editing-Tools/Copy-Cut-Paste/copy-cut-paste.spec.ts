@@ -27,15 +27,11 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
-import {
-  pressRedoButton,
-  pressUndoButton,
-  selectOpenFileTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;
@@ -107,9 +103,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -123,7 +119,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 500;
     const y = 200;
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/clean-diff-properties.mol',
@@ -201,10 +197,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await cutToClipboardByKeyboard(page);
     // 2. Empty canvas - We removed all from canvas by Cut to clipboard
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     // 3. Reaction on the canvas - We returned all back to canvas
     await takeEditorScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     // 4. Emty canvas - We Undo previus Redo
     await takeEditorScreenshot(page);
   });
@@ -265,7 +261,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 400;
     const y = 300;
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/clean-diff-properties.mol',
@@ -401,7 +397,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 500;
     const y = 200;
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/generic-groups.mol', page);
     await selectAllStructuresOnCanvas(page);
@@ -422,7 +418,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 300;
     const y = 200;
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await selectAllStructuresOnCanvas(page);
@@ -444,7 +440,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 300;
     const y = 200;
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await selectAllStructuresOnCanvas(page);
@@ -483,7 +479,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 500;
     const y = 300;
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/R-Group-structure.mol', page);
     await selectAllStructuresOnCanvas(page);
@@ -524,7 +520,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 500;
     const y = 300;
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/s-group-features.mol', page);
     await selectAllStructuresOnCanvas(page);
@@ -563,7 +559,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Nitrogen atom can't attach to structure
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/attached.mol', page);
     await selectAllStructuresOnCanvas(page);
@@ -600,7 +596,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     The structure is cut (and then is pasted) with the Chiral flag.
     */
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/chiral-structure.mol', page);
     await selectAllStructuresOnCanvas(page);
@@ -636,7 +632,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Nitrogen atom can't attach to structure.
     const anyAtom = 12;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Rxn-V2000/reaction.rxn', page);
     await selectAllStructuresOnCanvas(page);
@@ -657,7 +653,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Select the whole reaction. Cut/Paste it into the canvas.
     */
     const anyAtom = 8;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Rxn-V2000/rxn-reaction.rxn', page);
     await selectAllStructuresOnCanvas(page);
@@ -701,7 +697,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: Cut reaction has Failed Arrow with default size and position.
     */
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Rxn-V2000/structure-with-failed-arrow.rxn',
@@ -742,7 +738,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: Cut reaction has plus sign and one arrow.
     */
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Rxn-V2000/arrows-in-different-directions.rxn',
@@ -783,7 +779,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Can't attach atom of Nitrogen to structure.
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/structure-with-all-kinds-of-s-groups.mol',
@@ -822,7 +818,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 300;
     const y = 200;
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Rxn-V2000/mapped-structure.rxn', page);
     await selectAllStructuresOnCanvas(page);
@@ -875,7 +871,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Description: Cut objects are pasted as one object and correctly displayed without data loss.
     */
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('KET/stereo-test-structures.ket', page);
     await selectAllStructuresOnCanvas(page);
@@ -917,7 +913,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Error message when run under docker. But manual test is working.
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/complex-r-group-structure.mol',
@@ -965,7 +961,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     // Can't attach atom of Nitrogen to structure.
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'KET/structure-with-simple-objects-and-text.ket',
@@ -1007,7 +1003,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is able to edit the pasted structure.
     */
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/aromatic-structures.mol',
@@ -1051,7 +1047,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is not able to edit the pasted Functional Groups.
     */
     const anyAtom = 5;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('KET/expanded-and-contracted-fg.ket', page);
     await selectAllStructuresOnCanvas(page);
@@ -1094,7 +1090,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     User is not able to edit the pasted Functional Groups.
     */
     const anyAtom = 0;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/expanded-and-contracted-salts.mol',
@@ -1181,18 +1177,15 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     const smartsString =
       '[#6]-[#6]-[#6]-[#6]-[!#40!#79!#30]-[#6]-[#6]-[#6]-[#6]';
-    const pasteFromClipboardButton =
-      openStructureDialog(page).pasteFromClipboardButton;
-    const openStructureTextarea =
-      pasteFromClipboardDialog(page).openStructureTextarea;
-    const cancelButton = pasteFromClipboardDialog(page).cancelButton;
 
-    await selectOpenFileTool(page);
-    await pasteFromClipboardButton.click();
-    await openStructureTextarea.fill(smartsString);
+    await TopLeftToolbar(page).openFile();
+    await OpenStructureDialog(page).pasteFromClipboard();
+    await PasteFromClipboardDialog(page).openStructureTextarea.fill(
+      smartsString,
+    );
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await cancelButton.click();
+    await PasteFromClipboardDialog(page).cancelButton.click();
     await page.keyboard.press('Control+Alt+v');
     await clickInTheMiddleOfTheScreen(page);
     await expect(page).toHaveScreenshot();

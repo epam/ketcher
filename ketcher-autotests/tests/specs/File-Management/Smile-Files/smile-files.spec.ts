@@ -10,32 +10,26 @@ import {
   moveMouseAway,
 } from '@utils';
 import {
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  chooseFileFormat,
-  getTextAreaValue,
-} from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 async function getPreviewForSmiles(
   page: Page,
   smileType: MoleculesFileFormatType,
 ) {
-  await selectSaveTool(page);
-  await chooseFileFormat(page, smileType);
-  const previewInput = await getTextAreaValue(page);
+  await TopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(smileType);
+  const previewInput = await SaveStructureDialog(page).getTextAreaValue();
   expect(previewInput).not.toBe('');
 }
 
 async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
   await pressButton(page, 'Cancel');
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 
   await pasteFromClipboardAndAddToCanvas(page, smiles);
   await clickInTheMiddleOfTheScreen(page);

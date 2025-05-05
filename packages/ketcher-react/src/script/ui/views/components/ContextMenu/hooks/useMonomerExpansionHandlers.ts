@@ -1,4 +1,9 @@
-import { Action, setExpandMonomerSGroup } from 'ketcher-core';
+import {
+  Action,
+  AmbiguousMonomer,
+  MonomerMicromolecule,
+  setExpandMonomerSGroup,
+} from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -21,6 +26,13 @@ const useMonomerExpansionHandlers = () => {
       const action = new Action();
 
       selectedFunctionalGroups?.forEach((fg) => {
+        if (
+          !(fg.relatedSGroup instanceof MonomerMicromolecule) ||
+          fg.relatedSGroup.monomer instanceof AmbiguousMonomer
+        ) {
+          return;
+        }
+
         action.mergeWith(
           setExpandMonomerSGroup(molecule, fg.relatedSGroupId, {
             expanded: toExpand,

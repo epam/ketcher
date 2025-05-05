@@ -34,6 +34,8 @@ import {
   KetcherLogger,
   fromPaste,
   Coordinates,
+  Atom,
+  Pool,
 } from 'ketcher-core';
 import {
   DOMSubscription,
@@ -97,26 +99,34 @@ const highlightTargets = [
 ];
 
 function selectStereoFlagsIfNecessary(
-  atoms: any,
-  expAtoms: number[],
+  atoms: Pool<Atom>,
+  explicitlySelectedAtoms: number[],
 ): number[] {
-  const atomsOfFragments = {};
+  const fragmentToAtoms: Map<number, number[]> = new Map();
   atoms.forEach((atom, atomId) => {
-    atomsOfFragments[atom.fragment]
-      ? atomsOfFragments[atom.fragment].push(atomId)
-      : (atomsOfFragments[atom.fragment] = [atomId]);
+    const atomFragment = atom.fragment;
+    if (atomFragment === -1) {
+      return;
+    }
+
+    const currentAtoms = fragmentToAtoms.get(atomFragment) ?? [];
+    const updatedAtoms = currentAtoms.concat(atomId);
+    fragmentToAtoms.set(atomFragment, updatedAtoms);
   });
 
-  const stereoFlags: number[] = [];
+  return Object.keys(fragmentToAtoms).reduce((stereoFlags, fragId) => {
+    const numericFragId = Number(fragId);
+    const fragmentAtoms = fragmentToAtoms.get(numericFragId) ?? [];
+    const shouldSelectStereoFlag = fragmentAtoms.every((atomId) =>
+      explicitlySelectedAtoms.includes(atomId),
+    );
 
-  Object.keys(atomsOfFragments).forEach((fragId) => {
-    let shouldSelSFlag = true;
-    atomsOfFragments[fragId].forEach((atomId) => {
-      if (!expAtoms.includes(atomId)) shouldSelSFlag = false;
-    });
-    shouldSelSFlag && stereoFlags.push(Number(fragId));
-  });
-  return stereoFlags;
+    if (shouldSelectStereoFlag) {
+      return stereoFlags.concat(numericFragId);
+    }
+
+    return stereoFlags;
+  }, [] as number[]);
 }
 
 export interface Selection {

@@ -114,19 +114,18 @@ function selectStereoFlagsIfNecessary(
     fragmentToAtoms.set(atomFragment, updatedAtoms);
   });
 
-  return Object.keys(fragmentToAtoms).reduce((stereoFlags, fragId) => {
-    const numericFragId = Number(fragId);
-    const fragmentAtoms = fragmentToAtoms.get(numericFragId) ?? [];
+  let stereoFlags: number[] = [];
+  fragmentToAtoms.forEach((fragmentAtoms, fragmentId) => {
     const shouldSelectStereoFlag = fragmentAtoms.every((atomId) =>
       explicitlySelectedAtoms.includes(atomId),
     );
 
     if (shouldSelectStereoFlag) {
-      return stereoFlags.concat(numericFragId);
+      stereoFlags = stereoFlags.concat(fragmentId);
     }
+  });
 
-    return stereoFlags;
-  }, [] as number[]);
+  return stereoFlags;
 }
 
 export interface Selection {

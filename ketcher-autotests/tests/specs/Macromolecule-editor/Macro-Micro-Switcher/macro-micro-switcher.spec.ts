@@ -2413,8 +2413,6 @@ const nonExpandableMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/1. Peptide X (ambiguouse, alternatives, from library).ket',
     monomerLocatorText: 'X',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription:
@@ -2422,16 +2420,12 @@ const nonExpandableMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/2. Peptide A+C+D+E+F+G+H+I+K+L+M+N+O+P+Q+R+S+T+U+V+W+Y (ambiguouse, mixed).ket',
     monomerLocatorText: '%',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription: '3. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/3. Peptide G+H+I+K+L+M+N+O+P (ambiguous, mixed).ket',
     monomerLocatorText: '%',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription:
@@ -2439,112 +2433,84 @@ const nonExpandableMonomers: IMonomer[] = [
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/4. Peptide G,H,I,K,L,M,N,O,P (ambiguous, alternatives).ket',
     monomerLocatorText: '%',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription: '5. Sugar UNA, SGNA, RGNA (ambiguous, alternatives)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/5. Sugar UNA, SGNA, RGNA (ambiguous, alternatives).ket',
     monomerLocatorText: '%',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription: '6. Sugar UNA, SGNA, RGNA (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/6. Sugar UNA, SGNA, RGNA (ambiguous, mixed).ket',
     monomerLocatorText: '%',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription: '7. DNA base N (ambiguous, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/7. DNA base N (ambiguous, alternatives, from library).ket',
     monomerLocatorText: 'N',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription: '8. RNA base N (ambiguous, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/8. RNA base N (ambiguous, alternatives, from library).ket',
     monomerLocatorText: 'N',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription: '9. Base M (ambiguous, alternatives, from library)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/9. Base M (ambiguous, alternatives, from library).ket',
     monomerLocatorText: 'M',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription: '10. DNA base A+C+G+T (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/10. DNA base A+C+G+T (ambiguous, mixed).ket',
     monomerLocatorText: '%',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription: '11. RNA base A+C+G+U (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/11. RNA base A+C+G+U (ambiguous, mixed).ket',
     monomerLocatorText: '%',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription: '12. Base A+C (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/12. Base A+C (ambiguous, mixed).ket',
     monomerLocatorText: '%',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription: '13. Phosphate bnn,cmp,nen (ambiguous, alternatives)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/13. Phosphate bnn,cmp,nen (ambiguous, alternatives).ket',
     monomerLocatorText: '%',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription: '14. Phosphate bnn+cmp+nen (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/14. Phosphate bnn+cmp+nen (ambiguous, mixed).ket',
     monomerLocatorText: '%',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription: '15. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/15. CHEM PEG-2,PEG-4,PEG-6 (ambiguous, alternatives).ket',
     monomerLocatorText: '%',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription: '16. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed)',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/16. CHEM PEG-2+PEG-4+PEG-6 (ambiguous, mixed).ket',
     monomerLocatorText: '%',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5789',
   },
   {
     monomerDescription: '17. Unknown nucleotide',
     KETFile:
       'KET/Micro-Macro-Switcher/Basic-Monomers/Negative/17. Unknown nucleotide.ket',
     monomerLocatorText: 'Unknown',
-    shouldFail: true,
-    issueNumber: 'https://github.com/epam/ketcher/issues/5791',
   },
 ];
 
@@ -2564,12 +2530,6 @@ test.describe('Impossible to expand on Micro canvas: ', () => {
        *       3. Call context menu for appeared monomer
        *       4. Check if Expand monomer menu option is disabled
        */
-      // Test should be skipped if related bug exists
-      test.fail(
-        nonExpandableMonomer.shouldFail === true,
-        `That test fails because of ${nonExpandableMonomer.issueNumber} issue(s).`,
-      );
-
       await openFileAndAddToCanvasAsNewProject(
         nonExpandableMonomer.KETFile,
         page,

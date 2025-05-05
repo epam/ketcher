@@ -40,8 +40,8 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { topRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -232,9 +232,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The help, about and fullscreen mode are enabled in view-only mode 
     */
-    const fullScreenButton = TopRightToolbar(page).fullScreenButton;
-    const aboutButton = topRightToolbar(page).aboutButton;
-    const helpButton = topRightToolbar(page).helpButton;
+    const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
+    const aboutButton = TopRightToolbar(page).aboutButton;
+    const helpButton = TopRightToolbar(page).helpButton;
 
     await enableViewOnlyModeBySetOptions(page);
     await expect(helpButton).toBeEnabled();
@@ -397,13 +397,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await TopRightToolbar(page).setZoomInputValue('20');
+    await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).setZoomInputValue('100');
+    await CommonTopRightToolbar(page).setZoomInputValue('100');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).setZoomInputValue('350');
+    await CommonTopRightToolbar(page).setZoomInputValue('350');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

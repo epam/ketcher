@@ -35,7 +35,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { closeErrorMessage } from '@utils/common/helpers';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -64,7 +64,7 @@ test.beforeAll(async ({ browser }) => {
   const context = await browser.newContext();
   page = await context.newPage();
   await waitForPageInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.afterEach(async ({ context: _ }, testInfo) => {
@@ -107,7 +107,7 @@ test.describe('Import-Saving .ket Files', () => {
     );
 
     const numberOfPressZoomOut = 6;
-    await TopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -128,7 +128,7 @@ test.describe('Import-Saving .ket Files', () => {
     );
 
     const numberOfPressZoomOut = 7;
-    await TopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -264,7 +264,7 @@ test.describe('Import-Saving .ket Files', () => {
     */
     markResetToDefaultState('macromoleculesEditor');
 
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvas('KET/monomers-saved-in-macro-mode.ket', page);
     await takeEditorScreenshot(page);
   });
@@ -712,7 +712,7 @@ for (const monomer of allTypesOfMonomers) {
      *       6. Take screenshot to witness saved state
      */
 
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(monomer.KETFile, page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
@@ -722,7 +722,7 @@ for (const monomer of allTypesOfMonomers) {
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 }
 
@@ -735,7 +735,7 @@ test(`Verify that user can save/load macromolecule structures with hydrogen bond
    *       3. Save canvas to KET
    *       4. Verify that export result equal to template
    */
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   const KETFile =
     'KET/Hydrogen-bonds/Hydrogen bonds between all type of monomers.ket';
   const KETFileExpected =

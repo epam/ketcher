@@ -1,6 +1,6 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { Page, test } from '@playwright/test';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import {
   waitForPageInit,
   takeEditorScreenshot,
@@ -32,7 +32,7 @@ async function shiftStructure(page: Page) {
 test.describe('addFragment', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasMacro(fileName, page);
     await shiftStructure(page);
   });
@@ -46,7 +46,7 @@ test.describe('addFragment', () => {
       async () => await addFragment(page, fileContents),
     );
     const numberOfPressZoomOut = 6;
-    await TopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await page.mouse.move(0, 0);
     await takeEditorScreenshot(page);
   });
@@ -58,7 +58,7 @@ test.describe('addFragment', () => {
       async () => await addFragment(page, fileContents),
     );
     const numberOfPressZoomOut = 6;
-    await TopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await page.mouse.move(0, 0);
     await takeEditorScreenshot(page);

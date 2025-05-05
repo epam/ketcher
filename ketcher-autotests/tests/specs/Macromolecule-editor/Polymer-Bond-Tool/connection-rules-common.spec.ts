@@ -39,7 +39,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -64,7 +64,7 @@ test.describe('Common connection rules: ', () => {
     await page.goto('', { waitUntil: 'domcontentloaded' });
     await waitForKetcherInit(page);
     await waitForIndigoToLoad(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test.afterEach(async () => {
@@ -478,11 +478,11 @@ test.describe('Common connection rules: ', () => {
       'Molfiles-V3000/Common-Bond-Tests/C___Cysteine on the canvas.mol',
       page,
     );
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await page.getByText('C', { exact: true }).first().hover();
     await waitForMonomerPreviewMicro(page);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test(`Check that system marks availiable connection point as avaliable in Select Connection Point dialog (use attached files)`, async () => {

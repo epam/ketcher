@@ -3,13 +3,13 @@ import { RNA_TAB } from '@constants/testIdConstants';
 import { waitForPageInit } from '@utils/common';
 import { takePageScreenshot } from '@utils';
 import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 /* 
 Test case: #3063 - Add e2e tests for Macromolecule editor
 */
 async function createRNA(page: Page) {
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await page.getByTestId(RNA_TAB).click();
   await toggleRnaBuilderAccordion(page);
   await page.fill('[placeholder="Name your structure"]', 'MyRNA');

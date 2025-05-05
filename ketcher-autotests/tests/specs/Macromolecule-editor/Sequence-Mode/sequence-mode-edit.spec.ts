@@ -59,7 +59,7 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
@@ -74,7 +74,7 @@ async function callContextMenuForAnySymbol(page: Page) {
 test.describe('Sequence edit mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectSequenceLayoutModeTool(page);
   });
 

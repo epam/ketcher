@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
@@ -11,7 +11,7 @@ import {
 test.describe('getMolfile', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('with two monomers bonded', async ({ page }) => {

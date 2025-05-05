@@ -45,7 +45,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { goToFavoritesTab } from '@utils/macromolecules/library';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Chem } from '@constants/monomers/Chem';
@@ -91,7 +91,7 @@ export async function doubleClickOnAtom(page: Page, atomText: string) {
 test.describe('Macro-Micro-Switcher2', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Add to Favorites section Peptides, Sugars, Bases, Phosphates and CHEMs then Hide Library and switch to Micro mode and back', async ({
@@ -105,8 +105,8 @@ test.describe('Macro-Micro-Switcher2', () => {
     test.slow();
     await addToFavoritesMonomers(page);
     await hideLibrary(page);
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await goToFavoritesTab(page);
     await takeMonomerLibraryScreenshot(page);
   });
@@ -131,9 +131,9 @@ test.describe('Macro-Micro-Switcher2', () => {
         Description: Switching between Macro and Micro mode not crash application when opened DNA/RNA with modyfied monomer
         */
       await openFileAndAddToCanvasMacro(testInfo.fileName, page);
-      await TopRightToolbar(page).turnOnMicromoleculesEditor();
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await takeEditorScreenshot(page);
-      await TopRightToolbar(page).turnOnMacromoleculesEditor();
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await selectSnakeLayoutModeTool(page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
@@ -258,7 +258,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByTestId('canvas').getByText('O').click();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.F1).hover();
     await waitForMonomerPreview(page);
@@ -307,10 +307,10 @@ test.describe('Macro-Micro-Switcher2', () => {
     );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
     await TopLeftToolbar(page).clearCanvas();
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 
@@ -323,14 +323,14 @@ test.describe('Macro-Micro-Switcher2', () => {
      * Clear Canvas, switch back to Micro mode, verify that arrows are presented in Micro mode.
      *
      */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/three-different-multi-tail-arrows.ket',
       page,
     );
     await takeEditorScreenshot(page);
     await TopLeftToolbar(page).clearCanvas();
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 
@@ -360,7 +360,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       */
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Ket,
@@ -425,13 +425,13 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Check that atom properties are preserved.
       Expected: Atom properties are preserved.
     */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/single-atom-properties.ket',
       page,
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 
@@ -447,12 +447,12 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Try to edit atom properties.
       Expected: Atom properties are non-editable.
     */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/single-atom-properties.ket',
       page,
     );
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await doubleClickOnAtom(page, 'Zn');
     await takeEditorScreenshot(page);
   });
@@ -468,7 +468,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Save and load the file.
       Expected: The file is saved and loaded correctly.
     */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/single-atom-properties.ket',
       page,
@@ -496,7 +496,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Save and load the file.
       Expected: The file is saved and loaded correctly.
     */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/single-atom-properties.ket',
       page,
@@ -526,7 +526,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Look at the SVG preview.
       Expected: The SVG preview is correct.
     */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/single-atom-properties.ket',
       page,
@@ -550,24 +550,24 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Check that atom properties are displayed correctly.
       Expected: Atom properties are displayed correctly.
     */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/single-atom-properties.ket',
       page,
     );
-    await TopRightToolbar(page).setZoomInputValue('50');
+    await CommonTopRightToolbar(page).setZoomInputValue('50');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopRightToolbar(page).setZoomInputValue('120');
+    await CommonTopRightToolbar(page).setZoomInputValue('120');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopRightToolbar(page).setZoomInputValue('150');
+    await CommonTopRightToolbar(page).setZoomInputValue('150');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -587,14 +587,14 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Switch back to Micro mode.
       Expected: Atom properties are preserved.
     */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/single-atom-properties.ket',
       page,
     );
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 
@@ -613,7 +613,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       6. Undo and redo actions.
       Expected: Undo and redo actions correctly preserve changes to single atom properties.
     */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/single-atom-properties.ket',
       page,
@@ -625,7 +625,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await takeEditorScreenshot(page);
     await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
@@ -646,7 +646,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       4. Copy and paste the structure.
       Expected: Atom properties are preserved.
     */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/single-atom-properties.ket',
       page,
@@ -654,7 +654,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await copyAndPaste(page);
     await clickOnCanvas(page, 400, 400);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
     await clickOnCanvas(page, 800, 100);
@@ -675,7 +675,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Open the file in Micro mode.
       Expected: The file is saved and loaded correctly.
     */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/single-atom-properties.ket',
       page,
@@ -685,7 +685,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/single-atom-properties-saved-in-macro-expected.ket',
       FileType.KET,
     );
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/single-atom-properties-saved-in-macro-expected.ket',
       page,
@@ -705,7 +705,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Open the file in Micro mode.
       Expected: The file is saved and loaded correctly.
     */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/single-atom-properties.ket',
       page,
@@ -716,7 +716,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       FileType.MOL,
       'v3000',
     );
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V3000/single-atom-properties-saved-in-macro-expected.mol',
       page,
@@ -739,7 +739,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/benzene-ring-with-two-atoms.ket',
       page,
     );
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -759,14 +759,14 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Switch to Micro mode
       4. Switch to Macromolecules mode
     */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
     await selectSnakeLayoutModeTool(page);
     await takePageScreenshot(page);
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -784,7 +784,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       1. Switch to Macromolecules mode
       2. Verify that Sequence mode is opened
     */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -802,7 +802,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Check the default tab in the library
       3. Default tab should be RNA
       */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -820,7 +820,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Change typing type to PEP
       3. Changing typing type to PEP switches the library tab to Peptide
       */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -840,7 +840,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Change typing type to RNA
       4. Changing typing type to RNA switches the library tab to RNA
       */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -860,7 +860,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       2. Change typing type to DNA
       3. Changing typing type to DNA switches the library tab to RNA
       */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -880,7 +880,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Change typing type to RNA
       4. Changing typing type from RNA to DNA and viceversa does not affect the library tab
       */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -902,7 +902,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       3. Press Ctrl+Alt+P for Peptides
       4. Press Ctrl+Alt+R for RNA
       */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -934,7 +934,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       5. Change typing type to PEP
       6. Start typing type PEP
       */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -962,7 +962,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       6. Start typing type PEP
       7. Switch to Flex mode and back to Sequence mode
       */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -993,14 +993,14 @@ test.describe('Macro-Micro-Switcher2', () => {
       4. Switch to Micro mode
       5. Switch to Macromolecules mode
     */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
     await selectFlexLayoutModeTool(page);
     await selectSequenceLayoutModeTool(page);
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -1023,7 +1023,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/benzene-ring-with-two-atoms.ket',
       page,
     );
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });

@@ -26,7 +26,7 @@ import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 // function removeNotComparableData(file: string) {
 //   return file.replaceAll('\r', '');
@@ -34,7 +34,7 @@ import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.describe('Import-Saving .fasta Files', () => {

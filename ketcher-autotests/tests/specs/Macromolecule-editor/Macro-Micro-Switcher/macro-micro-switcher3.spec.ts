@@ -23,7 +23,7 @@ import {
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
@@ -69,7 +69,7 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
@@ -97,7 +97,7 @@ interface IMonomer {
 // Unable to stabilize because of Undo/redo shift object on the canvas
 // test.describe('Move collapsed monomer on Micro and Undo: ', () => {
 //   test.beforeEach(async () => {
-//     await TopRightToolbar(page).turnOnMicromoleculesEditor();
+//     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 //   });
 
 //   const movableCollapsedMonomers: IMonomer[] = [
@@ -268,7 +268,7 @@ interface IMonomer {
 //        */
 //       if (movableCollapsedMonomer.pageReloadNeeded) {
 //         await pageReload(page);
-//         await TopRightToolbar(page).turnOnMicromoleculesEditor();
+//         await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 //       }
 
 //       await openFileAndAddToCanvasAsNewProject(
@@ -346,7 +346,7 @@ const movableExpandedMonomers: IMonomer[] = [
 
 test.describe('Move in expanded state on Micro canvas: ', () => {
   test.beforeEach(async () => {
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   });
 
   for (const movableExpandedMonomer of movableExpandedMonomers) {
@@ -386,7 +386,7 @@ test.describe('Move in expanded state on Micro canvas: ', () => {
 
 test.describe('Move expanded monomer on Micro and Undo: ', () => {
   test.beforeEach(async () => {
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   });
 
   for (const movableExpandedMonomer of movableExpandedMonomers) {
@@ -448,7 +448,7 @@ test(`Verify that the system supports undo/redo functionality for expanding and 
    *       4. Take screenshot to witness final position
    *       5. Press Redo button
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
   await expandMonomer(page, expandableMonomer.monomerLocatorText);
   await takeEditorScreenshot(page);
@@ -470,12 +470,12 @@ test(`Verify switching back from micro mode to macro mode with expanded and coll
    *       4. Switch to Micro mode
    *       6. Take screenshot to witness final position
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
   await expandMonomer(page, expandableMonomer.monomerLocatorText);
   await takeEditorScreenshot(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page);
 
   test.fixme(
@@ -503,7 +503,7 @@ test(`Verify that the system supports copy/paste functionality for collapsed mon
    *       4. Paste it to the canvas
    *       5. Take screenshot to witness final position
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(copyableMonomer.KETFile, page);
   await takeEditorScreenshot(page);
@@ -532,7 +532,7 @@ test(`Verify that the system supports cut/paste functionality for collapsed mono
    *       4. Paste it to the canvas
    *       5. Take screenshot to witness final position
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(cutableMonomer.KETFile, page);
   await takeEditorScreenshot(page);
@@ -557,7 +557,7 @@ test(`Verify that the system supports copy/paste functionality for expanded mono
    *       6. Paste it to the canvas
    *       7. Take screenshot to witness final position
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(copyableMonomer.KETFile, page);
   await expandMonomer(page, copyableMonomer.monomerLocatorText);
@@ -589,7 +589,7 @@ test(`Verify that the system supports cut/paste functionality for expanded monom
    *       6. Paste it to the canvas
    *       7. Take screenshot to witness final position
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(cutableMonomer.KETFile, page);
   await expandMonomer(page, cutableMonomer.monomerLocatorText);
@@ -617,13 +617,13 @@ test(`Verify that "Expand monomer" does not break cyclic structures when the rin
    *       3. Expand all monomers from cycle
    *       4. Take screenshot to witness final position
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All type of monomers cycled.ket',
     page,
   );
-  await TopRightToolbar(page).setZoomInputValue('50');
+  await CommonTopRightToolbar(page).setZoomInputValue('50');
   await resetCurrentTool(page);
   await takeEditorScreenshot(page);
   await expandMonomer(page, 'A');
@@ -651,13 +651,13 @@ test(`Verify that expanding multiple monomers works in a left-to-right order wit
    *       3. Expand all monomers from  chain (from right to left)
    *       4. Take screenshot to witness final position
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',
     page,
   );
-  await TopRightToolbar(page).setZoomInputValue('50');
+  await CommonTopRightToolbar(page).setZoomInputValue('50');
   await resetCurrentTool(page);
   await takeEditorScreenshot(page);
   await expandMonomer(page, '12ddR');
@@ -685,13 +685,13 @@ test(`Verify that expanding multiple monomers works in a top-to-bottom order wit
    *       3. Expand all monomers from chain (from top to bottom)
    *       4. Take screenshot to witness final position
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All type of monomers in vertical chain.ket',
     page,
   );
-  await TopRightToolbar(page).setZoomInputValue('40');
+  await CommonTopRightToolbar(page).setZoomInputValue('40');
   await resetCurrentTool(page);
   await takeEditorScreenshot(page);
   await expandMonomer(page, 'oC64m5');
@@ -719,7 +719,7 @@ test(`Verify that expanding monomers with big mircomolecule ring structures in t
    *       3. Expand all monomers from chain (from right to left)
    *       4. Take screenshot to witness final position
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain and large micromolecule in the middle.ket',
@@ -769,7 +769,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
    *           3.4 Press Cancel in appeared Abbriviation dialog
    *           3.5 Undo changes to collapse momomer back
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',
@@ -834,7 +834,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 
 // test.describe('Trying to change: ', () => {
 //   test.beforeEach(async () => {
-//     await TopRightToolbar(page).turnOnMicromoleculesEditor();
+//     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 //   });
 
 //   for (const tryToChangeMonomer of tryToChangeMonomers) {
@@ -904,7 +904,7 @@ test(
      *           3.8 Take screenshot to witness monomer got collapsed
      */
     test.slow();
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
     await openFileAndAddToCanvasAsNewProject(
       'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',

@@ -26,7 +26,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -85,13 +85,13 @@ test.describe('Action on simples objects', () => {
 
   test('Simple Object - Action with zoom tool', async ({ page }) => {
     // Test case: EPMLSOPKET-1980
-    await TopRightToolbar(page).setZoomInputValue('20');
+    await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await setupEllipse(page);
-    await TopRightToolbar(page).setZoomInputValue('200');
+    await CommonTopRightToolbar(page).setZoomInputValue('200');
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
-      await TopRightToolbar(page).setZoomInputValue('100');
+      await CommonTopRightToolbar(page).setZoomInputValue('100');
     });
     await takeEditorScreenshot(page);
   });

@@ -24,7 +24,7 @@ import {
 } from '@utils/macromolecules/sequence';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -33,7 +33,7 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await selectSequenceLayoutModeTool(page);
 });
 

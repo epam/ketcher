@@ -59,7 +59,7 @@ import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 declare global {
   interface Window {
@@ -74,11 +74,11 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.afterEach(async () => {
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await TopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
 });
@@ -98,11 +98,11 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
    * 3. Try copy/paste and cut/paste actions
    * 4. Take a screenshot to validate the it works as expected (paste action should be successful)
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await selectRingButton(RingButton.Benzene, page);
   await clickInTheMiddleOfTheScreen(page);
 
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await selectFlexLayoutModeTool(page);
 
   await clickInTheMiddleOfTheScreen(page);
@@ -127,7 +127,7 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
    * 4. Click on another atom such as "Br" and click on the functional group
    * 5. Take a screenshot to validate the exception is not thrown and replacement is successful
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   const atomToolbar = rightToolbar(page);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let changeEventSubscriber: any;
@@ -263,10 +263,10 @@ test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for at
    * 2. Switch to Macro mode
    * 3. Take a screenshot to validate hydrogens should be shown
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await pasteFromClipboardAndAddToCanvas(page, '[LiH].C');
   await clickInTheMiddleOfTheScreen(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -342,14 +342,14 @@ test(`Case 10: System reset micromolecule canvas settings to default if switched
    * 6. Open Settings, Bond section again
    * 7. Check if Bond length remains the same (80)
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openSettings(page);
   await openBondsSettingsSection(page);
   await setBondLengthValue(page, '80');
   await pressButton(page, 'Apply');
 
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openSettings(page);
   await openBondsSettingsSection(page);
   const bondLengthValue = await getBondLengthValue(page);
@@ -399,7 +399,7 @@ test(`Case 13: Export to ket (and getKET function) change incrementally internal
    * 3. Save the file as .ket
    * 4. Save the file as .ket again to validate the internal IDs remain the same
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvas(
     'KET/Bugs/Export to ket (and getKET function) change incrementally internal IDs every call.ket',
@@ -828,7 +828,7 @@ test(`Case 32: S-group in the middle of a chain does not expand when opening an 
    * 3. Try to expand Gly_2, meS_3, Ala_4 S-groups
    * 3. Take screenshot to validate S-groups got expanded to display its full structure within the chain
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     'SDF/Bugs/S-group in the middle of a chain does not expand when opening an SDF V3000 file.sdf',
@@ -857,7 +857,7 @@ test(`Case 33: Stereo flags are displayed despite enabling 'Ignore chiral flag' 
    * 4. Load the MOL V2000 file
    * 5. Take screenshot to validate the stereo flags are displayed
    */
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     "Molfiles-V2000/Bugs/Stereo flags are displayed despite enabling 'Ignore chiral flag' in MOL V2000 files.mol",

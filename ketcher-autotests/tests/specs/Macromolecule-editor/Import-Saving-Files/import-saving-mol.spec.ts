@@ -33,7 +33,7 @@ import {
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { pageReload } from '@utils/common/helpers';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -41,7 +41,7 @@ test.beforeAll(async ({ browser }) => {
   const context = await browser.newContext();
   page = await context.newPage();
   await waitForPageInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor({
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
     enableFlexMode: false,
     goToPeptides: false,
   });
@@ -51,7 +51,7 @@ test.afterEach(async ({ context: _ }, testInfo) => {
   await TopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
   await processResetToDefaultState(testInfo, page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -191,7 +191,7 @@ test.describe('Import-Saving .mol Files', () => {
     expect(molFile).toEqual(molFileExpected);
 
     const numberOfPressZoomOut = 6;
-    await TopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -231,7 +231,7 @@ test.describe('Import-Saving .mol Files', () => {
   */
   for (const monomer of monomersToDelete) {
     test(`Open file from .mol V3000 and Delete ${monomer.text} monomer`, async () => {
-      await TopRightToolbar(page).turnOnMacromoleculesEditor();
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await selectFlexLayoutModeTool(page);
       await openFileAndAddToCanvasMacro(
         'Molfiles-V3000/monomers-connected-with-bonds.mol',
@@ -286,7 +286,7 @@ test.describe('Import-Saving .mol Files', () => {
       await page.close();
       page = await context.newPage();
       await waitForPageInit(page);
-      await TopRightToolbar(page).turnOnMacromoleculesEditor();
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     },
   );
 
@@ -363,7 +363,7 @@ test.describe('Import-Saving .mol Files', () => {
     Test case: Import/Saving files
     Description: .mol file imported in micro mode
     */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvas(
       'Molfiles-V3000/monomers-saved-in-macro-mode.mol',
       page,
@@ -603,7 +603,7 @@ test.describe('Import modified .mol files from external editor', () => {
   /*
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
   We have opened feature request https://github.com/epam/ketcher/issues/4532
   After closing the ticket, you need to delete two files from temporaryFailedTestsFileNames
@@ -644,7 +644,9 @@ test.describe('Import modified .mol files from external editor', () => {
         await selectFlexLayoutModeTool(page);
         await openFileAndAddToCanvasMacro(`Molfiles-V3000/${fileName}`, page);
         const numberOfPressZoomOut = 4;
-        await TopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
+        await CommonTopRightToolbar(page).selectZoomOutTool(
+          numberOfPressZoomOut,
+        );
         await clickInTheMiddleOfTheScreen(page);
       });
     }
@@ -661,7 +663,7 @@ test.describe('Base monomers on the canvas, their connection points and preview 
   /*
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
   */
 
@@ -716,7 +718,7 @@ test.describe('CHEM monomers on the canvas, their connection points and preview 
   /*
     test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
   */
   const fileNames = [
@@ -777,7 +779,7 @@ test.describe('Peptide monomers on the canvas, their connection points and previ
   /*
     test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
   */
   const fileNames = [
@@ -840,7 +842,7 @@ test.describe('Phosphate monomers on the canvas, their connection points and pre
   /*
     test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
   */
 
@@ -905,7 +907,7 @@ test.describe('Sugar monomers on the canvas, their connection points and preview
   /*
     test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
   */
   const fileNames = [

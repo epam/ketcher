@@ -2,7 +2,7 @@
 import { Chem } from '@constants/monomers/Chem';
 import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import {
   addSingleMonomerToCanvas,
   BondType,
@@ -38,7 +38,7 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await addSuperatomAttachmentPoint(page, 'C', 3);
     await takeEditorScreenshot(page);
 
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await goToPeptidesTab(page);
     const firstAlanine = await addSingleMonomerToCanvas(
       page,
@@ -75,7 +75,7 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await bondTwoMonomersPointToPoint(page, molecule, thirdAlanine, 'R4', 'R2');
 
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 
@@ -93,9 +93,9 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await clickOnAtom(page, 'C', 10, 'right');
     await page.getByText('Delete').click();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 
@@ -111,9 +111,9 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await clickOnBond(page, BondType.SINGLE, 18, 'right');
     await page.getByText('Delete').click();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 });

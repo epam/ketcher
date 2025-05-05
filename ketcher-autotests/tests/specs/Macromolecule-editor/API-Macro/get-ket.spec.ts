@@ -14,12 +14,12 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('getKet', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('with two monomers bonded', async ({ page }) => {

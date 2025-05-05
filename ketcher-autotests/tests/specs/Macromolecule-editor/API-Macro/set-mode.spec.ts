@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import {
   waitForPageInit,
   openFileAndAddToCanvasMacro,
@@ -14,7 +14,7 @@ import {
 test.describe('setMode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Should set "sequence" mode', async ({ page }) => {

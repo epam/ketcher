@@ -28,7 +28,7 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 test.setTimeout(40000);
@@ -38,7 +38,7 @@ test.beforeAll(async ({ browser }) => {
   const context = await browser.newContext();
   page = await context.newPage();
   await waitForPageInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.afterEach(async () => {
@@ -659,7 +659,7 @@ expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
      *          5. Collapce target monomer back
      *          6. Take screenshot to witness hydrogen bonds got shown
      */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(monomer.fileName, page);
     await takeEditorScreenshot(page);
     await expandMonomer(page, monomer.alias);
@@ -667,7 +667,7 @@ expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
     await collapseMonomer(page);
     await takeEditorScreenshot(page);
 
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     // Test should be skipped if related bug exists
     test.fixme(
       monomer.shouldFail === true,

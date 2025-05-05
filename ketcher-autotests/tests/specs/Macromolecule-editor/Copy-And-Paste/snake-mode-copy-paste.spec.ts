@@ -13,12 +13,12 @@ import {
 } from '@utils';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Snake mode copy&paste', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 250;
 

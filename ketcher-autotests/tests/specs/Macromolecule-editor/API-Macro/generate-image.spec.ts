@@ -1,12 +1,12 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { waitForPageInit } from '@utils';
 
 test.describe('getKet', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Check that generateImage method works with macromolecules', async ({

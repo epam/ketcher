@@ -13,13 +13,13 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Clear Canvas Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await goToPeptidesTab(page);
   });
 
@@ -204,10 +204,10 @@ test.describe('Clear Canvas Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 });

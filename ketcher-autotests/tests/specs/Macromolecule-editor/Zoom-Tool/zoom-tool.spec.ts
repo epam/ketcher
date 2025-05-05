@@ -27,7 +27,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -46,7 +46,7 @@ test.beforeAll(async ({ browser }) => {
   // Reminder: do not pass page as async paramenter to test
   page = await sharedContext.newPage();
   await waitForPageInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.afterEach(async () => {
@@ -84,18 +84,18 @@ test.describe('Zoom Tool', () => {
 
   test('Zoom In & Out monomer with menu buttons', async () => {
     const zoomInCount = 4;
-    await TopRightToolbar(page).selectZoomInTool(zoomInCount);
+    await CommonTopRightToolbar(page).selectZoomInTool(zoomInCount);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await TopRightToolbar(page).resetZoom();
+    await CommonTopRightToolbar(page).resetZoom();
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
     const zoomOutCount = 2;
-    await TopRightToolbar(page).selectZoomOutTool(zoomOutCount);
+    await CommonTopRightToolbar(page).selectZoomOutTool(zoomOutCount);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -116,21 +116,21 @@ test.describe('Zoom Tool', () => {
 
   test('Zoom In & Out attachment points with menu buttons', async () => {
     const zoomInCount = 2;
-    await TopRightToolbar(page).selectZoomInTool(zoomInCount);
+    await CommonTopRightToolbar(page).selectZoomInTool(zoomInCount);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await peptide.hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
 
-    await TopRightToolbar(page).resetZoom();
+    await CommonTopRightToolbar(page).resetZoom();
     await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
 
     const zoomOutCount = 2;
-    await TopRightToolbar(page).selectZoomOutTool(zoomOutCount);
+    await CommonTopRightToolbar(page).selectZoomOutTool(zoomOutCount);
     await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
     await waitForMonomerPreview(page);
@@ -159,7 +159,7 @@ test.describe('Zoom Tool', () => {
   test('Zoom In & Out bond with menu buttons', async () => {
     const bondCoordinates = { x: 400, y: 400 };
     const zoomInCount = 2;
-    await TopRightToolbar(page).selectZoomInTool(zoomInCount);
+    await CommonTopRightToolbar(page).selectZoomInTool(zoomInCount);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await peptide.hover();
@@ -167,7 +167,7 @@ test.describe('Zoom Tool', () => {
     await page.mouse.move(bondCoordinates.x, bondCoordinates.y);
     await takeEditorScreenshot(page);
     await page.mouse.up();
-    await TopRightToolbar(page).resetZoom();
+    await CommonTopRightToolbar(page).resetZoom();
     await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
     await page.mouse.down();
@@ -175,7 +175,7 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
     await page.mouse.up();
     const zoomOutCount = 2;
-    await TopRightToolbar(page).selectZoomOutTool(zoomOutCount);
+    await CommonTopRightToolbar(page).selectZoomOutTool(zoomOutCount);
     await clickInTheMiddleOfTheScreen(page);
     await peptide.hover();
     await page.mouse.down();
@@ -212,7 +212,7 @@ test.describe('Zoom Tool', () => {
     const selectionStart = { x: 200, y: 200 };
     const selectionEnd = { x: 400, y: 400 };
     const zoomInCount = 2;
-    await TopRightToolbar(page).selectZoomInTool(zoomInCount);
+    await CommonTopRightToolbar(page).selectZoomInTool(zoomInCount);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -226,7 +226,7 @@ test.describe('Zoom Tool', () => {
     );
     await takeEditorScreenshot(page);
 
-    await TopRightToolbar(page).resetZoom();
+    await CommonTopRightToolbar(page).resetZoom();
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleArea(
       page,
@@ -238,7 +238,7 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     const zoomOutCount = 2;
-    await TopRightToolbar(page).selectZoomOutTool(zoomOutCount);
+    await CommonTopRightToolbar(page).selectZoomOutTool(zoomOutCount);
     await clickInTheMiddleOfTheScreen(page);
     await selectRectangleArea(
       page,
@@ -318,11 +318,11 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     const numberOfZooms = 5;
-    await TopRightToolbar(page).selectZoomInTool(numberOfZooms);
+    await CommonTopRightToolbar(page).selectZoomInTool(numberOfZooms);
     await takeEditorScreenshot(page);
 
-    await TopRightToolbar(page).resetZoom();
-    await TopRightToolbar(page).selectZoomOutTool(numberOfZooms);
+    await CommonTopRightToolbar(page).resetZoom();
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfZooms);
     await takeEditorScreenshot(page);
   });
 
@@ -351,11 +351,11 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     const numberOfZooms = 5;
-    await TopRightToolbar(page).selectZoomInTool(numberOfZooms);
+    await CommonTopRightToolbar(page).selectZoomInTool(numberOfZooms);
     await takeEditorScreenshot(page);
 
-    await TopRightToolbar(page).resetZoom();
-    await TopRightToolbar(page).selectZoomOutTool(numberOfZooms);
+    await CommonTopRightToolbar(page).resetZoom();
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfZooms);
     await takeEditorScreenshot(page);
   });
 
@@ -384,11 +384,11 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     const numberOfZooms = 5;
-    await TopRightToolbar(page).selectZoomInTool(numberOfZooms);
+    await CommonTopRightToolbar(page).selectZoomInTool(numberOfZooms);
     await takeEditorScreenshot(page);
 
-    await TopRightToolbar(page).resetZoom();
-    await TopRightToolbar(page).selectZoomOutTool(numberOfZooms);
+    await CommonTopRightToolbar(page).resetZoom();
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfZooms);
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Escape');
@@ -420,11 +420,11 @@ test.describe('Zoom Tool', () => {
     await takeEditorScreenshot(page);
 
     const numberOfZooms = 5;
-    await TopRightToolbar(page).selectZoomInTool(numberOfZooms);
+    await CommonTopRightToolbar(page).selectZoomInTool(numberOfZooms);
     await takeEditorScreenshot(page);
 
-    await TopRightToolbar(page).resetZoom();
-    await TopRightToolbar(page).selectZoomOutTool(numberOfZooms);
+    await CommonTopRightToolbar(page).resetZoom();
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfZooms);
     await takeEditorScreenshot(page);
 
     await page.keyboard.press('Escape');

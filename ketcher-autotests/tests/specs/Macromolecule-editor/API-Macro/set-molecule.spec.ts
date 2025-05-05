@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import {
   waitForPageInit,
   setMolecule,
@@ -12,7 +12,7 @@ import {
 test.describe('setMolecule', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('mol with two monomers bonded', async ({ page }) => {
@@ -24,7 +24,7 @@ test.describe('setMolecule', () => {
       async () => await setMolecule(page, fileContents),
     );
     const numberOfPressZoomOut = 6;
-    await TopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -38,7 +38,7 @@ test.describe('setMolecule', () => {
       async () => await setMolecule(page, fileContents),
     );
     const numberOfPressZoomOut = 6;
-    await TopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
+    await CommonTopRightToolbar(page).selectZoomOutTool(numberOfPressZoomOut);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

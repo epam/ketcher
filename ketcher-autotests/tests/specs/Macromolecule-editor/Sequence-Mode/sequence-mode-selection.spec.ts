@@ -24,12 +24,12 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 250;
 
@@ -71,7 +71,7 @@ test.describe('Sequence mode selection for view mode', () => {
 test.describe('Sequence mode selection for edit mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 250;
 
@@ -137,7 +137,7 @@ test.describe('Sequence mode selection for edit mode', () => {
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   const testData = [
@@ -245,9 +245,9 @@ test.describe('Sequence mode selection for view mode', () => {
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await TopRightToolbar(page).selectZoomOutTool(8);
+    await CommonTopRightToolbar(page).selectZoomOutTool(8);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).selectZoomInTool(5);
+    await CommonTopRightToolbar(page).selectZoomInTool(5);
     await takeEditorScreenshot(page);
   });
 

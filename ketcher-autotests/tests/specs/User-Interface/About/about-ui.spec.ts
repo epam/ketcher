@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { AboutDialog } from '@tests/pages/molecules/canvas/AboutDialog';
-import { topRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { takeEditorScreenshot, clickByLink, waitForPageInit } from '@utils';
 
 test.describe('Open Ketcher', () => {
@@ -16,9 +16,8 @@ test.describe('Open Ketcher', () => {
     const buildVersion = AboutDialog(page).buildVersion;
     const buildTime = AboutDialog(page).buildTime;
     const buildIndigoVersion = AboutDialog(page).buildIndigoVersion;
-    const TopRightToolbar = topRightToolbar(page);
 
-    await TopRightToolbar.selectAboutButton();
+    await TopRightToolbar(page).About();
     await takeEditorScreenshot(page, {
       mask: [buildVersion, buildTime, buildIndigoVersion],
     });
@@ -29,9 +28,7 @@ test.describe('Open Ketcher', () => {
     Test case: EPMLSOPKET-12193
     Description: 'About' floating window links check
     */
-    const TopRightToolbar = topRightToolbar(page);
-
-    await TopRightToolbar.selectAboutButton();
+    await TopRightToolbar(page).About();
 
     await clickByLink(
       page,
@@ -54,9 +51,7 @@ test.describe('Open Ketcher', () => {
   test('Close About floating window', async ({ page }) => {
     /* Test case: EPMLSOPKET-12192
     Description: Close 'About' window */
-    const TopRightToolbar = topRightToolbar(page);
-
-    await TopRightToolbar.selectAboutButton();
+    await TopRightToolbar(page).About();
     await AboutDialog(page).closeByOk();
   });
 });

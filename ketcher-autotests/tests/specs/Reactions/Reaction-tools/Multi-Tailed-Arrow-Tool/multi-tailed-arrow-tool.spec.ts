@@ -53,7 +53,7 @@ import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -502,13 +502,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).setZoomInputValue('20');
+    await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).setZoomInputValue('400');
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).setZoomInputValue('100');
+    await CommonTopRightToolbar(page).setZoomInputValue('100');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -561,13 +561,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).selectZoomOutTool(8);
+    await CommonTopRightToolbar(page).selectZoomOutTool(8);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).selectZoomInTool(19);
+    await CommonTopRightToolbar(page).selectZoomInTool(19);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).resetZoom();
+    await CommonTopRightToolbar(page).resetZoom();
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -3604,7 +3604,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.svg',
       page,
     );
-    await TopRightToolbar(page).setZoomInputValue('20');
+    await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await TopLeftToolbar(page).clearCanvas();
@@ -3612,7 +3612,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'Images/multi-tailed-arrows-15-with-images-png-svg-80-with-structures-50.png',
       page,
     );
-    await TopRightToolbar(page).setZoomInputValue('20');
+    await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });

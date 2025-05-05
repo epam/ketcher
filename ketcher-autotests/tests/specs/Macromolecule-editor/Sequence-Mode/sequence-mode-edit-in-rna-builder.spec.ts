@@ -30,12 +30,12 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Sequence mode edit in RNA Builder', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await openFileAndAddToCanvasMacro('KET/nine-connected-rnas.ket', page);
     await selectSequenceLayoutModeTool(page);
@@ -178,7 +178,7 @@ test.describe('Sequence mode edit in RNA Builder', () => {
 test.describe('Modify nucleotides from sequence in RNA builder', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectSequenceLayoutModeTool(page);
     await moveMouseAway(page);
   });

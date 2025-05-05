@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import {
   waitForPageInit,
   takeEditorScreenshot,
@@ -12,7 +12,7 @@ import {
 test.describe('setZoom', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Should zoom drawn structures', async ({ page }) => {
@@ -37,7 +37,7 @@ test.describe('setZoom', () => {
       await takeEditorScreenshot(page);
 
       if (adjustZoom) {
-        await TopRightToolbar(page).selectZoomInTool(3);
+        await CommonTopRightToolbar(page).selectZoomInTool(3);
         await clickInTheMiddleOfTheScreen(page);
         await takeEditorScreenshot(page);
       }

@@ -46,7 +46,7 @@ import { Chem } from '@constants/monomers/Chem';
 import { Nucleotides } from '@constants/monomers/Nucleotides';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -55,7 +55,7 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await selectSnakeLayoutModeTool(page);
 });
 
@@ -3497,10 +3497,10 @@ test(`16. Ensure that switching between macro and micro modes does not break the
 
   await createAntisenseStrandOption.click();
 
-  await TopRightToolbar(page).turnOnMicromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 

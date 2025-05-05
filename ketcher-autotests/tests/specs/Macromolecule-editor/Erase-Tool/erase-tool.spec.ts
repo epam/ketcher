@@ -36,13 +36,13 @@ import {
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Erase Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await goToPeptidesTab(page);
   });
 
@@ -330,11 +330,11 @@ test.describe('Erase Tool', () => {
       page,
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await TopRightToolbar(page).selectZoomInTool(5);
+    await CommonTopRightToolbar(page).selectZoomInTool(5);
     await clickInTheMiddleOfTheScreen(page);
     await getMonomerLocator(page, Peptides.Bal).click();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).selectZoomOutTool(8);
+    await CommonTopRightToolbar(page).selectZoomOutTool(8);
     await clickInTheMiddleOfTheScreen(page);
     await getMonomerLocator(page, Peptides.D_2Nal).click();
     await takeEditorScreenshot(page);

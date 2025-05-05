@@ -63,7 +63,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -177,7 +177,7 @@ test.describe('RNA Library', () => {
     page = await context.newPage();
 
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await configureInitialState(page);
   });
 
@@ -198,8 +198,8 @@ test.describe('RNA Library', () => {
     Description: Application does not crash. 
     Test working incorrect because we have bug: https://github.com/epam/ketcher/issues/3498
     */
-      await TopRightToolbar(page).turnOnMicromoleculesEditor();
-      await TopRightToolbar(page).turnOnMacromoleculesEditor();
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
       await configureInitialState(page);
     },
@@ -1001,7 +1001,7 @@ test.describe('RNA Library', () => {
       'KET/monomers-connected-with-bonds.ket',
       page,
     );
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takePageScreenshot(page);
   });
 
@@ -1081,11 +1081,11 @@ test.describe('RNA Library', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
 
     // reset to default state
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await configureInitialState(page);
   });
 

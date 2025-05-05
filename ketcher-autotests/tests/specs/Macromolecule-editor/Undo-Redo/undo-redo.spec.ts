@@ -39,7 +39,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Undo Redo', () => {
@@ -47,7 +47,7 @@ test.describe('Undo Redo', () => {
   let peptide2: Locator;
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await goToPeptidesTab(page);
     peptide1 = await addSingleMonomerToCanvas(page, Peptides.Tza, 300, 300, 0);
@@ -150,7 +150,7 @@ test.describe('Undo Redo', () => {
 test.describe('Undo-Redo tests', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Deleting entities(Peptides, RNA, CHEM, Bonds) and then checking Undo and Redo actions', async ({

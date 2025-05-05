@@ -9,7 +9,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { Monomer } from '@utils/types';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 interface IAmbiguousMonomerName {
   testDescription: string;
@@ -24,7 +24,7 @@ interface IAmbiguousMonomerName {
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 const AmbiguousMonomers: IAmbiguousMonomerName[] = [

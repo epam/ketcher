@@ -71,7 +71,7 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -90,7 +90,7 @@ test.beforeAll(async ({ browser }) => {
   // Reminder: do not pass page as async paramenter to test
   page = await sharedContext.newPage();
   await waitForPageInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await goToPeptidesTab(page);
 });
 
@@ -1068,7 +1068,7 @@ test.describe('Import-Saving .idt Files', () => {
     */
     markResetToDefaultState('macromoleculesEditor');
 
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/sequence-with-unresolved-idt-monomers-micro-mode-expected.ket',
       page,
@@ -1088,7 +1088,7 @@ test.describe('Import-Saving .idt Files', () => {
       MacroFileType.IDT,
       `/52MOErA/*/i2MOErC/*/i2MOErG/*/i2MOErC/*/i2MOErG/*/iMe-dC/*G*A*/iMe-dC/*T*A*T*A*/iMe-dC/`,
     );
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 

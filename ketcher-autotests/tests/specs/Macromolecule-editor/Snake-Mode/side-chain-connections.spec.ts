@@ -27,7 +27,7 @@ import {
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -40,7 +40,7 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
@@ -1071,7 +1071,7 @@ test.describe('Side chain connections', () => {
     );
 
     await waitForRender(page, async () => {
-      await TopRightToolbar(page).turnOnMicromoleculesEditor();
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     });
 
     await takeEditorScreenshot(page);
@@ -1083,7 +1083,7 @@ test.describe('Side chain connections', () => {
       Case 18: Check that display of side-chain connections does not visually change when switching between Micro and Macro modes
     */
     await waitForRender(page, async () => {
-      await TopRightToolbar(page).turnOnMacromoleculesEditor();
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     });
 
     await openFileAndAddToCanvasMacro(
@@ -1092,11 +1092,11 @@ test.describe('Side chain connections', () => {
     );
 
     await waitForRender(page, async () => {
-      await TopRightToolbar(page).turnOnMicromoleculesEditor();
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     });
 
     await waitForRender(page, async () => {
-      await TopRightToolbar(page).turnOnMacromoleculesEditor();
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     });
 
     await selectFlexLayoutModeTool(page);

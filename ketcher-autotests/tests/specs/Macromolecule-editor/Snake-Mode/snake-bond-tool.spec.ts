@@ -30,7 +30,7 @@ import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 /* eslint-disable no-magic-numbers */
 
 async function createBondedMonomers(page: Page) {
@@ -77,7 +77,7 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
@@ -967,8 +967,8 @@ test.describe('Snake Bond Tool', () => {
     });
 
     // Workaround against fake scroll bars that sometimes shown even if they are not intended to
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     // ---
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(`KET/sequence-rna-4000.ket`, page);
@@ -1010,8 +1010,8 @@ test.describe('Snake Bond Tool', () => {
     */
 
     // Workaround against fake scroll bars that sometimes shown even if they are not intended to
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     // ---
     await selectFlexLayoutModeTool(page);
     page.on('console', (msg) => {

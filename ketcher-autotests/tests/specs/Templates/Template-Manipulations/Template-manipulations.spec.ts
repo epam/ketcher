@@ -54,7 +54,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -350,8 +350,8 @@ test.describe('Template Manupulations', () => {
     Click the Zoom In button several times.
     Click the Zoom Out button several times.
     */
-    const zoomSelector = TopRightToolbar(page).zoomSelector;
-    await TopRightToolbar(page).selectZoomOutTool();
+    const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
+    await CommonTopRightToolbar(page).selectZoomOutTool();
     await clickInTheMiddleOfTheScreen(page);
     await drawBenzeneRing(page);
     await page.getByTestId('reaction-plus').click();

@@ -11,7 +11,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Open/save file tests: ', () => {
   let page: Page;
@@ -36,7 +36,7 @@ test.describe('Open/save file tests: ', () => {
     await page.goto('', { waitUntil: 'domcontentloaded' });
     await waitForKetcherInit(page);
     await waitForIndigoToLoad(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test.afterEach(async () => {

@@ -71,7 +71,7 @@ import {
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -124,7 +124,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     const context = await browser.newContext();
     page = await context.newPage();
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -401,7 +401,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Change C1 of a molecule to O using the keyboard and then try to change C2 to N very
      * quickly afterward
      */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -424,7 +424,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Press Undo
      * 4. Take a screenshot
      */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
       page,
@@ -446,7 +446,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Go to the Library - Peptide tab
      * 3. Click on A peptide
      */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -585,7 +585,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Press Aromatize | Dearomatize | Layout | Clean Up | Calculate CIP | Add/Remove explicit hydrogens button
      * 4. Take a screenshot
      */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
       page,
@@ -610,7 +610,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Switch to Sequence mode
      * 4. Take a screenshot
      */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -636,7 +636,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Take a screenshot
      */
     await pageReload(page);
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
       page,
@@ -656,7 +656,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Click on the center of double bond (e.g. between two black lines)
      * 4. Take a screenshot
      */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -684,7 +684,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Bugs/monomers-cycled.ket',
       page,
     );
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     await page.getByText('1Nal').click({ button: 'right' });
     await page.getByText('Expand monomers').click();
@@ -707,7 +707,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Take a screenshot
      */
     await pageReload(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -715,9 +715,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Bugs/ketcher - 2025-01-06T161755.116.ket',
       page,
     );
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -735,12 +735,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Switch to Macro mode
      * 4. Take a screenshot
      */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/ketcher - 2025-01-06T160012.582.ket',
       page,
     );
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -759,7 +759,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Press Save button
      */
     test.slow();
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -787,7 +787,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Load RXN V3000 file with Super G and Super T monomers
      * 3. Take a screenshot
      */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/super-g-and-super-t.ket',
       page,
@@ -816,7 +816,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Load RXN V3000 file with Super G and Super T monomers
      * 3. Take a screenshot
      */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -842,7 +842,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Load from HELM using paste from clipboard
      * 3. Take a screenshot
      */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -923,7 +923,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      */
     await goToRNATab(page);
     await selectMonomer(page, Presets.MOE_A_P);
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await verifyFileExport(
       page,
       'Molfiles-V3000/Bugs/moe-a-p-expected.mol',
@@ -948,7 +948,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Expand structure
      * 4. Take a screenshot
      */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/modified-phosphates.ket',
       page,
@@ -972,12 +972,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Draw a cyclohexane
      * 6. Compare bond lengths
      */
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
     await selectMonomer(page, Bases.A);
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     await page.getByText('A', { exact: true }).click({ button: 'right' });
     await page.getByText('Expand monomer').click();

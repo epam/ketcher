@@ -34,7 +34,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 async function addTail(page: Page, x: number, y: number) {
   await page.mouse.click(x, y, { button: 'right' });
@@ -815,13 +815,13 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await TopRightToolbar(page).setZoomInputValue('20');
+      await CommonTopRightToolbar(page).setZoomInputValue('20');
       await resetCurrentTool(page);
       await takeEditorScreenshot(page);
-      await TopRightToolbar(page).setZoomInputValue('400');
+      await CommonTopRightToolbar(page).setZoomInputValue('400');
       await resetCurrentTool(page);
       await takeEditorScreenshot(page);
-      await TopRightToolbar(page).setZoomInputValue('100');
+      await CommonTopRightToolbar(page).setZoomInputValue('100');
       await resetCurrentTool(page);
       await takeEditorScreenshot(page);
     });

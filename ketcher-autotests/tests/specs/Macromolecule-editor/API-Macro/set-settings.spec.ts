@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import {
   openFileAndAddToCanvasMacro,
   waitForPageInit,
@@ -9,7 +9,7 @@ import {
 test.describe('getKet', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Set bond Thickness to 22', async ({ page }) => {

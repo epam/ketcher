@@ -1,5 +1,5 @@
 import { Page, test, TestInfo } from '@playwright/test';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { chooseTab, Tabs } from '@utils/macromolecules';
 
@@ -11,10 +11,10 @@ const resetStateTypes = {
     await chooseTab(page, Tabs.Peptides);
   },
   micromoleculesEditor: async (page: Page) => {
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   },
   macromoleculesEditor: async (page: Page) => {
-    await TopRightToolbar(page).turnOnMacromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   },
 };
 

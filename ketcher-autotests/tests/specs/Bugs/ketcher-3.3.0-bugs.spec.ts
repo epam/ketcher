@@ -48,7 +48,7 @@ import {
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -62,7 +62,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     const context = await browser.newContext();
     page = await context.newPage();
     await waitForPageInit(page);
-    await TopRightToolbar(page).turnOnMacromoleculesEditor({
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -848,7 +848,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     await page.getByText('1Nal').click({ button: 'right' });
     await page.getByText('Expand monomer').click();
@@ -867,7 +867,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Go to the Structure library, Salts and Solvents tab
      * 3. Select DBU
      */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectSaltsAndSolvents(SaltsAndSolvents.DBU, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -883,7 +883,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Load from MOL
      * 3. Take a screenshot
      */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Bugs/structure-with-stereo-bonds-4.mol',
       page,
@@ -901,7 +901,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Load from MOL
      * 3. Take a screenshot
      */
-    await TopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Bugs/R-fragment-structure.mol',
       page,

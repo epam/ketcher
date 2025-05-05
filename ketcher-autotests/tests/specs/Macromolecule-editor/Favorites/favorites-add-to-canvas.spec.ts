@@ -1,6 +1,6 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import {
   addMonomerToFavorites,
   clickInTheMiddleOfTheScreen,
@@ -14,7 +14,7 @@ test('Add molecule to favorites, switch to Favorites tab and drag it to the canv
   page,
 }) => {
   await waitForPageInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
   await addMonomerToFavorites(page, Peptides.A);
   await selectMonomer(page, Peptides.A, true);

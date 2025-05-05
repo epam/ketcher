@@ -8,7 +8,7 @@ import {
   MOLECULES_MODE,
 } from '@constants/testIdConstants';
 
-type TopRightToolbarLocators = {
+type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
   fullScreenButton: Locator;
   zoomSelector: Locator;
@@ -21,8 +21,8 @@ type ZoomDropdownLocators = {
   zoomDefaultButton: Locator;
 };
 
-export const TopRightToolbar = (page: Page) => {
-  const locators: TopRightToolbarLocators = {
+export const CommonTopRightToolbar = (page: Page) => {
+  const locators: CommonTopRightToolbarLocators = {
     ketcherModeSwitcherCombobox: page.getByTestId('polymer-toggler'),
     fullScreenButton: page.getByTestId('fullscreen-mode-button'),
     zoomSelector: page.getByTestId('zoom-selector'),
@@ -121,4 +121,6 @@ export const TopRightToolbar = (page: Page) => {
   };
 };
 
-export type TopRightToolbarType = ReturnType<typeof TopRightToolbar>;
+export type CommonTopRightToolbarType = ReturnType<
+  typeof CommonTopRightToolbar
+>;

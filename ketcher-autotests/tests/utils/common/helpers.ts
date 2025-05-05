@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import { waitForKetcherInit, waitForIndigoToLoad } from './loaders';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import { TopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export async function emptyFunction() {}
@@ -10,7 +10,7 @@ export async function pageReload(page: Page) {
   await page.reload();
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 }
 
 export async function pageReloadMicro(page: Page) {
@@ -36,7 +36,7 @@ export async function contextReload(page: Page): Promise<Page> {
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);
   await waitForIndigoToLoad(page);
-  await TopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   return page;
 }
 

@@ -53,7 +53,7 @@ import {
   SupportedModes,
 } from 'application/ketcher.types';
 import { isNumber } from 'lodash';
-import { ChemicalMimeType } from 'ketcher-core';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };

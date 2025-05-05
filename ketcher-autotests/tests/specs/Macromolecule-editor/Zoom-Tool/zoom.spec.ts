@@ -14,7 +14,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   takePageScreenshot,
   moveMouseAway,
-  openStructurePasteFromClipboard,
   dragMouseTo,
   clickOnMiddleOfCanvas,
   zoomWithMouseWheel,
@@ -24,24 +23,17 @@ import {
   ZoomInByKeyboard,
   selectMonomer,
 } from '@utils';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
-import {
-  selectZoomReset,
-  selectZoomOutTool,
-  topRightToolbarLocators,
-  turnOnMacromoleculesEditor,
-  zoomDropdownLocators,
-  selectZoomInTool,
-} from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   connectMonomersWithBonds,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { goToRNATab } from '@utils/macromolecules/library';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
   const zoomLevelDelta = 600;
@@ -58,7 +50,7 @@ async function zoomWithMouseScrollAndTakeScreenshot(page: Page) {
 test.describe('Zoom Tool', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Check tooltip for a Zoom in, Zoom out, Reset buttons', async ({
@@ -70,19 +62,19 @@ test.describe('Zoom Tool', () => {
     */
     const buttons = [
       {
-        locator: zoomDropdownLocators(page).zoomInButton,
+        locator: CommonTopRightToolbar(page).zoomInButton,
         title: 'Zoom In',
       },
       {
-        locator: zoomDropdownLocators(page).zoomOutButton,
+        locator: CommonTopRightToolbar(page).zoomOutButton,
         title: 'Zoom Out',
       },
       {
-        locator: zoomDropdownLocators(page).zoomDefaultButton,
+        locator: CommonTopRightToolbar(page).zoomDefaultButton,
         title: 'Zoom 100%',
       },
     ];
-    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+    const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
     await zoomSelector.click();
     for (const button of buttons) {
       await expect(button.locator).toHaveAttribute('title', button.title);
@@ -103,10 +95,10 @@ test.describe('Zoom Tool', () => {
       'KET/peptides-connected-with-bonds.ket',
       page,
     );
-    await selectZoomInTool(page, 10);
+    await CommonTopRightToolbar(page).selectZoomInTool(10);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectZoomOutTool(page, 10);
+    await CommonTopRightToolbar(page).selectZoomOutTool(10);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -118,22 +110,22 @@ test.describe('Zoom Tool', () => {
     Test case: Zoom Tool
     Description: Minimum value for zoom out is 20% and maximum value for zoom in is 400%
     */
-    const zoomSelector = topRightToolbarLocators(page).zoomSelector;
+    const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
 
     await goToRNATab(page);
     await openFileAndAddToCanvasMacro(
       'KET/peptides-connected-with-bonds.ket',
       page,
     );
-    await selectZoomOutTool(page, 10);
+    await CommonTopRightToolbar(page).selectZoomOutTool(10);
 
     await clickInTheMiddleOfTheScreen(page);
     let zoomValue = await zoomSelector.textContent();
     expect(zoomValue).toBe('20%');
     await takePageScreenshot(page);
 
-    await selectZoomReset(page);
-    await selectZoomInTool(page, 30);
+    await CommonTopRightToolbar(page).resetZoom();
+    await CommonTopRightToolbar(page).selectZoomInTool(30);
     await clickInTheMiddleOfTheScreen(page);
     zoomValue = await zoomSelector.textContent();
     expect(zoomValue).toBe('400%');
@@ -173,7 +165,7 @@ test.describe('Zoom Tool', () => {
     }
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await selectZoomReset(page);
+    await CommonTopRightToolbar(page).resetZoom();
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
@@ -382,7 +374,7 @@ test.describe('Zoom Tool', () => {
         1,
       );
     }
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, { monomerAlias: '(R1,R2,R3,R4,R5)' }).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -398,11 +390,9 @@ test.describe('Zoom Tool', () => {
     Paste from Clipboard window not change their position and not overlap each other.
     After fix bug https://github.com/epam/ketcher/issues/4174 need to update snapshot.
     */
-    const pasteFromClipboardButton =
-      openStructureDialog(page).pasteFromClipboardButton;
     await goToRNATab(page);
-    await selectOpenFileTool(page);
-    await pasteFromClipboardButton.click();
+    await TopLeftToolbar(page).openFile();
+    await OpenStructureDialog(page).pasteFromClipboard();
     await browser.newContext({ deviceScaleFactor: 2.5 });
     await page.setViewportSize({ width: 435, height: 291 });
     await takePageScreenshot(page);
@@ -414,7 +404,8 @@ test.describe('Zoom Tool', () => {
     Description: When zoomed out to 25%, buttons and toolbars have the correct appearance
     */
     await goToRNATab(page);
-    await openStructurePasteFromClipboard(page);
+    await TopLeftToolbar(page).openFile();
+    await OpenStructureDialog(page).pasteFromClipboard();
     await browser.newContext({ deviceScaleFactor: 0.2 });
     await page.setViewportSize({ width: 4358, height: 2918 });
     await takePageScreenshot(page);
@@ -426,7 +417,8 @@ test.describe('Zoom Tool', () => {
     Description: When zoomed to maximum, buttons in Paste from Clipboard window not change their position and not overlap each other
     */
     await goToRNATab(page);
-    await openStructurePasteFromClipboard(page);
+    await TopLeftToolbar(page).openFile();
+    await OpenStructureDialog(page).pasteFromClipboard();
     await browser.newContext({ deviceScaleFactor: 4 });
     await page.setViewportSize({ width: 435, height: 291 });
     await takePageScreenshot(page);

@@ -6,7 +6,7 @@ import {
   dragMouseTo,
 } from '@utils';
 import { ArrowTool, selectNestedTool } from './tools/selectNestedTool';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 export async function drawReactionWithTwoBenzeneRings(
@@ -36,7 +36,7 @@ export async function drawReactionWithTwoBenzeneRings(
 }
 
 export async function drawStructure(page: Page) {
-  await bondSelectionTool(page, MicroBondType.Single);
+  await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
   await clickInTheMiddleOfTheScreen(page);
   await clickInTheMiddleOfTheScreen(page);
   await clickInTheMiddleOfTheScreen(page);

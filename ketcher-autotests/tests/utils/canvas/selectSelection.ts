@@ -4,13 +4,15 @@ import { getControlModifier } from '@utils/keyboard';
 import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
 import { INPUT_DELAY } from '@utils/globals';
 import { moveMouseAway, waitForRender } from '..';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 
 export async function cutAndPaste(page: Page) {
   const modifier = getControlModifier();
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
   await keyboardPressOnCanvas(page, `${modifier}+KeyA`, { delay: INPUT_DELAY });
@@ -20,7 +22,9 @@ export async function cutAndPaste(page: Page) {
 
 export async function copyAndPaste(page: Page) {
   const modifier = getControlModifier();
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   // to focus in Editor
   await clickInTheMiddleOfTheScreen(page);
   await moveMouseAway(page);

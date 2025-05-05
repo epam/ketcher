@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   clickOnAtom,
@@ -19,7 +19,7 @@ test.describe('Generic node', () => {
   const Atomstests = ['A', 'AH', 'Q', 'QH', 'M', 'MH', 'X', 'XH'];
   for (const atom of Atomstests) {
     test(`adding atoms_${atom}`, async ({ page }) => {
-      const extendedTableButton = rightToolbar(page).extendedTableButton;
+      const extendedTableButton = RightToolbar(page).extendedTableButton;
 
       await extendedTableButton.click();
       await page.getByRole('button', { name: atom, exact: true }).click();

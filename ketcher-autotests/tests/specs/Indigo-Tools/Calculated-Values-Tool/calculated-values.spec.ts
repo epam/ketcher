@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   selectTopPanelButton,
   openFileAndAddToCanvas,
@@ -210,7 +210,7 @@ test.describe('Calculated Values Tools', () => {
     Exact Mass: 33.988
     Elemental Analysis: H 5.9 S 94.1
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);

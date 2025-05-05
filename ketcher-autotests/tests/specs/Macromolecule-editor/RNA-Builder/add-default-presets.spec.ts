@@ -9,12 +9,12 @@ import {
 import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
 import { Presets } from '@constants/monomers/Presets';
 import { goToRNATab } from '@utils/macromolecules/library';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await goToRNATab(page);
     await toggleRnaBuilderAccordion(page);
   });

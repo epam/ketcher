@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { pressButton, clickOnAtom, resetCurrentTool } from '@utils';
 
 export async function selectAtomLabel(
@@ -141,7 +141,7 @@ export async function selectThreeAtomsFromPeriodicTable(
   atom3: string,
   button: string,
 ) {
-  const periodicTableButton = rightToolbar(page).periodicTableButton;
+  const periodicTableButton = RightToolbar(page).periodicTableButton;
 
   await periodicTableButton.click();
   await page.getByText(selectlisting, { exact: true }).click();
@@ -156,7 +156,7 @@ export async function selectElementFromExtendedTable(
   element: string,
   button: string,
 ) {
-  const extendedTableButton = rightToolbar(page).extendedTableButton;
+  const extendedTableButton = RightToolbar(page).extendedTableButton;
 
   await extendedTableButton.click();
   await page.getByRole('button', { name: element, exact: true }).click();

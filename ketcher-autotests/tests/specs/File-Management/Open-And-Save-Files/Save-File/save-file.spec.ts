@@ -21,14 +21,10 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import {
-  chooseFileFormat,
-  getTextAreaValue,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 const RING_OFFSET = 150;
@@ -166,12 +162,14 @@ test.describe('Save files', () => {
     Description: File formats in the Save Structure window match the mockup
     */
     const fileFormatDropdonwList =
-      saveStructureDialog(page).fileFormatDropdonwList;
+      SaveStructureDialog(page).fileFormatDropdownList;
 
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.KetFormat);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.KetFormat,
+    );
     await fileFormatDropdonwList.click();
     await takeEditorScreenshot(page);
   });
@@ -184,10 +182,10 @@ test.describe('Save files', () => {
       Description: In the save window that opens, in the preview section, 
       the atom or structure has no coordinates because they were not added to the canvas.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Hydrogen);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
 
     const expectedFile = await getMolfile(page, 'v2000');
     await saveToFile(
@@ -218,9 +216,11 @@ test.describe('Save files', () => {
     await waitForIndigoToLoad(page);
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.InChIKey);
-    const inChistring = await getTextAreaValue(page);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.InChIKey,
+    );
+    const inChistring = await SaveStructureDialog(page).getTextAreaValue();
     expect(inChistring).toEqual('UHOVQNZJYSORNB-UHFFFAOYSA-N');
   });
 
@@ -322,8 +322,10 @@ test.describe('Open/Save/Paste files', () => {
       Description: File is shown in the preview
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -333,8 +335,10 @@ test.describe('Open/Save/Paste files', () => {
       Description: File is shown in the preview
     */
     await openFileAndAddToCanvas('KET/two-benzene-connected.ket', page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -346,9 +350,11 @@ test.describe('Open/Save/Paste files', () => {
     Query properties will not be reflected in the file saved."
     */
     await openFileAndAddToCanvas('Molfiles-V2000/attached-data.mol', page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMILES);
-    await saveStructureDialog(page).warningsTab.click();
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMILES,
+    );
+    await SaveStructureDialog(page).warningsTab.click();
     await takeEditorScreenshot(page);
   });
 

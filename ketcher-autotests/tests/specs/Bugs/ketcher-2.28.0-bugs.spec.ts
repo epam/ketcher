@@ -47,29 +47,19 @@ import {
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { getBondLocator } from '@utils/macromolecules/polymerBond';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { expandAbbreviation } from '@utils/sgroup/helpers';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondDataIds } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 declare global {
   interface Window {
@@ -84,12 +74,12 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.afterEach(async () => {
-  await turnOnMacromoleculesEditor(page);
-  await selectClearCanvasTool(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await TopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
 });
 
@@ -108,11 +98,11 @@ test(`Case 1: Copy/Cut-Paste functionality not working for microstructures in Ma
    * 3. Try copy/paste and cut/paste actions
    * 4. Take a screenshot to validate the it works as expected (paste action should be successful)
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await selectRingButton(RingButton.Benzene, page);
   await clickInTheMiddleOfTheScreen(page);
 
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await selectFlexLayoutModeTool(page);
 
   await clickInTheMiddleOfTheScreen(page);
@@ -137,8 +127,8 @@ test(`Case 2: Exception when modifying a functional group after adding a ketcher
    * 4. Click on another atom such as "Br" and click on the functional group
    * 5. Take a screenshot to validate the exception is not thrown and replacement is successful
    */
-  await turnOnMicromoleculesEditor(page);
-  const atomToolbar = rightToolbar(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  const atomToolbar = RightToolbar(page);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let changeEventSubscriber: any;
   await page.evaluate(() => {
@@ -245,7 +235,6 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
    * 3. Save them in the SVG file format
    * 4. Take a screenshot to validate the names are displayed correctly
    */
-  const cancelButton = saveStructureDialog(page).cancelButton;
   await selectFlexLayoutModeTool(page);
   await pasteFromClipboardAndAddToMacromoleculesCanvas(
     page,
@@ -253,13 +242,15 @@ test(`Case 6: When saving in SVG format, unsplit nucleotides, whose names consis
     'RNA1{[2-damdA].[5Br-dU].[5hMedC]}$$$$V2.0',
   );
 
-  await selectSaveTool(page);
-  await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
+  await TopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.SVGDocument,
+  );
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
     hideMacromoleculeEditorScrollBars: true,
   });
-  await cancelButton.click();
+  await SaveStructureDialog(page).cancel();
 });
 
 test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for atom in bonds too)`, async () => {
@@ -272,10 +263,10 @@ test(`Case 7: Hydrogens are not shown for single atoms in Macro mode (and for at
    * 2. Switch to Macro mode
    * 3. Take a screenshot to validate hydrogens should be shown
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await pasteFromClipboardAndAddToCanvas(page, '[LiH].C');
   await clickInTheMiddleOfTheScreen(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -324,7 +315,7 @@ test(`Case 9: In the Text-editing mode, after inserting a fragment at the end of
   await addMonomerToCenterOfCanvas(page, Presets.T);
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 
   await selectSequenceLayoutModeTool(page);
   await keyboardTypeOnCanvas(page, 'UUU');
@@ -351,14 +342,14 @@ test(`Case 10: System reset micromolecule canvas settings to default if switched
    * 6. Open Settings, Bond section again
    * 7. Check if Bond length remains the same (80)
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openSettings(page);
   await openBondsSettingsSection(page);
   await setBondLengthValue(page, '80');
   await pressButton(page, 'Apply');
 
-  await turnOnMacromoleculesEditor(page);
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openSettings(page);
   await openBondsSettingsSection(page);
   const bondLengthValue = await getBondLengthValue(page);
@@ -408,7 +399,7 @@ test(`Case 13: Export to ket (and getKET function) change incrementally internal
    * 3. Save the file as .ket
    * 4. Save the file as .ket again to validate the internal IDs remain the same
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvas(
     'KET/Bugs/Export to ket (and getKET function) change incrementally internal IDs every call.ket',
@@ -575,7 +566,7 @@ test(`Case 19: System keeps antisense base layout and enumeration even after cha
     bondType: MacroBondDataIds.Hydrogen,
   }).first();
 
-  await selectEraseTool(page);
+  await CommonLeftToolbar(page).selectEraseTool();
   await hydrogenBond.click({ force: true });
 
   const leftEndSugarfR = getMonomerLocator(page, {
@@ -662,7 +653,7 @@ test(`Case 21: RNA chain remain flipped after hydrogen bond removal`, async () =
     bondType: MacroBondDataIds.Hydrogen,
   }).first();
 
-  await selectEraseTool(page);
+  await await CommonLeftToolbar(page).selectEraseTool();
   await hydrogenBond.click({ force: true });
 
   await selectSnakeLayoutModeTool(page);
@@ -788,7 +779,7 @@ test(`Case 30: Undo operation creates unremovable bonds on the canvas (clear can
     'RNA1{P}|RNA2{R(C)}$RNA2,RNA1,2:pair-1:pair$$$V2.0',
   );
 
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,
@@ -837,7 +828,7 @@ test(`Case 32: S-group in the middle of a chain does not expand when opening an 
    * 3. Try to expand Gly_2, meS_3, Ala_4 S-groups
    * 3. Take screenshot to validate S-groups got expanded to display its full structure within the chain
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     'SDF/Bugs/S-group in the middle of a chain does not expand when opening an SDF V3000 file.sdf',
@@ -866,7 +857,7 @@ test(`Case 33: Stereo flags are displayed despite enabling 'Ignore chiral flag' 
    * 4. Load the MOL V2000 file
    * 5. Take screenshot to validate the stereo flags are displayed
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     "Molfiles-V2000/Bugs/Stereo flags are displayed despite enabling 'Ignore chiral flag' in MOL V2000 files.mol",

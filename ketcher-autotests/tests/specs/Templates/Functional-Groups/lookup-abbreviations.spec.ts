@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
   DELAY_IN_SECONDS,
@@ -201,7 +201,9 @@ test.describe('Lookup Abbreviations tests', () => {
     await page.keyboard.type('bn');
     await page.keyboard.press('Enter');
     await clickOnAtom(page, 'C', atomC);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
   });

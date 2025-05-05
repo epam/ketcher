@@ -1,8 +1,5 @@
 import { test } from '@playwright/test';
-import {
-  aboutDialogLocators,
-  closeAboutDialogByOkButton,
-} from '@tests/pages/molecules/canvas/AboutDialog';
+import { AboutDialog } from '@tests/pages/molecules/canvas/AboutDialog';
 import { topRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { takeEditorScreenshot, clickByLink, waitForPageInit } from '@utils';
 
@@ -16,9 +13,9 @@ test.describe('Open Ketcher', () => {
     Test case: EPMLSOPKET-12191
     Description: 'About' floating window appears
     */
-    const buildVersion = aboutDialogLocators(page).buildVersion;
-    const buildTime = aboutDialogLocators(page).buildTime;
-    const buildIndigoVersion = aboutDialogLocators(page).buildIndigoVersion;
+    const buildVersion = AboutDialog(page).buildVersion;
+    const buildTime = AboutDialog(page).buildTime;
+    const buildIndigoVersion = AboutDialog(page).buildIndigoVersion;
     const TopRightToolbar = topRightToolbar(page);
 
     await TopRightToolbar.selectAboutButton();
@@ -60,6 +57,6 @@ test.describe('Open Ketcher', () => {
     const TopRightToolbar = topRightToolbar(page);
 
     await TopRightToolbar.selectAboutButton();
-    await closeAboutDialogByOkButton(page);
+    await AboutDialog(page).closeByOk();
   });
 });

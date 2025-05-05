@@ -448,7 +448,7 @@ const HydrophobicityChart = (props: HydrophobicityChartProps) => {
   const data = lttb(
     initialData.map((_item, index) => index + 1),
     initialData,
-    100,
+    100000,
   );
 
   const svgRef = useRef<SVGSVGElement | null>(null);

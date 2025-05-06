@@ -17,7 +17,7 @@
 import { useAppDispatch, useAppSelector } from 'hooks';
 import {
   selectIsMacromoleculesPropertiesWindowOpened,
-  setMacromoleculesPropertiesWindowVisibility,
+  toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
 import styled from '@emotion/styled';
 import { Button } from 'ketcher-react';
@@ -51,22 +51,19 @@ const StyledButton = styled(Button)<{ isActive?: boolean }>(
 
 export const CalculateMacromoleculePropertiesButton = () => {
   const dispatch = useAppDispatch();
+
   const isMacromoleculesPropertiesWindowOpened = useAppSelector(
     selectIsMacromoleculesPropertiesWindowOpened,
   );
+
   const recalculateMacromoleculeProperties =
     useRecalculateMacromoleculeProperties();
 
   const handleClick = async () => {
-    const isMacromoleculesPropertiesWindowOpenedNewState =
-      !isMacromoleculesPropertiesWindowOpened;
+    const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
+    await recalculateMacromoleculeProperties(skipDataFetch);
 
-    await recalculateMacromoleculeProperties();
-    dispatch(
-      setMacromoleculesPropertiesWindowVisibility(
-        isMacromoleculesPropertiesWindowOpenedNewState,
-      ),
-    );
+    dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
 
     blurActiveElement();
   };

@@ -2,11 +2,6 @@ import { Page, Locator, expect } from '@playwright/test';
 import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
-import {
-  LAYOUT_TOGGLER,
-  MACROMOLECULES_MODE,
-  MOLECULES_MODE,
-} from '@constants/testIdConstants';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -86,11 +81,11 @@ export const CommonTopRightToolbar = (page: Page) => {
       const switcher = locators.ketcherModeSwitcherCombobox;
       expect(switcher).toBeVisible();
       await switcher.click();
-      const macroOption = page.getByTestId(MACROMOLECULES_MODE);
+      const macroOption = page.getByTestId('macromolecules_mode');
       expect(macroOption).toBeVisible();
       await macroOption.click();
 
-      expect(page.getByTestId(LAYOUT_TOGGLER)).toBeVisible();
+      expect(page.getByTestId('layout-mode')).toBeVisible();
 
       if (options.enableFlexMode) {
         await selectFlexLayoutModeTool(page);
@@ -114,7 +109,7 @@ export const CommonTopRightToolbar = (page: Page) => {
       const switcher = locators.ketcherModeSwitcherCombobox;
       expect(switcher).toBeVisible();
       await switcher.click();
-      const microOption = page.getByTestId(MOLECULES_MODE);
+      const microOption = page.getByTestId('molecules_mode');
       expect(microOption).toBeVisible();
       await microOption.click();
     },

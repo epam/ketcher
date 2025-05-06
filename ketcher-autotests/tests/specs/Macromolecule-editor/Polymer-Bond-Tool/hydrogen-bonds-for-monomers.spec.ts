@@ -23,24 +23,12 @@ import {
   getBondLocator,
 } from '@utils/macromolecules/polymerBond';
 import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
-import {
-  bondSelectionTool,
-  commonLeftToolbarLocators,
-  selectEraseTool,
-  selectHandTool,
-} from '@tests/pages/common/CommonLeftToolbar';
-import {
   MacroBondDataIds,
   MacroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 test.setTimeout(40000);
@@ -50,11 +38,11 @@ test.beforeAll(async ({ browser }) => {
   const context = await browser.newContext();
   page = await context.newPage();
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
 });
 
@@ -599,16 +587,14 @@ async function expandMonomer(page: Page, locatorText: string) {
 async function collapseMonomer(page: Page) {
   // await clickInTheMiddleOfTheScreen(page, 'right');
   const canvasLocator = page.getByTestId('ketcher-canvas');
-  const attachmentPoint = canvasLocator
-    .getByText('R1', { exact: true })
-    .first();
+  const attachmentPoint = canvasLocator.getByText('H', { exact: true }).first();
 
   if (await attachmentPoint.isVisible()) {
     await attachmentPoint.click({
       button: 'right',
     });
   } else {
-    await canvasLocator.getByText('R2', { exact: true }).first().click({
+    await canvasLocator.getByText('O', { exact: true }).first().click({
       button: 'right',
     });
   }
@@ -673,7 +659,7 @@ expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
      *          5. Collapce target monomer back
      *          6. Take screenshot to witness hydrogen bonds got shown
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(monomer.fileName, page);
     await takeEditorScreenshot(page);
     await expandMonomer(page, monomer.alias);
@@ -681,7 +667,7 @@ expandableMonomersWithHydrogenBonds.forEach((monomer, index) => {
     await collapseMonomer(page);
     await takeEditorScreenshot(page);
 
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     // Test should be skipped if related bug exists
     test.fixme(
       monomer.shouldFail === true,
@@ -724,12 +710,12 @@ Object.values(monomers).forEach((leftMonomer) => {
         hideMonomerPreview: true,
       });
 
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
       });
 
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
       });
@@ -770,7 +756,7 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       expect(await bondLine.count()).toEqual(1);
 
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await clickOnConnectionLine(page);
 
       expect(await bondLine.count()).toEqual(0);
@@ -815,6 +801,7 @@ Object.values(monomers).forEach((leftMonomer) => {
 
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
       });
     });
   });
@@ -871,17 +858,16 @@ Object.entries(MacroBondType).forEach(([key, dataTestId]) => {
    */
   test(`11. ${key} bond tool: verification`, async () => {
     test.setTimeout(25000);
+    const commonLeftToolbar = CommonLeftToolbar(page);
     // to reset Bond tool state
-    await selectHandTool(page);
-    await commonLeftToolbarLocators(
-      page,
-    ).bondSelectionDropdownExpandButton.click();
+    await commonLeftToolbar.selectHandTool();
+    await commonLeftToolbar.bondSelectionDropdownExpandButton.click();
 
     const button = page.getByTestId(dataTestId).first();
     await expect(button).toHaveAttribute('title', buttonIdToTitle[dataTestId]);
 
-    await selectHandTool(page);
-    await bondSelectionTool(page, dataTestId);
+    await commonLeftToolbar.selectHandTool();
+    await commonLeftToolbar.selectBondTool(dataTestId);
     await expect(button).toHaveAttribute('class', /active/);
   });
 });

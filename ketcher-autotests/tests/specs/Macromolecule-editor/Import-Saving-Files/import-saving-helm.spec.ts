@@ -12,17 +12,10 @@ import {
   closeOpenStructure,
   pageReload,
 } from '@utils/common/helpers';
-import {
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
-import {
-  chooseFileFormat,
-  getTextAreaValue,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -35,16 +28,14 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
-  // await resetZoomLevelToDefault(page);
-  await selectClearCanvasTool(page);
-  // await resetZoomLevelToDefault(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -475,17 +466,20 @@ test.describe('Export to HELM: ', () => {
         `That test fails because of ${correctHELMString.issueNumber} issue.`,
       );
       if (correctHELMString.pageReloadNeeded) await pageReload(page);
-      const cancelButton = saveStructureDialog(page).cancelButton;
 
       await pasteFromClipboardAndAddToMacromoleculesCanvas(
         page,
         MacroFileType.HELM,
         correctHELMString.HELMString,
       );
-      await selectSaveTool(page);
-      await chooseFileFormat(page, MacromoleculesFileFormatType.HELM);
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.HELM,
+      );
 
-      const HELMExportResult = await getTextAreaValue(page);
+      const HELMExportResult = await SaveStructureDialog(
+        page,
+      ).getTextAreaValue();
 
       if (correctHELMString.differentHELMExport) {
         expect(HELMExportResult).toEqual(correctHELMString.differentHELMExport);
@@ -493,7 +487,7 @@ test.describe('Export to HELM: ', () => {
         expect(HELMExportResult).toEqual(correctHELMString.HELMString);
       }
 
-      await cancelButton.click();
+      await SaveStructureDialog(page).cancel();
     });
   }
 });

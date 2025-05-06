@@ -1,22 +1,33 @@
-import { type Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
-export const aboutDialogLocators = (page: Page) => ({
-  aboutButton: page.getByTestId('about-button'),
-  closeWindowButton: page.getByTestId('close-window-button'),
-  okButton: page.getByTestId('ok-button'),
-  buildVersion: page.getByTestId('build-version'),
-  buildTime: page.getByTestId('build-time'),
-  buildIndigoVersion: page.getByTestId('build-indigo-version'),
-});
+type AboutDialogLocators = {
+  closeWindowButton: Locator;
+  okButton: Locator;
+  buildVersion: Locator;
+  buildTime: Locator;
+  buildIndigoVersion: Locator;
+};
 
-export async function selectAboutButton(page: Page) {
-  await aboutDialogLocators(page).aboutButton.click();
-}
+export const AboutDialog = (page: Page) => {
+  const locators: AboutDialogLocators = {
+    closeWindowButton: page.getByTestId('close-window-button'),
+    okButton: page.getByTestId('ok-button'),
+    buildVersion: page.getByTestId('build-version'),
+    buildTime: page.getByTestId('build-time'),
+    buildIndigoVersion: page.getByTestId('build-indigo-version'),
+  };
 
-export async function closeAboutDialogByCloseWindowButton(page: Page) {
-  await aboutDialogLocators(page).closeWindowButton.click();
-}
+  return {
+    ...locators,
 
-export async function closeAboutDialogByOkButton(page: Page) {
-  await aboutDialogLocators(page).okButton.click();
-}
+    async closeByX() {
+      await locators.closeWindowButton.click();
+    },
+
+    async closeByOk() {
+      await locators.okButton.click();
+    },
+  };
+};
+
+export type AboutDialogType = ReturnType<typeof AboutDialog>;

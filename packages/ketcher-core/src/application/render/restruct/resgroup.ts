@@ -234,7 +234,10 @@ class ReSGroup extends ReObject {
       set.push(sGroupItem.hovering);
 
       SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach((aid) => {
-        set.push(render?.ctab?.atoms?.get(aid)?.makeHoverPlate(render));
+        const atom = render?.ctab?.atoms?.get(aid);
+
+        set.push(atom?.makeHoverPlate(render));
+        set.push(atom?.makeMonomerAttachmentPointHighlightPlate(render));
       }, this);
       SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach((bid) => {
         set.push(render?.ctab?.bonds?.get(bid)?.makeHoverPlate(render));

@@ -9,8 +9,6 @@ import {
   openFileAndAddToCanvas,
   pressButton,
   moveMouseToTheMiddleOfTheScreen,
-  selectAtomInToolbar,
-  AtomButton,
   resetCurrentTool,
   BondType,
   selectRingButton,
@@ -30,7 +28,9 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 const CANVAS_CLICK_X = 600;
 const CANVAS_CLICK_Y = 600;
@@ -288,8 +288,10 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1544
       Description: User is able to add atom on structure with Data S-group.
     */
+    const atomToolbar = RightToolbar(page);
+
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -303,7 +305,7 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to delete and undo/redo atom on structure with Data S-group.
     */
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
 

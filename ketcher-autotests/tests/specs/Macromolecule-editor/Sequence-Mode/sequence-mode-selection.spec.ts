@@ -15,25 +15,21 @@ import {
   clickOnCanvas,
   moveMouseAway,
 } from '@utils';
-import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
-import {
-  turnOnMacromoleculesEditor,
-  selectZoomOutTool,
-  selectZoomInTool,
-} from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   getSequenceSymbolLocator,
   selectSequenceRangeInEditMode,
 } from '@utils/macromolecules/sequence';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 250;
 
@@ -75,7 +71,7 @@ test.describe('Sequence mode selection for view mode', () => {
 test.describe('Sequence mode selection for edit mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     const ZOOM_OUT_VALUE = 400;
     const SCROLL_DOWN_VALUE = 250;
 
@@ -130,7 +126,7 @@ test.describe('Sequence mode selection for edit mode', () => {
     await keyboardPressOnCanvas(page, 'Backspace');
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
 
     await keyboardPressOnCanvas(page, 'Escape');
@@ -141,7 +137,7 @@ test.describe('Sequence mode selection for edit mode', () => {
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   const testData = [
@@ -166,7 +162,9 @@ test.describe('Sequence mode selection for view mode', () => {
     test(`Ensure that ${data.description}`, async ({ page }) => {
       await openFileAndAddToCanvasMacro(data.file, page);
       await selectSequenceLayoutModeTool(page);
-      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+      await CommonLeftToolbar(page).selectAreaSelectionTool(
+        SelectionToolType.Rectangle,
+      );
       await page
         .locator('g.drawn-structures')
         .locator('g', { has: page.locator('text="G"') })
@@ -247,9 +245,9 @@ test.describe('Sequence mode selection for view mode', () => {
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro('KET/rna-dna-peptides-chains.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectZoomOutTool(page, 8);
+    await CommonTopRightToolbar(page).selectZoomOutTool(8);
     await takeEditorScreenshot(page);
-    await selectZoomInTool(page, 5);
+    await CommonTopRightToolbar(page).selectZoomInTool(5);
     await takeEditorScreenshot(page);
   });
 

@@ -1,11 +1,10 @@
 import { test } from '@playwright/test';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   selectTopPanelButton,
   TopPanelButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  selectAtomInToolbar,
-  AtomButton,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   waitForPageInit,
@@ -22,7 +21,9 @@ test.describe('Special nodes', () => {
       // Test case: EPMLSOPKET-1469, 1741, 1473, 1481, 1483
       // Description: verify Calculated values for atoms
       // results of this test are not fully correct. when calculte values function is fixed - update scrshots
-      await selectAtomInToolbar(AtomButton.Extended, page);
+      const extendedTableButton = RightToolbar(page).extendedTableButton;
+
+      await extendedTableButton.click();
       await page.getByRole('button', { name: atom, exact: true }).click();
       await page.getByTestId('OK').click();
       await clickInTheMiddleOfTheScreen(page);
@@ -36,7 +37,9 @@ test.describe('Special nodes', () => {
       // Test case: EPMLSOPKET-1468
       // Checking UI and functionality of Special Nodes
       // buttons in Extended table dialog
-      await selectAtomInToolbar(AtomButton.Extended, page);
+      const extendedTableButton = RightToolbar(page).extendedTableButton;
+
+      await extendedTableButton.click();
       await page.getByRole('button', { name: atom, exact: true }).click();
       await takeEditorScreenshot(page);
     });
@@ -45,7 +48,9 @@ test.describe('Special nodes', () => {
   for (const atom of atoms) {
     test(`${atom} is present on canvas`, async ({ page }) => {
       // Test case: EPMLSOPKET-1469, 1741, 1473, 1481, 1483
-      await selectAtomInToolbar(AtomButton.Extended, page);
+      const extendedTableButton = RightToolbar(page).extendedTableButton;
+
+      await extendedTableButton.click();
       await page.getByRole('button', { name: atom, exact: true }).click();
       await page.getByTestId('OK').click();
       await clickInTheMiddleOfTheScreen(page);
@@ -56,11 +61,13 @@ test.describe('Special nodes', () => {
   for (const atom of atoms) {
     test(`${atom} adding to multiple atoms of structure`, async ({ page }) => {
       // Test case: EPMLSOPKET-1469, 1741, 1473, 1481, 1483
+      const extendedTableButton = RightToolbar(page).extendedTableButton;
+
       await openFileAndAddToCanvas(
         'Molfiles-V2000/heteroatoms-structure.mol',
         page,
       );
-      await selectAtomInToolbar(AtomButton.Extended, page);
+      await extendedTableButton.click();
       await page.getByRole('button', { name: atom, exact: true }).click();
       await page.getByTestId('OK').click();
       await page.keyboard.down('Shift');
@@ -81,7 +88,9 @@ test.describe('Special node', () => {
   for (const atom of atoms) {
     test(`${atom} recognition`, async ({ page }) => {
       // Test case: EPMLSOPKET-1470, 1472, 1480, 1482, 1484
-      await selectAtomInToolbar(AtomButton.Extended, page);
+      const extendedTableButton = RightToolbar(page).extendedTableButton;
+
+      await extendedTableButton.click();
       await page.getByRole('button', { name: atom, exact: true }).click();
       await page.getByTestId('OK').click();
       await clickInTheMiddleOfTheScreen(page);

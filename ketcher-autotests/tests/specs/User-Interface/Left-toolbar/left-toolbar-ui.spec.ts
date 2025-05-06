@@ -1,8 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
-import {
-  bondSelectionTool,
-  commonLeftToolbarLocators,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   BondType,
@@ -38,16 +35,16 @@ test.describe('Left toolbar UI tests', () => {
 
   test('left toolbar selection tool verification', async ({ page }) => {
     // Test case: EPMLSOPKET-4268
-    await commonLeftToolbarLocators(page).areaSelectionDropdownButton.click();
+    await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
     const selectionToolDropdownWidth = 200;
     await takeDropdownScreenshot(page, selectionToolDropdownWidth);
   });
 
   test('left toolbar bonds verification', async ({ page }) => {
     // Test case: EPMLSOPKET-4268
-    await commonLeftToolbarLocators(page).handToolButton.click();
-    await commonLeftToolbarLocators(page).bondSelectionDropdownButton.click();
-    await commonLeftToolbarLocators(page).bondSelectionDropdownButton.click();
+    await CommonLeftToolbar(page).handToolButton.click();
+    await CommonLeftToolbar(page).bondSelectionDropdownButton.click();
+    await CommonLeftToolbar(page).bondSelectionDropdownButton.click();
     const selectionToolDropdownWidth = 700;
     await takeDropdownScreenshot(page, selectionToolDropdownWidth);
   });
@@ -76,7 +73,7 @@ test.describe('Left toolbar UI tests', () => {
   test('stereochemistry ui verification', async ({ page }) => {
     // Test case: EPMLSOPKET-8918
     await drawBenzeneRing(page);
-    await bondSelectionTool(page, MicroBondType.SingleUp);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
     const bondNumber = 2;
     await clickOnBond(page, BondType.SINGLE, bondNumber);
     await takeLeftToolbarScreenshot(page);

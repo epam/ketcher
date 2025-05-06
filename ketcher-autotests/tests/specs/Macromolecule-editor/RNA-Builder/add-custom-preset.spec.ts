@@ -3,6 +3,7 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Sugars } from '@constants/monomers/Sugars';
 import { BUTTON__ADD_TO_PRESETS, RNA_TAB } from '@constants/testIdConstants';
 import { Page, test } from '@playwright/test';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import {
   moveMouseToTheMiddleOfTheScreen,
   selectCustomPreset,
@@ -10,7 +11,6 @@ import {
   takeEditorScreenshot,
   takeMonomerLibraryScreenshot,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { waitForPageInit } from '@utils/common';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
@@ -40,7 +40,7 @@ async function expandRnaBuilder(page: Page) {
 test.describe('Macromolecules custom presets', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await createRNA(page);
   });
 
@@ -65,7 +65,7 @@ test.describe('Macromolecules custom presets', () => {
     await waitForPageInit(page);
 
     // Click on POLYMER_TOGGLER
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     // Click on <button> "RNA"
     await goToRNATab(page);

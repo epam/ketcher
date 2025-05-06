@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import {
   selectSequenceLayoutModeTool,
   typeAllEnglishAlphabet,
@@ -6,12 +7,11 @@ import {
   takeTopToolbarScreenshot,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Sequence edit mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectSequenceLayoutModeTool(page);
   });
 

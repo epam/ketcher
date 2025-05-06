@@ -32,19 +32,11 @@ import {
   selectLayoutTool,
 } from '@utils';
 import { pageReloadMicro } from '@utils/common/helpers';
-import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 const xOffsetFromCenter = -35;
 const idToTitle: {
@@ -120,7 +112,7 @@ test.describe('Plus and Arrows tools ', () => {
         await selectNestedTool(page, tool);
         await clickOnTheCanvas(page, xOffsetFromCenter, 0);
         await takeEditorScreenshot(page);
-        await pressUndoButton(page);
+        await TopLeftToolbar(page).undo();
         await takeEditorScreenshot(page);
       });
     }
@@ -135,7 +127,9 @@ test.describe('Plus and Arrows tools ', () => {
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 100, y + 100, page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await takeEditorScreenshot(page);
     await page.mouse.move(x + 98, y + 98);
     await dragMouseTo(x + 150, y + 150, page);
@@ -177,7 +171,7 @@ test.describe('Plus and Arrows tools ', () => {
     await clickOnTheCanvas(page, -80, 0);
     await takeEditorScreenshot(page);
 
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnTheCanvas(page, -60, 0);
     await takeEditorScreenshot(page);
 
@@ -187,11 +181,11 @@ test.describe('Plus and Arrows tools ', () => {
     await clickOnTheCanvas(page, xOffsetFromCenter2, -100);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -204,7 +198,9 @@ test.describe('Plus and Arrows tools ', () => {
     let point: Point;
     test.beforeEach(async ({ page }) => {
       await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
-      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+      await CommonLeftToolbar(page).selectAreaSelectionTool(
+        SelectionToolType.Rectangle,
+      );
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });
 
@@ -288,9 +284,9 @@ test.describe('Plus and Arrows tools ', () => {
       await copyAndPaste(page);
       await clickOnCanvas(page, point.x - 100, point.y - 100);
       await takeEditorScreenshot(page);
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await page.mouse.move(point.x - 300, point.y - 100);
       await dragMouseTo(point.x - 140, point.y + 100, page);
     });
@@ -303,7 +299,9 @@ test.describe('Plus and Arrows tools ', () => {
     let point: Point;
     test.beforeEach(async ({ page }) => {
       await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
-      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+      await CommonLeftToolbar(page).selectAreaSelectionTool(
+        SelectionToolType.Rectangle,
+      );
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
     });
 
@@ -357,9 +355,9 @@ test.describe('Plus and Arrows tools ', () => {
       await copyAndPaste(page);
       await clickOnCanvas(page, point.x - 100, point.y - 100);
       await takeEditorScreenshot(page);
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await page.mouse.move(point.x - 300, point.y - 100);
       await dragMouseTo(point.x - 140, point.y + 100, page);
     });
@@ -382,7 +380,9 @@ test.describe('Plus and Arrows tools ', () => {
       await selectNestedTool(page, ArrowTool.ARROW_EQUILIBRIUM_FILLED_HALF_BOW);
       await clickOnTheCanvas(page, -40, 0);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
-      await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+      await CommonLeftToolbar(page).selectAreaSelectionTool(
+        SelectionToolType.Rectangle,
+      );
     }
 
     test('Select the reaction arrow and move it', async ({ page }) => {
@@ -444,12 +444,12 @@ test.describe('Plus and Arrows tools ', () => {
     test('Click the equilibrium arrow with the Erase tool, Undo, Erase for part of reaction, Undo/Redo', async ({
       page,
     }) => {
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await clickOnTheCanvas(page, -OFFSET_FROM_ARROW, 0);
       await takeEditorScreenshot(page);
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await page.mouse.move(point.x - 40, point.y - 300);
       await dragMouseTo(point.x + 400, point.y + 100, page);
       await moveMouseToTheMiddleOfTheScreen(page);
@@ -476,7 +476,7 @@ test.describe('Plus and Arrows tools ', () => {
     await takeEditorScreenshot(page);
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await selectCleanTool(page);
   });
 
@@ -485,18 +485,16 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: EPMLSOPKET-1793
      * Description: Save plus sign and arrow
      */
-    const cancelButton = saveStructureDialog(page).cancelButton;
-
     await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectSaveTool(page);
-    await cancelButton.click();
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).cancel();
     await takeEditorScreenshot(page);
     await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
     const offsetFromCenter = -35;
     await clickOnTheCanvas(page, offsetFromCenter, 0);
-    await selectSaveTool(page);
-    await cancelButton.click();
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).cancel();
   });
 
   test.describe('Save multiple reaction arrows', () => {
@@ -650,7 +648,7 @@ test.describe('Plus and Arrows tools ', () => {
         page,
       );
       await takeEditorScreenshot(page);
-      await selectClearCanvasTool(page);
+      await TopLeftToolbar(page).clearCanvas();
       await openFileAndAddToCanvas(
         `KET/resizing-reaction-arrow-saving.ket`,
         page,
@@ -676,12 +674,14 @@ test.describe('Plus and Arrows tools ', () => {
     await selectNestedTool(page, ArrowTool.ARROW_EQUILIBRIUM_OPEN_ANGLE);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
 
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
   });
 
   test.describe('Arrow snapping', () => {

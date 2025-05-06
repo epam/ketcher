@@ -8,33 +8,17 @@ import {
 } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import {
-  AtomButton,
   LeftPanelButton,
   MacromoleculesLeftPanelButton,
   RingButton,
   TopPanelButton,
 } from '@utils/selectors';
-import {
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-
-/**
- * Selects an atom from Atom toolbar
- * Usage: await selectAtom(AtomButton.Carbon, page)
- **/
-export async function selectAtom(type: AtomButton, page: Page) {
-  await selectButtonByTitle(type, page);
-}
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 /**
  *  Select button from left panel
@@ -50,15 +34,6 @@ export async function selectTool(type: LeftPanelButton, page: Page) {
  */
 export async function selectAction(type: TopPanelButton, page: Page) {
   await selectButtonByTitle(type, page);
-}
-
-/**
- * Usage: await selectAtomInToolbar(AtomButton.Carbon, page)
- * Select an atom from Atom toolbar
- * **/
-export async function selectAtomInToolbar(atomName: AtomButton, page: Page) {
-  const atomButton = page.locator(`button[title*="${atomName}"]`);
-  await atomButton.click();
 }
 
 export async function openLayoutModeMenu(page: Page) {
@@ -137,14 +112,6 @@ export async function selectImageTool(page: Page) {
   await bondToolButton.click();
 }
 
-export async function openStructurePasteFromClipboard(page: Page) {
-  const pasteFromClipboardButton =
-    openStructureDialog(page).pasteFromClipboardButton;
-
-  await selectOpenFileTool(page);
-  await pasteFromClipboardButton.click();
-}
-
 export async function selectRectangleArea(
   page: Page,
   startX: number,
@@ -152,7 +119,9 @@ export async function selectRectangleArea(
   endX: number,
   endY: number,
 ) {
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await page.mouse.move(startX, startY);
   await page.mouse.down();
   await page.mouse.move(endX, endY);
@@ -197,13 +166,11 @@ export async function saveStructureWithReaction(
   page: Page,
   format?: MoleculesFileFormatType,
 ) {
-  const saveButton = saveStructureDialog(page).saveButton;
-
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   if (format) {
-    await chooseFileFormat(page, format);
+    await SaveStructureDialog(page).chooseFileFormat(format);
   }
-  await saveButton.click();
+  await SaveStructureDialog(page).save();
 }
 
 export async function typeAllEnglishAlphabet(page: Page) {
@@ -235,25 +202,13 @@ export async function selectWithLasso(
 }
 
 export async function saveToTemplates(page: Page, templateName: string) {
-  const saveToTemplatesButton = saveStructureDialog(page).saveToTemplatesButton;
+  const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
 
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill(templateName);
   await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-
-export async function selectFormatForSaving(page: Page, templateName: string) {
-  await page.getByRole('option', { name: templateName }).click();
-}
-
-export async function clickOnSaveFileAndOpenDropdown(page: Page) {
-  const fileFormatDropdonwList =
-    saveStructureDialog(page).fileFormatDropdonwList;
-
-  await selectSaveTool(page);
-  await fileFormatDropdonwList.click();
 }
 
 export async function openSettings(page: Page) {

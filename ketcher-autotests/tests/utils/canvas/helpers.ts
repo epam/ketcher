@@ -15,7 +15,6 @@ import {
 import { ELEMENT_TITLE } from './types';
 import { getControlModifier } from '@utils/keyboard';
 import {
-  AtomButton,
   RingButton,
   TemplateLibrary,
   TopPanelButton,
@@ -24,23 +23,18 @@ import {
   selectRing,
 } from '@utils/selectors';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
-import {
-  openSettings,
-  selectAtomInToolbar,
-  selectTopPanelButton,
-} from './tools';
+import { openSettings, selectTopPanelButton } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
 import { Monomer } from '@utils/types';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 export async function drawBenzeneRing(page: Page) {
   await selectRing(RingButton.Benzene, page);
@@ -86,7 +80,9 @@ export async function selectAnyStructuresFromAromaticsTable(
 }
 
 export async function addCyclopentadieneRingWithTwoAtoms(page: Page) {
-  await selectAtomInToolbar(AtomButton.Nitrogen, page);
+  const atomToolbar = RightToolbar(page);
+
+  await atomToolbar.clickAtom(Atom.Nitrogen);
   await clickOnAtom(page, 'C', 0);
   const anyAtom = 3;
   await clickOnAtom(page, 'C', anyAtom);
@@ -326,17 +322,17 @@ export async function delay(seconds = 1) {
 }
 
 export async function screenshotBetweenUndoRedo(page: Page) {
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, {
     maxDiffPixels: 1,
   });
-  await pressRedoButton(page);
+  await TopLeftToolbar(page).redo();
 }
 
 export async function screenshotBetweenUndoRedoInMacro(page: Page) {
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
   await takeEditorScreenshot(page);
-  await pressRedoButton(page);
+  await TopLeftToolbar(page).redo();
 }
 
 export async function resetAllSettingsToDefault(page: Page) {
@@ -398,7 +394,9 @@ export async function addMonomerToCenterOfCanvas(
 ) {
   await selectMonomer(page, monomerType);
   await clickInTheMiddleOfTheScreen(page);
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
 }
 
 export async function addPeptideOnCanvas(page: Page, peptide: Monomer) {
@@ -578,7 +576,9 @@ export async function selectCanvasArea(
   firstCorner: { x: number; y: number },
   secondCorner: { x: number; y: number },
 ) {
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await page.mouse.move(firstCorner.x, firstCorner.y);
   await dragMouseTo(secondCorner.x, secondCorner.y, page);
 }

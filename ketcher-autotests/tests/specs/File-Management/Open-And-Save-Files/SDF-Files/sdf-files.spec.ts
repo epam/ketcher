@@ -5,8 +5,6 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  clickOnSaveFileAndOpenDropdown,
-  selectFormatForSaving,
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
@@ -372,104 +370,6 @@ test.describe('CDF files', () => {
       'SDF/unsplit-nucleotides-connected-with-peptides-v2000.sdf',
       page,
     );
-    await takeEditorScreenshot(page);
-  });
-
-  test(`Verify it is not possible to export the simple schema with retrosynthetic arrow to SDF V2000`, async ({
-    page,
-  }) => {
-    /*
-    Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF2000 file and loaded back
-    */
-    await openFileAndAddToCanvas(
-      'KET/simple-schema-with-retrosynthetic-arrow.ket',
-      page,
-    );
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SDF V2000');
-    await takeEditorScreenshot(page);
-  });
-
-  test(`Verify it is not possible to export the schema with retrosynthetic, angel arrows and plus to SDF V2000`, async ({
-    page,
-  }) => {
-    /*
-    Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF2000 file and loaded back
-    */
-    await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
-      page,
-    );
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SDF V2000');
-    await takeEditorScreenshot(page);
-  });
-
-  test(`Verify it is not possible to export the schema with two retrosynthetic arrows to SDF V2000`, async ({
-    page,
-  }) => {
-    /*
-    Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF2000 file and loaded back
-    */
-    await openFileAndAddToCanvas(
-      'KET/schema-with-two-retrosynthetic-arrows.ket',
-      page,
-    );
-
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SDF V2000');
-    await takeEditorScreenshot(page);
-  });
-
-  test(`Verify it is not possible to export the simple schema with retrosynthetic arrow to SDF V3000`, async ({
-    page,
-  }) => {
-    /*
-    Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF3000 file and loaded back
-    */
-    await openFileAndAddToCanvas(
-      'KET/simple-schema-with-retrosynthetic-arrow.ket',
-      page,
-    );
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SDF V3000');
-    await takeEditorScreenshot(page);
-  });
-
-  test(`Verify it is not possible to export the schema with retrosynthetic, angel arrows and plus to SDF V3000`, async ({
-    page,
-  }) => {
-    /*
-    Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF3000 file and loaded back
-    */
-    await openFileAndAddToCanvas(
-      'KET/schema-with-retrosynthetic-angel-arrows-and-plus.ket',
-      page,
-    );
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SDF V3000');
-    await takeEditorScreenshot(page);
-  });
-
-  test(`Verify it is not possible to export the schema with two retrosynthetic arrows to SDF V3000`, async ({
-    page,
-  }) => {
-    /*
-    Test case: #2071
-    Description: Validate that the schema with retrosynthetic arrow could not be saved to SDF3000 file and loaded back
-    */
-    await openFileAndAddToCanvas(
-      'KET/schema-with-two-retrosynthetic-arrows.ket',
-      page,
-    );
-
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SDF V3000');
     await takeEditorScreenshot(page);
   });
 });

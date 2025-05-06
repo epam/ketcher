@@ -50,25 +50,20 @@ import {
   switchToPeptideMode,
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { Bases } from '@constants/monomers/Bases';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
 async function setRotationStep(page: Page, value: string) {
-  await page.getByTestId('settings-button').click();
+  await TopRightToolbar(page).Settings();
   await page.getByTestId('rotationStep-input').click();
   await page.getByTestId('rotationStep-input').fill(value);
   await page.getByTestId('OK').click();
@@ -79,14 +74,14 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     const context = await browser.newContext();
     page = await context.newPage();
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await processResetToDefaultState(testInfo, page);
   });
 
@@ -194,14 +189,14 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 4. Switch to Macro mode
      * 5. Take a screenshot
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/Adding Attachment point to microstructure already connected to monomer - causes problems (sometimes crash).ket',
       page,
     );
     await clickOnAtom(page, 'C', 4, 'right');
     await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -271,14 +266,14 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 5. Press Undo button
      * 6. Take a screenshot
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 200);
     await clickOnCanvas(page, 400, 400);
     await clickOnCanvas(page, 600, 600);
     await setRotationStep(page, '20');
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -341,7 +336,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 2. Right click on the bond
      * 3. Take a screenshot
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/Unable to change atom to another if molecule has attachment point.ket',
       page,
@@ -361,7 +356,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 3. Hover over D-OAla monomer
      * 4. Take a screenshot
      */
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -679,7 +674,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
     }).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowLeft');
     await keyboardPressOnCanvas(page, 'Backspace');
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

@@ -24,15 +24,6 @@ import {
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
-import {
   createDNAAntisenseChain,
   createRNAAntisenseChain,
   getMonomerLocator,
@@ -46,16 +37,16 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { Sugars } from '@constants/monomers/Sugars';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Bases } from '@constants/monomers/Bases';
 import { Phosphates } from '@constants/monomers/Phosphates';
 import { Chem } from '@constants/monomers/Chem';
 import { Nucleotides } from '@constants/monomers/Nucleotides';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -64,12 +55,12 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await selectSnakeLayoutModeTool(page);
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -3264,7 +3255,7 @@ test(`11. Check that option "Delete" deletes the selected monomers and all the b
   await deleteOption.click();
   await takeEditorScreenshot(page);
 
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
   await takeEditorScreenshot(page);
 });
 
@@ -3341,32 +3332,36 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
 
   const sugarRs = getMonomerLocator(page, Sugars.R);
 
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await sugarRs.nth(2).click();
-  await selectEraseTool(page);
+  await CommonLeftToolbar(page).selectEraseTool();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await sugarRs.nth(1).click();
   await dragMouseTo(200, 200, page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await pressRedoButton(page);
+  await TopLeftToolbar(page).redo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await pressRedoButton(page);
+  await TopLeftToolbar(page).redo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await pressRedoButton(page);
+  await TopLeftToolbar(page).redo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 
@@ -3502,10 +3497,10 @@ test(`16. Ensure that switching between macro and micro modes does not break the
 
   await createAntisenseStrandOption.click();
 
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 
@@ -3714,7 +3709,7 @@ test(`22. Verify dot positioning after copy and paste structures`, async () => {
 
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await pasteFromClipboardByKeyboard(page);
 
   await takeEditorScreenshot(page, {
@@ -3747,7 +3742,7 @@ test(`23. Verify dot positioning after deleting and Undo/Redo actions`, async ()
 
   await selectAllStructuresOnCanvas(page);
   await page.keyboard.press('Delete');
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

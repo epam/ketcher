@@ -3,9 +3,7 @@ import { expect, Page, test } from '@playwright/test';
 import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
-  getFasta,
   getMolfile,
-  getSequence,
   Monomer,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
@@ -46,16 +44,10 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  selectClearCanvasTool,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -68,7 +60,7 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
   // Creation of custom presets needed for testing
   await createTestPresets(page);
@@ -78,7 +70,7 @@ test.afterEach(async () => {
   await keyboardPressOnCanvas(page, 'Escape');
   await keyboardPressOnCanvas(page, 'Escape');
   await resetZoomLevelToDefault(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
 });
 
@@ -2062,7 +2054,7 @@ test(`25. Verify undo/redo functionality after replacing monomers`, async () => 
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
@@ -2158,9 +2150,9 @@ test(`27. Verify switching from Macro mode to Micro mode and back without data l
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
   await checkForKnownBugs(
@@ -2305,23 +2297,11 @@ test(`30. Verify saving and reopening a structure with replaced monomers in Sequ
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  const expectedFile = await getSequence(page);
-  await saveToFile(
+  await verifyFileExport(
+    page,
     'Common/Sequence-Mode-Replacement/replacement-expected.seq',
-    expectedFile,
+    FileType.SEQ,
   );
-
-  const METADATA_STRING_INDEX = [1];
-
-  const { fileExpected: sequenceFileExpected, file: sequenceFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'Common/Sequence-Mode-Replacement/replacement-expected.seq',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(sequenceFile).toEqual(sequenceFileExpected);
   await checkForKnownBugs(
     replaceMonomer,
     sequence,
@@ -2360,23 +2340,11 @@ test(`31. Verify saving and reopening a structure with replaced monomers in FAST
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  const expectedFile = await getFasta(page);
-  await saveToFile(
+  await verifyFileExport(
+    page,
     'Common/Sequence-Mode-Replacement/replacement-expected.fasta',
-    expectedFile,
+    FileType.FASTA,
   );
-
-  const METADATA_STRING_INDEX = [1];
-
-  const { fileExpected: fastaFileExpected, file: fastaFile } =
-    await receiveFileComparisonData({
-      page,
-      expectedFileName:
-        'Common/Sequence-Mode-Replacement/replacement-expected.fasta',
-      metaDataIndexes: METADATA_STRING_INDEX,
-    });
-
-  expect(fastaFile).toEqual(fastaFileExpected);
 
   await checkForKnownBugs(
     replaceMonomer,

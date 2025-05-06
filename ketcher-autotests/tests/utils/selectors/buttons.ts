@@ -1,37 +1,3 @@
-/* eslint-disable no-inline-comments */
-/**
- * Usage: await selectAtom(AtomButton.Carbon, page)
- * Select an atom from Atom toolbar
- *
- **/
-
-export enum AtomButton {
-  Hydrogen = 'Hydrogen',
-  Carbon = 'Carbon',
-  Nitrogen = 'Nitrogen',
-  Oxygen = 'Oxygen',
-  Sulfur = 'Sulfur',
-  Phosphorus = 'Phosphorus',
-  Fluorine = 'Fluorine',
-  Chlorine = 'Chlorine',
-  Bromine = 'Bromine',
-  Iodine = 'Iodine',
-  Gold = 'Gold',
-  Platinum = 'Platinum',
-  Periodic = 'Periodic',
-  Any = 'Any',
-  Extended = 'Extended',
-}
-
-export type Atoms = Exclude<
-  AtomButton,
-  | AtomButton.Gold
-  | AtomButton.Platinum
-  | AtomButton.Periodic
-  | AtomButton.Any
-  | AtomButton.Extended
->;
-
 export enum TopPanelButton {
   Copy = 'Copy',
   Paste = 'Paste',
@@ -85,7 +51,6 @@ export enum RingButton {
 export const STRUCTURE_LIBRARY_BUTTON_NAME = 'Structure Library';
 
 export type ToolbarButton =
-  | AtomButton
   | TopPanelButton
   | LeftPanelButton
   | RingButton

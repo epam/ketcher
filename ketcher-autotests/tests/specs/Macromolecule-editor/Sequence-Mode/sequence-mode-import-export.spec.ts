@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@playwright/test';
 import {
-  openStructurePasteFromClipboard,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
@@ -12,20 +11,18 @@ import {
   resetZoomLevelToDefault,
   waitForPageInit,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { zoomWithMouseWheel, chooseTab, Tabs } from '@utils/macromolecules';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import {
   PeptideLetterCodeType,
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatName } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -38,13 +35,13 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
 test.afterEach(async () => {
   await resetZoomLevelToDefault(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -72,12 +69,11 @@ test.describe('Import/export sequence:', () => {
 
     */
     const contentTypeSelector =
-      pasteFromClipboardDialog(page).contentTypeSelector;
-    const monomerTypeSelector =
-      pasteFromClipboardDialog(page).monomerTypeSelector;
+      PasteFromClipboardDialog(page).contentTypeSelector;
 
     await selectSequenceLayoutModeTool(page);
-    await openStructurePasteFromClipboard(page);
+    await TopLeftToolbar(page).openFile();
+    await OpenStructureDialog(page).pasteFromClipboard();
 
     const defaultValue = await contentTypeSelector
       .locator('span')
@@ -103,7 +99,7 @@ test.describe('Import/export sequence:', () => {
     // Case 2
     await page.getByText(MacroFileType.Sequence).click();
 
-    await monomerTypeSelector.click();
+    await PasteFromClipboardDialog(page).monomerTypeSelector.click();
 
     const options2 = page.getByRole('option');
     const values2 = await options2.allTextContents();
@@ -119,9 +115,9 @@ test.describe('Import/export sequence:', () => {
     await keyboardPressOnCanvas(page, 'Escape');
 
     // Case 30
-    await contentTypeSelector.click();
+    await PasteFromClipboardDialog(page).contentTypeSelector.click();
     await page.getByText(MacroFileType.FASTA).click();
-    await monomerTypeSelector.click();
+    await PasteFromClipboardDialog(page).monomerTypeSelector.click();
     const options3 = page.getByRole('option');
     const values3 = await options3.allTextContents();
 
@@ -270,11 +266,10 @@ test.describe('Import/export sequence:', () => {
     */
 
     const fileFormatDropdonwList =
-      saveStructureDialog(page).fileFormatDropdonwList;
-    const cancelButton = saveStructureDialog(page).cancelButton;
+      SaveStructureDialog(page).fileFormatDropdownList;
 
     await selectSequenceLayoutModeTool(page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
 
     const defaultValue = await fileFormatDropdonwList
       .locator('span')
@@ -300,6 +295,6 @@ test.describe('Import/export sequence:', () => {
     }
 
     await options.first().click();
-    await cancelButton.click();
+    await SaveStructureDialog(page).cancel();
   });
 });

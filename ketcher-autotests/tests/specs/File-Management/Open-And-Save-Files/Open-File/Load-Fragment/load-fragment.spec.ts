@@ -1,13 +1,13 @@
 import { test, expect, Page } from '@playwright/test';
-import { commonLeftToolbarLocators } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  AtomButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   openPasteFromClipboard,
   waitForPageInit,
-  selectAtomInToolbar,
   selectLeftPanelButton,
   dragMouseTo,
   LeftPanelButton,
@@ -57,7 +57,7 @@ async function moveElement(
   const pointXToMoveElement = x - xShiftForElement;
   const pointYToMoveElement = y - yShiftForElement;
 
-  await commonLeftToolbarLocators(page).handToolButton.click();
+  await CommonLeftToolbar(page).handToolButton.click();
   await moveOnAtom(page, atomLabel, atomNumber);
   await dragMouseTo(pointXToMoveElement, pointYToMoveElement, page);
 }
@@ -145,7 +145,10 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       'Convert error!\nGiven string could not be loaded as (query or plain) molecule or reaction, see the error messages: ' +
       "'molecule auto loader: SMILES loader: cycle number 0 is not allowed', " +
       "'scanner: BufferScanner::read() error', 'scanner: BufferScanner::read() error', " +
-      "'molecule auto loader: SMILES loader: cycle number 0 is not allowed'";
+      "'molecule auto loader: SMILES loader: cycle number 0 is not allowed', " +
+      "'molecule auto loader: SMILES loader: cycle number 0 is not allowed', " +
+      "'scanner: BufferScanner::read() error'";
+
     expect(convertErrorMessage).toEqual(expectedErrorMessage);
     await takeEditorScreenshot(page);
   });
@@ -169,7 +172,9 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     const shiftForSecondHydrogen = 200;
 
     async function addAndMoveHydrogen() {
-      await selectAtomInToolbar(AtomButton.Hydrogen, page);
+      const atomToolbar = RightToolbar(page);
+
+      await atomToolbar.clickAtom(Atom.Hydrogen);
       await clickInTheMiddleOfTheScreen(page);
       await moveElement(page, 'H', 0, shiftForHydrogen, 0);
     }
@@ -185,7 +190,9 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     }
 
     async function addAndMoveOxygen() {
-      await selectAtomInToolbar(AtomButton.Oxygen, page);
+      const atomToolbar = RightToolbar(page);
+
+      await atomToolbar.clickAtom(Atom.Oxygen);
       await clickInTheMiddleOfTheScreen(page);
       await moveElement(page, 'O', 0, shiftForOxygen, 0);
     }
@@ -197,7 +204,9 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     }
 
     async function addSecondHydrogen() {
-      await selectAtomInToolbar(AtomButton.Hydrogen, page);
+      const atomToolbar = RightToolbar(page);
+
+      await atomToolbar.clickAtom(Atom.Hydrogen);
       await clickOnCanvas(page, x + shiftForSecondHydrogen, y, {
         button: 'left',
       });

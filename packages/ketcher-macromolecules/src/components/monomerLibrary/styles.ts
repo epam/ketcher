@@ -24,7 +24,7 @@ export const MonomerLibraryContainer = styled.div`
   display: flex;
   flex-direction: column;
   background-color: ${(props) => props.theme.ketcher.color.background.primary};
-  box-shadow: 0 2px 5px rgba(103, 104, 132, 0.15);
+  box-shadow: ${({ theme }) => theme.ketcher.shadow.mainLayoutBlocks};
   border-radius: 4px;
 `;
 

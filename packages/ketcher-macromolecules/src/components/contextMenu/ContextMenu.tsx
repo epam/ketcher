@@ -1,4 +1,4 @@
-import { ReactElement } from 'react';
+import { ReactElement, useEffect } from 'react';
 import { Item, ItemParams, Separator } from 'react-contexify';
 import {
   BaseMonomer,
@@ -7,6 +7,8 @@ import {
 } from 'ketcher-core';
 import { StyledMenu } from 'components/contextMenu/styles';
 import { CONTEXT_MENU_ID } from 'components/contextMenu/types';
+import { useAppDispatch } from 'hooks';
+import { setContextMenuActive } from 'state/common';
 
 interface MenuItem {
   name: string;
@@ -72,6 +74,26 @@ const assembleMenuItems = (
 };
 
 export const ContextMenu = ({ id, handleMenuChange, menuItems }: MenuProps) => {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const handleContextMenuClose = (e) => {
+      const isClickOnNucleotide =
+        e.target?.__data__?.node || e.target?.__data__?.monomer;
+      if (isClickOnNucleotide) {
+        e.stopPropagation();
+        return;
+      }
+      dispatch(setContextMenuActive(false));
+    };
+    document.addEventListener('click', handleContextMenuClose);
+    document.addEventListener('contextmenu', handleContextMenuClose);
+    return () => {
+      document.removeEventListener('click', handleContextMenuClose);
+      document.removeEventListener('contextmenu', handleContextMenuClose);
+    };
+  }, [dispatch, id]);
+
   return (
     <StyledMenu id={id}>
       {assembleMenuItems(menuItems, handleMenuChange)}

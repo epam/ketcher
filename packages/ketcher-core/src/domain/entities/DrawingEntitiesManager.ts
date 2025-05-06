@@ -22,6 +22,7 @@ import {
   SubChainNode,
   Sugar,
 } from 'domain/entities';
+import { BondCIP } from 'domain/entities/types';
 import {
   AttachmentPointHoverOperation,
   MonomerAddOperation,
@@ -1654,7 +1655,6 @@ export class DrawingEntitiesManager {
 
       const snakeLayoutMatrix =
         this.calculateSnakeLayoutMatrix(chainsCollection);
-
       this.snakeLayoutMatrix = snakeLayoutMatrix;
 
       command.merge(
@@ -1871,6 +1871,7 @@ export class DrawingEntitiesManager {
         bond.type,
         bond.stereo,
         bond.bondIdInMicroMode,
+        bond.cip,
       );
       const addedBond = bondAddCommand.operations[0].bond as Bond;
 
@@ -1901,6 +1902,57 @@ export class DrawingEntitiesManager {
     );
 
     return { command, mergedDrawingEntities };
+  }
+
+  public filterSelection() {
+    const filteredDrawingEntitiesManager = new DrawingEntitiesManager();
+
+    this.selectedEntities.forEach(([, entity]) => {
+      if (entity instanceof BaseMonomer) {
+        filteredDrawingEntitiesManager.addMonomerChangeModel(
+          entity.monomerItem,
+          entity.position,
+          entity,
+        );
+      } else if (entity instanceof Atom) {
+        filteredDrawingEntitiesManager.addMonomerChangeModel(
+          entity.monomer.monomerItem,
+          entity.monomer.position,
+          entity.monomer,
+        );
+      } else if (entity instanceof PolymerBond && entity.secondMonomer) {
+        const firstAttachmentPoint =
+          entity.firstMonomer.getAttachmentPointByBond(entity);
+        const secondAttachmentPoint =
+          entity.secondMonomer?.getAttachmentPointByBond(entity);
+        if (
+          firstAttachmentPoint &&
+          secondAttachmentPoint &&
+          entity.firstMonomer.selected &&
+          entity.secondMonomer?.selected
+        ) {
+          filteredDrawingEntitiesManager.finishPolymerBondCreationModelChange(
+            entity.firstMonomer,
+            entity.secondMonomer,
+            firstAttachmentPoint,
+            secondAttachmentPoint,
+            undefined,
+            entity,
+          );
+        }
+      } else if (entity instanceof HydrogenBond && entity.secondMonomer) {
+        filteredDrawingEntitiesManager.finishPolymerBondCreationModelChange(
+          entity.firstMonomer,
+          entity.secondMonomer,
+          AttachmentPointName.HYDROGEN,
+          AttachmentPointName.HYDROGEN,
+          MACROMOLECULES_BOND_TYPES.HYDROGEN,
+          entity,
+        );
+      }
+    });
+
+    return filteredDrawingEntitiesManager;
   }
 
   public centerMacroStructure() {
@@ -2359,6 +2411,7 @@ export class DrawingEntitiesManager {
     stereo: number,
     bondIdInMicroMode: number,
     _bond?: Bond,
+    cip?: BondCIP | null,
   ) {
     if (_bond) {
       this.bonds.set(_bond.id, _bond);
@@ -2372,6 +2425,7 @@ export class DrawingEntitiesManager {
       bondIdInMicroMode,
       type,
       stereo,
+      cip,
     );
 
     this.bonds.set(bond.id, bond);
@@ -2387,6 +2441,7 @@ export class DrawingEntitiesManager {
     type: number,
     stereo: number,
     bondIdInMicroMode: number,
+    cip?: BondCIP | null,
   ) {
     const command = new Command();
     const bondAddOperation = new BondAddOperation(
@@ -2398,6 +2453,7 @@ export class DrawingEntitiesManager {
           stereo,
           bondIdInMicroMode,
           bond,
+          cip,
         ),
       (bond: Bond) => this.deleteBondChangeModel(bond),
     );

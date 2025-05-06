@@ -33,6 +33,7 @@ export const enum Command {
   GenerateImageAsBase64,
   GetInChIKey,
   ExplicitHydrogens,
+  CalculateMacromoleculeProperties,
 }
 
 export const enum WorkerEvent {
@@ -49,6 +50,7 @@ export const enum WorkerEvent {
   GenerateImageAsBase64 = 'generateImageAsBase64',
   GetInChIKey = 'getInChIKey',
   ExplicitHydrogens = 'convert_explicit_hydrogens',
+  CalculateMacromoleculeProperties = 'calculateMacroProperties',
 }
 
 export enum SupportedFormat {
@@ -168,6 +170,10 @@ export interface ExplicitHydrogensCommandData
     WithFormat {
   mode: 'auto' | 'fold' | 'unfold';
 }
+
+export interface CalculateMacromoleculePropertiesCommandData
+  extends CommandData,
+    WithStruct {}
 
 interface OutputMessageBase {
   type?: Command;

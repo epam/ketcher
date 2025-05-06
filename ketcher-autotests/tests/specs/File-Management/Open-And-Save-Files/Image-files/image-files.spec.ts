@@ -41,13 +41,7 @@ import {
   readFileContent,
   copyContentToClipboard,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  selectOpenFileTool,
-  pressUndoButton,
-  pressRedoButton,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import {
   clearLocalStorage,
   closeErrorAndInfoModals,
@@ -58,18 +52,12 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { openStructureLibrary } from '@utils/templates';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Image files', () => {
   let page: Page;
@@ -83,7 +71,7 @@ test.describe('Image files', () => {
 
   test.afterEach(async ({ context: _ }) => {
     await closeErrorAndInfoModals(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
   });
 
@@ -340,7 +328,7 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Images together (PNG, SVG) are correctly displayed in .ket format in Open Structure Preview
      */
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await openFile('KET/images-png-svg.ket', page);
     await takeEditorScreenshot(page);
   });
@@ -351,8 +339,10 @@ test.describe('Image files', () => {
      * Description: Images together (PNG, SVG) are correctly displayed in .ket format in Save Structure Preview
      */
     await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.KetFormat);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.KetFormat,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -372,11 +362,9 @@ test.describe('Image files', () => {
        * Test case: #4911
        * Description: Error message is displayed - "Cannot deserialize input JSON."
        */
-      const addToCanvasButton =
-        pasteFromClipboardDialog(page).addToCanvasButton;
-      await selectOpenFileTool(page);
+      await TopLeftToolbar(page).openFile();
       await openFile(`KET/${fileName}.ket`, page);
-      await addToCanvasButton.click();
+      await PasteFromClipboardDialog(page).addToCanvasButton.click();
       await takeEditorScreenshot(page);
     });
   }
@@ -403,8 +391,8 @@ test.describe('Image files', () => {
        * Description: Error message is displayed - "Cannot deserialize input JSON."
        */
       const addToCanvasButton =
-        pasteFromClipboardDialog(page).addToCanvasButton;
-      await selectOpenFileTool(page);
+        PasteFromClipboardDialog(page).addToCanvasButton;
+      await TopLeftToolbar(page).openFile();
       await openFile(`KET/${file}`, page);
       await addToCanvasButton.click();
       await takeEditorScreenshot(page);
@@ -416,8 +404,8 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Error message is displayed - "Cannot deserialize input JSON."
      */
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-    await selectOpenFileTool(page);
+    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
+    await TopLeftToolbar(page).openFile();
     await openFile(`KET/image-png-159-symbols.ket`, page);
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);
@@ -428,14 +416,14 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Zoom In and Zoom Out work for Images
      */
-    await setZoomInputValue(page, '400');
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
     await resetCurrentTool(page);
     await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '20');
+    await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '100');
+    await CommonTopRightToolbar(page).setZoomInputValue('100');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -545,13 +533,13 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '20');
+    await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '400');
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '100');
+    await CommonTopRightToolbar(page).setZoomInputValue('100');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -578,7 +566,9 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
@@ -600,7 +590,9 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -623,16 +615,16 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 200, 200);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -649,11 +641,11 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -680,11 +672,11 @@ test.describe('Image files', () => {
      */
     await openFileAndAddToCanvasAsNewProject('KET/images-png-svg.ket', page);
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -698,11 +690,11 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -716,11 +708,11 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -732,11 +724,11 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -836,7 +828,9 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.mouse.move(100, 100);
     await dragMouseTo(800, 800, page);
     await takeEditorScreenshot(page);
@@ -849,7 +843,9 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.keyboard.press('Shift+Tab');
     await selectWithLasso(page, 100, 100, [
       { x: 800, y: 800 },
@@ -885,7 +881,9 @@ test.describe('Image files', () => {
     await pageReloadMicro(page);
 
     await openImageAndAddToCanvas('Images/image-png.png', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -925,13 +923,13 @@ test.describe('Image files', () => {
      * Description: Images of (PNG, SVG) cannot be saved to template - "Save to Template" button is disabled
      */
     const saveToTemplatesButton =
-      saveStructureDialog(page).saveToTemplatesButton;
+      SaveStructureDialog(page).saveToTemplatesButton;
     const saveStructureTextarea =
-      saveStructureDialog(page).saveStructureTextarea;
+      SaveStructureDialog(page).saveStructureTextarea;
 
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await expect(saveToTemplatesButton).toBeDisabled();
     await takeEditorScreenshot(page, {
       mask: [saveStructureTextarea],
@@ -948,7 +946,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 400);
     await saveToTemplates(page, 'My Custom Template');
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page
@@ -994,7 +992,9 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
@@ -1021,7 +1021,9 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
@@ -1046,7 +1048,9 @@ test.describe('Image files', () => {
      */
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
@@ -1079,7 +1083,9 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 200, 200);
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
@@ -1109,7 +1115,9 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await takeEditorScreenshot(page);
     await clickOnCanvas(page, 200, 200);
     const resizeHandle = page.getByTestId('imageResize-bottomRightPosition');
@@ -1138,7 +1146,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1164,7 +1172,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1190,7 +1198,7 @@ test.describe('Image files', () => {
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 500);
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1808,7 +1816,7 @@ test.describe('Image files', () => {
       'CDXML/image-png-with-elements-expected.cdxml',
       page,
     );
-    await setZoomInputValue(page, '60');
+    await CommonTopRightToolbar(page).setZoomInputValue('60');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1840,7 +1848,7 @@ test.describe('Image files', () => {
       'CDXML/image-png-with-elements-expected.cdxml',
       page,
     );
-    await setZoomInputValue(page, '60');
+    await CommonTopRightToolbar(page).setZoomInputValue('60');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1872,7 +1880,7 @@ test.describe('Image files', () => {
       'CDXML/image-svg-with-elements-expected.cdxml',
       page,
     );
-    await setZoomInputValue(page, '60');
+    await CommonTopRightToolbar(page).setZoomInputValue('60');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1904,7 +1912,7 @@ test.describe('Image files', () => {
       'CDXML/image-svg-with-elements-expected.cdxml',
       page,
     );
-    await setZoomInputValue(page, '60');
+    await CommonTopRightToolbar(page).setZoomInputValue('60');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1936,7 +1944,7 @@ test.describe('Image files', () => {
       'CDXML/image-svg-png-with-elements-expected.cdxml',
       page,
     );
-    await setZoomInputValue(page, '60');
+    await CommonTopRightToolbar(page).setZoomInputValue('60');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1968,7 +1976,7 @@ test.describe('Image files', () => {
       'CDXML/image-svg-png-with-elements-expected.cdxml',
       page,
     );
-    await setZoomInputValue(page, '60');
+    await CommonTopRightToolbar(page).setZoomInputValue('60');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -2041,13 +2049,12 @@ test.describe('Image files', () => {
   for (const testCase of testCases) {
     test(testCase.description, async () => {
       if (testCase.action === 'open') {
-        await selectOpenFileTool(page);
+        await TopLeftToolbar(page).openFile();
         await openFile(testCase.file, page);
       } else if (testCase.action === 'save') {
         await openFileAndAddToCanvas(testCase.file, page);
-        await selectSaveTool(page);
-        await chooseFileFormat(
-          page,
+        await TopLeftToolbar(page).saveFile();
+        await SaveStructureDialog(page).chooseFileFormat(
           testCase.dropdownOption || MoleculesFileFormatType.MDLMolfileV2000,
         );
       }
@@ -2065,7 +2072,7 @@ test.describe('Image files', () => {
       'KET/images-png-50-with-50-structures.ket',
       page,
     );
-    await setZoomInputValue(page, '20');
+    await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -2090,7 +2097,7 @@ test.describe('Image files', () => {
       'KET/images-png-50-with-50-structures.ket',
       page,
     );
-    await setZoomInputValue(page, '20');
+    await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -2153,10 +2160,9 @@ test.describe('Image files', () => {
      * Description: Image can't be loaded from CDX/CDXML/Base 64 CDX file if the length of bitmap is less than 160 symbols and error message
      *  is displayed - "Cannot deserialize input JSON.".
      */
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await openFile(`CDXML/image-png-169-symbols.cdxml`, page);
-    await addToCanvasButton.click();
+    await PasteFromClipboardDialog(page).addToCanvasButton.click();
     await takeEditorScreenshot(page);
   });
 
@@ -2168,13 +2174,13 @@ test.describe('Image files', () => {
     const fileContent = await readFileContent('CDX/image-png-expected.cdx');
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '20');
+    await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '400');
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '100');
+    await CommonTopRightToolbar(page).setZoomInputValue('100');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -2189,13 +2195,13 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '20');
+    await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '400');
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '100');
+    await CommonTopRightToolbar(page).setZoomInputValue('100');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -2207,13 +2213,13 @@ test.describe('Image files', () => {
      */
     await openFileAndAddToCanvas('CDXML/image-png-expected.cdxml', page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '20');
+    await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '400');
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '100');
+    await CommonTopRightToolbar(page).setZoomInputValue('100');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -2225,13 +2231,13 @@ test.describe('Image files', () => {
      */
     await openFileAndAddToCanvas('CDXML/image-png-svg-together.cdxml', page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '20');
+    await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '400');
+    await CommonTopRightToolbar(page).setZoomInputValue('400');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '100');
+    await CommonTopRightToolbar(page).setZoomInputValue('100');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -2523,7 +2529,7 @@ test.describe('Image files', () => {
     );
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -2537,7 +2543,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -2552,7 +2558,7 @@ test.describe('Image files', () => {
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
   });
 
@@ -2567,7 +2573,7 @@ test.describe('Image files', () => {
     );
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
   });
 
@@ -2576,11 +2582,13 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2161
      * Description: Added from KET SVG images are displayed on preview and saved to SVG files with correct positions and layers
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openFileAndAddToCanvas('KET/svg-images-black-and-colored.ket', page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2602,14 +2610,16 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2161
      * Description: Added from KET color SVG images with elements saved to SVG can be viewed on preview and Save button is enabled
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openFileAndAddToCanvasAsNewProject(
       'KET/svg-colored-images-with-elements.ket',
       page,
     );
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2619,7 +2629,7 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2161
      * Description: Added by Tool SVG images are displayed on preview and saved to SVG files with correct positions and layers
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas(
@@ -2629,8 +2639,10 @@ test.describe('Image files', () => {
       200,
     );
     await takeEditorScreenshot(page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2640,11 +2652,13 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2161
      * Description: Added from KET SVG images with elements are displayed on preview and saved together to SVG file with the correct positions and layers
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openFileAndAddToCanvas('KET/images-svg-with-elements.ket', page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2655,7 +2669,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool SVG images with elements are displayed on preview and saved together to SVG file
      * with the correct positions and layers after selection, moving actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas(
@@ -2666,15 +2680,19 @@ test.describe('Image files', () => {
     );
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2685,7 +2703,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file
      * with the correct positions and layers after scaling actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas(
@@ -2698,7 +2716,9 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
 
     // Ensure the element is in view
@@ -2709,8 +2729,10 @@ test.describe('Image files', () => {
     await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2721,7 +2743,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool SVG images with elements are displayed on preview and saved together to SVG file
      * with the correct positions and layers after deleting actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas(
@@ -2732,16 +2754,20 @@ test.describe('Image files', () => {
     );
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2752,7 +2778,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool SVG images with elements are displayed on preview and saved together to SVG file
      * with the correct positions and layers after copying actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas(
@@ -2768,8 +2794,10 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 500, 500);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2780,7 +2808,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool SVG images with elements are displayed on preview and saved together to SVG file
      * with the correct positions and layers after undo/redo actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas(
@@ -2797,8 +2825,10 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2808,15 +2838,17 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2162
      * Description: Added from KET color SVG images with elements saved to PNG can be viewed on preview and Save button is enabled
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openFileAndAddToCanvasAsNewProject(
       'KET/svg-colored-images-with-elements.ket',
       page,
     );
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2827,7 +2859,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool SVG images with elements are displayed on preview and saved together to PNG file
      * with the correct positions and layers after selection, moving actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas(
@@ -2838,15 +2870,19 @@ test.describe('Image files', () => {
     );
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2857,7 +2893,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file
      * with the correct positions and layers after scaling actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas(
@@ -2870,7 +2906,9 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
 
     // Ensure the element is in view
@@ -2881,8 +2919,10 @@ test.describe('Image files', () => {
     await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2893,7 +2933,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool SVG images with elements are displayed on preview and saved together to PNG file
      * with the correct positions and layers after deleting actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas(
@@ -2904,16 +2944,20 @@ test.describe('Image files', () => {
     );
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     await page.mouse.move(200, 200);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2924,7 +2968,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool SVG images with elements are displayed on preview and saved together to PNG file
      * with the correct positions and layers after copying actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas(
@@ -2940,8 +2984,10 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 500, 500);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2952,7 +2998,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool SVG images with elements are displayed on preview and saved together to PNG file
      * with the correct positions and layers after undo/redo actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas(
@@ -2969,8 +3015,10 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -2982,7 +3030,7 @@ test.describe('Image files', () => {
      * PNG images with the correct positions and layers of elements.
      */
     await openImageAndAddToCanvas('Images/saved-svg-images-as-png.png', page);
-    await setZoomInputValue(page, '30');
+    await CommonTopRightToolbar(page).setZoomInputValue('30');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -3004,14 +3052,16 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2029
      * Description: Added by Tool PNG images are displayed on preview and can be saved to PNG file with correct positions and layers
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-png.png', page, 300, 300);
     await openImageAndAddToCanvas('Images/image-png-demo.png', page, 400, 400);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -3021,14 +3071,16 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2029
      * Description: Added by Tool PNG images are displayed on preview and can be saved to SVG file with correct positions and layers
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-png.png', page, 300, 300);
     await openImageAndAddToCanvas('Images/image-png-demo.png', page, 400, 400);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -3038,11 +3090,13 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2029
      * Description: Added from KET PNG images with elements are displayed on preview and saved together to PNG file with the correct positions and layers
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openFileAndAddToCanvas('KET/images-png-with-elements.ket', page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -3052,11 +3106,13 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2029
      * Description: Added from KET PNG images with elements are displayed on preview and saved together to SVG file with the correct positions and layers
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openFileAndAddToCanvas('KET/images-png-with-elements.ket', page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -3067,21 +3123,25 @@ test.describe('Image files', () => {
      * Description: Added by Tool PNG images with Benzene Ring are displayed on preview and saved together to PNG file
      * with the correct positions and layers after selection, moving actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-png.png', page, 300, 300);
     await openImageAndAddToCanvas('Images/image-png-demo.png', page);
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await page.mouse.move(300, 300);
     await dragMouseTo(600, 500, page);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -3092,21 +3152,25 @@ test.describe('Image files', () => {
      * Description: Added by Tool PNG images with Benzene Ring are displayed on preview and saved together to SVG file
      * with the correct positions and layers after selection, moving actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-png.png', page, 300, 300);
     await openImageAndAddToCanvas('Images/image-png-demo.png', page);
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await page.mouse.move(300, 300);
     await dragMouseTo(600, 500, page);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -3117,7 +3181,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool SVG images with elements are displayed on preview and can be saved together to PNG file
      * with the correct positions and layers after scaling actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-png.png', page, 300, 300);
     await openImageAndAddToCanvas('Images/image-png-demo.png', page);
@@ -3125,7 +3189,9 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 300, 300);
 
     // Ensure the element is in view
@@ -3136,8 +3202,10 @@ test.describe('Image files', () => {
     await dragMouseTo(600, 500, page);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -3148,7 +3216,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool SVG images with elements are displayed on preview and can be saved together to SVG file
      * with the correct positions and layers after scaling actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-png.png', page, 300, 300);
     await openImageAndAddToCanvas('Images/image-png-demo.png', page);
@@ -3156,7 +3224,9 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnCanvas(page, 300, 300);
 
     // Ensure the element is in view
@@ -3167,8 +3237,10 @@ test.describe('Image files', () => {
     await dragMouseTo(600, 500, page);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -3179,21 +3251,25 @@ test.describe('Image files', () => {
      * Description: Added by Tool PNG images with elements are displayed on preview and saved together to PNG file
      * with the correct positions and layers after deleting actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-png.png', page);
     await openImageAndAddToCanvas('Images/image-png-demo.png', page, 600, 500);
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -3204,21 +3280,25 @@ test.describe('Image files', () => {
      * Description: Added by Tool PNG images with elements are displayed on preview and saved together to SVG file
      * with the correct positions and layers after deleting actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-png.png', page);
     await openImageAndAddToCanvas('Images/image-png-demo.png', page, 600, 500);
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -3229,7 +3309,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool PNG images with elements are displayed on preview and saved together to PNG file
      * with the correct positions and layers after copying actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-png.png', page, 600, 500);
     await openImageAndAddToCanvas('Images/image-png-demo.png', page);
@@ -3240,8 +3320,10 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 500, 400);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -3252,7 +3334,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool PNG images with elements are displayed on preview and saved together to SVG file
      * with the correct positions and layers after copying actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-png.png', page, 600, 500);
     await openImageAndAddToCanvas('Images/image-png-demo.png', page);
@@ -3263,8 +3345,10 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 500, 400);
     await takeEditorScreenshot(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -3275,7 +3359,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool SVG images with Benzene Ring are displayed on preview and saved together to PNG file
      * with the correct positions and layers after undo/redo actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-png.png', page, 600, 500);
     await openImageAndAddToCanvas('Images/image-png-demo.png', page);
@@ -3287,8 +3371,10 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.PNGImage);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });
@@ -3299,7 +3385,7 @@ test.describe('Image files', () => {
      * Description: Added by Tool SVG images with Benzene Ring are displayed on preview and saved together to SVG file
      * with the correct positions and layers after undo/redo actions of images.
      */
-    const saveButton = saveStructureDialog(page).saveButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     await openImageAndAddToCanvas('Images/image-png.png', page, 600, 500);
     await openImageAndAddToCanvas('Images/image-png-demo.png', page);
@@ -3311,8 +3397,10 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await expect(saveButton).toBeEnabled();
     await takeEditorScreenshot(page);
   });

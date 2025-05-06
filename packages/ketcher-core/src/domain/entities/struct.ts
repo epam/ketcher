@@ -16,7 +16,7 @@
 
 import assert from 'assert';
 import { Atom, radicalElectrons } from './atom';
-import { EditorSelection } from 'application/editor';
+import type { EditorSelection } from 'application/editor';
 import { Bond } from './bond';
 import { Box2Abs } from './box2Abs';
 import { Elements } from 'domain/constants';
@@ -41,6 +41,10 @@ import { isNumber } from 'lodash';
 import { Image } from './image';
 import { getStereoAtomsMap } from 'application/editor/actions/helpers';
 import { MultitailArrow } from './multitailArrow';
+import {
+  flipPointByCenter,
+  rotateDelta,
+} from 'application/editor/shared/utils';
 
 export type Neighbor = {
   aid: number;
@@ -1370,5 +1374,73 @@ export class Struct {
     this.rxnPluses.changeInitiallySelectedPropertiesForPool();
     this.rxnArrows.changeInitiallySelectedPropertiesForPool();
     this.texts.changeInitiallySelectedPropertiesForPool();
+  }
+
+  public applyMonomersTransformations() {
+    const atomToBonds = new Map<number, number[]>();
+
+    this.bonds.forEach((bond, bondId) => {
+      for (const atomId of [bond.begin, bond.end]) {
+        const list = atomToBonds.get(atomId) ?? [];
+        list.push(bondId);
+        atomToBonds.set(atomId, list);
+      }
+    });
+
+    this.sgroups.forEach((sGroup) => {
+      if (!(sGroup instanceof MonomerMicromolecule)) {
+        return;
+      }
+
+      const center = sGroup.pp;
+      if (!center) {
+        return;
+      }
+
+      const rotateValue = sGroup.monomer.monomerItem.transformation?.rotate;
+      if (rotateValue) {
+        sGroup.atoms.forEach((atomId) => {
+          const atom = this.atoms.get(atomId);
+          if (!atom) {
+            return;
+          }
+
+          atom.pp = atom.pp.add(rotateDelta(atom.pp, center, rotateValue));
+        });
+      }
+
+      const flipValue = sGroup.monomer.monomerItem.transformation?.flip;
+      if (flipValue) {
+        sGroup.atoms.forEach((atomId) => {
+          const atom = this.atoms.get(atomId);
+          if (!atom) {
+            return;
+          }
+
+          atom.pp = atom.pp.add(flipPointByCenter(atom.pp, center, flipValue));
+        });
+
+        const sGroupBonds = new Set<number>(
+          sGroup.atoms.flatMap((atomId) => atomToBonds.get(atomId)),
+        );
+
+        sGroupBonds.forEach((bondId) => {
+          const bond = this.bonds.get(bondId);
+          if (!bond || bond.type !== Bond.PATTERN.TYPE.SINGLE) {
+            return;
+          }
+
+          if (
+            bond.stereo === Bond.PATTERN.STEREO.UP ||
+            bond.stereo === Bond.PATTERN.STEREO.DOWN
+          ) {
+            bond.stereo =
+              bond.stereo === Bond.PATTERN.STEREO.UP
+                ? Bond.PATTERN.STEREO.DOWN
+                : Bond.PATTERN.STEREO.UP;
+          }
+        });
+      }
+    });
   }
 }

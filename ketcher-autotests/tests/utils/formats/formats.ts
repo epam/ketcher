@@ -1,6 +1,6 @@
 import { Page, expect } from '@playwright/test';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MolfileFormat, Struct, SupportedModes } from 'ketcher-core';
-import { commonLeftToolbarLocators } from '@tests/pages/common/CommonLeftToolbar';
 
 export async function getKet(page: Page): Promise<string> {
   return await page.evaluate(() => window.ketcher.getKet());
@@ -188,7 +188,7 @@ export async function waitForViewOnlyModeState(
   isEnabled: boolean,
   timeout = 100000,
 ): Promise<void> {
-  const eraseButton = commonLeftToolbarLocators(page).eraseButton;
+  const eraseButton = CommonLeftToolbar(page).eraseButton;
 
   if (isEnabled) {
     await expect(eraseButton).toBeDisabled({ timeout });

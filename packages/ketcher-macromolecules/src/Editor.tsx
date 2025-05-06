@@ -42,6 +42,7 @@ import {
   destroyEditor,
   selectEditor,
   selectIsHandToolSelected,
+  setContextMenuActive,
 } from 'state/common';
 import {
   useAppDispatch,
@@ -95,6 +96,7 @@ import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
 import { RootSizeProvider } from './contexts';
+import { MacromoleculePropertiesWindow } from 'components/macromoleculeProperties';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -185,6 +187,8 @@ function Editor({
   useEffect(() => {
     editor?.events.rightClickSequence.add(([event, selections]) => {
       setSelections(selections);
+      window.dispatchEvent(new Event('hidePreview'));
+      dispatch(setContextMenuActive(true));
       showSequenceContextMenu({
         event,
         props: {
@@ -314,6 +318,10 @@ function Editor({
         <Layout.Right hide={isMonomerLibraryHidden}>
           <MonomerLibrary toggleLibraryVisibility={toggleLibraryVisibility} />
         </Layout.Right>
+
+        <Layout.Bottom>
+          <MacromoleculePropertiesWindow />
+        </Layout.Bottom>
         <Layout.InsideRoot>
           {isMonomerLibraryHidden && (
             <MonomerLibraryToggle onClick={toggleLibraryVisibility} />

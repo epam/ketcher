@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import { RNA_TAB } from '@constants/testIdConstants';
 import { moveMouseAway } from '@utils/moveMouseAway';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 export const RnaAccordionTypes = {
   Presets: {
@@ -73,7 +73,7 @@ export async function toggleRnaAccordionItem(
 }
 
 export async function gotoRNA(page: Page) {
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await page.getByTestId(RNA_TAB).click();
   await toggleRnaBuilderAccordion(page);
 }

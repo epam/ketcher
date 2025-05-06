@@ -28,21 +28,13 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  selectClearCanvasTool,
-  selectOpenFileTool,
-  pressUndoButton,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import { addTextToCanvas } from '@utils/selectors/addTextBoxToCanvas';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { setZoomInputValue } from '@tests/pages/common/TopRightToolbar';
-import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 async function addTail(page: Page, x: number, y: number) {
   await page.mouse.click(x, y, { button: 'right' });
@@ -63,7 +55,7 @@ test.describe('Cascade Reactions', () => {
 
   test.afterEach(async ({ context: _ }) => {
     await closeErrorAndInfoModals(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
   });
 
@@ -792,7 +784,7 @@ test.describe('Cascade Reactions', () => {
         1. Open RDF file Open Structure Preview
         2. Take screenshot
       */
-      await selectOpenFileTool(page);
+      await TopLeftToolbar(page).openFile();
       await openFile(rdfFile, page);
       await takeEditorScreenshot(page);
     });
@@ -823,13 +815,13 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
-      await setZoomInputValue(page, '20');
+      await CommonTopRightToolbar(page).setZoomInputValue('20');
       await resetCurrentTool(page);
       await takeEditorScreenshot(page);
-      await setZoomInputValue(page, '400');
+      await CommonTopRightToolbar(page).setZoomInputValue('400');
       await resetCurrentTool(page);
       await takeEditorScreenshot(page);
-      await setZoomInputValue(page, '100');
+      await CommonTopRightToolbar(page).setZoomInputValue('100');
       await resetCurrentTool(page);
       await takeEditorScreenshot(page);
     });
@@ -893,7 +885,7 @@ test.describe('Cascade Reactions', () => {
       await openFileAndAddToCanvasAsNewProject(rdfFile, page);
       await takeEditorScreenshot(page);
       await selectPartOfMolecules(page);
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       await takeEditorScreenshot(page);
       await screenshotBetweenUndoRedo(page);
       await takeEditorScreenshot(page);
@@ -1710,8 +1702,8 @@ test.describe('Cascade Reactions', () => {
          * Description: Canvas is empty, click on Save as..., verify that ${format} option is placed under SDF V2000, SDF V3000
          * in a File format dropdown, empty canvas can't be saved to ${format}, error "Convert error! core: <molecule> is not a base reaction" is displayed.
          */
-        await selectSaveTool(page);
-        await chooseFileFormat(page, format);
+        await TopLeftToolbar(page).saveFile();
+        await SaveStructureDialog(page).chooseFileFormat(format);
         await takeEditorScreenshot(page);
       });
     },
@@ -1762,18 +1754,20 @@ test.describe('Cascade Reactions', () => {
           await clickOnCanvas(page, 500, 600);
           await selectRing(RingButton.Benzene, page);
           await clickOnCanvas(page, 200, 600);
-          await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+          await CommonLeftToolbar(page).selectAreaSelectionTool(
+            SelectionToolType.Rectangle,
+          );
           await addTail(page, 482, 464);
           await takeEditorScreenshot(page);
           await selectPartOfMolecules(page);
-          await selectEraseTool(page);
+          await CommonLeftToolbar(page).selectEraseTool();
           await takeEditorScreenshot(page);
-          await pressUndoButton(page);
+          await TopLeftToolbar(page).undo();
           await takeEditorScreenshot(page);
           await copyAndPaste(page);
           await clickOnCanvas(page, 500, 200);
           await takeEditorScreenshot(page);
-          await pressUndoButton(page);
+          await TopLeftToolbar(page).undo();
           await verifyFileExport(
             page,
             `${rdfFileExpected}`,

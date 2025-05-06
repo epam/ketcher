@@ -191,6 +191,7 @@ export function load(struct: Struct, options?) {
       parsedStruct.setImplicitHydrogen();
       parsedStruct.setStereoLabelsToAtoms();
       parsedStruct.markFragments();
+      parsedStruct.applyMonomersTransformations();
 
       if (fragment) {
         if (parsedStruct.isBlank()) {

@@ -21,6 +21,7 @@ import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
 import {
   BaseMonomer,
+  CoreEditor,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   NodeSelection,
   NodesSelection,
@@ -106,10 +107,11 @@ interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
   monomersLibraryUpdate?: string | JSON;
+  onInit?: (editor: CoreEditor) => void;
 }
 
 interface EditorContainerProps extends EditorProps {
-  onInit?: () => void;
+  onInit?: (editor: CoreEditor) => void;
 }
 
 function EditorContainer({
@@ -127,10 +129,6 @@ function EditorContainer({
     ketcher: editorTheme,
   });
 
-  useEffect(() => {
-    onInit?.();
-  }, [onInit]);
-
   return (
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
@@ -141,6 +139,7 @@ function EditorContainer({
               theme={editorTheme}
               togglerComponent={togglerComponent}
               monomersLibraryUpdate={monomersLibraryUpdate}
+              onInit={onInit}
             />
           </EditorWrapper>
         </RootSizeProvider>
@@ -153,6 +152,7 @@ function Editor({
   theme,
   togglerComponent,
   monomersLibraryUpdate,
+  onInit,
 }: EditorProps) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
@@ -176,7 +176,12 @@ function Editor({
 
   useEffect(() => {
     dispatch(
-      createEditor({ theme, canvas: canvasRef.current, monomersLibraryUpdate }),
+      createEditor({
+        theme,
+        canvas: canvasRef.current,
+        monomersLibraryUpdate,
+        onInit,
+      }),
     );
 
     return () => {

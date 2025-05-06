@@ -98,9 +98,10 @@ export const editorSlice: Slice = createSlice({
         theme: DeepPartial<ThemeType>;
         canvas: SVGSVGElement;
         monomersLibraryUpdate?: string | JSON;
+        onInit?: (editor: CoreEditor) => void;
       }>,
     ) => {
-      state.editor = new CoreEditor({
+      const editor = new CoreEditor({
         theme: action.payload.theme,
         canvas: action.payload.canvas,
         mode: state.editorLayoutMode
@@ -108,6 +109,9 @@ export const editorSlice: Slice = createSlice({
           : undefined,
         monomersLibraryUpdate: action.payload.monomersLibraryUpdate,
       });
+
+      state.editor = editor;
+      action.payload.onInit?.(editor);
     },
     destroyEditor: (state) => {
       state.editorLayoutMode = state.editor.mode.modeName;

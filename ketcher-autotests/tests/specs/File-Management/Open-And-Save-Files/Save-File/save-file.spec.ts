@@ -138,20 +138,14 @@ test.describe('Save files', () => {
       'Molfiles-V3000/structure-where-atoms-exceeds999.mol',
       page,
     );
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-    expect(molFile).toEqual(molFileExpected);
   });
 
   test('The file formats in the Save Structure window match the mockup', async ({

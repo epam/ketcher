@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   pressButton,
   takeEditorScreenshot,
@@ -14,8 +14,6 @@ import {
   resetCurrentTool,
   copyAndPaste,
   cutAndPaste,
-  saveToFile,
-  receiveFileComparisonData,
   clickOnAtom,
   screenshotBetweenUndoRedo,
   setAttachmentPoints,
@@ -29,7 +27,6 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
-import { getMolfile } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
@@ -406,21 +403,14 @@ test.describe('Attachment Point Tool', () => {
     Description: Structure with attachment points saved as .mol file
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/chain-with-attachment-points-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'Molfiles-V2000/chain-with-attachment-points-expected.mol',
-      });
-    expect(molFile).toEqual(molFileExpected);
-    await takeEditorScreenshot(page);
   });
 
   test('Click and Save as *.mol file', async ({ page }) => {
@@ -430,21 +420,14 @@ test.describe('Attachment Point Tool', () => {
     Open the saved *.mol file and edit it in any way.
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/chain-with-attachment-points-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'Molfiles-V2000/chain-with-attachment-points-expected.mol',
-      });
-    expect(molFile).toEqual(molFileExpected);
-    await takeEditorScreenshot(page);
   });
 
   test('Save as *.mol file V3000', async ({ page }) => {

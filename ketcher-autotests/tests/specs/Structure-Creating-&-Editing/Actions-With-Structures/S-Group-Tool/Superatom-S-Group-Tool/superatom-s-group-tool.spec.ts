@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   LeftPanelButton,
   selectLeftPanelButton,
@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
-  receiveFileComparisonData,
   BondType,
   selectRingButton,
   RingButton,
@@ -16,13 +15,11 @@ import {
   clickOnAtom,
   clickOnBond,
   screenshotBetweenUndoRedo,
-  saveToFile,
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getMolfile } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
@@ -245,20 +242,14 @@ test.describe('Superatom S-Group tool', () => {
       Description: User is able to save and open structure with Superatom S-group.
     */
     await openFileAndAddToCanvas('KET/superatom-all-chain.ket', page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/superatom-all-chain-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'Molfiles-V2000/superatom-all-chain-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-    expect(molFile).toEqual(molFileExpected);
-    await takeEditorScreenshot(page);
   });
 
   test('Contract/expand/remove abbreviation on whole Chain structure with Superatom S-group', async ({

@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   LeftPanelButton,
   selectLeftPanelButton,
@@ -8,7 +8,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
-  receiveFileComparisonData,
   moveMouseToTheMiddleOfTheScreen,
   resetCurrentTool,
   BondType,
@@ -20,13 +19,11 @@ import {
   clickOnAtom,
   fillFieldByPlaceholder,
   screenshotBetweenUndoRedo,
-  saveToFile,
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getMolfile } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
@@ -172,23 +169,14 @@ test.describe('Data S-Group tool', () => {
       'Molfiles-V2000/chain-with-name-and-value.mol',
       page,
     );
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
-      'Molfiles-V2000/chain-with-name-and-value-expected.mol',
-      expectedFile,
-    );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'Molfiles-V2000/chain-with-name-and-value-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-    expect(molFile).toEqual(molFileExpected);
 
-    await editSGroupProperties(page, '33', 'Multiple group', '8');
-    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V2000/chain-with-name-and-value-expected.mol',
+      FileType.MOL,
+      'v2000',
+      [1],
+    );
   });
 
   test('Add Data S-Group to atoms of Chain', async ({ page }) => {

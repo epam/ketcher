@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { expect, Page, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   BondType,
   clickInTheMiddleOfTheScreen,
@@ -11,10 +11,8 @@ import {
   LeftPanelButton,
   openFileAndAddToCanvas,
   pressButton,
-  receiveFileComparisonData,
   resetCurrentTool,
   RingButton,
-  saveToFile,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
   selectLeftPanelButton,
@@ -24,7 +22,6 @@ import {
   waitForPageInit,
 } from '@utils';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import { getMolfile } from '@utils/formats';
 import { SGroupRepeatPattern } from '@utils/sgroup';
 import {
   FileType,
@@ -293,20 +290,14 @@ test.describe('SRU Polymer tool', () => {
       Description: User is able to save and open structure with SRU polymer S-group.
     */
     await openFileAndAddToCanvas('KET/sru-polymer-data.ket', page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/sru-polymer-data-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'Molfiles-V2000/sru-polymer-data-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-    expect(molFile).toEqual(molFileExpected);
-    await takeEditorScreenshot(page);
   });
 
   test('Add S-Group properties to structure and atom', async ({ page }) => {

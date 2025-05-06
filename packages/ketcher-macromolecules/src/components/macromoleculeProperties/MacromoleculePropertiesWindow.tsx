@@ -735,7 +735,11 @@ export const MacromoleculePropertiesWindow = () => {
 
   useEffect(() => {
     debouncedRecalculateMacromoleculeProperties(skipDataFetch);
-  }, [unipositiveIonsMeasurementUnit, oligonucleotidesMeasurementUnit]);
+  }, [
+    unipositiveIonsMeasurementUnit,
+    oligonucleotidesMeasurementUnit,
+    skipDataFetch,
+  ]);
 
   useEffect(() => {
     setSelectedTabIndex(

@@ -23,6 +23,7 @@ import styled from '@emotion/styled';
 import { Button } from 'ketcher-react';
 import { blurActiveElement } from 'helpers/canvas';
 import { useRecalculateMacromoleculeProperties } from '../../hooks/useRecalculateMacromoleculeProperties';
+import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
 
 const StyledButton = styled(Button)<{ isActive?: boolean }>(
   ({ theme, isActive }) => ({
@@ -74,6 +75,8 @@ export const CalculateMacromoleculePropertiesButton = () => {
     <StyledButton
       isActive={isMacromoleculesPropertiesWindowOpened}
       onClick={handleClick}
+      title={`Calculate properties (${hotkeysShortcuts.toggleMacromoleculesPropertiesVisibility})`}
+      data-testid="calculate-macromolecule-properties-button"
     >
       <svg
         width="15"

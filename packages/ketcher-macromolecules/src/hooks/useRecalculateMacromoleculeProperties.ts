@@ -33,8 +33,8 @@ export const useRecalculateMacromoleculeProperties = () => {
     selectOligonucleotidesMeasurementUnit,
   );
 
-  return async () => {
-    if (!editor) {
+  return async (shouldSkip?: boolean) => {
+    if (!editor || shouldSkip) {
       return;
     }
 

@@ -689,26 +689,6 @@ export const MacromoleculePropertiesWindow = () => {
   const macromoleculesProperties = useAppSelector(
     selectMacromoleculesProperties,
   );
-  const firstMacromoleculesProperties:
-    | SingleChainMacromoleculeProperties
-    | undefined = macromoleculesProperties?.[0];
-  const [selectedTabIndex, setSelectedTabIndex] = useState(
-    PROPERTIES_TABS.PEPTIDES,
-  );
-  const [massMeasurementUnit, setMassMeasurementUnit] = useState(
-    calculateMassMeasurementUnit(firstMacromoleculesProperties?.mass),
-  );
-  const isMacromoleculesPropertiesWindowOpened = useAppSelector(
-    selectIsMacromoleculesPropertiesWindowOpened,
-  );
-  const recalculateMacromoleculeProperties =
-    useRecalculateMacromoleculeProperties();
-  const debouncedRecalculateMacromoleculeProperties = useCallback(
-    debounce(() => {
-      recalculateMacromoleculeProperties();
-    }, 500),
-    [recalculateMacromoleculeProperties],
-  );
   const unipositiveIonsMeasurementUnit = useAppSelector(
     selectUnipositiveIonsMeasurementUnit,
   );
@@ -716,9 +696,34 @@ export const MacromoleculePropertiesWindow = () => {
     selectOligonucleotidesMeasurementUnit,
   );
 
+  const firstMacromoleculesProperties:
+    | SingleChainMacromoleculeProperties
+    | undefined = macromoleculesProperties?.[0];
+
+  const [selectedTabIndex, setSelectedTabIndex] = useState(
+    PROPERTIES_TABS.PEPTIDES,
+  );
+  const [massMeasurementUnit, setMassMeasurementUnit] = useState(
+    calculateMassMeasurementUnit(firstMacromoleculesProperties?.mass),
+  );
+
+  const isMacromoleculesPropertiesWindowOpened = useAppSelector(
+    selectIsMacromoleculesPropertiesWindowOpened,
+  );
+
+  const recalculateMacromoleculeProperties =
+    useRecalculateMacromoleculeProperties();
+  const debouncedRecalculateMacromoleculeProperties = useCallback(
+    debounce((shouldSkip?: boolean) => {
+      recalculateMacromoleculeProperties(shouldSkip);
+    }, 500),
+    [recalculateMacromoleculeProperties],
+  );
+
+  const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
   useEffect(() => {
     const selectEntitiesHandler = () => {
-      debouncedRecalculateMacromoleculeProperties();
+      debouncedRecalculateMacromoleculeProperties(skipDataFetch);
     };
 
     editor?.events.selectEntities.add(selectEntitiesHandler);
@@ -726,11 +731,15 @@ export const MacromoleculePropertiesWindow = () => {
     return () => {
       editor?.events.selectEntities.remove(selectEntitiesHandler);
     };
-  }, [editor]);
+  }, [editor, skipDataFetch]);
 
   useEffect(() => {
-    debouncedRecalculateMacromoleculeProperties();
-  }, [unipositiveIonsMeasurementUnit, oligonucleotidesMeasurementUnit]);
+    debouncedRecalculateMacromoleculeProperties(skipDataFetch);
+  }, [
+    unipositiveIonsMeasurementUnit,
+    oligonucleotidesMeasurementUnit,
+    skipDataFetch,
+  ]);
 
   useEffect(() => {
     setSelectedTabIndex(

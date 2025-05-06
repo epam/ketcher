@@ -30,7 +30,7 @@ import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,
@@ -765,6 +765,45 @@ export const MacromoleculePropertiesWindow = () => {
     !hasNucleotideSpecificProperties(firstMacromoleculesProperties) ||
     macromoleculesProperties.length > 2;
 
+  const grossFormula = useMemo(() => {
+    if (!firstMacromoleculesProperties?.grossFormula) {
+      return null;
+    }
+
+    return (
+      <GrossFormula>
+        {firstMacromoleculesProperties?.grossFormula
+          .split(' ')
+          .map((atomNameWithAmount, i) => {
+            return (
+              <GrossFormulaPart
+                part={atomNameWithAmount}
+                key={i}
+              ></GrossFormulaPart>
+            );
+          })}
+      </GrossFormula>
+    );
+  }, [firstMacromoleculesProperties?.grossFormula]);
+
+  const molecularMassValue = useMemo(() => {
+    if (!firstMacromoleculesProperties?.mass) {
+      return null;
+    }
+
+    return (
+      <>
+        <MolecularMassAmount>
+          {_round(
+            firstMacromoleculesProperties?.mass /
+              massMeasurementUnitToNumber[massMeasurementUnit],
+            3,
+          )}
+        </MolecularMassAmount>{' '}
+      </>
+    );
+  }, [firstMacromoleculesProperties?.mass, massMeasurementUnit]);
+
   return isMacromoleculesPropertiesWindowOpened ? (
     <StyledWrapper
       hasError={
@@ -789,42 +828,23 @@ export const MacromoleculePropertiesWindow = () => {
         <StyledCloseIcon name="close" onClick={closeWindow} />
       </WindowControlsArea>
       <Header>
-        {firstMacromoleculesProperties && (
-          <>
-            <GrossFormula>
-              {firstMacromoleculesProperties?.grossFormula
-                .split(' ')
-                .map((atomNameWithAmount, i) => {
-                  return (
-                    <GrossFormulaPart
-                      part={atomNameWithAmount}
-                      key={i}
-                    ></GrossFormulaPart>
-                  );
-                })}
-            </GrossFormula>
-            <MolecularMass>
-              <MolecularMassAmount>
-                {_round(
-                  firstMacromoleculesProperties?.mass /
-                    massMeasurementUnitToNumber[massMeasurementUnit],
-                  3,
-                )}
-              </MolecularMassAmount>{' '}
-              <BasicPropertyDropdown
-                options={[
-                  MassMeasurementUnit.Da,
-                  MassMeasurementUnit.kDa,
-                  MassMeasurementUnit.MDa,
-                ].map((unit) => ({
-                  id: unit,
-                  label: unit,
-                }))}
-                currentSelection={massMeasurementUnit}
-                selectionHandler={onMassMeasurementUnitChange}
-              />
-            </MolecularMass>
-          </>
+        {grossFormula}
+        {molecularMassValue && (
+          <MolecularMass>
+            {molecularMassValue}
+            <BasicPropertyDropdown
+              options={[
+                MassMeasurementUnit.Da,
+                MassMeasurementUnit.kDa,
+                MassMeasurementUnit.MDa,
+              ].map((unit) => ({
+                id: unit,
+                label: unit,
+              }))}
+              currentSelection={massMeasurementUnit}
+              selectionHandler={onMassMeasurementUnitChange}
+            />
+          </MolecularMass>
         )}
       </Header>
       <TabsWrapper>

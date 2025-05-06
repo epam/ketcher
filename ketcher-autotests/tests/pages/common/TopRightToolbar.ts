@@ -18,7 +18,9 @@ type ZoomDropdownLocators = {
 
 export const CommonTopRightToolbar = (page: Page) => {
   const locators: CommonTopRightToolbarLocators = {
-    ketcherModeSwitcherCombobox: page.getByTestId('polymer-toggler:visible'),
+    ketcherModeSwitcherCombobox: page
+      .getByTestId('polymer-toggler')
+      .filter({ has: page.locator(':visible') }),
     fullScreenButton: page.getByTestId('fullscreen-mode-button'),
     zoomSelector: page.getByTestId('zoom-selector'),
   };

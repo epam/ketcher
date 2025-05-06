@@ -67,6 +67,7 @@ import { BaseMonomerRenderer } from 'application/render';
 import { initializeMode, parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
+import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -169,18 +170,10 @@ export class CoreEditor {
     this.cancelActiveDrag();
   };
 
-  private dragCtx = null;
-
   private cancelActiveDrag(): void {
-    if (this.dragCtx) {
-      this.dragCtx = null;
+    if (this.tool instanceof SelectRectangle) {
+      this.tool.stopMovement();
     }
-
-    if (this.tool && typeof this.tool.cancel === 'function') {
-      this.tool.cancel();
-    }
-
-    this.drawingEntitiesManager.unselectAllDrawingEntities();
   }
 
   static provideEditorInstance(): CoreEditor {

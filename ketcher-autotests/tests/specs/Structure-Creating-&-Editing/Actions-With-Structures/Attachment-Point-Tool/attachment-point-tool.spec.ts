@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   pressButton,
   takeEditorScreenshot,
@@ -14,8 +14,6 @@ import {
   resetCurrentTool,
   copyAndPaste,
   cutAndPaste,
-  saveToFile,
-  receiveFileComparisonData,
   clickOnAtom,
   screenshotBetweenUndoRedo,
   setAttachmentPoints,
@@ -29,7 +27,6 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
-import { getMolfile, getSmiles } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,

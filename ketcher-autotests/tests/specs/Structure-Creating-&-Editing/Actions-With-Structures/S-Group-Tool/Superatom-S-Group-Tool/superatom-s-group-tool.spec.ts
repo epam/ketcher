@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
-  receiveFileComparisonData,
   BondType,
   selectRingButton,
   RingButton,

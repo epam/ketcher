@@ -14,6 +14,7 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
   readFileContent,
+  MonomerType,
 } from '@utils';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -28,6 +29,7 @@ import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaul
 import { pageReload } from '@utils/common/helpers';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 
 let page: Page;
 
@@ -232,12 +234,12 @@ test.describe('Import-Saving .mol Files', () => {
       [1],
     );
 
-    // Closing page since test expects it to have closed at the end
-    const context = page.context();
-    await page.close();
-    page = await context.newPage();
-    await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    // // Closing page since test expects it to have closed at the end
+    // const context = page.context();
+    // await page.close();
+    // page = await context.newPage();
+    // await waitForPageInit(page);
+    // await turnOnMacromoleculesEditor(page);
   });
 
   const monomersToDelete = [

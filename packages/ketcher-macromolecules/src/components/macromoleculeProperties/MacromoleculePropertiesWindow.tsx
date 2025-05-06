@@ -44,20 +44,13 @@ import * as d3 from 'd3';
 
 const OTHER_MONOMER_COUNT_NAME = 'Other';
 
-function hasNucleotideSpecificProperties(
-  macromoleculesProperties?: SingleChainMacromoleculeProperties,
-) {
-  return (
-    macromoleculesProperties?.monomerCount?.nucleotides &&
-    Object.keys(macromoleculesProperties.monomerCount.nucleotides).length > 0
-  );
-}
-
-function hasPeptideSpecificProperties(
-  macromoleculesProperties: SingleChainMacromoleculeProperties,
-) {
-  return !hasNucleotideSpecificProperties(macromoleculesProperties);
-}
+const hasSpecificProperty = (
+  macromoleculesProperties: SingleChainMacromoleculeProperties | undefined,
+  property: 'nucleotides' | 'peptides',
+) => {
+  const specificProperty = macromoleculesProperties?.monomerCount?.[property];
+  return specificProperty && Object.keys(specificProperty).length > 0;
+};
 
 const StyledWrapper = styled('div')<{ isActive?: boolean; hasError?: boolean }>(
   ({ hasError }) => ({
@@ -734,7 +727,7 @@ export const MacromoleculePropertiesWindow = () => {
 
   useEffect(() => {
     setSelectedTabIndex(
-      hasNucleotideSpecificProperties(firstMacromoleculesProperties)
+      hasSpecificProperty(firstMacromoleculesProperties, 'nucleotides')
         ? PROPERTIES_TABS.RNA
         : PROPERTIES_TABS.PEPTIDES,
     );
@@ -755,15 +748,14 @@ export const MacromoleculePropertiesWindow = () => {
     setMassMeasurementUnit(option as MassMeasurementUnit);
   };
 
+  const hasCommonError =
+    !firstMacromoleculesProperties || macromoleculesProperties.length > 2;
   const hasPeptidesTabError =
-    !firstMacromoleculesProperties ||
-    !hasPeptideSpecificProperties(firstMacromoleculesProperties) ||
-    macromoleculesProperties.length > 2;
-
+    hasCommonError ||
+    !hasSpecificProperty(firstMacromoleculesProperties, 'peptides');
   const hasNucleotidesTabError =
-    !firstMacromoleculesProperties ||
-    !hasNucleotideSpecificProperties(firstMacromoleculesProperties) ||
-    macromoleculesProperties.length > 2;
+    hasCommonError ||
+    !hasSpecificProperty(firstMacromoleculesProperties, 'nucleotides');
 
   const grossFormula = useMemo(() => {
     if (!firstMacromoleculesProperties?.grossFormula) {

@@ -62,6 +62,7 @@ export interface IEditorEvents {
   pasteFromClipboard: Subscription;
   deleteSelectedStructure: Subscription;
   selectEntities: Subscription;
+  toggleMacromoleculesPropertiesVisibility: Subscription;
 }
 
 export let editorEvents: IEditorEvents;
@@ -124,6 +125,7 @@ export function resetEditorEvents() {
     pasteFromClipboard: new Subscription(),
     deleteSelectedStructure: new Subscription(),
     selectEntities: new Subscription(),
+    toggleMacromoleculesPropertiesVisibility: new Subscription(),
   };
 }
 resetEditorEvents();
@@ -265,6 +267,12 @@ export const hotkeysConfiguration = {
     shortcut: ['Shift+Alt+d'],
     handler: (editor: CoreEditor) => {
       editor.events.createAntisenseChain.dispatch(true);
+    },
+  },
+  toggleMacromoleculesPropertiesVisibility: {
+    shortcut: 'Alt+c',
+    handler: (editor: CoreEditor) => {
+      editor.events.toggleMacromoleculesPropertiesVisibility.dispatch();
     },
   },
 };

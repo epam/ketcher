@@ -129,6 +129,10 @@ export const editorSlice: Slice = createSlice({
     ) => {
       state.isMacromoleculesPropertiesWindowOpened = action.payload;
     },
+    toggleMacromoleculesPropertiesWindowVisibility: (state) => {
+      state.isMacromoleculesPropertiesWindowOpened =
+        !state.isMacromoleculesPropertiesWindowOpened;
+    },
     setMacromoleculesProperties: (
       state,
       action: PayloadAction<SingleChainMacromoleculeProperties[]>,
@@ -161,6 +165,7 @@ export const {
   showPreview,
   setContextMenuActive,
   setMacromoleculesPropertiesWindowVisibility,
+  toggleMacromoleculesPropertiesWindowVisibility,
   setMacromoleculesProperties,
   setUnipositiveIonsMeasurementUnit,
   setOligonucleotidesMeasurementUnit,

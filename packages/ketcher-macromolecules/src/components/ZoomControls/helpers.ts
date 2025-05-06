@@ -4,7 +4,7 @@ import {
   ZoomTool,
 } from 'ketcher-core';
 
-export const shortcuts =
+export const hotkeysShortcuts =
   generateMenuShortcuts<typeof hotkeysConfiguration>(hotkeysConfiguration);
 
 export const getIntegerFromString = (zoomInput: string | undefined): number => {

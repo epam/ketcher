@@ -21,15 +21,27 @@ export const CommonTopRightToolbar = (page: Page) => {
     ketcherModeSwitcherCombobox: page
       .getByTestId('polymer-toggler')
       .filter({ has: page.locator(':visible') }),
-    fullScreenButton: page.getByTestId('fullscreen-mode-button'),
-    zoomSelector: page.getByTestId('zoom-selector'),
+    fullScreenButton: page
+      .getByTestId('fullscreen-mode-button')
+      .filter({ has: page.locator(':visible') }),
+    zoomSelector: page
+      .getByTestId('zoom-selector')
+      .filter({ has: page.locator(':visible') }),
   };
 
   const zoomLocators: ZoomDropdownLocators = {
-    zoomValueEditbox: page.getByTestId('zoom-value'),
-    zoomOutButton: page.getByTestId('zoom-out'),
-    zoomInButton: page.getByTestId('zoom-in'),
-    zoomDefaultButton: page.getByTestId('zoom-default'),
+    zoomValueEditbox: page
+      .getByTestId('zoom-value')
+      .filter({ has: page.locator(':visible') }),
+    zoomOutButton: page
+      .getByTestId('zoom-out')
+      .filter({ has: page.locator(':visible') }),
+    zoomInButton: page
+      .getByTestId('zoom-in')
+      .filter({ has: page.locator(':visible') }),
+    zoomDefaultButton: page
+      .getByTestId('zoom-default')
+      .filter({ has: page.locator(':visible') }),
   };
 
   return {

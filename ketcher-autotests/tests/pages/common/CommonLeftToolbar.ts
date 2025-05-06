@@ -18,13 +18,21 @@ type LeftToolbarLocators = {
 
 export const CommonLeftToolbar = (page: Page) => {
   const locators: LeftToolbarLocators = {
-    handToolButton: page.getByTestId('hand'),
-    areaSelectionDropdownButton: page.getByTestId('select-rectangle'),
+    handToolButton: page
+      .getByTestId('hand')
+      .filter({ has: page.locator(':visible') }),
+    areaSelectionDropdownButton: page
+      .getByTestId('select-rectangle')
+      .filter({ has: page.locator(':visible') }),
     areaSelectionDropdownExpandButton: page
       .getByTestId('select-drop-down-button')
       .getByTestId('dropdown-expand'),
-    eraseButton: page.getByTestId('erase'),
-    bondSelectionDropdownButton: page.getByTestId('bonds-drop-down-button'),
+    eraseButton: page
+      .getByTestId('erase')
+      .filter({ has: page.locator(':visible') }),
+    bondSelectionDropdownButton: page
+      .getByTestId('bonds-drop-down-button')
+      .filter({ has: page.locator(':visible') }),
     bondSelectionDropdownExpandButton: page
       .getByTestId('bonds-drop-down-button')
       .getByTestId('dropdown-expand'),

@@ -46,13 +46,7 @@ export class RotateMonomerOperation extends BaseOperation {
       return;
     }
 
-    /*
-     * Ketcher provides rotation angle according to the rotation tool – 0 is in the middle, minus angle rotates anti-clockwise, plus angle rotates clockwise
-     * Indigo uses trigonometric circle – 0 is on the right, plus angle rotates anti-clockwise, minus angle rotates clockwise
-     * Hence, we have to invert the angle when saving and when loading from KET file
-     */
-    const invertedValue = -this.data.value;
-    monomerTransformation.rotate = this.previousValue + invertedValue;
+    monomerTransformation.rotate = this.previousValue + this.data.value;
   }
 
   invert() {

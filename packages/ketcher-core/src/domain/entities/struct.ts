@@ -1399,16 +1399,13 @@ export class Struct {
 
       const rotateValue = sGroup.monomer.monomerItem.transformation?.rotate;
       if (rotateValue) {
-        const invertedRotateValue = -rotateValue;
         sGroup.atoms.forEach((atomId) => {
           const atom = this.atoms.get(atomId);
           if (!atom) {
             return;
           }
 
-          atom.pp = atom.pp.add(
-            rotateDelta(atom.pp, center, invertedRotateValue),
-          );
+          atom.pp = atom.pp.add(rotateDelta(atom.pp, center, rotateValue));
         });
       }
 

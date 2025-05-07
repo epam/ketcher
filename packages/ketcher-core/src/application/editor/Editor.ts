@@ -96,7 +96,13 @@ export class CoreEditor {
   private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
   public drawnStructuresWrapperElement: SVGGElement;
-  public canvasOffset: DOMRect;
+  public canvasOffset: DOMRect = {
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
+  } as DOMRect;
+
   public theme;
   public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
@@ -143,7 +149,7 @@ export class CoreEditor {
     this.setupKeyboardEvents();
     this.setupHotKeysEvents();
     this.setupCopyPasteEvent();
-    this.canvasOffset = this.canvas.getBoundingClientRect();
+    this.resetCanvasOffset();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -153,6 +159,10 @@ export class CoreEditor {
     this.switchToMacromolecules();
     this.rerenderSequenceMode();
     this.initializeEventListeners();
+  }
+
+  private resetCanvasOffset() {
+    this.canvasOffset = this.canvas.getBoundingClientRect();
   }
 
   private initializeEventListeners(): void {
@@ -887,7 +897,7 @@ export class CoreEditor {
     }
 
     history.destroy();
-    zoomTool.canvas.html('');
+    this.drawingEntitiesManager.clearCanvas();
     zoomTool.resetZoom();
     struct.applyMonomersTransformations();
     reStruct.render.setMolecule(struct);
@@ -898,6 +908,8 @@ export class CoreEditor {
   }
 
   public switchToMacromolecules() {
+    this.resetCanvasOffset();
+
     const struct = this.micromoleculesEditor?.struct() || new Struct();
     const ketcher = ketcherProvider.getKetcher();
     const { modelChanges } =

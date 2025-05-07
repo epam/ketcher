@@ -2036,6 +2036,7 @@ export class DrawingEntitiesManager {
   public getAllSelectedEntitiesForEntities(drawingEntities: DrawingEntity[]) {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
+    editor.events.selectEntities.dispatch(drawingEntities);
     drawingEntities.forEach((monomer) => monomer.turnOnSelection());
     const newDrawingEntities = drawingEntities.reduce(
       (

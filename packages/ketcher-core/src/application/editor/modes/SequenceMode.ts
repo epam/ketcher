@@ -517,6 +517,9 @@ export class SequenceMode extends BaseMode {
       if (this.selectionStartCaretPosition > SequenceRenderer.caretPosition) {
         startCaretPosition = SequenceRenderer.caretPosition;
         endCaretPosition = this.selectionStartCaretPosition;
+      } else {
+        SequenceRenderer.setCaretPosition(SequenceRenderer.caretPosition + 1);
+        endCaretPosition++;
       }
       const monomers = SequenceRenderer.getMonomersByCaretPositionRange(
         startCaretPosition,

@@ -26,6 +26,7 @@ export const CommonLeftToolbar = (page: Page) => {
       .filter({ has: page.locator(':visible') }),
     areaSelectionDropdownExpandButton: page
       .getByTestId('select-drop-down-button')
+      .filter({ has: page.locator(':visible') })
       .getByTestId('dropdown-expand'),
     eraseButton: page
       .getByTestId('erase')
@@ -35,6 +36,7 @@ export const CommonLeftToolbar = (page: Page) => {
       .filter({ has: page.locator(':visible') }),
     bondSelectionDropdownExpandButton: page
       .getByTestId('bonds-drop-down-button')
+      .filter({ has: page.locator(':visible') })
       .getByTestId('dropdown-expand'),
     bondMultiToolSection: page.getByTestId('multi-tool-dropdown').first(),
   };

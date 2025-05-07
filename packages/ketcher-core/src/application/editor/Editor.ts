@@ -156,8 +156,6 @@ export class CoreEditor {
     editor = this;
     const ketcher = ketcherProvider.getKetcher();
     this.micromoleculesEditor = ketcher?.editor;
-    this.switchToMacromolecules();
-    this.rerenderSequenceMode();
     this.initializeEventListeners();
   }
 
@@ -902,7 +900,6 @@ export class CoreEditor {
     struct.applyMonomersTransformations();
     reStruct.render.setMolecule(struct);
 
-    this._monomersLibraryParsedJson = null;
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
   }
@@ -933,13 +930,6 @@ export class CoreEditor {
     ketcher?.editor.clear();
     ketcher?.editor.zoom(1);
     this._type = EditorType.Macromolecules;
-  }
-
-  private rerenderSequenceMode() {
-    if (this.mode instanceof SequenceMode) {
-      this.drawingEntitiesManager.clearCanvas();
-      this.drawingEntitiesManager.applyMonomersSequenceLayout();
-    }
   }
 
   public isCurrentModeWithAutozoom(): boolean {

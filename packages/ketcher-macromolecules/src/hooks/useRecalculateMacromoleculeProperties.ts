@@ -43,7 +43,7 @@ export const useRecalculateMacromoleculeProperties = () => {
       editor.drawingEntitiesManager.filterSelection();
     const ketSerializer = new KetSerializer();
     const drawingEntitiesManagerToCalculateProperties =
-      selectionDrawingEntitiesManager.hasMonomers
+      selectionDrawingEntitiesManager.hasDrawingEntities
         ? selectionDrawingEntitiesManager
         : editor.drawingEntitiesManager;
     const chainsCollection = ChainsCollection.fromMonomers([
@@ -51,7 +51,7 @@ export const useRecalculateMacromoleculeProperties = () => {
     ]);
 
     if (
-      !drawingEntitiesManagerToCalculateProperties.hasMonomers ||
+      !drawingEntitiesManagerToCalculateProperties.hasDrawingEntities ||
       chainsCollection.chains.length > 2 ||
       (chainsCollection.chains.length === 2 &&
         !isSenseAntisenseChains(

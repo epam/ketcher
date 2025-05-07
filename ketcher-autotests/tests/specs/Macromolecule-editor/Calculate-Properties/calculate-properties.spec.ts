@@ -17,6 +17,10 @@ import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
 
+async function clickOnXButton(page: Page) {
+  await page.locator('.css-1icymbx').click();
+}
+
 let page: Page;
 
 test.describe('Calculate Properties tests', () => {
@@ -228,7 +232,7 @@ test.describe('Calculate Properties tests', () => {
     await takePageScreenshot(page);
     await TopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
-    await page.locator('.css-1icymbx').click();
+    await clickOnXButton(page);
     await takePageScreenshot(page);
   });
 });

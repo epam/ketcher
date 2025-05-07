@@ -1124,7 +1124,7 @@ export class SequenceMode extends BaseMode {
 
   get keyboardEventHandlers() {
     const deleteNode = (direction: Direction) => {
-      if (this.isEditInRNABuilderMode) return; // Добавляем проверку
+      if (this.isEditInRNABuilderMode) return;
       const editor = CoreEditor.provideEditorInstance();
       const nodeToDelete =
         direction === Direction.Left

@@ -77,6 +77,15 @@ export const TopLeftToolbar = (page: Page) => {
         await locators.redoButton.click();
       });
     },
+
+    async calculateProperties() {
+      await waitForRender(page, async () => {
+        await locators.calculateMacromoleculePropertiesButton.click({
+          timeout: 1000,
+        });
+        await page.waitForTimeout(1000);
+      });
+    },
   };
 };
 

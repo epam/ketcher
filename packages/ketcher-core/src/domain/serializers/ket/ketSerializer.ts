@@ -66,6 +66,7 @@ import { Chem } from 'domain/entities/Chem';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   getKetRef,
+  modifyTransformation,
   populateStructWithSelection,
   setAmbiguousMonomerTemplatePrefix,
   setMonomerPrefix,
@@ -783,12 +784,14 @@ export class KetSerializer implements Serializer<Struct> {
     let nextMonomerId = 0;
 
     drawingEntitiesManager.monomers.forEach((monomer) => {
+      const monomerItem = monomer.monomerItem;
+
       if (
         monomer instanceof Chem &&
-        monomer.monomerItem.props.isMicromoleculeFragment
+        monomerItem.props.isMicromoleculeFragment
       ) {
         const atomIdMap = new Map<number, number>();
-        monomer.monomerItem.struct.mergeInto(
+        monomerItem.struct.mergeInto(
           struct,
           null,
           null,
@@ -807,10 +810,11 @@ export class KetSerializer implements Serializer<Struct> {
         monomerIdMap.set(monomer.id, nextMonomerId);
 
         if (monomer instanceof AmbiguousMonomer) {
+          const ambiguousMonomerItem = monomer.variantMonomerItem;
           templateId =
-            monomer.variantMonomerItem.subtype +
+            ambiguousMonomerItem.subtype +
             '_' +
-            monomer.variantMonomerItem.options.reduce(
+            ambiguousMonomerItem.options.reduce(
               (templateId, option) =>
                 templateId +
                 '_' +
@@ -820,10 +824,14 @@ export class KetSerializer implements Serializer<Struct> {
               '',
             );
         } else {
-          templateId =
-            monomer.monomerItem.props.id ||
-            getMonomerUniqueKey(monomer.monomerItem);
+          templateId = monomerItem.props.id || getMonomerUniqueKey(monomerItem);
         }
+
+        const { seqId, expanded, transformation } = monomerItem;
+        const isExpandedDefined = expanded !== undefined;
+        const isTransformationDefined =
+          transformation !== undefined &&
+          Object.keys(transformation).length > 0;
 
         fileContent[monomerKey] = {
           type:
@@ -837,7 +845,13 @@ export class KetSerializer implements Serializer<Struct> {
           },
           alias: monomer.label,
           templateId,
-          seqid: monomer.monomerItem.seqId,
+          seqid: seqId,
+          ...(isExpandedDefined && {
+            expanded,
+          }),
+          ...(isTransformationDefined && {
+            transformation: modifyTransformation(transformation),
+          }),
         };
         fileContent.root.nodes.push(getKetRef(monomerKey));
 
@@ -981,6 +995,7 @@ export class KetSerializer implements Serializer<Struct> {
     _struct: Struct,
     drawingEntitiesManager = new DrawingEntitiesManager(),
     selection?: EditorSelection,
+    isBeautified = true, // TODO make false by default
   ) {
     const struct = KetSerializer.removeLeavingGroupsFromConnectedAtoms(_struct);
     struct.enableInitiallySelected();
@@ -1014,7 +1029,11 @@ export class KetSerializer implements Serializer<Struct> {
       ...serializedMicromoleculesStruct.root.nodes,
     ];
 
-    return JSON.stringify(fileContent, null, 4) as unknown as string;
+    return JSON.stringify(
+      fileContent,
+      null,
+      isBeautified ? 4 : undefined,
+    ) as unknown as string;
   }
 
   convertMonomersLibrary(monomersLibrary: IKetMacromoleculesContent) {

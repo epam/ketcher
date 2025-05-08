@@ -17,14 +17,11 @@ import {
   getSequence,
   getSmiles,
   getFasta,
+  getExtendedSmiles,
 } from '@utils/formats';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import {
-  chooseFileFormat,
-  getTextAreaValue,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 export enum FileType {
   KET = 'ket',
@@ -32,6 +29,7 @@ export enum FileType {
   CDXML = 'cdxml',
   SMARTS = 'smarts',
   SMILES = 'smi',
+  ExtendedSMILES = 'cxsmi',
   MOL = 'mol',
   RXN = 'rxn',
   CML = 'cml',
@@ -53,6 +51,7 @@ const fileTypeHandlers: { [key in FileType]: FileTypeHandler } = {
   [FileType.CDXML]: getCdxml,
   [FileType.SMARTS]: getSmarts,
   [FileType.SMILES]: getSmiles,
+  [FileType.ExtendedSMILES]: getExtendedSmiles,
   [FileType.MOL]: getMolfile,
   [FileType.RXN]: getRxn,
   [FileType.RDF]: getRdf,
@@ -229,14 +228,13 @@ export async function receiveFileComparisonData({
 }
 
 export async function verifyHELMExport(page: Page, HELMExportExpected = '') {
-  const cancelButton = saveStructureDialog(page).cancelButton;
-
-  await selectSaveTool(page);
-
-  await chooseFileFormat(page, MacromoleculesFileFormatType.HELM);
-  const HELMExportResult = await getTextAreaValue(page);
+  await TopLeftToolbar(page).saveFile();
+  await SaveStructureDialog(page).chooseFileFormat(
+    MacromoleculesFileFormatType.HELM,
+  );
+  const HELMExportResult = await SaveStructureDialog(page).getTextAreaValue();
 
   expect(HELMExportResult).toEqual(HELMExportExpected);
 
-  await cancelButton.click();
+  await SaveStructureDialog(page).cancel();
 }

@@ -1,5 +1,5 @@
 import { Page, test } from '@playwright/test';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
 import {
@@ -71,7 +71,9 @@ async function separetingAndMovingRecatngles(page: Page) {
   await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
-  await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Lasso,
+  );
   await createSomeStructure(page);
   await clickOnCanvas(page, point4.x, point4.y);
   await page.mouse.down();

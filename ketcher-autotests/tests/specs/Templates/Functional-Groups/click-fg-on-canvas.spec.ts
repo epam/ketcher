@@ -1,13 +1,13 @@
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@playwright/test';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  selectAtomInToolbar,
   takeEditorScreenshot,
-  AtomButton,
   selectFunctionalGroups,
   selectSaltsAndSolvents,
   FunctionalGroups,
@@ -27,7 +27,9 @@ test.describe('Click Functional Group on canvas', () => {
       Test case: EPMLSOPKET-10105
       Description: when clicking with an FG template on an atom it should replace it
     */
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -69,9 +71,11 @@ test.describe('Click Functional Group on canvas', () => {
       Description: when clicking with an FG template
       on an atom connected with bond to another atom  it should replace it
     */
-    await selectAtomInToolbar(AtomButton.Chlorine, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Chlorine);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAtomInToolbar(AtomButton.Bromine, page);
+    await atomToolbar.clickAtom(Atom.Bromine);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
@@ -89,7 +93,9 @@ test.describe('Click Functional Group on canvas', () => {
       Test case: EPMLSOPKET-10109
       Description: when clicking with an FG template on an FG connected with bond to another atom  it should replace it
     */
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
 
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);

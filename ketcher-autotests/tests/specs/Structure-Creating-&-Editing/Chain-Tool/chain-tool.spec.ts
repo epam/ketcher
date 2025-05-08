@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
-import { selectTool, takeEditorScreenshot } from '@utils/canvas';
+import { takeEditorScreenshot } from '@utils/canvas';
+import { selectTool } from '@utils/canvas/tools';
 import {
   getAtomByIndex,
   getBottomAtomByAttributes,

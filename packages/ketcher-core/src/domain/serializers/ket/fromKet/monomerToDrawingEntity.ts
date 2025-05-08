@@ -8,6 +8,7 @@ import {
 import { Struct, Vec2 } from 'domain/entities';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
+  modifyTransformation,
   setMonomerTemplatePrefix,
   switchIntoChemistryCoordSystem,
 } from 'domain/serializers/ket/helpers';
@@ -19,7 +20,8 @@ export function templateToMonomerProps(template: IKetMonomerTemplate) {
     id: template.id,
     Name: template.fullName || template.name || template.alias || template.id,
     MonomerNaturalAnalogCode: template.naturalAnalogShort || '',
-    MonomerName: template.alias || template.id,
+    MonomerNaturalAnalogThreeLettersCode: template.naturalAnalog || '',
+    MonomerName: template.name || template.alias || template.id,
     MonomerFullName: template.fullName,
     MonomerType: template.classHELM,
     MonomerClass: template.class,
@@ -38,15 +40,25 @@ export function monomerToDrawingEntity(
   const position: Vec2 = switchIntoChemistryCoordSystem(
     new Vec2(node.position.x, node.position.y),
   );
+
+  const { alias, id } = template;
+  const { seqid, expanded, transformation } = node;
+
   return drawingEntitiesManager.addMonomer(
     {
       struct,
-      label: template.alias || template.id,
+      label: alias || id,
       colorScheme: undefined,
       favorite: false,
       props: templateToMonomerProps(template),
       attachmentPoints: KetSerializer.getTemplateAttachmentPoints(template),
-      seqId: node.seqid,
+      seqId: seqid,
+      ...(expanded !== undefined && {
+        expanded,
+      }),
+      ...(transformation !== undefined && {
+        transformation: modifyTransformation(transformation),
+      }),
     },
     position,
   );
@@ -62,6 +74,7 @@ export function createMonomersForVariantMonomer(
   const monomers = monomerTemplates.map((monomerTemplate) => {
     const monomerItem = {
       label: monomerTemplate.alias,
+      expanded: false,
       struct: KetSerializer.convertMonomerTemplateToStruct(monomerTemplate),
       props: templateToMonomerProps(monomerTemplate),
       attachmentPoints: monomerTemplate.attachmentPoints,
@@ -101,6 +114,7 @@ export function variantMonomerToDrawingEntity(
       options: template.options,
       idtAliases: template.idtAliases,
       isAmbiguous: true,
+      transformation: node.transformation,
     },
     position,
   );

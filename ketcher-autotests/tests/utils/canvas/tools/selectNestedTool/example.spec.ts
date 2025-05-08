@@ -14,7 +14,7 @@ export {};
 // // shows the usage of selectNestedTool for autotesters
 // test('use tripple bond tool', async ({ page }) => {
 //   await waitForPageInit(page);
-//   await bondSelectionTool(page, MicroBondType.Triple);
+//   await CommonLeftToolbar(page).selectBondTool(MicroBondType.Triple);
 // });
 
 // test('use shape rectangle tool', async ({ page }) => {
@@ -24,7 +24,7 @@ export {};
 
 // test('use selection tool', async ({ page }) => {
 //   await waitForPageInit(page);
-//   await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+//   await CommonLeftToolbar(page).selectAreaSelectionTool(SelectionToolType.Lasso);
 // });
 
 // test('use vertical rotate tool', async ({ page }) => {

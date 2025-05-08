@@ -19,6 +19,7 @@ import {
   AutomapCommandData,
   CalculateCipCommandData,
   CalculateCommandData,
+  CalculateMacromoleculePropertiesCommandData,
   CalculateProps,
   CheckCommandData,
   CleanCommandData,
@@ -66,6 +67,8 @@ import {
   StructService,
   StructServiceOptions,
   pickStandardServerOptions,
+  CalculateMacromoleculePropertiesData,
+  CalculateMacromoleculePropertiesResult,
 } from 'ketcher-core';
 
 import EventEmitter from 'events';
@@ -213,6 +216,8 @@ const messageTypeToEventMapping: {
   [Command.GenerateImageAsBase64]: WorkerEvent.GenerateImageAsBase64,
   [Command.GetInChIKey]: WorkerEvent.GetInChIKey,
   [Command.ExplicitHydrogens]: WorkerEvent.ExplicitHydrogens,
+  [Command.CalculateMacromoleculeProperties]:
+    WorkerEvent.CalculateMacromoleculeProperties,
 };
 
 class IndigoService implements StructService {
@@ -836,6 +841,42 @@ class IndigoService implements StructService {
       this.EE.removeListener(WorkerEvent.ExplicitHydrogens, action);
       this.EE.addListener(WorkerEvent.ExplicitHydrogens, action);
 
+      this.worker.postMessage(inputMessage);
+    });
+  }
+
+  calculateMacromoleculeProperties(
+    data: CalculateMacromoleculePropertiesData,
+    options?: StructServiceOptions,
+  ): Promise<CalculateMacromoleculePropertiesResult> {
+    const { struct } = data;
+
+    return new Promise((resolve, reject) => {
+      const action = ({ data }: OutputMessageWrapper) => {
+        const msg: OutputMessage<string> = data;
+
+        if (!msg.hasError) {
+          resolve(JSON.parse(msg.payload));
+        } else {
+          reject(msg.error);
+        }
+      };
+
+      const commandData: CalculateMacromoleculePropertiesCommandData = {
+        struct,
+        options: {
+          ...this.getStandardServerOptions(options),
+          upc: options?.upc,
+          nac: options?.nac,
+        },
+      };
+      const inputMessage: InputMessage<CalculateMacromoleculePropertiesData> = {
+        type: Command.CalculateMacromoleculeProperties,
+        data: commandData,
+      };
+
+      this.EE.removeAllListeners(WorkerEvent.CalculateMacromoleculeProperties);
+      this.EE.addListener(WorkerEvent.CalculateMacromoleculeProperties, action);
       this.worker.postMessage(inputMessage);
     });
   }

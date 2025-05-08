@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
-import { expect, Page, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
-  AtomButton,
   BondType,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
@@ -12,13 +11,10 @@ import {
   LeftPanelButton,
   openFileAndAddToCanvas,
   pressButton,
-  receiveFileComparisonData,
   resetCurrentTool,
   RingButton,
-  saveToFile,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
-  selectAtomInToolbar,
   selectLeftPanelButton,
   selectRingButton,
   selectUndoByKeyboard,
@@ -26,13 +22,14 @@ import {
   waitForPageInit,
 } from '@utils';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import { getMolfile } from '@utils/formats';
 import { SGroupRepeatPattern } from '@utils/sgroup';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -189,8 +186,10 @@ test.describe('SRU Polymer tool', () => {
       Test case: EPMLSOPKET-1532
       Description: User is able to add atom on structure with SRU polymer S-group.
     */
+    const atomToolbar = RightToolbar(page);
+
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -204,7 +203,7 @@ test.describe('SRU Polymer tool', () => {
       Description: User is able to delete and undo/redo atom on structure with SRU polymer S-group.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
 
@@ -291,20 +290,14 @@ test.describe('SRU Polymer tool', () => {
       Description: User is able to save and open structure with SRU polymer S-group.
     */
     await openFileAndAddToCanvas('KET/sru-polymer-data.ket', page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/sru-polymer-data-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'Molfiles-V2000/sru-polymer-data-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-    expect(molFile).toEqual(molFileExpected);
-    await takeEditorScreenshot(page);
   });
 
   test('Add S-Group properties to structure and atom', async ({ page }) => {

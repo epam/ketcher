@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import {
   pressButton,
   takeEditorScreenshot,
@@ -9,12 +10,6 @@ import {
   waitForPageInit,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/addTextBoxToCanvas';
-import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-  topLeftToolbarLocators,
-} from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Clear canvas', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,8 +18,8 @@ test.describe('Clear canvas', () => {
 
   test('Clear Canvas - checking button tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-1702
-    await selectClearCanvasTool(page);
-    const button = topLeftToolbarLocators(page).clearCanvasButton;
+    await TopLeftToolbar(page).clearCanvas();
+    const button = TopLeftToolbar(page).clearCanvasButton;
     await expect(button).toHaveAttribute('title', 'Clear Canvas (Ctrl+Del)');
     await takeEditorScreenshot(page);
   });
@@ -34,7 +29,7 @@ test.describe('Clear canvas', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('one two three');
     await pressButton(page, 'Apply');
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -43,11 +38,11 @@ test.describe('Clear canvas', () => {
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await clickInTheMiddleOfTheScreen(page);
-    await pressUndoButton(page);
-    await pressRedoButton(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
+    await TopLeftToolbar(page).redo();
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -94,13 +89,13 @@ test.describe('Clear canvas', () => {
     // Test case: EPMLSOPKET-1706
     await openFileAndAddToCanvas('SMILES/chain-with-r-group.smi', page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectClearCanvasTool(page);
-    await pressUndoButton(page);
-    await selectClearCanvasTool(page);
-    await pressUndoButton(page);
-    await pressUndoButton(page);
-    await pressRedoButton(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).clearCanvas();
+    await TopLeftToolbar(page).undo();
+    await TopLeftToolbar(page).clearCanvas();
+    await TopLeftToolbar(page).undo();
+    await TopLeftToolbar(page).undo();
+    await TopLeftToolbar(page).redo();
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 });

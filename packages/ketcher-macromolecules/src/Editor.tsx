@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { Provider } from 'react-redux';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
@@ -44,6 +45,7 @@ import {
   selectIsHandToolSelected,
   initKetcherId,
   setContextMenuActive,
+  toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
 import {
   useAppDispatch,
@@ -97,6 +99,7 @@ import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
 import { RootSizeProvider } from './contexts';
+import { MacromoleculePropertiesWindow } from 'components/macromoleculeProperties';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -236,6 +239,9 @@ function Editor({
         });
       },
     );
+    editor?.events.toggleMacromoleculesPropertiesVisibility.add(() => {
+      dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
+    });
   }, [editor]);
 
   useEffect(() => {
@@ -327,6 +333,10 @@ function Editor({
         <Layout.Right hide={isMonomerLibraryHidden}>
           <MonomerLibrary toggleLibraryVisibility={toggleLibraryVisibility} />
         </Layout.Right>
+
+        <Layout.Bottom>
+          <MacromoleculePropertiesWindow />
+        </Layout.Bottom>
         <Layout.InsideRoot>
           {isMonomerLibraryHidden && (
             <MonomerLibraryToggle onClick={toggleLibraryVisibility} />

@@ -8,17 +8,19 @@ import {
   moveOnBond,
   BondType,
   dragMouseTo,
-  selectAtomInToolbar,
-  AtomButton,
   clickOnAtom,
   selectPartOfChain,
   selectPartOfMolecules,
-  saveToFile,
   selectCleanTool,
   selectLayoutTool,
 } from '@utils';
-import { getMolfile } from '@utils/formats/formats';
-import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('Indigo Tools - Clean Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -52,7 +54,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -70,7 +72,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -89,7 +91,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -130,7 +132,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -162,12 +164,12 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -182,7 +184,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -201,7 +203,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -219,7 +221,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -237,7 +239,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -251,7 +253,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await selectCleanTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
@@ -333,12 +335,14 @@ test.describe('Indigo Tools - Clean Tools', () => {
     const x = 300;
     const y = 300;
     const anyAtom = 0;
+    const atomToolbar = RightToolbar(page);
+
     await openFileAndAddToCanvas('Molfiles-V2000/toluene.mol', page);
     await selectCleanTool(page);
     await moveOnBond(page, BondType.SINGLE, 0);
     await dragMouseTo(x, y, page);
     await selectCleanTool(page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
@@ -372,7 +376,7 @@ test.describe('Indigo Tools - Clean Tools', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/big-rings.mol', page);
     await selectCleanTool(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await selectLayoutTool(page);
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
@@ -432,16 +436,14 @@ test.describe('Indigo Tools - Clean Tools', () => {
     Click the Layout button.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-br.mol', page);
-    await takeEditorScreenshot(page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile('Molfiles-V2000/ring-with-attachment.mol', expectedFile);
-    await openFileAndAddToCanvas(
-      'Molfiles-V2000/ring-with-attachment.mol',
+
+    await verifyFileExport(
       page,
+      'Molfiles-V2000/ring-with-attachment.mol',
+      FileType.MOL,
+      'v2000',
+      [1],
     );
-    await selectPartOfMolecules(page);
-    await selectCleanTool(page);
-    await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
   test('Clean Up action on part of structure with S-Group', async ({

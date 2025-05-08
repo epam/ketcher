@@ -67,6 +67,7 @@ import { BaseMonomerRenderer } from 'application/render';
 import { initializeMode, parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
+import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 
 interface ICoreEditorConstructorParams {
   ketcherId?: string;
@@ -173,18 +174,10 @@ export class CoreEditor {
     this.cancelActiveDrag();
   };
 
-  private dragCtx = null;
-
   private cancelActiveDrag(): void {
-    if (this.dragCtx) {
-      this.dragCtx = null;
+    if (this.tool instanceof SelectRectangle) {
+      this.tool.stopMovement();
     }
-
-    if (this.tool && typeof this.tool.cancel === 'function') {
-      this.tool.cancel();
-    }
-
-    this.drawingEntitiesManager.unselectAllDrawingEntities();
   }
 
   static provideEditorInstance(): CoreEditor {
@@ -884,18 +877,23 @@ export class CoreEditor {
     history.destroy();
     const struct = this.micromoleculesEditor.struct();
     const reStruct = this.micromoleculesEditor.render.ctab;
+
     const { conversionErrorMessage } =
       MacromoleculesConverter.convertDrawingEntitiesToStruct(
         this.drawingEntitiesManager,
         struct,
         reStruct,
       );
-    reStruct.render.setMolecule(struct);
+
     if (conversionErrorMessage) {
       const ketcher = ketcherProvider.getKetcher(this.ketcherId);
 
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
+
+    struct.applyMonomersTransformations();
+    reStruct.render.setMolecule(struct);
+
     this._monomersLibraryParsedJson = null;
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();

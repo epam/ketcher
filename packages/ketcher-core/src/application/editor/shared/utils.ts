@@ -17,7 +17,7 @@
 import { Struct } from 'domain/entities/struct';
 import { Vec2 } from 'domain/entities/vec2';
 import { inRange } from 'lodash';
-import { BondAtoms } from 'application/editor/shared/utils.types';
+import type { BondAtoms, FlipDirection } from './utils.types';
 
 let FRAC = Math.PI / 12; // '15º'
 
@@ -77,6 +77,34 @@ function mergeBondsParams(
 
   return { merged, angle, scale, cross: Math.abs(degrees(angle)) > 90 };
 }
+
+export const rotateDelta = (v: Vec2, center: Vec2, angle: number) => {
+  let v1 = v.sub(center);
+  v1 = v1.rotate(angle);
+  v1.add_(center); // eslint-disable-line no-underscore-dangle
+  return v1.sub(v);
+};
+
+export const flipPointByCenter = (
+  pointToFlip: Vec2,
+  center: Vec2,
+  flipDirection: FlipDirection,
+) => {
+  const d = new Vec2();
+  if (flipDirection === 'horizontal') {
+    d.x =
+      center.x > pointToFlip.x
+        ? 2 * (center.x - pointToFlip.x)
+        : -2 * (pointToFlip.x - center.x);
+  } else {
+    // 'vertical'
+    d.y =
+      center.y > pointToFlip.y
+        ? 2 * (center.y - pointToFlip.y)
+        : -2 * (pointToFlip.y - center.y);
+  }
+  return d;
+};
 
 export default {
   calcAngle,

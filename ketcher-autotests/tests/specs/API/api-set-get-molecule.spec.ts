@@ -1,8 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@playwright/test';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  AtomButton,
-  selectAtomInToolbar,
   takeEditorScreenshot,
   FILE_TEST_DATA,
   waitForSpinnerFinishedWork,
@@ -262,9 +261,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description:  Elements ["Pol", "CYH", "CXH"] disabled and show tooltip: '{elementName}'
     */
     // Called to make sure the page has been fully loaded
+    const extendedTableButton = RightToolbar(page).extendedTableButton;
+
     await clickInTheMiddleOfTheScreen(page);
     await disableQueryElements(page);
-    await selectAtomInToolbar(AtomButton.Extended, page);
+    await extendedTableButton.click();
     await takeEditorScreenshot(page);
   });
 

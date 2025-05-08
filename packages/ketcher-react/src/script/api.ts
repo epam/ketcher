@@ -50,6 +50,8 @@ function createApi(
     getInChIKey: structService.getInChIKey.bind(structService),
     toggleExplicitHydrogens:
       structService.toggleExplicitHydrogens.bind(structService),
+    calculateMacromoleculeProperties:
+      structService.calculateMacromoleculeProperties.bind(structService),
     destroy: structService.destroy?.bind(structService),
   });
 }

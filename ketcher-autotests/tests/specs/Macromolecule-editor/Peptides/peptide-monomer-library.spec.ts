@@ -18,22 +18,18 @@ import {
   takeMonomerLibraryScreenshot,
   waitForPageInit,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { goToPeptidesTab, goToTab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
-import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('Peptide library testing', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await goToPeptidesTab(page);
   });
 
@@ -141,7 +137,7 @@ test.describe('Peptide library testing', () => {
     */
     await selectMonomer(page, Peptides.dA);
     await clickInTheMiddleOfTheScreen(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Peptides.dA).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -156,7 +152,7 @@ test.describe('Peptide library testing', () => {
     */
     await selectMonomer(page, Peptides.Edc);
     await clickInTheMiddleOfTheScreen(page);
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Peptides.Edc).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -171,7 +167,9 @@ test.describe('Peptide library testing', () => {
     */
     await selectMonomer(page, Peptides.Edc);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await getMonomerLocator(page, Peptides.Edc).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -200,7 +198,7 @@ test.describe('Peptide library testing', () => {
     */
     await selectMonomer(page, Chem.Test_6_Ch);
     await clickInTheMiddleOfTheScreen(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Chem.Test_6_Ch).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -215,7 +213,7 @@ test.describe('Peptide library testing', () => {
     */
     await selectMonomer(page, Chem.MCC);
     await clickInTheMiddleOfTheScreen(page);
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await getMonomerLocator(page, Chem.MCC).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -230,7 +228,9 @@ test.describe('Peptide library testing', () => {
     */
     await selectMonomer(page, Chem.SMPEG2);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await getMonomerLocator(page, Chem.SMPEG2).hover();
     await waitForMonomerPreview(page);
     await takeEditorScreenshot(page);
@@ -262,7 +262,7 @@ test.describe('Peptide library testing', () => {
       page,
     );
     await getMonomerLocator(page, Peptides.Nal).click();
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await takeEditorScreenshot(page);
   });
 
@@ -278,12 +278,14 @@ test.describe('Peptide library testing', () => {
     const y = 200;
     await openFileAndAddToCanvasMacro('KET/stuck-peptides-connected.ket', page);
     await getMonomerLocator(page, Peptides.Nal).click();
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await getMonomerLocator(page, Peptides.Nal).hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page, {

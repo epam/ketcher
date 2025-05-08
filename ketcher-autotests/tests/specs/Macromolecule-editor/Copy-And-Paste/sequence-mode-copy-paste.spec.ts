@@ -17,8 +17,6 @@ import {
   readFileContent,
   copyContentToClipboard,
 } from '@utils';
-import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   getSequenceSymbolLocator,
@@ -29,13 +27,15 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 const ZOOM_OUT_VALUE = 400;
 const SCROLL_DOWN_VALUE = 250;
 test.describe('Sequence mode copy&paste for view mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
     await selectSequenceLayoutModeTool(page);
@@ -68,7 +68,7 @@ test.describe('Sequence mode copy&paste for view mode', () => {
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -93,7 +93,7 @@ test.describe('Sequence mode copy&paste for view mode', () => {
 test.describe('Sequence mode copy&paste for edit mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await openFileAndAddToCanvasMacro('KET/monomers-chains.ket', page);
     await selectSequenceLayoutModeTool(page);
@@ -115,7 +115,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -145,8 +145,8 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
       await copyToClipboardByKeyboard(page);
       await takeEditorScreenshot(page);
 
-      await pressUndoButton(page);
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
+      await TopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
     },
   );
@@ -170,8 +170,8 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
   //   await pasteFromClipboardByKeyboard(page);
   //   await takeEditorScreenshot(page);
   //
-  //   await pressUndoButton(page);
-  //   await pressUndoButton(page);
+  //   await TopLeftToolbar(page).undo();
+  //   await TopLeftToolbar(page).undo();
   //   await takeEditorScreenshot(page);
   // });
 });
@@ -179,7 +179,7 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
 test.describe('Sequence-edit mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectSequenceLayoutModeTool(page);
   });
 

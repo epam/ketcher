@@ -151,6 +151,13 @@ const formatProperties: FormatPropertiesMap = {
     false,
     {},
   ),
+  'sequence-3-letter': new SupportedFormatProperties(
+    'SEQUENCE (3-letter code)',
+    ChemicalMimeType.SEQUENCE,
+    ['.seq'],
+    false,
+    {},
+  ),
   unknown: new SupportedFormatProperties(
     'Unknown',
     ChemicalMimeType.UNKNOWN,

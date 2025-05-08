@@ -833,8 +833,7 @@ class SelectRectangle implements BaseTool {
         this.history.update(modelChanges);
       }
     } finally {
-      this.moveStarted = false;
-      this.editor.transientDrawingView.clear();
+      this.stopMovement();
     }
   }
 
@@ -910,6 +909,11 @@ class SelectRectangle implements BaseTool {
 
       this.editor.renderersContainer.update(modelChanges);
     }
+  }
+
+  public stopMovement() {
+    this.moveStarted = false;
+    this.editor.transientDrawingView.clear();
   }
 }
 

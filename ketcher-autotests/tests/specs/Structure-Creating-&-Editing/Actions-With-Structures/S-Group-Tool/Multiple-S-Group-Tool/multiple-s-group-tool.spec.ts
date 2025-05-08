@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   LeftPanelButton,
   selectLeftPanelButton,
@@ -7,9 +7,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
-  receiveFileComparisonData,
-  selectAtomInToolbar,
-  AtomButton,
   resetCurrentTool,
   BondType,
   copyAndPaste,
@@ -18,7 +15,6 @@ import {
   clickOnBond,
   fillFieldByLabel,
   screenshotBetweenUndoRedo,
-  saveToFile,
   RgroupTool,
   selectNestedTool,
   AttachmentPoint,
@@ -27,12 +23,13 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
-import { getMolfile } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -137,8 +134,10 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1521
       Description: User is able to add atom on structure with Multiple S-group.
     */
+    const atomToolbar = RightToolbar(page);
+
     await openFileAndAddToCanvas('KET/multiple-group.ket', page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -152,7 +151,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: User is able to delete and undo/redo atom on structure with Multiple S-group.
     */
     await openFileAndAddToCanvas('KET/multiple-group.ket', page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
 
@@ -224,20 +223,14 @@ test.describe('Multiple S-Group tool', () => {
       Description: User is able to save and open structure with Multiple S-group.
     */
     await openFileAndAddToCanvas('KET/multiple-group-data.ket', page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/multiple-group-data-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'Molfiles-V2000/multiple-group-data-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-    expect(molFile).toEqual(molFileExpected);
-    await takeEditorScreenshot(page);
   });
 
   test('Limit on minimum count', async ({ page }) => {

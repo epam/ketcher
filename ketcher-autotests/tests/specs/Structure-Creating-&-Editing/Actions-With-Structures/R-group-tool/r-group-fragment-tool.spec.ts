@@ -1,4 +1,4 @@
-import { expect, Page, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -11,8 +11,6 @@ import {
   openFileAndAddToCanvas,
   pressButton,
   clickOnAtom,
-  receiveFileComparisonData,
-  saveToFile,
   copyAndPaste,
   cutAndPaste,
   waitForPageInit,
@@ -26,16 +24,9 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getExtendedSmiles } from '@utils/formats';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 async function openRGroupModalForTopAtom(page: Page) {
   await selectRingButton(RingButton.Benzene, page);
@@ -255,21 +246,23 @@ test.describe('Open Ketcher', () => {
       page,
     );
 
-    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await page.getByText('R8').click();
     await page.keyboard.press('Delete');
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('R8').click();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await selectAllStructuresOnCanvas(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -373,19 +366,10 @@ test.describe('R-Group Fragment Tool', () => {
       'Extended-SMILES/r1-several-structures.cxsmi',
       page,
     );
-    const expectedFile = await getExtendedSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Extended-SMILES/r1-several-structures-expected.cxsmi',
-      expectedFile,
+      FileType.ExtendedSMILES,
     );
-
-    const { fileExpected: smiFileExpected, file: smiFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'Extended-SMILES/r1-several-structures-expected.cxsmi',
-      });
-
-    expect(smiFile).toEqual(smiFileExpected);
   });
 });

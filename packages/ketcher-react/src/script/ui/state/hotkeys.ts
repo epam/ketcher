@@ -167,7 +167,10 @@ function keyHandle(dispatch, getState, hotKeys, event) {
     const newIndex = (index + 1) % groupLength;
 
     const actName = group[newIndex];
-    if (actionState[actName] && actionState[actName].disabled === true) {
+    if (
+      (actionState[actName] && actionState[actName].disabled === true) ||
+      actionState[actName]?.hidden === true
+    ) {
       event.preventDefault();
       return;
     }

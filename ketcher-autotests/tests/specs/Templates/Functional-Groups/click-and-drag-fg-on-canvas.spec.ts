@@ -1,8 +1,8 @@
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@playwright/test';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  selectAtomInToolbar,
-  AtomButton,
   selectFunctionalGroups,
   FunctionalGroups,
   selectSaltsAndSolvents,
@@ -30,7 +30,9 @@ test.describe('Click and drag FG on canvas', () => {
       Test case: EPMLSOPKET-11550
       Description: when click & drag with an FG on atom it should forms a bond between
     */
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
 
     await drawFGAndDrag(FunctionalGroups.Cbz, SHIFT, page);
@@ -73,10 +75,12 @@ test.describe('Click and drag FG on canvas', () => {
       Description: when click & drag with an FG on an atom connected with bond to another atom
       it should forms a bond
     */
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    const atomToolbar = RightToolbar(page);
+
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;

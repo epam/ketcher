@@ -252,6 +252,7 @@ export const defaultTheme: EditorTheme = {
   },
   shadow: {
     regular: '0px 1px 1px rgba(197, 203, 207, 0.7)',
+    mainLayoutBlocks: '0px 2px 5px rgba(103, 104, 132, 0.15)',
   },
   outline: {
     small: '1px solid #B4B9D6',

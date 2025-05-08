@@ -23,6 +23,8 @@ import {
   CalculateCipData,
   CalculateCipResult,
   CalculateData,
+  CalculateMacromoleculePropertiesData,
+  CalculateMacromoleculePropertiesResult,
   CalculateResult,
   CheckData,
   CheckResult,
@@ -459,5 +461,22 @@ export class RemoteStructService implements StructService {
       this.defaultOptions,
       this.customHeaders,
     )(data, this.getStandardServerOptions(options));
+  }
+
+  calculateMacromoleculeProperties(
+    data: CalculateMacromoleculePropertiesData,
+    options?: StructServiceOptions,
+  ): Promise<CalculateMacromoleculePropertiesResult> {
+    return indigoCall(
+      'POST',
+      'indigo/calculateMacroProperties',
+      this.apiPath,
+      this.defaultOptions,
+      this.customHeaders,
+    )(data, {
+      ...this.getStandardServerOptions(options),
+      upc: options?.upc,
+      nac: options?.nac,
+    });
   }
 }

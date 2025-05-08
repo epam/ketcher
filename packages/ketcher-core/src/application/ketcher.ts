@@ -53,6 +53,7 @@ import {
   SupportedModes,
 } from 'application/ketcher.types';
 import { isNumber, uniqueId } from 'lodash';
+import { ChemicalMimeType } from 'domain/services/struct/structService.types';
 
 type SetMoleculeOptions = {
   position?: { x: number; y: number };
@@ -259,10 +260,43 @@ export class Ketcher {
     );
   }
 
-  getSequence(): Promise<string> {
+  async getSequence(
+    format: '1-letter' | '3-letter' = '1-letter',
+  ): Promise<string> {
+    if (format === '1-letter' || format === '3-letter') {
+      const editor = CoreEditor.provideEditorInstance();
+      const indigo = this.indigo;
+
+      const ketSerializer = new KetSerializer();
+      const serializedKet = ketSerializer.serialize(
+        editor.drawingEntitiesManager.micromoleculesHiddenEntities.clone(),
+        editor.drawingEntitiesManager,
+      );
+
+      const formatToUse =
+        format === '1-letter'
+          ? ChemicalMimeType.SEQUENCE
+          : ChemicalMimeType.PeptideSequenceThreeLetter;
+
+      try {
+        const result = await indigo.convert(serializedKet, {
+          outputFormat: formatToUse,
+        });
+        return result.struct;
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error occurred';
+        throw new Error(
+          `Failed to convert structure to ${format} format: ${errorMessage}`,
+        );
+      }
+    }
+
     return getStructure(
       this.id,
-      SupportedFormat.sequence,
+      format === '3-letter'
+        ? SupportedFormat.sequence3Letter
+        : SupportedFormat.sequence,
       this.#formatterFactory,
       this.editor.struct(),
       CoreEditor.provideEditorInstance()?.drawingEntitiesManager,

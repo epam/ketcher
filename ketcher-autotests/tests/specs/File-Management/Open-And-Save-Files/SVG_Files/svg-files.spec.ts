@@ -1,14 +1,15 @@
 import { test } from '@playwright/test';
 import {
-  clickOnSaveFileAndOpenDropdown,
   openFileAndAddToCanvas,
   openSettings,
   pressButton,
-  selectFormatForSaving,
   selectLayoutTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 
 test.describe('Saving in .svg files', () => {
   test.beforeEach(async ({ page }) => {
@@ -27,8 +28,10 @@ test.describe('Saving in .svg files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SVG Document');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -44,8 +47,10 @@ test.describe('Saving in .svg files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SVG Document');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -61,8 +66,10 @@ test.describe('Saving in .svg files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SVG Document');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -78,8 +85,10 @@ test.describe('Saving in .svg files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SVG Document');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -95,8 +104,10 @@ test.describe('Saving in .svg files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SVG Document');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -111,8 +122,10 @@ test.describe('Saving in .svg files', () => {
       'KET/schema-with-reverse-retrosynthetic-arrow-and-pluses.ket',
       page,
     );
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SVG Document');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -130,8 +143,10 @@ test.describe('Saving in .svg files', () => {
     await pressButton(page, 'OK');
     await selectLayoutTool(page);
     await takeEditorScreenshot(page);
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'SVG Document');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 });

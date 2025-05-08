@@ -6,8 +6,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   BondType,
-  selectAtomInToolbar,
-  AtomButton,
   resetCurrentTool,
   selectLeftPanelButton,
   LeftPanelButton,
@@ -22,11 +20,10 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
-import {
-  commonLeftToolbarLocators,
-  selectAreaSelectionTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 test.describe('Right-click menu', () => {
   test.beforeEach(async ({ page }) => {
@@ -102,8 +99,10 @@ test.describe('Right-click menu', () => {
     Test case: EPMLSOPKET-5877
     Description: Bond is deleted
     */
+    const atomToolbar = RightToolbar(page);
+
     await openFileAndAddToCanvas('KET/chain.ket', page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, 0, 'right');
     });
@@ -145,7 +144,7 @@ test.describe('Right-click menu', () => {
     await page.getByRole('button', { name: 'aliphatic' }).click();
     await page.getByText('Unsaturated').first().click();
     await takeEditorScreenshot(page);
-    await commonLeftToolbarLocators(page).areaSelectionDropdownButton.click();
+    await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
     await takeEditorScreenshot(page);
   });
 
@@ -289,8 +288,10 @@ test.describe('Right-click menu', () => {
     */
     const canvasClickX = 300;
     const canvasClickY = 300;
+    const atomToolbar = RightToolbar(page);
+
     await openFileAndAddToCanvas('KET/chain.ket', page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await clickOnCanvas(page, canvasClickX, canvasClickY);
@@ -436,7 +437,9 @@ test.describe('Right-click menu', () => {
       3. Observes the "Highlight" option
     */
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.keyboard.down('Shift');
     await clickOnBond(page, BondType.DOUBLE, 1);
     await clickOnAtom(page, 'C', 2);
@@ -475,7 +478,9 @@ test.describe('Right-click menu', () => {
         4. Select each color individually and verify the highlights.
     */
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     const colors = [
       '.css-cyxjjb', // Red
       '.css-55t14h', // Orange
@@ -508,7 +513,9 @@ test.describe('Right-click menu', () => {
         4. Select each color individually and verify the highlights.
     */
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     const colors = [
       '.css-cyxjjb', // Red
       '.css-55t14h', // Orange

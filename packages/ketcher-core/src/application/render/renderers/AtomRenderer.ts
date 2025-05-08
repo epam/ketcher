@@ -300,6 +300,10 @@ export class AtomRenderer extends BaseRenderer {
     return textElement;
   }
 
+  private get cipElementId() {
+    return `cip-atom-${this.atom.id}`;
+  }
+
   public appendSelection() {
     if (!this.selectionElement) {
       const selectionContourElement = this.appendSelectionContour();
@@ -312,11 +316,14 @@ export class AtomRenderer extends BaseRenderer {
         // @ts-ignore
         .attr('class', 'dynamic-element');
     }
+
+    this.canvas?.select(`#${this.cipElementId} rect`)?.attr('fill', '#57FF8F');
   }
 
   public removeSelection() {
     this.selectionElement?.remove();
     this.selectionElement = undefined;
+    this.canvas?.select(`#${this.cipElementId} rect`)?.attr('fill', '#f5f5f5');
   }
 
   public drawSelection() {
@@ -441,8 +448,53 @@ export class AtomRenderer extends BaseRenderer {
     this.bodyElement = this.appendBody();
     this.textElement = this.appendLabel();
     this.appendAtomProperties();
+    this.appendStereochemistry();
     this.hoverElement = this.appendHover();
     this.drawSelection();
+  }
+
+  private appendStereochemistry() {
+    const cipValue = this.atom.properties.cip;
+
+    if (!cipValue) {
+      return;
+    }
+
+    const cipGroup = this.canvas?.append('g')?.attr('id', this.cipElementId);
+
+    const cipText = cipGroup
+      ?.append('text')
+      .text(`(${cipValue})`)
+      .attr('font-family', 'Arial')
+      .attr('font-size', '13px')
+      .attr('pointer-events', 'none');
+
+    const textNode = cipText?.node();
+    if (textNode) {
+      const box = textNode.getBBox();
+      const rectWidth = box.width + 2;
+      const rectHeight = box.height + 2;
+
+      cipGroup
+        ?.insert('rect', 'text')
+        .attr('x', box.x)
+        .attr('y', box.y)
+        .attr('width', rectWidth)
+        .attr('height', rectHeight)
+        .attr('rx', 3)
+        .attr('ry', 3)
+        .attr('fill', '#f5f5f5');
+
+      cipGroup?.attr(
+        'transform',
+        `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
+      );
+
+      // TODO: Hack to avoid overlapping with bonds as they're rendered later. Won't be needed once smart positioning is implemented
+      setTimeout(() => {
+        cipGroup?.raise();
+      }, 0);
+    }
   }
 
   public move() {
@@ -450,10 +502,22 @@ export class AtomRenderer extends BaseRenderer {
       'transform',
       `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
     );
+
+    this.canvas
+      ?.select(`#${this.cipElementId}`)
+      ?.attr(
+        'transform',
+        `translate(${this.scaledPosition.x}, ${this.scaledPosition.y})`,
+      );
+
+    setTimeout(() => {
+      this.canvas?.select(`#${this.cipElementId}`).raise();
+    }, 0);
   }
 
   public remove() {
     this.removeSelection();
+    this.canvas.select(`#${this.cipElementId}`).remove();
     super.remove();
   }
 

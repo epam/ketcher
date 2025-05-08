@@ -4,5 +4,5 @@ import { RootSizeContext } from '../contexts';
 export const useIsCompactView = () => {
   const { height } = useContext(RootSizeContext);
 
-  return height < 720;
+  return height < 715;
 };

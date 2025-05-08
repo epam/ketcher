@@ -264,9 +264,12 @@ export class Ketcher {
           outputFormat: formatToUse,
         });
         return result.struct;
-      } catch (error) {
-        console.error('Error during sequence conversion:', error);
-        throw error;
+      } catch (error: unknown) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error occurred';
+        throw new Error(
+          `Failed to convert structure to ${format} format: ${errorMessage}`,
+        );
       }
     }
 

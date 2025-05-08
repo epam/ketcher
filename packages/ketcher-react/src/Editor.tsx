@@ -9,6 +9,10 @@ type Props = Omit<EditorProps, 'ketcherId'> & {
   disableMacromoleculesEditor?: boolean;
 };
 
+interface MacromoleculesEditorProps {
+  ketcherId: string;
+  togglerComponent?: JSX.Element;
+}
 /*
  * TODO:
  *  ketcher-macromolecules is imported asynchronously to avoid circular dependencies between it and ketcher-react
@@ -18,7 +22,11 @@ type Props = Omit<EditorProps, 'ketcherId'> & {
  */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const MacromoleculesEditor = lazy(() => import('ketcher-macromolecules'));
+const MacromoleculesEditor = lazy(
+  () => import('ketcher-macromolecules'),
+) as unknown as React.LazyExoticComponent<
+  React.ComponentType<MacromoleculesEditorProps>
+>;
 
 export const Editor = (props: Props) => {
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);

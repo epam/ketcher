@@ -72,10 +72,9 @@ export const Editor = (props: Props) => {
   return (
     <>
       <div
+        className={styles.editorsWrapper}
         style={{
-          display: showPolymerEditor ? 'block' : 'none',
-          height: '100%',
-          width: '100%',
+          display: showPolymerEditor ? undefined : 'none',
         }}
       >
         <Suspense
@@ -92,10 +91,9 @@ export const Editor = (props: Props) => {
         </Suspense>
       </div>
       <div
+        className={styles.editorsWrapper}
         style={{
-          display: showPolymerEditor ? 'none' : 'block',
-          height: '100%',
-          width: '100%',
+          display: showPolymerEditor ? 'none' : undefined,
         }}
       >
         <MicromoleculesEditorComponent

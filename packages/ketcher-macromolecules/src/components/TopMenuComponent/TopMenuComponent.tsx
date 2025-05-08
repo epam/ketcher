@@ -32,7 +32,7 @@ import {
   isAntisenseCreationDisabled,
   isAntisenseOptionVisible,
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IconName } from 'ketcher-react';
 import { CalculateMacromoleculePropertiesButton } from 'components/macromoleculeProperties';
 import { hotkeysShortcuts } from 'components/ZoomControls/helpers';
@@ -51,23 +51,32 @@ export function TopMenuComponent() {
     useState<IconName>();
   const activeMenuItems = [activeTool];
   const isDisabled = isSequenceEditInRNABuilderMode;
-  editor?.events.selectEntities.add((selectedEntities: BaseMonomer[]) => {
-    setSelectedEntities(selectedEntities);
-    if (
-      selectedEntities.length &&
-      !isAntisenseCreationDisabled(selectedEntities)
-    ) {
-      setNeedOpenByMenuItemClick(false);
-      if (hasOnlyDeoxyriboseSugars(selectedEntities)) {
-        setAntisenseActiveOption('antisenseDnaStrand');
-      } else if (hasOnlyRiboseSugars(selectedEntities)) {
-        setAntisenseActiveOption('antisenseRnaStrand');
-      } else {
-        setAntisenseActiveOption('antisenseStrand');
-        setNeedOpenByMenuItemClick(true);
+
+  useEffect(() => {
+    const selectEntitiesHandler = (selectedEntities: BaseMonomer[]) => {
+      setSelectedEntities(selectedEntities);
+      if (
+        selectedEntities.length &&
+        !isAntisenseCreationDisabled(selectedEntities)
+      ) {
+        setNeedOpenByMenuItemClick(false);
+        if (hasOnlyDeoxyriboseSugars(selectedEntities)) {
+          setAntisenseActiveOption('antisenseDnaStrand');
+        } else if (hasOnlyRiboseSugars(selectedEntities)) {
+          setAntisenseActiveOption('antisenseRnaStrand');
+        } else {
+          setAntisenseActiveOption('antisenseStrand');
+          setNeedOpenByMenuItemClick(true);
+        }
       }
-    }
-  });
+    };
+
+    editor?.events.selectEntities.add(selectEntitiesHandler);
+
+    return () => {
+      editor?.events.selectEntities.remove(selectEntitiesHandler);
+    };
+  }, [editor]);
 
   const menuItemChanged = (name) => {
     if (modalComponentList[name]) {

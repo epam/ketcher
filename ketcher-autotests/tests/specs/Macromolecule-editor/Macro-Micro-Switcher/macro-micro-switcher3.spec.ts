@@ -21,7 +21,6 @@ import {
   resetZoomLevelToDefault,
   takeElementScreenshot,
   selectAllStructuresOnCanvas,
-  clickOnMiddleOfCanvas,
 } from '@utils';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

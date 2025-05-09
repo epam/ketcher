@@ -764,7 +764,7 @@ export const MacromoleculePropertiesWindow = () => {
   };
 
   const hasCommonError =
-    !firstMacromoleculesProperties || macromoleculesProperties.length > 2;
+    !firstMacromoleculesProperties || macromoleculesProperties.length > 1;
   const hasPeptidesTabError =
     hasCommonError ||
     !hasSpecificProperty(firstMacromoleculesProperties, 'peptides');

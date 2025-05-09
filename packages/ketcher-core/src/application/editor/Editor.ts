@@ -126,7 +126,7 @@ export class CoreEditor {
     mode,
     monomersLibraryUpdate,
   }: ICoreEditorConstructorParams) {
-    this._type = EditorType.Macromolecules;
+    this._type = EditorType.Micromolecules;
     this.theme = theme;
     this.canvas = canvas;
     this.drawnStructuresWrapperElement = canvas.querySelector(

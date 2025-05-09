@@ -115,7 +115,10 @@ export async function getLeftToolBarWidth(page: Page): Promise<number> {
 }
 
 export async function getTopToolBarHeight(page: Page): Promise<number> {
-  const topBarSize = await page.getByTestId('top-toolbar').boundingBox();
+  const topBarSize = await page
+    .getByTestId('top-toolbar')
+    .filter({ has: page.locator(':visible') })
+    .boundingBox();
 
   // we can get padding / margin values of top toolbar through y property
   if (topBarSize?.height) {

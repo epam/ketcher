@@ -51,7 +51,11 @@ export const CommonLeftToolbar = (page: Page) => {
     async selectAreaSelectionTool(toolType: SelectionToolType) {
       if (await locators.areaSelectionDropdownExpandButton.isVisible()) {
         await locators.areaSelectionDropdownExpandButton.click();
-        await page.getByTestId(toolType).first().click();
+        await page
+          .getByTestId(toolType)
+          .filter({ has: page.locator(':visible') })
+          .first()
+          .click();
       } else {
         await locators.areaSelectionDropdownButton.click();
       }
@@ -84,7 +88,10 @@ export const CommonLeftToolbar = (page: Page) => {
     async selectBondTool(bondType: MacroBondType | MicroBondType) {
       let attempts = 0;
       const maxAttempts = 5;
-      const bondTypeButton = page.getByTestId(bondType).first();
+      const bondTypeButton = page
+        .getByTestId(bondType)
+        .filter({ has: page.locator(':visible') })
+        .first();
       while (attempts < maxAttempts) {
         try {
           await this.expandBondSelectionDropdown();

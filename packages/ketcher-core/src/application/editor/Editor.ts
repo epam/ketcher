@@ -928,6 +928,7 @@ export class CoreEditor {
 
     this.renderersContainer.update(modelChanges);
     ketcher?.editor.clear();
+    ketcher?.editor.clearHistory();
     ketcher?.editor.zoom(1);
     this._type = EditorType.Macromolecules;
   }

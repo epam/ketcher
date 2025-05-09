@@ -112,6 +112,7 @@ interface EditorProps {
 
 interface EditorContainerProps extends EditorProps {
   onInit?: (editor: CoreEditor) => void;
+  isMacromoleculesEditorTurnedOn?: boolean;
 }
 
 function EditorContainer({
@@ -119,6 +120,7 @@ function EditorContainer({
   theme,
   togglerComponent,
   monomersLibraryUpdate,
+  isMacromoleculesEditorTurnedOn,
 }: EditorContainerProps) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
@@ -133,7 +135,10 @@ function EditorContainer({
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
-        <RootSizeProvider rootRef={rootElRef}>
+        <RootSizeProvider
+          rootRef={rootElRef}
+          isMacromoleculesEditorTurnedOn={isMacromoleculesEditorTurnedOn}
+        >
           <EditorWrapper ref={rootElRef} className={EditorClassName}>
             <Editor
               theme={editorTheme}

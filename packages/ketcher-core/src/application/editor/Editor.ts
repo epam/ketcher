@@ -96,7 +96,13 @@ export class CoreEditor {
   private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
   public drawnStructuresWrapperElement: SVGGElement;
-  public canvasOffset: DOMRect;
+  public canvasOffset: DOMRect = {
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
+  } as DOMRect;
+
   public theme;
   public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
@@ -120,7 +126,7 @@ export class CoreEditor {
     mode,
     monomersLibraryUpdate,
   }: ICoreEditorConstructorParams) {
-    this._type = EditorType.Macromolecules;
+    this._type = EditorType.Micromolecules;
     this.theme = theme;
     this.canvas = canvas;
     this.drawnStructuresWrapperElement = canvas.querySelector(
@@ -143,16 +149,18 @@ export class CoreEditor {
     this.setupKeyboardEvents();
     this.setupHotKeysEvents();
     this.setupCopyPasteEvent();
-    this.canvasOffset = this.canvas.getBoundingClientRect();
+    this.resetCanvasOffset();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
     const ketcher = ketcherProvider.getKetcher();
     this.micromoleculesEditor = ketcher?.editor;
-    this.switchToMacromolecules();
-    this.rerenderSequenceMode();
     this.initializeEventListeners();
+  }
+
+  private resetCanvasOffset() {
+    this.canvasOffset = this.canvas.getBoundingClientRect();
   }
 
   private initializeEventListeners(): void {
@@ -868,11 +876,10 @@ export class CoreEditor {
   }
 
   public switchToMicromolecules() {
-    this.unsubscribeEvents();
     const history = new EditorHistory(this);
-    history.destroy();
     const struct = this.micromoleculesEditor.struct();
     const reStruct = this.micromoleculesEditor.render.ctab;
+    const zoomTool = ZoomTool.instance;
 
     const { conversionErrorMessage } =
       MacromoleculesConverter.convertDrawingEntitiesToStruct(
@@ -887,15 +894,19 @@ export class CoreEditor {
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
 
+    history.destroy();
+    this.drawingEntitiesManager.clearCanvas();
+    zoomTool.resetZoom();
     struct.applyMonomersTransformations();
     reStruct.render.setMolecule(struct);
 
-    this._monomersLibraryParsedJson = null;
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
   }
 
-  private switchToMacromolecules() {
+  public switchToMacromolecules() {
+    this.resetCanvasOffset();
+
     const struct = this.micromoleculesEditor?.struct() || new Struct();
     const ketcher = ketcherProvider.getKetcher();
     const { modelChanges } =
@@ -917,14 +928,9 @@ export class CoreEditor {
 
     this.renderersContainer.update(modelChanges);
     ketcher?.editor.clear();
+    ketcher?.editor.clearHistory();
+    ketcher?.editor.zoom(1);
     this._type = EditorType.Macromolecules;
-  }
-
-  private rerenderSequenceMode() {
-    if (this.mode instanceof SequenceMode) {
-      this.drawingEntitiesManager.clearCanvas();
-      this.drawingEntitiesManager.applyMonomersSequenceLayout();
-    }
   }
 
   public isCurrentModeWithAutozoom(): boolean {

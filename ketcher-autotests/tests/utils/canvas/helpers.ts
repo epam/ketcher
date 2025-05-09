@@ -102,7 +102,10 @@ export async function drawElementByTitle(
 }
 
 export async function getLeftToolBarWidth(page: Page): Promise<number> {
-  const leftBarSize = await page.getByTestId('left-toolbar').boundingBox();
+  const leftBarSize = await page
+    .getByTestId('left-toolbar')
+    .filter({ has: page.locator(':visible') })
+    .boundingBox();
 
   // we can get padding / margin values of left toolbar through x property
   if (leftBarSize?.width) {
@@ -113,7 +116,10 @@ export async function getLeftToolBarWidth(page: Page): Promise<number> {
 }
 
 export async function getTopToolBarHeight(page: Page): Promise<number> {
-  const topBarSize = await page.getByTestId('top-toolbar').boundingBox();
+  const topBarSize = await page
+    .getByTestId('top-toolbar')
+    .filter({ has: page.locator(':visible') })
+    .boundingBox();
 
   // we can get padding / margin values of top toolbar through y property
   if (topBarSize?.height) {
@@ -171,7 +177,10 @@ export async function takeElementScreenshot(
     await page.getByTestId('polymer-library-preview').isHidden();
   }
 
-  const element = page.getByTestId(elementId).first();
+  const element = page
+    .getByTestId(elementId)
+    .filter({ has: page.locator(':visible') })
+    .first();
   await expect(element).toHaveScreenshot(options);
 }
 

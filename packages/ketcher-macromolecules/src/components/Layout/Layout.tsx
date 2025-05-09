@@ -42,7 +42,7 @@ const RowMain = styled.div(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   containerType: 'size',
-  overflow: 'hidden',
+  overflow: 'clip',
 }));
 
 const Row = styled.div(({ theme }) => ({

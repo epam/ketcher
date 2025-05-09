@@ -139,6 +139,14 @@ export class ZoomTool implements BaseTool {
     this.zoomEventHandlers.push(zoomEventHandler);
   }
 
+  unsubscribeOnZoomEvent(
+    zoomEventHandler: (transform?: ZoomTransform) => void,
+  ) {
+    this.zoomEventHandlers = this.zoomEventHandlers.filter(
+      (handler) => handler !== zoomEventHandler,
+    );
+  }
+
   dispatchZoomEventHandlers(transform: ZoomTransform) {
     this.zoomEventHandlers.forEach((zoomEventHandler) => {
       zoomEventHandler(transform);

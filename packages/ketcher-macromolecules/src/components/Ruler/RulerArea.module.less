@@ -1,7 +1,7 @@
 .rulerArea {
   width: 100%;
   height: 36px;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: var(--color-background-canvas);
 }
 
 .rulerInput {
@@ -9,18 +9,26 @@
   top: 10px;
   height: 14px;
   width: 26px;
-  border: 1px solid #cad3dd;
+  border: var(--border-regular);
   border-radius: 3px;
   /*opacity: 40%;*/
   text-align: center;
+  box-shadow: var(--shadow-regular);
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  -moz-appearance: textfield;
 
   &:hover {
-    cursor: pointer;
+    //cursor: pointer;
   }
 
   &:focus {
     height: 18px;
     outline: none;
-    border: 1px solid #43B5C0;
+    border: 1px solid var(--color-input-border-hover);
   }
 }

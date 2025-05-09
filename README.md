@@ -124,6 +124,7 @@ Parameters:
 
 - `structure: string`. Structure is a string in any supported format.
 - `options?: { position?: { x: number, y: number } }`. – (Optional) "position" - coordinates of top left corner of inserted structure in angstroms. Y coordinate value increases from bottom to top.
+- `options?: { position?: { rescale: boolean } }`. – (Optional) "position" - adjusts structure coordinates for fit the editor's viewport; skipped if false.
 
 `addFragment(structure: string, options?: Object): Promise<void>` – adds the given structure to the canvas without altering the current structure. The editor viewport will automatically adjust to fit all structures after insertion.
 

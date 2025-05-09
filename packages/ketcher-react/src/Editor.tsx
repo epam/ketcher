@@ -86,6 +86,7 @@ export const Editor = (props: Props) => {
         >
           <MacromoleculesEditorComponent
             togglerComponent={togglerComponent}
+            isMacromoleculesEditorTurnedOn={showPolymerEditor}
             onInit={onInitMacromoleculesEditor}
           />
         </Suspense>

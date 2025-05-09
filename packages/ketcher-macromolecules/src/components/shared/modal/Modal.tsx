@@ -24,6 +24,7 @@ interface ModalProps {
   modalWidth?: string;
   expanded?: boolean;
   setExpanded?: (boolean) => void;
+  testId?: string;
 }
 const StyledDialog = styled(Dialog)`
   .MuiPaper-root {
@@ -93,11 +94,13 @@ export const Modal = ({
   modalWidth,
   expanded = false,
   setExpanded = EmptyFunction,
+  testId,
 }: ModalProps) => {
   const theme = useTheme();
 
   const paperProps = useMemo(
     () => ({
+      testId,
       style: {
         background: theme.ketcher.color.background.primary,
         borderRadius: '8px',

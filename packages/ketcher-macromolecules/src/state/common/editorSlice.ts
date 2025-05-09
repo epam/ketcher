@@ -68,7 +68,7 @@ const initialState: EditorState = {
   isContextMenuActive: false,
   isMacromoleculesPropertiesWindowOpened: false,
   macromoleculesProperties: undefined,
-  unipositiveIonsMeasurementUnit: MolarMeasurementUnit.nanoMol,
+  unipositiveIonsMeasurementUnit: MolarMeasurementUnit.milliMol,
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit.microMol,
 };
 

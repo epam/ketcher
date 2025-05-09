@@ -1276,11 +1276,6 @@ test.describe('Check that non-expanded monomers exported as their symbols in PNG
        *       2. Open Save dialog and select PNG Image option
        *       3. Take screenshot to witness export preview
        */
-      // test.fixme(
-      //   true,
-      //   `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
-      // );
-
       const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
 
       await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
@@ -1320,14 +1315,137 @@ test.describe('Check that non-expanded monomers exported as their symbols in SVG
        *       2. Open Save dialog and select SVG Document option
        *       3. Take screenshot to witness export preview
        */
-      // test.fixme(
-      //   true,
-      //   `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
-      // );
-
       const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
 
       await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
+
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.SVGDocument,
+      );
+      const previewAreaTestId =
+        (await saveStructureArea.getAttribute('data-testid')) || '';
+      await takeElementScreenshot(page, previewAreaTestId);
+
+      await SaveStructureDialog(page).cancel();
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+const monomerCompositions: IMonomer[] = [
+  {
+    monomerDescription: '1. Petide L (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Expand-monomers/1. Petide L (from library) surrounded by all types of monomers.ket',
+    monomerLocatorText: 'L',
+  },
+  {
+    monomerDescription: '2. Sugar UNA (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Expand-monomers/2. Sugar UNA (from library) surrounded by all types of monomers.ket',
+    monomerLocatorText: 'UNA',
+  },
+  {
+    monomerDescription: '3. Base nC6n5C (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Expand-monomers/3. Base nC6n5C (from library) surrounded by all types of monomers.ket',
+    monomerLocatorText: 'nC6n5C',
+  },
+  {
+    monomerDescription: '4. Phosphate bnn (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Expand-monomers/4. Phosphate bnn (from library) surrounded by all types of monomers.ket',
+    monomerLocatorText: 'bnn',
+  },
+  {
+    monomerDescription: '5. Unsplit nucleotide Super-G (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Expand-monomers/5. Unsplit nucleotide Super-G (from library) surrounded by all types of monomers.ket',
+    monomerLocatorText: 'Super-G',
+  },
+  {
+    monomerDescription: '6. CHEM 4FB (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Expand-monomers/6. CHEM 4FB (from library) surrounded by all types of monomers.ket',
+    monomerLocatorText: '4FB',
+  },
+];
+
+test.describe('Check that part expanded and part non-expanded monomers on same structure exported as their symbols and their atom and bond form in PNG: ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const monomerComposition of monomerCompositions) {
+    test(`${monomerComposition.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7036
+       * Description: Check that part expanded and part non-expanded monomers on same structure exported as their symbols and their atom and bond form in PNG
+       *
+       * Case: 1. Load monomer composition on Molecules canvas
+       *       2. Expand monomer at the center
+       *       2. Open Save dialog and select PNG Image option
+       *       3. Take screenshot to witness export preview
+       */
+      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
+
+      await openFileAndAddToCanvasAsNewProject(
+        monomerComposition.KETFile,
+        page,
+      );
+
+      await expandMonomer(page, monomerComposition.monomerLocatorText);
+
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.PNGImage,
+      );
+
+      const previewAreaTestId =
+        (await saveStructureArea.getAttribute('data-testid')) || '';
+      await takeElementScreenshot(page, previewAreaTestId);
+
+      await SaveStructureDialog(page).cancel();
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+test.describe('Check that part expanded and part non-expanded monomers on same structure exported as their symbols and their atom and bond form in SVG: ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const monomerComposition of monomerCompositions) {
+    test(`${monomerComposition.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7036
+       * Description: Check that part expanded and part non-expanded monomers on same structure exported as their symbols and their atom and bond form in SVG
+       *
+       * Case: 1. Load monomer composition on Molecules canvas
+       *       2. Expand monomer at the center
+       *       3. Open Save dialog and select SVG Document option
+       *       4. Take screenshot to witness export preview
+       */
+      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
+
+      await openFileAndAddToCanvasAsNewProject(
+        monomerComposition.KETFile,
+        page,
+      );
+
+      await expandMonomer(page, monomerComposition.monomerLocatorText);
 
       await TopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(

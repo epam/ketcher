@@ -7,8 +7,10 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
   MacroFileType,
+  openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
+  selectFlexLayoutModeTool,
   selectPartOfMolecules,
   takePageScreenshot,
   takeTopToolbarScreenshot,
@@ -29,6 +31,34 @@ export async function selectMolecularMassUnit(
   unit?: 'Da' | 'kDa' | 'MDa',
 ) {
   const dropdown = page.getByTestId('dropdown-select').first();
+  await expect(dropdown).toBeVisible();
+  await dropdown.click();
+  if (!unit) return;
+  const optionTestId = `${unit}-option`;
+  const option = page.getByTestId(optionTestId).first();
+  await expect(option).toBeVisible();
+  await option.click();
+}
+
+export async function selectUnipositiveIonsUnit(
+  page: Page,
+  unit?: 'nM' | 'μM' | 'mM',
+) {
+  const dropdown = page.getByTestId('dropdown-select').nth(1);
+  await expect(dropdown).toBeVisible();
+  await dropdown.click();
+  if (!unit) return;
+  const optionTestId = `${unit}-option`;
+  const option = page.getByTestId(optionTestId).first();
+  await expect(option).toBeVisible();
+  await option.click();
+}
+
+export async function selectOligonucleotidesUnit(
+  page: Page,
+  unit?: 'nM' | 'μM' | 'mM',
+) {
+  const dropdown = page.getByTestId('dropdown-select').nth(2);
   await expect(dropdown).toBeVisible();
   await dropdown.click();
   if (!unit) return;
@@ -434,6 +464,149 @@ test.describe('Calculate Properties tests', () => {
       page,
       MacroFileType.HELM,
       'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}$$$$V2.0',
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 19: Verify that Melting temperature displayed as a number with one decimal point', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Melting temperature displayed as a number with one decimal point.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 4. Open the "Calculate Properties" window
+     * 5. Check that Melting temperature displayed as a number with one decimal point
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,38:pair-2:pair|RNA1,RNA2,35:pair-5:pair|RNA1,RNA2,32:pair-8:pair|RNA1,RNA2,29:pair-11:pair|RNA1,RNA2,26:pair-14:pair|RNA1,RNA2,23:pair-17:pair|RNA1,RNA2,20:pair-20:pair|RNA1,RNA2,17:pair-23:pair|RNA1,RNA2,14:pair-26:pair|RNA1,RNA2,11:pair-29:pair|RNA1,RNA2,8:pair-32:pair|RNA1,RNA2,5:pair-35:pair|RNA1,RNA2,2:pair-38:pair$$$V2.0',
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 20: Check that values for the concentration of unipositive ions and oligonucleotides can be changed by the user, but the default/preset values are 140mM and 200μM respectively', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Values for the concentration of unipositive ions and oligonucleotides can be changed by the user,
+     * but the default/preset values are 140mM and 200μM respectively.
+     * Within the drop-down menu for units of these two concentrations there three options nM, μM, and mM.
+     * Changing the units change the numbers appropriately.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 4. Open the "Calculate Properties" window
+     * 5. Check that values for the concentration of unipositive ions and oligonucleotides can be changed by the user,
+     * but the default/preset values are 140mM and 200μM respectively
+     * 6. Check that within the drop-down menu for units of these two concentrations there three options nM, μM, and mM
+     * 7. Check that changing the units change the numbers appropriately
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}|RNA2{[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)P.[dR](T)}$RNA1,RNA2,38:pair-2:pair|RNA1,RNA2,35:pair-5:pair|RNA1,RNA2,32:pair-8:pair|RNA1,RNA2,29:pair-11:pair|RNA1,RNA2,26:pair-14:pair|RNA1,RNA2,23:pair-17:pair|RNA1,RNA2,20:pair-20:pair|RNA1,RNA2,17:pair-23:pair|RNA1,RNA2,14:pair-26:pair|RNA1,RNA2,11:pair-29:pair|RNA1,RNA2,8:pair-32:pair|RNA1,RNA2,5:pair-35:pair|RNA1,RNA2,2:pair-38:pair$$$V2.0',
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+    await selectUnipositiveIonsUnit(page, 'μM');
+    await selectOligonucleotidesUnit(page, 'mM');
+    await takePageScreenshot(page);
+    await selectUnipositiveIonsUnit(page, 'mM');
+    await selectOligonucleotidesUnit(page, 'nM');
+    await takePageScreenshot(page);
+    await selectUnipositiveIonsUnit(page, 'nM');
+    await selectOligonucleotidesUnit(page, 'μM');
+    await takePageScreenshot(page);
+  });
+
+  test('Case 21: Check that Base count displayed as a grid with the appropriate number next to the natural analogue', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Base count displayed as a grid with the appropriate number next to the natural analogue.
+     * If a natural analogue does not appear within the selection, the appropriate card is grayed out.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 4. Open the "Calculate Properties" window
+     * 5. Check that Base count displayed as a grid with the appropriate number next to the natural analogue
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[dR](A)P.[dR](G)P.[dR](T)}$$$$V2.0',
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 22: Check if a natural analogue does not appear within the selection, the appropriate card is grayed out', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: If a natural analogue does not appear within the selection, the appropriate card is grayed out.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     * 4. Select one chain/continuous part of one chain
+     * 5. Check that if a natural analogue does not appear within the selection, the appropriate card is grayed out
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[dR](A)P.[dR](C)P.[dR](G)P.[dR](T)P.[dR](U)}$$$$V2.0',
+    );
+    await getSymbolLocator(page, {
+      symbolAlias: 'A',
+      nodeIndexOverall: 0,
+    }).dblclick();
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 2; i++) {
+      await keyboardPressOnCanvas(page, 'ArrowRight');
+    }
+    await page.keyboard.up('Shift');
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 23: Check Calculation Properties for standard R2-R1 connected monomers with microstructure', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Calculation Properties for standard R2-R1 connected monomers with microstructure displayed.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from file
+     * 3. Select all
+     * 4. Open the "Calculate Properties" window
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/peptide-connected-to-microstructure-r2-r1.ket',
+      page,
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 24: Check Calculation Properties for non-standard R3-R1 connected monomers with microstructure', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Calculation Properties for standard R3-R1 connected monomers with microstructure displayed.
+     * We have a bug: https://github.com/epam/ketcher/issues/7085
+     * After fixing this bug, we need to check that the calculation properties for non-standard R3-R1 connected monomers with microstructure displayed.
+     * And update screenshot.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from file
+     * 3. Select all
+     * 4. Open the "Calculate Properties" window
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/peptide-connected-to-microstructure-r3-r1.ket',
+      page,
     );
     await TopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);

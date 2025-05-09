@@ -1,6 +1,7 @@
 import {
   AmbiguousMonomer,
   BaseMonomer,
+  HydrogenBond,
   MONOMER_CLASS_TO_CONSTRUCTOR,
   Peptide,
   Phosphate,
@@ -296,4 +297,34 @@ export function isRnaBaseApplicableForAntisense(monomer?: BaseMonomer) {
     (isRnaBaseOrAmbiguousRnaBase(monomer) &&
       Boolean(getSugarFromRnaBase(monomer)))
   );
+}
+
+export function getAllConnectedMonomersRecursively(
+  monomer: BaseMonomer,
+): BaseMonomer[] {
+  const stack = [monomer];
+  const visited = new Set<BaseMonomer>();
+  const connectedMonomers: BaseMonomer[] = [];
+
+  while (stack.length > 0) {
+    const currentMonomer = stack.pop();
+
+    if (!currentMonomer || visited.has(currentMonomer)) {
+      continue;
+    }
+
+    visited.add(currentMonomer);
+    connectedMonomers.push(currentMonomer);
+
+    currentMonomer.forEachBond((bond) => {
+      if (bond instanceof PolymerBond || bond instanceof HydrogenBond) {
+        const anotherMonomer = bond.getAnotherMonomer(currentMonomer);
+        if (anotherMonomer && !visited.has(anotherMonomer)) {
+          stack.push(anotherMonomer);
+        }
+      }
+    });
+  }
+
+  return connectedMonomers;
 }

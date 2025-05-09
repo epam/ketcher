@@ -13,13 +13,20 @@ import {
   clickOnCanvas,
   selectMonomer,
   clickInTheMiddleOfTheScreen,
+  resetZoomLevelToDefault,
 } from '@utils';
 import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
+// import {
+//   pressRedoButton,
+//   pressUndoButton,
+//   selectClearCanvasTool,
+// } from '@tests/pages/common/TopLeftToolbar';
+// import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Chem } from '@constants/monomers/Chem';
-import { goToPeptidesTab } from '@utils/macromolecules/library';
+// import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -45,12 +52,33 @@ async function moveMonomersToNewPosition(
 }
 
 test.describe('Rectangle Selection Tool', () => {
-  test.beforeEach(async ({ page }) => {
+  // test.beforeEach(async ({ page }) => {
+  //   await waitForPageInit(page);
+  //   await turnOnMacromoleculesEditor(page);
+  //   await goToPeptidesTab(page);
+  // });
+
+  let page: Page;
+
+  test.beforeAll(async ({ browser }) => {
+    const context = await browser.newContext();
+    page = await context.newPage();
+
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    await goToPeptidesTab(page);
   });
-  test('Select monomer and bonds and then erase', async ({ page }) => {
+
+  test.afterEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await TopLeftToolbar(page).clearCanvas();
+    await resetZoomLevelToDefault(page);
+  });
+
+  test.afterAll(async ({ browser }) => {
+    await Promise.all(browser.contexts().map((context) => context.close()));
+  });
+
+  test('Select monomer and bonds and then erase', async () => {
     /* 
     Test case: #2360 - "Select" tool for Macromolecules editor
     Description: Rectangle Selection Tool
@@ -124,7 +152,7 @@ test.describe('Rectangle Selection Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Move monomer bonded with another monomers', async ({ page }) => {
+  test('Move monomer bonded with another monomers', async () => {
     /* 
     Test case: #2367 - move items on the canvas
     Description: check ability to move items on the canvas
@@ -161,9 +189,7 @@ test.describe('Rectangle Selection Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Monomer appears above other monomers, when selected', async ({
-    page,
-  }) => {
+  test('Monomer appears above other monomers, when selected', async () => {
     /*
       Test case: Selected monomer does not appear above the others
       See issue https://github.com/epam/ketcher/issues/3703 for more detailes
@@ -187,7 +213,7 @@ test.describe('Rectangle Selection Tool', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Group selection using `Shift+LClick`', async ({ page }) => {
+  test('Group selection using `Shift+LClick`', async () => {
     /* 
     Test case: #3728 - Group selection using Shift+LClick for Macromolecules editor
     Description: Selection elements pointly
@@ -251,9 +277,7 @@ test.describe('Rectangle Selection Tool', () => {
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
   });
 
-  test('Move selected by selection tool peptide to new position on canvas', async ({
-    page,
-  }) => {
+  test('Move selected by selection tool peptide to new position on canvas', async () => {
     /* 
     Test case: #2507 - Add Peptides monomers to canvas
     Description: Selected by selection tool peptide moved to new position on canvas
@@ -283,16 +307,14 @@ test.describe('Rectangle Selection Tool', () => {
   ];
 
   for (const testCase of testCases) {
-    test(testCase.description, async ({ page }) => {
+    test(testCase.description, async () => {
       const x = 400;
       const y = 500;
       await moveMonomersToNewPosition(page, testCase.filePath, 'meD', x, y);
     });
   }
 
-  test('Move selected by selection tool CHEM to new position on canvas', async ({
-    page,
-  }) => {
+  test('Move selected by selection tool CHEM to new position on canvas', async () => {
     /* 
     Test case: #2507 - Add CHEM monomers to canvas
     Description: Selected by selection tool CHEM moved to new position on canvas
@@ -327,7 +349,7 @@ test.describe('Rectangle Selection Tool', () => {
   ];
 
   for (const testCase of testCasesForChems) {
-    test(testCase.description, async ({ page }) => {
+    test(testCase.description, async () => {
       const x = 400;
       const y = 500;
       await moveMonomersToNewPosition(page, testCase.filePath, 'A6OH', x, y);
@@ -356,7 +378,7 @@ test.describe('Rectangle Selection Tool', () => {
   ];
 
   for (const testCase of testCasesForMolfiles) {
-    test(testCase.description, async ({ page }) => {
+    test(testCase.description, async () => {
       const x = 400;
       const y = 500;
       await moveMonomersToNewPosition(
@@ -369,9 +391,7 @@ test.describe('Rectangle Selection Tool', () => {
     });
   }
 
-  test('Check selection/deselection for all kind monomers (Peptides, RNA, CHEM)', async ({
-    page,
-  }) => {
+  test('Check selection/deselection for all kind monomers (Peptides, RNA, CHEM)', async () => {
     /* 
     Test case: Selection tool
     Description: Selection of monomers looks in accordance with the design.
@@ -385,7 +405,7 @@ test.describe('Rectangle Selection Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Move a monomer, then use the Undo/Redo function', async ({ page }) => {
+  test('Move a monomer, then use the Undo/Redo function', async () => {
     /* 
     Test case: Selection tool
     Description: Undo/Redo functions works after selection and moving monomer.
@@ -404,9 +424,7 @@ test.describe('Rectangle Selection Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that you can move monomers on canvas in snake-view', async ({
-    page,
-  }) => {
+  test('Check that you can move monomers on canvas in snake-view', async () => {
     /* 
     Test case: Selection tool
     Description: Monomers moved to new position in Snake mode view.
@@ -421,9 +439,7 @@ test.describe('Rectangle Selection Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Create multiple rows of monomers and move monomer between different rows', async ({
-    page,
-  }) => {
+  test('Create multiple rows of monomers and move monomer between different rows', async () => {
     /* 
     Test case: Selection tool
     Description: Monomer moved to new position through rows of monomers.
@@ -436,9 +452,7 @@ test.describe('Rectangle Selection Tool', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('Check that you can select all kind of monomers and delete by pressing Delete button and then can Undo it', async ({
-    page,
-  }) => {
+  test('Check that you can select all kind of monomers and delete by pressing Delete button and then can Undo it', async () => {
     /* 
     Test case: Selection tool
     Description: Monomers are deleted from canvas and then appears after pressing Undo.

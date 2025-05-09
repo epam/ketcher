@@ -1,4 +1,4 @@
-import { Action, fromSgroupDeletion } from 'ketcher-core';
+import { Action, fromSgroupDeletion, ketcherProvider } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAppContext } from 'src/hooks';
@@ -12,12 +12,12 @@ import {
 type Params = ItemEventParams<FunctionalGroupsContextMenuProps>;
 
 const useFunctionalGroupRemove = () => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
   const dispatch = useDispatch();
 
   const handler = useCallback(
     ({ props }: Params) => {
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const selectedFunctionalGroups = props?.functionalGroups;
       const action = new Action();
 
@@ -33,7 +33,7 @@ const useFunctionalGroupRemove = () => {
       editor.update(action);
       highlightFG(dispatch, { group: null, id: null });
     },
-    [dispatch, getKetcherInstance],
+    [dispatch, ketcherId],
   );
 
   return handler;

@@ -33,6 +33,7 @@ function createApi(
   const info = structService.info();
 
   return Object.assign(info, {
+    addKetcherId: structService.addKetcherId.bind(structService),
     info: structService.info.bind(structService),
     convert: structService.convert.bind(structService),
     layout: structService.layout.bind(structService),

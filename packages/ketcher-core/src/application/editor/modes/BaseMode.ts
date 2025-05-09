@@ -225,7 +225,8 @@ export abstract class BaseMode {
     pastedStr: string,
     sequenceType: SequenceType,
   ) {
-    const indigo = ketcherProvider.getKetcher().indigo;
+    const editor = CoreEditor.provideEditorInstance();
+    const indigo = ketcherProvider.getKetcher(editor.ketcherId).indigo;
     try {
       const ketStruct = await indigo.convert(pastedStr, {
         outputFormat: ChemicalMimeType.KET,

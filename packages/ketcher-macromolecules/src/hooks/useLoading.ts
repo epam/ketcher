@@ -1,8 +1,11 @@
 import { KetcherAsyncEvents, ketcherProvider } from 'ketcher-core';
 import { useCallback, useEffect, useState } from 'react';
+import { useAppSelector } from './stateHooks';
+import { selectKetcherId } from 'state/common';
 
 export function useLoading() {
-  const ketcher = ketcherProvider.getKetcher();
+  const ketcherId = useAppSelector(selectKetcherId);
+  const ketcher = ketcherProvider.getKetcher(ketcherId);
   const [isLoading, setIsLoading] = useState(false);
 
   const onLoadingStart = useCallback(() => setIsLoading(true), [setIsLoading]);

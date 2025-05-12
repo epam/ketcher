@@ -168,7 +168,7 @@ class ReAtom extends ReObject {
     }
 
     if (style) {
-      const path = this.makeHighlightePlate(restruct, style);
+      const path = this.makeHighlightePlate(restruct, style, -4);
 
       restruct.addReObjectPath(LayerMap.atom, this.visel, path);
 
@@ -176,10 +176,9 @@ class ReAtom extends ReObject {
     }
   }
 
-  getLabeledSelectionContour(render: Render, isHighlight: boolean) {
+  getLabeledSelectionContour(render: Render, highlightPadding = 0) {
     const { paper, ctab: restruct, options } = render;
     const { fontszInPx, radiusScaleFactor } = options;
-    const highlightPadding = isHighlight ? -2 : 0;
     const padding = fontszInPx * radiusScaleFactor + highlightPadding;
     const radius = fontszInPx * radiusScaleFactor * 2 + highlightPadding;
     const box = this.getVBoxObj(restruct.render)!;
@@ -196,10 +195,9 @@ class ReAtom extends ReObject {
     );
   }
 
-  getUnlabeledSelectionContour(render: Render, isHighlight: boolean) {
+  getUnlabeledSelectionContour(render: Render, highlightPadding = 0) {
     const { paper, options } = render;
     const { atomSelectionPlateRadius } = options;
-    const highlightPadding = isHighlight ? -2 : 0;
     const ps = Scale.modelToCanvas(this.a.pp, options);
     return paper.circle(
       ps.x,
@@ -208,13 +206,14 @@ class ReAtom extends ReObject {
     );
   }
 
-  getSelectionContour(render: Render, isHighlight: boolean) {
+  getSelectionContour(render: Render, highlightPadding = 0) {
     const hasLabel =
       (this.a.pseudo && this.a.pseudo.length > 1 && !getQueryAttrsText(this)) ||
       (this.showLabel && this.a.implicitH !== 0);
+
     return hasLabel
-      ? this.getLabeledSelectionContour(render, isHighlight)
-      : this.getUnlabeledSelectionContour(render, isHighlight);
+      ? this.getLabeledSelectionContour(render, highlightPadding)
+      : this.getUnlabeledSelectionContour(render, highlightPadding);
   }
 
   private isPlateShouldBeHidden = (atom: Atom, render: Render) => {
@@ -236,6 +235,7 @@ class ReAtom extends ReObject {
   private makeHighlightePlate = (
     restruct: ReStruct,
     style: RenderOptionStyles,
+    highlightPadding = -2,
   ) => {
     const atom = this.a;
     const { render } = restruct;
@@ -243,7 +243,7 @@ class ReAtom extends ReObject {
       return null;
     }
 
-    return this.getSelectionContour(render, true).attr(style);
+    return this.getSelectionContour(render, highlightPadding).attr(style);
   };
 
   makeHoverPlate(render: Render) {
@@ -253,7 +253,7 @@ class ReAtom extends ReObject {
       return null;
     }
 
-    return this.getSelectionContour(render, false).attr(options.hoverStyle);
+    return this.getSelectionContour(render).attr(options.hoverStyle);
   }
 
   makeSelectionPlate(restruct: ReStruct) {
@@ -264,7 +264,7 @@ class ReAtom extends ReObject {
     if (this.isPlateShouldBeHidden(atom, render)) {
       return null;
     }
-    return this.getSelectionContour(render, false).attr(options.selectionStyle);
+    return this.getSelectionContour(render).attr(options.selectionStyle);
   }
 
   private isNeedShiftForCharge(showCharge: boolean, bondLength: number) {

@@ -487,6 +487,11 @@ export class CoreEditor {
         this.onModifyAminoAcids(monomers, modificationType);
       },
     );
+
+    this.events.setEditorLineLength.add(() => {
+      // TODO: Save changes to history
+      this.mode.initialize();
+    });
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {

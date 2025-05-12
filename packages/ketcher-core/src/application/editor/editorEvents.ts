@@ -64,6 +64,7 @@ export interface IEditorEvents {
   selectEntities: Subscription;
   toggleMacromoleculesPropertiesVisibility: Subscription;
   modifyAminoAcids: Subscription;
+  setEditorLineLength: Subscription;
 }
 
 export let editorEvents: IEditorEvents;
@@ -128,6 +129,7 @@ export function resetEditorEvents() {
     selectEntities: new Subscription(),
     toggleMacromoleculesPropertiesVisibility: new Subscription(),
     modifyAminoAcids: new Subscription(),
+    setEditorLineLength: new Subscription(),
   };
 }
 resetEditorEvents();

@@ -1,30 +1,30 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ZoomTool } from 'ketcher-core';
 import { ZoomTransform } from 'd3';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  selectEditor,
+  selectEditorLineLength,
+  updateEditorLineLength,
+} from 'state/common';
+import { useLayoutMode } from 'hooks';
+
+import RulerInput from './RulerInput';
 
 import styles from './RulerArea.module.less';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectEditorLineLength, updateEditorLineLength } from 'state/common';
-import { useLayoutMode } from 'hooks';
 
 export const RulerArea = () => {
   const dispatch = useDispatch();
 
   const layoutMode = useLayoutMode();
   const editorLineLength = useSelector(selectEditorLineLength);
-
-  console.log(editorLineLength);
-
   const lineLengthValue = editorLineLength[layoutMode];
 
-  console.log(lineLengthValue);
-
-  const rulerInputRef = useRef<HTMLInputElement>(null);
+  const editor = useSelector(selectEditor);
 
   const [transform, setTransform] = useState<ZoomTransform>(
     new ZoomTransform(1, 0, 0),
   );
-  const [inputValue, setInputValue] = useState(lineLengthValue);
 
   useEffect(() => {
     const zoom = ZoomTool.instance;
@@ -45,45 +45,43 @@ export const RulerArea = () => {
     return () => {
       zoom.unsubscribeOnZoomEvent(zoomEventHandler);
     };
+    // TODO: Perhaps it's not the best approach, should better rely on some promise/init event
   }, [ZoomTool.instance]);
 
   const screenX = useMemo(() => {
     const baseOffset = 40;
+    // TODO: Incorrect calculation here
     const indents = (lineLengthValue % 10) - 1;
-    console.log('indents', indents);
     const translateValue =
       baseOffset + indents * 10 + (lineLengthValue + 1) * 20;
     return transform.applyX(translateValue);
   }, [lineLengthValue, transform]);
 
-  useLayoutEffect(() => {
-    const inputElement = rulerInputRef.current;
-    if (!inputElement) {
-      return;
-    }
-    inputElement.style.transform = `translateX(${screenX}px)`;
-  }, [screenX]);
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    if (value) {
+  const updateSettings = useCallback(
+    (value: number) => {
       dispatch(
-        updateEditorLineLength({ 'sequence-layout-mode': Number(value) }),
+        updateEditorLineLength({ ...editorLineLength, [layoutMode]: value }),
       );
-      setInputValue(value);
-    }
-  };
+      editor.events.setEditorLineLength.dispatch();
+    },
+    [
+      dispatch,
+      editor?.events?.setEditorLineLength,
+      editorLineLength,
+      layoutMode,
+    ],
+  );
+
+  if (layoutMode === 'flex-layout-mode') {
+    return;
+  }
 
   return (
     <div className={styles.rulerArea}>
-      <input
-        className={styles.rulerInput}
-        type="number"
-        min="0"
-        step="1"
-        ref={rulerInputRef}
-        onChange={handleChange}
-        value={inputValue}
+      <RulerInput
+        lineLengthValue={lineLengthValue}
+        onCommitValue={updateSettings}
+        offsetX={screenX}
       />
     </div>
   );

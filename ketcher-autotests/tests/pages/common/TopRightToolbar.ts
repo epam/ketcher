@@ -31,18 +31,10 @@ export const CommonTopRightToolbar = (page: Page) => {
   };
 
   const zoomLocators: ZoomDropdownLocators = {
-    zoomValueEditbox: page
-      .getByTestId('zoom-value')
-      .filter({ has: page.locator(':visible') }),
-    zoomOutButton: page
-      .getByTestId('zoom-out')
-      .filter({ has: page.locator(':visible') }),
-    zoomInButton: page
-      .getByTestId('zoom-in')
-      .filter({ has: page.locator(':visible') }),
-    zoomDefaultButton: page
-      .getByTestId('zoom-default')
-      .filter({ has: page.locator(':visible') }),
+    zoomValueEditbox: page.getByTestId('zoom-value'),
+    zoomOutButton: page.getByTestId('zoom-out'),
+    zoomInButton: page.getByTestId('zoom-in'),
+    zoomDefaultButton: page.getByTestId('zoom-default'),
   };
 
   return {

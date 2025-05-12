@@ -10,6 +10,7 @@ import {
 import { useLayoutMode } from 'hooks';
 
 import RulerInput from './RulerInput';
+import RulerScale from './RulerScale';
 
 import styles from './RulerArea.module.less';
 
@@ -51,9 +52,9 @@ export const RulerArea = () => {
   const screenX = useMemo(() => {
     const baseOffset = 40;
     // TODO: Incorrect calculation here
-    const indents = (lineLengthValue % 10) - 1;
+    const indents = lineLengthValue / 10 - 1;
     const translateValue =
-      baseOffset + indents * 10 + (lineLengthValue + 1) * 20;
+      baseOffset + indents * 10 + lineLengthValue * 20 + 10;
     return transform.applyX(translateValue);
   }, [lineLengthValue, transform]);
 
@@ -73,7 +74,7 @@ export const RulerArea = () => {
   );
 
   if (layoutMode === 'flex-layout-mode') {
-    return;
+    return null;
   }
 
   return (
@@ -83,6 +84,7 @@ export const RulerArea = () => {
         onCommitValue={updateSettings}
         offsetX={screenX}
       />
+      <RulerScale transform={transform} />
     </div>
   );
 };

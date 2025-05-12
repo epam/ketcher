@@ -22,7 +22,6 @@ import {
   resetZoomLevelToDefault,
   takeElementScreenshot,
   selectAllStructuresOnCanvas,
-  getAtomByIndex,
   clickInTheMiddleOfTheScreen,
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
@@ -61,14 +60,6 @@ async function expandMonomer(page: Page, locatorText: string) {
   await callContexMenu(page, locatorText);
   await waitForRender(page, async () => {
     await page.getByText('Expand monomer').click();
-  });
-}
-
-async function collapseMonomer(page: Page, locatorText: string) {
-  const point = await getAtomByIndex(page, { label: locatorText }, 1);
-  await clickOnCanvas(page, point.x, point.y, { button: 'right' });
-  await waitForRender(page, async () => {
-    await page.getByText('Collapse monomer').click();
   });
 }
 

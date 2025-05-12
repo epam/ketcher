@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ZoomTool } from 'ketcher-core';
-import { ZoomTransform } from 'd3';
+import { D3DragEvent, ZoomTransform } from 'd3';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   selectEditor,
@@ -11,6 +11,7 @@ import { useLayoutMode } from 'hooks';
 
 import RulerInput from './RulerInput';
 import RulerScale from './RulerScale';
+import RulerHandle from './RulerHandle';
 
 import styles from './RulerArea.module.less';
 
@@ -26,6 +27,9 @@ export const RulerArea = () => {
   const [transform, setTransform] = useState<ZoomTransform>(
     new ZoomTransform(1, 0, 0),
   );
+
+  const dragStartX = useRef(0);
+  const [dragDelta, setDragDelta] = useState(0);
 
   useEffect(() => {
     const zoom = ZoomTool.instance;
@@ -49,14 +53,16 @@ export const RulerArea = () => {
     // TODO: Perhaps it's not the best approach, should better rely on some promise/init event
   }, [ZoomTool.instance]);
 
-  const screenX = useMemo(() => {
+  const [inputOffsetX, handleOffsetX] = useMemo(() => {
     const baseOffset = 40;
-    // TODO: Incorrect calculation here
     const indents = lineLengthValue / 10 - 1;
     const translateValue =
       baseOffset + indents * 10 + lineLengthValue * 20 + 10;
-    return transform.applyX(translateValue);
-  }, [lineLengthValue, transform]);
+    return [
+      transform.applyX(translateValue) + dragDelta + 6,
+      transform.applyX(translateValue) + dragDelta - 14,
+    ];
+  }, [lineLengthValue, dragDelta, transform]);
 
   const updateSettings = useCallback(
     (value: number) => {
@@ -73,6 +79,51 @@ export const RulerArea = () => {
     ],
   );
 
+  const handleDragStart = useCallback(
+    (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
+      dragStartX.current = event.sourceEvent.clientX;
+    },
+    [],
+  );
+
+  const handleDrag = useCallback(
+    (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
+      const dragDelta = event.sourceEvent.clientX - dragStartX.current;
+      setDragDelta(dragDelta);
+    },
+    [],
+  );
+
+  const handleDragEnd = useCallback(
+    (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
+      const finalDelta = event.sourceEvent.clientX - dragStartX.current;
+
+      const baseOffset = 40;
+      const indents = lineLengthValue / 10 - 1;
+      const translateValue =
+        baseOffset + indents * 10 + lineLengthValue * 20 + 10;
+      const finalScreenX = transform.applyX(translateValue + finalDelta);
+
+      console.log('finalScreenX', finalScreenX);
+
+      // 2) back to world X
+      const finalWorldX = transform.invertX(finalScreenX);
+      console.log('finalWorldX', finalWorldX);
+      //
+      // // 3) raw count & snap
+      const rawCount = (finalWorldX - indents * 10 - baseOffset) / 20;
+      console.log('rawCount', rawCount);
+      const snapped = Math.round(rawCount / 10) * 10;
+      console.log('snapped', snapped);
+
+      updateSettings(snapped);
+
+      setDragDelta(0);
+      dragStartX.current = 0;
+    },
+    [transform, lineLengthValue, updateSettings],
+  );
+
   if (layoutMode === 'flex-layout-mode') {
     return null;
   }
@@ -82,7 +133,13 @@ export const RulerArea = () => {
       <RulerInput
         lineLengthValue={lineLengthValue}
         onCommitValue={updateSettings}
-        offsetX={screenX}
+        offsetX={inputOffsetX}
+      />
+      <RulerHandle
+        offsetX={handleOffsetX}
+        onDragStart={handleDragStart}
+        onDrag={handleDrag}
+        onDragEnd={handleDragEnd}
       />
       <RulerScale transform={transform} />
     </div>

@@ -89,6 +89,8 @@ class ReAtom extends ReObject {
     rectangle: any;
   };
 
+  private expandedMonomerAttachmentPoints?: any; // Raphael paths
+
   constructor(atom: Atom) {
     super('atom');
     this.a = atom; // TODO rename a to item
@@ -117,11 +119,28 @@ class ReAtom extends ReObject {
 
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
 
-    if (!this.selected) {
-      this.makeMonomerAttachmentPointHighlightPlate(render);
+    return ret;
+  }
+
+  setHover(hover: boolean, render: Render) {
+    super.setHover(hover, render);
+
+    if (!hover || this.selected) {
+      this.expandedMonomerAttachmentPoints?.hide();
+
+      return;
     }
 
-    return ret;
+    if (this.expandedMonomerAttachmentPoints?.removed) {
+      this.expandedMonomerAttachmentPoints = undefined;
+    }
+
+    if (this.expandedMonomerAttachmentPoints) {
+      this.expandedMonomerAttachmentPoints.show();
+    } else {
+      this.expandedMonomerAttachmentPoints =
+        this.makeMonomerAttachmentPointHighlightPlate(render);
+    }
   }
 
   public makeMonomerAttachmentPointHighlightPlate(render: Render) {

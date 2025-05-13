@@ -94,4 +94,5 @@ export interface Editor {
   setMacromoleculeConvertionError: (errorMessage: string) => void;
   clearMacromoleculeConvertionError: () => void;
   serverSettings: object;
+  focusCliparea: () => void;
 }

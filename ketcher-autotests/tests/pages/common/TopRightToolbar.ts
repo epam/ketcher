@@ -2,7 +2,6 @@ import { Page, Locator, expect } from '@playwright/test';
 import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
-import { clickOnCanvas } from '@utils';
 
 type CommonTopRightToolbarLocators = {
   ketcherModeSwitcherCombobox: Locator;
@@ -119,8 +118,6 @@ export const CommonTopRightToolbar = (page: Page) => {
       const microOption = page.getByTestId('molecules_mode');
       expect(microOption).toBeVisible();
       await microOption.click();
-      // click on canvas to focus it
-      await clickOnCanvas(page, 0, 0);
     },
   };
 };

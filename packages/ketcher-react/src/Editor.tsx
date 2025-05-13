@@ -56,6 +56,7 @@ export const Editor = (props: Props) => {
         macromoleculesEditor?.switchToMacromolecules();
       } else {
         macromoleculesEditor?.switchToMicromolecules();
+        moleculesEditor?.focusCliparea();
       }
     }
   }, [showPolymerEditor]);

@@ -15,6 +15,7 @@ type IndigoFunctionsToolbarLocators = {
 };
 
 export const IndigoFunctionsToolbar = (page: Page) => {
+  console.log('page is ', page);
   const locators: IndigoFunctionsToolbarLocators = {
     aromatizeButton: page.getByTestId('Aromatize button'),
     dearomatizeButton: page.getByTestId('Dearomatize button'),

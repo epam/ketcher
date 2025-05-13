@@ -113,6 +113,8 @@ test.describe('Calculate Properties tests', () => {
     await iconButton.hover();
     expect(icon.title).toBeTruthy();
     await takeTopToolbarScreenshot(page);
+    await iconButton.click();
+    await takeTopToolbarScreenshot(page);
   });
 
   test('Case 2: Check that the shortcut Alt+C (Option+C for MacOS) used to invoke the "Calculate Properties" window', async () => {

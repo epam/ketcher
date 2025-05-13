@@ -327,7 +327,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Check that hand tool is available
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    const handTool = page.getByTestId('hand');
+    const handTool = CommonLeftToolbar(page).handToolButton;
     await expect(handTool).toBeVisible();
     await expect(handTool).toBeEnabled();
     await expect(handTool).toHaveAttribute('title', 'Hand Tool (Ctrl+Alt+H)');

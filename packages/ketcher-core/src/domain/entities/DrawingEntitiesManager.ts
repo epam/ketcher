@@ -1949,6 +1949,25 @@ export class DrawingEntitiesManager {
           MACROMOLECULES_BOND_TYPES.HYDROGEN,
           entity,
         );
+      } else if (entity instanceof MonomerToAtomBond) {
+        filteredDrawingEntitiesManager.addMonomerToAtomBondChangeModel(
+          entity.monomer,
+          entity.atom,
+          entity.monomer.getAttachmentPointByBond(
+            entity,
+          ) as AttachmentPointName,
+          entity,
+        );
+      } else if (entity instanceof Bond) {
+        filteredDrawingEntitiesManager.addBondChangeModel(
+          entity.firstAtom,
+          entity.secondAtom,
+          entity.type,
+          entity.stereo,
+          entity.bondIdInMicroMode,
+          entity,
+          entity.cip,
+        );
       }
     });
 
@@ -2088,6 +2107,7 @@ export class DrawingEntitiesManager {
   public getAllSelectedEntitiesForEntities(drawingEntities: DrawingEntity[]) {
     const command = new Command();
     const editor = CoreEditor.provideEditorInstance();
+    editor.events.selectEntities.dispatch(drawingEntities);
     drawingEntities.forEach((monomer) => monomer.turnOnSelection());
     const newDrawingEntities = drawingEntities.reduce(
       (

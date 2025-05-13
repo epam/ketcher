@@ -626,7 +626,7 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 3
   await pressButton(page, 'Set ACS Settings');
   await pressButton(page, 'Apply');
   await pressButton(page, 'OK');
-  await selectLayoutTool(page);
+  await IndigoFunctionsToolbar(page).layout();
   await takeEditorScreenshot(page);
 
   await verifyFileExport(
@@ -657,7 +657,7 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 2
   await pressButton(page, 'Set ACS Settings');
   await pressButton(page, 'Apply');
   await pressButton(page, 'OK');
-  await selectLayoutTool(page);
+  await IndigoFunctionsToolbar(page).layout();
   await takeEditorScreenshot(page);
 
   await verifyFileExport(

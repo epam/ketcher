@@ -43,14 +43,14 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfChain(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
   test('Center molecule after layout', async ({ page }) => {
     // Related Github issue: https://github.com/epam/ketcher/issues/2078
     await openFileAndAddToCanvas('Molfiles-V2000/benzene-rings.mol', page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -63,7 +63,7 @@ test.describe('Indigo Tools - Layout', () => {
     const shift = 150;
     await openFileAndAddToCanvas(structureWithStereoFlags, page, shift, shift);
     for (let i = 0; i < numberOfIterations; i++) {
-      await selectLayoutTool(page);
+      await IndigoFunctionsToolbar(page).layout();
     }
     await takeEditorScreenshot(page);
   });
@@ -76,7 +76,7 @@ test.describe('Indigo Tools - Layout', () => {
       'Molfiles-V2000/chloro-ethylamino-dimethyl-propoxy-propan-ol.mol',
       page,
     );
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -92,10 +92,10 @@ test.describe('Indigo Tools - Layout', () => {
     const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/toluene.mol', page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
@@ -108,7 +108,7 @@ test.describe('Indigo Tools - Layout', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/distorted-Sgroups.mol', page);
     await selectPartOfMolecules(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -124,7 +124,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -140,7 +140,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -156,7 +156,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -173,7 +173,7 @@ test.describe('Indigo Tools - Layout', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -185,7 +185,7 @@ test.describe('Indigo Tools - Layout', () => {
     We have a bug https://github.com/epam/Indigo/issues/2229
     */
     await openFileAndAddToCanvas('Rxn-V2000/distorted-reaction.rxn', page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -197,7 +197,7 @@ test.describe('Indigo Tools - Layout', () => {
     Description: After Layout the structures are displayed orderly in the middle of the screen.
     */
     await openFileAndAddToCanvas('KET/four-benzene-at-edges.ket', page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -209,7 +209,7 @@ test.describe('Indigo Tools - Layout', () => {
     Description: After Layout the structures are displayed orderly in the middle of the screen.
     */
     await openFileAndAddToCanvas('KET/four-benzene-at-edges.ket', page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -227,7 +227,7 @@ test.describe('Indigo Tools - Layout', () => {
         page,
       );
       await selectPartOfMolecules(page);
-      await selectLayoutTool(page);
+      await IndigoFunctionsToolbar(page).layout();
       await takeEditorScreenshot(page);
     },
   );

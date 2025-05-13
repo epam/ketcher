@@ -574,7 +574,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -597,7 +597,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -620,7 +620,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -643,7 +643,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -666,7 +666,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -689,7 +689,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -712,7 +712,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -735,7 +735,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -759,7 +759,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -783,7 +783,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -807,7 +807,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -831,7 +831,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -854,7 +854,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -877,7 +877,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -900,7 +900,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -923,7 +923,7 @@ test.describe('General Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 });

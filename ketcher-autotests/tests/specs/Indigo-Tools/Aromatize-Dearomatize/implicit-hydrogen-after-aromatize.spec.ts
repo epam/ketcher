@@ -28,7 +28,7 @@ test.describe('Shows correctly implicit Hydrogen after aromatize', () => {
         `KET/Implicit-Hydrogen-After-Aromatize/${fileName}`,
         page,
       );
-      await selectAromatizeTool(page);
+      await IndigoFunctionsToolbar(page).aromatize();
       await takeEditorScreenshot(page);
     });
   }

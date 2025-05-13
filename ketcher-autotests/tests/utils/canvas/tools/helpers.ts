@@ -1,18 +1,8 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import {
-  clickOnCanvas,
-  SequenceType,
-  waitForRender,
-  waitForSpinnerFinishedWork,
-} from '@utils';
+import { clickOnCanvas, SequenceType, waitForRender } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
-import {
-  LeftPanelButton,
-  MacromoleculesLeftPanelButton,
-  RingButton,
-  TopPanelButton,
-} from '@utils/selectors';
+import { LeftPanelButton, RingButton, TopPanelButton } from '@utils/selectors';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
@@ -147,14 +137,6 @@ export async function selectLeftPanelButton(
 ) {
   const leftPanelButton = page.locator(`button[title*="${buttonName}"]`);
   await leftPanelButton.click();
-}
-
-export async function selectMacromoleculesPanelButton(
-  buttonName: MacromoleculesLeftPanelButton,
-  page: Page,
-) {
-  const topPanelButton = page.locator(`button[title*="${buttonName}"]`);
-  await topPanelButton.click();
 }
 
 export async function selectButtonById(buttonId: 'OK', page: Page) {
@@ -387,10 +369,4 @@ export async function scrollToDownInSetting(page: Page) {
   const scrollToDown = page.getByTestId('Options for Debugging-accordion');
   await scrollToDown.scrollIntoViewIfNeeded();
   await scrollToDown.hover({ force: true });
-}
-
-export async function selectAddRemoveExplicitHydrogens(page: Page) {
-  await waitForSpinnerFinishedWork(page, async () => {
-    await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
-  });
 }

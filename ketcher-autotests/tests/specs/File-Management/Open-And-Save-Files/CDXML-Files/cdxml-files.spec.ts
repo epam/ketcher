@@ -3,8 +3,6 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  TopPanelButton,
-  selectTopPanelButton,
   selectLeftPanelButton,
   LeftPanelButton,
   waitForPageInit,
@@ -16,7 +14,6 @@ import {
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
   selectAllStructuresOnCanvas,
-  selectLayoutTool,
   setHashSpacingOptionUnit,
   setHashSpacingValue,
   openBondsSettingsSection,
@@ -28,6 +25,7 @@ import {
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -473,7 +471,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '54.8');
     await pressButton(page, 'Apply');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
     await verifyFileExport(
@@ -504,7 +502,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '54.8');
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -533,7 +531,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '7.8');
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -562,7 +560,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '7.8');
     await pressButton(page, 'Apply');
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -591,7 +589,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
     await verifyFileExport(
@@ -622,7 +620,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
     await verifyFileExport(

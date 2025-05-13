@@ -1,9 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
 import {
-  selectTopPanelButton,
   openFileAndAddToCanvas,
-  TopPanelButton,
   takeEditorScreenshot,
   BondType,
   selectRingButton,
@@ -15,14 +13,11 @@ import {
   receiveFileComparisonData,
   saveToFile,
   waitForPageInit,
-  waitForSpinnerFinishedWork,
   waitForRender,
   clickOnBond,
   openFileAndAddToCanvasAsNewProject,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectAromatizeTool,
-  selectLayoutTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -35,6 +30,7 @@ import {
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -49,9 +45,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: The structure isn`t changed.
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
   });
 
@@ -66,9 +60,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
   });
 
@@ -78,9 +70,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Description: Nothing happens on the canvas when it is empty.
     Ketcher functions work correctly after clicking the 'Calculate CIP' button on the empty canvas.
     */
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
@@ -101,8 +91,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).calculateCIP();
+    await IndigoFunctionsToolbar(page).layout();
 
     await takeEditorScreenshot(page);
 
@@ -124,7 +114,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await copyAndPaste(page);
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
@@ -144,7 +134,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await cutAndPaste(page);
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
@@ -161,9 +151,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structures-with-stereo-bonds-ez.mol',
       page,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
   });
 
@@ -178,9 +166,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds-1.mol',
       page,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
   });
 
@@ -195,9 +181,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds-2.mol',
       page,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
   });
 
@@ -212,9 +196,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds-3.mol',
       page,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
   });
 
@@ -229,9 +211,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds-4.mol',
       page,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
   });
 
@@ -246,9 +226,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds-5.mol',
       page,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
   });
 
@@ -263,9 +241,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds-6.mol',
       page,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
   });
 
@@ -280,9 +256,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds-7.mol',
       page,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
   });
 
@@ -299,12 +273,10 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/aromatic-with-stereolabels.mol',
       page,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
 
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
 
     await TopLeftToolbar(page).undo();
@@ -321,8 +293,8 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    await IndigoFunctionsToolbar(page).calculateCIP();
+    await IndigoFunctionsToolbar(page)._3DViewer();
     await takeEditorScreenshot(page);
   });
 
@@ -339,9 +311,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
     );
-    await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await waitForRender(page, async () => {
       await clickOnBond(page, BondType.SINGLE, 3);
     });
@@ -365,7 +335,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/chain-with-stereo-bonds.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await CommonLeftToolbar(page).selectEraseTool();
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
     await clickOnCanvas(page, point.x, point.y);
@@ -391,10 +361,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
     );
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
-    );
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await selectAllStructuresOnCanvas(page);
     const coordinates = await getRotationHandleCoordinates(page);
     const { x: rotationHandleX, y: rotationHandleY } = coordinates;
@@ -420,9 +387,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/chain-with-stereo-bonds.mol',
       page,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
     await clickOnCanvas(page, point.x, point.y);
@@ -438,9 +403,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/chain-with-stereo-bonds.mol',
       page,
     );
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await page.mouse.move(point.x, point.y);
     await takeEditorScreenshot(page);
@@ -460,7 +423,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
         'KET/schema-with-retrosynthetic-arrow-for-options.ket',
         page,
       );
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
+      await IndigoFunctionsToolbar(page).calculateCIP();
       await takeEditorScreenshot(page);
     },
   );
@@ -482,9 +445,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
     );
-    await waitForRender(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
-    });
+    await IndigoFunctionsToolbar(page).calculateCIP();
 
     await verifyFileExport(
       page,
@@ -515,7 +476,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
         'Molfiles-V2000/structure-with-stereo-bonds-expectedV2000.mol',
         expectedFile,
       );
-      await selectTopPanelButton(TopPanelButton.Calculate, page);
+      await IndigoFunctionsToolbar(page).calculateCIP();
       const METADATA_STRING_INDEX = [1];
       const { file: molFile, fileExpected: molFileExpected } =
         await receiveFileComparisonData({
@@ -558,7 +519,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await verifyFileExport(
       page,
       'SMILES/structure-with-stereo-bonds.smi',
@@ -575,7 +536,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       'Molfiles-V2000/structure-with-stereo-bonds.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await verifyFileExport(
       page,
       'InChI/structure-with-stereo-bonds.inchi',

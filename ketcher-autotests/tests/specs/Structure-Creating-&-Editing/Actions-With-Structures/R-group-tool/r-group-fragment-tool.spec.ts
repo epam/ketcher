@@ -277,7 +277,7 @@ test.describe('Open Ketcher', () => {
       'Molfiles-V2000/r1-several-distorted.mol',
       page,
     );
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 

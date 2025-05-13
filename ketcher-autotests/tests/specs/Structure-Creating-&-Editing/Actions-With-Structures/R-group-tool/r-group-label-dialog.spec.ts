@@ -478,7 +478,7 @@ test.describe('R-Group Label Tool', () => {
       'Molfiles-V2000/distorted-structure-with-r-group.mol',
       page,
     );
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 });

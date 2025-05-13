@@ -38,7 +38,7 @@ test.describe('ACS Style Settings', () => {
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -54,7 +54,7 @@ test.describe('ACS Style Settings', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await openSettings(page);
     await pressButton(page, 'Reset');

@@ -240,7 +240,7 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
 
     this.isEditMode = false;
-    this.initialize(false, true, false);
+    this.initialize(false, true, true);
     editor.events.toggleSequenceEditMode.dispatch(false);
   }
 

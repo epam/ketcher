@@ -18,15 +18,8 @@ import {
 import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { getMonomerLocator, moveMonomer } from '@utils/macromolecules/monomer';
-// import {
-//   pressRedoButton,
-//   pressUndoButton,
-//   selectClearCanvasTool,
-// } from '@tests/pages/common/TopLeftToolbar';
-// import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import { Chem } from '@constants/monomers/Chem';
-// import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -53,12 +46,6 @@ async function moveMonomersToNewPosition(
 }
 
 test.describe('Rectangle Selection Tool', () => {
-  // test.beforeEach(async ({ page }) => {
-  //   await waitForPageInit(page);
-  //   await turnOnMacromoleculesEditor(page);
-  //   await goToPeptidesTab(page);
-  // });
-
   let page: Page;
 
   test.beforeAll(async ({ browser }) => {

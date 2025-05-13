@@ -176,10 +176,13 @@ export async function takeElementScreenshot(
     await page.getByTestId('polymer-library-preview').isHidden();
   }
 
-  const element = page
-    .getByTestId(elementId)
-    .filter({ has: page.locator(':visible') })
-    .first();
+  let element = page.getByTestId(elementId);
+
+  if ((await element.count()) > 1) {
+    element = element.filter({ has: page.locator(':visible') });
+    element = element.first();
+  }
+
   await expect(element).toHaveScreenshot(options);
 }
 

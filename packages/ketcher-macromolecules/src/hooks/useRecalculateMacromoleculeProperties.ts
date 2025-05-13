@@ -43,13 +43,13 @@ export const useRecalculateMacromoleculeProperties = () => {
     const chainsCollection = ChainsCollection.fromMonomers([
       ...drawingEntitiesManagerToCalculateProperties.monomers.values(),
     ]);
+    const firstMonomer = chainsCollection.firstNode?.monomer;
     const areAllMonomersConnectedByCovalentOrHydrogenBonds =
+      !firstMonomer ||
       chainsCollection.chains.reduce(
         (acc: number, chain: Chain) => acc + chain.monomers.length,
         0,
-      ) <=
-      getAllConnectedMonomersRecursively(chainsCollection.firstNode.monomer)
-        .length;
+      ) <= getAllConnectedMonomersRecursively(firstMonomer).length;
 
     if (
       !drawingEntitiesManagerToCalculateProperties.hasDrawingEntities ||

@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   waitForPageInit,
   takeEditorScreenshot,
@@ -8,7 +9,6 @@ import {
   openFileAndAddToCanvas,
   openSettings,
   resetAllSettingsToDefault,
-  selectLayoutTool,
   openBondsSettingsSection,
 } from '@utils';
 

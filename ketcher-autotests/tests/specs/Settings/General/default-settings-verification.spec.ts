@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@playwright/test';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   waitForPageInit,
   drawBenzeneRing,
@@ -19,7 +20,6 @@ import {
   delay,
   clickOnCanvas,
   selectUndoByKeyboard,
-  selectLayoutTool,
 } from '@utils';
 
 async function resetSelectToolOff(page: Page) {

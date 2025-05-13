@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   openFileAndAddToCanvas,
-  selectAromatizeTool,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';

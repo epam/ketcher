@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
@@ -9,7 +10,6 @@ import {
   setBondLengthValue,
   pressButton,
   openSettings,
-  selectLayoutTool,
   setHashSpacingOptionUnit,
   setHashSpacingValue,
   openBondsSettingsSection,

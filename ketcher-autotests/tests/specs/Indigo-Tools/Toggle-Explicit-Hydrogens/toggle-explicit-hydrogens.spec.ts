@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -9,7 +10,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   screenshotBetweenUndoRedo,
   clickOnCanvas,
-  selectAddRemoveExplicitHydrogens,
 } from '@utils';
 
 test.describe('Toggle-Explicit-Hydrogens Tool', () => {

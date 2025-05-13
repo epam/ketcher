@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { MolfileFormat } from '@app/../packages/ketcher-core/dist';
 import { expect, test } from '@playwright/test';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -11,7 +12,6 @@ import {
   pressButton,
   openSettings,
   selectAllStructuresOnCanvas,
-  selectLayoutTool,
   openBondsSettingsSection,
 } from '@utils';
 import {

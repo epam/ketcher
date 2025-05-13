@@ -72,7 +72,6 @@ import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
-  mode?: BaseMode;
   monomersLibraryUpdate?: string | JSON;
 }
 
@@ -113,6 +112,7 @@ export class CoreEditor {
   }
 
   public mode: BaseMode;
+  private previousModes: BaseMode[] = [];
   public sequenceTypeEnterMode = SequenceType.RNA;
   private micromoleculesEditor: Editor;
   private hotKeyEventHandler: (event: KeyboardEvent) => void = () => {};
@@ -123,7 +123,6 @@ export class CoreEditor {
   constructor({
     theme,
     canvas,
-    mode,
     monomersLibraryUpdate,
   }: ICoreEditorConstructorParams) {
     this._type = EditorType.Micromolecules;
@@ -132,7 +131,7 @@ export class CoreEditor {
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
-    this.mode = initializeMode(mode);
+    this.mode = new SequenceMode();
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
@@ -670,6 +669,7 @@ export class CoreEditor {
     }
 
     this.mode.destroy();
+    this.previousModes.push(this.mode);
     this.mode = new ModeConstructor(this.mode.modeName);
     command.merge(this.mode.initialize(true, false, !hasModeChanged));
     history.update(
@@ -904,8 +904,18 @@ export class CoreEditor {
     this.drawingEntitiesManager = new DrawingEntitiesManager();
   }
 
+  private resetModeIfNeeded() {
+    if (this.previousModes.length === 0) {
+      const newModeName = initializeMode().modeName;
+
+      this.onSelectMode(newModeName);
+      this.events.layoutModeChange.dispatch(newModeName);
+    }
+  }
+
   public switchToMacromolecules() {
     this.resetCanvasOffset();
+    this.resetModeIfNeeded();
 
     const struct = this.micromoleculesEditor?.struct() || new Struct();
     const ketcher = ketcherProvider.getKetcher();
@@ -926,7 +936,12 @@ export class CoreEditor {
       );
     }
 
-    this.renderersContainer.update(modelChanges);
+    if (this.mode instanceof SequenceMode) {
+      this.mode.initialize();
+    } else {
+      this.renderersContainer.update(modelChanges);
+    }
+
     ketcher?.editor.clear();
     ketcher?.editor.clearHistory();
     ketcher?.editor.zoom(1);

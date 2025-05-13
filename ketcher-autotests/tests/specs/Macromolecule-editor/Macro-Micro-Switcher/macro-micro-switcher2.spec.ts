@@ -34,6 +34,7 @@ import {
   takeTopToolbarScreenshot,
   selectSequenceTypeMode,
   hideLibrary,
+  showLibrary,
 } from '@utils';
 import {
   selectRingButton,
@@ -107,6 +108,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await hideLibrary(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await showLibrary(page);
     await goToFavoritesTab(page);
     await takeMonomerLibraryScreenshot(page);
   });

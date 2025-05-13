@@ -18,7 +18,6 @@ import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
   CoreEditor,
   LayoutMode,
-  modesMap,
   SingleChainMacromoleculeProperties,
 } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
@@ -104,9 +103,6 @@ export const editorSlice: Slice = createSlice({
       const editor = new CoreEditor({
         theme: action.payload.theme,
         canvas: action.payload.canvas,
-        mode: state.editorLayoutMode
-          ? new modesMap[state.editorLayoutMode]()
-          : undefined,
         monomersLibraryUpdate: action.payload.monomersLibraryUpdate,
       });
 

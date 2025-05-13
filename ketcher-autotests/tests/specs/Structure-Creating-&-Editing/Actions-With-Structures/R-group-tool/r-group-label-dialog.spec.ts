@@ -18,7 +18,6 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
-  selectLayoutTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -29,6 +28,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {

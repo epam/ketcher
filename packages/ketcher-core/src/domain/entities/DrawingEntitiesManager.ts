@@ -2016,13 +2016,28 @@ export class DrawingEntitiesManager {
     return new Vec2((xmin + xmax) / 2, (ymin + ymax) / 2);
   }
 
+  public rerenderMolecules() {
+    const editor = CoreEditor.provideEditorInstance();
+
+    this.atoms.forEach((atom) => {
+      editor.renderersContainer.deleteAtom(atom);
+      editor.renderersContainer.addAtom(atom);
+    });
+
+    this.bonds.forEach((bond) => {
+      editor.renderersContainer.deleteBond(bond);
+      editor.renderersContainer.addBond(bond);
+    });
+  }
+
   public applyMonomersSequenceLayout() {
     const chainsCollection = ChainsCollection.fromMonomers([
       ...this.monomers.values(),
     ]);
-    chainsCollection.rearrange();
 
+    chainsCollection.rearrange();
     SequenceRenderer.show(chainsCollection);
+    this.rerenderMolecules();
 
     return chainsCollection;
   }
@@ -2040,6 +2055,14 @@ export class DrawingEntitiesManager {
 
     this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
       editor.renderersContainer.deleteMonomerToAtomBond(monomerToAtomBond);
+    });
+
+    this.atoms.forEach((atom) => {
+      editor.renderersContainer.deleteAtom(atom);
+    });
+
+    this.bonds.forEach((bond) => {
+      editor.renderersContainer.deleteBond(bond);
     });
 
     SequenceRenderer.clear();
@@ -2069,6 +2092,8 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.deleteMonomerToAtomBond(monomerToAtomBond);
       editor.renderersContainer.addMonomerToAtomBond(monomerToAtomBond);
     });
+
+    this.rerenderMolecules();
 
     return command;
   }

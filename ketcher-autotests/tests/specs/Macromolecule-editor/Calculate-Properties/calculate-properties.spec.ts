@@ -594,7 +594,12 @@ test.describe('Calculate Properties tests', () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Calculation Properties for standard R3-R1 connected monomers with microstructure displayed.
-     * We have a bug: https://github.com/epam/ketcher/issues/7085
+     * We have a bugs on Ketcher and Indigo side:
+     * https://github.com/epam/ketcher/issues/7085
+     * https://github.com/epam/Indigo/issues/2902
+     * https://github.com/epam/Indigo/issues/2903
+     * https://github.com/epam/Indigo/issues/2904
+     * https://github.com/epam/Indigo/issues/2905
      * After fixing this bug, we need to check that the calculation properties for non-standard R3-R1 connected monomers with microstructure displayed.
      * And update screenshot.
      * Scenario:

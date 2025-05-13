@@ -164,6 +164,10 @@ export class SequenceMode extends BaseMode {
     needRemoveSelection = true,
     needReArrangeChains = true,
   ) {
+    if (this.isEditMode) {
+      needReArrangeChains = false;
+      needScroll = false;
+    }
     const command = super.initialize(needRemoveSelection);
     const editor = CoreEditor.provideEditorInstance();
 
@@ -236,7 +240,7 @@ export class SequenceMode extends BaseMode {
     const editor = CoreEditor.provideEditorInstance();
 
     this.isEditMode = false;
-    this.initialize(false, true, true);
+    this.initialize(false, true, false);
     editor.events.toggleSequenceEditMode.dispatch(false);
   }
 

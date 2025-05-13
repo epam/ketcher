@@ -32,6 +32,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { goToPeptidesTab } from '@utils/macromolecules/library';
 /* eslint-disable no-magic-numbers */
 
 async function moveMonomersToNewPosition(
@@ -66,6 +67,7 @@ test.describe('Rectangle Selection Tool', () => {
 
     await waitForPageInit(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await goToPeptidesTab(page);
   });
 
   test.afterEach(async () => {

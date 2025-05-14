@@ -682,7 +682,8 @@ test.describe('Templates - Functional Group Tools3', () => {
     await commonLeftToolbar.eraseButton.click();
     await takeEditorScreenshot(page);
 
-    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await commonLeftToolbar.bondSelectionDropdownButton.click();
+    // CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await takeEditorScreenshot(page);
 
     await selectLeftPanelToolClick(LeftPanelButton.Chain, page);

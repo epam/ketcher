@@ -9,6 +9,8 @@ type TopLeftToolbarLocators = {
   saveButton: Locator;
   undoButton: Locator;
   redoButton: Locator;
+  createAntisenseStrandButton: Locator;
+  calculateMacromoleculePropertiesButton: Locator;
 };
 
 export const TopLeftToolbar = (page: Page) => {
@@ -18,6 +20,10 @@ export const TopLeftToolbar = (page: Page) => {
     saveButton: page.getByTestId('save-file-button'),
     undoButton: page.getByTestId('undo'),
     redoButton: page.getByTestId('redo'),
+    createAntisenseStrandButton: page.getByTestId('antisenseRnaStrand'),
+    calculateMacromoleculePropertiesButton: page.getByTestId(
+      'calculate-macromolecule-properties-button',
+    ),
   };
 
   const closeWindowXButton = page.getByTestId('close-window-button');
@@ -69,6 +75,15 @@ export const TopLeftToolbar = (page: Page) => {
     async redo() {
       await waitForRender(page, async () => {
         await locators.redoButton.click();
+      });
+    },
+
+    async calculateProperties() {
+      await waitForRender(page, async () => {
+        await locators.calculateMacromoleculePropertiesButton.click({
+          timeout: 1000,
+        });
+        await page.waitForTimeout(1000);
       });
     },
   };

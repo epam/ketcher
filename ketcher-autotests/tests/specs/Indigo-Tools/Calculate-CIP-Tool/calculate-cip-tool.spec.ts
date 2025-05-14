@@ -70,7 +70,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Ketcher functions work correctly after clicking the 'Calculate CIP' button on the empty canvas.
     */
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);

@@ -455,36 +455,37 @@ test.describe('Macro-Micro-Switcher', () => {
     });
   });
 
-  // const tests = [
-  //   {
-  //     button: IndigoFunctionsToolbar(page).layoutButton,
-  //     description: 'Layout',
-  //   },
-  //   {
-  //     button: IndigoFunctionsToolbar(page).cleanUpButton,
-  //     description: 'Clean Up',
-  //   },
-  // ];
+  test(`Check that Pressing Layout button not erase all macromolecules from canvas`, async () => {
+    /*
+      Test case: Macro-Micro-Switcher/3712
+      Description: Pressing Layout button not erase all macromolecules from canvas
+      */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectMonomer(page, Peptides.A);
+    await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
 
-  // for (const testInfo of tests) {
-  //   test(`Check that Pressing ${testInfo.description} button not erase all macromolecules from canvas`, async () => {
-  //     /*
-  //     Test case: Macro-Micro-Switcher/3712
-  //     Description: Pressing Layout or Clean Up button not erase all macromolecules from canvas
-  //     */
-  //     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-  //     await selectMonomer(page, Peptides.A);
-  //     await clickInTheMiddleOfTheScreen(page);
-  //     await moveMouseAway(page);
-  //     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  //     await waitForSpinnerFinishedWork(page, async () =>
-  //       testInfo.button.click(),
-  //     );
-  //     await takeEditorScreenshot(page, {
-  //       hideMacromoleculeEditorScrollBars: true,
-  //     });
-  //   });
-  // }
+  test(`Check that Pressing Clean Up button not erase all macromolecules from canvas`, async () => {
+    /*
+      Test case: Macro-Micro-Switcher/3712
+      Description: Pressing Clean Up button not erase all macromolecules from canvas
+      */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectMonomer(page, Peptides.A);
+    await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await IndigoFunctionsToolbar(page).cleanUp();
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
 
   test('Check that for CHEMs monomer from when switch to micro mode restricted remove abbreviation', async () => {
     /* 

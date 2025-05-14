@@ -11,7 +11,6 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
   selectFlexLayoutModeTool,
-  selectPartOfMolecules,
   takePageScreenshot,
   takeTopToolbarScreenshot,
 } from '@utils';
@@ -23,7 +22,7 @@ import { getSymbolLocator } from '@utils/macromolecules/monomer';
 import { switchToDNAMode } from '@utils/macromolecules/sequence';
 
 async function clickOnXButton(page: Page) {
-  await page.locator('.css-1icymbx').click();
+  await page.getByTestId('macromolecule-properties-close').click();
 }
 
 export async function selectMolecularMassUnit(
@@ -412,7 +411,15 @@ test.describe('Calculate Properties tests', () => {
       MacroFileType.HELM,
       'PEPTIDE1{Q.Q.W.E.E.E.R.T.T.Y.U.I.O.P.A.S.S.D.F.G.H.K.L.C.V.M.K.D.K.D.W.T.W.E.I.G.K.I.G.G.H.H.S.U.K.M.M.C.K.F.K.F.R.I.U.I.E.O.I.K}$$$$V2.0',
     );
-    await selectPartOfMolecules(page, -80);
+    await getSymbolLocator(page, {
+      symbolAlias: 'Q',
+      nodeIndexOverall: 0,
+    }).dblclick();
+    await page.keyboard.down('Shift');
+    for (let i = 0; i < 16; i++) {
+      await keyboardPressOnCanvas(page, 'ArrowRight');
+    }
+    await page.keyboard.up('Shift');
     await TopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });

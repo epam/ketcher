@@ -6,8 +6,6 @@ import {
   openFileAndAddToCanvas,
   selectNestedTool,
   RgroupTool,
-  LeftPanelButton,
-  selectLeftPanelButton,
   dragMouseTo,
   resetCurrentTool,
   copyAndPaste,
@@ -19,8 +17,6 @@ import {
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectCleanTool,
-  selectLayoutTool,
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -34,6 +30,8 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const CANVAS_CLICK_X = 300;
@@ -690,7 +688,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickOnAtom(page, 'N', 0);
 
     await clickOnAtom(page, 'L#', 0);
@@ -860,12 +858,12 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
     await TopLeftToolbar(page).undo();
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 });

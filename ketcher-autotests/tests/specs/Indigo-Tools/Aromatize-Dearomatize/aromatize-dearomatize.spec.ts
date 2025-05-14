@@ -8,8 +8,7 @@ import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   selectAllStructuresOnCanvas,
-  selectAromatizeTool,
-  selectDearomatizeTool,
+  selectRing,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -20,6 +19,7 @@ import {
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const CANVAS_CLICK_X = 200;
@@ -35,8 +35,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Test case: EPMLSOPKET-1867
     Description: Nothing is changed.
     */
-    await selectAromatizeTool(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -46,9 +46,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/non-aromatic.mol', page);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -63,9 +63,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/non-aromatic-structures.mol',
       page,
     );
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -83,9 +83,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/aromatic-structures.mol',
       page,
     );
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -101,9 +101,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
       page,
     );
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -119,8 +119,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
       page,
     );
-    await selectAromatizeTool(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
+    await IndigoFunctionsToolbar(page).dearomatize();
     await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
     await TopLeftToolbar(page).redo();
@@ -142,7 +142,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     );
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
   });
 
@@ -160,7 +160,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     );
     await cutAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
   });
 
@@ -176,7 +176,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
 
     await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await selectAllStructuresOnCanvas(page);
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await takeEditorScreenshot(page);
@@ -329,7 +329,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
         'KET/all-possible-query-features-with-out-custom-query.ket',
         page,
       );
-      await selectAromatizeTool(page);
+      await IndigoFunctionsToolbar(page).aromatize();
       await takeEditorScreenshot(page);
     },
   );
@@ -358,8 +358,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
         'KET/all-possible-query-features-with-out-custom-query.ket',
         page,
       );
-      await selectAromatizeTool(page);
-      await selectDearomatizeTool(page);
+      await IndigoFunctionsToolbar(page).aromatize();
+      await IndigoFunctionsToolbar(page).dearomatize();
       await takeEditorScreenshot(page);
     },
   );
@@ -383,7 +383,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'KET/all-possible-custom-query-features.ket',
       page,
     );
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
   });
 
@@ -407,8 +407,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'KET/all-possible-custom-query-features.ket',
       page,
     );
-    await selectAromatizeTool(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -423,7 +423,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'KET/schema-with-retrosynthetic-arrow-for-options.ket',
       page,
     );
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
   });
 
@@ -438,8 +438,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'KET/schema-with-retrosynthetic-arrow-for-options.ket',
       page,
     );
-    await selectAromatizeTool(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 });

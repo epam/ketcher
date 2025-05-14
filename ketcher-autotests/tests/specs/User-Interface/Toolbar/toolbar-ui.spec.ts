@@ -3,6 +3,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
@@ -17,9 +18,6 @@ import {
   drawBenzeneRing,
   clickOnAtom,
   waitForRender,
-  selectAromatizeTool,
-  selectDearomatizeTool,
-  selectAddRemoveExplicitHydrogens,
   waitForIndigoToLoad,
 } from '@utils';
 
@@ -192,9 +190,9 @@ test.describe('Open Ketcher', () => {
     */
     await takeTopToolbarScreenshot(page);
     await drawBenzeneRing(page);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -205,9 +203,9 @@ test.describe('Open Ketcher', () => {
     */
     await takeTopToolbarScreenshot(page);
     await drawBenzeneRing(page);
-    await selectAddRemoveExplicitHydrogens(page);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
-    await selectAddRemoveExplicitHydrogens(page);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
   });
 });

@@ -16,10 +16,10 @@ import {
   clickOnAtom,
   getEditorScreenshot,
   clickOnCanvas,
-  selectCleanTool,
 } from '@utils';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import { openStructureLibrary } from '@tests/pages/molecules/BottomToolbar';
 
 const CANVAS_CLICK_X = 300;
@@ -235,7 +235,7 @@ test.describe('Create and Save Templates', () => {
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('user_template_1');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
 
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();

@@ -19,7 +19,6 @@ import {
   dragMouseTo,
   clickOnCanvas,
   waitForRender,
-  selectLayoutTool,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -33,6 +32,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 async function addTail(page: Page, x: number, y: number) {
@@ -2701,7 +2701,7 @@ test.describe('Cascade Reactions', () => {
       */
       await openFileAndAddToCanvasAsNewProject(ketFile, page);
       await takeEditorScreenshot(page);
-      await selectLayoutTool(page);
+      await IndigoFunctionsToolbar(page).layout();
       await takeEditorScreenshot(page);
     });
   });

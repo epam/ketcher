@@ -1,4 +1,5 @@
 import { Page, test } from '@playwright/test';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -10,7 +11,6 @@ import {
   pressButton,
   setReactionMarginSizeValue,
   openSettings,
-  selectLayoutTool,
   setHashSpacingOptionUnit,
   setHashSpacingValue,
   openBondsSettingsSection,
@@ -452,7 +452,7 @@ test.describe('CML files', () => {
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '67.8');
     await pressButton(page, 'Apply');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
     await verifyFileExport(
@@ -483,7 +483,7 @@ test.describe('CML files', () => {
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '54.8');
     await pressButton(page, 'Apply');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -513,7 +513,7 @@ test.describe('CML files', () => {
     await setReactionMarginSizeValue(page, '1.8');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
     await verifyFileExport(
@@ -543,7 +543,7 @@ test.describe('CML files', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

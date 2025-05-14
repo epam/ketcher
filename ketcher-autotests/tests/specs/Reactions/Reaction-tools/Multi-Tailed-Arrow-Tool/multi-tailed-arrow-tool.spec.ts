@@ -17,20 +17,14 @@ import {
   openImageAndAddToCanvas,
   pasteFromClipboardByKeyboard,
   pressButton,
-  selectAddRemoveExplicitHydrogens,
   resetCurrentTool,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
-  selectAromatizeTool,
-  selectCleanTool,
-  selectDearomatizeTool,
   selectDropdownTool,
-  selectLayoutTool,
   selectPartOfMolecules,
-  selectTopPanelButton,
+  selectRing,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
-  TopPanelButton,
   waitForPageInit,
   waitForRender,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -51,6 +45,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import {
   openStructureLibrary,
   selectRingButton,
@@ -3637,9 +3632,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -3728,7 +3723,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
        */
       await openFileAndAddToCanvasAsNewProject(file, page);
       await takeEditorScreenshot(page);
-      await selectLayoutTool(page);
+      await IndigoFunctionsToolbar(page).layout();
       await takeEditorScreenshot(page);
       await verifyFileExport(page, expectedFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(expectedFile, page);
@@ -3763,7 +3758,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(700, 340, page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -3803,7 +3798,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(700, 340, page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -3837,7 +3832,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -3870,7 +3865,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Check, page);
+    await IndigoFunctionsToolbar(page).checkStructure();
     await takeEditorScreenshot(page, {
       mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
     });
@@ -3907,7 +3902,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
     await pressButton(page, 'Close');
     await takeEditorScreenshot(page);
@@ -3942,9 +3937,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectAddRemoveExplicitHydrogens(page);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
-    await selectAddRemoveExplicitHydrogens(page);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

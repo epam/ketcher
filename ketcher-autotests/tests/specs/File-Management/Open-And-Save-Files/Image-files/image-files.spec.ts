@@ -16,24 +16,17 @@ import {
   openImageAndAddToCanvas,
   pasteFromClipboardByKeyboard,
   pressButton,
-  selectAddRemoveExplicitHydrogens,
   resetCurrentTool,
   resetZoomLevelToDefault,
   saveToTemplates,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
-  selectAromatizeTool,
-  selectCleanTool,
-  selectDearomatizeTool,
-  selectLayoutTool,
   selectLeftPanelButton,
-  selectTopPanelButton,
+  selectRing,
   selectWithLasso,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
-  TopPanelButton,
   waitForPageInit,
-  waitForSpinnerFinishedWork,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
@@ -55,6 +48,7 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import {
   openStructureLibrary,
   selectRingButton,
@@ -1301,9 +1295,9 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1328,7 +1322,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1360,7 +1354,7 @@ test.describe('Image files', () => {
     await dragMouseTo(x, y, page);
     await clickOnCanvas(page, 100, 100);
     await takeEditorScreenshot(page);
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -1375,10 +1369,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
-    );
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1403,10 +1394,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Check, page),
-    );
+    await IndigoFunctionsToolbar(page).checkStructure();
     await takeEditorScreenshot(page, {
       mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
     });
@@ -1434,10 +1422,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Calculated, page),
-    );
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
     await pressButton(page, 'Close');
     await verifyFileExport(
@@ -1463,9 +1448,9 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectAddRemoveExplicitHydrogens(page);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
-    await selectAddRemoveExplicitHydrogens(page);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1489,10 +1474,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.ThreeD, page),
-    );
+    await IndigoFunctionsToolbar(page).TreeDViewer();
     await takeEditorScreenshot(page);
     await pressButton(page, 'Cancel');
     await verifyFileExport(

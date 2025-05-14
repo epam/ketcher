@@ -16,7 +16,6 @@ import {
   resetCurrentTool,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectLayoutTool,
 } from '@utils';
 import {
   FileType,
@@ -25,6 +24,7 @@ import {
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 async function openRGroupModalForTopAtom(page: Page) {
@@ -276,7 +276,7 @@ test.describe('Open Ketcher', () => {
       'Molfiles-V2000/r1-several-distorted.mol',
       page,
     );
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 

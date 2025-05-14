@@ -52,6 +52,7 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   openStructureLibrary,
   selectRingButton,
@@ -149,7 +150,7 @@ test.describe('Template Manupulations', () => {
     With the template select any bond of the created structure, hold and drag "left-right".
     */
     const shift = 10;
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -216,7 +217,7 @@ test.describe('Template Manupulations', () => {
     const anyAtom = 0;
     const atomToolbar = RightToolbar(page);
 
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);

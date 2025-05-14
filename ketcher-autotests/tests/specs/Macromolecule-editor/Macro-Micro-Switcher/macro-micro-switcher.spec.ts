@@ -12,7 +12,6 @@ import {
   FunctionalGroups,
   LeftPanelButton,
   SaltsAndSolvents,
-  TopPanelButton,
   addMonomersToFavorites,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
@@ -31,18 +30,13 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   pressButton,
   readFileContent,
-  selectAromatizeTool,
-  selectCleanTool,
-  selectDearomatizeTool,
   selectDropdownTool,
   selectFunctionalGroups,
-  selectLayoutTool,
   selectLeftPanelButton,
   selectMonomer,
   selectSaltsAndSolvents,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
-  selectTopPanelButton,
   setAttachmentPoints,
   switchSequenceEnteringButtonType,
   takeEditorScreenshot,
@@ -51,7 +45,6 @@ import {
   takeTopToolbarScreenshot,
   waitForPageInit,
   waitForRender,
-  waitForSpinnerFinishedWork,
 } from '@utils';
 import { hideLibrary, showLibrary } from '@utils/canvas/tools';
 import {
@@ -96,6 +89,7 @@ import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const topLeftCorner = {
@@ -151,9 +145,7 @@ async function setAtomAndBondSettings(page: Page) {
 }
 
 async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
-  await waitForRender(page, async () => {
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-  });
+  await IndigoFunctionsToolbar(page).TreeDViewer();
   if (waitForButtonIsEnabled) {
     await miewApplyButtonIsEnabled(page);
   }
@@ -462,31 +454,37 @@ test.describe('Macro-Micro-Switcher', () => {
     });
   });
 
-  const tests = [
-    { button: TopPanelButton.Layout, description: 'Layout' },
-    { button: TopPanelButton.Clean, description: 'Clean Up' },
-  ];
-
-  for (const testInfo of tests) {
-    test(`Check that Pressing ${testInfo.description} button not erase all macromolecules from canvas`, async () => {
-      /* 
+  test(`Check that Pressing Layout button not erase all macromolecules from canvas`, async () => {
+    /*
       Test case: Macro-Micro-Switcher/3712
-      Description: Pressing Layout or Clean Up button not erase all macromolecules from canvas
+      Description: Pressing Layout button not erase all macromolecules from canvas
       */
-      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-      await selectMonomer(page, Peptides.A);
-      await clickInTheMiddleOfTheScreen(page);
-      await moveMouseAway(page);
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await waitForSpinnerFinishedWork(
-        page,
-        async () => await selectTopPanelButton(testInfo.button, page),
-      );
-      await takeEditorScreenshot(page, {
-        hideMacromoleculeEditorScrollBars: true,
-      });
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectMonomer(page, Peptides.A);
+    await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await IndigoFunctionsToolbar(page).layout();
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
     });
-  }
+  });
+
+  test(`Check that Pressing Clean Up button not erase all macromolecules from canvas`, async () => {
+    /*
+      Test case: Macro-Micro-Switcher/3712
+      Description: Pressing Clean Up button not erase all macromolecules from canvas
+      */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectMonomer(page, Peptides.A);
+    await clickInTheMiddleOfTheScreen(page);
+    await moveMouseAway(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await IndigoFunctionsToolbar(page).cleanUp();
+    await takeEditorScreenshot(page, {
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
 
   test('Check that for CHEMs monomer from when switch to micro mode restricted remove abbreviation', async () => {
     /* 
@@ -525,7 +523,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await selectRingButton(page, 'Benzene');
       await clickInTheMiddleOfTheScreen(page);
-      await selectTopPanelButton(TopPanelButton.ThreeD, page);
+      await IndigoFunctionsToolbar(page).TreeDViewer();
       await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         maxDiffPixelRatio: 0.05,
@@ -1770,9 +1768,9 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -1785,7 +1783,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -1796,7 +1794,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvas('KET/distorted-r1-attachment-point.ket', page);
     await takeEditorScreenshot(page);
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 
@@ -1807,10 +1805,7 @@ test.describe('Macro-Micro-Switcher', () => {
     */
     await openFileAndAddToCanvas('KET/structure-with-ap-and-stereo.ket', page);
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
-    );
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
   });
 
@@ -1823,10 +1818,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Check, page),
-    );
+    await IndigoFunctionsToolbar(page).checkStructure();
     await takeEditorScreenshot(page, {
       mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
     });
@@ -1841,10 +1833,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Calculated, page),
-    );
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -2031,7 +2020,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
   });

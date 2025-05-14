@@ -1,7 +1,5 @@
 import { test } from '@playwright/test';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
   FunctionalGroups,
   openFileAndAddToCanvas,
   pressButton,
@@ -26,10 +24,6 @@ import {
   copyToClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectAromatizeTool,
-  selectDearomatizeTool,
-  selectCleanTool,
-  selectLayoutTool,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -38,6 +32,8 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const X_DELTA = 300;
@@ -55,7 +51,7 @@ test.describe('Templates - Functional Group Tools', () => {
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -211,7 +207,7 @@ test.describe('Templates - Functional Group Tools', () => {
    */
     await openFileAndAddToCanvas('Molfiles-V2000/expanded-fg-CO2Et.mol', page);
 
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
       await pressButton(page, 'Remove Abbreviation');
@@ -309,7 +305,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
     );
 
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
 
@@ -680,12 +676,15 @@ test.describe('Templates - Functional Group Tools3', () => {
 
     await commonLeftToolbar.selectHandTool();
     await commonLeftToolbar.areaSelectionDropdownButton.click();
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
     await commonLeftToolbar.eraseButton.click();
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
-    await selectLeftPanelToolClick(LeftPanelButton.SingleBond, page);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
     await selectLeftPanelToolClick(LeftPanelButton.Chain, page);
@@ -798,10 +797,10 @@ test.describe('Templates - Functional Group Tools3', () => {
       await page.getByText('Expand Abbreviation').click();
     });
 
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
 
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -837,10 +836,10 @@ test.describe('Templates - Functional Group Tools3', () => {
       await page.getByText('Expand Abbreviation').click();
     });
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page);
   });
 
@@ -934,7 +933,7 @@ test.describe('Templates - Functional Group Tools3', () => {
    */
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
+    await IndigoFunctionsToolbar(page).TreeDViewer();
     await takeEditorScreenshot(page);
   });
 });

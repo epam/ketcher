@@ -2036,8 +2036,8 @@ export class DrawingEntitiesManager {
     ]);
 
     chainsCollection.rearrange();
-    SequenceRenderer.show(chainsCollection);
     this.rerenderMolecules();
+    SequenceRenderer.show(chainsCollection);
 
     return chainsCollection;
   }
@@ -2088,12 +2088,12 @@ export class DrawingEntitiesManager {
       editor.renderersContainer.addPolymerBond(polymerBond);
     });
 
+    this.rerenderMolecules();
+
     this.monomerToAtomBonds.forEach((monomerToAtomBond) => {
       editor.renderersContainer.deleteMonomerToAtomBond(monomerToAtomBond);
       editor.renderersContainer.addMonomerToAtomBond(monomerToAtomBond);
     });
-
-    this.rerenderMolecules();
 
     return command;
   }

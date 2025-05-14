@@ -9,7 +9,9 @@ import {
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
+  DEFAULT_LAYOUT_MODE,
   FlexMode,
+  HAS_CONTENT_LAYOUT_MODE,
   LayoutMode,
   modesMap,
   SequenceMode,
@@ -64,7 +66,7 @@ import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
-import { initializeMode, parseMonomersLibrary } from './helpers';
+import { parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
@@ -906,7 +908,16 @@ export class CoreEditor {
 
   private resetModeIfNeeded() {
     if (this.previousModes.length === 0) {
-      const newModeName = initializeMode().modeName;
+      const ketcher = ketcherProvider.getKetcher();
+      const isBlank = ketcher?.editor?.struct().isBlank();
+      const oldModeName = this.mode?.modeName;
+      const newModeName = isBlank
+        ? DEFAULT_LAYOUT_MODE
+        : HAS_CONTENT_LAYOUT_MODE;
+
+      if (oldModeName === newModeName) {
+        return;
+      }
 
       this.onSelectMode(newModeName);
       this.events.layoutModeChange.dispatch(newModeName);

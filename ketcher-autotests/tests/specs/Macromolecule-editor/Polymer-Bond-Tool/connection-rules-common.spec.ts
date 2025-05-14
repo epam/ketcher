@@ -479,7 +479,12 @@ test.describe('Common connection rules: ', () => {
       page,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await page.getByText('C', { exact: true }).first().hover();
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('C', { exact: true })
+      .first()
+      .hover();
     await waitForMonomerPreviewMicro(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

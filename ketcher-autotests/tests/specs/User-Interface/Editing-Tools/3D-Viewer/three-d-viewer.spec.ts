@@ -1,11 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import { Page, expect, test } from '@playwright/test';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import {
   pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  selectTopPanelButton,
-  TopPanelButton,
   moveMouseToTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
@@ -20,9 +19,7 @@ import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApply
 import { getKet } from '@utils/formats';
 
 async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
-  await waitForRender(page, async () => {
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-  });
+  await IndigoFunctionsToolbar(page).TreeDViewer();
   if (waitForButtonIsEnabled) {
     await miewApplyButtonIsEnabled(page);
   }

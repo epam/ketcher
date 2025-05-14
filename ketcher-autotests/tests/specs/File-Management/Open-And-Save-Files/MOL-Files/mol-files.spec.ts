@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { MolfileFormat } from '@app/../packages/ketcher-core/dist';
 import { expect, test } from '@playwright/test';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -11,7 +12,6 @@ import {
   pressButton,
   openSettings,
   selectAllStructuresOnCanvas,
-  selectLayoutTool,
   openBondsSettingsSection,
 } from '@utils';
 import {
@@ -777,7 +777,7 @@ test.describe('Open and Save file', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -805,7 +805,7 @@ test.describe('Open and Save file', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

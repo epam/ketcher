@@ -28,8 +28,6 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectCleanTool,
-  selectLayoutTool,
 } from '@utils';
 import { pageReloadMicro } from '@utils/common/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -37,6 +35,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 const xOffsetFromCenter = -35;
 const idToTitle: {
@@ -474,10 +473,10 @@ test.describe('Plus and Arrows tools ', () => {
     await page.mouse.move(point.x - 30, point.y);
     await dragMouseTo(point.x + 20, point.y + 50, page);
     await takeEditorScreenshot(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await TopLeftToolbar(page).undo();
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
   });
 
   test('Save plus sign and arrow', async ({ page }) => {

@@ -55,6 +55,7 @@ const RulerHandle = ({ offsetX, onDragStart, onDrag, onDragEnd }: Props) => {
       fill="none"
       pointerEvents="none"
       ref={svgRef}
+      data-testid="ruler-handle"
     >
       <g cursor="pointer" pointerEvents="all" ref={handleRef}>
         <mask id="a" fill="#fff">

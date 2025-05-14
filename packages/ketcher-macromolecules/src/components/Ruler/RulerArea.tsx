@@ -104,17 +104,9 @@ export const RulerArea = () => {
         baseOffset + indents * 10 + lineLengthValue * 20 + 10;
       const finalScreenX = transform.applyX(translateValue + finalDelta);
 
-      console.log('finalScreenX', finalScreenX);
-
-      // 2) back to world X
       const finalWorldX = transform.invertX(finalScreenX);
-      console.log('finalWorldX', finalWorldX);
-      //
-      // // 3) raw count & snap
       const rawCount = (finalWorldX - indents * 10 - baseOffset) / 20;
-      console.log('rawCount', rawCount);
       const snapped = Math.round(rawCount / 10) * 10;
-      console.log('snapped', snapped);
 
       updateSettings(snapped);
 

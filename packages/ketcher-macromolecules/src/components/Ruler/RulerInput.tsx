@@ -26,7 +26,12 @@ const RulerInput = ({ lineLengthValue, offsetX, onCommitValue }: Props) => {
     inputElement.style.transform = `translateX(${offsetX}px)`;
   }, [offsetX]);
 
-  const [value, setValue] = useState(lineLengthValue.toString());
+  const stringifiedLineLengthValue = lineLengthValue.toString();
+
+  const [value, setValue] = useState(stringifiedLineLengthValue);
+  if (value !== stringifiedLineLengthValue) {
+    setValue(stringifiedLineLengthValue);
+  }
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
@@ -34,13 +39,13 @@ const RulerInput = ({ lineLengthValue, offsetX, onCommitValue }: Props) => {
 
   const handleBlur = () => {
     if (value.trim() === '') {
-      setValue(lineLengthValue.toString());
+      setValue(stringifiedLineLengthValue);
       return;
     }
 
     const newValue = Number(value);
     if (Number.isNaN(newValue) || newValue < 1) {
-      setValue(lineLengthValue.toString());
+      setValue(stringifiedLineLengthValue);
       return;
     }
 

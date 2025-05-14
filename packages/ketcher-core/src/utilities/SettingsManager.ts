@@ -112,7 +112,7 @@ export class SettingsManager {
 
   static get editorLineLength(): EditorLineLength {
     const { editorLineLength } = this.getSettings();
-    return editorLineLength ?? DefaultEditorLineLength;
+    return { ...DefaultEditorLineLength, ...editorLineLength };
   }
 
   static set editorLineLength(newEditorLineLength) {

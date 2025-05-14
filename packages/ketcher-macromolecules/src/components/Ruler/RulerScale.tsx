@@ -49,7 +49,9 @@ const RulerScale = ({ transform }: Props) => {
     });
   }, [transform]);
 
-  return <svg className={styles.rulerScale} ref={ref} />;
+  return (
+    <svg className={styles.rulerScale} ref={ref} data-testid="ruler-scale" />
+  );
 };
 
 export default memo(RulerScale);

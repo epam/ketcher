@@ -2,6 +2,7 @@ import { IndigoProvider } from 'ketcher-react';
 import {
   Chain,
   ChainsCollection,
+  getAllConnectedMonomersRecursively,
   KetcherLogger,
   KetSerializer,
   Struct,
@@ -15,13 +16,6 @@ import {
   setMacromoleculesProperties,
 } from 'state/common';
 import { useAppDispatch, useAppSelector } from './stateHooks';
-
-function isSenseAntisenseChains(chain1: Chain, chain2: Chain) {
-  return (
-    (chain1.isAntisense && !chain2.isAntisense) ||
-    (!chain1.isAntisense && chain2.isAntisense)
-  );
-}
 
 export const useRecalculateMacromoleculeProperties = () => {
   const dispatch = useAppDispatch();
@@ -43,21 +37,23 @@ export const useRecalculateMacromoleculeProperties = () => {
       editor.drawingEntitiesManager.filterSelection();
     const ketSerializer = new KetSerializer();
     const drawingEntitiesManagerToCalculateProperties =
-      selectionDrawingEntitiesManager.hasMonomers
+      selectionDrawingEntitiesManager.hasDrawingEntities
         ? selectionDrawingEntitiesManager
         : editor.drawingEntitiesManager;
     const chainsCollection = ChainsCollection.fromMonomers([
       ...drawingEntitiesManagerToCalculateProperties.monomers.values(),
     ]);
+    const firstMonomer = chainsCollection.firstNode?.monomer;
+    const areAllMonomersConnectedByCovalentOrHydrogenBonds =
+      !firstMonomer ||
+      chainsCollection.chains.reduce(
+        (acc: number, chain: Chain) => acc + chain.monomers.length,
+        0,
+      ) <= getAllConnectedMonomersRecursively(firstMonomer).length;
 
     if (
-      !drawingEntitiesManagerToCalculateProperties.hasMonomers ||
-      chainsCollection.chains.length > 2 ||
-      (chainsCollection.chains.length === 2 &&
-        !isSenseAntisenseChains(
-          chainsCollection.chains[0],
-          chainsCollection.chains[1],
-        ))
+      !drawingEntitiesManagerToCalculateProperties.hasDrawingEntities ||
+      !areAllMonomersConnectedByCovalentOrHydrogenBonds
     ) {
       dispatch(setMacromoleculesProperties(undefined));
 

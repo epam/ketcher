@@ -6,6 +6,20 @@ export enum KetNodeType {
   AMBIGUOUS_MONOMER = 'ambiguousMonomer',
 }
 
+export type MonomerTransformation = Partial<{
+  rotate: number;
+  shift: Partial<{
+    x: number;
+    y: number;
+  }>;
+  flip: FlipDirection;
+}>;
+
+export type AmbiguousMonomerTransformation = Pick<
+  MonomerTransformation,
+  'flip'
+>;
+
 export interface IKetMonomerNode {
   type: KetNodeType.MONOMER;
   id: string;
@@ -17,14 +31,7 @@ export interface IKetMonomerNode {
   alias: string;
   templateId: string;
   expanded?: boolean;
-  transformation?: Partial<{
-    rotate: number;
-    shift: Partial<{
-      x: number;
-      y: number;
-    }>;
-    flip: FlipDirection;
-  }>;
+  transformation?: MonomerTransformation;
 }
 
 export interface IKetAmbiguousMonomerNode {
@@ -36,12 +43,7 @@ export interface IKetAmbiguousMonomerNode {
   };
   alias: string;
   templateId: string;
-  transformation?: Partial<{
-    shift: Partial<{
-      x: number;
-      y: number;
-    }>;
-  }>;
+  transformation?: AmbiguousMonomerTransformation;
 }
 
 export type KetNode = IKetMonomerNode | IKetAmbiguousMonomerNode;

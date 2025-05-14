@@ -66,6 +66,7 @@ import { Chem } from 'domain/entities/Chem';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
 import {
   getKetRef,
+  modifyTransformation,
   populateStructWithSelection,
   setAmbiguousMonomerTemplatePrefix,
   setMonomerPrefix,
@@ -849,7 +850,7 @@ export class KetSerializer implements Serializer<Struct> {
             expanded,
           }),
           ...(isTransformationDefined && {
-            transformation,
+            transformation: modifyTransformation(transformation),
           }),
         };
         fileContent.root.nodes.push(getKetRef(monomerKey));

@@ -30,7 +30,7 @@ import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,
@@ -44,20 +44,13 @@ import * as d3 from 'd3';
 
 const OTHER_MONOMER_COUNT_NAME = 'Other';
 
-function hasNucleotideSpecificProperties(
-  macromoleculesProperties?: SingleChainMacromoleculeProperties,
-) {
-  return (
-    macromoleculesProperties?.monomerCount?.nucleotides &&
-    Object.keys(macromoleculesProperties.monomerCount.nucleotides).length > 0
-  );
-}
-
-function hasPeptideSpecificProperties(
-  macromoleculesProperties: SingleChainMacromoleculeProperties,
-) {
-  return !hasNucleotideSpecificProperties(macromoleculesProperties);
-}
+const hasSpecificProperty = (
+  macromoleculesProperties: SingleChainMacromoleculeProperties | undefined,
+  property: 'nucleotides' | 'peptides',
+) => {
+  const specificProperty = macromoleculesProperties?.monomerCount?.[property];
+  return specificProperty && Object.keys(specificProperty).length > 0;
+};
 
 const StyledWrapper = styled('div')<{ isActive?: boolean; hasError?: boolean }>(
   ({ hasError }) => ({
@@ -618,7 +611,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
       <RnaBasicPropertiesWrapper>
         {isNumber(props.macromoleculesProperties.Tm) ? (
           <BasicProperty
-            name="Melting temperature"
+            name="Melting Temp. (°C)"
             value={_round(props.macromoleculesProperties.Tm, 1)}
             hint="The melting temperature is calculated using the method from Khandelwal G. and Bhyravabhotla J. (2010). Only base natural analogues are used in the calculation."
           />
@@ -713,17 +706,23 @@ export const MacromoleculePropertiesWindow = () => {
 
   const recalculateMacromoleculeProperties =
     useRecalculateMacromoleculeProperties();
-  const debouncedRecalculateMacromoleculeProperties = useCallback(
-    debounce((shouldSkip?: boolean) => {
-      recalculateMacromoleculeProperties(shouldSkip);
-    }, 500),
-    [recalculateMacromoleculeProperties],
-  );
-
   const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
+  const debouncedRecalculateMacromoleculePropertiesRef = useRef<
+    (shouldSkip?: boolean) => void
+  >(recalculateMacromoleculeProperties);
+
+  useEffect(() => {
+    debouncedRecalculateMacromoleculePropertiesRef.current = debounce(
+      (shouldSkip?: boolean) => {
+        recalculateMacromoleculeProperties(shouldSkip);
+      },
+      500,
+    );
+  }, [recalculateMacromoleculeProperties]);
+
   useEffect(() => {
     const selectEntitiesHandler = () => {
-      debouncedRecalculateMacromoleculeProperties(skipDataFetch);
+      debouncedRecalculateMacromoleculePropertiesRef.current(skipDataFetch);
     };
 
     editor?.events.selectEntities.add(selectEntitiesHandler);
@@ -734,7 +733,7 @@ export const MacromoleculePropertiesWindow = () => {
   }, [editor, skipDataFetch]);
 
   useEffect(() => {
-    debouncedRecalculateMacromoleculeProperties(skipDataFetch);
+    debouncedRecalculateMacromoleculePropertiesRef.current(skipDataFetch);
   }, [
     unipositiveIonsMeasurementUnit,
     oligonucleotidesMeasurementUnit,
@@ -743,7 +742,7 @@ export const MacromoleculePropertiesWindow = () => {
 
   useEffect(() => {
     setSelectedTabIndex(
-      hasNucleotideSpecificProperties(firstMacromoleculesProperties)
+      hasSpecificProperty(firstMacromoleculesProperties, 'nucleotides')
         ? PROPERTIES_TABS.RNA
         : PROPERTIES_TABS.PEPTIDES,
     );
@@ -764,15 +763,14 @@ export const MacromoleculePropertiesWindow = () => {
     setMassMeasurementUnit(option as MassMeasurementUnit);
   };
 
+  const hasCommonError =
+    !firstMacromoleculesProperties || macromoleculesProperties.length > 1;
   const hasPeptidesTabError =
-    !firstMacromoleculesProperties ||
-    !hasPeptideSpecificProperties(firstMacromoleculesProperties) ||
-    macromoleculesProperties.length > 2;
-
+    hasCommonError ||
+    !hasSpecificProperty(firstMacromoleculesProperties, 'peptides');
   const hasNucleotidesTabError =
-    !firstMacromoleculesProperties ||
-    !hasNucleotideSpecificProperties(firstMacromoleculesProperties) ||
-    macromoleculesProperties.length > 2;
+    hasCommonError ||
+    !hasSpecificProperty(firstMacromoleculesProperties, 'nucleotides');
 
   const grossFormula = useMemo(() => {
     if (!firstMacromoleculesProperties?.grossFormula) {

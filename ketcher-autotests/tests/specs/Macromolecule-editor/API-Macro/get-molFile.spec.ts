@@ -1,12 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { openFileAndAddToCanvasMacro, waitForPageInit } from '@utils';
 import {
-  openFileAndAddToCanvasMacro,
-  waitForPageInit,
-  saveToFile,
-  getMolfile,
-  receiveFileComparisonData,
-} from '@utils';
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 test.describe('getMolfile', () => {
   test.beforeEach(async ({ page }) => {
@@ -16,19 +14,12 @@ test.describe('getMolfile', () => {
 
   test('with two monomers bonded', async ({ page }) => {
     await openFileAndAddToCanvasMacro('KET/alanine-monomers-bonded.ket', page);
-    const mol = await getMolfile(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'Molfiles-V3000/alanine-monomers-bonded-expected.mol',
-      mol,
+      FileType.MOL,
+      'v3000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'Molfiles-V3000/alanine-monomers-bonded-expected.mol',
-        fileFormat: 'v3000',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-    expect(molFile).toEqual(molFileExpected);
   });
 });

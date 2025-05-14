@@ -4,6 +4,7 @@ import { MacromoleculesFileFormatType } from '../constants/fileFormats/macroFile
 import { delay } from '@utils/canvas';
 
 type SaveStructureDialogLocators = {
+  saveStructureDialog: Locator;
   fileNameEditbox: Locator;
   fileFormatDropdownList: Locator;
   previewTab: Locator;
@@ -19,10 +20,11 @@ type SaveStructureDialogLocators = {
 
 export const SaveStructureDialog = (page: Page) => {
   const locators: SaveStructureDialogLocators = {
+    saveStructureDialog: page.getByTestId('save-structure-dialog'),
     fileNameEditbox: page.getByTestId('filename-input'),
     fileFormatDropdownList: page.getByTestId('file-format-list').first(),
     previewTab: page.getByTestId('preview-tab'),
-    saveStructureTextarea: page.getByTestId('preview-area-text'),
+    saveStructureTextarea: page.getByTestId('preview-area'),
     warningsTab: page.getByTestId('warnings-tab'),
     warningTextarea: page.getByTestId('WarningTextArea'),
     copyToClipboardButton: page.getByTestId('copy-to-clipboard'),

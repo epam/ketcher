@@ -13,13 +13,16 @@ import {
   clickOnCanvas,
   dragMouseTo,
   moveMouseAway,
-  RingButton,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import {
+  BottomToolbar,
+  RingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 async function checkTooltip(type: RingButton, page: Page) {
   const templateButton = page.getByRole('button', { name: type });
@@ -114,7 +117,7 @@ test.describe('Templates - Rings manipulations', () => {
     await waitForPageInit(page);
   });
 
-  const templates = Object.values(RingButton);
+  const templates = Object.values(BottomToolbar);
 
   for (const template of templates) {
     test(template, async ({ page }) => {

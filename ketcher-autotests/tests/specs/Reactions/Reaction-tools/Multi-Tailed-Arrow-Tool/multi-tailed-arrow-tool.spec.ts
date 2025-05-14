@@ -22,7 +22,6 @@ import {
   selectAllStructuresOnCanvas,
   selectDropdownTool,
   selectPartOfMolecules,
-  selectRing,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   waitForPageInit,

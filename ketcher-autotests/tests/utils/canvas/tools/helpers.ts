@@ -2,7 +2,7 @@
 import { Page } from '@playwright/test';
 import { clickOnCanvas, SequenceType, waitForRender } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
-import { LeftPanelButton, RingButton, TopPanelButton } from '@utils/selectors';
+import { LeftPanelButton, TopPanelButton } from '@utils/selectors';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';

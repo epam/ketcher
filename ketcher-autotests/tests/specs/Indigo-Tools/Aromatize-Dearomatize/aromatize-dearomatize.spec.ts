@@ -8,7 +8,6 @@ import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   selectAllStructuresOnCanvas,
-  selectRing,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';

@@ -22,7 +22,6 @@ import {
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
   selectLeftPanelButton,
-  selectRing,
   selectWithLasso,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,

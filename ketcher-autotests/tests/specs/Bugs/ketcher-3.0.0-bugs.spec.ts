@@ -72,6 +72,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 
 let page: Page;
 
@@ -590,7 +591,8 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
       page,
     );
-    await selectAromatizeTool(page);
+    // await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await selectDearomatizeTool(page);
     await selectLayoutTool(page);
     await selectCleanTool(page);

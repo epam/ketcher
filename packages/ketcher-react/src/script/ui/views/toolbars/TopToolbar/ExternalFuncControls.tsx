@@ -55,6 +55,7 @@ export const ExternalFuncControls = ({
       name: 'arom',
       title: 'Aromatize',
       handler: onAromatize,
+      testId: 'Aromatize button',
     },
     {
       name: 'dearom',
@@ -107,6 +108,7 @@ export const ExternalFuncControls = ({
       disabled={indigoVerification || disabledButtons.includes(button.name)}
       isHidden={hiddenButtons.includes(button.name)}
       key={button.name}
+      testId={button.testId}
     />
   );
 

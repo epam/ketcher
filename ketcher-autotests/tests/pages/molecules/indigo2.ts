@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Locator, Page } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 import { waitForSpinnerFinishedWork } from '@utils/common';
 
 type IndigoFunctionsToolbarLocators2 = {
@@ -15,9 +15,7 @@ type IndigoFunctionsToolbarLocators2 = {
 };
 
 export const IndigoFunctionsToolbar2 = (page: Page) => {
-  if (!page || !(page instanceof Page)) {
-    throw new Error('Valid Page instance is required');
-  }
+  if (!page) throw new Error('Page parameter is required');
   const locators: IndigoFunctionsToolbarLocators2 = {
     aromatizeButton: page.getByTestId('Aromatize button'),
     dearomatizeButton: page.getByTestId('Dearomatize button'),

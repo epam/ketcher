@@ -10,8 +10,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
-  selectRing,
-  RingButton,
   moveMouseToTheMiddleOfTheScreen,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
@@ -36,6 +34,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
@@ -326,7 +325,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });

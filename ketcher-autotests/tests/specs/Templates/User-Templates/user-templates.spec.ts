@@ -20,13 +20,10 @@ import {
 } from '@utils';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { openStructureLibrary } from '@tests/pages/molecules/BottomToolbar';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
-
-async function openStructureLibrary(page: Page) {
-  await page.getByTestId('template-lib').click();
-}
 
 async function saveToTemplates(page: Page, shouldSave = true) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;

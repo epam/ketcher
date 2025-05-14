@@ -19,8 +19,6 @@ import {
   takePageScreenshot,
   selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
-  selectRingButton,
-  RingButton,
   clickOnCanvas,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
@@ -49,6 +47,7 @@ import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 let page: Page;
 
@@ -852,7 +851,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     await selectAllStructuresOnCanvas(page);
     await page.getByText('1Nal').click({ button: 'right' });
     await page.getByText('Expand monomer').click();
-    await selectRingButton(RingButton.Cyclohexane, page);
+    await selectRingButton(page, 'Cyclohexane');
     await clickOnCanvas(page, 505, 400);
     await takeEditorScreenshot(page);
   });

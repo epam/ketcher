@@ -15,12 +15,10 @@ import {
 import { ELEMENT_TITLE } from './types';
 import { getControlModifier } from '@utils/keyboard';
 import {
-  RingButton,
   TemplateLibrary,
   TopPanelButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   selectMonomer,
-  selectRing,
 } from '@utils/selectors';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import { openSettings, selectTopPanelButton } from './tools';
@@ -35,19 +33,20 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 export async function drawBenzeneRing(page: Page) {
-  await selectRing(RingButton.Benzene, page);
+  await selectRingButton(page, 'Benzene');
   await clickInTheMiddleOfTheScreen(page);
 }
 
 export async function drawCyclohexaneRing(page: Page) {
-  await selectRing(RingButton.Cyclohexane, page);
+  await selectRingButton(page, 'Cyclohexane');
   await clickInTheMiddleOfTheScreen(page);
 }
 
 export async function drawCyclopentadieneRing(page: Page) {
-  await selectRing(RingButton.Cyclopentadiene, page);
+  await selectRingButton(page, 'Cyclopentadiene');
   await clickInTheMiddleOfTheScreen(page);
 }
 

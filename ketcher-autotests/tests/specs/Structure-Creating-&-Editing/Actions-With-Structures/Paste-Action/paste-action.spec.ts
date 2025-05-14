@@ -9,13 +9,12 @@ import {
   drawBenzeneRing,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectRing,
-  RingButton,
   clickOnCanvas,
 } from '@utils';
 import { TopPanelButton } from '@utils/selectors';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Paste Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -44,10 +43,10 @@ test.describe('Paste Tool', () => {
     */
     await drawBenzeneRing(page);
 
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickOnCanvas(page, 200, 200);
 
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickOnCanvas(page, 400, 400);
 
     await selectAllStructuresOnCanvas(page);

@@ -10,7 +10,6 @@ import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
 import {
   LeftPanelButton,
   MacromoleculesLeftPanelButton,
-  RingButton,
   TopPanelButton,
 } from '@utils/selectors';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -134,11 +133,6 @@ export async function selectTopPanelButton(
 ) {
   const topPanelButton = page.locator(`button[title*="${buttonName}"]`);
   await topPanelButton.click();
-}
-
-export async function selectRingButton(buttonName: RingButton, page: Page) {
-  const bottomPanelButton = page.locator(`button[title*="${buttonName}"]`);
-  await bottomPanelButton.click();
 }
 
 export async function selectLeftPanelButton(

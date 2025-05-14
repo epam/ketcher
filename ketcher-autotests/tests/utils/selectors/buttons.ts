@@ -37,23 +37,11 @@ export enum LeftPanelButton {
   ZoomReset = 'Reset Zoom',
 }
 
-export enum RingButton {
-  Benzene = 'Benzene',
-  Cyclopentadiene = 'Cyclopentadiene',
-  Cyclohexane = 'Cyclohexane',
-  Cyclopentane = 'Cyclopentane',
-  Cyclopropane = 'Cyclopropane',
-  Cyclobutane = 'Cyclobutane',
-  Cycloheptane = 'Cycloheptane',
-  Cyclooctane = 'Cyclooctane',
-}
-
 export const STRUCTURE_LIBRARY_BUTTON_NAME = 'Structure Library';
 
 export type ToolbarButton =
   | TopPanelButton
   | LeftPanelButton
-  | RingButton
   | typeof STRUCTURE_LIBRARY_BUTTON_NAME;
 
 export enum MacromoleculesLeftPanelButton {

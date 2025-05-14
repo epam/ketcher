@@ -2,7 +2,6 @@
 import { test, expect } from '@playwright/test';
 import {
   FILE_TEST_DATA,
-  RingButton,
   clickInTheMiddleOfTheScreen,
   drawBenzeneRing,
   openFileAndAddToCanvas,
@@ -10,7 +9,6 @@ import {
   pasteFromClipboardAndAddToCanvas,
   receiveFileComparisonData,
   saveToFile,
-  selectRingButton,
   takeEditorScreenshot,
   waitForIndigoToLoad,
   waitForPageInit,
@@ -26,6 +24,7 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const RING_OFFSET = 150;
 const ARROW_OFFSET = 20;
@@ -158,7 +157,7 @@ test.describe('Save files', () => {
     const fileFormatDropdonwList =
       SaveStructureDialog(page).fileFormatDropdownList;
 
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -208,7 +207,7 @@ test.describe('Save files', () => {
      */
     // Can't select TestId because after press drop-down menu there is no InchIKey.
     await waitForIndigoToLoad(page);
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(

@@ -5,8 +5,6 @@ import {
   LeftPanelButton,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
-  selectRing,
-  RingButton,
   moveOnAtom,
   waitForRender,
   TopPanelButton,
@@ -35,6 +33,7 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -540,7 +539,7 @@ test.describe('Hot key Del', () => {
     });
     const x = 100;
     const y = 100;
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
       await moveOnAtom(page, 'C', 0);

@@ -19,7 +19,6 @@ import {
   pressButton,
   selectAddRemoveExplicitHydrogens,
   resetCurrentTool,
-  RingButton,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
@@ -28,7 +27,6 @@ import {
   selectDropdownTool,
   selectLayoutTool,
   selectPartOfMolecules,
-  selectRing,
   selectTopPanelButton,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -46,7 +44,6 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { openStructureLibrary } from '@utils/templates';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
@@ -54,6 +51,10 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import {
+  openStructureLibrary,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -81,7 +82,7 @@ async function setupElementsAndModifyMultiTailArrow(page: Page) {
     'reaction-arrow-multitail',
   );
   await clickOnCanvas(page, 600, 400);
-  await selectRing(RingButton.Benzene, page);
+  await selectRingButton(page, 'Benzene');
   await clickOnCanvas(page, 200, 400);
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
@@ -1044,7 +1045,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'reaction-arrow-multitail',
     );
     await clickOnCanvas(page, 500, 600);
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickOnCanvas(page, 200, 400);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -1155,7 +1156,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 200, 200);
     await clickOnCanvas(page, 800, 200);
     await clickOnCanvas(page, 800, 300);
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -1227,7 +1228,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 200, 200);
     await clickOnCanvas(page, 800, 200);
     await clickOnCanvas(page, 800, 300);
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(

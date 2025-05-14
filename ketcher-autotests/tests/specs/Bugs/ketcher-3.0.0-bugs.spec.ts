@@ -37,8 +37,6 @@ import {
   setMolecule,
   FILE_TEST_DATA,
   moveMouseAway,
-  selectRing,
-  RingButton,
 } from '@utils';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import { pageReload } from '@utils/common/helpers';
@@ -72,6 +70,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 let page: Page;
 
@@ -981,7 +980,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await selectAllStructuresOnCanvas(page);
     await page.getByText('A', { exact: true }).click({ button: 'right' });
     await page.getByText('Expand monomer').click();
-    await selectRing(RingButton.Cyclohexane, page);
+    await selectRingButton(page, 'Cyclohexane');
     await clickOnCanvas(page, 180, 180);
     await takeEditorScreenshot(page);
   });

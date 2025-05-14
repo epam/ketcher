@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import {
-  RingButton,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   copyAndPaste,
@@ -11,7 +10,6 @@ import {
   selectAllStructuresOnCanvas,
   selectAromatizeTool,
   selectDearomatizeTool,
-  selectRing,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -22,6 +20,7 @@ import {
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -175,7 +174,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await selectAromatizeTool(page);
     await selectAllStructuresOnCanvas(page);

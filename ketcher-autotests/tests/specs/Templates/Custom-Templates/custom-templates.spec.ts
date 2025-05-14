@@ -19,6 +19,7 @@ import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -226,8 +227,8 @@ test.describe('Open Ketcher', () => {
     Description:
     'Structure Library (Shift + T)' tooltip appears when Hover over the 'SL'.
     */
-    const button = page.getByTestId('template-lib');
-    await expect(button).toHaveAttribute(
+    const structureLibraryButton = BottomToolbar(page).structureLibraryButton;
+    await expect(structureLibraryButton).toHaveAttribute(
       'title',
       'Structure Library (Shift+T)',
     );

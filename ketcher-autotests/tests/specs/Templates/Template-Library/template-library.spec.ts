@@ -1,4 +1,5 @@
 import { Page, test, expect } from '@playwright/test';
+import { openStructureLibrary } from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -14,6 +15,7 @@ import {
   waitForPageInit,
   waitForRender,
 } from '@utils';
+import { editStructureTemplate, openFunctionalGroup } from '@utils/templates';
 
 async function setDisplayStereoFlagsSettingToOn(page: Page) {
   await openSettings(page);
@@ -48,26 +50,6 @@ async function placePhenylalanineMustard(page: Page, x: number, y: number) {
     await phenylalanineLocator.first().click();
     await clickOnCanvas(page, x, y);
   });
-}
-
-async function openStructureLibrary(page: Page) {
-  await page.getByTestId('template-lib').click();
-}
-
-async function openFunctionalGroup(page: Page) {
-  await openStructureLibrary(page);
-  await page.getByText('Functional Group').click();
-}
-
-async function editStructureTemplate(
-  page: Page,
-  templateCategory: string,
-  templateName: string,
-) {
-  const editStructureButton = page.getByTitle(templateName).getByRole('button');
-  await openStructureLibrary(page);
-  await page.getByText(templateCategory).click();
-  await editStructureButton.click();
 }
 
 async function editAndClearTemplateName(

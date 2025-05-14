@@ -1,4 +1,5 @@
 import { Page, test } from '@playwright/test';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
@@ -8,8 +9,6 @@ import {
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   resetCurrentTool,
-  selectRing,
-  RingButton,
   getAtomByIndex,
   openSettings,
   clickOnCanvas,
@@ -120,7 +119,7 @@ test.describe('Atom Settings', () => {
     const pointX = 200;
     const pointY = 200;
 
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 

@@ -1,11 +1,11 @@
 import { Page } from '@playwright/test';
-
-export async function openStructureLibrary(page: Page) {
-  await page.getByTestId('template-lib').click();
-}
+import {
+  BottomToolbar,
+  openStructureLibrary,
+} from '@tests/pages/molecules/BottomToolbar';
 
 export async function openFunctionalGroup(page: Page) {
-  await openStructureLibrary(page);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByText('Functional Group').click();
 }
 

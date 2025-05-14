@@ -11,7 +11,6 @@ import {
   FILE_TEST_DATA,
   FunctionalGroups,
   LeftPanelButton,
-  RingButton,
   SaltsAndSolvents,
   TopPanelButton,
   addMonomersToFavorites,
@@ -40,7 +39,6 @@ import {
   selectLayoutTool,
   selectLeftPanelButton,
   selectMonomer,
-  selectRing,
   selectSaltsAndSolvents,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
@@ -98,6 +96,7 @@ import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const topLeftCorner = {
   x: -325,
@@ -524,7 +523,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await clickInTheMiddleOfTheScreen(page);
       await moveMouseAway(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await selectRing(RingButton.Benzene, page);
+      await selectRingButton(page, 'Benzene');
       await clickInTheMiddleOfTheScreen(page);
       await selectTopPanelButton(TopPanelButton.ThreeD, page);
       await moveMouseAway(page);
@@ -1032,7 +1031,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const y = 200;
       const x1 = 600;
       const y1 = 600;
-      await selectRing(RingButton.Benzene, page);
+      await selectRingButton(page, 'Benzene');
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

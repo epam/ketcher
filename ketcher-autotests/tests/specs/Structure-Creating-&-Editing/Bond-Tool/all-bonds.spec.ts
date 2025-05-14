@@ -7,8 +7,6 @@ import {
   getCoordinatesTopAtomOfBenzeneRing,
   LeftPanelButton,
   moveMouseToTheMiddleOfTheScreen,
-  RingButton,
-  selectRing,
   selectTool,
   takeEditorScreenshot,
   DELAY_IN_SECONDS,
@@ -18,7 +16,6 @@ import {
   pressButton,
   selectFunctionalGroups,
   FunctionalGroups,
-  selectRingButton,
   clickOnBond,
   takeLeftToolbarScreenshot,
   moveOnAtom,
@@ -49,6 +46,7 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -120,7 +118,7 @@ test.describe(`Bond tool:`, () => {
 
       await TopLeftToolbar(page).clearCanvas();
 
-      await selectRing(RingButton.Benzene, page);
+      await selectRingButton(page, 'Benzene');
       await clickInTheMiddleOfTheScreen(page);
 
       await CommonLeftToolbar(page).selectBondTool(bondType);
@@ -173,7 +171,7 @@ test.describe(`Bond tool:`, () => {
 
       await TopLeftToolbar(page).clearCanvas();
 
-      await selectRing(RingButton.Benzene, page);
+      await selectRingButton(page, 'Benzene');
       await clickInTheMiddleOfTheScreen(page);
 
       await CommonLeftToolbar(page).selectBondTool(bondType);
@@ -381,7 +379,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         });
         await TopLeftToolbar(page).undo();
 
-        await selectRing(RingButton.Cyclohexane, page);
+        await selectRingButton(page, 'Cyclohexane');
         await clickOnCanvas(page, point.x, point.y, {
           waitForRenderTimeOut: 100,
         });
@@ -601,7 +599,7 @@ test.describe('Bond Tool', () => {
      *Test case: EPMLSOPKET-1436
      *Description: Aromatic Bond tool - Ring inside the cycle structure
      */
-    await selectRingButton(RingButton.Cyclohexane, page);
+    await selectRingButton(page, 'Cyclohexane');
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Aromatic);
     let i = 0;

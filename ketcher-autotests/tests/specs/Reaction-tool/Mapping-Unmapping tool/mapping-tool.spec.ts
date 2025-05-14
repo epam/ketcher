@@ -3,8 +3,6 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  selectRingButton,
-  RingButton,
   getCoordinatesTopAtomOfBenzeneRing,
   dragMouseTo,
   waitForPageInit,
@@ -20,6 +18,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Mapping Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -84,7 +83,7 @@ test.describe('Mapping Tools', () => {
   }) => {
     // EPMLSOPKET-12961
     // Undo not working properly https://github.com/epam/ketcher/issues/2174
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await selectDropdownTool(page, 'reaction-map', 'reaction-map');
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);

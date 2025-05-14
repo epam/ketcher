@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   selectTopPanelButton,
@@ -9,8 +10,6 @@ import {
   takeEditorScreenshot,
   BondType,
   dragMouseTo,
-  selectRingButton,
-  RingButton,
   clickInTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   waitForPageInit,
@@ -157,7 +156,7 @@ test.describe('Calculated Values Tools', () => {
     The number of decimal places in the 'Molecular Weight' and 'Exact Mass'
     changes according to the selected values in the fields for the decimal places count.
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await selectTopPanelButton(TopPanelButton.Calculated, page);
 

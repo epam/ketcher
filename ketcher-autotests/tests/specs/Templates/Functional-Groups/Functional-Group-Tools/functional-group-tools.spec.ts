@@ -12,8 +12,6 @@ import {
   takeEditorScreenshot,
   selectLeftPanelButton,
   LeftPanelButton,
-  selectRingButton,
-  RingButton,
   resetCurrentTool,
   selectLeftPanelToolClick,
   attachOnTopOfBenzeneBonds,
@@ -40,6 +38,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const X_DELTA = 300;
 
@@ -426,7 +425,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
     );
 
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await waitForRender(page, async () => {
@@ -435,7 +434,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await takeEditorScreenshot(page);
 
-    await selectRingButton(RingButton.Cyclopentadiene, page);
+    await selectRingButton(page, 'Cyclopentadiene');
     point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await resetCurrentTool(page);
@@ -716,7 +715,7 @@ test.describe('Templates - Functional Group Tools3', () => {
 
     await selectLeftPanelToolClick(LeftPanelButton.AddText, page);
 
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 

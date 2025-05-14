@@ -1,12 +1,11 @@
 import { test } from '@playwright/test';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   getCoordinatesTopAtomOfBenzeneRing,
-  selectRingButton,
   LeftPanelButton,
   selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  RingButton,
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
@@ -22,7 +21,7 @@ test.describe('S-Group Properties', () => {
       Description: Checking S-Group drop-down types 'Type' drop-down list with Data,
       Multiple group, SRU polymer, Superatom and Query Component items. Data item is selected by default;
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
@@ -37,7 +36,7 @@ test.describe('S-Group Properties', () => {
       Test case: EPMLSOPKET-1537
       Description: A superatom named `Test` is created. Atom enclosed in brackets.
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
@@ -62,7 +61,7 @@ test.describe('S-Group Properties', () => {
     */
     const testName = 'Test';
     const testValue = '8';
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);
@@ -79,7 +78,7 @@ test.describe('S-Group Properties', () => {
   });
 
   test('A query component  is created', async ({ page }) => {
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
     await selectLeftPanelButton(LeftPanelButton.S_Group, page);

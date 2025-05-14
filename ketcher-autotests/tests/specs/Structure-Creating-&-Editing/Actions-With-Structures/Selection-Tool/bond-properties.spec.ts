@@ -9,10 +9,8 @@ import {
   LeftPanelButton,
   openFileAndAddToCanvas,
   pressButton,
-  RingButton,
   selectAllStructuresOnCanvas,
   selectLeftPanelButton,
-  selectRingButton,
   takeEditorScreenshot,
 } from '@utils';
 import {
@@ -21,6 +19,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 async function selectOption(
   page: Page,
@@ -527,7 +526,7 @@ test.describe('Bond Properties', () => {
       SelectionToolType.Rectangle,
     );
 
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickOnCanvas(page, x + 150, y + 150);
 
     await verifyFileExport(

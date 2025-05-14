@@ -8,8 +8,6 @@ import {
   openFileAndAddToCanvas,
   pressButton,
   BondType,
-  selectRingButton,
-  RingButton,
   copyAndPaste,
   cutAndPaste,
   clickOnAtom,
@@ -27,6 +25,7 @@ import {
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 let point: { x: number; y: number };
 
 async function addNameToSuperatom(
@@ -175,7 +174,7 @@ test.describe('Superatom S-Group tool', () => {
       EDIT ABBREVIATION modal appears.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });

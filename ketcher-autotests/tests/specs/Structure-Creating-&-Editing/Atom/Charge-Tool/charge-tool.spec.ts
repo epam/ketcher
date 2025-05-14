@@ -1,10 +1,9 @@
 import { test } from '@playwright/test';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   takeLeftToolbarScreenshot,
-  selectRingButton,
-  RingButton,
   moveOnAtom,
   clickInTheMiddleOfTheScreen,
   resetCurrentTool,
@@ -25,7 +24,7 @@ test.describe('Charge tool', () => {
     Description: Charge Plus is applied to the structure atom.
     */
     const anyAtom = 0;
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift++');
@@ -39,7 +38,7 @@ test.describe('Charge tool', () => {
     Description: Charge Minus is applied to the structure atom.
     */
     const anyAtom = 0;
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('-');

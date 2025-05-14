@@ -6,8 +6,6 @@ import {
   TopPanelButton,
   takeEditorScreenshot,
   BondType,
-  selectRingButton,
-  RingButton,
   clickInTheMiddleOfTheScreen,
   resetCurrentTool,
   copyAndPaste,
@@ -35,6 +33,7 @@ import {
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -81,7 +80,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await waitForSpinnerFinishedWork(page, async () => {
       await selectTopPanelButton(TopPanelButton.Calculate, page);
     });
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);

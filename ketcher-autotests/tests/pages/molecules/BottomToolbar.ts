@@ -80,7 +80,7 @@ export type RingButton =
   | 'Cycloheptane'
   | 'Cyclooctane';
 
-const ringToLocator: Record<RingButton, keyof BottomToolbarLocators> = {
+export const ringToLocator: Record<RingButton, keyof BottomToolbarLocators> = {
   Benzene: 'benzeneButton',
   Cyclopentadiene: 'cyclopentadieneButton',
   Cyclohexane: 'cyclohexaneButton',

@@ -20,8 +20,9 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import {
-  BottomToolbar,
   RingButton,
+  ringToLocator,
+  selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 
 async function checkTooltip(type: RingButton, page: Page) {
@@ -110,19 +111,16 @@ async function manipulateRingsByName(type: RingButton, page: Page) {
   await checkHistoryForBondDeletion(page);
 }
 
-test.describe('Templates - Rings manipulations', () => {
-  // EPMLSOPKET: connecting different rings to rings, applying changes to a single ring, history check
+const templates = Object.keys(ringToLocator) as RingButton[];
 
+test.describe('Templates – Rings manipulations', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
 
-  const templates = Object.values(BottomToolbar);
-
   for (const template of templates) {
-    test(template, async ({ page }) => {
-      // EPLMSOPCKET-1668, EPLMSOPCKET-1675, EPLMSOPCKET-1677, EPLMSOPCKET-1679, EPLMSOPCKET-1680, EPLMSOPCKET-1681
-      // EPLMSOPCKET-1682, EPLMSOPCKET-1683
+    test(`Ring: ${template}`, async ({ page }) => {
+      await selectRingButton(page, template);
       await manipulateRingsByName(template, page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);

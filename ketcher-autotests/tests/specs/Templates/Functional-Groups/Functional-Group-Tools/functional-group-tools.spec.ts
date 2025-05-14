@@ -931,7 +931,7 @@ test.describe('Templates - Functional Group Tools3', () => {
    */
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
-    await IndigoFunctionsToolbar(page)._3DViewer();
+    await IndigoFunctionsToolbar(page).TreeDViewer();
     await takeEditorScreenshot(page);
   });
 });

@@ -19,7 +19,7 @@ import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApply
 import { getKet } from '@utils/formats';
 
 async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
-  await IndigoFunctionsToolbar(page)._3DViewer();
+  await IndigoFunctionsToolbar(page).TreeDViewer();
   if (waitForButtonIsEnabled) {
     await miewApplyButtonIsEnabled(page);
   }

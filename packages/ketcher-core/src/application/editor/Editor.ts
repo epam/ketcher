@@ -307,6 +307,7 @@ export class CoreEditor {
   }
 
   private handleHotKeyEvents(event: KeyboardEvent) {
+    if (this._type === EditorType.Micromolecules) return;
     if (!(event.target instanceof HTMLElement)) return;
     const keySettings = hotkeysConfiguration;
     const hotKeys = initHotKeys(keySettings);

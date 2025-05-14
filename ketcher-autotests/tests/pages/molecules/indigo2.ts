@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
-import { waitForSpinnerFinishedWork } from '@utils/common';
+import { waitForSpinnerFinishedWork } from '@utils/common/loaders';
 
 type IndigoFunctionsToolbarLocators = {
   aromatizeButton: Locator;

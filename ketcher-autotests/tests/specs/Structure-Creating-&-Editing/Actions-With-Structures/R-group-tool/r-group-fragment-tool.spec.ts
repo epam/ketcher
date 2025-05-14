@@ -26,7 +26,7 @@ import {
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 async function openRGroupModalForTopAtom(page: Page) {
   await selectRingButton(RingButton.Benzene, page);

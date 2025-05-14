@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,

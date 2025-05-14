@@ -40,7 +40,7 @@ import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {

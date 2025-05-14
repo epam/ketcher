@@ -15,7 +15,7 @@ import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 async function editText(page: Page, text: string) {
   await page.getByTestId('openStructureModal').getByRole('textbox').click();

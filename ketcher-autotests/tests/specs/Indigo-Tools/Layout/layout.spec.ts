@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,

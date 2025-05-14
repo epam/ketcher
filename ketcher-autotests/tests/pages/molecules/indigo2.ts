@@ -2,7 +2,7 @@
 import { Page, Locator } from '@playwright/test';
 import { waitForSpinnerFinishedWork } from '@utils/common';
 
-type IndigoFunctionsToolbarLocators2 = {
+type IndigoFunctionsToolbarLocators = {
   aromatizeButton: Locator;
   dearomatizeButton: Locator;
   layoutButton: Locator;
@@ -14,9 +14,9 @@ type IndigoFunctionsToolbarLocators2 = {
   TreeDViewerButton: Locator;
 };
 
-export const IndigoFunctionsToolbar2 = (page: Page) => {
+export const IndigoFunctionsToolbar = (page: Page) => {
   if (!page) throw new Error('Page parameter is required');
-  const locators: IndigoFunctionsToolbarLocators2 = {
+  const locators: IndigoFunctionsToolbarLocators = {
     aromatizeButton: page.getByTestId('Aromatize button'),
     dearomatizeButton: page.getByTestId('Dearomatize button'),
     layoutButton: page.getByTestId('Layout button'),
@@ -98,6 +98,6 @@ export const IndigoFunctionsToolbar2 = (page: Page) => {
   };
 };
 
-export type IndigoFunctionsToolbarType2 = ReturnType<
-  typeof IndigoFunctionsToolbar2
+export type IndigoFunctionsToolbarType = ReturnType<
+  typeof IndigoFunctionsToolbar
 >;

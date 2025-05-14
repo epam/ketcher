@@ -37,7 +37,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await TopLeftToolbar(page).saveFile();

@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@playwright/test';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import {
   waitForPageInit,
   drawBenzeneRing,

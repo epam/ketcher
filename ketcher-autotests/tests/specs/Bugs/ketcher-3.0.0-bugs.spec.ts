@@ -27,7 +27,6 @@ import {
   clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
-  selectAromatizeTool,
   selectDearomatizeTool,
   selectLayoutTool,
   selectCleanTool,

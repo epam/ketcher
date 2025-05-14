@@ -28,6 +28,7 @@ import {
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { pageReloadMicro } from '@utils/common/helpers';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -806,7 +807,9 @@ test.describe('Plus and Arrows tools ', () => {
      */
     await selectNestedTool(page, ArrowTool.ARROW_RETROSYNTHETIC);
     await clickInTheMiddleOfTheScreen(page);
-    await copyAndPaste(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await copyAndPaste(page);
+    });
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
   });
@@ -818,7 +821,9 @@ test.describe('Plus and Arrows tools ', () => {
      */
     await selectNestedTool(page, ArrowTool.ARROW_RETROSYNTHETIC);
     await clickInTheMiddleOfTheScreen(page);
-    await cutAndPaste(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await cutAndPaste(page);
+    });
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await screenshotBetweenUndoRedo(page);
   });

@@ -949,7 +949,7 @@ export class CoreEditor {
     }
 
     if (this.mode instanceof SequenceMode) {
-      this.mode.initialize();
+      this.mode.initialize(false, false, false);
     } else {
       this.renderersContainer.update(modelChanges);
     }

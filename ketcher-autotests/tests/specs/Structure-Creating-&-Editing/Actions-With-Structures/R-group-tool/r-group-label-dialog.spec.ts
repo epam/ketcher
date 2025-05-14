@@ -18,6 +18,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -380,7 +381,9 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 200;
     await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
-    await copyAndPaste(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await copyAndPaste(page);
+    });
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
@@ -393,7 +396,9 @@ test.describe('R-Group Label Tool', () => {
     const x = 500;
     const y = 200;
     await openFileAndAddToCanvas('Rxn-V2000/chain-with-r-group.rxn', page);
-    await cutAndPaste(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await cutAndPaste(page);
+    });
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });

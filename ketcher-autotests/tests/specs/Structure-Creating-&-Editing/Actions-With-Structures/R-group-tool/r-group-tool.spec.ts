@@ -8,6 +8,7 @@ import {
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   waitForPageInit,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import {
   FileType,
@@ -48,7 +49,9 @@ test.describe('R-Group', () => {
       'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
       page,
     );
-    await copyAndPaste(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await copyAndPaste(page);
+    });
     await clickOnCanvas(page, x, y);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -66,7 +69,9 @@ test.describe('R-Group', () => {
       'Molfiles-V2000/r-group-with-allkind-attachment-points.mol',
       page,
     );
-    await cutAndPaste(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await cutAndPaste(page);
+    });
     await clickOnCanvas(page, x, y);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);

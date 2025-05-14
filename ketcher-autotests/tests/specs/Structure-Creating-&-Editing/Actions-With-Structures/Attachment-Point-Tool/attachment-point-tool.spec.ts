@@ -20,6 +20,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   openFileAndAddToCanvasAsNewProject,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
@@ -371,7 +372,9 @@ test.describe('Attachment Point Tool', () => {
       'KET/reaction-with-attachment-points.ket',
       page,
     );
-    await copyAndPaste(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await copyAndPaste(page);
+    });
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
   });
@@ -388,7 +391,9 @@ test.describe('Attachment Point Tool', () => {
       'KET/reaction-with-attachment-points.ket',
       page,
     );
-    await cutAndPaste(page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await cutAndPaste(page);
+    });
     await clickOnCanvas(page, x, y);
 
     await screenshotBetweenUndoRedo(page);

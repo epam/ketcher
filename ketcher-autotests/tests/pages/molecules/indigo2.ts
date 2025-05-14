@@ -15,7 +15,9 @@ type IndigoFunctionsToolbarLocators = {
 };
 
 export const IndigoFunctionsToolbar = (page: Page) => {
-  if (!page) throw new Error('Page parameter is required');
+  if (!page || typeof page.getByTestId !== 'function') {
+    throw new Error('Page parameter is required');
+  }
   const locators: IndigoFunctionsToolbarLocators = {
     aromatizeButton: page.getByTestId('Aromatize button'),
     dearomatizeButton: page.getByTestId('Dearomatize button'),

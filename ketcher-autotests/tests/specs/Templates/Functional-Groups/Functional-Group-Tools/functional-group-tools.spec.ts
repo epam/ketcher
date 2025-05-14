@@ -677,13 +677,15 @@ test.describe('Templates - Functional Group Tools3', () => {
 
     await commonLeftToolbar.selectHandTool();
     await commonLeftToolbar.areaSelectionDropdownButton.click();
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
     await commonLeftToolbar.eraseButton.click();
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
-    await commonLeftToolbar.bondSelectionDropdownButton.click();
-    // CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
+    await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
     await selectLeftPanelToolClick(LeftPanelButton.Chain, page);

@@ -4,8 +4,6 @@ import {
   pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  selectNestedTool,
-  RgroupTool,
   dragMouseTo,
   selectRing,
   RingButton,

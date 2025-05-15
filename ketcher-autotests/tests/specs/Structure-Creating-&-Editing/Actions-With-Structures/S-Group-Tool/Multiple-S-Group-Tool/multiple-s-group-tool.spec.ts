@@ -1,8 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
-  LeftPanelButton,
-  selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -15,8 +13,6 @@ import {
   clickOnBond,
   fillFieldByLabel,
   screenshotBetweenUndoRedo,
-  RgroupTool,
-  selectNestedTool,
   AttachmentPoint,
   setAttachmentPoints,
   waitForPageInit,

@@ -8,7 +8,10 @@ import {
 import { ArrowTool, selectNestedTool } from './tools/selectNestedTool';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import {
+  BottomToolbar,
+  drawBenzeneRing,
+} from '@tests/pages/molecules/BottomToolbar';
 
 export async function drawReactionWithTwoBenzeneRings(
   page: Page,
@@ -28,7 +31,7 @@ export async function drawReactionWithTwoBenzeneRings(
     firstBenzineTopAtom.y - arrowLenght,
     page,
   );
-  await page.getByRole('button', { name: 'Benzene (T)' }).click();
+  await BottomToolbar(page).Benzene();
   await clickOnCanvas(
     page,
     firstBenzineTopAtom.x,

@@ -38,14 +38,14 @@ import {
 
 import { KetSerializer } from 'domain/serializers';
 import { createPolymerEditorCanvas } from '../../../helpers/dom';
-import { CoreEditor, FlexMode } from 'application/editor';
+import { CoreEditor } from 'application/editor';
 
 const ket = new KetSerializer();
 
 describe('deserialize (ToStruct)', () => {
   const canvas = createPolymerEditorCanvas();
   // eslint-disable-next-line no-new
-  new CoreEditor({ canvas, theme: {}, mode: new FlexMode() });
+  new CoreEditor({ canvas, theme: {} });
   const parsedPrepareContent = JSON.parse(preparedKet);
   const deserData = ket.deserialize(preparedKet);
   it('correct work with atoms', () => {
@@ -181,7 +181,7 @@ describe('deserialize (ToStruct)', () => {
 describe('serialize (ToKet)', () => {
   const canvas = createPolymerEditorCanvas();
   // eslint-disable-next-line no-new
-  new CoreEditor({ canvas, theme: {}, mode: new FlexMode() });
+  new CoreEditor({ canvas, theme: {} });
   const parsedNewPrepareStruct = JSON.parse(ket.serialize(prepareStruct));
   const parsedPrepareContent = JSON.parse(preparedKet);
   it('correct work with atoms', () => {

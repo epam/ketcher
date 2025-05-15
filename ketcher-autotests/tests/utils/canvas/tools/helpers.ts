@@ -135,7 +135,9 @@ export async function selectLeftPanelButton(
   buttonName: LeftPanelButton,
   page: Page,
 ) {
-  const leftPanelButton = page.locator(`button[title*="${buttonName}"]`);
+  const leftPanelButton = page
+    .locator(`button[title*="${buttonName}"]`)
+    .filter({ has: page.locator(':visible') });
   await leftPanelButton.click();
 }
 

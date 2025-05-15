@@ -533,7 +533,12 @@ test.describe('Functional Groups', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('me').first().hover();
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('me')
+      .first()
+      .hover();
     await takeEditorScreenshot(page);
   });
 

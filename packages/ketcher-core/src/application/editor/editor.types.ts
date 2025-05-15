@@ -50,6 +50,7 @@ export interface Editor {
   undo: () => void;
   redo: () => void;
   clear: () => void;
+  clearHistory: () => void;
   options: (value?: any) => any;
   setOptions: (opts: string) => any;
   zoom: (value?: any) => any;
@@ -93,4 +94,5 @@ export interface Editor {
   setMacromoleculeConvertionError: (errorMessage: string) => void;
   clearMacromoleculeConvertionError: () => void;
   serverSettings: object;
+  focusCliparea: () => void;
 }

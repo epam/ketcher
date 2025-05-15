@@ -13,11 +13,21 @@ type TopLeftToolbarLocators = {
 
 export const TopLeftToolbar = (page: Page) => {
   const locators: TopLeftToolbarLocators = {
-    clearCanvasButton: page.getByTestId('clear-canvas'),
-    openButton: page.getByTestId('open-file-button'),
-    saveButton: page.getByTestId('save-file-button'),
-    undoButton: page.getByTestId('undo'),
-    redoButton: page.getByTestId('redo'),
+    clearCanvasButton: page
+      .getByTestId('clear-canvas')
+      .filter({ has: page.locator(':visible') }),
+    openButton: page
+      .getByTestId('open-file-button')
+      .filter({ has: page.locator(':visible') }),
+    saveButton: page
+      .getByTestId('save-file-button')
+      .filter({ has: page.locator(':visible') }),
+    undoButton: page
+      .getByTestId('undo')
+      .filter({ has: page.locator(':visible') }),
+    redoButton: page
+      .getByTestId('redo')
+      .filter({ has: page.locator(':visible') }),
   };
 
   const closeWindowXButton = page.getByTestId('close-window-button');

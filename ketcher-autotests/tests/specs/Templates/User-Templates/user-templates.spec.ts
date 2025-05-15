@@ -16,7 +16,6 @@ import {
   clickOnAtom,
   getEditorScreenshot,
   clickOnCanvas,
-  waitForSpinnerFinishedWork,
 } from '@utils';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
@@ -177,9 +176,7 @@ test.describe('Click User Templates on canvas', () => {
     Description: Template is copied and pasted as expected.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await copyAndPaste(page);
-    });
+    await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
@@ -190,9 +187,7 @@ test.describe('Click User Templates on canvas', () => {
     Description: Template is cut and pasted as expected.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/templates.mol', page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await cutAndPaste(page);
-    });
+    await cutAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });

@@ -33,7 +33,6 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   readFileContent,
   copyContentToClipboard,
-  waitForSpinnerFinishedWork,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
@@ -775,9 +774,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await copyAndPaste(page);
-    });
+    await copyAndPaste(page);
     await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
   });
@@ -794,9 +791,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await cutAndPaste(page);
-    });
+    await cutAndPaste(page);
     await clickOnCanvas(page, 300, 350);
     await takeEditorScreenshot(page);
   });

@@ -22,7 +22,6 @@ import {
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  waitForSpinnerFinishedWork,
 } from '@utils';
 import {
   FileType,
@@ -202,9 +201,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: User is able to copy and paste structure with Multiple S-group.
     */
     await openFileAndAddToCanvas('KET/multiple-group.ket', page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await copyAndPaste(page);
-    });
+    await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
@@ -215,9 +212,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: User is able to cut and paste structure with Multiple S-group.
     */
     await openFileAndAddToCanvas('KET/multiple-group.ket', page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await cutAndPaste(page);
-    });
+    await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

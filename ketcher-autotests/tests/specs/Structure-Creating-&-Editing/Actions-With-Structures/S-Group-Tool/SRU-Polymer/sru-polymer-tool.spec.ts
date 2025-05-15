@@ -20,7 +20,6 @@ import {
   selectUndoByKeyboard,
   takeEditorScreenshot,
   waitForPageInit,
-  waitForSpinnerFinishedWork,
 } from '@utils';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { SGroupRepeatPattern } from '@utils/sgroup';
@@ -269,9 +268,7 @@ test.describe('SRU Polymer tool', () => {
       Description: User is able to copy and paste structure with SRU polymer S-group.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await copyAndPaste(page);
-    });
+    await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await takeEditorScreenshot(page);
   });
@@ -282,9 +279,7 @@ test.describe('SRU Polymer tool', () => {
       Description: User is able to cut and paste structure with SRU polymer S-group.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await cutAndPaste(page);
-    });
+    await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

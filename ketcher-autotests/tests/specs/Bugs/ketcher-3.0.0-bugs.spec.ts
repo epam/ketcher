@@ -27,12 +27,6 @@ import {
   clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
-  selectAromatizeTool,
-  selectDearomatizeTool,
-  selectLayoutTool,
-  selectCleanTool,
-  selectCalculateTool,
-  selectAddRemoveExplicitHydrogens,
   clickOnCanvas,
   setMolecule,
   FILE_TEST_DATA,
@@ -72,6 +66,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 let page: Page;
 
@@ -585,17 +580,19 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Press Aromatize | Dearomatize | Layout | Clean Up | Calculate CIP | Add/Remove explicit hydrogens button
      * 4. Take a screenshot
      */
+    const indigoFunctionsToolbar = IndigoFunctionsToolbar(page);
+
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
       page,
     );
-    await selectAromatizeTool(page);
-    await selectDearomatizeTool(page);
-    await selectLayoutTool(page);
-    await selectCleanTool(page);
-    await selectCalculateTool(page);
-    await selectAddRemoveExplicitHydrogens(page);
+    await indigoFunctionsToolbar.aromatize();
+    await indigoFunctionsToolbar.dearomatize();
+    await indigoFunctionsToolbar.layout();
+    await indigoFunctionsToolbar.cleanUp();
+    await indigoFunctionsToolbar.calculateCIP();
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
   });
 

@@ -9,8 +9,6 @@ import {
   RingButton,
   moveOnAtom,
   waitForRender,
-  TopPanelButton,
-  selectTopPanelButton,
   takeEditorScreenshot,
   drawBenzeneRing,
   clickOnAtom,
@@ -28,13 +26,11 @@ import {
   SaltsAndSolvents,
   copyAndPaste,
   clickOnCanvas,
-  selectAromatizeTool,
-  selectDearomatizeTool,
-  selectAddRemoveExplicitHydrogens,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -432,9 +428,9 @@ test.describe('Hot keys', () => {
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
     await page.mouse.click(100, 100);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page, { maxDiffPixels: 2 });
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -457,7 +453,7 @@ test.describe('Hot keys', () => {
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -482,9 +478,9 @@ test.describe('Hot keys', () => {
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
-    await selectAddRemoveExplicitHydrogens(page);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
-    await selectAddRemoveExplicitHydrogens(page);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
   });
 

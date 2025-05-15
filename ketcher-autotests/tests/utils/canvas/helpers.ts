@@ -17,13 +17,12 @@ import { getControlModifier } from '@utils/keyboard';
 import {
   RingButton,
   TemplateLibrary,
-  TopPanelButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   selectMonomer,
   selectRing,
 } from '@utils/selectors';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
-import { openSettings, selectTopPanelButton } from './tools';
+import { openSettings } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';
@@ -514,41 +513,6 @@ export async function selectRedoByKeyboard(
 
 export async function copyToClipboardByIcon(page: Page) {
   await page.getByTestId('copy-to-clipboard').click();
-}
-
-export async function selectAromatizeTool(page: Page) {
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await selectTopPanelButton(TopPanelButton.Aromatize, page),
-  );
-}
-
-export async function selectDearomatizeTool(page: Page) {
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await selectTopPanelButton(TopPanelButton.Dearomatize, page),
-  );
-}
-
-export async function selectCleanTool(page: Page) {
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-  );
-}
-
-export async function selectCalculateTool(page: Page) {
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
-  );
-}
-
-export async function selectLayoutTool(page: Page) {
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-  );
 }
 
 export async function copyStructureByCtrlMove(

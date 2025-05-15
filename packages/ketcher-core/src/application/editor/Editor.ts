@@ -74,6 +74,7 @@ import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
+  mode?: BaseMode;
   monomersLibraryUpdate?: string | JSON;
 }
 
@@ -126,6 +127,7 @@ export class CoreEditor {
     theme,
     canvas,
     monomersLibraryUpdate,
+    mode,
   }: ICoreEditorConstructorParams) {
     this._type = EditorType.Micromolecules;
     this.theme = theme;
@@ -133,7 +135,7 @@ export class CoreEditor {
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
-    this.mode = new SequenceMode();
+    this.mode = mode || new SequenceMode();
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);

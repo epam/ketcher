@@ -6,7 +6,11 @@ describe('CoreEditor', () => {
   it('should track dom events and trigger handlers', () => {
     const canvas = createPolymerEditorCanvas();
     const mode = new FlexMode();
-    const editor: CoreEditor = new CoreEditor({ canvas, theme: {}, mode });
+    const editor: CoreEditor = new CoreEditor({
+      canvas,
+      theme: {},
+      mode,
+    });
     const onMousemove = jest.fn();
     jest
       .spyOn(MonomerTool.prototype, 'mousemove')

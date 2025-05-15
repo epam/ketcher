@@ -5,10 +5,14 @@ import { LoadingCircles } from './script/ui/views/components';
 
 import styles from './Editor.module.less';
 
-type Props = EditorProps & {
+type Props = Omit<EditorProps, 'ketcherId'> & {
   disableMacromoleculesEditor?: boolean;
 };
 
+interface MacromoleculesEditorProps {
+  ketcherId: string;
+  togglerComponent?: JSX.Element;
+}
 /*
  * TODO:
  *  ketcher-macromolecules is imported asynchronously to avoid circular dependencies between it and ketcher-react
@@ -18,11 +22,15 @@ type Props = EditorProps & {
  */
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-const MacromoleculesEditor = lazy(() => import('ketcher-macromolecules'));
+const MacromoleculesEditor = lazy(
+  () => import('ketcher-macromolecules'),
+) as unknown as React.LazyExoticComponent<
+  React.ComponentType<MacromoleculesEditorProps>
+>;
 
 export const Editor = (props: Props) => {
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
-
+  const [ketcherId, setKetcherId] = useState<string>('');
   const togglePolymerEditor = (toggleValue: boolean) => {
     setShowPolymerEditor(toggleValue);
     window.isPolymerEditorTurnedOn = toggleValue;
@@ -51,7 +59,10 @@ export const Editor = (props: Props) => {
             </div>
           }
         >
-          <MacromoleculesEditor togglerComponent={togglerComponent} />
+          <MacromoleculesEditor
+            ketcherId={ketcherId}
+            togglerComponent={togglerComponent}
+          />
         </Suspense>
       ) : (
         <Suspense
@@ -63,6 +74,8 @@ export const Editor = (props: Props) => {
         >
           <MicromoleculesEditor
             {...props}
+            ketcherId={ketcherId}
+            onSetKetcherId={setKetcherId}
             togglerComponent={togglerComponent}
           />
         </Suspense>

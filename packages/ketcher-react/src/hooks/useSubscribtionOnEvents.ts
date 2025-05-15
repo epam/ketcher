@@ -16,7 +16,7 @@
 
 import { useDispatch } from 'react-redux';
 import { indigoVerification } from '../script/ui/state/request';
-import { Ketcher, KetcherAsyncEvents } from 'ketcher-core';
+import { Ketcher, KetcherAsyncEvents, ketcherProvider } from 'ketcher-core';
 import { useEffect } from 'react';
 import { useAppContext } from './useAppContext';
 import { ketcherInitEventName } from '../constants';
@@ -24,7 +24,7 @@ import { ketcherInitEventName } from '../constants';
 export const useSubscriptionOnEvents = () => {
   const dispatch = useDispatch();
 
-  const { getKetcherInstance, ketcherId } = useAppContext();
+  const { ketcherId } = useAppContext();
 
   const loadingHandler = () => {
     dispatch(indigoVerification(true));
@@ -59,11 +59,11 @@ export const useSubscriptionOnEvents = () => {
 
   useEffect(() => {
     const subscribeOnInit = () => {
-      subscribe(getKetcherInstance());
+      subscribe(ketcherProvider.getKetcher(ketcherId));
     };
 
     const unsubscribeOnUnMount = () => {
-      unsubscribe(getKetcherInstance());
+      unsubscribe(ketcherProvider.getKetcher(ketcherId));
     };
 
     const initEventName = ketcherInitEventName(ketcherId);

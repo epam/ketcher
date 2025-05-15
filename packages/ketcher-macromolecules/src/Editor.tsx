@@ -43,6 +43,7 @@ import {
   destroyEditor,
   selectEditor,
   selectIsHandToolSelected,
+  initKetcherId,
   setContextMenuActive,
   toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
@@ -103,6 +104,7 @@ import { MacromoleculePropertiesWindow } from 'components/macromoleculePropertie
 const muiTheme = createTheme(muiOverrides);
 
 interface EditorProps {
+  ketcherId: string;
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
   monomersLibraryUpdate?: string | JSON;
@@ -114,6 +116,7 @@ interface EditorContainerProps extends EditorProps {
 
 function EditorContainer({
   onInit,
+  ketcherId,
   theme,
   togglerComponent,
   monomersLibraryUpdate,
@@ -127,6 +130,8 @@ function EditorContainer({
     ketcher: editorTheme,
   });
 
+  store.dispatch(initKetcherId(ketcherId));
+
   useEffect(() => {
     onInit?.();
   }, [onInit]);
@@ -138,6 +143,7 @@ function EditorContainer({
         <RootSizeProvider rootRef={rootElRef}>
           <EditorWrapper ref={rootElRef} className={EditorClassName}>
             <Editor
+              ketcherId={ketcherId}
               theme={editorTheme}
               togglerComponent={togglerComponent}
               monomersLibraryUpdate={monomersLibraryUpdate}
@@ -176,7 +182,11 @@ function Editor({
 
   useEffect(() => {
     dispatch(
-      createEditor({ theme, canvas: canvasRef.current, monomersLibraryUpdate }),
+      createEditor({
+        theme,
+        canvas: canvasRef.current,
+        monomersLibraryUpdate,
+      }),
     );
 
     return () => {

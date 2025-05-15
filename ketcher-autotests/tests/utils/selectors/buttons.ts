@@ -23,9 +23,4 @@ export enum LeftPanelButton {
   AddImage = 'Add Image',
 }
 
-export const STRUCTURE_LIBRARY_BUTTON_NAME = 'Structure Library';
-
-export type ToolbarButton =
-  | TopPanelButton
-  | LeftPanelButton
-  | typeof STRUCTURE_LIBRARY_BUTTON_NAME;
+export type ToolbarButton = TopPanelButton | LeftPanelButton;

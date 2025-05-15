@@ -6,17 +6,16 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Page, expect } from '@playwright/test';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   LeftPanelButton,
   Monomer,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  pressButton,
   selectLeftPanelButton,
 } from '@utils';
 import {
@@ -248,7 +247,7 @@ export async function selectSaltsAndSolvents(
   page: Page,
 ) {
   // const amountOfSaltsAndSolvents = 124;
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
   const saltsButton = page
     .locator(`div[title*="${saltsAndSolventsGroupName}"] > div`)
@@ -274,7 +273,7 @@ export async function selectFunctionalGroups(
   page: Page,
 ) {
   const amountOfFunctionalGroups = 62;
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Functional Groups' }).click();
   const functionalGroupButton = page
     .locator(`div[title*="${functionalGroupName}"] > div`)
@@ -292,7 +291,7 @@ export async function selectFunctionalGroup(
   functionalGroupName: FunctionalGroups,
   page: Page,
 ) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Functional Groups' }).click();
   await selectFunctionalGroups(functionalGroupName, page);
 }
@@ -344,7 +343,7 @@ export async function selectUserTemplatesAndPlaceInTheMiddle(
   itemToChoose: TemplateLibrary,
   page: Page,
 ) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Template Library' }).click();
   await page.getByRole('button', { name: 'Aromatics' }).click();
   await selectUserTemplate(itemToChoose, page);

@@ -1,5 +1,8 @@
 import { Page, test, expect } from '@playwright/test';
-import { openStructureLibrary } from '@tests/pages/molecules/BottomToolbar';
+import {
+  BottomToolbar,
+  openStructureLibrary,
+} from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -10,7 +13,6 @@ import {
   pressButton,
   selectAllStructuresOnCanvas,
   selectFunctionalGroups,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
@@ -39,7 +41,7 @@ async function setIgnoreChiralFlagSetting(page: Page, newSetting: boolean) {
 }
 
 async function placePhenylalanineMustard(page: Page, x: number, y: number) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   const phenylalanineLocator = page.locator(
     `div[title*="Phenylalanine mustard"] > div`,
   );

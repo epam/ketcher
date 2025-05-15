@@ -102,4 +102,14 @@ export async function drawBenzeneRing(page: Page) {
   await clickInTheMiddleOfTheScreen(page);
 }
 
+export async function drawCyclohexaneRing(page: Page) {
+  await selectRingButton(page, 'Cyclohexane');
+  await clickInTheMiddleOfTheScreen(page);
+}
+
+export async function drawCyclopentadieneRing(page: Page) {
+  await selectRingButton(page, 'Cyclopentadiene');
+  await clickInTheMiddleOfTheScreen(page);
+}
+
 export type BottomToolbarType = ReturnType<typeof BottomToolbar>;

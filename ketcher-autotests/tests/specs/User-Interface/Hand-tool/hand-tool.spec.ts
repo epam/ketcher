@@ -1,12 +1,11 @@
 import { Page, test, expect } from '@playwright/test';
 import {
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   openFileAndAddToCanvas,
-  pressButton,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 async function mouseMovement(page: Page, endPoint: { x: number; y: number }) {
   const startPoint = { x: 300, y: 300 };
@@ -58,7 +57,7 @@ test.describe('Hand tool', () => {
     // Verify if hand is not following coursor outside the canvas
     const point = { x: 45, y: 148 };
     await CommonLeftToolbar(page).selectHandTool();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.mouse.move(point.x, point.y);
     await takeEditorScreenshot(page);
   });

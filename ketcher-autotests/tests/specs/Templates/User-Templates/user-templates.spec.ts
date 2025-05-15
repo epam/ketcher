@@ -8,7 +8,6 @@ import {
   pasteFromClipboardAndAddToCanvas,
   TemplateLibrary,
   selectUserTemplatesAndPlaceInTheMiddle,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
   copyAndPaste,
   cutAndPaste,
@@ -20,6 +19,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import {
+  BottomToolbar,
   drawBenzeneRing,
   openStructureLibrary,
 } from '@tests/pages/molecules/BottomToolbar';
@@ -211,7 +211,7 @@ test.describe('Create and Save Templates', () => {
     await saveToTemplates(page);
 
     await TopLeftToolbar(page).clearCanvas();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('0NNNNHNHNNHNNHNH').click();
     await clickInTheMiddleOfTheScreen(page);

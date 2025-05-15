@@ -5,7 +5,6 @@ import {
   selectLeftPanelButton,
   LeftPanelButton,
   clickInTheMiddleOfTheScreen,
-  pressButton,
   resetCurrentTool,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -16,7 +15,6 @@ import {
   drawFGAndDrag,
   pressTab,
   FILE_TEST_DATA,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
   waitForRender,
   copyAndPaste,
@@ -35,7 +33,10 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import {
+  BottomToolbar,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
@@ -202,7 +203,7 @@ test.describe('Functional Groups', () => {
     await saveToTemplates(page);
 
     await TopLeftToolbar(page).clearCanvas();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('0OOCH3CCl3OO').click();
     await clickInTheMiddleOfTheScreen(page);

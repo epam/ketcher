@@ -10,8 +10,6 @@ import {
   waitForPageInit,
   resetCurrentTool,
   openFileAndAddToCanvas,
-  drawCyclopentadieneRing,
-  drawCyclohexaneRing,
   selectLeftPanelButton,
   LeftPanelButton,
   addCyclopentadieneRingWithTwoAtoms,
@@ -24,7 +22,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   getRightAtomByAttributes,
   clickOnTheCanvas,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   selectUserTemplate,
   FunctionalGroups,
   selectFunctionalGroups,
@@ -53,7 +50,10 @@ import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
+  BottomToolbar,
   drawBenzeneRing,
+  drawCyclohexaneRing,
+  drawCyclopentadieneRing,
   openStructureLibrary,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
@@ -258,7 +258,7 @@ test.describe('Template Manupulations', () => {
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByTestId('canvas').getByText('S').first().click();
     await TopLeftToolbar(page).clearCanvas();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Template Library' }).click();
     await takeEditorScreenshot(page);
   });
@@ -704,7 +704,7 @@ test.describe('Open Ketcher', () => {
     await page.getByTestId('template-0').click();
     await clickInTheMiddleOfTheScreen(page);
     await takePageScreenshot(page);
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Template Library' }).click();
     await page.getByRole('button', { name: 'Aromatics' }).click();
     await selectUserTemplate(TemplateLibrary.Azulene, page);

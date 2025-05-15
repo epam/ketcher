@@ -14,7 +14,6 @@ import {
   selectLeftPanelToolClick,
   attachOnTopOfBenzeneBonds,
   clickOnAtom,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
   selectFunctionalGroups,
   moveOnAtom,
@@ -34,7 +33,10 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import {
+  BottomToolbar,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 const X_DELTA = 300;
 
@@ -644,7 +646,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     Description: All FG's which contain symbols 'C2' are displayed on FG's window.
     All FG's which contain symbols 'Y' are displayed on FG's window.
    */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await page.getByPlaceholder('Search by elements...').click();
     await page.keyboard.press('C');
@@ -653,7 +655,7 @@ test.describe('Templates - Functional Group Tools3', () => {
 
     await page.getByRole('banner').getByRole('button').click();
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByPlaceholder('Search by elements...').click();
     await page.keyboard.press('Y');
     await takeEditorScreenshot(page);
@@ -763,7 +765,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     Test case: EPMLSOPKET-2931
     Description: FG is downloaded ('ketcher-fg-tmpls.sdf' file). File contains all FG's from library
    */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await pressButton(page, 'Save to SDF');
   });

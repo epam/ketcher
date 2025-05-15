@@ -1,8 +1,6 @@
 import { test, expect } from '@playwright/test';
 import {
-  pressButton,
   takeEditorScreenshot,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
   selectUserTemplatesAndPlaceInTheMiddle,
   TemplateLibrary,
@@ -32,7 +30,7 @@ test.describe('Open Ketcher', () => {
     Description:
     The 'Template Library' tab is opened by default.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await takeEditorScreenshot(page);
   });
 
@@ -57,11 +55,11 @@ test.describe('Open Ketcher', () => {
     Click the 'X' button.
     Click on the 'Custom Templates' button.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await PasteFromClipboardDialog(page).closeWindowButton.click();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await takeEditorScreenshot(page);
   });
 
@@ -72,7 +70,7 @@ test.describe('Open Ketcher', () => {
     Open 'Custom Templates'
     Switch between tabs
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
@@ -98,12 +96,12 @@ test.describe('Open Ketcher', () => {
     Close 'Custom Templates' window
     Open 'Custom Templates' window
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByPlaceholder('Search by elements...').fill('DMF');
     await page.getByPlaceholder('Search by elements...').press('Enter');
     await takeEditorScreenshot(page);
     await PasteFromClipboardDialog(page).closeWindowButton.click();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await takeEditorScreenshot(page);
   });
 
@@ -128,7 +126,7 @@ test.describe('Open Ketcher', () => {
     Description:
     Click on Edit button in right down corner of template (e.g. alpha-D-Arabinofuranose)
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Template Library' }).click();
     await page.getByRole('button', { name: 'Aromatics (18)' }).click();
     await page.getByTitle('Azulene').getByRole('button').click();
@@ -143,7 +141,7 @@ test.describe('Open Ketcher', () => {
     Description:
     Make any change(s) in the window. Click the 'Apply' button.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await selectAzuleneOnTemplateLibrary(page);
     await PasteFromClipboardDialog(page).closeWindowButton.click();
     await selectAzuleneOnTemplateLibrary(page);

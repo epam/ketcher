@@ -33,6 +33,7 @@ import {
   takeTopToolbarScreenshot,
   selectSequenceTypeMode,
   hideLibrary,
+  showLibrary,
 } from '@utils';
 import {
   selectRingButton,
@@ -108,6 +109,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await hideLibrary(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await showLibrary(page);
     await goToFavoritesTab(page);
     await takeMonomerLibraryScreenshot(page);
   });
@@ -654,7 +656,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await clickOnCanvas(page, 800, 100);
+    await clickOnCanvas(page, 600, 100);
     await pasteFromClipboardByKeyboard(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);

@@ -32,6 +32,8 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;

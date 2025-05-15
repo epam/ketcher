@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { takeEditorScreenshot } from '@utils/canvas';
-import { selectTool } from '@utils/canvas/tools';
 import {
   getAtomByIndex,
   getBottomAtomByAttributes,
@@ -16,7 +16,7 @@ import {
   moveMouseToTheMiddleOfTheScreen,
 } from '@utils/clicks';
 import { waitForPageInit } from '@utils/common';
-import { LeftPanelButton, RingButton, selectRing } from '@utils/selectors';
+import { RingButton, selectRing } from '@utils/selectors';
 
 const DELTA = 100;
 const DELTA_Y = 110;

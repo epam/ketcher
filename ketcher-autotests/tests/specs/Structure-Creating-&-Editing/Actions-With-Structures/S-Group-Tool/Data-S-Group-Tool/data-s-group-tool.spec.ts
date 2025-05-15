@@ -2,8 +2,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
-  LeftPanelButton,
-  selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -31,6 +29,8 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 
 const CANVAS_CLICK_X = 600;
 const CANVAS_CLICK_Y = 600;

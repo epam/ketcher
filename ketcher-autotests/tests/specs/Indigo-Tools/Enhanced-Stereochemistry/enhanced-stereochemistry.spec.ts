@@ -2,11 +2,10 @@
 import { Page, test } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  selectLeftPanelButton,
-  LeftPanelButton,
   pressButton,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,

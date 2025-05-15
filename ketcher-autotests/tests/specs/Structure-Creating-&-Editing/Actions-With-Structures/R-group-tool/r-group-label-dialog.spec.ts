@@ -1,9 +1,7 @@
 import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  LeftPanelButton,
   clickInTheMiddleOfTheScreen,
-  selectLeftPanelButton,
   getCoordinatesTopAtomOfBenzeneRing,
   selectRingButton,
   RingButton,
@@ -29,6 +27,8 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {

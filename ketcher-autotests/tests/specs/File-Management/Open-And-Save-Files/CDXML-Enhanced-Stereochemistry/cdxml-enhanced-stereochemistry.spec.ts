@@ -1,10 +1,9 @@
 import { Page, test } from '@playwright/test';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  LeftPanelButton,
   pressButton,
-  selectLeftPanelButton,
   clickOnAtom,
   waitForPageInit,
   waitForRender,

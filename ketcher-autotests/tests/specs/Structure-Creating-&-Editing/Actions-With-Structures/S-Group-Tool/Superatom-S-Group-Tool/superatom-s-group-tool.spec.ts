@@ -1,8 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
-  LeftPanelButton,
-  selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -27,6 +25,8 @@ import {
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 let point: { x: number; y: number };
 
 async function addNameToSuperatom(

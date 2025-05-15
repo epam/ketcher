@@ -11,8 +11,6 @@ import {
   moveOnBond,
   BondType,
   pressButton,
-  selectLeftPanelButton,
-  LeftPanelButton,
   fillFieldByPlaceholder,
   dragMouseTo,
   takeLeftToolbarScreenshot,
@@ -23,6 +21,7 @@ import {
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 
 test.describe('Selection tools', () => {
   test.beforeEach(async ({ page }) => {

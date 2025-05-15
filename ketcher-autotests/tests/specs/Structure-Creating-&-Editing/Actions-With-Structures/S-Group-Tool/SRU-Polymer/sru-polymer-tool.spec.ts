@@ -8,14 +8,12 @@ import {
   clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
-  LeftPanelButton,
   openFileAndAddToCanvas,
   pressButton,
   resetCurrentTool,
   RingButton,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
-  selectLeftPanelButton,
   selectRingButton,
   selectUndoByKeyboard,
   takeEditorScreenshot,
@@ -30,6 +28,8 @@ import {
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;

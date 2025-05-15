@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -8,8 +9,6 @@ import {
   moveOnAtom,
   clickInTheMiddleOfTheScreen,
   resetCurrentTool,
-  selectLeftPanelButton,
-  LeftPanelButton,
   clickOnAtom,
   waitForPageInit,
 } from '@utils';

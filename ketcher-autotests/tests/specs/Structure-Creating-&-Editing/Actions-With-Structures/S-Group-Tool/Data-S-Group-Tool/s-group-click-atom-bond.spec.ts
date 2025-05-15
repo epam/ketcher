@@ -1,9 +1,8 @@
 import { test } from '@playwright/test';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   getCoordinatesTopAtomOfBenzeneRing,
   selectRingButton,
-  LeftPanelButton,
-  selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   RingButton,

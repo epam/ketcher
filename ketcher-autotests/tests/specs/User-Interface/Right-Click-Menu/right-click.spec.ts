@@ -7,8 +7,6 @@ import {
   openFileAndAddToCanvas,
   BondType,
   resetCurrentTool,
-  selectLeftPanelButton,
-  LeftPanelButton,
   waitForPageInit,
   waitForRender,
   clickOnBond,
@@ -24,6 +22,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 
 test.describe('Right-click menu', () => {
   test.beforeEach(async ({ page }) => {

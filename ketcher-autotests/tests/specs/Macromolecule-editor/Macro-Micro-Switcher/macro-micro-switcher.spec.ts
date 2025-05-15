@@ -309,7 +309,11 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await page.getByText('A6OH').click({ button: 'right' });
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('A6OH')
+      .click({ button: 'right' });
     await waitForMonomerPreviewMicro(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,

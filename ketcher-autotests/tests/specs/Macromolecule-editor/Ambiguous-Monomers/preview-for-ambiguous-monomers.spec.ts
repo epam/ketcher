@@ -9,6 +9,7 @@ import {
   waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
+  waitForRender,
 } from '@utils';
 import { pageReload } from '@utils/common/helpers';
 import {
@@ -504,8 +505,9 @@ test.describe('Preview tooltips checks: ', () => {
         MacroFileType.HELM,
         ambiguousMonomer.HELMString,
       );
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-
+      await waitForRender(page, async () => {
+        await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+      });
       await hoverMouseOverMicroMonomer(
         page,
         ambiguousMonomer.monomerLocatorIndexOnMicro,

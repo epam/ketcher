@@ -20,7 +20,6 @@ import {
 import { RenderersManager } from 'application/render/renderers/RenderersManager';
 import { createPolymerEditorCanvas } from '../../helpers/dom';
 import { CoreEditor, MACROMOLECULES_BOND_TYPES } from 'application/editor';
-import { FlexMode } from 'application/editor/modes/FlexMode';
 
 describe('Drawing Entities Manager', () => {
   it('should create monomer', () => {
@@ -93,7 +92,6 @@ describe('Drawing Entities Manager', () => {
     const editor = new CoreEditor({
       canvas: createPolymerEditorCanvas(),
       theme: {},
-      mode: new FlexMode(),
     });
     const drawingEntitiesManager = editor.drawingEntitiesManager;
     const renderersManager = new RenderersManager({ theme: {} });
@@ -111,7 +109,6 @@ describe('Drawing Entities Manager', () => {
     const editor = new CoreEditor({
       canvas: createPolymerEditorCanvas(),
       theme: {},
-      mode: new FlexMode(),
     });
     const drawingEntitiesManager = editor.drawingEntitiesManager;
     const renderersManager = new RenderersManager({ theme: {} });

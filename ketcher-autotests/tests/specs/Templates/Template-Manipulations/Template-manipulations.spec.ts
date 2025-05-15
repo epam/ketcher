@@ -273,16 +273,26 @@ test.describe('Template Manupulations', () => {
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
     await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
-    await page.getByText('S').first().click();
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('S')
+      .first()
+      .click();
     await page.getByLabel('Primary attachment point').check();
     await takeEditorScreenshot(page);
     await page.getByTestId('OK').click();
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('S').first().click({
-      button: 'right',
-    });
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('S')
+      .first()
+      .click({
+        button: 'right',
+      });
     await takeEditorScreenshot(page);
     await page.getByText('Edit...').click();
     await page.getByLabel('Label').click();

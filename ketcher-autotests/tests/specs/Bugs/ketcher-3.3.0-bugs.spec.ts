@@ -850,7 +850,11 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await page.getByText('1Nal').click({ button: 'right' });
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('1Nal')
+      .click({ button: 'right' });
     await page.getByText('Expand monomer').click();
     await selectRingButton(RingButton.Cyclohexane, page);
     await clickOnCanvas(page, 505, 400);

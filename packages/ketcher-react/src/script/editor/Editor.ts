@@ -726,6 +726,11 @@ class Editor implements KetcherEditor {
     KetcherLogger.log('Editor.redo(), end');
   }
 
+  public clearHistory() {
+    this.historyStack = [];
+    this.historyPtr = 0;
+  }
+
   subscribe(eventName: any, handler: any) {
     const subscriber = {
       handler,

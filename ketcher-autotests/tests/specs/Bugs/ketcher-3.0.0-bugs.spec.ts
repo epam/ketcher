@@ -22,7 +22,6 @@ import {
   dragMouseTo,
   selectMonomer,
   pressButton,
-  drawBenzeneRing,
   moveOnAtom,
   clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
@@ -65,7 +64,10 @@ import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 let page: Page;
 

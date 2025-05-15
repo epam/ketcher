@@ -3,7 +3,6 @@ import { test, expect } from '@playwright/test';
 import {
   FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
-  drawBenzeneRing,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   pasteFromClipboardAndAddToCanvas,
@@ -24,7 +23,10 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 const RING_OFFSET = 150;
 const ARROW_OFFSET = 20;

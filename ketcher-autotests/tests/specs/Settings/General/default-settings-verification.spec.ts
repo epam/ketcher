@@ -1,9 +1,9 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@playwright/test';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import {
   waitForPageInit,
-  drawBenzeneRing,
   pressButton,
   copyAndPaste,
   takeEditorScreenshot,

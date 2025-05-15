@@ -4,7 +4,6 @@ import {
   BondType,
   waitForPageInit,
   takeEditorScreenshot,
-  drawBenzeneRing,
   clickOnAtom,
   openFileAndAddToCanvas,
   selectAllStructuresOnCanvas,
@@ -12,7 +11,10 @@ import {
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Select tools tests', () => {
   test.beforeEach(async ({ page }) => {

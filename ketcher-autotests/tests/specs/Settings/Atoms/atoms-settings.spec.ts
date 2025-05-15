@@ -1,11 +1,13 @@
 import { Page, test } from '@playwright/test';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   waitForPageInit,
   pressButton,
-  drawBenzeneRing,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   resetCurrentTool,

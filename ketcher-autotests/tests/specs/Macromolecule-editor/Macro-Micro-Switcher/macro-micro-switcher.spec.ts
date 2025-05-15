@@ -17,7 +17,6 @@ import {
   clickOnAtom,
   clickOnCanvas,
   dragMouseTo,
-  drawBenzeneRing,
   getControlModifier,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
@@ -90,7 +89,10 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 const topLeftCorner = {
   x: -325,

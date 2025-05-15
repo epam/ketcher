@@ -3,6 +3,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
@@ -15,7 +16,6 @@ import {
   resetCurrentTool,
   waitForPageInit,
   takeRightToolbarScreenshot,
-  drawBenzeneRing,
   clickOnAtom,
   waitForRender,
   waitForIndigoToLoad,

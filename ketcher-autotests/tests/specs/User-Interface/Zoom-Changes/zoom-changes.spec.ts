@@ -10,7 +10,6 @@ import {
   TemplateLibrary,
   openFileAndAddToCanvas,
   waitForPageInit,
-  drawBenzeneRing,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
   readFileContent,
@@ -18,6 +17,7 @@ import {
 } from '@utils';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 async function checkZoomLevel(page: Page, zoomLevel: string) {
   const zoomSelector = CommonTopRightToolbar(page).zoomSelector;

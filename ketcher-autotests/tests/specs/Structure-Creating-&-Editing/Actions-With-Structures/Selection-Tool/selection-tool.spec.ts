@@ -16,12 +16,14 @@ import {
   takeLeftToolbarScreenshot,
   waitForPageInit,
   waitForRender,
-  drawBenzeneRing,
   selectAllStructuresOnCanvas,
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Selection tools', () => {
   test.beforeEach(async ({ page }) => {

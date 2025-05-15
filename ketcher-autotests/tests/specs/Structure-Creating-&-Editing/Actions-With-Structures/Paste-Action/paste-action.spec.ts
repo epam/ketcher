@@ -6,7 +6,6 @@ import {
   selectAction,
   waitForPageInit,
   selectAllStructuresOnCanvas,
-  drawBenzeneRing,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
@@ -14,7 +13,10 @@ import {
 import { TopPanelButton } from '@utils/selectors';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Paste Tool', () => {
   test.beforeEach(async ({ page }) => {

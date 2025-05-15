@@ -4,7 +4,6 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   waitForRender,
-  drawBenzeneRing,
   resetCurrentTool,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -27,6 +26,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;

@@ -1,11 +1,13 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 import {
   takeEditorScreenshot,
   waitForPageInit,
-  drawBenzeneRing,
   openFileAndAddToCanvasAsNewProject,
   screenshotBetweenUndoRedo,
   clickOnCanvas,

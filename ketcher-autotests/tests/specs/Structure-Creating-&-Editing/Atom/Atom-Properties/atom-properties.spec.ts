@@ -14,7 +14,6 @@ import {
   waitForPageInit,
   waitForRender,
   waitForAtomPropsModal,
-  drawBenzeneRing,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
@@ -54,7 +53,10 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;

@@ -19,7 +19,6 @@ import {
   clickOnBond,
   takeLeftToolbarScreenshot,
   moveOnAtom,
-  drawBenzeneRing,
   rightClickOnBond,
   selectOption,
   waitForPageInit,
@@ -45,7 +44,10 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',

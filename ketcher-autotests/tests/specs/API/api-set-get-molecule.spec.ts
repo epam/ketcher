@@ -1,5 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@playwright/test';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
@@ -8,8 +9,6 @@ import {
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  drawBenzeneRing,
-  waitForLoad,
   clickOnCanvas,
   openSettings,
   pressButton,
@@ -768,9 +767,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: #3531
      * Description: "containsReaction" method returns "false" if structure has not a reaction in micro mode
      */
-    await waitForLoad(page, async () => {
-      await drawBenzeneRing(page);
-    });
+    await drawBenzeneRing(page);
     const containsReaction = await page.evaluate(() => {
       return window.ketcher.containsReaction();
     });

@@ -1,4 +1,5 @@
 import { Page, expect, test } from '@playwright/test';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   BondType,
@@ -7,7 +8,6 @@ import {
   clickOnAtom,
   doubleClickOnAtom,
   doubleClickOnBond,
-  drawBenzeneRing,
   pressButton,
   selectAllStructuresOnCanvas,
   selectTool,

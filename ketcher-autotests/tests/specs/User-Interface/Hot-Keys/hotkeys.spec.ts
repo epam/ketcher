@@ -8,7 +8,6 @@ import {
   moveOnAtom,
   waitForRender,
   takeEditorScreenshot,
-  drawBenzeneRing,
   clickOnAtom,
   clickOnBond,
   BondType,
@@ -29,7 +28,10 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
-import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {

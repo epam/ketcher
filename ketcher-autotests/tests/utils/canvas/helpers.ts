@@ -34,11 +34,6 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
-export async function drawBenzeneRing(page: Page) {
-  await selectRingButton(page, 'Benzene');
-  await clickInTheMiddleOfTheScreen(page);
-}
-
 export async function drawCyclohexaneRing(page: Page) {
   await selectRingButton(page, 'Cyclohexane');
   await clickInTheMiddleOfTheScreen(page);

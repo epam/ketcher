@@ -3,7 +3,6 @@ import { expect, test, Page } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
   clickOnAtom,
   selectNestedTool,
@@ -38,6 +37,7 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await TopLeftToolbar(page).saveFile();

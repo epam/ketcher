@@ -5,7 +5,6 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   pressButton,
-  drawBenzeneRing,
   clickOnAtom,
   moveOnAtom,
   waitForPageInit,
@@ -54,6 +53,7 @@ import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
+  drawBenzeneRing,
   openStructureLibrary,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';

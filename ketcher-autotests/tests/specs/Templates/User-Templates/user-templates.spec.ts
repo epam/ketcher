@@ -12,7 +12,6 @@ import {
   waitForPageInit,
   copyAndPaste,
   cutAndPaste,
-  drawBenzeneRing,
   clickOnAtom,
   getEditorScreenshot,
   clickOnCanvas,
@@ -20,7 +19,10 @@ import {
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
-import { openStructureLibrary } from '@tests/pages/molecules/BottomToolbar';
+import {
+  drawBenzeneRing,
+  openStructureLibrary,
+} from '@tests/pages/molecules/BottomToolbar';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;

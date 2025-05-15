@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { drawBenzeneRing, getCoordinatesTopAtomOfBenzeneRing } from '.';
+import { getCoordinatesTopAtomOfBenzeneRing } from '.';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -8,6 +8,7 @@ import {
 import { ArrowTool, selectNestedTool } from './tools/selectNestedTool';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 export async function drawReactionWithTwoBenzeneRings(
   page: Page,

@@ -11,8 +11,6 @@ import {
   takeLeftToolbarScreenshot,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
-  selectTopPanelButton,
-  TopPanelButton,
   openFile,
   moveOnAtom,
   resetCurrentTool,
@@ -23,10 +21,7 @@ import {
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
 } from '@utils';
-import {
-  selectOpenFileTool,
-  topLeftToolbarLocators,
-} from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { waitForOpenButtonEnabled } from '@utils/common/loaders/waitForElementState';
 import {
@@ -39,18 +34,13 @@ import {
   enableViewOnlyMode,
   enableViewOnlyModeBySetOptions,
 } from '@utils/formats';
-import {
-  commonLeftToolbarLocators,
-  selectAreaSelectionTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import {
-  setZoomInputValue,
-  topRightToolbarLocators,
-} from '@tests/pages/common/TopRightToolbar';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
-import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { topRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -174,8 +164,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
-    await expect(topLeftToolbarLocators(page).openButton).toBeEnabled();
-    await expect(topLeftToolbarLocators(page).saveButton).toBeEnabled();
+    await expect(TopLeftToolbar(page).openButton).toBeEnabled();
+    await expect(TopLeftToolbar(page).saveButton).toBeEnabled();
     await expect(page.getByTitle('Copy (Ctrl+C)')).toBeEnabled();
     await takeTopToolbarScreenshot(page);
   });
@@ -188,9 +178,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description: Hand and selection tools are enabled in view-only mode
     */
     await enableViewOnlyModeBySetOptions(page);
-    await expect(commonLeftToolbarLocators(page).handToolButton).toBeEnabled();
+    await expect(CommonLeftToolbar(page).handToolButton).toBeEnabled();
     await expect(
-      commonLeftToolbarLocators(page).areaSelectionDropdownButton,
+      CommonLeftToolbar(page).areaSelectionDropdownButton,
     ).toBeEnabled();
     await takeLeftToolbarScreenshot(page);
   });
@@ -241,9 +231,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The help, about and fullscreen mode are enabled in view-only mode 
     */
-    const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
-    const aboutButton = topRightToolbar(page).aboutButton;
-    const helpButton = topRightToolbar(page).helpButton;
+    const fullScreenButton = CommonTopRightToolbar(page).fullScreenButton;
+    const aboutButton = TopRightToolbar(page).aboutButton;
+    const helpButton = TopRightToolbar(page).helpButton;
 
     await enableViewOnlyModeBySetOptions(page);
     await expect(helpButton).toBeEnabled();
@@ -276,24 +266,15 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Check, page),
-    );
+    await IndigoFunctionsToolbar(page).checkStructure();
     await takeEditorScreenshot(page, {
       mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
     });
     await closeErrorAndInfoModals(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.Calculated, page),
-    );
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
-    await waitForSpinnerFinishedWork(
-      page,
-      async () => await selectTopPanelButton(TopPanelButton.ThreeD, page),
-    );
+    await IndigoFunctionsToolbar(page).TreeDViewer();
     await takeEditorScreenshot(page);
   });
 
@@ -304,10 +285,10 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Test case: https://github.com/epam/ketcher/issues/4965
     Description: The "Add to Canvas" button is disabled in the "Open structure" dialog window
     */
-    const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
-    const openAsNewButton = pasteFromClipboardDialog(page).openAsNewButton;
+    const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
+    const openAsNewButton = PasteFromClipboardDialog(page).openAsNewButton;
     await enableViewOnlyModeBySetOptions(page);
-    await selectOpenFileTool(page);
+    await TopLeftToolbar(page).openFile();
     await openFile(`KET/images-png-50-with-50-structures.ket`, page);
     await expect(addToCanvasButton).toBeDisabled();
     await expect(openAsNewButton).toBeEnabled();
@@ -339,7 +320,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
         page,
       }) => {
         const saveStructureTextarea =
-          saveStructureDialog(page).saveStructureTextarea;
+          SaveStructureDialog(page).saveStructureTextarea;
 
         await selectRingButton(RingButton.Benzene, page);
         await clickInTheMiddleOfTheScreen(page);
@@ -406,13 +387,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
-    await setZoomInputValue(page, '20');
+    await CommonTopRightToolbar(page).setZoomInputValue('20');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '100');
+    await CommonTopRightToolbar(page).setZoomInputValue('100');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
-    await setZoomInputValue(page, '350');
+    await CommonTopRightToolbar(page).setZoomInputValue('350');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
   });
@@ -459,7 +440,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const timeout = 2000;
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await moveOnAtom(page, 'C', 1);
     await page.mouse.down();
     await page.waitForTimeout(timeout);
@@ -481,7 +464,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     */
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await takeLeftToolbarScreenshot(page);
     await enableViewOnlyModeBySetOptions(page);
     await takeLeftToolbarScreenshot(page);
@@ -498,7 +483,9 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await disableViewOnlyModeBySetOptions(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await selectAllStructuresOnCanvas(page);
     await moveOnAtom(page, 'C', 1);
     await dragMouseTo(300, 300, page);

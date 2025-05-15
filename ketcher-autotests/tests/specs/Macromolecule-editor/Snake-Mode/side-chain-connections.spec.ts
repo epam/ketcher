@@ -16,31 +16,18 @@ import {
   ZoomOutByKeyboard,
   waitForPageInit,
 } from '@utils';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 import { pageReload } from '@utils/common/helpers';
 import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -53,14 +40,14 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await resetZoomLevelToDefault(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -964,9 +951,9 @@ test.describe('Side chain connections', () => {
     const randomSideBondToSelect = 12;
     await clickNthConnectionLine(page, randomSideBondToSelect);
     // await takeEditorScreenshot(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -985,16 +972,18 @@ test.describe('Side chain connections', () => {
 
     // Selectiong ALL 60 available bonds
     const numberOfBondsToSelectAndDelete = 60;
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     for (let i = 0; i < numberOfBondsToSelectAndDelete; i = i + 1) {
       await page.keyboard.down('Shift');
       await clickNthConnectionLine(page, i);
       await page.keyboard.up('Shift');
     }
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -1013,16 +1002,18 @@ test.describe('Side chain connections', () => {
 
     // Selecting ALL 53 available bonds
     const numberOfBondsToSelectAndDelete = 53;
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     for (let i = 0; i < numberOfBondsToSelectAndDelete; i = i + 1) {
       await page.keyboard.down('Shift');
       await clickNthConnectionLine(page, i);
       await page.keyboard.up('Shift');
     }
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
@@ -1053,18 +1044,19 @@ test.describe('Side chain connections', () => {
     /*  
       Case 16: Verify saving structure with side-chain connections in SVG Document format
     */
-    const cancelButton = saveStructureDialog(page).cancelButton;
     await showLibrary(page);
     await selectSnakeLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(
       `KET/Side-Chain-Connections/16.ket`,
       page,
     );
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MacromoleculesFileFormatType.SVGDocument);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
     // Closing Save dialog
-    await cancelButton.click();
+    await SaveStructureDialog(page).cancel();
   });
 
   test('17. Verify saving structure with side-chain connections in SVG Document format', async () => {
@@ -1079,7 +1071,7 @@ test.describe('Side chain connections', () => {
     );
 
     await waitForRender(page, async () => {
-      await turnOnMicromoleculesEditor(page);
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     });
 
     await takeEditorScreenshot(page);
@@ -1091,7 +1083,7 @@ test.describe('Side chain connections', () => {
       Case 18: Check that display of side-chain connections does not visually change when switching between Micro and Macro modes
     */
     await waitForRender(page, async () => {
-      await turnOnMacromoleculesEditor(page);
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     });
 
     await openFileAndAddToCanvasMacro(
@@ -1100,11 +1092,11 @@ test.describe('Side chain connections', () => {
     );
 
     await waitForRender(page, async () => {
-      await turnOnMicromoleculesEditor(page);
+      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     });
 
     await waitForRender(page, async () => {
-      await turnOnMacromoleculesEditor(page);
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     });
 
     await selectFlexLayoutModeTool(page);

@@ -374,6 +374,7 @@ class SaveDialog extends Component {
           <img
             src={`data:image/${format}+xml;base64,${imageSrc}`}
             alt={`${format} preview`}
+            data-testid="preview-area"
           />
         )}
       </div>
@@ -386,7 +387,7 @@ class SaveDialog extends Component {
           className={classes.previewArea}
           readOnly
           ref={this.textAreaRef}
-          data-testid="preview-area-binary"
+          data-testid="preview-area"
         />
       </div>
     );
@@ -399,7 +400,7 @@ class SaveDialog extends Component {
             className={classes.previewArea}
             readOnly
             ref={this.textAreaRef}
-            data-testid="preview-area-text"
+            data-testid="preview-area"
           />
           <IconButton
             onClick={this.handleCopy}
@@ -526,6 +527,7 @@ class SaveDialog extends Component {
   render() {
     return (
       <Dialog
+        testId="save-structure-dialog"
         className={classes.dialog}
         title="Save Structure"
         params={this.props}

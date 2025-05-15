@@ -1,5 +1,5 @@
 import { Page, test } from '@playwright/test';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -13,7 +13,7 @@ async function selectExtendedAtom(
   extendedAtom: AtomExtendedType,
   atomToClick: AtomLabelType,
 ) {
-  const extendedTableButton = rightToolbar(page).extendedTableButton;
+  const extendedTableButton = RightToolbar(page).extendedTableButton;
 
   await extendedTableButton.click();
   await page.getByRole('button', { name: extendedAtom, exact: true }).click();

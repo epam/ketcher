@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   selectSaltsAndSolvents,
   SaltsAndSolvents,
@@ -45,7 +45,7 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
       const originalTimeout = 10000;
       const longerTimeout = 30000;
       page.setDefaultTimeout(longerTimeout);
-      const atomToolbar = rightToolbar(page);
+      const atomToolbar = RightToolbar(page);
 
       await atomToolbar.clickAtom(Atom.Carbon);
       await clickInTheMiddleOfTheScreen(page);
@@ -70,7 +70,7 @@ Test case: EPMLSOPKET-12969 - 'Check that in all cases, there must be a replacem
   test('Verify if Methan Sulphonic Acid replace the Nitrogen atom', async ({
     page,
   }) => {
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);

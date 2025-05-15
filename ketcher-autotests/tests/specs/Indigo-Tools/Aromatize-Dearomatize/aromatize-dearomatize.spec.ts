@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   RingButton,
   clickInTheMiddleOfTheScreen,
@@ -8,11 +8,7 @@ import {
   cutAndPaste,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  receiveFileComparisonData,
-  saveToFile,
   selectAllStructuresOnCanvas,
-  selectAromatizeTool,
-  selectDearomatizeTool,
   selectRing,
   takeEditorScreenshot,
   waitForPageInit,
@@ -21,13 +17,10 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { getSmiles } from '@utils/formats';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -42,8 +35,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Test case: EPMLSOPKET-1867
     Description: Nothing is changed.
     */
-    await selectAromatizeTool(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -53,9 +46,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Description: Nothing is changed on the canvas because only non-aromatic structures are present on the canvas.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/non-aromatic.mol', page);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -70,9 +63,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/non-aromatic-structures.mol',
       page,
     );
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -90,9 +83,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/aromatic-structures.mol',
       page,
     );
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -108,9 +101,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
       page,
     );
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -126,11 +119,11 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'Molfiles-V2000/cycles-with-aromatic-bonds.mol',
       page,
     );
-    await selectAromatizeTool(page);
-    await selectDearomatizeTool(page);
-    await pressUndoButton(page);
+    await IndigoFunctionsToolbar(page).aromatize();
+    await IndigoFunctionsToolbar(page).dearomatize();
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -149,7 +142,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     );
     await copyAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
   });
 
@@ -167,7 +160,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     );
     await cutAndPaste(page);
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
   });
 
@@ -179,11 +172,11 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     Description: Atom added to the structure.
     The structures are rendered with a circle inside the cycle during any manipulations.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await selectRing(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await selectAllStructuresOnCanvas(page);
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await takeEditorScreenshot(page);
@@ -243,19 +236,11 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     with the circle inside the cycles.
     */
     await openFileAndAddToCanvas('SMILES/aromatic-benzene-smiles.smi', page);
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/aromatic-benzene-smiles-expected.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-
-    const { fileExpected: smiFileExpected, file: smiFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/aromatic-benzene-smiles-expected.smi',
-      });
-
-    expect(smiFile).toEqual(smiFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -344,7 +329,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
         'KET/all-possible-query-features-with-out-custom-query.ket',
         page,
       );
-      await selectAromatizeTool(page);
+      await IndigoFunctionsToolbar(page).aromatize();
       await takeEditorScreenshot(page);
     },
   );
@@ -373,8 +358,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
         'KET/all-possible-query-features-with-out-custom-query.ket',
         page,
       );
-      await selectAromatizeTool(page);
-      await selectDearomatizeTool(page);
+      await IndigoFunctionsToolbar(page).aromatize();
+      await IndigoFunctionsToolbar(page).dearomatize();
       await takeEditorScreenshot(page);
     },
   );
@@ -398,7 +383,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'KET/all-possible-custom-query-features.ket',
       page,
     );
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
   });
 
@@ -422,8 +407,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'KET/all-possible-custom-query-features.ket',
       page,
     );
-    await selectAromatizeTool(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -438,7 +423,7 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'KET/schema-with-retrosynthetic-arrow-for-options.ket',
       page,
     );
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
   });
 
@@ -453,8 +438,8 @@ test.describe('Aromatize/Dearomatize Tool', () => {
       'KET/schema-with-retrosynthetic-arrow-for-options.ket',
       page,
     );
-    await selectAromatizeTool(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 });

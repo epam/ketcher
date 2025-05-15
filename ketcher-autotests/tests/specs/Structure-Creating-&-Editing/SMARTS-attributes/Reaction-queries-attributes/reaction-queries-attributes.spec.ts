@@ -22,8 +22,8 @@ import {
 import { selectRingButton } from '@utils/canvas/tools';
 import { checkSmartsValue } from '../utils';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 async function drawStructureWithArrowOpenAngle(page: Page) {
@@ -31,7 +31,7 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
   const shiftForHydrogen = 25;
   const shiftForCoordinatesToResetArrowOpenAngleTool = 100;
   const shiftForOxygen = 125;
-  const atomToolbar = rightToolbar(page);
+  const atomToolbar = RightToolbar(page);
 
   await atomToolbar.clickAtom(Atom.Hydrogen);
   await clickInTheMiddleOfTheScreen(page);
@@ -72,7 +72,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
   });
 
   test('Checking SMARTS with reaction mapping tool', async ({ page }) => {
-    await bondSelectionTool(page, MicroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
 
@@ -110,7 +110,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
      */
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const shiftValue = 50;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await selectRingButton(RingButton.Cyclopropane, page);
     await clickInTheMiddleOfTheScreen(page);
@@ -135,7 +135,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const shiftValue = 50;
     const delta = 30;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Carbon);
     await clickInTheMiddleOfTheScreen(page);

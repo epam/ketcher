@@ -7,16 +7,13 @@ import {
   moveMouseAway,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   verifyFileExport,
   FileType,
 } from '@utils/files/receiveFileComparisonData';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Reagents SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
@@ -43,8 +40,10 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMARTS);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMARTS,
+    );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -71,8 +70,10 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMARTS);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMARTS,
+    );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -121,8 +122,6 @@ test.describe('Reagents SMARTS format', () => {
     Test case: EPMLSOPKET-4685
     Description: File saved in format (e.g. "ketcher.smarts")
     */
-    const saveButton = saveStructureDialog(page).saveButton;
-
     await openFileAndAddToCanvas(
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
@@ -134,8 +133,10 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.DaylightSMARTS);
-    await saveButton.click();
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMARTS,
+    );
+    await SaveStructureDialog(page).save();
   });
 });

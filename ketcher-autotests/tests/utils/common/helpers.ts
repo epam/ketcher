@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import { waitForKetcherInit, waitForIndigoToLoad } from './loaders';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export async function emptyFunction() {}
@@ -10,7 +10,7 @@ export async function pageReload(page: Page) {
   await page.reload();
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 }
 
 export async function pageReloadMicro(page: Page) {
@@ -36,7 +36,7 @@ export async function contextReload(page: Page): Promise<Page> {
   await page.goto('', { waitUntil: 'domcontentloaded' });
   await waitForKetcherInit(page);
   await waitForIndigoToLoad(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   return page;
 }
 
@@ -65,11 +65,10 @@ export async function closeErrorMessage(page: Page) {
 }
 
 export async function closeOpenStructure(page: Page) {
-  const closeButton = openStructureDialog(page).closeWindowButton;
   const openStructure = page.getByText('Open Structure', {
     exact: true,
   });
-  await closeButton.click();
+  await OpenStructureDialog(page).close();
   await openStructure.waitFor({ state: 'hidden' });
 }
 

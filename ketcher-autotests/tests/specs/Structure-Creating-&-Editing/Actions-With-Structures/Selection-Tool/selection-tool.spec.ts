@@ -21,10 +21,7 @@ import {
   drawBenzeneRing,
   selectAllStructuresOnCanvas,
 } from '@utils';
-import {
-  commonLeftToolbarLocators,
-  selectAreaSelectionTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 
 test.describe('Selection tools', () => {
@@ -325,7 +322,9 @@ test.describe('Selection tools', () => {
     await fillFieldByPlaceholder(page, 'Enter value', '33');
     await pressButton(page, 'Apply');
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.getByText('33', { exact: true }).click();
     await dragMouseTo(pointx, pointy, page);
     await takeEditorScreenshot(page);
@@ -376,7 +375,9 @@ test.describe('Selection tools', () => {
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await clickOnAtom(page, 'N', 0);
     await page.keyboard.down('Shift');
     for (let i = 0; i < 50; i++) {
@@ -394,7 +395,9 @@ test.describe('Selection tools', () => {
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await clickOnAtom(page, 'N', 0);
     await page.keyboard.down('Shift');
     for (let i = 0; i < 50; i++) {
@@ -412,7 +415,9 @@ test.describe('Selection tools', () => {
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await clickOnAtom(page, 'N', 0);
     await page.keyboard.down('Shift');
     for (let i = 0; i < 80; i++) {
@@ -430,7 +435,9 @@ test.describe('Selection tools', () => {
     Description: The canvas should automatically expand in the direction the structure is being moved.
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await clickOnAtom(page, 'N', 0);
     await page.keyboard.down('Shift');
     for (let i = 0; i < 80; i++) {
@@ -447,7 +454,9 @@ test.describe('Selection tools', () => {
     Structure is visible on the canvas.
     */
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await clickOnAtom(page, 'N', 0);
     await page.keyboard.down('Shift');
     for (let i = 0; i < 100; i++) {
@@ -462,7 +471,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-10068
     Description: Selection palette should contain Rectangle Selection, Lasso Selection, Fragment Selection tools.
     */
-    await commonLeftToolbarLocators(page).areaSelectionDropdownButton.click();
+    await CommonLeftToolbar(page).areaSelectionDropdownButton.click();
     await expect(page).toHaveScreenshot();
   });
 
@@ -472,7 +481,9 @@ test.describe('Selection tools', () => {
     Description: When mouse hover on Benzene ring atom or bond, selection appears.
     */
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await moveOnAtom(page, 'C', 0);
     await takeEditorScreenshot(page);
     await moveOnBond(page, BondType.SINGLE, 0);
@@ -525,7 +536,9 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-18047
     Description: Shift+Tab switch selection tools after selecting Lasso.
     */
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     await takeLeftToolbarScreenshot(page);
     for (let i = 0; i < 3; i++) {
       await page.keyboard.press('Shift+Tab');

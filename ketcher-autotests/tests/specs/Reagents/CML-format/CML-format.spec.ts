@@ -12,9 +12,9 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import { chooseFileFormat } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Reagents CML format', () => {
   test.beforeEach(async ({ page }) => {
@@ -65,8 +65,10 @@ test.describe('Reagents CML format', () => {
       'CML/reagents-below-and-above-arrow.cml',
       page,
     );
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.CML);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.CML,
+    );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });

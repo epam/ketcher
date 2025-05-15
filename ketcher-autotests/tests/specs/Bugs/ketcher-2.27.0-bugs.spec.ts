@@ -30,27 +30,21 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   connectMonomersWithBonds,
   getMonomerLocator,
 } from '@utils/macromolecules/monomer';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import {
-  bondSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
 import { Peptides } from '@constants/monomers/Peptides';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -72,14 +66,14 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     const context = await browser.newContext();
     page = await context.newPage();
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
     await processResetToDefaultState(testInfo, page);
   });
@@ -154,7 +148,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       'KET/Bugs/Unable to connect monomer to molecule in snake mode.ket',
       page,
     );
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -209,9 +203,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectSequenceLayoutModeTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -228,7 +222,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 1. Toggle to Molecules mode
      * 2. Open arrow menu in toobar
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openDropdown(page, 'reaction-arrow-open-angle');
     await takeEditorScreenshot(page);
   });
@@ -244,7 +238,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 3. Toggle to Sequence mode
      * 4. Toggle back to Flex mode
      */
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Bugs/System should remember the canvas mode on Molecules_Macromolecules mode switch.ket',
@@ -276,7 +270,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from file
      * 3. Highlight attachment points
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/benzene-ring-with-two-attachment-points.ket',
       page,
@@ -313,7 +307,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     ];
 
     for (const filePath of files) {
-      await turnOnMacromoleculesEditor(page);
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
       await selectFlexLayoutModeTool(page);
       await openFileAndAddToCanvasAsNewProjectMacro(filePath, page);
       await takeEditorScreenshot(page, {
@@ -332,8 +326,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 1. Toggle to Macromolecules mode
      * 2. Check that hand tool is available
      */
-    await turnOnMacromoleculesEditor(page);
-    const handTool = page.getByTestId('hand');
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    const handTool = CommonLeftToolbar(page).handToolButton;
     await expect(handTool).toBeVisible();
     await expect(handTool).toBeEnabled();
     await expect(handTool).toHaveAttribute('title', 'Hand Tool (Ctrl+Alt+H)');
@@ -351,7 +345,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 1. Load from file
      * 2. Check that getKet not duplicates items
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/micro-and-macro-structure.ket',
       page,
@@ -381,7 +375,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 4. Toggle back to Macromolecules mode
      * 5. System opens Flex mode canvas
      */
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectFlexLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Bugs/System should remember the canvas mode on Molecules_Macromolecules mode switch.ket',
@@ -391,8 +385,8 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await turnOnMicromoleculesEditor(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -409,7 +403,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from file
      * 3. Press Stereochemistry button and press Apply button in appeared dialog
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/Two nucleotides.ket',
       page,
@@ -429,7 +423,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from file
      * 3. Apply new hash spacing setting to canvas
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/bond-with-hash-spacing.ket',
       page,
@@ -453,7 +447,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from file
      * 3. Hover mouse over label
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
       page,
@@ -472,7 +466,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Open Library, go to Peptides tab
      * 3. Search J
      */
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await goToPeptidesTab(page);
     const rnaLibrarySearch = page.getByTestId('monomer-library-input');
     await rnaLibrarySearch.fill('J');
@@ -492,7 +486,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 5. Press Ctrl+V to paste
      * 6. Check that hydrogen bonds are not missed
      */
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/Copy_paste operation works wrong (copy only two hydrogen bonds and drops others).ket',
       page,
@@ -516,7 +510,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from file
      * 3. Deleted peptides
      */
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/Copy_paste operation works wrong (copy only two hydrogen bonds and drops others).ket',
       page,
@@ -525,7 +519,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Peptides._1Nal).click();
     await getMonomerLocator(page, Peptides.A).click();
     await getMonomerLocator(page, Peptides.D).first().click();
@@ -546,7 +540,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Load from file
      * 3. Click on the monomer 2Nal and expand it
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/circle-peptides-one-expanded.ket',
       page,
@@ -575,7 +569,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * We have a bug https://github.com/epam/ketcher/issues/6993
      * After fixing it we need to update screenshots
      */
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/Bugs/Delete of micromolecules bonds works wrong (or doesnt work).ket',
       page,
@@ -584,7 +578,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, 570, 400);
     await clickOnCanvas(page, 600, 360);
     await clickOnCanvas(page, 600, 420);
@@ -592,9 +586,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

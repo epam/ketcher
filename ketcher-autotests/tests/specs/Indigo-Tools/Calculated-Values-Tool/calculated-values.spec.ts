@@ -1,11 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  selectTopPanelButton,
   openFileAndAddToCanvas,
-  TopPanelButton,
   takeEditorScreenshot,
   BondType,
   dragMouseTo,
@@ -14,7 +13,6 @@ import {
   clickInTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   waitForPageInit,
-  waitForSpinnerFinishedWork,
   clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -32,7 +30,7 @@ test.describe('Calculated Values Tools', () => {
     the 'Chemical Formula' field contains 'C7H16' value.
     */
     await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -49,7 +47,7 @@ test.describe('Calculated Values Tools', () => {
     'Elemental Analysis' field;
     'Close' button.
     */
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -75,7 +73,7 @@ test.describe('Calculated Values Tools', () => {
       'Molfiles-V2000/calculated-values-rings.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
 
     await takeEditorScreenshot(page);
 
@@ -105,7 +103,7 @@ test.describe('Calculated Values Tools', () => {
     changes according to the selected values in the fields for the decimal places count.
     */
     await openFileAndAddToCanvas('Rxn-V2000/calcvalues-reaction.rxn', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
 
     await takeEditorScreenshot(page);
 
@@ -135,9 +133,7 @@ test.describe('Calculated Values Tools', () => {
     await clickOnCanvas(page, point.x, point.y);
     await page.keyboard.up('Shift');
 
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Calculated, page);
-    });
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -159,7 +155,7 @@ test.describe('Calculated Values Tools', () => {
     */
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
 
     await takeEditorScreenshot(page);
 
@@ -183,7 +179,7 @@ test.describe('Calculated Values Tools', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/ritalin.mol', page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y - yDelta, page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -196,7 +192,7 @@ test.describe('Calculated Values Tools', () => {
     should be correct: '[78.047] > [155.957]'.
     */
     await openFileAndAddToCanvas('Rxn-V2000/benzene-bromination.rxn', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -210,11 +206,11 @@ test.describe('Calculated Values Tools', () => {
     Exact Mass: 33.988
     Elemental Analysis: H 5.9 S 94.1
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -228,7 +224,7 @@ test.describe('Calculated Values Tools', () => {
     Cannot calculate mass for structure with pseudoatoms, template atoms or RSites' message.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/r-group-label.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -245,7 +241,7 @@ test.describe('Calculated Values Tools', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/r-group-label.mol', page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -256,7 +252,7 @@ test.describe('Calculated Values Tools', () => {
     'Cannot calculate properties for RGroups' message.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/r-group-all-chain.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -273,7 +269,7 @@ test.describe('Calculated Values Tools', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/r-group-all-chain.mol', page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -289,7 +285,7 @@ test.describe('Calculated Values Tools', () => {
       'Molfiles-V2000/attachment-points-structure.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -309,7 +305,7 @@ test.describe('Calculated Values Tools', () => {
     );
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -332,7 +328,7 @@ test.describe('Calculated Values Tools', () => {
       'Molfiles-V2000/sru-polymer-structure.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -356,7 +352,7 @@ test.describe('Calculated Values Tools', () => {
       'Molfiles-V2000/multiple-group-structure.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -379,7 +375,7 @@ test.describe('Calculated Values Tools', () => {
       'Molfiles-V2000/superatom-structure.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -402,7 +398,7 @@ test.describe('Calculated Values Tools', () => {
       'Molfiles-V2000/data-s-group-structure.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -415,7 +411,7 @@ test.describe('Calculated Values Tools', () => {
     calculate properties for structures with query features' message.
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-non-hsub.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -431,7 +427,7 @@ test.describe('Calculated Values Tools', () => {
       'Molfiles-V3000/a-query-unsaturated.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -444,7 +440,7 @@ test.describe('Calculated Values Tools', () => {
     calculate properties for structures with query features' message.
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-ring-bonds.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -457,7 +453,7 @@ test.describe('Calculated Values Tools', () => {
     calculate properties for structures with query features' message.
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-aq.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -470,7 +466,7 @@ test.describe('Calculated Values Tools', () => {
     calculate properties for structures with query features' message.
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-atom-list.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -483,7 +479,7 @@ test.describe('Calculated Values Tools', () => {
     calculate properties for structures with query features' message.
     */
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-not-list.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -498,7 +494,7 @@ test.describe('Calculated Values Tools', () => {
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-non-hsub.mol', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await clickOnCanvas(page, point.x, point.y);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -516,7 +512,7 @@ test.describe('Calculated Values Tools', () => {
     );
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await clickOnCanvas(page, point.x, point.y);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -531,7 +527,7 @@ test.describe('Calculated Values Tools', () => {
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-ring-bonds.mol', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await clickOnCanvas(page, point.x, point.y);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -546,7 +542,7 @@ test.describe('Calculated Values Tools', () => {
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-aq.mol', page);
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await clickOnCanvas(page, point.x, point.y);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -561,7 +557,7 @@ test.describe('Calculated Values Tools', () => {
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-atom-list.mol', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -576,7 +572,7 @@ test.describe('Calculated Values Tools', () => {
     await openFileAndAddToCanvas('Molfiles-V3000/a-query-not-list.mol', page);
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -596,7 +592,7 @@ test.describe('Calculated Values Tools', () => {
     C 78.3 H 4.4 O 17.4
     */
     await openFileAndAddToCanvas('Molfiles-V2000/hetero-adduct.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -616,7 +612,7 @@ test.describe('Calculated Values Tools', () => {
     C 60.1 H 4.1 Br 35.8
     */
     await openFileAndAddToCanvas('Molfiles-V2000/c14napthylbromide.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -629,7 +625,7 @@ test.describe('Calculated Values Tools', () => {
     calculate properties for structures with query features' message.
     */
     await openFileAndAddToCanvas('Molfiles-V3000/dgln-atomlist.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -650,7 +646,7 @@ test.describe('Calculated Values Tools', () => {
       'Rxn-V2000/reaction-plus-and-arrows.rxn',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -674,7 +670,7 @@ test.describe('Calculated Values Tools', () => {
     await openFileAndAddToCanvas('KET/reaction-arrow.ket', page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - xDelta, y + yDelta, page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -697,7 +693,7 @@ test.describe('Calculated Values Tools', () => {
       'Molfiles-V2000/ethane-with-valence-and-stereobond.mol',
       page,
     );
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 });
@@ -728,7 +724,7 @@ test.describe('Calculated Values Tools', () => {
     Window for error messages
     'Check', 'Cancel', 'Apply', X buttons
     */
-    await selectTopPanelButton(TopPanelButton.Check, page);
+    await IndigoFunctionsToolbar(page).checkStructure();
     await takeEditorScreenshot(page, {
       mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
     });

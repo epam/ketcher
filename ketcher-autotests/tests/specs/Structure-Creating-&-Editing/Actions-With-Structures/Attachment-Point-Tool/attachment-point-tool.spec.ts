@@ -1,21 +1,17 @@
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   selectNestedTool,
   RgroupTool,
-  LeftPanelButton,
-  selectLeftPanelButton,
   dragMouseTo,
   selectRing,
   RingButton,
   resetCurrentTool,
   copyAndPaste,
   cutAndPaste,
-  saveToFile,
-  receiveFileComparisonData,
   clickOnAtom,
   screenshotBetweenUndoRedo,
   setAttachmentPoints,
@@ -23,34 +19,27 @@ import {
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  selectCleanTool,
-  selectLayoutTool,
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getRotationHandleCoordinates } from '@utils/clicks/selectButtonByTitle';
-import { getMolfile, getSmiles } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
 
 async function selectNotListAtoms(page: Page) {
-  const periodicTableButton = rightToolbar(page).periodicTableButton;
+  const periodicTableButton = RightToolbar(page).periodicTableButton;
 
   await periodicTableButton.click();
   await page.getByText('Not List').click();
@@ -61,7 +50,7 @@ async function selectNotListAtoms(page: Page) {
 }
 
 async function selectExtendedTableElements(page: Page, element: string) {
-  const extendedTableButton = rightToolbar(page).extendedTableButton;
+  const extendedTableButton = RightToolbar(page).extendedTableButton;
 
   await extendedTableButton.click();
   await page.getByRole('button', { name: element, exact: true }).click();
@@ -157,12 +146,12 @@ test.describe('Attachment Point Tool', () => {
     );
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -278,7 +267,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1644
     Description: The attachment point's asterisk is colored with the same color as the atom symbol.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await atomToolbar.clickAtom(Atom.Nitrogen);
@@ -299,7 +288,7 @@ test.describe('Attachment Point Tool', () => {
     Test case: EPMLSOPKET-1644
     Description: The Not List atom, Any Atom, Group Generics is attached to attachment points.
     */
-    const anyAtomButton = rightToolbar(page).anyAtomButton;
+    const anyAtomButton = RightToolbar(page).anyAtomButton;
 
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
     await selectNotListAtoms(page);
@@ -412,21 +401,14 @@ test.describe('Attachment Point Tool', () => {
     Description: Structure with attachment points saved as .mol file
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/chain-with-attachment-points-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'Molfiles-V2000/chain-with-attachment-points-expected.mol',
-      });
-    expect(molFile).toEqual(molFileExpected);
-    await takeEditorScreenshot(page);
   });
 
   test('Click and Save as *.mol file', async ({ page }) => {
@@ -436,21 +418,14 @@ test.describe('Attachment Point Tool', () => {
     Open the saved *.mol file and edit it in any way.
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/chain-with-attachment-points-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        metaDataIndexes: METADATA_STRING_INDEX,
-        expectedFileName:
-          'Molfiles-V2000/chain-with-attachment-points-expected.mol',
-      });
-    expect(molFile).toEqual(molFileExpected);
-    await takeEditorScreenshot(page);
   });
 
   test('Save as *.mol file V3000', async ({ page }) => {
@@ -529,17 +504,11 @@ test.describe('Attachment Point Tool', () => {
     Description: Structure with attachment points saved as .smi file
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/chain-with-attachment-points-expected.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smiFileExpected, file: smiFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/chain-with-attachment-points-expected.smi',
-      });
-    expect(smiFile).toEqual(smiFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -554,17 +523,11 @@ test.describe('Attachment Point Tool', () => {
     Open the saved *.cml file and edit it in any way.
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
-    const expectedFile = await getSmiles(page);
-    await saveToFile(
+    await verifyFileExport(
+      page,
       'SMILES/chain-with-attachment-points-expected.smi',
-      expectedFile,
+      FileType.SMILES,
     );
-    const { fileExpected: smiFileExpected, file: smiFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'SMILES/chain-with-attachment-points-expected.smi',
-      });
-    expect(smiFile).toEqual(smiFileExpected);
     await takeEditorScreenshot(page);
   });
 
@@ -604,7 +567,9 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     const point = await getAtomByIndex(page, { label: 'N' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     const coordinatesWithShift = point.y + yDelta;
@@ -618,7 +583,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -635,7 +600,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'N', 0);
 
     await clickOnAtom(page, 'L#', 0);
@@ -643,7 +608,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -661,7 +626,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     point = await getAtomByIndex(page, { label: 'N' }, 0);
     await page.mouse.move(point.x, point.y);
     await page.keyboard.press('Delete');
@@ -673,7 +638,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -686,7 +651,7 @@ test.describe('Attachment Point Tool', () => {
       Description: New bond is created, the attachment point isn't removed.
     */
     const yDelta = 100;
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/chain-attachment-list.mol',
@@ -707,7 +672,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 4; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -724,7 +689,7 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickOnAtom(page, 'N', 0);
 
     await clickOnAtom(page, 'L#', 0);
@@ -732,7 +697,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -765,7 +730,7 @@ test.describe('Attachment Point Tool', () => {
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -894,12 +859,12 @@ test.describe('Attachment Point Tool', () => {
       page,
     );
 
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page, { maxDiffPixelRatio: 0.05 });
   });
 });

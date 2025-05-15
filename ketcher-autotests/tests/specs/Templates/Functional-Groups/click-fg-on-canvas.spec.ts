@@ -1,7 +1,7 @@
 import { MAX_BOND_LENGTH } from '@constants';
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -27,7 +27,7 @@ test.describe('Click Functional Group on canvas', () => {
       Test case: EPMLSOPKET-10105
       Description: when clicking with an FG template on an atom it should replace it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickInTheMiddleOfTheScreen(page);
@@ -71,7 +71,7 @@ test.describe('Click Functional Group on canvas', () => {
       Description: when clicking with an FG template
       on an atom connected with bond to another atom  it should replace it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Chlorine);
     await clickInTheMiddleOfTheScreen(page);
@@ -93,7 +93,7 @@ test.describe('Click Functional Group on canvas', () => {
       Test case: EPMLSOPKET-10109
       Description: when clicking with an FG template on an FG connected with bond to another atom  it should replace it
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);

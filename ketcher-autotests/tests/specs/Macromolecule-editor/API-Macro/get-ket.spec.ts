@@ -8,18 +8,18 @@ import {
   clickInTheMiddleOfTheScreen,
   selectAllStructuresOnCanvas,
 } from '@utils';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 test.describe('getKet', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('with two monomers bonded', async ({ page }) => {
@@ -153,7 +153,7 @@ test.describe('getKet', () => {
   Test case: https://github.com/epam/ketcher/issues/4238
   Description: getKet function return ket file with selection flags in Micro mode
   */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await atomToolbar.clickAtom(Atom.Hydrogen);
     await clickInTheMiddleOfTheScreen(page);

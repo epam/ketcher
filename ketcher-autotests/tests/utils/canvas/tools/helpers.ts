@@ -1,31 +1,14 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import {
-  clickOnCanvas,
-  SequenceType,
-  waitForRender,
-  waitForSpinnerFinishedWork,
-} from '@utils';
+import { clickOnCanvas, SequenceType, waitForRender } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
-import {
-  LeftPanelButton,
-  MacromoleculesLeftPanelButton,
-  RingButton,
-  TopPanelButton,
-} from '@utils/selectors';
-import {
-  selectOpenFileTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { LeftPanelButton, RingButton, TopPanelButton } from '@utils/selectors';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 /**
  *  Select button from left panel
@@ -119,14 +102,6 @@ export async function selectImageTool(page: Page) {
   await bondToolButton.click();
 }
 
-export async function openStructurePasteFromClipboard(page: Page) {
-  const pasteFromClipboardButton =
-    openStructureDialog(page).pasteFromClipboardButton;
-
-  await selectOpenFileTool(page);
-  await pasteFromClipboardButton.click();
-}
-
 export async function selectRectangleArea(
   page: Page,
   startX: number,
@@ -134,7 +109,9 @@ export async function selectRectangleArea(
   endX: number,
   endY: number,
 ) {
-  await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Rectangle,
+  );
   await page.mouse.move(startX, startY);
   await page.mouse.down();
   await page.mouse.move(endX, endY);
@@ -162,14 +139,6 @@ export async function selectLeftPanelButton(
   await leftPanelButton.click();
 }
 
-export async function selectMacromoleculesPanelButton(
-  buttonName: MacromoleculesLeftPanelButton,
-  page: Page,
-) {
-  const topPanelButton = page.locator(`button[title*="${buttonName}"]`);
-  await topPanelButton.click();
-}
-
 export async function selectButtonById(buttonId: 'OK', page: Page) {
   const element = page.getByTestId(buttonId);
   await element.click();
@@ -179,13 +148,11 @@ export async function saveStructureWithReaction(
   page: Page,
   format?: MoleculesFileFormatType,
 ) {
-  const saveButton = saveStructureDialog(page).saveButton;
-
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   if (format) {
-    await chooseFileFormat(page, format);
+    await SaveStructureDialog(page).chooseFileFormat(format);
   }
-  await saveButton.click();
+  await SaveStructureDialog(page).save();
 }
 
 export async function typeAllEnglishAlphabet(page: Page) {
@@ -217,9 +184,9 @@ export async function selectWithLasso(
 }
 
 export async function saveToTemplates(page: Page, templateName: string) {
-  const saveToTemplatesButton = saveStructureDialog(page).saveToTemplatesButton;
+  const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
 
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill(templateName);
@@ -402,10 +369,4 @@ export async function scrollToDownInSetting(page: Page) {
   const scrollToDown = page.getByTestId('Options for Debugging-accordion');
   await scrollToDown.scrollIntoViewIfNeeded();
   await scrollToDown.hover({ force: true });
-}
-
-export async function selectAddRemoveExplicitHydrogens(page: Page) {
-  await waitForSpinnerFinishedWork(page, async () => {
-    await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
-  });
 }

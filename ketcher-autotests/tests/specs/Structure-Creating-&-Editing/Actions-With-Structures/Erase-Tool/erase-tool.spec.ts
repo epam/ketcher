@@ -13,8 +13,8 @@ import {
 } from '@utils';
 import { getLeftTopBarSize } from '@utils/canvas/common/getLeftTopBarSize';
 import { RxnArrow, RxnPlus } from 'ketcher-core';
-import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 function checkElementExists(element: RxnPlus | RxnArrow, errorMsg: string) {
   if (!element) {
     throw new Error(errorMsg);
@@ -29,7 +29,7 @@ test.describe('Erase Tool', () => {
       page,
     );
 
-    await await selectEraseTool(page);
+    await await CommonLeftToolbar(page).selectEraseTool();
   });
 
   test('Erase atom and bond', async ({ page }) => {
@@ -97,7 +97,7 @@ test.describe('Erase Tool', () => {
 
     expect(plusDeleted).toEqual(plusAfterDelete);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     const plusOnCanvas = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnPluses.size;
@@ -133,7 +133,7 @@ test.describe('Erase Tool', () => {
     });
     expect(arrowDeleted).toEqual(arrowAfterDelete);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     const arrowOnCanvas = await page.evaluate(() => {
       return window.ketcher.editor.struct().rxnArrows.size;

@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   LeftPanelButton,
   selectLeftPanelButton,
@@ -8,7 +8,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
-  receiveFileComparisonData,
   moveMouseToTheMiddleOfTheScreen,
   resetCurrentTool,
   BondType,
@@ -20,19 +19,17 @@ import {
   clickOnAtom,
   fillFieldByPlaceholder,
   screenshotBetweenUndoRedo,
-  saveToFile,
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getMolfile } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 
 const CANVAS_CLICK_X = 600;
@@ -172,23 +169,14 @@ test.describe('Data S-Group tool', () => {
       'Molfiles-V2000/chain-with-name-and-value.mol',
       page,
     );
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
-      'Molfiles-V2000/chain-with-name-and-value-expected.mol',
-      expectedFile,
-    );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName:
-          'Molfiles-V2000/chain-with-name-and-value-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-    expect(molFile).toEqual(molFileExpected);
 
-    await editSGroupProperties(page, '33', 'Multiple group', '8');
-    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V2000/chain-with-name-and-value-expected.mol',
+      FileType.MOL,
+      'v2000',
+      [1],
+    );
   });
 
   test('Add Data S-Group to atoms of Chain', async ({ page }) => {
@@ -300,7 +288,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1544
       Description: User is able to add atom on structure with Data S-group.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
     await atomToolbar.clickAtom(Atom.Oxygen);
@@ -317,7 +305,7 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to delete and undo/redo atom on structure with Data S-group.
     */
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
 

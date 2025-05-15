@@ -2,7 +2,7 @@
 import { Locator, Page } from '@playwright/test';
 import { hideMonomerPreview } from '@utils/macromolecules/index';
 import { clickOnCanvas, MonomerType, moveMouseAway } from '..';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import {
   MacroBondDataIds,
   MacroBondType,
@@ -39,7 +39,7 @@ export async function bondTwoMonomers(
   needSelectAttachmentPoint = true,
   needConnect = true,
 ) {
-  await bondSelectionTool(page, bondType);
+  await CommonLeftToolbar(page).selectBondTool(bondType);
   await firstMonomerElement.hover({ force: true });
   await page.mouse.down();
   await secondMonomerElement.hover({ force: true });
@@ -289,9 +289,9 @@ export async function bondTwoMonomersPointToPoint(
   chooseConnectionPointsInDialogIfAppeared = false,
 ): Promise<Locator> {
   if (bondType) {
-    await bondSelectionTool(page, bondType);
+    await CommonLeftToolbar(page).selectBondTool(bondType);
   } else {
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   }
 
   await firstMonomer.hover({ force: true });
@@ -393,7 +393,7 @@ export async function bondMonomerPointToMoleculeAtom(
   monomerConnectionPoint?: string,
   connectionPointShift?: { x: number; y: number },
 ) {
-  await bondSelectionTool(page, MacroBondType.Single);
+  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await monomer.hover({ force: true });
 
   if (monomerConnectionPoint) {
@@ -459,7 +459,7 @@ export async function bondNucleotidePointToMoleculeAtom(
   monomerConnectionPoint?: string,
   connectionPointShift?: { x: number; y: number },
 ) {
-  await bondSelectionTool(page, MacroBondType.Single);
+  await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
   await monomer.hover({ force: true });
 
   if (monomerConnectionPoint) {

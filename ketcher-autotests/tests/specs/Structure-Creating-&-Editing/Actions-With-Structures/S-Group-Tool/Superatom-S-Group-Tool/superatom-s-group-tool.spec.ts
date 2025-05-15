@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
   LeftPanelButton,
   selectLeftPanelButton,
@@ -7,7 +7,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
-  receiveFileComparisonData,
   BondType,
   selectRingButton,
   RingButton,
@@ -16,20 +15,18 @@ import {
   clickOnAtom,
   clickOnBond,
   screenshotBetweenUndoRedo,
-  saveToFile,
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { getMolfile } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { rightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 let point: { x: number; y: number };
 
 async function addNameToSuperatom(
@@ -135,7 +132,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: User is unable to add atom on structure with Superatom S-group.
       EDIT ABBREVIATION modal appears.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
     await atomToolbar.clickAtom(Atom.Oxygen);
@@ -150,7 +147,7 @@ test.describe('Superatom S-Group tool', () => {
       EDIT ABBREVIATION modal appears.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });
@@ -204,7 +201,7 @@ test.describe('Superatom S-Group tool', () => {
       Test case: EPMLSOPKET-12989
       Description: User is able select atom by hotkey after Remove Abbreviation on Chain with Superatom S-Group.
     */
-    const atomToolbar = rightToolbar(page);
+    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
     await atomToolbar.clickAtom(Atom.Nitrogen);
@@ -245,20 +242,14 @@ test.describe('Superatom S-Group tool', () => {
       Description: User is able to save and open structure with Superatom S-group.
     */
     await openFileAndAddToCanvas('KET/superatom-all-chain.ket', page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/superatom-all-chain-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'Molfiles-V2000/superatom-all-chain-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-    expect(molFile).toEqual(molFileExpected);
-    await takeEditorScreenshot(page);
   });
 
   test('Contract/expand/remove abbreviation on whole Chain structure with Superatom S-group', async ({

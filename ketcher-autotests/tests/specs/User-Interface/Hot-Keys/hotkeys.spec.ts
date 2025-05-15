@@ -9,8 +9,6 @@ import {
   RingButton,
   moveOnAtom,
   waitForRender,
-  TopPanelButton,
-  selectTopPanelButton,
   takeEditorScreenshot,
   drawBenzeneRing,
   clickOnAtom,
@@ -28,13 +26,11 @@ import {
   SaltsAndSolvents,
   copyAndPaste,
   clickOnCanvas,
-  selectAromatizeTool,
-  selectDearomatizeTool,
-  selectAddRemoveExplicitHydrogens,
 } from '@utils';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -44,7 +40,9 @@ test.describe('Hot keys', () => {
   test('select last chosen selected tool when user press ESC', async ({
     page,
   }) => {
-    await selectAreaSelectionTool(page, SelectionToolType.Fragment);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Fragment,
+    );
     await selectTool(LeftPanelButton.AddText, page);
     await page.keyboard.press('Escape');
     await expect(page.getByTestId('select-fragment')).toBeVisible();
@@ -72,7 +70,9 @@ test.describe('Hot keys', () => {
       Expected: Atom copied and moves to a new place.
       */
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await copyStructureByCtrlMove(page, 'C', 0);
     await takeEditorScreenshot(page);
   });
@@ -90,7 +90,9 @@ test.describe('Hot keys', () => {
       Expected: Atom and bond copied and moves to a new place.
       */
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.keyboard.down('Shift');
     await clickOnAtom(page, 'C', 0);
     await clickOnBond(page, BondType.SINGLE, 0);
@@ -114,7 +116,9 @@ test.describe('Hot keys', () => {
       */
     await drawBenzeneRing(page);
     await selectAllStructuresOnCanvas(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -137,7 +141,9 @@ test.describe('Hot keys', () => {
       page,
     );
     await selectAllStructuresOnCanvas(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -162,7 +168,9 @@ test.describe('Hot keys', () => {
       page,
     );
     await selectAllStructuresOnCanvas(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -187,7 +195,9 @@ test.describe('Hot keys', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await copyStructureByCtrlMove(page, 'C', 0, { x: 250, y: 250 });
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -208,7 +218,9 @@ test.describe('Hot keys', () => {
       page,
     );
     await selectAllStructuresOnCanvas(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await copyStructureByCtrlMove(page, 'C', 0, { x: 245, y: 245 });
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
@@ -228,7 +240,9 @@ test.describe('Hot keys', () => {
       */
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.getByText('Cbz').hover();
     await page.keyboard.down('Control');
     await dragMouseTo(300, 300, page);
@@ -251,7 +265,9 @@ test.describe('Hot keys', () => {
       */
     await selectFunctionalGroups(FunctionalGroups.Cbz, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.getByText('Cbz').click({ button: 'right' });
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();
@@ -276,7 +292,9 @@ test.describe('Hot keys', () => {
       */
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.getByText('formic acid').hover();
     await page.keyboard.down('Control');
     await dragMouseTo(300, 300, page);
@@ -299,7 +317,9 @@ test.describe('Hot keys', () => {
       */
     await selectSaltsAndSolvents(SaltsAndSolvents.FormicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await page.getByText('formic acid').click({ button: 'right' });
     await waitForRender(page, async () => {
       await page.getByText('Expand Abbreviation').click();
@@ -326,7 +346,9 @@ test.describe('Hot keys', () => {
       'KET/reaction-with-catalyst.ket',
       page,
     );
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
     await page.mouse.click(100, 100);
@@ -349,7 +371,9 @@ test.describe('Hot keys', () => {
       'KET/two-benzene-and-elliptical-arrow.ket',
       page,
     );
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
     await page.mouse.click(100, 100);
@@ -372,7 +396,9 @@ test.describe('Hot keys', () => {
       'KET/two-benzene-valence-alias-text-plus.ket',
       page,
     );
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
     await page.mouse.click(100, 100);
@@ -396,13 +422,15 @@ test.describe('Hot keys', () => {
       'KET/two-benzene-valence-alias-text-plus.ket',
       page,
     );
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
     await page.mouse.click(100, 100);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page, { maxDiffPixels: 2 });
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
   });
 
@@ -418,12 +446,14 @@ test.describe('Hot keys', () => {
       Expected: Layout works after moving by ctrl.
       */
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Layout, page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -441,14 +471,16 @@ test.describe('Hot keys', () => {
       Expected: Add/remove explicit hydrogen works after moving by ctrl.
       */
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0);
     await page.mouse.click(100, 100);
     await takeEditorScreenshot(page);
-    await selectAddRemoveExplicitHydrogens(page);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
-    await selectAddRemoveExplicitHydrogens(page);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
   });
 
@@ -469,7 +501,9 @@ test.describe('Hot keys', () => {
       'KET/two-benzene-valence-alias-text-plus.ket',
       page,
     );
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await selectAllStructuresOnCanvas(page);
     await copyStructureByCtrlMove(page, 'C', 0, { x: 270, y: 245 });
     await page.mouse.click(100, 100);
@@ -509,7 +543,7 @@ test.describe('Hot key Del', () => {
     });
     await page.keyboard.press('Delete');
     await page.mouse.move(x, y);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 });

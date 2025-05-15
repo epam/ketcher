@@ -16,13 +16,10 @@ import {
   clickOnAtom,
   getEditorScreenshot,
   clickOnCanvas,
-  selectCleanTool,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import { saveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -32,9 +29,9 @@ async function openStructureLibrary(page: Page) {
 }
 
 async function saveToTemplates(page: Page, shouldSave = true) {
-  const saveToTemplatesButton = saveStructureDialog(page).saveToTemplatesButton;
+  const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
 
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My Template');
@@ -45,7 +42,7 @@ async function saveToTemplates(page: Page, shouldSave = true) {
 
 async function saveUserTemplate(page: Page) {
   await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-  await selectSaveTool(page);
+  await TopLeftToolbar(page).saveFile();
   await clickInTheMiddleOfTheScreen(page);
 }
 
@@ -73,10 +70,10 @@ test.describe('Click User Templates on canvas', () => {
       Description: spaces in Molecule name field validation
     */
     const saveToTemplatesButton =
-      saveStructureDialog(page).saveToTemplatesButton;
+      SaveStructureDialog(page).saveToTemplatesButton;
 
     await selectUserTemplatesAndPlaceInTheMiddle(TemplateLibrary.Azulene, page);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await clickInTheMiddleOfTheScreen(page);
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
@@ -96,13 +93,13 @@ test.describe('Click User Templates on canvas', () => {
       Description: delete user template validation
     */
     const saveToTemplatesButton =
-      saveStructureDialog(page).saveToTemplatesButton;
+      SaveStructureDialog(page).saveToTemplatesButton;
 
     await selectUserTemplatesAndPlaceInTheMiddle(
       TemplateLibrary.Naphtalene,
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('to_delete');
@@ -124,13 +121,13 @@ test.describe('Click User Templates on canvas', () => {
     Description: Creating Template with Simple Objects validation
     */
     const saveToTemplatesButton =
-      saveStructureDialog(page).saveToTemplatesButton;
+      SaveStructureDialog(page).saveToTemplatesButton;
 
     await openFileAndAddToCanvas(
       'Molfiles-V2000/create-template-with-simple-objects.mol',
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('simple_object_template');
@@ -151,18 +148,18 @@ test.describe('Click User Templates on canvas', () => {
     Description: Creating Template with Reaction arrow validation.
     */
     const saveToTemplatesButton =
-      saveStructureDialog(page).saveToTemplatesButton;
+      SaveStructureDialog(page).saveToTemplatesButton;
 
     await openFileAndAddToCanvas(
       'Rxn-V2000/create-template-with-reaction-arrow.rxn',
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('reaction_arrow_template');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
 
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
@@ -214,7 +211,7 @@ test.describe('Create and Save Templates', () => {
     await clickInTheMiddleOfTheScreen(page);
     await saveToTemplates(page);
 
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('0NNNNHNHNNHNNHNH').click();
@@ -229,19 +226,19 @@ test.describe('Create and Save Templates', () => {
       Description: saving user template validation
     */
     const saveToTemplatesButton =
-      saveStructureDialog(page).saveToTemplatesButton;
+      SaveStructureDialog(page).saveToTemplatesButton;
 
     await selectUserTemplatesAndPlaceInTheMiddle(
       TemplateLibrary.Naphtalene,
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await clickInTheMiddleOfTheScreen(page);
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('user_template_1');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
 
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
@@ -260,7 +257,7 @@ test.describe('Create and Save Templates', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/long-structure.mol', page);
     await saveToTemplates(page);
 
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await drawBenzeneRing(page);
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
@@ -322,19 +319,19 @@ test.describe('Templates field lenght validations', () => {
       Description: warning message validation
     */
     const saveToTemplatesButton =
-      saveStructureDialog(page).saveToTemplatesButton;
+      SaveStructureDialog(page).saveToTemplatesButton;
 
     await selectUserTemplatesAndPlaceInTheMiddle(
       TemplateLibrary.Naphtalene,
       page,
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('user_template_1');
     await page.getByRole('button', { name: 'Save', exact: true }).click();
 
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await saveToTemplatesButton.click();
     await page.getByPlaceholder('template').click();
     await page.getByPlaceholder('template').fill('user_template_1');

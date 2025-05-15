@@ -1,111 +1,121 @@
-import { type Page, expect } from '@playwright/test';
-import {
-  LAYOUT_TOGGLER,
-  MACROMOLECULES_MODE,
-  MOLECULES_MODE,
-} from '@constants/testIdConstants';
+import { Page, Locator, expect } from '@playwright/test';
 import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 
-export const topRightToolbarLocators = (page: Page) => ({
-  ketcherModeSwitcherCombobox: page.getByTestId('polymer-toggler'),
-  fullScreenButton: page.getByTestId('fullscreen-mode-button'),
-  zoomSelector: page.getByTestId('zoom-selector'),
-});
+type CommonTopRightToolbarLocators = {
+  ketcherModeSwitcherCombobox: Locator;
+  fullScreenButton: Locator;
+  zoomSelector: Locator;
+};
 
-export const zoomDropdownLocators = (page: Page) => ({
-  zoomValueEditbox: page.getByTestId('zoom-value'),
-  zoomOutButton: page.getByTestId('zoom-out'),
-  zoomInButton: page.getByTestId('zoom-in'),
-  zoomDefaultButton: page.getByTestId('zoom-default'),
-});
+type ZoomDropdownLocators = {
+  zoomValueEditbox: Locator;
+  zoomOutButton: Locator;
+  zoomInButton: Locator;
+  zoomDefaultButton: Locator;
+};
 
-export async function setZoomInputValue(page: Page, value: string) {
-  const zoomSelector = topRightToolbarLocators(page).zoomSelector;
-  const zoomValueEditbox = zoomDropdownLocators(page).zoomValueEditbox;
-  await zoomSelector.click();
-  await zoomValueEditbox.fill(value);
-  await waitForRender(page, async () => {
-    await page.keyboard.press('Enter');
-  });
-}
+export const CommonTopRightToolbar = (page: Page) => {
+  const locators: CommonTopRightToolbarLocators = {
+    ketcherModeSwitcherCombobox: page.getByTestId('polymer-toggler'),
+    fullScreenButton: page.getByTestId('fullscreen-mode-button'),
+    zoomSelector: page.getByTestId('zoom-selector'),
+  };
 
-export async function selectZoomOutTool(page: Page, count = 1) {
-  const zoomSelector = topRightToolbarLocators(page).zoomSelector;
-  const zoomOutButton = zoomDropdownLocators(page).zoomOutButton;
-  await zoomSelector.click();
-  for (let i = 0; i < count; i++) {
-    await waitForRender(page, async () => {
-      await zoomOutButton.click();
-    });
-  }
-  await zoomSelector.click({ force: true });
-  await zoomOutButton.waitFor({ state: 'detached' });
-}
+  const zoomLocators: ZoomDropdownLocators = {
+    zoomValueEditbox: page.getByTestId('zoom-value'),
+    zoomOutButton: page.getByTestId('zoom-out'),
+    zoomInButton: page.getByTestId('zoom-in'),
+    zoomDefaultButton: page.getByTestId('zoom-default'),
+  };
 
-export async function selectZoomInTool(page: Page, count = 1) {
-  const zoomSelector = topRightToolbarLocators(page).zoomSelector;
-  const zoomInButton = zoomDropdownLocators(page).zoomInButton;
-  await zoomSelector.click();
-  for (let i = 0; i < count; i++) {
-    await waitForRender(page, async () => {
-      await zoomInButton.click();
-    });
-  }
-  await zoomSelector.click({ force: true });
-  await zoomInButton.waitFor({ state: 'detached' });
-}
+  return {
+    ...locators,
+    ...zoomLocators,
 
-export async function selectZoomReset(page: Page) {
-  const zoomSelector = topRightToolbarLocators(page).zoomSelector;
-  const zoomDefaultButton = zoomDropdownLocators(page).zoomDefaultButton;
-  await zoomSelector.click();
-  await waitForRender(page, async () => {
-    await zoomDefaultButton.click();
-  });
-  await zoomSelector.click({ force: true });
-  await zoomDefaultButton.waitFor({ state: 'detached' });
-}
+    async setZoomInputValue(value: string) {
+      await locators.zoomSelector.click();
+      await zoomLocators.zoomValueEditbox.fill(value);
+      await waitForRender(page, async () => {
+        await page.keyboard.press('Enter');
+      });
+    },
 
-export async function turnOnMacromoleculesEditor(
-  page: Page,
-  options: {
-    enableFlexMode?: boolean;
-    goToPeptides?: boolean;
-  } = { enableFlexMode: true, goToPeptides: true },
-) {
-  const ketcherModeSwitcherCombobox =
-    topRightToolbarLocators(page).ketcherModeSwitcherCombobox;
-  expect(ketcherModeSwitcherCombobox).toBeVisible();
-  await ketcherModeSwitcherCombobox.click();
-  expect(page.getByTestId(MACROMOLECULES_MODE)).toBeVisible();
-  await page.getByTestId(MACROMOLECULES_MODE).click();
-  expect(page.getByTestId(LAYOUT_TOGGLER)).toBeVisible();
+    async selectZoomOutTool(count = 1) {
+      await locators.zoomSelector.click();
+      for (let i = 0; i < count; i++) {
+        await waitForRender(page, async () => {
+          await zoomLocators.zoomOutButton.click();
+        });
+      }
+      await locators.zoomSelector.click({ force: true });
+      await zoomLocators.zoomOutButton.waitFor({ state: 'detached' });
+    },
 
-  if (options.enableFlexMode) {
-    await selectFlexLayoutModeTool(page);
-  } else if (options.goToPeptides) {
-    await goToPeptidesTab(page);
-  } else {
-    // Dirty hack
-    // waiting Library to load
-    await page.getByTestId('summary-Nucleotides').waitFor({ state: 'visible' });
-  }
+    async selectZoomInTool(count = 1) {
+      await locators.zoomSelector.click();
+      for (let i = 0; i < count; i++) {
+        await waitForRender(page, async () => {
+          await zoomLocators.zoomInButton.click();
+        });
+      }
+      await locators.zoomSelector.click({ force: true });
+      await zoomLocators.zoomInButton.waitFor({ state: 'detached' });
+    },
 
-  await page.evaluate(() => {
-    // Temporary solution to disable autozoom for the polymer editor in e2e tests
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    window._ketcher_isAutozoomDisabled = true;
-  });
-}
+    async resetZoom() {
+      await locators.zoomSelector.click();
+      await waitForRender(page, async () => {
+        await zoomLocators.zoomDefaultButton.click();
+      });
+      await locators.zoomSelector.click({ force: true });
+      await zoomLocators.zoomDefaultButton.waitFor({ state: 'detached' });
+    },
+    async turnOnMacromoleculesEditor(
+      options: {
+        enableFlexMode?: boolean;
+        goToPeptides?: boolean;
+      } = { enableFlexMode: true, goToPeptides: true },
+    ) {
+      const switcher = locators.ketcherModeSwitcherCombobox;
+      expect(switcher).toBeVisible();
+      await switcher.click();
+      const macroOption = page.getByTestId('macromolecules_mode');
+      expect(macroOption).toBeVisible();
+      await macroOption.click();
 
-export async function turnOnMicromoleculesEditor(page: Page) {
-  const ketcherModeSwitcherCombobox =
-    topRightToolbarLocators(page).ketcherModeSwitcherCombobox;
-  expect(ketcherModeSwitcherCombobox).toBeVisible();
-  await ketcherModeSwitcherCombobox.click();
-  expect(page.getByTestId(MOLECULES_MODE)).toBeVisible();
-  await page.getByTestId(MOLECULES_MODE).click();
-}
+      expect(page.getByTestId('layout-mode')).toBeVisible();
+
+      if (options.enableFlexMode) {
+        await selectFlexLayoutModeTool(page);
+      } else if (options.goToPeptides) {
+        await goToPeptidesTab(page);
+      } else {
+        await page
+          .getByTestId('summary-Nucleotides')
+          .waitFor({ state: 'visible' });
+      }
+
+      await page.evaluate(() => {
+        // Temporary solution to disable autozoom for the polymer editor in e2e tests
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        window._ketcher_isAutozoomDisabled = true;
+      });
+    },
+
+    async turnOnMicromoleculesEditor() {
+      const switcher = locators.ketcherModeSwitcherCombobox;
+      expect(switcher).toBeVisible();
+      await switcher.click();
+      const microOption = page.getByTestId('molecules_mode');
+      expect(microOption).toBeVisible();
+      await microOption.click();
+    },
+  };
+};
+
+export type CommonTopRightToolbarType = ReturnType<
+  typeof CommonTopRightToolbar
+>;

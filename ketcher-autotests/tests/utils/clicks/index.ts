@@ -14,7 +14,7 @@ import { AtomLabelType, DropdownIds, DropdownToolIds } from './types';
 import { waitForItemsToMergeInitialization } from '@utils/common/loaders/waitForRender';
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { getBondById } from '@utils/canvas/bonds/getBondByIndex/getBondByIndex';
-import { commonLeftToolbarLocators } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 
 type BoundingBox = {
   width: number;
@@ -45,7 +45,7 @@ export async function clickInTheMiddleOfTheScreen(
   page: Page,
   button: 'left' | 'right' = 'left',
 ) {
-  await page.waitForSelector('body', { state: 'attached' });
+  await page.waitForSelector('body', { state: 'attached', timeout: 10000 });
   const boundingBox = await page.locator('body').boundingBox();
   if (!boundingBox) {
     throw new Error('Unable to get boundingBox for <body>');
@@ -262,7 +262,7 @@ export async function moveOnBond(
 }
 
 export async function openDropdown(page: Page, dropdownElementId: DropdownIds) {
-  await commonLeftToolbarLocators(page).handToolButton.click();
+  await CommonLeftToolbar(page).handToolButton.click();
   // There is a bug in Ketcher – if we click on button too fast, dropdown menu is not opened
   const button = page.getByTestId(dropdownElementId);
   await button.isVisible();

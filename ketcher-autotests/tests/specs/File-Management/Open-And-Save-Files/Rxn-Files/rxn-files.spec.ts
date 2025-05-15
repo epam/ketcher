@@ -25,29 +25,23 @@ import {
   setBondLengthValue,
   openSettings,
   clickOnCanvas,
-  selectLayoutTool,
   setHashSpacingValue,
   setHashSpacingOptionUnit,
   openBondsSettingsSection,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
-import {
-  getTextAreaValue,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
-  await selectSaveTool(page);
-  const textareaText = await getTextAreaValue(page);
+  await TopLeftToolbar(page).saveFile();
+  const textareaText = await SaveStructureDialog(page).getTextAreaValue();
   const expectedSentence = '$RXN';
   wantedResult
     ? expect(textareaText?.startsWith(expectedSentence)).toBeTruthy()
@@ -81,8 +75,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Description: Reaction from file that contains Rgroup
      */
     test.slow();
-    const saveButton = saveStructureDialog(page).saveButton;
-    const cancelButton = saveStructureDialog(page).cancelButton;
+    const saveButton = SaveStructureDialog(page).saveButton;
 
     const xOffsetFromCenter = 40;
     await drawBenzeneRing(page);
@@ -92,10 +85,10 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await page.getByRole('button', { name: 'Apply' }).click();
     await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
     await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
 
-    await cancelButton.click();
+    await SaveStructureDialog(page).cancel();
     await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
     await setAttachmentPoints(
       page,
@@ -103,16 +96,16 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       { primary: true },
       'Apply',
     );
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
 
-    await cancelButton.click();
+    await SaveStructureDialog(page).cancel();
     await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
     await page.getByRole('button', { name: 'R22' }).click();
     await page.getByRole('button', { name: 'Apply' }).click();
-    await selectSaveTool(page);
+    await TopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
   });
 
@@ -172,7 +165,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await savedFileInfoStartsWithRxn(page);
 
     await pressButton(page, 'Cancel');
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, xCoordinatesWithShiftHalf, yCoordinatesWithShift);
     await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
     const yArrowStart = y + yDelta20;
@@ -182,7 +175,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await savedFileInfoStartsWithRxn(page, true);
 
     await pressButton(page, 'Cancel');
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
@@ -379,7 +372,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-phosphates.ket',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);
@@ -410,7 +403,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-peptides.ket',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);
@@ -441,7 +434,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-nucleotides.ket',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
     await page.mouse.move(100, 500);
     await dragMouseTo(700, 100, page);
@@ -472,7 +465,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-chems.ket',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);
@@ -502,7 +495,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-bases.ket',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);
@@ -533,7 +526,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       'KET/unsplit-nucleotides-connected-with-sugars.ket',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);
@@ -1207,7 +1200,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await setReactionMarginSizeValue(page, '47.8');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1234,7 +1227,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -1261,7 +1254,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

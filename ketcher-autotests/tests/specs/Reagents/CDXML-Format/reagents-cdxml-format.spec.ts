@@ -7,12 +7,9 @@ import {
   waitForPageInit,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import {
-  chooseFileFormat,
-  saveStructureDialog,
-} from '@tests/pages/common/SaveStructureDialog';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Reagents CDXML format', () => {
   test.beforeEach(async ({ page }) => {
@@ -30,8 +27,10 @@ test.describe('Reagents CDXML format', () => {
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.CDXML,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -47,8 +46,10 @@ test.describe('Reagents CDXML format', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.CDXML,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -61,8 +62,10 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect text NH3 as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
     await openFileAndAddToCanvas('KET/reagent-nh3-text-above-arrow.ket', page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.CDXML,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -75,8 +78,10 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect text HCl below arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
     await openFileAndAddToCanvas('KET/reagent-hcl-text-below-arrow.ket', page);
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.CDXML,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -85,15 +90,16 @@ test.describe('Reagents CDXML format', () => {
     Test case: EPMLSOPKET-4721
     Description: File saved in format (e.g. "ketcher.cdxml")
     */
-    const saveButton = saveStructureDialog(page).saveButton;
     await openFileAndAddToCanvas(
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
 
-    await selectSaveTool(page);
-    await chooseFileFormat(page, MoleculesFileFormatType.CDXML);
-    await saveButton.click();
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.CDXML,
+    );
+    await SaveStructureDialog(page).save();
     await takeEditorScreenshot(page);
   });
 

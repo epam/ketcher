@@ -19,15 +19,6 @@ import {
   takeTopToolbarScreenshot,
   selectAllStructuresOnCanvas,
 } from '@utils';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  turnOnMacromoleculesEditor,
-  selectZoomOutTool,
-  selectZoomInTool,
-} from '@tests/pages/common/TopRightToolbar';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import {
   keyboardPressOnCanvas,
@@ -35,6 +26,8 @@ import {
 } from '@utils/keyboard/index';
 import { createAntisenseStrandByButton } from '@utils/macromolecules/monomer';
 import { switchToDNAMode } from '@utils/macromolecules/sequence';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 export async function clickOnTriangle(page: Page) {
   const expandButton = page
@@ -46,7 +39,7 @@ export async function clickOnTriangle(page: Page) {
 test.describe('Sequence Mode', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Open monomers chains and switch to sequence mode', async ({ page }) => {
@@ -200,7 +193,7 @@ test.describe('Sequence Mode', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await selectSequenceLayoutModeTool(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -462,10 +455,10 @@ test.describe('Sequence Mode', () => {
     */
     await selectSequenceLayoutModeTool(page);
     await startNewSequence(page);
-    await selectZoomOutTool(page, 3);
+    await CommonTopRightToolbar(page).selectZoomOutTool(3);
     await keyboardTypeOnCanvas(page, 'ac');
     await takeEditorScreenshot(page);
-    await selectZoomInTool(page, 2);
+    await CommonTopRightToolbar(page).selectZoomInTool(2);
     await keyboardPressOnCanvas(page, 'g');
     await keyboardPressOnCanvas(page, 'Escape');
     await takeEditorScreenshot(page);
@@ -1135,7 +1128,43 @@ test.describe('Sequence Mode', () => {
         modifiedAminoAcid,
       );
       await takeEditorScreenshot(page);
-      await selectClearCanvasTool(page);
+      await TopLeftToolbar(page).clearCanvas();
     }
+  });
+
+  test('Check that adjusted Add new sequence control width to longest sequence around it', async ({
+    page,
+  }) => {
+    /*
+     * Test task: https://github.com/epam/ketcher/issues/7104
+     * Description: Check that adjusted Add new sequence control width to longest sequence around it
+     * Case:
+     *      1. Switch to sequence mode
+     *      2. Open HELM with chains of different lenght
+     *      3. Hover mouse over first new sequence button
+     *      3. Take a screenshot to verify that all modified amino acids are marked
+     */
+    const newSequenceButton = page.getByTestId('NewSequencePlusButton');
+    await selectSequenceLayoutModeTool(page);
+
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      `PEPTIDE1{A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A}|PEPTIDE2{A.A.A.A.A.A.A.A.A}|PEPTIDE3{A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A.A}|PEPTIDE4{A.A.A.A}$$$$V2.0`,
+    );
+
+    await newSequenceButton.nth(0).hover({ force: true });
+    await takeEditorScreenshot(page);
+
+    await newSequenceButton.nth(1).hover({ force: true });
+    await takeEditorScreenshot(page);
+
+    await newSequenceButton.nth(2).hover({ force: true });
+    await takeEditorScreenshot(page);
+
+    await newSequenceButton.nth(3).hover({ force: true });
+    await takeEditorScreenshot(page);
+
+    await TopLeftToolbar(page).clearCanvas();
   });
 });

@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-magic-numbers */
 import { chooseTab, Tabs } from '@utils/macromolecules';
+import path from 'path';
 import { Page, test } from '@playwright/test';
 import {
   dragMouseTo,
@@ -19,19 +20,22 @@ import {
   waitForRender,
   resetCurrentTool,
   resetZoomLevelToDefault,
+  takeElementScreenshot,
+  selectAllStructuresOnCanvas,
+  clickInTheMiddleOfTheScreen,
+  selectFlexLayoutModeTool,
+  selectSequenceLayoutModeTool,
 } from '@utils';
-import {
-  pressRedoButton,
-  pressUndoButton,
-  selectClearCanvasTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  setZoomInputValue,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import {
+  FileType,
+  verifyFileExport,
+} from '@utils/files/receiveFileComparisonData';
 
 async function clickOnAtomOfExpandedMonomer(page: Page, atomId: number) {
   await clickOnAtomById(page, atomId);
@@ -77,12 +81,12 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
 test.afterEach(async () => {
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
 });
 
@@ -105,7 +109,7 @@ interface IMonomer {
 // Unable to stabilize because of Undo/redo shift object on the canvas
 // test.describe('Move collapsed monomer on Micro and Undo: ', () => {
 //   test.beforeEach(async () => {
-//     await turnOnMicromoleculesEditor(page);
+//     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 //   });
 
 //   const movableCollapsedMonomers: IMonomer[] = [
@@ -276,7 +280,7 @@ interface IMonomer {
 //        */
 //       if (movableCollapsedMonomer.pageReloadNeeded) {
 //         await pageReload(page);
-//         await turnOnMicromoleculesEditor(page);
+//         await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 //       }
 
 //       await openFileAndAddToCanvasAsNewProject(
@@ -296,7 +300,7 @@ interface IMonomer {
 //       await moveMouseToTheMiddleOfTheScreen(page);
 //       await takeEditorScreenshot(page);
 
-//       await pressUndoButton(page);
+//       await TopLeftToolbar(page).undo();
 //       await takeEditorScreenshot(page);
 
 //       // Test should be skipped if related bug exists
@@ -354,7 +358,7 @@ const movableExpandedMonomers: IMonomer[] = [
 
 test.describe('Move in expanded state on Micro canvas: ', () => {
   test.beforeEach(async () => {
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   });
 
   for (const movableExpandedMonomer of movableExpandedMonomers) {
@@ -394,7 +398,7 @@ test.describe('Move in expanded state on Micro canvas: ', () => {
 
 test.describe('Move expanded monomer on Micro and Undo: ', () => {
   test.beforeEach(async () => {
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   });
 
   for (const movableExpandedMonomer of movableExpandedMonomers) {
@@ -423,7 +427,7 @@ test.describe('Move expanded monomer on Micro and Undo: ', () => {
       await moveMouseToTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
 
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -456,13 +460,13 @@ test(`Verify that the system supports undo/redo functionality for expanding and 
    *       4. Take screenshot to witness final position
    *       5. Press Redo button
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
   await expandMonomer(page, expandableMonomer.monomerLocatorText);
   await takeEditorScreenshot(page);
-  await pressUndoButton(page);
+  await TopLeftToolbar(page).undo();
   await takeEditorScreenshot(page);
-  await pressRedoButton(page);
+  await TopLeftToolbar(page).redo();
   await takeEditorScreenshot(page);
 });
 
@@ -478,12 +482,12 @@ test(`Verify switching back from micro mode to macro mode with expanded and coll
    *       4. Switch to Micro mode
    *       6. Take screenshot to witness final position
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
   await expandMonomer(page, expandableMonomer.monomerLocatorText);
   await takeEditorScreenshot(page);
-  await turnOnMacromoleculesEditor(page);
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
   await takeEditorScreenshot(page);
 
   test.fixme(
@@ -511,7 +515,7 @@ test(`Verify that the system supports copy/paste functionality for collapsed mon
    *       4. Paste it to the canvas
    *       5. Take screenshot to witness final position
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(copyableMonomer.KETFile, page);
   await takeEditorScreenshot(page);
@@ -540,7 +544,7 @@ test(`Verify that the system supports cut/paste functionality for collapsed mono
    *       4. Paste it to the canvas
    *       5. Take screenshot to witness final position
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(cutableMonomer.KETFile, page);
   await takeEditorScreenshot(page);
@@ -565,7 +569,7 @@ test(`Verify that the system supports copy/paste functionality for expanded mono
    *       6. Paste it to the canvas
    *       7. Take screenshot to witness final position
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(copyableMonomer.KETFile, page);
   await expandMonomer(page, copyableMonomer.monomerLocatorText);
@@ -597,7 +601,7 @@ test(`Verify that the system supports cut/paste functionality for expanded monom
    *       6. Paste it to the canvas
    *       7. Take screenshot to witness final position
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(cutableMonomer.KETFile, page);
   await expandMonomer(page, cutableMonomer.monomerLocatorText);
@@ -625,13 +629,13 @@ test(`Verify that "Expand monomer" does not break cyclic structures when the rin
    *       3. Expand all monomers from cycle
    *       4. Take screenshot to witness final position
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All type of monomers cycled.ket',
     page,
   );
-  await setZoomInputValue(page, '50');
+  await CommonTopRightToolbar(page).setZoomInputValue('50');
   await resetCurrentTool(page);
   await takeEditorScreenshot(page);
   await expandMonomer(page, 'A');
@@ -659,13 +663,13 @@ test(`Verify that expanding multiple monomers works in a left-to-right order wit
    *       3. Expand all monomers from  chain (from right to left)
    *       4. Take screenshot to witness final position
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',
     page,
   );
-  await setZoomInputValue(page, '50');
+  await CommonTopRightToolbar(page).setZoomInputValue('50');
   await resetCurrentTool(page);
   await takeEditorScreenshot(page);
   await expandMonomer(page, '12ddR');
@@ -693,13 +697,13 @@ test(`Verify that expanding multiple monomers works in a top-to-bottom order wit
    *       3. Expand all monomers from chain (from top to bottom)
    *       4. Take screenshot to witness final position
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All type of monomers in vertical chain.ket',
     page,
   );
-  await setZoomInputValue(page, '40');
+  await CommonTopRightToolbar(page).setZoomInputValue('40');
   await resetCurrentTool(page);
   await takeEditorScreenshot(page);
   await expandMonomer(page, 'oC64m5');
@@ -727,7 +731,7 @@ test(`Verify that expanding monomers with big mircomolecule ring structures in t
    *       3. Expand all monomers from chain (from right to left)
    *       4. Take screenshot to witness final position
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain and large micromolecule in the middle.ket',
@@ -777,7 +781,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
    *           3.4 Press Cancel in appeared Abbriviation dialog
    *           3.5 Undo changes to collapse momomer back
    */
-  await turnOnMicromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
   await openFileAndAddToCanvasAsNewProject(
     'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',
@@ -787,13 +791,13 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 
   for (const monomer of monomers) {
     await expandMonomer(page, monomer.name);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
     await pressCancelAtEditAbbreviationDialog(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
   }
 });
 
@@ -842,7 +846,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 
 // test.describe('Trying to change: ', () => {
 //   test.beforeEach(async () => {
-//     await turnOnMicromoleculesEditor(page);
+//     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 //   });
 
 //   for (const tryToChangeMonomer of tryToChangeMonomers) {
@@ -869,14 +873,14 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
 //       );
 //       await expandMonomer(page, tryToChangeMonomer.monomerLocatorText);
 //       await takeEditorScreenshot(page);
-//       const atomToolbar = rightToolbar(page);
+//       const atomToolbar = RightToolbar(page);
 
 //       await atomToolbar.clickAtom(Atom.Bromine);
 //       await clickOnAtomOfExpandedMonomer(page, 1);
 //       await takeEditorScreenshot(page);
 //       await pressCancelAtEditAbbreviationDialog(page);
 
-//       await bondSelectionTool(page, MicroBondType.Triple);
+//       await CommonLeftToolbar(page).selectBondTool(MicroBondType.Triple);
 //       await clickOnBondOfExpandedMonomer(page, 1);
 //       await takeEditorScreenshot(page);
 //       await pressCancelAtEditAbbreviationDialog(page);
@@ -912,7 +916,7 @@ test(
      *           3.8 Take screenshot to witness monomer got collapsed
      */
     test.slow();
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
 
     await openFileAndAddToCanvasAsNewProject(
       'KET/Micro-Macro-Switcher/All type of monomers in horisontal chain.ket',
@@ -926,17 +930,17 @@ test(
     for (const monomer of monomers) {
       await expandMonomer(page, monomer.name);
       await clickOnAtomOfExpandedMonomer(page, monomer.AtomId);
-      await selectEraseTool(page);
+      await CommonLeftToolbar(page).selectEraseTool();
       // Pic 2, 5, 8, 11, 14, 17
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       // Pic 3, 6, 9, 12, 15, 18
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
       // Pic 4, 6, 10, 13, 16, 19
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -944,3 +948,683 @@ test(
     }
   },
 );
+
+const expandableMonomers: IMonomer[] = [
+  {
+    monomerDescription: '1. Petide D (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/1. Petide D (from library).ket',
+    monomerLocatorText: 'D',
+  },
+  {
+    monomerDescription: '2. Sugar UNA (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/2. Sugar UNA (from library).ket',
+    monomerLocatorText: 'UNA',
+  },
+  {
+    monomerDescription: '3. Base hU (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/3. Base hU (from library).ket',
+    monomerLocatorText: 'hU',
+  },
+  {
+    monomerDescription: '4. Phosphate bnn (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/4. Phosphate bnn (from library).ket',
+    monomerLocatorText: 'bnn',
+  },
+  {
+    monomerDescription: '5. Unsplit nucleotide 5hMedC (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/5. Unsplit nucleotide 5hMedC (from library).ket',
+    monomerLocatorText: '5hMedC',
+  },
+  {
+    monomerDescription: '6. CHEM 4aPEGMal (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Basic-Monomers/Positive/6. CHEM 4aPEGMal (from library).ket',
+    monomerLocatorText: '4aPEGMal',
+  },
+];
+
+test.describe('Check that in preview expanded monomers exported both to PNG in their atom and bond form: ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const expandableMonomer of expandableMonomers) {
+    test(`${expandableMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7036
+       * Description: Check that in preview expanded monomers exported both to PNG in their atom and bond form
+       *
+       * Case: 1. Load monomer on Molecules canvas
+       *       2. Expand it
+       *       3. Open Save dialog and select PNG Image option
+       *       4. Take screenshot to witness export preview
+       */
+      test.fixme(
+        true,
+        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
+      );
+
+      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
+      await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
+
+      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.PNGImage,
+      );
+      const previewAreaTestId =
+        (await saveStructureArea.getAttribute('data-testid')) || '';
+      await takeElementScreenshot(page, previewAreaTestId);
+      await SaveStructureDialog(page).cancel();
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+test.describe('Check that in preview expanded monomers exported both to SVG in their atom and bond form: ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const expandableMonomer of expandableMonomers) {
+    test(`${expandableMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7036
+       * Description: Check that in preview expanded monomers exported both to SVG in their atom and bond form
+       *
+       * Case: 1. Load monomer on Molecules canvas
+       *       2. Expand it
+       *       3. Open Save dialog and select SVG Document option
+       *       4. Take screenshot to witness export preview
+       */
+      test.fixme(
+        true,
+        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
+      );
+
+      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
+      await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
+
+      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.SVGDocument,
+      );
+      const previewAreaTestId =
+        (await saveStructureArea.getAttribute('data-testid')) || '';
+      await takeElementScreenshot(page, previewAreaTestId);
+      await SaveStructureDialog(page).cancel();
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+test.describe('Check that any flipping of the expanded monomers reflected in the exported PNG images: ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const expandableMonomer of expandableMonomers) {
+    test(`${expandableMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7036
+       * Description: Check that any flipping of the expanded monomers reflected in the exported PNG images
+       *
+       * Case: 1. Load monomer on Molecules canvas
+       *       2. Expand it
+       *       3. Select it all
+       *       4. Flip it
+       *       5. Open Save dialog and select PNG Image option
+       *       6. Take screenshot to witness export preview
+       */
+      test.fixme(
+        true,
+        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
+      );
+
+      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
+
+      await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
+      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      await clickOnCanvas(page, 0, 0);
+      await selectAllStructuresOnCanvas(page);
+      await page.keyboard.press('Alt+V');
+
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.PNGImage,
+      );
+      const previewAreaTestId =
+        (await saveStructureArea.getAttribute('data-testid')) || '';
+      await takeElementScreenshot(page, previewAreaTestId);
+      await SaveStructureDialog(page).cancel();
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+test.describe('Check that any flipping of the expanded monomers reflected in the exported SVG images: ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const expandableMonomer of expandableMonomers) {
+    test(`${expandableMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7036
+       * Description: Check that any flipping of the expanded monomers reflected in the exported SVG images
+       *
+       * Case: 1. Load monomer on Molecules canvas
+       *       2. Expand it
+       *       3. Select it all
+       *       4. Flip it
+       *       5. Open Save dialog and select SVG Document option
+       *       6. Take screenshot to witness export preview
+       */
+      test.fixme(
+        true,
+        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
+      );
+
+      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
+
+      await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
+      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      await clickOnCanvas(page, 0, 0);
+      await selectAllStructuresOnCanvas(page);
+      await page.keyboard.press('Alt+V');
+
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.SVGDocument,
+      );
+      const previewAreaTestId =
+        (await saveStructureArea.getAttribute('data-testid')) || '';
+      await takeElementScreenshot(page, previewAreaTestId);
+      await SaveStructureDialog(page).cancel();
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+test.describe('Check that any rotating of the expanded monomers reflected in the exported PNG images: ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const expandableMonomer of expandableMonomers) {
+    test(`${expandableMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7036
+       * Description: Check that any flipping of the expanded monomers reflected in the exported PNG images
+       *
+       * Case: 1. Load monomer on Molecules canvas
+       *       2. Expand it
+       *       3. Select it all
+       *       4. Flip it
+       *       5. Open Save dialog and select PNG Image option
+       *       6. Take screenshot to witness export preview
+       */
+      test.fixme(
+        true,
+        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
+      );
+
+      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
+      const rotationHandle = page.getByTestId('rotation-handle');
+
+      await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
+      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      await clickOnCanvas(page, 0, 0);
+      await selectAllStructuresOnCanvas(page);
+      await rotationHandle.hover();
+      await dragMouseTo(750, 150, page);
+
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.PNGImage,
+      );
+      const previewAreaTestId =
+        (await saveStructureArea.getAttribute('data-testid')) || '';
+      await takeElementScreenshot(page, previewAreaTestId);
+      await SaveStructureDialog(page).cancel();
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+test.describe('Check that any rotating of the expanded monomers reflected in the exported SVG images: ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const expandableMonomer of expandableMonomers) {
+    test(`${expandableMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7036
+       * Description: Check that any flipping of the expanded monomers reflected in the exported SVG images
+       *
+       * Case: 1. Load monomer on Molecules canvas
+       *       2. Expand it
+       *       3. Select it all
+       *       4. Flip it
+       *       5. Open Save dialog and select SVG Document option
+       *       6. Take screenshot to witness export preview
+       */
+      test.fixme(
+        true,
+        `Doesn't work because of https://github.com/epam/Indigo/issues/2888 issue(s).`,
+      );
+
+      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
+      const rotationHandle = page.getByTestId('rotation-handle');
+
+      await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
+      await expandMonomer(page, expandableMonomer.monomerLocatorText);
+      await clickOnCanvas(page, 0, 0);
+      await selectAllStructuresOnCanvas(page);
+      await rotationHandle.hover();
+      await dragMouseTo(750, 150, page);
+
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.SVGDocument,
+      );
+      const previewAreaTestId =
+        (await saveStructureArea.getAttribute('data-testid')) || '';
+      await takeElementScreenshot(page, previewAreaTestId);
+      await SaveStructureDialog(page).cancel();
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+test.describe('Check that non-expanded monomers exported as their symbols in PNG: ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const expandableMonomer of expandableMonomers) {
+    test(`${expandableMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7036
+       * Description: Check that non-expanded monomers exported as their symbols in PNG
+       *
+       * Case: 1. Load monomer on Molecules canvas
+       *       2. Open Save dialog and select PNG Image option
+       *       3. Take screenshot to witness export preview
+       */
+      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
+
+      await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
+
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.PNGImage,
+      );
+
+      const previewAreaTestId =
+        (await saveStructureArea.getAttribute('data-testid')) || '';
+      await takeElementScreenshot(page, previewAreaTestId);
+
+      await SaveStructureDialog(page).cancel();
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+test.describe('Check that non-expanded monomers exported as their symbols in SVG: ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const expandableMonomer of expandableMonomers) {
+    test(`${expandableMonomer.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7036
+       * Description: Check that non-expanded monomers exported as their symbols in SVG
+       *
+       * Case: 1. Load monomer on Molecules canvas
+       *       2. Open Save dialog and select SVG Document option
+       *       3. Take screenshot to witness export preview
+       */
+      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
+
+      await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
+
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.SVGDocument,
+      );
+      const previewAreaTestId =
+        (await saveStructureArea.getAttribute('data-testid')) || '';
+      await takeElementScreenshot(page, previewAreaTestId);
+
+      await SaveStructureDialog(page).cancel();
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+const monomerCompositions: IMonomer[] = [
+  {
+    monomerDescription: '1. Petide L (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Expand-monomers/1. Petide L (from library) surrounded by all types of monomers.ket',
+    monomerLocatorText: 'L',
+  },
+  {
+    monomerDescription: '2. Sugar UNA (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Expand-monomers/2. Sugar UNA (from library) surrounded by all types of monomers.ket',
+    monomerLocatorText: 'UNA',
+  },
+  {
+    monomerDescription: '3. Base nC6n5C (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Expand-monomers/3. Base nC6n5C (from library) surrounded by all types of monomers.ket',
+    monomerLocatorText: 'nC6n5C',
+  },
+  {
+    monomerDescription: '4. Phosphate bnn (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Expand-monomers/4. Phosphate bnn (from library) surrounded by all types of monomers.ket',
+    monomerLocatorText: 'bnn',
+  },
+  {
+    monomerDescription: '5. Unsplit nucleotide Super-G (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Expand-monomers/5. Unsplit nucleotide Super-G (from library) surrounded by all types of monomers.ket',
+    monomerLocatorText: 'Super-G',
+  },
+  {
+    monomerDescription: '6. CHEM 4FB (from library)',
+    KETFile:
+      'KET/Micro-Macro-Switcher/Expand-monomers/6. CHEM 4FB (from library) surrounded by all types of monomers.ket',
+    monomerLocatorText: '4FB',
+  },
+];
+
+test.describe('Check that part expanded and part non-expanded monomers on same structure exported as their symbols and their atom and bond form in PNG: ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const monomerComposition of monomerCompositions) {
+    test(`${monomerComposition.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7036
+       * Description: Check that part expanded and part non-expanded monomers on same structure exported as their symbols and their atom and bond form in PNG
+       *
+       * Case: 1. Load monomer composition on Molecules canvas
+       *       2. Expand monomer at the center
+       *       2. Open Save dialog and select PNG Image option
+       *       3. Take screenshot to witness export preview
+       */
+      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
+
+      await openFileAndAddToCanvasAsNewProject(
+        monomerComposition.KETFile,
+        page,
+      );
+
+      await expandMonomer(page, monomerComposition.monomerLocatorText);
+
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.PNGImage,
+      );
+
+      const previewAreaTestId =
+        (await saveStructureArea.getAttribute('data-testid')) || '';
+      await takeElementScreenshot(page, previewAreaTestId);
+
+      await SaveStructureDialog(page).cancel();
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+test.describe('Check that part expanded and part non-expanded monomers on same structure exported as their symbols and their atom and bond form in SVG: ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const monomerComposition of monomerCompositions) {
+    test(`${monomerComposition.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7036
+       * Description: Check that part expanded and part non-expanded monomers on same structure exported as their symbols and their atom and bond form in SVG
+       *
+       * Case: 1. Load monomer composition on Molecules canvas
+       *       2. Expand monomer at the center
+       *       3. Open Save dialog and select SVG Document option
+       *       4. Take screenshot to witness export preview
+       */
+      const saveStructureArea = SaveStructureDialog(page).saveStructureTextarea;
+
+      await openFileAndAddToCanvasAsNewProject(
+        monomerComposition.KETFile,
+        page,
+      );
+
+      await expandMonomer(page, monomerComposition.monomerLocatorText);
+
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.SVGDocument,
+      );
+      const previewAreaTestId =
+        (await saveStructureArea.getAttribute('data-testid')) || '';
+      await takeElementScreenshot(page, previewAreaTestId);
+
+      await SaveStructureDialog(page).cancel();
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+test.describe('If a monomer is expanded in small molecules mode, that option should be stored by Ketcher: ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const monomerComposition of monomerCompositions) {
+    test(`${monomerComposition.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7086
+       * Description: If a monomer is expanded in small molecules mode, that option should be stored by Ketcher (and passed on to Indigo when appropriate - export/layout...)
+       *
+       * Case: 1. Load monomer composition on Molecules canvas
+       *       2. Expand monomer at the center
+       *       3. Validate export to Ket
+       *       4. Load export result to clean canvas
+       *       4. Take screenshot to witness result
+       */
+      const parsed = path.parse(monomerComposition.KETFile);
+      const exportResultFileName = path.join(
+        parsed.dir,
+        `${parsed.name}-expected${parsed.ext}`,
+      );
+
+      await openFileAndAddToCanvasAsNewProject(
+        monomerComposition.KETFile,
+        page,
+      );
+
+      await expandMonomer(page, monomerComposition.monomerLocatorText);
+      await verifyFileExport(page, exportResultFileName, FileType.KET);
+
+      await openFileAndAddToCanvasAsNewProject(exportResultFileName, page);
+      await takeEditorScreenshot(page);
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+test.describe('Check that if a monomer is manipulated (rotated, flipped) in small molecules mode, the manipulations stored by Ketcher even if the monomer is later collapsed: ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const monomerComposition of monomerCompositions) {
+    test(`${monomerComposition.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7086
+       * Description: Check that if a monomer is manipulated (rotated, flipped) in small molecules mode, the manipulations stored by Ketcher even if the monomer is later collapsed
+       *
+       * Case: 1. Load monomer composition on Molecules canvas
+       *       2. Expand monomer
+       *       3. Flip it
+       *       4. Rotate it
+       *       5. Collapse monomer
+       *       6. Validate export to Ket
+       *       7. Load export result to clean canvas
+       *       8. Take screenshot to witness result
+       */
+      const parsed = path.parse(monomerComposition.KETFile);
+      const exportResultFileName = path.join(
+        parsed.dir,
+        `${parsed.name}-expected2${parsed.ext}`,
+      );
+      const rotationHandle = page.getByTestId('rotation-handle');
+
+      await openFileAndAddToCanvasAsNewProject(
+        monomerComposition.KETFile,
+        page,
+      );
+
+      await expandMonomer(page, monomerComposition.monomerLocatorText);
+      await clickOnCanvas(page, 0, 0);
+      await selectAllStructuresOnCanvas(page);
+      await page.keyboard.press('Alt+V');
+      await rotationHandle.hover();
+      await dragMouseTo(950, 150, page);
+      await selectAllStructuresOnCanvas(page);
+      await clickInTheMiddleOfTheScreen(page, 'right');
+      await waitForRender(page, async () => {
+        await page.getByText('Collapse monomer').click();
+      });
+
+      await verifyFileExport(page, exportResultFileName, FileType.KET);
+
+      await openFileAndAddToCanvasAsNewProject(exportResultFileName, page);
+      await expandMonomer(page, monomerComposition.monomerLocatorText);
+      await takeEditorScreenshot(page);
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});
+
+test.describe('Check that when going back to macromolecules mode, the monomer is still be represented with a symbol (sequence) or with a shape (flex/snake): ', () => {
+  test.beforeEach(async () => {
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+  });
+
+  for (const monomerComposition of monomerCompositions) {
+    test(`${monomerComposition.monomerDescription}`, async () => {
+      /*
+       * Test task: https://github.com/epam/ketcher/issues/7086
+       * Description: Check that when going back to macromolecules mode, the monomer is still be represented with a symbol (sequence) or with a shape (flex/snake).
+       *
+       * Case: 1. Load monomer composition on Molecules canvas
+       *       2. Expand monomer
+       *       3. Flip it
+       *       4. Rotate it
+       *       5. Switch to Macromolecules mode - Flex mode
+       *       6. Take screenshot to witness result
+       *       7. Switch to Sequence mode
+       *       8. Take screenshot to witness result
+       */
+      const rotationHandle = page.getByTestId('rotation-handle');
+
+      await openFileAndAddToCanvasAsNewProject(
+        monomerComposition.KETFile,
+        page,
+      );
+
+      await expandMonomer(page, monomerComposition.monomerLocatorText);
+      await clickOnCanvas(page, 0, 0);
+      await selectAllStructuresOnCanvas(page);
+      await page.keyboard.press('Alt+V');
+      await rotationHandle.hover();
+      await dragMouseTo(950, 150, page);
+      await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+      await selectFlexLayoutModeTool(page);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+      await selectSequenceLayoutModeTool(page);
+      await takeEditorScreenshot(page, {
+        hideMonomerPreview: true,
+        hideMacromoleculeEditorScrollBars: true,
+      });
+
+      // Test should be skipped if related bug exists
+      test.fixme(
+        expandableMonomer.shouldFail === true,
+        `That test results are wrong because of ${expandableMonomer.issueNumber} issue(s).`,
+      );
+    });
+  }
+});

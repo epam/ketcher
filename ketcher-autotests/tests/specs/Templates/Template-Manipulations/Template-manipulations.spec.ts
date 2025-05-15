@@ -539,7 +539,6 @@ test.describe('Open Ketcher', () => {
      -click with template any atom of the created benzene; 
     Clear All.
     */
-    await page.getByTestId('template-0').hover();
     await drawBenzeneRing(page);
     await openFileAndAddToCanvas(
       'Molfiles-V2000/s-group-with-attachment-points.mol',
@@ -598,12 +597,11 @@ test.describe('Open Ketcher', () => {
     Verify if the full preview of the Template is displayed under the mouse cursor
     */
     const xOffsetFromCenter = 40;
-    await page.getByTestId('template-0').hover();
-    await page.getByTestId('template-0').click();
+    await BottomToolbar(page).Benzene();
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnTheCanvas(page, xOffsetFromCenter, 0);
     await takePageScreenshot(page);
-    await page.getByTestId('template-1').click();
+    await BottomToolbar(page).Cyclopentadiene();
     const point = await getRightAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
     await takePageScreenshot(page);
@@ -700,8 +698,7 @@ test.describe('Open Ketcher', () => {
     Description:
     Verify if merging these Templates after clicking matches the full preview of merging these Templates"
     */
-    await page.getByTestId('template-0').hover();
-    await page.getByTestId('template-0').click();
+    await BottomToolbar(page).Benzene();
     await clickInTheMiddleOfTheScreen(page);
     await takePageScreenshot(page);
     await BottomToolbar(page).StructureLibrary();

@@ -98,8 +98,8 @@ test.describe('Templates - Template Library', () => {
   test('Open Structure Library tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-4265
     // Verify Structure LIbrary tooltip
-    const button = page.getByTestId('template-lib');
-    await expect(button).toHaveAttribute(
+    const { structureLibraryButton } = BottomToolbar(page);
+    await expect(structureLibraryButton).toHaveAttribute(
       'title',
       'Structure Library (Shift+T)',
     );

@@ -81,7 +81,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: The brackets are rendered correctly around Atom
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 3);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     await takeEditorScreenshot(page);
@@ -93,7 +93,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: The brackets are rendered correctly around Bond
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 3);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     await takeEditorScreenshot(page);
@@ -106,7 +106,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     await takeEditorScreenshot(page);
   });
@@ -119,7 +119,7 @@ test.describe('Superatom S-Group tool', () => {
     const CANVAS_CLICK_X = 570;
     const CANVAS_CLICK_Y = 380;
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await fillFieldByLabel(page, 'Name', 'Test@!#$%12345');
     await pressButton(page, 'Apply');
@@ -189,7 +189,7 @@ test.describe('Superatom S-Group tool', () => {
       EDIT ABBREVIATION modal appears.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
-    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });
@@ -284,7 +284,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     await verifyFileExport(
       page,
@@ -304,7 +304,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await addQueryComponent(page);
 
     await verifyFileExport(

@@ -10,7 +10,6 @@ import { Page, expect, test } from '@playwright/test';
 import {
   FILE_TEST_DATA,
   FunctionalGroups,
-  LeftPanelButton,
   RingButton,
   SaltsAndSolvents,
   addMonomersToFavorites,
@@ -31,9 +30,7 @@ import {
   pasteFromClipboardAndOpenAsNewProject,
   pressButton,
   readFileContent,
-  selectDropdownTool,
   selectFunctionalGroups,
-  selectLeftPanelButton,
   selectMonomer,
   selectRing,
   selectSaltsAndSolvents,
@@ -91,7 +88,9 @@ import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 
 const topLeftCorner = {
   x: -325,
@@ -911,13 +910,13 @@ test.describe('Macro-Micro-Switcher', () => {
     );
     const modifier = getControlModifier();
     await keyboardPressOnCanvas(page, `${modifier}+a`);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
     await keyboardPressOnCanvas(page, `${modifier}+a`);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
   });
 
@@ -1945,7 +1944,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
     await setAttachmentPoints(
@@ -1966,7 +1965,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await page.getByText('R1').click();
     await page.getByText('R18').click();
     await pressButton(page, 'Apply');
@@ -1982,7 +1981,7 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
     await clickOnAtom(page, 'C', 2);
@@ -2000,12 +1999,12 @@ test.describe('Macro-Micro-Switcher', () => {
       'KET/one-attachment-point-added-in-micro-mode.ket',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
+    await LeftToolbar(page).chargePlus();
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
     await clickOnAtom(page, 'C', 2);
     await takeEditorScreenshot(page);
-    await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
+    await LeftToolbar(page).chargeMinus();
     await page.getByText('R1').click();
     await takeEditorScreenshot(page);
     await clickOnAtom(page, 'C', 2);

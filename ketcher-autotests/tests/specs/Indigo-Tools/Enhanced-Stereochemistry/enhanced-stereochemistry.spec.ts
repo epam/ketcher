@@ -78,7 +78,7 @@ async function selectRadioButtonForNewGroup(
   selectRadioButton: string,
   cancelChanges = false,
 ) {
-  await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+  await LeftToolbar(page).stereochemestry();
   await page.getByLabel(selectRadioButton).check();
 
   await pressButton(page, cancelChanges ? 'Cancel' : 'Apply');
@@ -167,7 +167,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
     );
     await clickOnAtom(page, 'C', 1);
-    await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await LeftToolbar(page).stereochemestry();
     await takeEditorScreenshot(page);
   });
 
@@ -218,7 +218,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/same-marks-stereostructure.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await LeftToolbar(page).stereochemestry();
     await takeEditorScreenshot(page);
   });
 
@@ -233,7 +233,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'KET/different-marks-stereostructure.ket',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await LeftToolbar(page).stereochemestry();
     await takeEditorScreenshot(page);
   });
 
@@ -575,7 +575,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/stereo-structure-enchanced.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await LeftToolbar(page).stereochemestry();
     await takeEditorScreenshot(page);
   });
 
@@ -588,7 +588,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     one OR group has been created on the canvas.
     */
     await openFileAndAddToCanvas('KET/mixed-and-or-structure.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await LeftToolbar(page).stereochemestry();
     await takeEditorScreenshot(page);
   });
 

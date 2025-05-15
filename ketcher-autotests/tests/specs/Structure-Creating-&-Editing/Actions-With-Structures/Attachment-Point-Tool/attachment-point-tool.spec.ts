@@ -33,7 +33,7 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -68,7 +68,7 @@ test.describe('Attachment Point Tool', () => {
     Description: The Attachment Points dialog box is opened.
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });
@@ -79,7 +79,7 @@ test.describe('Attachment Point Tool', () => {
     Description: Check-mark are checked.
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
@@ -92,7 +92,7 @@ test.describe('Attachment Point Tool', () => {
     Description: All four Attachment points added to atoms of chain.
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 2 },
@@ -123,7 +123,7 @@ test.describe('Attachment Point Tool', () => {
     Undo removes two attachment points and Redo puts them back.
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 2 },
@@ -162,7 +162,7 @@ test.describe('Attachment Point Tool', () => {
     Description: Nothing is changed, the attachment points don't appear.
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 2 },
@@ -189,7 +189,7 @@ test.describe('Attachment Point Tool', () => {
     const clickToOutsideStructureX = 100;
     const clickToOutsideStructureY = 100;
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnCanvas(
       page,
       clickToOutsideStructureX,
@@ -206,7 +206,7 @@ test.describe('Attachment Point Tool', () => {
     Previously modified attachment point is changed with primary attachment point.
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
@@ -238,7 +238,7 @@ test.describe('Attachment Point Tool', () => {
     Description: User is able to remove the attachment points.
     */
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 2 },
@@ -309,7 +309,7 @@ test.describe('Attachment Point Tool', () => {
     and plus sign(s) are present on the canvas.
     */
     await openFileAndAddToCanvas('KET/reaction-with-arrow-and-plus.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 2 },
@@ -772,7 +772,7 @@ test.describe('Attachment Point Tool', () => {
     the attachment point labels near the curve line.
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
@@ -798,7 +798,7 @@ test.describe('Attachment Point Tool', () => {
     removing the attachment point labels near the curve line.
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
@@ -824,7 +824,7 @@ test.describe('Attachment Point Tool', () => {
     attachment point labels near the curve line.
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },

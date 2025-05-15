@@ -13,11 +13,8 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   takePageScreenshot,
   selectSequenceLayoutModeTool,
-  openDropdown,
   openFileAndAddToCanvasAsNewProject,
   takeLeftToolbarMacromoleculeScreenshot,
-  selectLeftPanelButton,
-  LeftPanelButton,
   pressButton,
   openSettings,
   openBondsSettingsSection,
@@ -45,6 +42,7 @@ import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -223,7 +221,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Open arrow menu in toobar
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openDropdown(page, 'reaction-arrow-open-angle');
+    await LeftToolbar(page).expandArrowToolsDropdown();
     await takeEditorScreenshot(page);
   });
 
@@ -408,7 +406,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       'KET/Bugs/Two nucleotides.ket',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await LeftToolbar(page).stereochemestry();
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
   });

@@ -16,7 +16,7 @@ export async function drawReactionWithTwoBenzeneRings(
   arrowLenght: number,
 ) {
   await drawBenzeneRing(page);
-  await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+  await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
   const firstBenzineTopAtom = await getCoordinatesTopAtomOfBenzeneRing(page);
   await page.mouse.move(
     firstBenzineTopAtom.x,

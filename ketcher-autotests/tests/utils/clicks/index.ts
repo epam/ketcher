@@ -3,18 +3,17 @@ import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import {
   BondType,
-  ReactionMappingTool,
   resetCurrentTool,
   selectButtonById,
-  selectNestedTool,
   takeEditorScreenshot,
   waitForRender,
 } from '..';
-import { AtomLabelType, DropdownIds, DropdownToolIds } from './types';
+import { AtomLabelType } from './types';
 import { waitForItemsToMergeInitialization } from '@utils/common/loaders/waitForRender';
 import { getAtomById } from '@utils/canvas/atoms/getAtomByIndex/getAtomByIndex';
 import { getBondById } from '@utils/canvas/bonds/getBondByIndex/getBondByIndex';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 
 type BoundingBox = {
   width: number;
@@ -261,37 +260,15 @@ export async function moveOnBond(
   await page.mouse.move(point.x, point.y);
 }
 
-export async function openDropdown(page: Page, dropdownElementId: DropdownIds) {
-  await CommonLeftToolbar(page).handToolButton.click();
-  // There is a bug in Ketcher – if we click on button too fast, dropdown menu is not opened
-  const button = page.getByTestId(dropdownElementId);
-  await button.isVisible();
-  await button.click({ delay: 200, clickCount: 2 });
-  const dropdown = page.locator('.default-multitool-dropdown');
-  if (!(await dropdown.isVisible({ timeout: 200 }))) {
-    await button.click();
-  }
-}
-
-export async function selectDropdownTool(
-  page: Page,
-  toolName: DropdownIds,
-  toolTypeId: DropdownToolIds,
-) {
-  await openDropdown(page, toolName);
-  const button = page.locator(
-    `.default-multitool-dropdown [data-testid="${toolTypeId}"]`,
-  );
-  await button.click();
-}
-
 export async function applyAutoMapMode(
   page: Page,
   mode: string,
   withScreenshot = true,
 ) {
   await resetCurrentTool(page);
-  await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
+  await LeftToolbar(page).selectReactionMappingTool(
+    ReactionMappingType.ReactionAutoMapping,
+  );
   await page.getByTestId('automap-mode-input-span').click();
   await selectOption(page, mode);
   await selectButtonById('OK', page);

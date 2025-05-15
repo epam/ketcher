@@ -3,8 +3,6 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  selectLeftPanelButton,
-  LeftPanelButton,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   setBondLengthOptionUnit,
@@ -25,7 +23,9 @@ import {
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -62,13 +62,13 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await atomToolbar.clickAtom(Atom.Hydrogen);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
+    await LeftToolbar(page).reactionPlusTool();
     await clickInTheMiddleOfTheScreen(page);
 
     await atomToolbar.clickAtom(Atom.Oxygen);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await clickInTheMiddleOfTheScreen(page);
 
     await atomToolbar.clickAtom(Atom.Hydrogen);

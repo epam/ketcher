@@ -306,7 +306,7 @@ test.describe('Right-click menu', () => {
     Description: Opens right-click menu for atom
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await takeEditorScreenshot(page);
@@ -320,7 +320,7 @@ test.describe('Right-click menu', () => {
     Description: Opens right-click menu for bond
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await takeEditorScreenshot(page);

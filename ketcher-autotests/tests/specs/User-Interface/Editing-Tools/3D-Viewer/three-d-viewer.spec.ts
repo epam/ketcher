@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, expect, test } from '@playwright/test';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   pressButton,
   takeEditorScreenshot,

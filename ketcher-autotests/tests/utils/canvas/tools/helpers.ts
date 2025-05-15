@@ -2,21 +2,13 @@
 import { Page } from '@playwright/test';
 import { clickOnCanvas, SequenceType, waitForRender } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
-import { LeftPanelButton, RingButton, TopPanelButton } from '@utils/selectors';
+import { RingButton, TopPanelButton } from '@utils/selectors';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-
-/**
- *  Select button from left panel
- * Usage: await selectTool(LeftPanelButton.HandTool, page)
- */
-export async function selectTool(type: LeftPanelButton, page: Page) {
-  await selectButtonByTitle(type, page);
-}
 
 /**
  * Select button from top panel
@@ -129,14 +121,6 @@ export async function selectTopPanelButton(
 export async function selectRingButton(buttonName: RingButton, page: Page) {
   const bottomPanelButton = page.locator(`button[title*="${buttonName}"]`);
   await bottomPanelButton.click();
-}
-
-export async function selectLeftPanelButton(
-  buttonName: LeftPanelButton,
-  page: Page,
-) {
-  const leftPanelButton = page.locator(`button[title*="${buttonName}"]`);
-  await leftPanelButton.click();
 }
 
 export async function selectButtonById(buttonId: 'OK', page: Page) {

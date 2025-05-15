@@ -18,7 +18,7 @@ const ellipseWidth = 120;
 const ellipseHeight = 100;
 
 const setupEllipse = async (page: Page) => {
-  await selectLeftPanelButton(LeftPanelButton.ShapeEllipse, page);
+  await LeftToolbar(page).selectShapeTool(ShapeType.Ellipse);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const ellipseCoordinates = { x: x + ellipseWidth, y: y + ellipseHeight };
   await clickInTheMiddleOfTheScreen(page);

@@ -6,13 +6,8 @@ import {
   drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
   clickOnAtom,
-  selectNestedTool,
-  ArrowTool,
   clickOnTheCanvas,
-  RgroupTool,
   pressButton,
-  selectLeftPanelButton,
-  LeftPanelButton,
   dragMouseTo,
   setAttachmentPoints,
   moveMouseToTheMiddleOfTheScreen,
@@ -37,7 +32,10 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await TopLeftToolbar(page).saveFile();
@@ -79,17 +77,17 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
     const xOffsetFromCenter = 40;
     await drawBenzeneRing(page);
-    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 1);
     await page.getByRole('button', { name: 'R7' }).click();
     await page.getByRole('button', { name: 'Apply' }).click();
-    await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     await clickOnTheCanvas(page, xOffsetFromCenter, 0);
     await TopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
 
     await SaveStructureDialog(page).cancel();
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 2 },
@@ -100,7 +98,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
 
     await SaveStructureDialog(page).cancel();
-    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
     await page.getByRole('button', { name: 'R22' }).click();
@@ -142,7 +140,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Description: File without arrow or(and) plus-symbol
      */
     test.slow();
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     await moveMouseToTheMiddleOfTheScreen(page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const xDelta = 300;
@@ -156,10 +154,10 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await savedFileInfoStartsWithRxn(page);
 
     await pressButton(page, 'Cancel');
-    await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
+    await LeftToolbar(page).reactionPlusTool();
     await clickOnCanvas(page, xCoordinatesWithShiftHalf, yCoordinatesWithShift);
     const ySecondChain = yCoordinatesWithShift + yDelta50;
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     await page.mouse.move(x, ySecondChain);
     await dragMouseTo(xCoordinatesWithShift, ySecondChain, page);
     await savedFileInfoStartsWithRxn(page);
@@ -167,7 +165,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await pressButton(page, 'Cancel');
     await CommonLeftToolbar(page).selectEraseTool();
     await clickOnCanvas(page, xCoordinatesWithShiftHalf, yCoordinatesWithShift);
-    await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     const yArrowStart = y + yDelta20;
     const yArrowEnd = yArrowStart + yDelta20;
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
@@ -176,7 +174,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
 
     await pressButton(page, 'Cancel');
     await TopLeftToolbar(page).clearCanvas();
-    await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);
     await savedFileInfoStartsWithRxn(page, true);
@@ -201,7 +199,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     );
 
     const xOffsetFromCenter = 50;
-    await selectNestedTool(page, ArrowTool.ARROW_FILLED_BOW);
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     await moveMouseToTheMiddleOfTheScreen(page);
     await clickOnTheCanvas(page, xOffsetFromCenter, 0);
     await takeEditorScreenshot(page);
@@ -373,7 +371,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);
 
@@ -404,7 +402,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);
 
@@ -435,7 +433,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
     await dragMouseTo(700, 100, page);
 
@@ -466,7 +464,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);
     await verifyFileExport(
@@ -496,7 +494,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);
 
@@ -527,7 +525,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       page,
     );
     await CommonLeftToolbar(page).selectEraseTool();
-    await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await page.mouse.move(100, 500);
     await dragMouseTo(900, 100, page);
 

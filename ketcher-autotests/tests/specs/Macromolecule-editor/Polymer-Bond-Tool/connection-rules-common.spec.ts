@@ -15,6 +15,7 @@ import {
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
   Monomer,
+  takeElementScreenshot,
 } from '@utils';
 import {
   selectSnakeLayoutModeTool,
@@ -488,7 +489,7 @@ test.describe('Common connection rules: ', () => {
       .first()
       .hover();
     await waitForMonomerPreviewMicro(page);
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, 'monomer-preview-micro');
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 

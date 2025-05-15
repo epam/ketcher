@@ -271,6 +271,7 @@ test.describe('Template Manupulations', () => {
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
+
     await page
       .getByTestId('ketcher-canvas')
       .filter({ has: page.locator(':visible') })

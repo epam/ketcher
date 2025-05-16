@@ -558,7 +558,10 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
             hint="The extinction coefficient for wavelength of 280nm is calculated using the method from Gill, S.C. and von Hippel, P.H. (1989). Only amino acid natural analogues are used in the calculation."
           ></BasicProperty>
         </BasicPropertiesWrapper>
-        <BasicProperty name="Hydrophobicity" />
+        <BasicProperty
+          name="Hydrophobicity"
+          hint="The hydrophobicity is calculated using the method from Black S.D. and Mould D.R. (1991). Only amino acid natural analogues are used in the calculation."
+        />
       </PeptideBasicPropertiesWrapper>
       <PeptidePropertiesBottomPart>
         {props.macromoleculesProperties.monomerCount.peptides && (

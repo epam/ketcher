@@ -489,7 +489,6 @@ export class CoreEditor {
     );
 
     this.events.setEditorLineLength.add(() => {
-      // TODO: Save changes to history
       this.mode.initialize();
     });
 

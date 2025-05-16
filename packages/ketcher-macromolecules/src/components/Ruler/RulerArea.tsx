@@ -14,6 +14,13 @@ import RulerScale from './RulerScale';
 import RulerHandle from './RulerHandle';
 
 import styles from './RulerArea.module.less';
+import {
+  SequenceModeIndentWidth,
+  SequenceModeItemWidth,
+  SequenceModeStartOffset,
+  SnakeModeItemWidth,
+  SnakeModeStartOffset,
+} from 'components/Ruler/RulerArea.constants';
 
 export const RulerArea = () => {
   const dispatch = useDispatch();
@@ -53,22 +60,26 @@ export const RulerArea = () => {
     // TODO: Perhaps it's not the best approach, should better rely on some promise/init event
   }, [ZoomTool.instance]);
 
+  const indentsInSequenceMode = lineLengthValue / 10 - 1;
+
   const translateValue = useMemo(() => {
     if (layoutMode === 'sequence-layout-mode') {
-      const baseOffset = 40;
-      const indents = lineLengthValue / 10 - 1;
-      return baseOffset + indents * 10 + lineLengthValue * 20 + 10;
+      return (
+        SequenceModeStartOffset +
+        indentsInSequenceMode * SequenceModeIndentWidth +
+        lineLengthValue * SequenceModeItemWidth
+      );
     } else if (layoutMode === 'snake-layout-mode') {
-      return 25 + lineLengthValue * 60;
+      return SnakeModeStartOffset + lineLengthValue * SnakeModeItemWidth;
     }
 
     return 0;
-  }, [layoutMode, lineLengthValue]);
+  }, [layoutMode, indentsInSequenceMode, lineLengthValue]);
 
   const [inputOffsetX, handleOffsetX] = useMemo(() => {
     return [
-      transform.applyX(translateValue) + dragDelta + 6,
-      transform.applyX(translateValue) + dragDelta - 14,
+      transform.applyX(translateValue) + dragDelta + 10,
+      transform.applyX(translateValue) + dragDelta - 8,
     ];
   }, [transform, translateValue, dragDelta]);
 
@@ -87,6 +98,15 @@ export const RulerArea = () => {
     ],
   );
 
+  const calculateDragPosition = useCallback(
+    (initialScreenX: number) => {
+      const dragDelta = initialScreenX - dragStartX.current;
+      const screenX = transform.applyX(translateValue) + dragDelta;
+      return [dragDelta, transform.invertX(screenX)];
+    },
+    [transform, translateValue],
+  );
+
   const handleDragStart = useCallback(
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
       dragStartX.current = event.sourceEvent.clientX;
@@ -97,29 +117,30 @@ export const RulerArea = () => {
 
   const handleDrag = useCallback(
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
-      const dragDelta = event.sourceEvent.clientX - dragStartX.current;
-      const finalScreenX = transform.applyX(translateValue) + dragDelta;
-      const finalWorldX = transform.invertX(finalScreenX);
+      const [dragDelta, dragPosition] = calculateDragPosition(
+        event.sourceEvent.clientX,
+      );
       setDragDelta(dragDelta);
-      editor.events.toggleLineLengthHighlighting.dispatch(true, finalWorldX);
+      editor.events.toggleLineLengthHighlighting.dispatch(true, dragPosition);
     },
-    [editor?.events?.toggleLineLengthHighlighting, transform, translateValue],
+    [editor?.events?.toggleLineLengthHighlighting, calculateDragPosition],
   );
 
   const handleDragEnd = useCallback(
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
-      const finalDelta = event.sourceEvent.clientX - dragStartX.current;
-      const finalScreenX = transform.applyX(translateValue + finalDelta);
-      const finalWorldX = transform.invertX(finalScreenX);
+      const [, dragPosition] = calculateDragPosition(event.sourceEvent.clientX);
 
       let newValue = 0;
       if (layoutMode === 'sequence-layout-mode') {
-        const baseOffset = 40;
-        const indents = lineLengthValue / 10 - 1;
-        const rawCount = (finalWorldX - indents * 10 - baseOffset) / 20;
+        const rawCount =
+          (dragPosition -
+            indentsInSequenceMode * SequenceModeIndentWidth -
+            SequenceModeStartOffset) /
+          SequenceModeItemWidth;
         newValue = Math.max(10, Math.round(rawCount / 10) * 10);
       } else if (layoutMode === 'snake-layout-mode') {
-        const rawCount = (finalWorldX - 25) / 60;
+        const rawCount =
+          (dragPosition - SnakeModeStartOffset) / SnakeModeItemWidth;
         newValue = Math.max(1, Math.round(rawCount));
       }
 
@@ -132,9 +153,9 @@ export const RulerArea = () => {
       editor.events.toggleLineLengthHighlighting.dispatch(false);
     },
     [
-      transform,
-      translateValue,
+      calculateDragPosition,
       layoutMode,
+      indentsInSequenceMode,
       lineLengthValue,
       updateSettings,
       editor?.events?.toggleLineLengthHighlighting,

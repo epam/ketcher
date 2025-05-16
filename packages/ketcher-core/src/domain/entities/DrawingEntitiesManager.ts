@@ -107,7 +107,7 @@ import {
 import { SugarWithBaseSnakeLayoutNode } from 'domain/entities/snake-layout-model/SugarWithBaseSnakeLayoutNode';
 import { SingleMonomerSnakeLayoutNode } from 'domain/entities/snake-layout-model/SingleMonomerSnakeLayoutNode';
 import { getRnaPartLibraryItem } from 'domain/helpers/rna';
-import { KetcherLogger } from 'utilities';
+import { KetcherLogger, SettingsManager } from 'utilities';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 
 export const CELL_WIDTH = 60;
@@ -1477,7 +1477,6 @@ export class DrawingEntitiesManager {
   }
 
   public applySnakeLayout(
-    canvasWidth: number,
     isSnakeMode: boolean,
     needRedrawBonds = true,
     needRepositionMonomers = true,
@@ -1495,9 +1494,8 @@ export class DrawingEntitiesManager {
 
     // not only snake mode???
     if (isSnakeMode) {
-      const numberOfCellsInRow = Math.floor(
-        (canvasWidth - CELL_WIDTH) / CELL_WIDTH,
-      );
+      const numberOfCellsInRow =
+        SettingsManager.editorLineLength['snake-layout-mode'];
       const rearrangedMonomersSet: Set<number> = new Set();
       let lastPosition = new Vec2({
         x: MONOMER_START_X_POSITION,
@@ -3105,9 +3103,7 @@ export class DrawingEntitiesManager {
       lastAddedMonomer = undefined;
     });
 
-    command.merge(
-      this.applySnakeLayout(editor.canvas.width.baseVal.value, true, true),
-    );
+    command.merge(this.applySnakeLayout(true, true));
 
     if (editor.mode instanceof SequenceMode) {
       command.addOperation(new ReinitializeModeOperation());

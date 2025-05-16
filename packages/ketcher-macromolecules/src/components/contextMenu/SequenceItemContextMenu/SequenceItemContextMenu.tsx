@@ -9,7 +9,6 @@ import {
 } from 'state/common';
 import {
   BaseSequenceItemRenderer,
-  ModeTypes,
   NodesSelection,
   BaseMonomer,
   isTwoStrandedNodeRestrictedForHydrogenBondCreation,
@@ -71,7 +70,7 @@ export const SequenceItemContextMenu = ({
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
-  const isSequenceMode = useLayoutMode() === ModeTypes.sequence;
+  const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
   const menuItems = [
     {
       name: SequenceItemContextMenuNames.title,

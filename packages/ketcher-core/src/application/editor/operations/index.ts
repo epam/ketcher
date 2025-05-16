@@ -35,3 +35,4 @@ export * from './simpleObject';
 export * from './sgroup';
 export * from './Text';
 export * from './monomer';
+export * from './modes';

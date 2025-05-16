@@ -28,6 +28,7 @@ export function templateToMonomerProps(template: IKetMonomerTemplate) {
     MonomerCaps: {},
     idtAliases: template.idtAliases,
     unresolved: template.unresolved,
+    modificationType: template.modificationType,
   };
 }
 

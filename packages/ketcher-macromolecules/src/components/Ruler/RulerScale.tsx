@@ -18,11 +18,12 @@ type Props = {
 
 const RulerScale = ({ transform, layoutMode }: Props) => {
   const ref = useRef<SVGSVGElement>(null);
-  const isZoomedOut = transform.k <= 0.5;
+
+  const isZoomedOut = transform.k - 0.5 < Number.EPSILON;
 
   const positions = useMemo(() => {
     return Array.from(
-      { length: layoutMode === 'snake-layout-mode' ? 100 : 20 },
+      { length: layoutMode === 'snake-layout-mode' ? 101 : 20 },
       (_, i) => {
         if (layoutMode === 'sequence-layout-mode') {
           return (

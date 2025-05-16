@@ -104,7 +104,7 @@ export async function setMolecule(
   page: Page,
   structStr: string,
   position?: { x: number; y: number },
-  rescale?: boolean,
+  rescale?: true,
 ): Promise<void> {
   return await page.evaluate(
     ({ structStr, position }) =>

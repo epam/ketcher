@@ -90,16 +90,20 @@ export const RulerArea = () => {
   const handleDragStart = useCallback(
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
       dragStartX.current = event.sourceEvent.clientX;
+      editor.events.toggleLineLengthHighlighting.dispatch(true, translateValue);
     },
-    [],
+    [editor?.events?.toggleLineLengthHighlighting, translateValue],
   );
 
   const handleDrag = useCallback(
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
       const dragDelta = event.sourceEvent.clientX - dragStartX.current;
+      const finalScreenX = transform.applyX(translateValue) + dragDelta;
+      const finalWorldX = transform.invertX(finalScreenX);
       setDragDelta(dragDelta);
+      editor.events.toggleLineLengthHighlighting.dispatch(true, finalWorldX);
     },
-    [],
+    [editor?.events?.toggleLineLengthHighlighting, transform, translateValue],
   );
 
   const handleDragEnd = useCallback(
@@ -125,8 +129,16 @@ export const RulerArea = () => {
 
       setDragDelta(0);
       dragStartX.current = 0;
+      editor.events.toggleLineLengthHighlighting.dispatch(false);
     },
-    [transform, translateValue, layoutMode, lineLengthValue, updateSettings],
+    [
+      transform,
+      translateValue,
+      layoutMode,
+      lineLengthValue,
+      updateSettings,
+      editor?.events?.toggleLineLengthHighlighting,
+    ],
   );
 
   if (layoutMode === 'flex-layout-mode') {

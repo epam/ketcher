@@ -1,11 +1,4 @@
-import {
-  Dispatch,
-  memo,
-  SetStateAction,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from 'react';
+import { memo, useEffect, useLayoutEffect, useRef } from 'react';
 import styles from './RulerArea.module.less';
 import { D3DragEvent, drag, select } from 'd3';
 

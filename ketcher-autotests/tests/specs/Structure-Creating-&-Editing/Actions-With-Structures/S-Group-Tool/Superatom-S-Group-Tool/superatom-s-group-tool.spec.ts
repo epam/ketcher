@@ -250,7 +250,8 @@ test.describe('Superatom S-Group tool', () => {
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'Molfiles-V2000/superatom-all-chain-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V2000/superatom-all-chain-expected.mol',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);

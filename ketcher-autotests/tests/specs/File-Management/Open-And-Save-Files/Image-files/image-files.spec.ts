@@ -7,6 +7,7 @@ import {
   clickOnCanvas,
   clickOnFileFormatDropdown,
   copyAndPaste,
+  copyToClipboardByKeyboard,
   cutAndPaste,
   dragMouseTo,
   FileFormatOption,
@@ -16,8 +17,10 @@ import {
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
+  openPasteFromClipboard,
   pasteFromClipboardByKeyboard,
   pressButton,
+  readFileContents,
   selectAddRemoveExplicitHydrogens,
   resetCurrentTool,
   resetZoomLevelToDefault,
@@ -40,9 +43,6 @@ import {
   waitForPageInit,
   waitForSpinnerFinishedWork,
   pasteFromClipboardAndAddToCanvas,
-  pasteFromClipboardAndOpenAsNewProject,
-  readFileContent,
-  copyContentToClipboard,
 } from '@utils';
 import {
   selectClearCanvasTool,
@@ -263,7 +263,9 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Images of (PNG, SVG) are copied from .ket format and added to canvas using "PASTE FROM CLIPBOARD - Add to Canvas"
      */
-    const fileContent = await readFileContent('KET/images-png-svg.ket');
+    const fileContent = await readFileContents(
+      'tests/test-data/KET/images-png-svg.ket',
+    );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -274,8 +276,11 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Images of (PNG, SVG) are copied from .ket format and added to canvas using "PASTE FROM CLIPBOARD - Open as New Project"
      */
-    const fileContent = await readFileContent('KET/images-png-svg.ket');
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    const fileContent = await readFileContents(
+      'tests/test-data/KET/images-png-svg.ket',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -284,8 +289,14 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Images together (PNG, SVG) are copied from .ket format and added from clipboard directly to selected place on Canvas with correct positions
      */
-    const fileContent = await readFileContent('KET/images-png-svg.ket');
-    await copyContentToClipboard(page, fileContent);
+    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
+    const fileContent = await readFileContents(
+      'tests/test-data/KET/images-png-svg.ket',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await closeWindowButton.click();
     await pasteFromClipboardByKeyboard(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -297,8 +308,8 @@ test.describe('Image files', () => {
      * Description: Images of (PNG, SVG) are copied from .cdxml format and added to canvas using "PASTE FROM CLIPBOARD - Add to Canvas"
      * (SVG image replaced by placeholder)
      */
-    const fileContent = await readFileContent(
-      'CDXML/image-png-svg-together.cdxml',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDXML/image-png-svg-together.cdxml',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickInTheMiddleOfTheScreen(page);
@@ -311,10 +322,11 @@ test.describe('Image files', () => {
      * Description: Images of (PNG, SVG) are copied from .cdxml format and added to canvas using "PASTE FROM CLIPBOARD - Open as New Project"
      * (SVG image replaced by placeholder)
      */
-    const fileContent = await readFileContent(
-      'CDXML/image-png-svg-together.cdxml',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDXML/image-png-svg-together.cdxml',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -324,10 +336,14 @@ test.describe('Image files', () => {
      * Description: Images together (PNG, SVG) are copied from .cdxml format and added from clipboard directly to selected place on Canvas with correct positions
      * (SVG image replaced by placeholder)
      */
-    const fileContent = await readFileContent(
-      'CDXML/image-png-svg-together.cdxml',
+    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
+    const fileContent = await readFileContents(
+      'tests/test-data/CDXML/image-png-svg-together.cdxml',
     );
-    await copyContentToClipboard(page, fileContent);
+    await openPasteFromClipboard(page, fileContent);
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await closeWindowButton.click();
     await pasteFromClipboardByKeyboard(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -996,10 +1012,11 @@ test.describe('Image files', () => {
       'CDX/image-svg-png-after-moving-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContent(
-      'CDX/image-svg-png-after-moving-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-after-moving-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -1084,10 +1101,11 @@ test.describe('Image files', () => {
       'CDX/image-svg-png-after-scaling-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContent(
-      'CDX/image-svg-png-after-scaling-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-after-scaling-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -1164,10 +1182,11 @@ test.describe('Image files', () => {
       'CDX/image-svg-png-after-deleting-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContent(
-      'CDX/image-svg-png-after-deleting-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-after-deleting-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -1240,10 +1259,11 @@ test.describe('Image files', () => {
       'CDX/image-svg-png-after-copying-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContent(
-      'CDX/image-svg-png-after-copying-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-after-copying-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -1534,8 +1554,11 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png.png', page);
     await takeEditorScreenshot(page);
     await verifyFileExport(page, 'CDX/image-png-expected.cdx', FileType.CDX);
-    const fileContent = await readFileContent('CDX/image-png-expected.cdx');
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -1572,10 +1595,11 @@ test.describe('Image files', () => {
       'CDX/image-svg-colored-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContent(
-      'CDX/image-svg-colored-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-colored-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -1615,10 +1639,11 @@ test.describe('Image files', () => {
       'CDX/images-svg-colored-above-png-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContent(
-      'CDX/images-svg-colored-above-png-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/images-svg-colored-above-png-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -1661,10 +1686,11 @@ test.describe('Image files', () => {
       'CDX/image-png-with-elements-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContent(
-      'CDX/image-png-with-elements-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-with-elements-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -1707,10 +1733,11 @@ test.describe('Image files', () => {
       'CDX/image-svg-with-elements-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContent(
-      'CDX/image-svg-with-elements-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-with-elements-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -1753,10 +1780,11 @@ test.describe('Image files', () => {
       'CDX/image-svg-png-with-elements-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContent(
-      'CDX/image-svg-png-with-elements-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-with-elements-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -1790,8 +1818,8 @@ test.describe('Image files', () => {
      * and they are on the correct positions and layer levels to each other and they saved together to CDX file with
      * correct coordinates of images and file size.
      */
-    const fileContent = await readFileContent(
-      'CDX/image-png-with-elements-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-with-elements-expected.cdx',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickOnCanvas(page, 200, 200);
@@ -1808,10 +1836,11 @@ test.describe('Image files', () => {
       'CDX/two-images-png-with-elements-expected.cdx',
       FileType.CDX,
     );
-    const fileContent2 = await readFileContent(
-      'CDX/two-images-png-with-elements-expected.cdx',
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/two-images-png-with-elements-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent2);
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -1822,8 +1851,8 @@ test.describe('Image files', () => {
      * and they are on the correct positions and layer levels to each other and they saved together to CDXML file with
      * correct coordinates of images and file size.
      */
-    const fileContent = await readFileContent(
-      'CDX/image-png-with-elements-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-with-elements-expected.cdx',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickOnCanvas(page, 200, 200);
@@ -1854,8 +1883,8 @@ test.describe('Image files', () => {
      * and they are on the correct positions and layer levels to each other and they saved together to CDX file with
      * correct coordinates of images and file size.(SVG image replaced by placeholder)
      */
-    const fileContent = await readFileContent(
-      'CDX/image-svg-with-elements-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-with-elements-expected.cdx',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickOnCanvas(page, 200, 200);
@@ -1872,10 +1901,11 @@ test.describe('Image files', () => {
       'CDX/two-images-svg-with-elements-expected.cdx',
       FileType.CDX,
     );
-    const fileContent2 = await readFileContent(
-      'CDX/two-images-svg-with-elements-expected.cdx',
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/two-images-svg-with-elements-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent2);
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -1886,8 +1916,8 @@ test.describe('Image files', () => {
      * and they are on the correct positions and layer levels to each other and they saved together to CDXML file with
      * correct coordinates of images and file size.(SVG image replaced by placeholder)
      */
-    const fileContent = await readFileContent(
-      'CDX/image-svg-with-elements-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-with-elements-expected.cdx',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickOnCanvas(page, 200, 200);
@@ -1918,8 +1948,8 @@ test.describe('Image files', () => {
      * and they are on the correct positions and layer levels to each other and they saved together to CDX file with
      * correct coordinates of images and file size.(SVG image replaced by placeholder)
      */
-    const fileContent = await readFileContent(
-      'CDX/image-svg-png-with-elements-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-with-elements-expected.cdx',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickOnCanvas(page, 200, 200);
@@ -1936,10 +1966,11 @@ test.describe('Image files', () => {
       'CDX/two-image-svg-png-with-elements-expected.cdx',
       FileType.CDX,
     );
-    const fileContent2 = await readFileContent(
-      'CDX/two-image-svg-png-with-elements-expected.cdx',
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/two-image-svg-png-with-elements-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent2);
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -1950,8 +1981,8 @@ test.describe('Image files', () => {
      * and they are on the correct positions and layer levels to each other and they saved together to CDXML file with
      * correct coordinates of images and file size.(SVG image replaced by placeholder)
      */
-    const fileContent = await readFileContent(
-      'CDX/image-svg-png-with-elements-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-with-elements-expected.cdx',
     );
     await pasteFromClipboardAndAddToCanvas(page, fileContent);
     await clickOnCanvas(page, 200, 200);
@@ -2066,10 +2097,14 @@ test.describe('Image files', () => {
       'CDX/images-png-50-with-50-structures-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContent(
-      'CDX/images-png-50-with-50-structures-expected.cdx',
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/images-png-50-with-50-structures-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent, true);
+    await openPasteFromClipboard(page, fileContent);
+    await waitForSpinnerFinishedWork(
+      page,
+      async () => await pressButton(page, 'Open as New Project'),
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -2158,8 +2193,11 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Images of allowed formats (PNG) zoomed in/out (20, 400, 100) before/after adding to Canvas from CDX file
      */
-    const fileContent = await readFileContent('CDX/image-png-expected.cdx');
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
     await setZoomInputValue(page, '20');
     await resetCurrentTool(page);
@@ -2234,8 +2272,11 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Action of adding to Canvas images of allowed formats (PNG) together from CDX file can be Undo/Redo
      */
-    const fileContent = await readFileContent('CDX/image-png-expected.cdx');
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -2314,8 +2355,11 @@ test.describe('Image files', () => {
       'CDX/two-image-png-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContent('CDX/two-image-png-expected.cdx');
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/two-image-png-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -2360,8 +2404,11 @@ test.describe('Image files', () => {
       'CDX/two-image-svg-expected.cdx',
       FileType.CDX,
     );
-    const fileContent = await readFileContent('CDX/two-image-svg-expected.cdx');
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/two-image-svg-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
   });
 
@@ -2398,10 +2445,11 @@ test.describe('Image files', () => {
      * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) with
      * elements selected and moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
      */
-    const fileContent = await readFileContent(
-      'CDX/image-png-with-elements-expected.cdx',
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/image-png-with-elements-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
     await dragMouseTo(900, 300, page);
@@ -2436,10 +2484,11 @@ test.describe('Image files', () => {
      * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (SVG) with
      * elements selected and moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
      */
-    const fileContent = await readFileContent(
-      'CDX/image-svg-with-elements-expected.cdx',
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/image-svg-with-elements-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
     await dragMouseTo(900, 300, page);
@@ -2474,10 +2523,11 @@ test.describe('Image files', () => {
      * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (SVG, PNG) with
      * elements selected and moved together and separately to other places on Canvas with appropriate layer level (including partial and complete overlap of elements)
      */
-    const fileContent = await readFileContent(
-      'CDX/image-svg-png-with-elements-expected.cdx',
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/image-svg-png-with-elements-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
     await dragMouseTo(900, 300, page);
@@ -2511,10 +2561,11 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Clear Canvas" (or Ctrl+Delete)
      */
-    const fileContent = await readFileContent(
-      'CDX/image-png-with-elements-expected.cdx',
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/image-png-with-elements-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
     await selectClearCanvasTool(page);
     await takeEditorScreenshot(page);
@@ -2539,10 +2590,11 @@ test.describe('Image files', () => {
      * Test case: https://github.com/epam/Indigo/issues/2028
      * Description: Loaded from CDX file and added to selected place on Canvas images of allowed formats (PNG) can be deleted using "Erase"
      */
-    const fileContent = await readFileContent(
-      'CDX/image-png-with-elements-expected.cdx',
+    const fileContent2 = await readFileContents(
+      'tests/test-data/CDX/image-png-with-elements-expected.cdx',
     );
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
+    await openPasteFromClipboard(page, fileContent2);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
     await selectEraseTool(page);

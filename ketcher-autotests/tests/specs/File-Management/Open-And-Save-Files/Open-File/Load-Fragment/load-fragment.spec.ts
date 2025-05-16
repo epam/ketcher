@@ -3,7 +3,9 @@ import { commonLeftToolbarLocators } from '@tests/pages/common/CommonLeftToolbar
 import {
   AtomButton,
   clickInTheMiddleOfTheScreen,
+  pressButton,
   takeEditorScreenshot,
+  waitForLoad,
   openFileAndAddToCanvas,
   openPasteFromClipboard,
   waitForPageInit,
@@ -14,14 +16,12 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   resetCurrentTool,
+  receiveFileComparisonData,
+  saveToFile,
   moveOnAtom,
   clickOnCanvas,
-  pasteFromClipboardAndOpenAsNewProject,
 } from '@utils';
-import {
-  FileType,
-  verifyFileExport,
-} from '@utils/files/receiveFileComparisonData';
+import { getKet } from '@utils/formats';
 
 const testCasesForOpeningFiles = [
   {
@@ -101,7 +101,10 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
      */
     const smileString = 'C1=CC=CC=C1';
 
-    await pasteFromClipboardAndOpenAsNewProject(page, smileString);
+    await openPasteFromClipboard(page, smileString);
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Open as New Project');
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -113,10 +116,10 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
      */
     const smileStringWithArrowSymbol = 'C1=CC=CC=C1>>C1=CC=CC=C1';
 
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      smileStringWithArrowSymbol,
-    );
+    await openPasteFromClipboard(page, smileStringWithArrowSymbol);
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Open as New Project');
+    });
     await takeEditorScreenshot(page);
   });
 
@@ -129,15 +132,13 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     const smileString = 'CCCCCC';
     const incorrectSmileString = 'CCCCC0';
 
-    await pasteFromClipboardAndOpenAsNewProject(page, smileString);
+    await openPasteFromClipboard(page, smileString);
+    await waitForLoad(page, async () => {
+      await pressButton(page, 'Open as New Project');
+    });
 
-    await pasteFromClipboardAndOpenAsNewProject(
-      page,
-      incorrectSmileString,
-      // error expected
-      false,
-    );
-
+    await openPasteFromClipboard(page, incorrectSmileString);
+    await pressButton(page, 'Open as New Project');
     const convertErrorMessage = await page
       .getByTestId('info-modal-body')
       .textContent();
@@ -222,11 +223,21 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
       'KET/hydrogen-plus-oxygen-arrow-hydrogen.ket',
       page,
     );
-    await verifyFileExport(
-      page,
+
+    const expectedKetFile = await getKet(page);
+    await saveToFile(
       'KET/hydrogen-plus-oxygen-arrow-hydrogen-expected.ket',
-      FileType.KET,
+      expectedKetFile,
     );
+
+    const { fileExpected: ketFileExpected, file: ketFile } =
+      await receiveFileComparisonData({
+        page,
+        expectedFileName:
+          'tests/test-data/KET/hydrogen-plus-oxygen-arrow-hydrogen-expected.ket',
+      });
+
+    expect(ketFile).toEqual(ketFileExpected);
     await takeEditorScreenshot(page);
   });
 });

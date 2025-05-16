@@ -4,6 +4,7 @@ import {
   clickOnCanvas,
   copyToClipboardByKeyboard,
   getFasta,
+  getKet,
   getMolfile,
   getSequence,
   Monomer,
@@ -86,9 +87,23 @@ test.afterAll(async ({ browser }) => {
   await Promise.all(browser.contexts().map((context) => context.close()));
 });
 
+// interface IReplaceMonomer {
+//   Id: number;
+//   Monomer?: Monomer;
+//   MonomerDescription: string;
+//   IsCustomPreset?: boolean;
+//   MonomerAlias?: string;
+//   MonomerTestId?: string;
+//   // ShouldFail?: boolean;
+//   // KnownBugs?: boolean;
+//   // BugsInTests?: IBugsInTests[];
+// }
 interface IBaseReplaceMonomer {
   Id: number;
   MonomerDescription: string;
+  // ShouldFail?: boolean;
+  // KnownBugs?: boolean;
+  // BugsInTests?: IBugsInTests[];
 }
 
 interface IStandardMonomer extends IBaseReplaceMonomer {
@@ -787,15 +802,16 @@ async function checkForKnownBugs(
 }
 
 async function closeErrorMessage(page: Page) {
-  const errorMessage = page.getByText('Error message', {
+  const errorMessage = await page.getByText('Error message', {
     exact: true,
   });
-  const closeWindowButton = page.getByRole('button', {
+  const closeWindowButton = await page.getByRole('button', {
     name: 'Close window',
   });
 
   await closeWindowButton.click();
   await errorMessage.waitFor({ state: 'hidden' });
+  // await closeWindowButton.click();
 }
 
 for (const replaceMonomer of replaceMonomers) {
@@ -2204,11 +2220,20 @@ test(`28. Verify saving and reopening a structure with replaced monomers in KET`
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await verifyFileExport(
-    page,
+  const expectedKetFile = await getKet(page);
+  await saveToFile(
     'Common/Sequence-Mode-Replacement/replacement-expected.ket',
-    FileType.KET,
+    expectedKetFile,
   );
+
+  const { fileExpected: ketFileExpected, file: ketFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName:
+        'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.ket',
+    });
+
+  expect(ketFile).toEqual(ketFileExpected);
 
   await checkForKnownBugs(
     replaceMonomer,
@@ -2260,7 +2285,7 @@ test(`29. Verify saving and reopening a structure with replaced monomers in MOL 
     await receiveFileComparisonData({
       page,
       expectedFileName:
-        'Common/Sequence-Mode-Replacement/replacement-expected.mol',
+        'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.mol',
       fileFormat: 'v3000',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
@@ -2317,7 +2342,7 @@ test(`30. Verify saving and reopening a structure with replaced monomers in Sequ
     await receiveFileComparisonData({
       page,
       expectedFileName:
-        'Common/Sequence-Mode-Replacement/replacement-expected.seq',
+        'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.seq',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 
@@ -2372,7 +2397,7 @@ test(`31. Verify saving and reopening a structure with replaced monomers in FAST
     await receiveFileComparisonData({
       page,
       expectedFileName:
-        'Common/Sequence-Mode-Replacement/replacement-expected.fasta',
+        'tests/test-data/Common/Sequence-Mode-Replacement/replacement-expected.fasta',
       metaDataIndexes: METADATA_STRING_INDEX,
     });
 

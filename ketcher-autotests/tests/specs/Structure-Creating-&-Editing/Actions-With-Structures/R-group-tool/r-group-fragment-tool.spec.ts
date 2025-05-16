@@ -383,7 +383,7 @@ test.describe('R-Group Fragment Tool', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'Extended-SMILES/r1-several-structures-expected.cxsmi',
+          'tests/test-data/Extended-SMILES/r1-several-structures-expected.cxsmi',
       });
 
     expect(smiFile).toEqual(smiFileExpected);

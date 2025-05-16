@@ -2,7 +2,10 @@
 import { test, expect } from '@playwright/test';
 import {
   openFileAndAddToCanvasMacro,
+  readFileContents,
   waitForPageInit,
+  getKet,
+  saveToFile,
   layout,
   recognize,
   selectAtomInToolbar,
@@ -24,11 +27,12 @@ test.describe('getKet', () => {
 
   test('with two monomers bonded', async ({ page }) => {
     await openFileAndAddToCanvasMacro('KET/alanine-monomers-bonded.ket', page);
-    await verifyFileExport(
-      page,
-      'KET/alanine-monomers-bonded-expected.ket',
-      FileType.KET,
+    const ket = await getKet(page);
+    await saveToFile('KET/alanine-monomers-bonded-expected.ket', ket);
+    const fileContents = await readFileContents(
+      'tests/test-data/KET/alanine-monomers-bonded-expected.ket',
     );
+    expect(ket).toBe(fileContents);
   });
 
   test('Check that layout method throws an Error: layout is not available in macro mode', async ({

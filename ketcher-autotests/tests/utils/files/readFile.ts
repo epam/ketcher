@@ -1,15 +1,19 @@
 /* eslint-disable max-len */
 import * as fs from 'fs';
 import * as path from 'path';
-import { Page } from '@playwright/test';
+import { Page, expect } from '@playwright/test';
 import {
+  pressButton,
   clickInTheMiddleOfTheScreen,
+  delay,
+  takeEditorScreenshot,
   clickOnTheCanvas,
   selectImageTool,
   clickOnCanvas,
   MacroFileType,
 } from '@utils';
 import { waitForLoad } from '@utils/common';
+import { getSmiles, getInchi } from '@utils/formats';
 import { MolfileFormat } from 'ketcher-core';
 import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
@@ -24,57 +28,51 @@ import {
   SequenceMonomerType,
 } from '@tests/pages/constants/monomers/Constants';
 
-export function getTestDataDirectory() {
-  const projectRoot = path.resolve(__dirname, '../../..');
-  const resolvedFilePath = path.resolve(projectRoot, 'tests/test-data');
-  return resolvedFilePath;
-}
-
-export async function readFileContent(filePath: string) {
-  const testDataDirectory = getTestDataDirectory();
-  const resolvedFilePath = path.resolve(testDataDirectory, filePath);
+export async function readFileContents(filePath: string) {
+  const resolvedFilePath = path.resolve(process.cwd(), filePath);
   return fs.promises.readFile(resolvedFilePath, 'utf8');
 }
 
 export async function openFile(filename: string, page: Page) {
   const openFromFileButton = openStructureDialog(page).openFromFileButton;
-
-  const testDataDirectory = getTestDataDirectory();
-  const resolvedFilePath = path.resolve(testDataDirectory, filename);
   // Start waiting for file chooser before clicking. Note no await.
   const fileChooserPromise = page.waitForEvent('filechooser');
   await openFromFileButton.click();
   const fileChooser = await fileChooserPromise;
-  await fileChooser.setFiles(resolvedFilePath);
+
+  // const [fileChooser] = await Promise.all([
+  //   // It is important to call waitForEvent before click to set up waiting.
+  //   page.waitForEvent('filechooser'),
+  //   // Opens the file chooser.
+  //   openFromFileButton.click(),
+  // ]);
+  await fileChooser.setFiles(`tests/test-data/${filename}`);
 }
 
 export async function selectOptionInDropdown(filename: string, page: Page) {
+  const extention = filename.split('.')[1];
   const options = {
     mol: 'MDL Molfile V3000',
     fasta: 'FASTA',
     seq: 'Sequence',
   };
-  const extention = filename.split('.')[1] as keyof typeof options;
-  const optionText = options[extention];
-  const contentTypeSelector =
-    pasteFromClipboardDialog(page).contentTypeSelector;
-  const selectorExists = await contentTypeSelector.isVisible();
+  const optionText = (options as any)[extention];
+  const selector = page.getByTestId('dropdown-select');
+  const selectorExists = await selector.isVisible();
 
-  if (
-    selectorExists &&
-    extention &&
-    optionText &&
-    extention !== ('ket' as string)
-  ) {
-    const selectorText = (await contentTypeSelector.innerText()).replace(
+  if (selectorExists && extention && extention !== 'ket' && optionText) {
+    const selectorText = (await selector.innerText()).replace(
       /(\r\n|\n|\r)/gm,
       '',
     );
-    await contentTypeSelector.getByText(selectorText).click();
+    await selector.getByText(selectorText).click();
     const option = page.getByRole('option');
     await option.getByText(optionText).click();
     // to stabilize the test
-    await contentTypeSelector.getByRole('combobox').allInnerTexts();
+    await page
+      .getByTestId('dropdown-select')
+      .getByRole('combobox')
+      .allInnerTexts();
   }
 }
 
@@ -115,7 +113,6 @@ export async function openFileAndAddToCanvasMacro(
   filename: string,
   page: Page,
   typeDropdownOption?: SequenceMonomerType,
-  errorExpected = false,
 ) {
   const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
 
@@ -128,23 +125,17 @@ export async function openFileAndAddToCanvasMacro(
   if (typeDropdownOption) {
     await monomerTypeSelection(page, typeDropdownOption);
   }
-  if (!errorExpected) {
-    await waitForLoad(page, async () => {
-      await addToCanvasButton.click();
-    });
-  } else {
+
+  await waitForLoad(page, async () => {
     await addToCanvasButton.click();
-  }
+  });
 }
 
 export async function openFileAndAddToCanvasAsNewProjectMacro(
   filename: string,
   page: Page,
   typeDropdownOption?: SequenceMonomerType,
-  errorExpected = false,
 ) {
-  const openAsNewButton = pasteFromClipboardDialog(page).openAsNewButton;
-
   await selectOpenFileTool(page);
   await openFile(filename, page);
 
@@ -155,34 +146,30 @@ export async function openFileAndAddToCanvasAsNewProjectMacro(
     await monomerTypeSelection(page, typeDropdownOption);
   }
 
-  if (!errorExpected) {
-    await waitForLoad(page, async () => {
-      await openAsNewButton.click();
-    });
-  } else {
-    await openAsNewButton.click();
-  }
+  await waitForLoad(page, async () => {
+    await pressButton(page, 'Open as New');
+  });
 }
 
 export async function openFileAndAddToCanvasAsNewProject(
   filename: string,
   page: Page,
-  errorExpected = false,
 ) {
-  const openAsNewButton = pasteFromClipboardDialog(page).openAsNewButton;
-
   await selectOpenFileTool(page);
   await openFile(filename, page);
 
   await selectOptionInDropdown(filename, page);
 
-  if (!errorExpected) {
-    await waitForLoad(page, async () => {
-      await openAsNewButton.click();
-    });
-  } else {
-    await openAsNewButton.click();
-  }
+  await waitForLoad(page, async () => {
+    const openAsNewProjectButton = await page.$(
+      'button[data-id="Open as New Project"]',
+    );
+    if (openAsNewProjectButton) {
+      await pressButton(page, 'Open as New Project');
+    } else {
+      await pressButton(page, 'Open as New');
+    }
+  });
 }
 
 export async function openImageAndAddToCanvas(
@@ -191,9 +178,6 @@ export async function openImageAndAddToCanvas(
   x?: number,
   y?: number,
 ) {
-  const testDataDirectory = getTestDataDirectory();
-  const resolvedFilePath = path.resolve(testDataDirectory, filename);
-
   await selectImageTool(page);
 
   if (x !== undefined && y !== undefined) {
@@ -204,7 +188,7 @@ export async function openImageAndAddToCanvas(
 
   const inputFile = await page.$('input[type="file"]');
   if (inputFile) {
-    await inputFile.setInputFiles(resolvedFilePath);
+    await inputFile.setInputFiles(`tests/test-data/${filename}`);
   } else {
     throw new Error('Input file element not found');
   }
@@ -252,17 +236,16 @@ export async function pasteFromClipboardAndOpenAsNewProject(
     openStructureDialog(page).pasteFromClipboardButton;
   const openStructureTextarea =
     pasteFromClipboardDialog(page).openStructureTextarea;
-  const openAsNewButton = pasteFromClipboardDialog(page).openAsNewButton;
 
   await selectOpenFileTool(page);
   await pasteFromClipboardButton.click();
   await openStructureTextarea.fill(fillStructure);
   if (needToWait) {
     await waitForLoad(page, async () => {
-      await openAsNewButton.click();
+      await pressButton(page, 'Open as New Project');
     });
   } else {
-    await openAsNewButton.click();
+    await pressButton(page, 'Open as New Project');
   }
 }
 
@@ -424,13 +407,50 @@ export async function receiveRxnFileComparisonData(
   return { rxnFileExpected, rxnFile };
 }
 
+export async function receiveKetFileComparisonData(
+  page: Page,
+  expectedKetFileName: string,
+) {
+  const ketFileExpected = fs
+    .readFileSync(expectedKetFileName, 'utf8')
+    .split('\n');
+  const ketFile = (await page.evaluate(() => window.ketcher.getKet())).split(
+    '\n',
+  );
+
+  return { ketFileExpected, ketFile };
+}
+
+export async function getAndCompareSmiles(page: Page, smilesFilePath: string) {
+  const smilesFileExpected = await readFileContents(smilesFilePath);
+  const smilesFile = await getSmiles(page);
+  expect(smilesFile).toEqual(smilesFileExpected);
+}
+
 // The function is used to save the structure that is placed in the center
 // of canvas when opened. So when comparing files, the coordinates
 // always match and there is no difference between the results when comparing.
 export async function saveToFile(filename: string, data: string) {
   if (process.env.GENERATE_DATA === 'true') {
-    return await fs.promises.writeFile(filename, data, 'utf-8');
+    // `tests/test-data/${filename}`,
+    return await fs.promises.writeFile(
+      `tests/test-data/${filename}`,
+      data,
+      'utf-8',
+    );
   }
+}
+
+/*
+Example of usage:
+await openFileAndAddToCanvas('KET/benzene-arrow-benzene-reagent-hcl.ket', page);
+const rxnFile = await getRxn(page, 'v3000');
+await saveToFile('Rxn-V3000/benzene-arrow-benzene-reagent-hcl.rxn', rxnFile); */
+export async function pasteFromClipboard(page: Page, fillValue: string) {
+  const openStructureTextarea =
+    pasteFromClipboardDialog(page).openStructureTextarea;
+
+  await openStructureTextarea.fill(fillValue);
 }
 
 export async function openPasteFromClipboard(
@@ -450,8 +470,41 @@ export async function openPasteFromClipboard(
   // await waitForLoad(page);
 }
 
-export async function copyContentToClipboard(page: Page, content: string) {
-  await page.evaluate(async (content) => {
-    await navigator.clipboard.writeText(content);
-  }, content);
+export async function placeFileInTheMiddle(
+  filename: string,
+  page: Page,
+  delayInSeconds: number,
+) {
+  await selectOpenFileTool(page);
+  await openFile(filename, page);
+  await pressButton(page, 'AddToCanvas');
+  await clickInTheMiddleOfTheScreen(page);
+  await delay(delayInSeconds);
+  await takeEditorScreenshot(page);
+  const cmlFile = (await page.evaluate(() => window.ketcher.getCml())).split(
+    '/n',
+  );
+  return { cmlFile };
+}
+
+export async function openFromFileViaClipboard(filename: string, page: Page) {
+  const pasteFromClipboardButton =
+    openStructureDialog(page).pasteFromClipboardButton;
+  const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+  const openStructureTextarea =
+    pasteFromClipboardDialog(page).openStructureTextarea;
+
+  const fileContent = await readFileContents(filename);
+  await pasteFromClipboardButton.click();
+  await openStructureTextarea.fill(fileContent);
+  await selectOptionInDropdown(filename, page);
+  await waitForLoad(page, () => {
+    addToCanvasButton.click();
+  });
+}
+
+export async function getAndCompareInchi(page: Page, inchiFilePath: string) {
+  const inchiFileExpected = await readFileContents(inchiFilePath);
+  const inchiFile = await getInchi(page);
+  expect(inchiFile).toEqual(inchiFileExpected);
 }

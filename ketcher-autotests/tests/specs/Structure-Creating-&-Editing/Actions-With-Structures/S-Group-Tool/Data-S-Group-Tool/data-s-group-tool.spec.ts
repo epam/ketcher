@@ -182,7 +182,7 @@ test.describe('Data S-Group tool', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'Molfiles-V2000/chain-with-name-and-value-expected.mol',
+          'tests/test-data/Molfiles-V2000/chain-with-name-and-value-expected.mol',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);

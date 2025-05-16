@@ -104,11 +104,10 @@ export async function setMolecule(
   page: Page,
   structStr: string,
   position?: { x: number; y: number },
-  rescale?: boolean,
 ): Promise<void> {
   return await page.evaluate(
     ({ structStr, position }) =>
-      window.ketcher.setMolecule(structStr, { position, rescale }),
+      window.ketcher.setMolecule(structStr, { position }),
     { structStr, position },
   );
 }

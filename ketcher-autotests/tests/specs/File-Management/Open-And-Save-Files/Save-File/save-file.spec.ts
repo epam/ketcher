@@ -112,7 +112,8 @@ test.describe('Save files', () => {
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'KET/two-benzene-connected-expected.smi',
+        expectedFileName:
+          'tests/test-data/KET/two-benzene-connected-expected.smi',
       });
     expect(smiFile).toEqual(smiFileExpected);
   });
@@ -160,7 +161,7 @@ test.describe('Save files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
+          'tests/test-data/Molfiles-V3000/structure-where-atoms-exceeds999-expected.mol',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
     expect(molFile).toEqual(molFileExpected);
@@ -202,7 +203,7 @@ test.describe('Save files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'Molfiles-V2000/nitrogen-atom-under-cursor-expected.mol',
+          'tests/test-data/Molfiles-V2000/nitrogen-atom-under-cursor-expected.mol',
         fileFormat: 'v2000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });

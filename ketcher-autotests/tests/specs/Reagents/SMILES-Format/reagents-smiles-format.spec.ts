@@ -3,10 +3,10 @@ import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
+  readFileContents,
   pasteFromClipboardAndAddToCanvas,
   waitForPageInit,
   moveMouseAway,
-  readFileContent,
 } from '@utils';
 import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
@@ -57,8 +57,8 @@ test.describe('Reagents SMILES format', () => {
       page,
     );
 
-    const smiFileExpected = await readFileContent(
-      'SMILES/daylight-smiles-expected.smi',
+    const smiFileExpected = await readFileContents(
+      'tests/test-data/SMILES/daylight-smiles-expected.smi',
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
@@ -83,8 +83,8 @@ test.describe('Reagents SMILES format', () => {
       page,
     );
 
-    const smiFileExpected = await readFileContent(
-      'SMILES/daylight-smiles-below-expected.smi',
+    const smiFileExpected = await readFileContents(
+      'tests/test-data/SMILES/daylight-smiles-below-expected.smi',
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
@@ -207,8 +207,8 @@ test.describe('Reagents SMILES format', () => {
       page,
     );
 
-    const smiFileExpected = await readFileContent(
-      'SMILES/daylight-smiles-expected.smi',
+    const smiFileExpected = await readFileContents(
+      'tests/test-data/SMILES/daylight-smiles-expected.smi',
     );
     const smiFile = await getSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);
@@ -226,8 +226,8 @@ test.describe('Reagents SMILES format', () => {
       page,
     );
 
-    const smiFileExpected = await readFileContent(
-      'Extended-SMILES/extended-smiles.cxsmi',
+    const smiFileExpected = await readFileContents(
+      'tests/test-data/Extended-SMILES/extended-smiles.cxsmi',
     );
     const smiFile = await getExtendedSmiles(page);
     expect(smiFile).toEqual(smiFileExpected);

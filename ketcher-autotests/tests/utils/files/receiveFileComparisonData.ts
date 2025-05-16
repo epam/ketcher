@@ -1,7 +1,6 @@
-import * as path from 'path';
 import { Page, expect } from '@playwright/test';
 import { Ketcher, MolfileFormat } from 'ketcher-core';
-import { getTestDataDirectory, readFileContent, saveToFile } from './readFile';
+import { readFileContents, saveToFile } from './readFile';
 import {
   getCdx,
   getCdxml,
@@ -87,17 +86,14 @@ export async function verifyFileExport(
   format?: MolfileFormat,
   metaDataIndexes: number[] = [],
 ) {
-  const testDataDir = getTestDataDirectory();
-  const resolvedExpectedFilename = path.resolve(testDataDir, expectedFilename);
-
   // This two lines for creating from scratch or for updating exampled files
   const expectedFileContent = await getFileContent(page, fileType, format);
-  await saveToFile(resolvedExpectedFilename, expectedFileContent);
+  await saveToFile(expectedFilename, expectedFileContent);
   // This line for filtering out example file content (named as fileExpected)
   // and file content from memory (named as file) from unnessusary data
   const { fileExpected, file } = await receiveFileComparisonData({
     page,
-    expectedFileName: resolvedExpectedFilename,
+    expectedFileName: `tests/test-data/${expectedFilename}`,
     fileFormat: format,
     metaDataIndexes,
   });
@@ -210,7 +206,7 @@ export async function receiveFileComparisonData({
   file: string[];
   fileExpected: string[];
 }> {
-  const fileExpected = (await readFileContent(expectedFileName)).split('\n');
+  const fileExpected = (await readFileContents(expectedFileName)).split('\n');
 
   const file = await receiveFile({
     page,

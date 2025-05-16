@@ -83,6 +83,34 @@ import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 
 let page: Page;
 
+// async function pasteFromClipboardAndAddToMacromoleculesCanvas(
+//   structureFormat: string,
+//   fillStructure: string,
+//   needToWait = true,
+// ) {
+//   const pasteFromClipboardButton =
+//     openStructureDialog(page).pasteFromClipboardButton;
+//   const openStructureTextarea =
+//     pasteFromClipboardDialog(page).openStructureTextarea;
+//   const addToCanvasButton = pasteFromClipboardDialog(page).addToCanvasButton;
+
+//   await selectOpenFileTool(page);
+//   await pasteFromClipboardButton.click();
+//   if (!(structureFormat === 'Ket')) {
+//     await page.getByRole('combobox').click();
+//     await page.getByText(structureFormat).click();
+//   }
+
+//   await openStructureTextarea.fill(fillStructure);
+//   if (needToWait) {
+//     await waitForLoad(page, async () => {
+//       await addToCanvasButton.click();
+//     });
+//   } else {
+//     await addToCanvasButton.click();
+//   }
+// }
+
 test.beforeAll(async ({ browser }) => {
   let sharedContext;
   try {
@@ -148,11 +176,13 @@ test.describe('Import-Saving .idt Files', () => {
     Test case: Import/Saving files/#4495
     Description: Option "IDT" to dropdown File format of modal window Save Structure is exist.
     */
-    const contentTypeSelector =
-      pasteFromClipboardDialog(page).contentTypeSelector;
-
     await selectSaveTool(page);
-    await contentTypeSelector.click();
+
+    const fileFormatComboBox = page
+      .getByTestId('dropdown-select')
+      .getByRole('combobox');
+
+    await fileFormatComboBox.click();
 
     const options = page.getByRole('option');
     const values = await options.allTextContents();

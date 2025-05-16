@@ -26,15 +26,15 @@ import {
   hideLibrary,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
+  openFile,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  openFileAndAddToCanvasAsNewProjectMacro,
   openFileAndAddToCanvasMacro,
+  openPasteFromClipboard,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
-  pasteFromClipboardAndOpenAsNewProject,
   pressButton,
-  readFileContent,
+  readFileContents,
   selectAromatizeTool,
   selectAtomInToolbar,
   selectCleanTool,
@@ -44,6 +44,7 @@ import {
   selectLayoutTool,
   selectLeftPanelButton,
   selectMonomer,
+  selectOptionInDropdown,
   selectRing,
   selectSaltsAndSolvents,
   selectSequenceLayoutModeTool,
@@ -82,7 +83,7 @@ import {
   addSuperatomAttachmentPoint,
   removeSuperatomAttachmentPoint,
 } from '@utils/canvas/atoms/superatomAttachmentPoints';
-import { closeErrorAndInfoModals } from '@utils/common/helpers';
+import { pageReload } from '@utils/common/helpers';
 import { waitForMonomerPreviewMicro } from '@utils/common/loaders/previewWaiters';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import {
@@ -110,7 +111,6 @@ import {
   MicroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 const topLeftCorner = {
   x: -325,
@@ -162,6 +162,34 @@ async function setAtomAndBondSettings(page: Page) {
     .nth(2)
     .fill('05');
   await page.getByTestId('OK').click();
+}
+
+async function openCdxFile(page: Page) {
+  await selectOpenFileTool(page);
+  await openFile(
+    'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+    page,
+  );
+
+  await selectOptionInDropdown(
+    'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
+    page,
+  );
+  await pressButton(page, 'Open as New Project');
+}
+
+async function openCdxmlFile(page: Page) {
+  await selectOpenFileTool(page);
+  await openFile(
+    'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+    page,
+  );
+
+  await selectOptionInDropdown(
+    'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
+    page,
+  );
+  await pressButton(page, 'Open as New Project');
 }
 
 enum FileFormat {
@@ -584,8 +612,6 @@ test.describe('Macro-Micro-Switcher', () => {
     Description: The pop-up window appear in fullscreen mode after clicking the “Open/Save” button.
     */
     const fullScreenButton = topRightToolbarLocators(page).fullScreenButton;
-    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
-
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         test.fail(
@@ -597,7 +623,7 @@ test.describe('Macro-Micro-Switcher', () => {
     await fullScreenButton.click();
     await selectOpenFileTool(page);
     await takeEditorScreenshot(page);
-    await closeWindowButton.click();
+    await page.getByTitle('Close window').click();
     await selectSaveTool(page);
     await takeEditorScreenshot(page);
   });
@@ -1658,18 +1684,11 @@ test.describe('Macro-Micro-Switcher', () => {
       FileType.CDX,
     );
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      'CDX/one-attachment-point-added-in-micro-mode-expected.cdx',
-      page,
-      undefined,
-      // Error expected
-      true,
-    );
-
+    await openCdxFile(page);
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });
-    await closeErrorAndInfoModals(page);
+    await pageReload(page);
   });
 
   test('Verify presence and correctness of attachment points (SAP) in the SGROUP segment of CDXML molecular structure files', async () => {
@@ -1688,10 +1707,7 @@ test.describe('Macro-Micro-Switcher', () => {
       FileType.CDXML,
     );
 
-    await openFileAndAddToCanvasAsNewProjectMacro(
-      'CDXML/one-attachment-point-added-in-micro-mode-expected.cdxml',
-      page,
-    );
+    await openCdxmlFile(page);
     await takeEditorScreenshot(page);
   });
 
@@ -2083,9 +2099,11 @@ test.describe('Macro-Micro-Switcher', () => {
      * to Macro mode and presented after returning to Micro
      */
 
-    const fileContent = await readFileContent('CDX/image-png-expected.cdx');
-    await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
-
+    const fileContent = await readFileContents(
+      'tests/test-data/CDX/image-png-expected.cdx',
+    );
+    await openPasteFromClipboard(page, fileContent);
+    await pressButton(page, 'Open as New Project');
     await takeEditorScreenshot(page);
     await turnOnMacromoleculesEditor(page);
     await takeEditorScreenshot(page);
@@ -2881,12 +2899,8 @@ test('Switch to Macro mode, verify that user cant open reactions from RDF RXN V2
   Test case: https://github.com/epam/Indigo/issues/2102
   Description: In Macro mode, user can't open reactions from RDF RXN V2000/V3000 - error message is displayed. 
   */
-  await openFileAndAddToCanvasAsNewProjectMacro(
-    'RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf',
-    page,
-    undefined,
-    // error is expected
-    true,
-  );
+  await selectOpenFileTool(page);
+  await openFile('RDF-V3000/rdf-rxn-v3000-cascade-reaction-2-1-1.rdf', page);
+  await pressButton(page, 'Open as New');
   await takeEditorScreenshot(page, { hideMacromoleculeEditorScrollBars: true });
 });

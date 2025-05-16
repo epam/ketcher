@@ -1,5 +1,5 @@
 /* eslint-disable no-magic-numbers */
-import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
+import { chooseTab, Tabs } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
@@ -475,7 +475,9 @@ test.describe('Preview tooltips checks: ', () => {
         page,
         ambiguousMonomer.monomerLocatorOptions,
       ).hover({ force: true });
-      await waitForMonomerPreview(page);
+      await page
+        .getByTestId('polymer-library-preview')
+        .waitFor({ state: 'visible' });
 
       await takeEditorScreenshot(page);
 
@@ -513,7 +515,9 @@ test.describe('Preview tooltips checks: ', () => {
         page,
         ambiguousMonomer.monomerLocatorIndexOnMicro,
       );
-      await waitForMonomerPreview(page);
+      await page
+        .getByTestId('polymer-library-preview')
+        .waitFor({ state: 'visible' });
 
       await takeEditorScreenshot(page);
       await turnOnMacromoleculesEditor(page);
@@ -546,7 +550,9 @@ test.describe('Preview tooltips checks: ', () => {
         ambiguousMonomer.HELMString,
       );
       await hoverMouseOverSequenceModeMonomer(page);
-      await waitForMonomerPreview(page);
+      await page
+        .getByTestId('polymer-library-preview')
+        .waitFor({ state: 'visible' });
       await takeEditorScreenshot(page);
 
       // Test should be skipped if related bug exists

@@ -535,7 +535,8 @@ test.describe('R-Group Label Tool', () => {
     const { fileExpected: smiFileExpected, file: smiFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'SMILES/chain-with-r-group-expected.smi',
+        expectedFileName:
+          'tests/test-data/SMILES/chain-with-r-group-expected.smi',
       });
 
     expect(smiFile).toEqual(smiFileExpected);

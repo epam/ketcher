@@ -25,7 +25,8 @@ test.describe('getMolfile', () => {
     const { fileExpected: molFileExpected, file: molFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'Molfiles-V3000/alanine-monomers-bonded-expected.mol',
+        expectedFileName:
+          'tests/test-data/Molfiles-V3000/alanine-monomers-bonded-expected.mol',
         fileFormat: 'v3000',
         metaDataIndexes: METADATA_STRING_INDEX,
       });

@@ -74,7 +74,7 @@ test.describe('Import-Saving .fasta Files', () => {
     const { fileExpected: fastaFileExpected, file: fastaFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'FASTA/fasta-rna-a-expected.fasta',
+        expectedFileName: 'tests/test-data/FASTA/fasta-rna-a-expected.fasta',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 
@@ -94,7 +94,7 @@ test.describe('Import-Saving .fasta Files', () => {
     const { fileExpected: fastaFileExpected, file: fastaFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'FASTA/fasta-empty.fasta',
+        expectedFileName: 'tests/test-data/FASTA/fasta-empty.fasta',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 
@@ -144,7 +144,8 @@ test.describe('Import-Saving .fasta Files', () => {
     const { fileExpected: fastaFileExpected, file: fastaFile } =
       await receiveFileComparisonData({
         page,
-        expectedFileName: 'FASTA/fasta-snake-mode-rna-expected.fasta',
+        expectedFileName:
+          'tests/test-data/FASTA/fasta-snake-mode-rna-expected.fasta',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 
@@ -395,7 +396,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await receiveFileComparisonData({
         page,
         expectedFileName:
-          'FASTA/unsplit-nucleotides-connected-with-nucleotides.fasta',
+          'tests/test-data/FASTA/unsplit-nucleotides-connected-with-nucleotides.fasta',
         metaDataIndexes: METADATA_STRING_INDEX,
       });
 

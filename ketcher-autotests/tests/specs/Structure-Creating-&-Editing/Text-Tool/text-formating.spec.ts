@@ -4,20 +4,21 @@ import {
   waitForPageInit,
   pressButton,
   clickInTheMiddleOfTheScreen,
+  openFromFileViaClipboard,
   waitForLoad,
+  readFileContents,
   openFileAndAddToCanvas,
   copyAndPaste,
   cutAndPaste,
   waitForRender,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  readFileContent,
-  pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import {
   pressRedoButton,
   pressUndoButton,
+  selectOpenFileTool,
 } from '@tests/pages/common/TopLeftToolbar';
 import {
   FileType,
@@ -25,7 +26,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 
 async function openFromFileViaTextBox(filename: string, page: Page) {
-  const fileText = await readFileContent(filename);
+  const fileText = await readFileContents(filename);
   await page.getByTestId('text').click();
   await clickInTheMiddleOfTheScreen(page);
   await page.getByRole('dialog').getByRole('textbox').fill(fileText);
@@ -151,9 +152,8 @@ test.describe('Text tools test cases', () => {
 
   test('Open saved .ket file', async ({ page }) => {
     // Test case: EPMLSOPKET-2235
-    const fileContent = await readFileContent('KET/ketfile01.ket');
-
-    await pasteFromClipboardAndAddToCanvas(page, fileContent);
+    await selectOpenFileTool(page);
+    await openFromFileViaClipboard('tests/test-data/KET/ketfile01.ket', page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await page.getByText('TEST321').dblclick();
@@ -217,7 +217,7 @@ test.describe('Text tools test cases', () => {
     await selectAllStructuresOnCanvas(page);
     await page.keyboard.press('Delete');
     await pressButton(page, 'Apply');
-    await openFromFileViaTextBox('Txt/longtext_test.txt', page);
+    await openFromFileViaTextBox('tests/test-data/Txt/longtext_test.txt', page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -225,9 +225,11 @@ test.describe('Text tools test cases', () => {
   test('UTF-8 compatible ("Paste from Clipboard")', async ({ page }) => {
     // Test case: EPMLSOPKET-5253
     // Verify if possible is add UTF-8 data format  to canvas
-    const fileContent = await readFileContent('KET/utf-8-svg-png.ket');
-
-    await pasteFromClipboardAndAddToCanvas(page, fileContent);
+    await selectOpenFileTool(page);
+    await openFromFileViaClipboard(
+      'tests/test-data/KET/utf-8-svg-png.ket',
+      page,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });

@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { Page, test, expect } from '@playwright/test';
 import {
   selectSnakeLayoutModeTool,
   takeEditorScreenshot,
@@ -7,6 +7,10 @@ import {
   selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   waitForRender,
+  getKet,
+  saveToFile,
+  receiveFileComparisonData,
+  getMolfile,
   hideLibrary,
   showLibrary,
   copyToClipboardByKeyboard,
@@ -32,10 +36,6 @@ import {
   selectEraseTool,
 } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import {
-  FileType,
-  verifyFileExport,
-} from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 
@@ -84,6 +84,35 @@ async function saveFileAsPngOrSvgFormat(page: Page, FileFormat: string) {
   await selectSaveTool(page);
   await clickOnFileFormatDropdown(page);
   await page.getByRole('option', { name: FileFormat }).click();
+}
+
+async function saveToKet(page: Page, fileName: string) {
+  const expectedKetFile = await getKet(page);
+  await saveToFile(`KET/Side-Chain-Connections/${fileName}`, expectedKetFile);
+
+  const { fileExpected: ketFileExpected, file: ketFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName: `tests/test-data/KET/Side-Chain-Connections/${fileName}`,
+    });
+
+  expect(ketFile).toEqual(ketFileExpected);
+}
+
+async function saveToMol(page: Page, fileName: string) {
+  const ignoredLineIndigo = 1;
+  const expectedMolFile = await getMolfile(page, 'v3000');
+  await saveToFile(`KET/Side-Chain-Connections/${fileName}`, expectedMolFile);
+
+  const { fileExpected: molFileExpected, file: molFile } =
+    await receiveFileComparisonData({
+      page,
+      expectedFileName: `tests/test-data/KET/Side-Chain-Connections/${fileName}`,
+      metaDataIndexes: [ignoredLineIndigo],
+      fileFormat: 'v3000',
+    });
+
+  expect(molFile).toEqual(molFileExpected);
 }
 
 test.describe('Side chain connections', () => {
@@ -1139,11 +1168,7 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/19.ket`,
       page,
     );
-    await verifyFileExport(
-      page,
-      'KET/Side-Chain-Connections/19-expected.ket',
-      FileType.KET,
-    );
+    await saveToKet(page, '19-expected.ket');
   });
 
   test('20. Verify saving and opening structure with side-chain connections in MOL V3000 format', async () => {
@@ -1156,12 +1181,6 @@ test.describe('Side chain connections', () => {
       `KET/Side-Chain-Connections/20.ket`,
       page,
     );
-    await verifyFileExport(
-      page,
-      'KET/Side-Chain-Connections/20-expected.mol',
-      FileType.MOL,
-      'v3000',
-      [1],
-    );
+    await saveToMol(page, '20-expected.mol');
   });
 });

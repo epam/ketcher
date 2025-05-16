@@ -9,13 +9,14 @@ import {
   scrollDown,
   selectRectangleArea,
   moveMouseAway,
+  openPasteFromClipboard,
+  readFileContents,
   startNewSequence,
   selectSnakeLayoutModeTool,
   waitForRender,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  readFileContent,
-  copyContentToClipboard,
+  selectAllStructuresOnCanvas,
 } from '@utils';
 import { pressUndoButton } from '@tests/pages/common/TopLeftToolbar';
 import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
@@ -29,6 +30,7 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
+import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 
 const ZOOM_OUT_VALUE = 400;
 const SCROLL_DOWN_VALUE = 250;
@@ -126,10 +128,16 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
     },
     async ({ page }) => {
       test.slow();
-      const fileContent = await readFileContent(
-        'KET/single-fragment-for-paste.ket',
+      const closeWindowButton =
+        pasteFromClipboardDialog(page).closeWindowButton;
+      const fileContent = await readFileContents(
+        'tests/test-data/KET/single-fragment-for-paste.ket',
       );
-      await copyContentToClipboard(page, fileContent);
+      await openPasteFromClipboard(page, fileContent);
+      await selectAllStructuresOnCanvas(page);
+      await copyToClipboardByKeyboard(page);
+      await closeWindowButton.click();
+
       await getSymbolLocator(page, {
         symbolAlias: 'G',
         nodeIndexOverall: 23,
@@ -155,7 +163,11 @@ test.describe('Sequence mode copy&paste for edit mode', () => {
   // test('Select letters with Shift & ArrowRight then paste sequence from clipboard and undo', async ({
   //   page,
   // }) => {
-  //   await copyContentToClipboard(page, 'atc');
+  //   await openPasteFromClipboard(page, 'atc');
+  //   await selectAllStructuresOnCanvas(page);
+  //   await copyToClipboardByKeyboard(page);
+  //   await page.getByTitle('Close window').click();
+  //
   //   await getSymbolLocator(page, { symbolAlias: 'G', nodeIndexOverall: 0 }).dblclick();
   //   const arrowCount = 10;
   //   await page.keyboard.down('Shift');
@@ -217,7 +229,10 @@ test.describe('Sequence-edit mode', () => {
   //   Test case: #3894
   //   Description: Pasted fragment is considered as new chain.
   //   */
-  //   await copyContentToClipboard(page, '>');
+  //   await openPasteFromClipboard(page, '>');
+  //   await selectAllStructuresOnCanvas(page);
+  //   await copyToClipboardByKeyboard(page);
+  //   await page.getByTitle('Close window').click();
   //   await startNewSequence(page);
   //   await pasteFromClipboardByKeyboard(page);
   //   await takeEditorScreenshot(page);
@@ -231,10 +246,13 @@ test.describe('Sequence-edit mode', () => {
   //   Test case: #3894
   //   Description: Sequence pasted on canvas.
   //   */
-  //   const fileContent = await readFileContent(
-  //     'Sequence/sequence-500-symbols.seq',
+  //   const fileContent = await readFileContents(
+  //     'tests/test-data/Sequence/sequence-500-symbols.seq',
   //   );
-  //   await copyContentToClipboard(page, fileContent);
+  //   await openPasteFromClipboard(page, fileContent);
+  //   await selectAllStructuresOnCanvas(page);
+  //   await copyToClipboardByKeyboard(page);
+  //   await page.getByTitle('Close window').click();
   //   await startNewSequence(page);
   //   await pasteFromClipboardByKeyboard(page);
   //   await waitForRender(page, async () => {

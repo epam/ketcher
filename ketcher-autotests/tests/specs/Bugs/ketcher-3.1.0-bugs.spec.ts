@@ -24,12 +24,14 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectSequenceLayoutModeTool,
+  pasteFromClipboard,
+  openStructurePasteFromClipboard,
   MonomerType,
   takeElementScreenshot,
   waitForMonomerPreview,
-  copyContentToClipboard,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
+import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import {
   goToFavoritesTab,
   goToPeptidesTab,
@@ -727,7 +729,11 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      */
     await selectSequenceLayoutModeTool(page);
     await switchToPeptideMode(page);
-    await copyContentToClipboard(page, 'GATYLIK');
+    await openStructurePasteFromClipboard(page);
+    await pasteFromClipboard(page, 'GATYLIK');
+    await selectAllStructuresOnCanvas(page);
+    await copyToClipboardByKeyboard(page);
+    await closeErrorAndInfoModals(page);
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,

@@ -15,6 +15,8 @@ type Props = Omit<EditorProps, 'ketcherId'> & {
 interface MacromoleculesEditorProps {
   ketcherId: string;
   togglerComponent?: JSX.Element;
+  isMacromoleculesEditorTurnedOn?: boolean;
+  onInit(macromoleculesEditor: CoreEditor): void;
 }
 /*
  * TODO:

@@ -5,11 +5,9 @@ import { createPolymerEditorCanvas } from '../../helpers/dom';
 describe('CoreEditor', () => {
   it('should track dom events and trigger handlers', () => {
     const canvas = createPolymerEditorCanvas();
-    const mode = new FlexMode();
     const editor: CoreEditor = new CoreEditor({
       canvas,
       theme: {},
-      mode,
     });
     const onMousemove = jest.fn();
     jest

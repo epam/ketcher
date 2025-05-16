@@ -53,16 +53,24 @@ export const RulerArea = () => {
     // TODO: Perhaps it's not the best approach, should better rely on some promise/init event
   }, [ZoomTool.instance]);
 
+  const translateValue = useMemo(() => {
+    if (layoutMode === 'sequence-layout-mode') {
+      const baseOffset = 40;
+      const indents = lineLengthValue / 10 - 1;
+      return baseOffset + indents * 10 + lineLengthValue * 20 + 10;
+    } else if (layoutMode === 'snake-layout-mode') {
+      return 25 + lineLengthValue * 60;
+    }
+
+    return 0;
+  }, [layoutMode, lineLengthValue]);
+
   const [inputOffsetX, handleOffsetX] = useMemo(() => {
-    const baseOffset = 40;
-    const indents = lineLengthValue / 10 - 1;
-    const translateValue =
-      baseOffset + indents * 10 + lineLengthValue * 20 + 10;
     return [
       transform.applyX(translateValue) + dragDelta + 6,
       transform.applyX(translateValue) + dragDelta - 14,
     ];
-  }, [lineLengthValue, dragDelta, transform]);
+  }, [transform, translateValue, dragDelta]);
 
   const updateSettings = useCallback(
     (value: number) => {
@@ -97,23 +105,28 @@ export const RulerArea = () => {
   const handleDragEnd = useCallback(
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
       const finalDelta = event.sourceEvent.clientX - dragStartX.current;
-
-      const baseOffset = 40;
-      const indents = lineLengthValue / 10 - 1;
-      const translateValue =
-        baseOffset + indents * 10 + lineLengthValue * 20 + 10;
       const finalScreenX = transform.applyX(translateValue + finalDelta);
-
       const finalWorldX = transform.invertX(finalScreenX);
-      const rawCount = (finalWorldX - indents * 10 - baseOffset) / 20;
-      const snapped = Math.round(rawCount / 10) * 10;
 
-      updateSettings(snapped);
+      let newValue = 0;
+      if (layoutMode === 'sequence-layout-mode') {
+        const baseOffset = 40;
+        const indents = lineLengthValue / 10 - 1;
+        const rawCount = (finalWorldX - indents * 10 - baseOffset) / 20;
+        newValue = Math.max(10, Math.round(rawCount / 10) * 10);
+      } else if (layoutMode === 'snake-layout-mode') {
+        const rawCount = (finalWorldX - 25) / 60;
+        newValue = Math.max(1, Math.round(rawCount));
+      }
+
+      if (newValue !== lineLengthValue) {
+        updateSettings(newValue);
+      }
 
       setDragDelta(0);
       dragStartX.current = 0;
     },
-    [transform, lineLengthValue, updateSettings],
+    [transform, translateValue, layoutMode, lineLengthValue, updateSettings],
   );
 
   if (layoutMode === 'flex-layout-mode') {
@@ -124,8 +137,9 @@ export const RulerArea = () => {
     <div className={styles.rulerArea}>
       <RulerInput
         lineLengthValue={lineLengthValue}
-        onCommitValue={updateSettings}
         offsetX={inputOffsetX}
+        layoutMode={layoutMode}
+        onCommitValue={updateSettings}
       />
       <RulerHandle
         offsetX={handleOffsetX}
@@ -133,7 +147,7 @@ export const RulerArea = () => {
         onDrag={handleDrag}
         onDragEnd={handleDragEnd}
       />
-      <RulerScale transform={transform} />
+      <RulerScale transform={transform} layoutMode={layoutMode} />
     </div>
   );
 };

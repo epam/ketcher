@@ -6,16 +6,23 @@ import {
   useRef,
   useState,
 } from 'react';
+import { LayoutMode } from 'ketcher-core';
 
 import styles from './RulerArea.module.less';
 
 type Props = {
   lineLengthValue: number;
   offsetX: number;
+  layoutMode: LayoutMode;
   onCommitValue: (value: number) => void;
 };
 
-const RulerInput = ({ lineLengthValue, offsetX, onCommitValue }: Props) => {
+const RulerInput = ({
+  lineLengthValue,
+  offsetX,
+  layoutMode,
+  onCommitValue,
+}: Props) => {
   const ref = useRef<HTMLInputElement>(null);
 
   useLayoutEffect(() => {
@@ -28,29 +35,32 @@ const RulerInput = ({ lineLengthValue, offsetX, onCommitValue }: Props) => {
 
   const stringifiedLineLengthValue = lineLengthValue.toString();
 
-  const [value, setValue] = useState(stringifiedLineLengthValue);
-  if (value !== stringifiedLineLengthValue) {
-    setValue(stringifiedLineLengthValue);
-  }
+  const [editingValue, setEditingValue] = useState<string | null>(null);
+  const displayValue =
+    editingValue !== null ? editingValue : stringifiedLineLengthValue;
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value);
+    setEditingValue(event.target.value);
   };
 
   const handleBlur = () => {
-    if (value.trim() === '') {
-      setValue(stringifiedLineLengthValue);
+    if (!editingValue || editingValue.trim() === '') {
+      setEditingValue(null);
       return;
     }
 
-    const newValue = Number(value);
+    const newValue = Number(editingValue);
     if (Number.isNaN(newValue) || newValue < 1) {
-      setValue(stringifiedLineLengthValue);
+      setEditingValue(null);
       return;
     }
 
-    const newLineLength = Math.round(newValue / 10) * 10;
-    setValue(newLineLength.toString());
+    const newLineLength =
+      layoutMode === 'sequence-layout-mode'
+        ? Math.round(newValue / 10) * 10
+        : newValue;
+
+    setEditingValue(null);
     onCommitValue(newLineLength);
   };
 
@@ -67,7 +77,7 @@ const RulerInput = ({ lineLengthValue, offsetX, onCommitValue }: Props) => {
       type="text"
       inputMode="numeric"
       pattern="[0-9]*"
-      value={value}
+      value={displayValue}
       onChange={handleChange}
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}

@@ -52,6 +52,7 @@ interface SGroupdrawBracketsOptions {
 class ReSGroup extends ReObject {
   public item: SGroup | undefined;
   public render!: Render;
+  private expandedMonomerAttachmentPoints?: any; // Raphael paths
 
   constructor(sgroup: SGroup) {
     super('sgroup');
@@ -237,12 +238,52 @@ class ReSGroup extends ReObject {
         const atom = render?.ctab?.atoms?.get(aid);
 
         set.push(atom?.makeHoverPlate(render));
-        set.push(atom?.makeMonomerAttachmentPointHighlightPlate(render));
       }, this);
       SGroup.getBonds(render.ctab.molecule, sGroupItem).forEach((bid) => {
         set.push(render?.ctab?.bonds?.get(bid)?.makeHoverPlate(render));
       }, this);
       render.ctab.addReObjectPath(LayerMap.hovering, this.visel, set);
+    }
+  }
+
+  setHover(hover: boolean, render: Render) {
+    super.setHover(hover, render);
+
+    if (!hover || this.selected) {
+      this.expandedMonomerAttachmentPoints?.hide();
+
+      return;
+    }
+
+    if (
+      !this.expandedMonomerAttachmentPoints?.length ||
+      this.expandedMonomerAttachmentPoints?.[0]?.removed
+    ) {
+      this.expandedMonomerAttachmentPoints = undefined;
+    }
+
+    if (this.expandedMonomerAttachmentPoints) {
+      this.expandedMonomerAttachmentPoints.show();
+    } else {
+      const paper = render.paper;
+      const sGroupItem = this.item;
+
+      if (!sGroupItem) {
+        return;
+      }
+
+      const set = paper.set();
+
+      render.paper.setStart();
+
+      SGroup.getAtoms(render.ctab.molecule, sGroupItem).forEach((aid) => {
+        const atom = render?.ctab?.atoms?.get(aid);
+
+        set.push(atom?.makeMonomerAttachmentPointHighlightPlate(render));
+      }, this);
+
+      render.ctab.addReObjectPath(LayerMap.atom, this.visel, set);
+      this.expandedMonomerAttachmentPoints = render.paper.setFinish();
     }
   }
 

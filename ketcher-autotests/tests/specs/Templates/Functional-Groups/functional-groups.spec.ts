@@ -36,6 +36,7 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
@@ -282,7 +283,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -532,7 +533,12 @@ test.describe('Functional Groups', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('me').first().hover();
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('me')
+      .first()
+      .hover();
     await takeEditorScreenshot(page);
   });
 

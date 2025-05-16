@@ -21,6 +21,7 @@ import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
 import {
   BaseMonomer,
+  CoreEditor,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   NodeSelection,
   NodesSelection,
@@ -108,10 +109,12 @@ interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
   monomersLibraryUpdate?: string | JSON;
+  onInit?: (editor: CoreEditor) => void;
 }
 
 interface EditorContainerProps extends EditorProps {
-  onInit?: () => void;
+  onInit?: (editor: CoreEditor) => void;
+  isMacromoleculesEditorTurnedOn?: boolean;
 }
 
 function EditorContainer({
@@ -120,6 +123,7 @@ function EditorContainer({
   theme,
   togglerComponent,
   monomersLibraryUpdate,
+  isMacromoleculesEditorTurnedOn,
 }: EditorContainerProps) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
@@ -132,21 +136,21 @@ function EditorContainer({
 
   store.dispatch(initKetcherId(ketcherId));
 
-  useEffect(() => {
-    onInit?.();
-  }, [onInit]);
-
   return (
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
-        <RootSizeProvider rootRef={rootElRef}>
+        <RootSizeProvider
+          rootRef={rootElRef}
+          isMacromoleculesEditorTurnedOn={isMacromoleculesEditorTurnedOn}
+        >
           <EditorWrapper ref={rootElRef} className={EditorClassName}>
             <Editor
               ketcherId={ketcherId}
               theme={editorTheme}
               togglerComponent={togglerComponent}
               monomersLibraryUpdate={monomersLibraryUpdate}
+              onInit={onInit}
             />
           </EditorWrapper>
         </RootSizeProvider>
@@ -159,6 +163,7 @@ function Editor({
   theme,
   togglerComponent,
   monomersLibraryUpdate,
+  onInit,
 }: EditorProps) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
@@ -186,6 +191,7 @@ function Editor({
         theme,
         canvas: canvasRef.current,
         monomersLibraryUpdate,
+        onInit,
       }),
     );
 

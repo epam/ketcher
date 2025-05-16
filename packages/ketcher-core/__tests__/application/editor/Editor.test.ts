@@ -1,4 +1,4 @@
-import { CoreEditor, FlexMode, ToolName } from 'application/editor';
+import { CoreEditor, ToolName } from 'application/editor';
 import { MonomerTool } from 'application/editor/tools/Monomer';
 import { createPolymerEditorCanvas } from '../../helpers/dom';
 

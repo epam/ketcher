@@ -30,7 +30,7 @@ import styled from '@emotion/styled';
 import _round from 'lodash/round';
 import _map from 'lodash/map';
 import { Tabs } from 'components/shared/Tabs';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   peptideNaturalAnalogues,
   rnaDnaNaturalAnalogues,
@@ -558,7 +558,10 @@ const PeptideProperties = (props: PeptidePropertiesProps) => {
             hint="The extinction coefficient for wavelength of 280nm is calculated using the method from Gill, S.C. and von Hippel, P.H. (1989). Only amino acid natural analogues are used in the calculation."
           ></BasicProperty>
         </BasicPropertiesWrapper>
-        <BasicProperty name="Hydrophobicity" />
+        <BasicProperty
+          name="Hydrophobicity"
+          hint="The hydrophobicity is calculated using the method from Black S.D. and Mould D.R. (1991). Only amino acid natural analogues are used in the calculation."
+        />
       </PeptideBasicPropertiesWrapper>
       <PeptidePropertiesBottomPart>
         {props.macromoleculesProperties.monomerCount.peptides && (
@@ -611,7 +614,7 @@ const RnaProperties = (props: DnaRnaPropertiesProps) => {
       <RnaBasicPropertiesWrapper>
         {isNumber(props.macromoleculesProperties.Tm) ? (
           <BasicProperty
-            name="Melting temperature"
+            name="Melting Temp. (°C)"
             value={_round(props.macromoleculesProperties.Tm, 1)}
             hint="The melting temperature is calculated using the method from Khandelwal G. and Bhyravabhotla J. (2010). Only base natural analogues are used in the calculation."
           />
@@ -706,17 +709,23 @@ export const MacromoleculePropertiesWindow = () => {
 
   const recalculateMacromoleculeProperties =
     useRecalculateMacromoleculeProperties();
-  const debouncedRecalculateMacromoleculeProperties = useCallback(
-    debounce((shouldSkip?: boolean) => {
-      recalculateMacromoleculeProperties(shouldSkip);
-    }, 500),
-    [recalculateMacromoleculeProperties],
-  );
-
   const skipDataFetch = !isMacromoleculesPropertiesWindowOpened;
+  const debouncedRecalculateMacromoleculePropertiesRef = useRef<
+    (shouldSkip?: boolean) => void
+  >(recalculateMacromoleculeProperties);
+
+  useEffect(() => {
+    debouncedRecalculateMacromoleculePropertiesRef.current = debounce(
+      (shouldSkip?: boolean) => {
+        recalculateMacromoleculeProperties(shouldSkip);
+      },
+      500,
+    );
+  }, [recalculateMacromoleculeProperties]);
+
   useEffect(() => {
     const selectEntitiesHandler = () => {
-      debouncedRecalculateMacromoleculeProperties(skipDataFetch);
+      debouncedRecalculateMacromoleculePropertiesRef.current(skipDataFetch);
     };
 
     editor?.events.selectEntities.add(selectEntitiesHandler);
@@ -727,7 +736,7 @@ export const MacromoleculePropertiesWindow = () => {
   }, [editor, skipDataFetch]);
 
   useEffect(() => {
-    debouncedRecalculateMacromoleculeProperties(skipDataFetch);
+    debouncedRecalculateMacromoleculePropertiesRef.current(skipDataFetch);
   }, [
     unipositiveIonsMeasurementUnit,
     oligonucleotidesMeasurementUnit,
@@ -758,7 +767,7 @@ export const MacromoleculePropertiesWindow = () => {
   };
 
   const hasCommonError =
-    !firstMacromoleculesProperties || macromoleculesProperties.length > 2;
+    !firstMacromoleculesProperties || macromoleculesProperties.length > 1;
   const hasPeptidesTabError =
     hasCommonError ||
     !hasSpecificProperty(firstMacromoleculesProperties, 'peptides');

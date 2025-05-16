@@ -671,3 +671,83 @@ test(`Verify that selecting a bond highlights it properly, even in complex struc
     await takeEditorScreenshot(page);
   }
 });
+
+test(`Check that when entering macromolecules mode all standard stereo-labels are visible if they were visible in molecules mode`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7104
+   * Description: Check that when entering macromolecules mode all standard stereo-labels are visible if they were visible in molecules mode
+   *
+   * Case: 1. Load ket file with all stereo-labels
+   *       2. Go to Macromolecules mode - Flex
+   *       3. Take screenshot to witness resulted canvas on Flex mode
+   *       4. Switch to Snake mode
+   *       5. Take screenshot to witness resulted canvas on Snake mode
+   *       6. Switch to Sequence mode
+   *       7. Take screenshot to witness resulted canvas on Sequence mode
+   *
+   */
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/Stereo-labels/All types of stereo-labels.ket',
+    page,
+  );
+  await selectFlexLayoutModeTool(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+
+  await selectSnakeLayoutModeTool(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+
+  await selectSequenceLayoutModeTool(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});
+
+test(`Check that visible stereo-labels in macromolecules mode get selected with the rest of the molecule, just like in small molecules mode`, async () => {
+  /*
+   * Test task: https://github.com/epam/ketcher/issues/7104
+   * Description: Check that when entering macromolecules mode all standard stereo-labels are visible if they were visible in molecules mode
+   *
+   * Case: 1. Load ket file with all stereo-labels
+   *       2. Go to Macromolecules mode - Flex
+   *       3. Select all elements on the canvas
+   *       4. Take screenshot to witness resulted canvas on Flex mode
+   *       5. Switch to Snake mode
+   *       6. Select all elements on the canvas
+   *       7. Take screenshot to witness resulted canvas on Snake mode
+   *       8. Switch to Sequence mode
+   *       9. Select all elements on the canvas
+   *       10. Take screenshot to witness resulted canvas on Sequence mode
+   *
+   */
+  await openFileAndAddToCanvasAsNewProject(
+    'KET/Micro-Macro-Switcher/Stereo-labels/All types of stereo-labels.ket',
+    page,
+  );
+  await selectFlexLayoutModeTool(page);
+  await selectAllStructuresOnCanvas(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+
+  await selectSnakeLayoutModeTool(page);
+  await selectAllStructuresOnCanvas(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+
+  await selectSequenceLayoutModeTool(page);
+  await selectAllStructuresOnCanvas(page);
+  await takeEditorScreenshot(page, {
+    hideMonomerPreview: true,
+    hideMacromoleculeEditorScrollBars: true,
+  });
+});

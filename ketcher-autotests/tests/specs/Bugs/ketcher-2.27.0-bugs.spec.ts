@@ -281,9 +281,14 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     });
     await page.getByText('Highlight', { exact: true }).click();
     await page.locator('.css-cyxjjb').click(); // Red
-    await page.locator('path').nth(8).click({
-      button: 'right',
-    });
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .locator('path')
+      .nth(8)
+      .click({
+        button: 'right',
+      });
     await page.getByText('Highlight', { exact: true }).click();
     await page.locator('.css-d1acvy').click(); // Blue
     await takeEditorScreenshot(page);
@@ -327,7 +332,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Check that hand tool is available
      */
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
-    const handTool = page.getByTestId('hand');
+    const handTool = CommonLeftToolbar(page).handToolButton;
     await expect(handTool).toBeVisible();
     await expect(handTool).toBeEnabled();
     await expect(handTool).toHaveAttribute('title', 'Hand Tool (Ctrl+Alt+H)');

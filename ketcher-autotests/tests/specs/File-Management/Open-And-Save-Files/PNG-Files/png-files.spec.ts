@@ -5,11 +5,11 @@ import {
   openFileAndAddToCanvas,
   openSettings,
   pressButton,
-  selectLayoutTool,
 } from '@utils';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 test.describe('Saving in .png files', () => {
   test.beforeEach(async ({ page }) => {
@@ -184,7 +184,7 @@ test.describe('Saving in .png files', () => {
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(

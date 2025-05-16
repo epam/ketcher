@@ -17,13 +17,12 @@ import { getControlModifier } from '@utils/keyboard';
 import {
   RingButton,
   TemplateLibrary,
-  TopPanelButton,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   selectMonomer,
   selectRing,
 } from '@utils/selectors';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
-import { openSettings, selectTopPanelButton } from './tools';
+import { openSettings } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';
@@ -102,7 +101,10 @@ export async function drawElementByTitle(
 }
 
 export async function getLeftToolBarWidth(page: Page): Promise<number> {
-  const leftBarSize = await page.getByTestId('left-toolbar').boundingBox();
+  const leftBarSize = await page
+    .getByTestId('left-toolbar')
+    .filter({ has: page.locator(':visible') })
+    .boundingBox();
 
   // we can get padding / margin values of left toolbar through x property
   if (leftBarSize?.width) {
@@ -113,7 +115,10 @@ export async function getLeftToolBarWidth(page: Page): Promise<number> {
 }
 
 export async function getTopToolBarHeight(page: Page): Promise<number> {
-  const topBarSize = await page.getByTestId('top-toolbar').boundingBox();
+  const topBarSize = await page
+    .getByTestId('top-toolbar')
+    .filter({ has: page.locator(':visible') })
+    .boundingBox();
 
   // we can get padding / margin values of top toolbar through y property
   if (topBarSize?.height) {
@@ -171,7 +176,13 @@ export async function takeElementScreenshot(
     await page.getByTestId('polymer-library-preview').isHidden();
   }
 
-  const element = page.getByTestId(elementId).first();
+  let element = page.getByTestId(elementId);
+
+  if ((await element.count()) > 1) {
+    element = element.filter({ has: page.locator(':visible') });
+    element = element.first();
+  }
+
   await expect(element).toHaveScreenshot(options);
 }
 
@@ -514,41 +525,6 @@ export async function selectRedoByKeyboard(
 
 export async function copyToClipboardByIcon(page: Page) {
   await page.getByTestId('copy-to-clipboard').click();
-}
-
-export async function selectAromatizeTool(page: Page) {
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await selectTopPanelButton(TopPanelButton.Aromatize, page),
-  );
-}
-
-export async function selectDearomatizeTool(page: Page) {
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await selectTopPanelButton(TopPanelButton.Dearomatize, page),
-  );
-}
-
-export async function selectCleanTool(page: Page) {
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await selectTopPanelButton(TopPanelButton.Clean, page),
-  );
-}
-
-export async function selectCalculateTool(page: Page) {
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await selectTopPanelButton(TopPanelButton.Calculate, page),
-  );
-}
-
-export async function selectLayoutTool(page: Page) {
-  await waitForSpinnerFinishedWork(
-    page,
-    async () => await selectTopPanelButton(TopPanelButton.Layout, page),
-  );
 }
 
 export async function copyStructureByCtrlMove(

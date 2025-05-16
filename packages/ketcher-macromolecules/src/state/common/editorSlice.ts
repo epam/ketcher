@@ -18,7 +18,6 @@ import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
   CoreEditor,
   LayoutMode,
-  modesMap,
   SingleChainMacromoleculeProperties,
 } from 'ketcher-core';
 import { EditorStatePreview, RootState } from 'state';
@@ -70,7 +69,7 @@ const initialState: EditorState = {
   isContextMenuActive: false,
   isMacromoleculesPropertiesWindowOpened: false,
   macromoleculesProperties: undefined,
-  unipositiveIonsMeasurementUnit: MolarMeasurementUnit.nanoMol,
+  unipositiveIonsMeasurementUnit: MolarMeasurementUnit.milliMol,
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit.microMol,
 };
 
@@ -104,16 +103,17 @@ export const editorSlice: Slice = createSlice({
         theme: DeepPartial<ThemeType>;
         canvas: SVGSVGElement;
         monomersLibraryUpdate?: string | JSON;
+        onInit?: (editor: CoreEditor) => void;
       }>,
     ) => {
-      state.editor = new CoreEditor({
+      const editor = new CoreEditor({
         theme: action.payload.theme,
         canvas: action.payload.canvas,
-        mode: state.editorLayoutMode
-          ? new modesMap[state.editorLayoutMode]()
-          : undefined,
         monomersLibraryUpdate: action.payload.monomersLibraryUpdate,
       });
+
+      state.editor = editor;
+      action.payload.onInit?.(editor);
     },
     destroyEditor: (state) => {
       state.editorLayoutMode = state.editor.mode.modeName;

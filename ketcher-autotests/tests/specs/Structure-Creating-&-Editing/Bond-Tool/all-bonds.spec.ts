@@ -31,8 +31,6 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
-  selectAromatizeTool,
-  selectDearomatizeTool,
   delay,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -49,6 +47,7 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -589,7 +588,7 @@ test.describe('Bond Tool', () => {
      *Test case: EPMLSOPKET-16887
      *Description: Bond Tool - Change the type of bond by clicking on bond
      */
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickOnBond(page, BondType.SINGLE, 0);
@@ -610,9 +609,9 @@ test.describe('Bond Tool', () => {
       i++;
     }
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
   });
 });

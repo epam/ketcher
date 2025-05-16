@@ -26,6 +26,7 @@ import {
   moveMouseAway,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
+  waitForSpinnerFinishedWork,
 } from '@utils';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
@@ -51,7 +52,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
-    await selectTopPanelButton(TopPanelButton.Cut, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Cut, page);
+    });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -63,7 +66,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await selectAllStructuresOnCanvas(page);
-    await selectTopPanelButton(TopPanelButton.Cut, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Cut, page);
+    });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -76,7 +81,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 3;
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnAtom(page, 'C', anyAtom);
-    await selectTopPanelButton(TopPanelButton.Cut, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Cut, page);
+    });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -89,7 +96,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyBond = 0;
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnBond(page, BondType.TRIPLE, anyBond);
-    await selectTopPanelButton(TopPanelButton.Cut, page);
+    await waitForSpinnerFinishedWork(page, async () => {
+      await selectTopPanelButton(TopPanelButton.Cut, page);
+    });
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });

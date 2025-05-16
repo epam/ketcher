@@ -1,8 +1,7 @@
 import { test } from '@playwright/test';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  selectTopPanelButton,
-  TopPanelButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
@@ -27,7 +26,7 @@ test.describe('Special nodes', () => {
       await page.getByRole('button', { name: atom, exact: true }).click();
       await page.getByTestId('OK').click();
       await clickInTheMiddleOfTheScreen(page);
-      await selectTopPanelButton(TopPanelButton.Calculated, page);
+      await IndigoFunctionsToolbar(page).calculatedValues();
       await takeEditorScreenshot(page);
     });
   }
@@ -94,7 +93,7 @@ test.describe('Special node', () => {
       await page.getByRole('button', { name: atom, exact: true }).click();
       await page.getByTestId('OK').click();
       await clickInTheMiddleOfTheScreen(page);
-      await selectTopPanelButton(TopPanelButton.Check, page);
+      await IndigoFunctionsToolbar(page).checkStructure();
       await takeEditorScreenshot(page, {
         mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
       });

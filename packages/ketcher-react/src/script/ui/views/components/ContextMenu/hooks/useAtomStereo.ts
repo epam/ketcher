@@ -1,4 +1,4 @@
-import { findStereoAtoms, KetcherLogger } from 'ketcher-core';
+import { findStereoAtoms, KetcherLogger, ketcherProvider } from 'ketcher-core';
 import { useCallback, useRef } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -9,7 +9,7 @@ import { noOperation } from '../utils';
 type Params = ItemEventParams<AtomContextMenuProps>;
 
 const useAtomStereo = () => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
   const stereoAtomIdsRef = useRef<number[] | undefined>();
 
   const handler = useCallback(
@@ -18,7 +18,7 @@ const useAtomStereo = () => {
         return;
       }
 
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
 
       try {
         const action = await EnhancedStereoTool.changeAtomsStereoAction(
@@ -32,12 +32,12 @@ const useAtomStereo = () => {
         noOperation();
       }
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   const disabled = useCallback(
     ({ props }: Params) => {
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const stereoAtomIds: number[] = findStereoAtoms(
         editor.struct(),
         props?.atomIds,
@@ -50,7 +50,7 @@ const useAtomStereo = () => {
 
       return true;
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   return [handler, disabled] as const;

@@ -8,10 +8,16 @@ import { LoadingCircles } from './script/ui/views/components';
 import styles from './Editor.module.less';
 import { Ketcher, Editor as MoleculesEditor, CoreEditor } from 'ketcher-core';
 
-type Props = EditorProps & {
+type Props = Omit<EditorProps, 'ketcherId'> & {
   disableMacromoleculesEditor?: boolean;
 };
 
+interface MacromoleculesEditorProps {
+  ketcherId: string;
+  togglerComponent?: JSX.Element;
+  isMacromoleculesEditorTurnedOn?: boolean;
+  onInit(macromoleculesEditor: CoreEditor): void;
+}
 /*
  * TODO:
  *  ketcher-macromolecules is imported asynchronously to avoid circular dependencies between it and ketcher-react
@@ -19,12 +25,13 @@ type Props = EditorProps & {
  *  so ketcher-macromolecules can't provide any typings while building ketcher-react.
  *  Consider refactoring/restructuring packages to avoid these two issues
  */
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 const MacromoleculesEditorComponent = lazy(
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   () => import('ketcher-macromolecules'),
-);
+) as unknown as React.LazyExoticComponent<
+  React.ComponentType<MacromoleculesEditorProps>
+>;
 
 export const Editor = (props: Props) => {
   const [showPolymerEditor, setShowPolymerEditor] = useState(false);
@@ -32,6 +39,7 @@ export const Editor = (props: Props) => {
   const [macromoleculesEditor, setMacromoleculesEditor] =
     useState<CoreEditor>();
 
+  const [ketcherId, setKetcherId] = useState<string>('');
   const togglePolymerEditor = (toggleValue: boolean) => {
     setShowPolymerEditor(toggleValue);
     window.isPolymerEditorTurnedOn = toggleValue;
@@ -87,6 +95,7 @@ export const Editor = (props: Props) => {
         >
           <MacromoleculesEditorComponent
             togglerComponent={togglerComponent}
+            ketcherId={ketcherId}
             isMacromoleculesEditorTurnedOn={showPolymerEditor}
             onInit={onInitMacromoleculesEditor}
           />
@@ -100,6 +109,8 @@ export const Editor = (props: Props) => {
       >
         <MicromoleculesEditorComponent
           {...props}
+          ketcherId={ketcherId}
+          onSetKetcherId={setKetcherId}
           togglerComponent={togglerComponent}
           onInit={onInitMoleculesEditor}
         />

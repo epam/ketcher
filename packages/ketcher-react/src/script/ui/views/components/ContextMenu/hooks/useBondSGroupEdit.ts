@@ -1,4 +1,4 @@
-import { Pile, ReStruct } from 'ketcher-core';
+import { ketcherProvider, Pile, ReStruct } from 'ketcher-core';
 import { useCallback, useRef } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -8,19 +8,19 @@ import { BondsContextMenuProps, ItemEventParams } from '../contextMenu.types';
 type Params = ItemEventParams<BondsContextMenuProps>;
 
 const useBondSGroupEdit = () => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
   const sGroupsRef = useRef(new Pile<number>());
 
   const handler = useCallback(() => {
-    const editor = getKetcherInstance().editor as Editor;
+    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const sGroups = Array.from(sGroupsRef.current);
     SGroupTool.sgroupDialog(editor, sGroups[0]);
-  }, [getKetcherInstance]);
+  }, [ketcherId]);
 
   // In react-contexify, `disabled` is executed before `hidden`
   const disabled = useCallback(
     ({ props }: Params) => {
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const struct: ReStruct = editor.render.ctab;
       const bondIds = props!.bondIds!;
 
@@ -33,11 +33,11 @@ const useBondSGroupEdit = () => {
 
       return sGroupsRef.current.size > 1;
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   const hidden = useCallback(() => {
-    const editor = getKetcherInstance().editor as Editor;
+    const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
     const struct: ReStruct = editor.render.ctab;
     const [sgGroupId] = sGroupsRef.current;
     const sgroup = struct.sgroups.get(sgGroupId)?.item;
@@ -45,7 +45,7 @@ const useBondSGroupEdit = () => {
       return true;
     }
     return sGroupsRef.current.size === 0;
-  }, [getKetcherInstance]);
+  }, [ketcherId]);
 
   return [handler, disabled, hidden] as const;
 };

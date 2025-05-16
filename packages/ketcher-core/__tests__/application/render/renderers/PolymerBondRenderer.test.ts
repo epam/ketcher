@@ -18,7 +18,7 @@ describe('Polymer Bond Renderer', () => {
     global.SVGElement.prototype.getBBox = jest.fn();
     jest
       .spyOn(global.SVGElement.prototype, 'getBBox')
-      .mockImplementation(() => ({ width: 30, height: 20 }));
+      .mockImplementation(() => ({ width: 30, height: 20 } as DOMRect));
     polymerBondRenderer.show();
 
     expect(canvas).toMatchSnapshot();

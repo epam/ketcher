@@ -1,5 +1,5 @@
 import { ReactElement, useEffect } from 'react';
-import { Item, ItemParams, Separator } from 'react-contexify';
+import { Item, ItemParams, Separator, Submenu } from 'react-contexify';
 import {
   BaseMonomer,
   BaseSequenceItemRenderer,
@@ -35,6 +35,7 @@ interface MenuItem {
     };
   }) => boolean;
   isMenuTitle?: boolean;
+  subMenuItems?: MenuItem[];
 }
 
 interface MenuProps {
@@ -50,8 +51,15 @@ const assembleMenuItems = (
   const items: ReactElement[] = [];
 
   menuItems.forEach(
-    ({ name, title, hidden, disabled, isMenuTitle, separator }, index) => {
-      const item = (
+    (
+      { name, title, hidden, disabled, isMenuTitle, separator, subMenuItems },
+      index,
+    ) => {
+      const item = subMenuItems ? (
+        <Submenu label={title}>
+          {assembleMenuItems(subMenuItems, handleMenuChange)}
+        </Submenu>
+      ) : (
         <Item
           id={name}
           onClick={handleMenuChange}

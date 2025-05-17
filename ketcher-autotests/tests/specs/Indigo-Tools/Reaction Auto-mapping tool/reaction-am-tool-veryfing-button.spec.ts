@@ -41,21 +41,22 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
      */
     const point1 = { x: -230, y: 0 };
     const point2 = { x: 200, y: 0 };
-    await LeftToolbar(page).selectReactionMappingTool(
+    const reactionAutoMappingButton = page.getByTestId(
       ReactionMappingType.ReactionAutoMapping,
     );
-    await takeEditorScreenshot(page);
+
+    await LeftToolbar(page).expandReactionMappingToolsDropdown();
+    await expect(reactionAutoMappingButton).toBeDisabled();
+
     await openFileAndAddToCanvas('Molfiles-V2000/four-structures.mol', page);
-    await LeftToolbar(page).selectReactionMappingTool(
-      ReactionMappingType.ReactionAutoMapping,
-    );
-    await takeEditorScreenshot(page);
+    await LeftToolbar(page).expandReactionMappingToolsDropdown();
+    await expect(reactionAutoMappingButton).toBeDisabled();
     await LeftToolbar(page).reactionPlusTool();
+
     await clickOnTheCanvas(page, point1.x, point1.y);
-    await LeftToolbar(page).selectReactionMappingTool(
-      ReactionMappingType.ReactionAutoMapping,
-    );
-    await takeEditorScreenshot(page);
+    await LeftToolbar(page).expandReactionMappingToolsDropdown();
+    await expect(reactionAutoMappingButton).toBeDisabled();
+
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     await clickOnTheCanvas(page, point2.x, point2.y);
     await LeftToolbar(page).selectReactionMappingTool(

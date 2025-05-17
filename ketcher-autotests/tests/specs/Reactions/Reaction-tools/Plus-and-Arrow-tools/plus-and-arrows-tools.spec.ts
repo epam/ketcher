@@ -99,8 +99,9 @@ test.describe('Plus and Arrows tools ', () => {
      * Test case: EPMLSOPKET-1783
      * Description: Create Reactions
      */
+    let counter = 1;
     for (const tool of Object.values(ArrowType)) {
-      test(` ${tool} check`, async ({ page }) => {
+      test(` ${counter}. ${tool} check`, async ({ page }) => {
         await openFileAndAddToCanvas(
           'Molfiles-V2000/benzene-and-cyclopentadiene.mol',
           page,
@@ -111,6 +112,7 @@ test.describe('Plus and Arrows tools ', () => {
         await TopLeftToolbar(page).undo();
         await takeEditorScreenshot(page);
       });
+      counter++;
     }
   });
 

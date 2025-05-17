@@ -67,7 +67,7 @@ export const LeftToolbar = (page: Page) => {
       await rGroupToolbar.waitFor({ state: 'visible' });
     },
 
-    async selectRGroupTool(rGroupType: RGroupType) {
+    async selectRGroupTool(rGroupType: RGroupType = RGroupType.RGroupLabel) {
       await this.expandRGroupToolsDropdown();
       await page.getByTestId(rGroupType).first().click();
     },
@@ -79,11 +79,23 @@ export const LeftToolbar = (page: Page) => {
     async expandArrowToolsDropdown() {
       const arrowToolbar = page.getByTestId('multi-tool-dropdown');
 
-      await locators.arrowToolsButton.getByTestId('dropdown-expand').click();
-      await arrowToolbar.waitFor({ state: 'visible' });
+      try {
+        await locators.arrowToolsButton
+          .getByTestId('dropdown-expand')
+          .click({ force: true });
+        await arrowToolbar.waitFor({ state: 'visible', timeout: 5000 });
+      } catch (error) {
+        console.warn(
+          "Arrow Tools Section didn't appeared after click in 5 seconds, trying alternative way...",
+        );
+        await this.reactionPlusTool();
+        await locators.arrowToolsButton.click({ force: true });
+        await locators.arrowToolsButton.click({ force: true });
+        await arrowToolbar.waitFor({ state: 'visible', timeout: 5000 });
+      }
     },
 
-    async selectArrowTool(arrowType: ArrowType) {
+    async selectArrowTool(arrowType: ArrowType = ArrowType.ArrowOpenAngle) {
       await this.expandArrowToolsDropdown();
       await page.getByTestId(arrowType).first().click();
     },
@@ -97,7 +109,9 @@ export const LeftToolbar = (page: Page) => {
       await reactionMappingToolbar.waitFor({ state: 'visible' });
     },
 
-    async selectReactionMappingTool(reactionMappingType: ReactionMappingType) {
+    async selectReactionMappingTool(
+      reactionMappingType: ReactionMappingType = ReactionMappingType.ReactionMapping,
+    ) {
       await this.expandReactionMappingToolsDropdown();
       await page.getByTestId(reactionMappingType).first().click();
     },

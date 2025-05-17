@@ -54,6 +54,7 @@ import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -370,7 +371,7 @@ test.describe('Template Manupulations', () => {
     // eslint-disable-next-line no-magic-numbers
     await clickOnTheCanvas(page, 1, -4);
     await takePageScreenshot(page);
-    await LeftToolbar(page).expandArrowToolsDropdown();
+    await LeftToolbar(page).selectArrowTool();
     await clickOnTheCanvas(page, 1, 0);
     await takePageScreenshot(page);
     await zoomSelector.click();

@@ -72,7 +72,6 @@ test.describe('Tests for Open and Save RXN file operations', () => {
      * Test case: EPMLSOPKET-1901
      * Description: Reaction from file that contains Rgroup
      */
-    test.slow();
     const saveButton = SaveStructureDialog(page).saveButton;
 
     const xOffsetFromCenter = 40;
@@ -81,6 +80,9 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await clickOnAtom(page, 'C', 1);
     await page.getByRole('button', { name: 'R7' }).click();
     await page.getByRole('button', { name: 'Apply' }).click();
+    await page
+      .getByRole('button', { name: 'Apply' })
+      .waitFor({ state: 'detached' });
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     await clickOnTheCanvas(page, xOffsetFromCenter, 0);
     await TopLeftToolbar(page).saveFile();

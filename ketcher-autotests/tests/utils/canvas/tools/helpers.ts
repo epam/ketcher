@@ -9,6 +9,7 @@ import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
 /**
  * Select button from top panel
@@ -175,17 +176,6 @@ export async function saveToTemplates(page: Page, templateName: string) {
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill(templateName);
   await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-
-export async function openSettings(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
-  // Wait while system loads list of values (i.e. Arial in particular) in Font combobox
-  await page.waitForSelector('div[role="combobox"]', {
-    state: 'attached',
-  });
-  await page.waitForSelector('div[role="combobox"]:has-text("Arial")', {
-    timeout: 5000,
-  });
 }
 
 export async function openStereochemistrySettingsSection(page: Page) {

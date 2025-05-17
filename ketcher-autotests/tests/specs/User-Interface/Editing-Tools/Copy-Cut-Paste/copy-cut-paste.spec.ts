@@ -6,7 +6,6 @@ import {
   RingButton,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
-  TopPanelButton,
   selectTopPanelButton,
   BondType,
   dragMouseTo,
@@ -27,6 +26,7 @@ import {
   clickOnCanvas,
   waitForSpinnerFinishedWork,
 } from '@utils';
+import { TopPanelButton } from '@utils/selectors';
 import { resetCurrentTool } from '@utils/canvas/tools';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';

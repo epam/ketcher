@@ -16,7 +16,6 @@ import {
   openFileAndAddToCanvasAsNewProject,
   takeLeftToolbarMacromoleculeScreenshot,
   pressButton,
-  openSettings,
   openBondsSettingsSection,
   scrollToDownInSetting,
   setHashSpacingValue,
@@ -25,7 +24,6 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
-  delay,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import {
@@ -44,6 +42,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -222,9 +221,6 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Open arrow menu in toobar
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    // hack - it seems that sytem reload control twice after mode switching
-    // and closes opened Arrow Tools panel if it was openned too fast
-    await delay(0.5);
     await LeftToolbar(page).expandArrowToolsDropdown();
     await takeEditorScreenshot(page);
   });
@@ -436,7 +432,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingValue(page, '10');

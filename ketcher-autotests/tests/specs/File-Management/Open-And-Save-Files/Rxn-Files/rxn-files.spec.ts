@@ -18,7 +18,6 @@ import {
   setReactionMarginSizeValue,
   setBondLengthOptionUnit,
   setBondLengthValue,
-  openSettings,
   clickOnCanvas,
   setHashSpacingValue,
   setHashSpacingOptionUnit,
@@ -36,6 +35,7 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await TopLeftToolbar(page).saveFile();
@@ -879,7 +879,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Bond length setting is applied and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'px-option');
     await setBondLengthValue(page, '7.8');
@@ -901,7 +901,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Hash spacing setting is applied and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '7.8');
@@ -929,7 +929,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Hash spacing setting is applied and it should be save to RXN3000
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'px-option');
     await setHashSpacingValue(page, '7.8');
@@ -956,7 +956,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Bond length setting is applied and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '67.8');
@@ -983,7 +983,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Hash spacing setting is applied and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '7.8');
@@ -1010,7 +1010,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Hash spacing setting is applied and it should be save to RXN3000
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '7.8');
@@ -1037,7 +1037,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Bond length setting is applied and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'cm-option');
     await setBondLengthValue(page, '7.8');
@@ -1064,7 +1064,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Hash spacing setting is applied and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '7.8');
@@ -1091,7 +1091,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Hash spacing setting is applied and it should be save to RXN3000
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '7.8');
@@ -1118,7 +1118,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Bond length setting is applied and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'inch-option');
     await setBondLengthValue(page, '7.8');
@@ -1140,7 +1140,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Hash spacing setting is applied and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '7.8');
@@ -1167,7 +1167,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Hash spacing setting is applied and it should be save to RXN3000
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '7.8');
@@ -1194,7 +1194,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to RXN2000
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '47.8');
@@ -1223,7 +1223,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: add new option ACS style and check saving to different format
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
@@ -1250,7 +1250,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
   Description: add new option ACS style and check saving to different format
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');

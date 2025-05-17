@@ -87,7 +87,7 @@ test.describe('Ket files', () => {
     test.slow();
     await waitForPageInit(page);
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
@@ -119,7 +119,7 @@ test.describe('Ket files', () => {
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
     await takeEditorScreenshot(page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
@@ -149,7 +149,7 @@ test.describe('Ket files', () => {
   */
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
@@ -180,7 +180,7 @@ test.describe('Ket files', () => {
   */
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
@@ -209,7 +209,7 @@ test.describe('Ket files', () => {
   The Bond length setting is applied, click on layout and it should be save to KET specification
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
@@ -235,7 +235,7 @@ test.describe('Ket files', () => {
   */
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
@@ -265,7 +265,7 @@ test.describe('Ket files', () => {
   */
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setReactionMarginSizeOptionUnit(page, 'px-option');
@@ -296,7 +296,7 @@ test.describe('Ket files', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
   */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setReactionMarginSizeOptionUnit(page, 'pt-option');
@@ -322,7 +322,7 @@ test.describe('Ket files', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setReactionMarginSizeOptionUnit(page, 'cm-option');
@@ -348,7 +348,7 @@ test.describe('Ket files', () => {
   The Reaction component margin size setting is applied, click on layout and it should be save to KET specification
   */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setReactionMarginSizeOptionUnit(page, 'inch-option');
@@ -373,7 +373,7 @@ test.describe('Ket files', () => {
     Description: add new option ACS style
     */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
@@ -397,7 +397,7 @@ test.describe('Ket files', () => {
   informational message displayed: "To fully apply these changes, you need to apply the layout."
   */
       await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-      await openSettings(page);
+      await TopRightToolbar(page).Settings();
       await openBondsSettingsSection(page);
       await scrollToDownInSetting(page);
       await setReactionMarginSizeOptionUnit(page, 'px-option');

@@ -137,7 +137,7 @@ test.describe('Saving in .svg files', () => {
   Description: add new option ACS style and check saving to different format
   */
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');

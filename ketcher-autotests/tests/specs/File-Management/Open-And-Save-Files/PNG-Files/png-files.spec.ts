@@ -180,7 +180,7 @@ test.describe('Saving in .png files', () => {
   https://github.com/epam/Indigo/issues/2457
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');

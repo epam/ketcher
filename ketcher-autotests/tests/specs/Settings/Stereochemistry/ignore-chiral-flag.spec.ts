@@ -27,7 +27,7 @@ async function templateFromLAminoAcidsCategory(page: Page) {
 }
 
 async function applyIgnoreChiralFlag(page: Page) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
 
   const resetSettingsButton = page
     .getByTitle('Reset')

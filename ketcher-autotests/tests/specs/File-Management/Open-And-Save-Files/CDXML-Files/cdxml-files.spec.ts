@@ -8,7 +8,6 @@ import {
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
-  openSettings,
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
   selectAllStructuresOnCanvas,
@@ -26,6 +25,7 @@ import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -466,7 +466,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   */
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setBondLengthOptionUnit(page, 'pt-option');
     await setBondLengthValue(page, '54.8');
@@ -497,7 +497,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   */
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
     await setHashSpacingValue(page, '54.8');
@@ -526,7 +526,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   */
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
     await setHashSpacingValue(page, '7.8');
@@ -555,7 +555,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   */
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
     await setHashSpacingValue(page, '7.8');
@@ -584,7 +584,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   */
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await setReactionMarginSizeOptionUnit(page, 'px-option');
     await setReactionMarginSizeValue(page, '7.8');
     await pressButton(page, 'Apply');
@@ -616,7 +616,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
   */
     test.slow();
     await openFileAndAddToCanvas('KET/layout-with-dif-elements.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');

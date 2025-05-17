@@ -2,9 +2,6 @@ export enum TopPanelButton {
   Copy = 'Copy',
   Paste = 'Paste',
   Cut = 'Cut',
-  Settings = 'Settings',
-  Help = 'Help',
-  About = 'About',
 }
 
 export enum RingButton {

@@ -22,7 +22,6 @@ import {
   cutAndPaste,
   waitForPageInit,
   waitForRender,
-  openSettings,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
@@ -41,6 +40,7 @@ import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -753,7 +753,7 @@ test.describe('Undo/Redo Actions', () => {
     Use select tool to choose and CTRL+C placed ring.
     Press CTRL+V and place the ring. Press CTRL+Z.
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await page.getByTestId('reset-to-select-input-span').click();
     await page.getByRole('option', { name: 'off' }).click();
     await takeEditorScreenshot(page);

@@ -6,7 +6,6 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   BondType,
-  resetCurrentTool,
   waitForPageInit,
   waitForRender,
   clickOnBond,
@@ -17,6 +16,7 @@ import {
   screenshotBetweenUndoRedo,
   moveMouseAway,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';

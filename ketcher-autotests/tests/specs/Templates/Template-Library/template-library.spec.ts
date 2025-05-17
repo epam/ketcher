@@ -16,7 +16,7 @@ import {
 } from '@utils';
 
 async function setDisplayStereoFlagsSettingToOn(page: Page) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByTestId('stereo-label-style-input-span').click();
   // Using "On" label style, to always show the stereo labels, so we can see the difference
@@ -25,7 +25,7 @@ async function setDisplayStereoFlagsSettingToOn(page: Page) {
 }
 
 async function setIgnoreChiralFlagSetting(page: Page, newSetting: boolean) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByText('Stereochemistry', { exact: true }).click();
 
   const checkLocator = page.getByText('Ignore the chiral flag');

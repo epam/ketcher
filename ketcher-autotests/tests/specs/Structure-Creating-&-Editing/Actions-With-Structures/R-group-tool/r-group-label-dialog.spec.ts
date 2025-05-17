@@ -16,6 +16,7 @@ import {
   selectAllStructuresOnCanvas,
   clickOnCanvas,
   ZoomInByKeyboard,
+  moveMouseAway,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import {
@@ -229,6 +230,7 @@ test.describe('R-Group Label Tool', () => {
     await clickOnCanvas(page, x, y);
     await pressButton(page, 'R5');
     await pressButton(page, 'Apply');
+    await moveMouseAway(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     let point: { x: number; y: number };
@@ -236,10 +238,10 @@ test.describe('R-Group Label Tool', () => {
     point = await getAtomByIndex(page, { label: 'C' }, 2);
     await clickOnCanvas(page, point.x, point.y);
     await pressButton(page, 'R5');
+    await pressButton(page, 'Apply');
 
-    await waitForRender(page, async () => {
-      await pressButton(page, 'Apply');
-    });
+    await moveMouseAway(page);
+
     await takeEditorScreenshot(page);
   });
 

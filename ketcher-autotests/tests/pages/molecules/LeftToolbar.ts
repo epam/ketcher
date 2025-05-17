@@ -1,8 +1,10 @@
+/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { RGroupType } from '../constants/rGroupSelectionTool/Constants';
 import { ArrowType } from '../constants/arrowSelectionTool/Constants';
 import { ReactionMappingType } from '../constants/reactionMappingTool/Constants';
 import { ShapeType } from '../constants/shapeSelectionTool/Constants';
+import { delay } from '@utils/index';
 
 type LeftToolbarLocators = {
   chainButton: Locator;
@@ -62,16 +64,18 @@ export const LeftToolbar = (page: Page) => {
 
     async expandRGroupToolsDropdown() {
       const rGroupToolbar = page.getByTestId('multi-tool-dropdown');
+
       try {
-        await locators.rGroupToolsButton.getByTestId('dropdown-expand').click();
+        await this.reactionPlusTool();
+        await locators.rGroupToolsButton.click({ force: true });
+        await delay(0.1);
+        await locators.rGroupToolsButton.click({ force: true });
         await rGroupToolbar.waitFor({ state: 'visible', timeout: 5000 });
       } catch (error) {
         console.warn(
           "R-Group Tools Section didn't appeared after click in 5 seconds, trying alternative way...",
         );
-        await this.reactionPlusTool();
-        await locators.rGroupToolsButton.click({ force: true });
-        await locators.rGroupToolsButton.click({ force: true });
+        await locators.rGroupToolsButton.getByTestId('dropdown-expand').click();
         await rGroupToolbar.waitFor({ state: 'visible', timeout: 5000 });
       }
     },
@@ -89,18 +93,18 @@ export const LeftToolbar = (page: Page) => {
       const arrowToolbar = page.getByTestId('multi-tool-dropdown');
 
       try {
-        // await this.reactionPlusTool();
-        await locators.arrowToolsButton
-          .getByTestId('dropdown-expand')
-          .click({ force: true });
+        await this.reactionPlusTool();
+        await locators.arrowToolsButton.click();
+        await delay(0.1);
+        await locators.arrowToolsButton.click();
         await arrowToolbar.waitFor({ state: 'visible', timeout: 5000 });
       } catch (error) {
         console.warn(
           "Arrow Tools Section didn't appeared after click in 5 seconds, trying alternative way...",
         );
-        await this.reactionPlusTool();
-        await locators.arrowToolsButton.click({ force: true });
-        await locators.arrowToolsButton.click({ force: true });
+        await locators.arrowToolsButton
+          .getByTestId('dropdown-expand')
+          .click({ force: true });
         await arrowToolbar.waitFor({ state: 'visible', timeout: 5000 });
       }
     },

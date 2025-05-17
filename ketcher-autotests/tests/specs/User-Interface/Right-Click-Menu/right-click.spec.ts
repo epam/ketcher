@@ -15,6 +15,7 @@ import {
   drawBenzeneRing,
   selectAllStructuresOnCanvas,
   screenshotBetweenUndoRedo,
+  moveMouseAway,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
@@ -214,6 +215,7 @@ test.describe('Right-click menu', () => {
       .locator('label')
       .filter({ hasText: 'Ignore the chiral flag' })
       .click();
+    await moveMouseAway(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
   });

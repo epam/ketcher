@@ -54,7 +54,6 @@ import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
-import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {

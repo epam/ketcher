@@ -2,6 +2,7 @@
 import { MolfileFormat } from '@app/../packages/ketcher-core/dist';
 import { expect, test } from '@playwright/test';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -10,7 +11,6 @@ import {
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
-  openSettings,
   selectAllStructuresOnCanvas,
   openBondsSettingsSection,
 } from '@utils';

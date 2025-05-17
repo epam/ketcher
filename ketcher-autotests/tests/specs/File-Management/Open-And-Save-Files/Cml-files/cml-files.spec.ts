@@ -1,5 +1,6 @@
 import { Page, test } from '@playwright/test';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -10,7 +11,6 @@ import {
   setBondLengthValue,
   pressButton,
   setReactionMarginSizeValue,
-  openSettings,
   setHashSpacingOptionUnit,
   setHashSpacingValue,
   openBondsSettingsSection,

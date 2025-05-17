@@ -1,10 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   moveMouseAway,
   openBondsSettingsSection,
   openFileAndAddToCanvasAsNewProject,
-  openSettings,
   pressButton,
   resetAllSettingsToDefault,
   scrollToDownInSetting,

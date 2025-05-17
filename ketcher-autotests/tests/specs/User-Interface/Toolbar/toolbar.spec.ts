@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
-  openSettings,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   waitForPageInit,

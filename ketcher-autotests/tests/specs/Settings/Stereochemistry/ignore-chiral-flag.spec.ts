@@ -1,13 +1,13 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
   openFileAndAddToCanvasAsNewProject,
-  openSettings,
   pressButton,
   takeEditorScreenshot,
   waitForPageInit,

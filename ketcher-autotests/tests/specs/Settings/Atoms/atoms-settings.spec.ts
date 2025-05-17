@@ -1,5 +1,6 @@
 import { Page, test } from '@playwright/test';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   takeEditorScreenshot,
   waitForPageInit,
@@ -11,7 +12,6 @@ import {
   selectRing,
   RingButton,
   getAtomByIndex,
-  openSettings,
   clickOnCanvas,
 } from '@utils';
 import { scrollSettingBar } from '@utils/scrollSettingBar';

@@ -1,11 +1,11 @@
 /* eslint-disable max-len */
 import { expect, test } from '@playwright/test';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   openBondsSettingsSection,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  openSettings,
   pressButton,
   scrollToDownInSetting,
   setBondLengthOptionUnit,

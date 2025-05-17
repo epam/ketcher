@@ -1,11 +1,11 @@
 import { Page, test, expect } from '@playwright/test';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
   getEditorScreenshot,
-  openSettings,
   pressButton,
   selectAllStructuresOnCanvas,
   selectFunctionalGroups,

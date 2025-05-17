@@ -1,6 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@playwright/test';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   waitForPageInit,
   drawBenzeneRing,
@@ -16,7 +17,6 @@ import {
   setReactionMarginSizeOptionUnit,
   setReactionMarginSizeValue,
   moveMouseAway,
-  openSettings,
   delay,
   clickOnCanvas,
   selectUndoByKeyboard,

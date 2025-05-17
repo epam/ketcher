@@ -11,11 +11,11 @@ import {
   selectFunctionalGroups,
   selectSaltsAndSolvents,
   FunctionalGroups,
-  resetCurrentTool,
   SaltsAndSolvents,
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools';
 
 test.describe('Click Functional Group on canvas', () => {
   test.beforeEach(async ({ page }) => {

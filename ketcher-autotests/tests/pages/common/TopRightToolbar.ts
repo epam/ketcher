@@ -113,10 +113,11 @@ export const CommonTopRightToolbar = (page: Page) => {
 
     async turnOnMicromoleculesEditor() {
       const switcher = locators.ketcherModeSwitcherCombobox;
-      expect(switcher).toBeVisible();
+      await switcher.waitFor({ state: 'visible' });
       await switcher.click();
+
       const microOption = page.getByTestId('molecules_mode');
-      expect(microOption).toBeVisible();
+      await microOption.waitFor({ state: 'visible' });
       await microOption.click();
     },
   };

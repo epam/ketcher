@@ -62,9 +62,18 @@ export const LeftToolbar = (page: Page) => {
 
     async expandRGroupToolsDropdown() {
       const rGroupToolbar = page.getByTestId('multi-tool-dropdown');
-
-      await locators.rGroupToolsButton.getByTestId('dropdown-expand').click();
-      await rGroupToolbar.waitFor({ state: 'visible' });
+      try {
+        await locators.rGroupToolsButton.getByTestId('dropdown-expand').click();
+        await rGroupToolbar.waitFor({ state: 'visible', timeout: 5000 });
+      } catch (error) {
+        console.warn(
+          "R-Group Tools Section didn't appeared after click in 5 seconds, trying alternative way...",
+        );
+        await this.reactionPlusTool();
+        await locators.rGroupToolsButton.click({ force: true });
+        await locators.rGroupToolsButton.click({ force: true });
+        await rGroupToolbar.waitFor({ state: 'visible', timeout: 5000 });
+      }
     },
 
     async selectRGroupTool(rGroupType: RGroupType = RGroupType.RGroupLabel) {
@@ -80,6 +89,7 @@ export const LeftToolbar = (page: Page) => {
       const arrowToolbar = page.getByTestId('multi-tool-dropdown');
 
       try {
+        // await this.reactionPlusTool();
         await locators.arrowToolsButton
           .getByTestId('dropdown-expand')
           .click({ force: true });

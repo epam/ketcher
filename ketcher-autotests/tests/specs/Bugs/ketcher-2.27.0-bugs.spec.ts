@@ -25,6 +25,7 @@ import {
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
+  delay,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import {
@@ -221,6 +222,9 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Open arrow menu in toobar
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    // hack - it seems that sytem reload control twice after mode switching
+    // and closes opened Arrow Tools panel if it was openned too fast
+    await delay(0.5);
     await LeftToolbar(page).expandArrowToolsDropdown();
     await takeEditorScreenshot(page);
   });

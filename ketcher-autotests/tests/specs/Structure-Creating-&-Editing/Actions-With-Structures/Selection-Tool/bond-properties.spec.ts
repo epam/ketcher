@@ -6,12 +6,10 @@ import {
   doubleClickOnBond,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  LeftPanelButton,
   openFileAndAddToCanvas,
   pressButton,
   RingButton,
   selectAllStructuresOnCanvas,
-  selectLeftPanelButton,
   selectRingButton,
   takeEditorScreenshot,
 } from '@utils';
@@ -21,6 +19,8 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 
 async function selectOption(
   page: Page,
@@ -519,7 +519,7 @@ test.describe('Bond Properties', () => {
     await selectOption(page, 'Unmarked', 'No change');
     await pressButton(page, 'Apply');
 
-    await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
+    await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await page.mouse.move(x, y + 30);
     dragMouseTo(x + 100, y + 100, page);

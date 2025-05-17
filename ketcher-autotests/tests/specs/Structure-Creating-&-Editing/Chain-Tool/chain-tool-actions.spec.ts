@@ -1,15 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   waitForPageInit,
-  selectTool,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  LeftPanelButton,
   clickOnAtom,
   clickOnBond,
   BondType,
@@ -29,7 +28,7 @@ test.describe('Chain Tool verification', () => {
   test('Chain Tool - UI verification', async ({ page }) => {
     // Test case: EPMLSOPKET-1474
     // Verify the icon and the tooltip of the Chain Tool button
-    const button = page.getByTestId('chain');
+    const button = LeftToolbar(page).chainButton;
     await expect(button).toHaveAttribute('title', 'Chain');
     await takeEditorScreenshot(page);
   });
@@ -37,7 +36,7 @@ test.describe('Chain Tool verification', () => {
   test('Chain tool - Select atom', async ({ page }) => {
     // Test case: EPMLSOPKET-1477
     // Verify selecting atom on chain and change it into other one
-    await selectTool(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(center.x + DELTA, center.y, page);
@@ -82,7 +81,7 @@ test.describe('Chain Tool verification', () => {
     const bondNumber = 2;
     const bondNumber1 = 4;
     const bondNumber2 = 6;
-    await selectTool(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(center.x + DELTA, center.y, page);

@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { Page, chromium, test } from '@playwright/test';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,

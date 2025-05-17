@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { takeEditorScreenshot } from '@utils/canvas';
-import { selectTool } from '@utils/canvas/tools';
 import {
   getAtomByIndex,
   getBottomAtomByAttributes,
@@ -16,7 +16,7 @@ import {
   moveMouseToTheMiddleOfTheScreen,
 } from '@utils/clicks';
 import { waitForPageInit } from '@utils/common';
-import { LeftPanelButton, RingButton, selectRing } from '@utils/selectors';
+import { RingButton, selectRing } from '@utils/selectors';
 
 const DELTA = 100;
 const DELTA_Y = 110;
@@ -26,7 +26,7 @@ test.describe('Chain Tool drawing', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
 
-    await selectTool(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     const center = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await moveMouseToTheMiddleOfTheScreen(page);
     await dragMouseTo(center.x + DELTA, center.y, page);
@@ -53,7 +53,7 @@ test.describe('Chain Tool drawing', () => {
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, point.x - DELTA, point.y + DELTA_Y);
 
-    await selectTool(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     point = await getBottomAtomByAttributes(page, { label: 'C' });
     await page.mouse.move(point.x, point.y);
     await dragMouseTo(point.x, point.y + DELTA, page);
@@ -116,7 +116,7 @@ test.describe('Chain Tool drawing', () => {
   4. Check the number of carbons in the chain.
   5. Take a screenshot.
   */
-    await selectTool(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.mouse.down();
     await page.mouse.move(900, 350);

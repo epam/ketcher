@@ -15,8 +15,6 @@ import {
   openFileAndAddToCanvas,
   drawCyclopentadieneRing,
   drawCyclohexaneRing,
-  selectLeftPanelButton,
-  LeftPanelButton,
   addCyclopentadieneRingWithTwoAtoms,
   TemplateLibrary,
   openEditDialogForTemplate,
@@ -31,8 +29,6 @@ import {
   selectUserTemplate,
   FunctionalGroups,
   selectFunctionalGroups,
-  openDropdown,
-  selectDropdownTool,
   getCoordinatesOfTheMiddleOfTheScreen,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -56,6 +52,8 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -220,7 +218,7 @@ test.describe('Template Manupulations', () => {
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     await atomToolbar.clickAtom(Atom.Iodine);
     await clickOnAtom(page, 'C', anyAtom);
 
@@ -272,7 +270,8 @@ test.describe('Template Manupulations', () => {
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
+
     await page
       .getByTestId('ketcher-canvas')
       .filter({ has: page.locator(':visible') })
@@ -371,7 +370,7 @@ test.describe('Template Manupulations', () => {
     // eslint-disable-next-line no-magic-numbers
     await clickOnTheCanvas(page, 1, -4);
     await takePageScreenshot(page);
-    await openDropdown(page, 'reaction-arrow-open-angle');
+    await LeftToolbar(page).selectArrowTool();
     await clickOnTheCanvas(page, 1, 0);
     await takePageScreenshot(page);
     await zoomSelector.click();

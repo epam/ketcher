@@ -1,11 +1,9 @@
 import { Page, test } from '@playwright/test';
 import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
-import { LeftPanelButton } from '@utils/selectors/buttons';
 import {
   selectAllStructuresOnCanvas,
   takeEditorScreenshot,
 } from '@utils/canvas';
-import { selectLeftPanelButton } from '@utils/canvas/tools';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
@@ -13,12 +11,14 @@ import {
 } from '@utils/clicks';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
 
 const setupEllipse = async (page: Page) => {
-  await selectLeftPanelButton(LeftPanelButton.ShapeEllipse, page);
+  await LeftToolbar(page).selectShapeTool(ShapeType.Ellipse);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const ellipseCoordinates = { x: x + ellipseWidth, y: y + ellipseHeight };
   await clickInTheMiddleOfTheScreen(page);

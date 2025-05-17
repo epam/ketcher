@@ -75,10 +75,6 @@ getBottomBondByAttributes - get bottom bond by attributes
 getLeftBondByAttributes - get left bond by attributes
 getFirstBondCoordinatesByAttributes - get one bond by attributes
 
-To select tools with nested / sub levels use:
-
-selectNestedTool - select specific tool that has sub / nested levels.
-
 ## Docker
 
 - Docker runs automatically in the pipeline after pushing changes to the repository.

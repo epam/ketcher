@@ -22,7 +22,6 @@ import {
   selectRing,
 } from '@utils/selectors';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
-import { openSettings } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';
@@ -34,6 +33,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
 export async function drawBenzeneRing(page: Page) {
   await selectRing(RingButton.Benzene, page);
@@ -347,7 +347,7 @@ export async function screenshotBetweenUndoRedoInMacro(page: Page) {
 }
 
 export async function resetAllSettingsToDefault(page: Page) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await pressButton(page, 'Reset');
   await pressButton(page, 'Apply');
 }

@@ -1,6 +1,8 @@
 import { test, expect, Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   clickInTheMiddleOfTheScreen,
@@ -8,9 +10,7 @@ import {
   openFileAndAddToCanvas,
   openPasteFromClipboard,
   waitForPageInit,
-  selectLeftPanelButton,
   dragMouseTo,
-  LeftPanelButton,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   resetCurrentTool,
@@ -180,7 +180,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     }
 
     async function addAndMovePlusSymbol() {
-      await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
+      await LeftToolbar(page).reactionPlusTool();
       await clickInTheMiddleOfTheScreen(page);
       await resetCurrentTool(page);
 
@@ -198,7 +198,7 @@ test.describe('load as fragment (Add to Canvas) srtuctures from files with diffe
     }
 
     async function addArrowSymbol() {
-      await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
+      await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
       await clickInTheMiddleOfTheScreen(page);
       await resetCurrentTool(page);
     }

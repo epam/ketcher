@@ -8,7 +8,6 @@ import { Sugars } from '@constants/monomers/Sugars';
 import { Page, expect } from '@playwright/test';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
-  LeftPanelButton,
   Monomer,
   STRUCTURE_LIBRARY_BUTTON_NAME,
   clickInTheMiddleOfTheScreen,
@@ -17,7 +16,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   pressButton,
-  selectLeftPanelButton,
 } from '@utils';
 import {
   MonomerLocationTabs,
@@ -349,17 +347,6 @@ export async function selectUserTemplatesAndPlaceInTheMiddle(
   await page.getByRole('button', { name: 'Aromatics' }).click();
   await selectUserTemplate(itemToChoose, page);
   await clickInTheMiddleOfTheScreen(page);
-}
-/*
-  Function for selecting tool from left panel, click right mouse in the middle of canvas and take
-  screenshot
-  */
-export async function selectLeftPanelToolClick(
-  leftbutton: LeftPanelButton,
-  page: Page,
-) {
-  await selectLeftPanelButton(leftbutton, page);
-  await clickInTheMiddleOfTheScreen(page, 'right');
 }
 
 const COORDS_CLICK = {

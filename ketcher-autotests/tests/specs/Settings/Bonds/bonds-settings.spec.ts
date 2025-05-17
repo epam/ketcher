@@ -1,10 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import { test, expect } from '@playwright/test';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   moveMouseAway,
   openBondsSettingsSection,
   openFileAndAddToCanvasAsNewProject,
-  openSettings,
   pressButton,
   resetAllSettingsToDefault,
   scrollToDownInSetting,
@@ -23,7 +23,7 @@ import {
 
 test('Verify Bonds setting menu', async ({ page }) => {
   await waitForPageInit(page);
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   await scrollToDownInSetting(page);
   await takeEditorScreenshot(page);
@@ -50,7 +50,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     const bondLenght = page.getByText('Bond length');
@@ -75,7 +75,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
@@ -98,7 +98,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
@@ -121,7 +121,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
@@ -144,7 +144,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
@@ -167,7 +167,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
@@ -190,7 +190,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
@@ -213,7 +213,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
@@ -237,7 +237,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
@@ -261,7 +261,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
@@ -285,7 +285,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
@@ -309,7 +309,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
@@ -330,7 +330,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
@@ -351,7 +351,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
@@ -372,7 +372,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
@@ -393,7 +393,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
@@ -415,7 +415,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
@@ -437,7 +437,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
@@ -459,7 +459,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
@@ -481,7 +481,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
@@ -503,7 +503,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
@@ -525,7 +525,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
@@ -547,7 +547,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
@@ -569,7 +569,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
@@ -592,7 +592,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
@@ -615,7 +615,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
@@ -637,7 +637,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
@@ -660,7 +660,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
@@ -682,7 +682,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
@@ -704,7 +704,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
@@ -726,7 +726,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
@@ -748,7 +748,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
@@ -770,7 +770,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
@@ -792,7 +792,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
@@ -814,7 +814,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
@@ -836,7 +836,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
@@ -859,7 +859,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
@@ -882,7 +882,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
@@ -905,7 +905,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
@@ -928,7 +928,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
@@ -951,7 +951,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     const hashSpacing = page.getByText('Hash spacing');
@@ -976,7 +976,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
@@ -999,7 +999,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
@@ -1022,7 +1022,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
@@ -1045,7 +1045,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
@@ -1068,7 +1068,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
@@ -1091,7 +1091,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
@@ -1114,7 +1114,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
@@ -1138,7 +1138,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
@@ -1162,7 +1162,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
@@ -1186,7 +1186,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
@@ -1210,7 +1210,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
@@ -1234,7 +1234,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
@@ -1258,7 +1258,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
@@ -1282,7 +1282,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
@@ -1306,7 +1306,7 @@ test.describe('Bonds Settings', () => {
       'KET/mixed-or-stereomarks.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
@@ -1326,7 +1326,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     const bondSpacing = page.getByText('Bond spacing');
@@ -1350,7 +1350,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '50');
@@ -1371,7 +1371,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '10');
@@ -1390,7 +1390,7 @@ test.describe('Bonds Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '100');
@@ -1414,7 +1414,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
@@ -1434,7 +1434,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
@@ -1454,7 +1454,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
@@ -1474,7 +1474,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
@@ -1492,7 +1492,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         0 should not be allowed to be applyed
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
@@ -1510,7 +1510,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         0 should not be allowed to be applyed
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
@@ -1528,7 +1528,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         0 should not be allowed to be applyed
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
@@ -1546,7 +1546,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         0 should not be allowed to be applyed
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
@@ -1566,7 +1566,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         a 1000.1 value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'cm-option');
@@ -1586,7 +1586,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         1000.1 value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'px-option');
@@ -1606,7 +1606,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         1000.1 value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'pt-option');
@@ -1626,7 +1626,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Bond length
         1000.1 value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondLengthOptionUnit(page, 'inch-option');
@@ -1645,7 +1645,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
@@ -1664,7 +1664,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
@@ -1683,7 +1683,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
@@ -1702,7 +1702,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
@@ -1721,7 +1721,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'px-option');
@@ -1740,7 +1740,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'cm-option');
@@ -1759,7 +1759,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'pt-option');
@@ -1778,7 +1778,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondThicknessOptionUnit(page, 'inch-option');
@@ -1797,7 +1797,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
@@ -1816,7 +1816,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
@@ -1835,7 +1835,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
@@ -1854,7 +1854,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
@@ -1873,7 +1873,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'px-option');
@@ -1892,7 +1892,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'cm-option');
@@ -1911,7 +1911,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'pt-option');
@@ -1930,7 +1930,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5175
         Description: 0 should not be allowed to be applyed
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setStereoBondWidthOptionUnit(page, 'inch-option');
@@ -1950,7 +1950,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
@@ -1970,7 +1970,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
@@ -1990,7 +1990,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
@@ -2010,7 +2010,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         a negative value should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
@@ -2028,7 +2028,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         0 should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
@@ -2046,7 +2046,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         0 should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
@@ -2064,7 +2064,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         0 should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
@@ -2082,7 +2082,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         0 should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
@@ -2102,7 +2102,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         1000.1 should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'inch-option');
@@ -2120,7 +2120,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         1000.1 should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'cm-option');
@@ -2138,7 +2138,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         1000.1 should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'pt-option');
@@ -2156,7 +2156,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Description: add new setting Hash spacing
         1000.1 should not be allowed to be entered
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');
@@ -2173,7 +2173,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5154
         Description: Change "Double bond width" setting
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '0');
@@ -2191,7 +2191,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5154
         Description: Change "Double bond width" setting
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '-19');
@@ -2207,7 +2207,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         Test case: https://github.com/epam/ketcher/issues/5154
         Description: Change "Double bond width" setting
         */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setBondSpacingValue(page, '101');

@@ -2,11 +2,11 @@
 import { Page, test } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  selectLeftPanelButton,
-  LeftPanelButton,
   pressButton,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -16,7 +16,6 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   waitForPageInit,
-  openSettings,
 } from '@utils';
 
 import {
@@ -28,7 +27,7 @@ async function selectLabelDisplayAtStereogenicCenters(
   page: Page,
   label: string,
 ) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByTestId('stereo-label-style-input-span').click();
   await page.getByRole('option', { name: label }).click();
@@ -36,7 +35,7 @@ async function selectLabelDisplayAtStereogenicCenters(
 }
 
 async function selectColorOfStereogenicCenters(page: Page, color: string) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByTestId('color-stereogenic-centers-input-span').click();
   await page.getByRole('option', { name: color }).click();
@@ -44,21 +43,21 @@ async function selectColorOfStereogenicCenters(page: Page, color: string) {
 }
 
 async function uncheckShowStereoFlag(page: Page) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByText('Show the Stereo flags').click();
   await pressButton(page, 'Apply');
 }
 
 async function autoFadeCenterLabelsOff(page: Page) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByText('Auto fade And/Or center labels').click();
   await pressButton(page, 'Apply');
 }
 
 async function editMixedFlagText(page: Page, text: string) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByLabel('Text of Mixed flag').click();
   await page.getByLabel('Text of Mixed flag').fill(text);
@@ -66,7 +65,7 @@ async function editMixedFlagText(page: Page, text: string) {
 }
 
 async function editAbsoluteFlagText(page: Page, text: string) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByLabel('Text of Absolute flag').click();
   await page.getByLabel('Text of Absolute flag').fill(text);
@@ -78,7 +77,7 @@ async function selectRadioButtonForNewGroup(
   selectRadioButton: string,
   cancelChanges = false,
 ) {
-  await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+  await LeftToolbar(page).stereochemestry();
   await page.getByLabel(selectRadioButton).check();
 
   await pressButton(page, cancelChanges ? 'Cancel' : 'Apply');
@@ -167,7 +166,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       page,
     );
     await clickOnAtom(page, 'C', 1);
-    await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await LeftToolbar(page).stereochemestry();
     await takeEditorScreenshot(page);
   });
 
@@ -218,7 +217,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/same-marks-stereostructure.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await LeftToolbar(page).stereochemestry();
     await takeEditorScreenshot(page);
   });
 
@@ -233,7 +232,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'KET/different-marks-stereostructure.ket',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await LeftToolbar(page).stereochemestry();
     await takeEditorScreenshot(page);
   });
 
@@ -513,7 +512,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     */
     const deltaX = 0;
     const deltaY = 100;
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await page.getByText('Stereochemistry', { exact: true }).click();
     await page.mouse.wheel(deltaX, deltaY);
     await takeEditorScreenshot(page);
@@ -575,7 +574,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
       'Molfiles-V2000/stereo-structure-enchanced.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await LeftToolbar(page).stereochemestry();
     await takeEditorScreenshot(page);
   });
 
@@ -588,7 +587,7 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     one OR group has been created on the canvas.
     */
     await openFileAndAddToCanvas('KET/mixed-and-or-structure.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await LeftToolbar(page).stereochemestry();
     await takeEditorScreenshot(page);
   });
 

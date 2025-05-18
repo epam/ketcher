@@ -164,10 +164,6 @@ export class SequenceMode extends BaseMode {
     needRemoveSelection = true,
     needReArrangeChains = true,
   ) {
-    if (this.isEditMode) {
-      needReArrangeChains = false;
-      needScroll = false;
-    }
     const command = super.initialize(needRemoveSelection);
     const editor = CoreEditor.provideEditorInstance();
 
@@ -192,12 +188,15 @@ export class SequenceMode extends BaseMode {
 
     const chainsCollection =
       editor.drawingEntitiesManager.applyMonomersSequenceLayout();
-    const firstMonomerPosition = (
-      chainsCollection.firstNode?.monomer.renderer as BaseSequenceItemRenderer
-    )?.scaledMonomerPositionForSequence;
 
-    if (firstMonomerPosition && (needScroll || needReArrangeChains)) {
-      zoom.scrollTo(firstMonomerPosition);
+    if (needScroll && !this.isEditMode) {
+      const firstMonomerPosition = (
+        chainsCollection.firstNode?.monomer.renderer as BaseSequenceItemRenderer
+      )?.scaledMonomerPositionForSequence;
+
+      if (firstMonomerPosition) {
+        zoom.scrollTo(firstMonomerPosition);
+      }
     }
 
     if (this.isEditMode) {

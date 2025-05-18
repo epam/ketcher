@@ -56,7 +56,7 @@ test.describe('ACS Style Settings', () => {
     await pressButton(page, 'OK');
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
-    await TopRightToolbar(page).Settings();
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await pressButton(page, 'Reset');
     await takeEditorScreenshot(page);
     await openBondsSettingsSection(page);

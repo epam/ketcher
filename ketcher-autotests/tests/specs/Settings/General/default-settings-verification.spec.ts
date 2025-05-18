@@ -72,7 +72,7 @@ test.describe('General Settings', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await TopRightToolbar(page).Settings();
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'px-option');
     await setFontSizeValue(page, '17.8');
     await page.waitForTimeout(1000);

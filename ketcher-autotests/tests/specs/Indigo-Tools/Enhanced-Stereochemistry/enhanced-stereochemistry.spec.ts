@@ -510,11 +510,9 @@ test.describe('Enhanced Stereochemistry Tool', () => {
     Test case: EPMLSOPKET-2266
     Description: “IUPAC style” in Label display at stereogenic centers is selected by default.
     */
-    const deltaX = 0;
-    const deltaY = 100;
     await TopRightToolbar(page).Settings();
+    await page.getByText('General', { exact: true }).click();
     await page.getByText('Stereochemistry', { exact: true }).click();
-    await page.mouse.wheel(deltaX, deltaY);
     await takeEditorScreenshot(page);
   });
 

@@ -50,7 +50,7 @@ test.describe('ACS Style Settings', () => {
     Description: add new option ACS style
     */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await TopRightToolbar(page).Settings();
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');

@@ -753,7 +753,7 @@ test.describe('Undo/Redo Actions', () => {
     Use select tool to choose and CTRL+C placed ring.
     Press CTRL+V and place the ring. Press CTRL+Z.
     */
-    await TopRightToolbar(page).Settings();
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await page.getByTestId('reset-to-select-input-span').click();
     await page.getByRole('option', { name: 'off' }).click();
     await takeEditorScreenshot(page);

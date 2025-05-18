@@ -1,13 +1,13 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   waitForPageInit,
   takeEditorScreenshot,
   pressButton,
   scrollToDownInSetting,
   openFileAndAddToCanvas,
-  openSettings,
   resetAllSettingsToDefault,
   openBondsSettingsSection,
 } from '@utils';
@@ -29,7 +29,7 @@ test.describe('ACS Style Settings', () => {
     Description: add new option ACS style
     */
     await openFileAndAddToCanvas('KET/layout-with-diagonally-arrow.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await pressButton(page, 'Set ACS Settings');
     await page.waitForTimeout(3000);
     await takeEditorScreenshot(page);
@@ -50,13 +50,13 @@ test.describe('ACS Style Settings', () => {
     Description: add new option ACS style
     */
     await openFileAndAddToCanvas('KET/layout-with-long-molecule.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await pressButton(page, 'Reset');
     await takeEditorScreenshot(page);
     await openBondsSettingsSection(page);

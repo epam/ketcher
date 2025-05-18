@@ -1,6 +1,5 @@
 import { Page, test } from '@playwright/test';
 import {
-  LeftPanelButton,
   RingButton,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
@@ -12,8 +11,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   resetCurrentTool,
   selectAllStructuresOnCanvas,
-  selectDropdownTool,
-  selectLeftPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
   clickOnCanvas,
@@ -25,6 +22,9 @@ import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 
 async function drawStructureWithArrowOpenAngle(page: Page) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -41,7 +41,7 @@ async function drawStructureWithArrowOpenAngle(page: Page) {
   await dragMouseTo(x - shiftForHydrogen, y, page);
   await resetCurrentTool(page);
 
-  await selectLeftPanelButton(LeftPanelButton.ArrowOpenAngleTool, page);
+  await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
   await clickInTheMiddleOfTheScreen(page);
   await resetCurrentTool(page);
 
@@ -76,7 +76,9 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Escape');
 
-    await selectDropdownTool(page, 'reaction-map', 'reaction-map');
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionMapping,
+    );
     await clickOnAtom(page, 'C', 0);
     await clickOnAtom(page, 'C', 1);
 
@@ -93,7 +95,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await selectRingButton(RingButton.Benzene, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
     await page.getByTestId('s-group-type').first().click();
@@ -119,7 +121,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await clickOnCanvas(page, x + shiftValue, y);
 
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await creatingComponentGroup(page);
     await takeEditorScreenshot(page);
     await checkSmartsValue(page, '([#6]1-[#6]-[#6]-1.[#6])');
@@ -143,14 +145,16 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     await clickOnCanvas(page, x + shiftValue, y);
     await page.keyboard.press('Escape');
 
-    await selectDropdownTool(page, 'reaction-map', 'reaction-map');
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionMapping,
+    );
     await clickOnAtom(page, 'C', 0);
     await clickOnAtom(page, 'F', 0);
 
     const carbonPoint = await getAtomByIndex(page, { label: 'C' }, 0);
     const fluorinePoint = await getAtomByIndex(page, { label: 'F' }, 0);
 
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
 
     await page.mouse.move(carbonPoint.x - delta, carbonPoint.y + delta);
     await page.mouse.down();

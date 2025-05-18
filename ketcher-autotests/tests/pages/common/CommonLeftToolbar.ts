@@ -48,7 +48,9 @@ export const CommonLeftToolbar = (page: Page) => {
       await locators.handToolButton.click();
     },
 
-    async selectAreaSelectionTool(toolType: SelectionToolType) {
+    async selectAreaSelectionTool(
+      toolType: SelectionToolType = SelectionToolType.Rectangle,
+    ) {
       if (await locators.areaSelectionDropdownExpandButton.isVisible()) {
         await locators.areaSelectionDropdownExpandButton.click();
         await page

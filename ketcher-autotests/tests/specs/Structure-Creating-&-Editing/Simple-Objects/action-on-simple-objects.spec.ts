@@ -1,6 +1,5 @@
 import { Page, test } from '@playwright/test';
 import {
-  LeftPanelButton,
   openFileAndAddToCanvas,
   waitForPageInit,
   waitForRender,
@@ -16,7 +15,6 @@ import {
   clickOnCanvas,
   ZoomInByKeyboard,
 } from '@utils';
-import { selectLeftPanelButton } from '@utils/canvas/tools';
 import { selectAllStructuresOnCanvas, copyAndPaste } from '@utils/canvas';
 import {
   FileType,
@@ -27,12 +25,14 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
 
 const setupEllipse = async (page: Page) => {
-  await selectLeftPanelButton(LeftPanelButton.ShapeEllipse, page);
+  await LeftToolbar(page).selectShapeTool(ShapeType.Ellipse);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const ellipseCoordinates = { x: x + ellipseWidth, y: y + ellipseHeight };
   await clickInTheMiddleOfTheScreen(page);

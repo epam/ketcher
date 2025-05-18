@@ -1,10 +1,9 @@
 import { Page, test } from '@playwright/test';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  LeftPanelButton,
   pressButton,
-  selectLeftPanelButton,
   clickOnAtom,
   waitForPageInit,
   waitForRender,
@@ -19,7 +18,7 @@ async function selectRadioButtonForNewGroup(
   selectRadioButton: string,
   cancelChanges = false,
 ) {
-  await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+  await LeftToolbar(page).stereochemestry();
   await page.getByLabel(selectRadioButton).check();
 
   await waitForRender(page, async () => {

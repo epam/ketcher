@@ -1,13 +1,13 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
   openFileAndAddToCanvasAsNewProject,
-  openSettings,
   pressButton,
   takeEditorScreenshot,
   waitForPageInit,
@@ -27,7 +27,7 @@ async function templateFromLAminoAcidsCategory(page: Page) {
 }
 
 async function applyIgnoreChiralFlag(page: Page) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
 
   const resetSettingsButton = page
     .getByTitle('Reset')

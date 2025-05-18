@@ -16,7 +16,6 @@ import {
   openFileAndAddToCanvas,
   fillFieldByPlaceholder,
   getCoordinatesTopAtomOfBenzeneRing,
-  selectRingButton,
   AttachmentPoint,
   copyAndPaste,
   cutAndPaste,
@@ -30,6 +29,7 @@ import {
   selectRedoByKeyboard,
   ZoomInByKeyboard,
 } from '@utils';
+import { selectRingButton } from '@utils/canvas/tools';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';

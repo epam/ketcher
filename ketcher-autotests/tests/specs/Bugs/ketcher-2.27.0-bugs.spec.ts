@@ -411,7 +411,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       'KET/Bugs/Two nucleotides.ket',
       page,
     );
-    await LeftToolbar(page).stereochemestry();
+    await LeftToolbar(page).stereochemistry();
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
   });

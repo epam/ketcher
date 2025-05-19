@@ -294,7 +294,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await IndigoFunctionsToolbar(page).TreeDViewer();
+    await IndigoFunctionsToolbar(page).ThreeDViewer();
     await takeEditorScreenshot(page);
   });
 

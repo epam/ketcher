@@ -24,6 +24,25 @@ type BoundingBox = {
 
 const HALF_DIVIDER = 2;
 
+let cachedBodyCenter: { x: number; y: number } | null = null;
+
+export async function getCachedBodyCenter(page: Page) {
+  if (cachedBodyCenter) return cachedBodyCenter;
+
+  await page.waitForSelector('body', { state: 'attached', timeout: 10000 });
+  const box = await page.locator('body').boundingBox();
+  if (!box) {
+    throw new Error('Unable to get boundingBox for <body>');
+  }
+
+  cachedBodyCenter = {
+    x: box.x + box.width / HALF_DIVIDER,
+    y: box.y + box.height / HALF_DIVIDER,
+  };
+
+  return cachedBodyCenter;
+}
+
 export async function clickAfterItemsToMergeInitialization(
   page: Page,
   x: number,
@@ -43,21 +62,21 @@ export async function clickAfterItemsToMergeInitialization(
 export async function clickInTheMiddleOfTheScreen(
   page: Page,
   button: 'left' | 'right' = 'left',
+  options: { waitForMergeInitialization: boolean } = {
+    waitForMergeInitialization: false,
+  },
 ) {
-  await page.waitForSelector('body', { state: 'attached', timeout: 10000 });
-  const boundingBox = await page.locator('body').boundingBox();
-  if (!boundingBox) {
-    throw new Error('Unable to get boundingBox for <body>');
-  }
+  const { x, y } = await getCachedBodyCenter(page);
 
-  await waitForRender(page, async () => {
-    await clickAfterItemsToMergeInitialization(
-      page,
-      boundingBox.x + boundingBox?.width / HALF_DIVIDER,
-      boundingBox.y + boundingBox?.height / HALF_DIVIDER,
-      button,
-    );
-  });
+  if (options.waitForMergeInitialization) {
+    await waitForRender(page, async () => {
+      await clickAfterItemsToMergeInitialization(page, x, y, button);
+    });
+  } else {
+    await waitForRender(page, async () => {
+      await page.mouse.click(x, y, { button });
+    });
+  }
 }
 
 export async function clickOnCanvas(

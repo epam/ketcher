@@ -274,7 +274,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
     await closeErrorAndInfoModals(page);
-    await IndigoFunctionsToolbar(page).TreeDViewer();
+    await IndigoFunctionsToolbar(page).ThreeDViewer();
     await takeEditorScreenshot(page);
   });
 

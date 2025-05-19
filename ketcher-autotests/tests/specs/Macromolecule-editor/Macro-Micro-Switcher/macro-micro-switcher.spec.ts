@@ -145,7 +145,7 @@ async function setAtomAndBondSettings(page: Page) {
 }
 
 async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
-  await IndigoFunctionsToolbar(page).TreeDViewer();
+  await IndigoFunctionsToolbar(page).ThreeDViewer();
   if (waitForButtonIsEnabled) {
     await miewApplyButtonIsEnabled(page);
   }
@@ -536,7 +536,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
       await selectRing(RingButton.Benzene, page);
       await clickInTheMiddleOfTheScreen(page);
-      await IndigoFunctionsToolbar(page).TreeDViewer();
+      await IndigoFunctionsToolbar(page).ThreeDViewer();
       await moveMouseAway(page);
       await takeEditorScreenshot(page, {
         maxDiffPixelRatio: 0.05,

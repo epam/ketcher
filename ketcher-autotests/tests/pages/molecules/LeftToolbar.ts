@@ -8,7 +8,7 @@ import { delay } from '@utils/index';
 
 type LeftToolbarLocators = {
   chainButton: Locator;
-  stereochemestryButton: Locator;
+  stereochemistryButton: Locator;
   chargePlusButton: Locator;
   chargeMinusButton: Locator;
   sGroupButton: Locator;
@@ -24,7 +24,7 @@ type LeftToolbarLocators = {
 export const LeftToolbar = (page: Page) => {
   const locators: LeftToolbarLocators = {
     chainButton: page.getByTestId('chain'),
-    stereochemestryButton: page.getByTestId('enhanced-stereo'),
+    stereochemistryButton: page.getByTestId('enhanced-stereo'),
     chargePlusButton: page.getByTestId('charge-plus'),
     chargeMinusButton: page.getByTestId('charge-minus'),
     sGroupButton: page.getByTestId('sgroup'),
@@ -46,8 +46,8 @@ export const LeftToolbar = (page: Page) => {
       await locators.chainButton.click();
     },
 
-    async stereochemestry() {
-      await locators.stereochemestryButton.click();
+    async stereochemistry() {
+      await locators.stereochemistryButton.click();
     },
 
     async chargePlus() {

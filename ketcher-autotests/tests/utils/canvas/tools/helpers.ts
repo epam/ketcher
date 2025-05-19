@@ -1,32 +1,14 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
-import {
-  clickOnCanvas,
-  SequenceType,
-  waitForRender,
-  waitForSpinnerFinishedWork,
-} from '@utils';
+import { clickOnCanvas, SequenceType, waitForRender } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
-import {
-  LeftPanelButton,
-  MacromoleculesLeftPanelButton,
-  RingButton,
-  TopPanelButton,
-} from '@utils/selectors';
+import { RingButton, TopPanelButton } from '@utils/selectors';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-
-/**
- *  Select button from left panel
- * Usage: await selectTool(LeftPanelButton.HandTool, page)
- */
-export async function selectTool(type: LeftPanelButton, page: Page) {
-  await selectButtonByTitle(type, page);
-}
 
 /**
  * Select button from top panel
@@ -141,22 +123,6 @@ export async function selectRingButton(buttonName: RingButton, page: Page) {
   await bottomPanelButton.click();
 }
 
-export async function selectLeftPanelButton(
-  buttonName: LeftPanelButton,
-  page: Page,
-) {
-  const leftPanelButton = page.locator(`button[title*="${buttonName}"]`);
-  await leftPanelButton.click();
-}
-
-export async function selectMacromoleculesPanelButton(
-  buttonName: MacromoleculesLeftPanelButton,
-  page: Page,
-) {
-  const topPanelButton = page.locator(`button[title*="${buttonName}"]`);
-  await topPanelButton.click();
-}
-
 export async function selectButtonById(buttonId: 'OK', page: Page) {
   const element = page.getByTestId(buttonId);
   await element.click();
@@ -209,17 +175,6 @@ export async function saveToTemplates(page: Page, templateName: string) {
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill(templateName);
   await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-
-export async function openSettings(page: Page) {
-  await selectTopPanelButton(TopPanelButton.Settings, page);
-  // Wait while system loads list of values (i.e. Arial in particular) in Font combobox
-  await page.waitForSelector('div[role="combobox"]', {
-    state: 'attached',
-  });
-  await page.waitForSelector('div[role="combobox"]:has-text("Arial")', {
-    timeout: 5000,
-  });
 }
 
 export async function openStereochemistrySettingsSection(page: Page) {
@@ -387,10 +342,4 @@ export async function scrollToDownInSetting(page: Page) {
   const scrollToDown = page.getByTestId('Options for Debugging-accordion');
   await scrollToDown.scrollIntoViewIfNeeded();
   await scrollToDown.hover({ force: true });
-}
-
-export async function selectAddRemoveExplicitHydrogens(page: Page) {
-  await waitForSpinnerFinishedWork(page, async () => {
-    await selectTopPanelButton(TopPanelButton.toggleExplicitHydrogens, page);
-  });
 }

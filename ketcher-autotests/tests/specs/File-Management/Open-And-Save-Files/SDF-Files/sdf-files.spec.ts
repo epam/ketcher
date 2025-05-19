@@ -1,5 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
@@ -8,8 +10,6 @@ import {
   setBondLengthOptionUnit,
   setBondLengthValue,
   pressButton,
-  openSettings,
-  selectLayoutTool,
   setHashSpacingOptionUnit,
   setHashSpacingValue,
   openBondsSettingsSection,
@@ -385,7 +385,7 @@ test('The Bond length setting with px option is applied and it should be save to
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   await setBondLengthOptionUnit(page, 'px-option');
   await setBondLengthValue(page, '79.8');
@@ -415,7 +415,7 @@ test('The Hash spacing setting with px option is applied and it should be save t
   */
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   await setHashSpacingOptionUnit(page, 'px-option');
   await setHashSpacingValue(page, '79.8');
@@ -444,7 +444,7 @@ test('The Hash spacing setting with px option is applied and it should be save t
   */
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   await setHashSpacingOptionUnit(page, 'px-option');
   await setHashSpacingValue(page, '79.8');
@@ -473,7 +473,7 @@ test('The Hash spacing setting with cm option is applied and it should be save t
   */
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   await setHashSpacingOptionUnit(page, 'cm-option');
   await setHashSpacingValue(page, '79.8');
@@ -502,7 +502,7 @@ test('The Hash spacing setting with cm option is applied and it should be save t
   */
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   await setHashSpacingOptionUnit(page, 'cm-option');
   await setHashSpacingValue(page, '79.8');
@@ -531,7 +531,7 @@ test('The Hash spacing setting with inch option is applied and it should be save
   */
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   await setHashSpacingOptionUnit(page, 'inch-option');
   await setHashSpacingValue(page, '79.8');
@@ -560,7 +560,7 @@ test('The Hash spacing setting with inch option is applied and it should be save
   */
   await waitForPageInit(page);
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   await setHashSpacingOptionUnit(page, 'inch-option');
   await setHashSpacingValue(page, '79.8');
@@ -590,7 +590,7 @@ test('The Bond length setting with pt option is applied and it should be save to
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   await setBondLengthOptionUnit(page, 'pt-option');
   await setBondLengthValue(page, '29.8');
@@ -622,11 +622,11 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 3
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await pressButton(page, 'Set ACS Settings');
   await pressButton(page, 'Apply');
   await pressButton(page, 'OK');
-  await selectLayoutTool(page);
+  await IndigoFunctionsToolbar(page).layout();
   await takeEditorScreenshot(page);
 
   await verifyFileExport(
@@ -653,11 +653,11 @@ test('The ACS setting is applied, click on layout and it should be save to sdf 2
   await waitForPageInit(page);
 
   await openFileAndAddToCanvas('KET/adenosine-triphosphate.ket', page);
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await pressButton(page, 'Set ACS Settings');
   await pressButton(page, 'Apply');
   await pressButton(page, 'OK');
-  await selectLayoutTool(page);
+  await IndigoFunctionsToolbar(page).layout();
   await takeEditorScreenshot(page);
 
   await verifyFileExport(

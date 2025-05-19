@@ -13,13 +13,9 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   takePageScreenshot,
   selectSequenceLayoutModeTool,
-  openDropdown,
   openFileAndAddToCanvasAsNewProject,
   takeLeftToolbarMacromoleculeScreenshot,
-  selectLeftPanelButton,
-  LeftPanelButton,
   pressButton,
-  openSettings,
   openBondsSettingsSection,
   scrollToDownInSetting,
   setHashSpacingValue,
@@ -45,6 +41,8 @@ import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
 async function connectMonomerToAtom(page: Page) {
   await getMonomerLocator(page, Peptides.A).hover();
@@ -223,7 +221,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
      * 2. Open arrow menu in toobar
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await openDropdown(page, 'reaction-arrow-open-angle');
+    await LeftToolbar(page).expandArrowToolsDropdown();
     await takeEditorScreenshot(page);
   });
 
@@ -281,9 +279,14 @@ test.describe('Ketcher bugs in 2.27.0', () => {
     });
     await page.getByText('Highlight', { exact: true }).click();
     await page.locator('.css-cyxjjb').click(); // Red
-    await page.locator('path').nth(8).click({
-      button: 'right',
-    });
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .locator('path')
+      .nth(8)
+      .click({
+        button: 'right',
+      });
     await page.getByText('Highlight', { exact: true }).click();
     await page.locator('.css-d1acvy').click(); // Blue
     await takeEditorScreenshot(page);
@@ -408,7 +411,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       'KET/Bugs/Two nucleotides.ket',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.Stereochemistry, page);
+    await LeftToolbar(page).stereochemistry();
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
   });
@@ -429,7 +432,7 @@ test.describe('Ketcher bugs in 2.27.0', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingValue(page, '10');

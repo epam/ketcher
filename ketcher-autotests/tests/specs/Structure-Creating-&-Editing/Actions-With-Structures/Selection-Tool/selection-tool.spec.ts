@@ -11,8 +11,6 @@ import {
   moveOnBond,
   BondType,
   pressButton,
-  selectLeftPanelButton,
-  LeftPanelButton,
   fillFieldByPlaceholder,
   dragMouseTo,
   takeLeftToolbarScreenshot,
@@ -23,6 +21,7 @@ import {
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 
 test.describe('Selection tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -316,7 +315,7 @@ test.describe('Selection tools', () => {
     const pointx1 = 750;
     const pointy1 = 300;
     await openFileAndAddToCanvas('KET/two-benzene-with-atoms.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 0);
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
     await fillFieldByPlaceholder(page, 'Enter value', '33');
@@ -520,7 +519,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-18046
     Description: Shift+Tab switch selection tools after pressing ESC button.
     */
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     await page.keyboard.press('Escape');
     await takeLeftToolbarScreenshot(page);
     for (let i = 0; i < 2; i++) {

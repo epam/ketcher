@@ -1,6 +1,8 @@
 import { Page, test } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
 import {
   selectAllStructuresOnCanvas,
@@ -10,7 +12,6 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  openDropdown,
 } from '@utils/clicks';
 
 async function selectLineWithSelectionTool(page: Page) {
@@ -57,8 +58,7 @@ async function separetingAndMovingLines(page: Page) {
 }
 
 const setupLine = async (page: Page) => {
-  await openDropdown(page, 'shape-ellipse');
-  await page.getByTestId('shape-line').click();
+  await LeftToolbar(page).selectShapeTool(ShapeType.Line);
   const moveTo = 250;
   await clickInTheMiddleOfTheScreen(page);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -76,8 +76,7 @@ test.describe('draw and highlight line', () => {
 
   test('drawing and highlighting', async ({ page }) => {
     // test case: EPMLSOPKET-16750
-    await openDropdown(page, 'shape-ellipse');
-    await page.getByTestId('shape-line').click();
+    await LeftToolbar(page).selectShapeTool(ShapeType.Line);
 
     const moveTo = 250;
     await clickInTheMiddleOfTheScreen(page);

@@ -1,9 +1,7 @@
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectTopPanelButton,
   waitForPageInit,
-  TopPanelButton,
   openFile,
   FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
@@ -17,6 +15,7 @@ import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 
 async function editText(page: Page, text: string) {
   await page.getByTestId('openStructureModal').getByRole('textbox').click();
@@ -60,7 +59,7 @@ test.describe('Floating windows', () => {
       Description: verify the floating window with calculated values 
     */
     await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -70,7 +69,7 @@ test.describe('Floating windows', () => {
       Description: verify 0 decimal places after the dot for calculated values 
     */
     await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await page.getByTestId('Molecular Weight-select').click();
     await page.getByRole('option', { name: '0' }).click();
     await page.getByTestId('Exact Mass-select').click();
@@ -84,7 +83,7 @@ test.describe('Floating windows', () => {
       Description: verify 7 decimal places after the dot for calculated values 
     */
     await openFileAndAddToCanvas('Molfiles-V2000/bicycle.mol', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await page.getByTestId('Molecular Weight-select').click();
     await page.getByRole('option', { name: '7' }).click();
     await page.getByTestId('Exact Mass-select').click();
@@ -97,7 +96,7 @@ test.describe('Floating windows', () => {
       Test case: EPMLSOPKET-4002
       Description: verify empty fields in floating window for empty canvas 
     */
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 
@@ -128,13 +127,13 @@ test.describe('Floating windows', () => {
       Description: Change dedcimal places
     */
     await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await page.getByText('Decimal places3').first().click();
     await page.getByRole('option', { name: '4' }).click();
     await page.getByText('Decimal places3').click();
     await page.getByRole('option', { name: '1' }).click();
     await page.keyboard.press('Escape');
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
   });
 

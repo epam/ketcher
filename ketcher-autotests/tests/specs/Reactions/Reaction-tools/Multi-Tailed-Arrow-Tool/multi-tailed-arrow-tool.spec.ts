@@ -10,29 +10,20 @@ import {
   dragMouseTo,
   moveMouseAway,
   moveOnAtom,
-  openDropdown,
   openFile,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
   openImageAndAddToCanvas,
   pasteFromClipboardByKeyboard,
   pressButton,
-  selectAddRemoveExplicitHydrogens,
   resetCurrentTool,
   RingButton,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
-  selectAromatizeTool,
-  selectCleanTool,
-  selectDearomatizeTool,
-  selectDropdownTool,
-  selectLayoutTool,
   selectPartOfMolecules,
   selectRing,
-  selectTopPanelButton,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
-  TopPanelButton,
   waitForPageInit,
   waitForRender,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -54,6 +45,9 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -75,11 +69,7 @@ async function selectFromSaveToTemplates(page: Page) {
 }
 
 async function setupElementsAndModifyMultiTailArrow(page: Page) {
-  await selectDropdownTool(
-    page,
-    'reaction-arrow-open-angle',
-    'reaction-arrow-multitail',
-  );
+  await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
   await clickOnCanvas(page, 600, 400);
   await selectRing(RingButton.Benzene, page);
   await clickOnCanvas(page, 200, 400);
@@ -142,7 +132,9 @@ async function hoverOverArrowSpine(
 
 async function addTails(page: Page, count: number) {
   for (let i = 0; i < count; i++) {
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByText('Add new tail').click();
   }
 }
@@ -167,11 +159,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Default Multi-Tailed Arrow with two tails saved to .ket file with correct coordinates of spine, tails and head
      * and after that loaded from .ket file and added to selected place on Canvas with the same parameters.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
 
     await verifyFileExport(
@@ -477,11 +465,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5104
      * Description: Multi-Tailed Arrow is correctly displayed in .ket format in Save Structure Preview.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -538,7 +522,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * after clicking it displays with filling, after clicking on another tool or esc, the icon selection with filling is removed and "Arrow Open Angle Tool"
      * is displayed without filling.
      */
-    await openDropdown(page, 'reaction-arrow-open-angle');
+    await LeftToolbar(page).expandArrowToolsDropdown();
     await takeEditorScreenshot(page);
     await page.getByTestId('reaction-arrow-multitail').click();
     await takeLeftToolbarScreenshot(page);
@@ -579,11 +563,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5055
      * Description: Action of adding to Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool" button and Undo/Redo.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
@@ -617,11 +597,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5055
      * Description: Adding to selected place on Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool" deleted using "Clear Canvas" (or Ctrl+Delete)
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await TopLeftToolbar(page).clearCanvas();
@@ -668,11 +644,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Adding to selected place on Canvas Multi-Tailed Arrows using "Multi-Tailed Arrow Tool"
      * deleted using "Erase" (or Delete, Backspace buttons)
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await selectAllStructuresOnCanvas(page);
@@ -810,11 +782,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Multi-Tailed Arrow with default size (spine-2.5, tail-0.4, head-0.8) added to selected places on Canvas
      * using "Multi-Tailed Arrow Tool" and saved to .ket file with the correct coordinates of spine, tails and head.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600);
 
     await verifyFileExport(
@@ -832,11 +800,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Three Multi-Tailed Arrows with default size (spine-2.5, tail-0.4, head-0.8) added to different selected places on Canvas
      * one by one using "Multi-Tailed Arrow Tool" and saved together to .ket file with the correct coordinates of spines, tails and heads.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400);
     await clickOnCanvas(page, 500, 600);
     await clickOnCanvas(page, 700, 500);
@@ -860,11 +824,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/three-benzene-rings.ket',
       page,
     );
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400);
     await clickOnCanvas(page, 500, 600);
     await clickOnCanvas(page, 700, 500);
@@ -925,11 +885,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5055
      * Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for default Multi-Tailed Arrow added by Tool
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600);
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
@@ -948,11 +904,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5055
      * Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for default Multi-Tailed Arrow added by Tool
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600);
     await selectAllStructuresOnCanvas(page);
     await takeEditorScreenshot(page);
@@ -976,11 +928,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     const saveStructureTextarea =
       SaveStructureDialog(page).saveStructureTextarea;
 
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600);
     await TopLeftToolbar(page).saveFile();
     await expect(saveToTemplatesButton).toBeDisabled();
@@ -1038,11 +986,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     added tails, add/remove tails, deletion of arrow/element.
     */
     test.slow();
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600);
     await selectRing(RingButton.Benzene, page);
     await clickOnCanvas(page, 200, 400);
@@ -1108,11 +1052,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Canvas one by one using "Multi-Tailed Arrow Tool" button and selected and moved to another places on Canvas with correct sizes 
     and positions of spines, tails and heads.
     */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 200, 200);
     await clickOnCanvas(page, 400, 400);
     await clickOnCanvas(page, 600, 600);
@@ -1147,11 +1087,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Canvas (with previously added elements) one by one using "Multi-Tailed Arrow Tool" button and they selected and moved together with 
     elements and separately to other places on Canvas with correct sizes and positions.
     */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 200, 200);
     await clickOnCanvas(page, 800, 200);
     await clickOnCanvas(page, 800, 300);
@@ -1219,11 +1155,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Test case: https://github.com/epam/ketcher/issues/4898
     Description: Movement actions Undo/Redo for added by Tool Multi-Tailed Arrows on Canvas with other elements.
     */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 200, 200);
     await clickOnCanvas(page, 800, 200);
     await clickOnCanvas(page, 800, 300);
@@ -1330,11 +1262,15 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     for (let i = 0; i < 3; i++) {
-      await clickInTheMiddleOfTheScreen(page, 'right');
+      await clickInTheMiddleOfTheScreen(page, 'right', {
+        waitForMergeInitialization: true,
+      });
       await page.getByText('Add new tail').click();
     }
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await expect(page.getByText('Add new tail')).toBeDisabled();
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1359,7 +1295,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await addTails(page, 6);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await expect(page.getByText('Add new tail')).toBeDisabled();
     await takeEditorScreenshot(page);
     await addTailToArrow(page, 0);
@@ -1390,7 +1328,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await addTails(page, 6);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await expect(page.getByText('Add new tail')).toBeDisabled();
     await takeEditorScreenshot(page);
     await addTailToArrow(page, 0);
@@ -1549,12 +1489,16 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'left', {
+      waitForMergeInitialization: true,
+    });
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
     for (let i = 0; i < 3; i++) {
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheScreen(page, 'left', {
+        waitForMergeInitialization: true,
+      });
       await hoverOverArrowSpine(page, 0, 'right');
       await page.getByText('Add new tail').click();
     }
@@ -1581,12 +1525,16 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
     for (let i = 0; i < 3; i++) {
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheScreen(page, 'left', {
+        waitForMergeInitialization: true,
+      });
       await hoverOverArrowSpine(page, 0, 'right');
       await page.getByText('Add new tail').click();
     }
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'left', {
+      waitForMergeInitialization: true,
+    });
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
@@ -1682,11 +1630,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Using "Multi-Tailed Arrow Tool" button, add 3 default Multi-Tailed Arrow to Canvas, add 1 tail to the first one, 2 tails to the second
      * and 3 to the third, verify that these 3 Multi-Tailed Arrows saved to KET with the correct coordinates of spines, tails and heads.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400);
     await clickOnCanvas(page, 500, 600);
     await clickOnCanvas(page, 700, 500);
@@ -1719,11 +1663,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * remove 1 middle tail for the first and 2 tails for the second, verify that these 2 Multi-Tailed Arrows saved to KET
      * with the correct coordinates of spines, tails and heads.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400);
     await clickOnCanvas(page, 500, 600);
 
@@ -1763,11 +1703,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      *  remove two tails (2 and 3 or 3 and 4) using "Remove tail", make sure that 3 more tails added using "Add new tail", after that changed Multi-Tailed Arrow
      *  with 6 tails saved to KET with the correct coordinates of spine, tails and head.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -1803,11 +1739,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * After Undo, the tails don't return to their original positions. After fixing the bug, the screenshot needs to be updated.
      * A bug has been logged: https://github.com/epam/ketcher/issues/5548
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -1843,11 +1775,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * A bug has been logged: https://github.com/epam/ketcher/issues/5548
      */
     test.slow();
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400);
     await clickOnCanvas(page, 500, 600);
     await clickOnCanvas(page, 700, 500);
@@ -1888,11 +1816,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for added by Tool default Multi-Tailed Arrow
      * after adding of tails and removing of tails with correct quantity of tails.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -1921,11 +1845,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for added by Tool default Multi-Tailed Arrow
      * after adding of tails and removing of tails with correct quantity of tails.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 300, 400);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -1957,13 +1877,19 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-2-tails-1.ket',
       page,
     );
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByText('Add new tail').click();
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByText('Add new tail').click();
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByText('Remove tail').click();
     await takeEditorScreenshot(page);
 
@@ -1980,16 +1906,16 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Added by Tool Multi-Tailed Arrow after adding/removing of tails selected and moved
      * with correct size and position of spine, tails and head.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByText('Add new tail').click();
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByText('Add new tail').click();
     await takeEditorScreenshot(page);
 
@@ -2107,11 +2033,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that head arrow moved up to 0.15 from the edge,
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2133,11 +2055,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that head arrow moved down up to 0.15 from the edge,
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2159,11 +2077,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that size of head arrow reduced to left (minimal size is 0.5),
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2185,11 +2099,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that size of head arrow increased to right,
      * after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2251,11 +2161,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     and its size can be changed for each of them, after that changed Multi-Tailed Arrows saved to KET with the correct coordinates of spines, tails and heads.
     */
 
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 300, 400);
     await clickOnCanvas(page, 400, 500);
@@ -2457,11 +2363,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/ketcher/issues/5058
      * Description: Undo/Redo actions performed for added by Tool default Multi-Tailed Arrow after moving/changing size of head.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2488,11 +2390,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Undo/Redo actions performed for added by Tool 3 default Multi-Tailed Arrows after moving/changing size of heads.
     */
     test.slow();
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 300, 400);
     await clickOnCanvas(page, 400, 500);
@@ -2537,11 +2435,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     by Tool 3 different Multi-Tailed Arrow after moving/changing size of head.
     */
 
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 300, 400);
     await clickOnCanvas(page, 400, 500);
@@ -2582,11 +2476,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     by Tool 3 different Multi-Tailed Arrow after moving/changing size of head.
     */
 
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 300, 400);
     await clickOnCanvas(page, 400, 500);
@@ -2626,11 +2516,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Added by Tool Multi-Tailed Arrow after moving/changing size of head selected and moved with correct size and position of spine, tails and head.
     */
 
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
 
     await takeEditorScreenshot(page);
@@ -2755,11 +2641,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that top tail moved up and
      * bottom tail moved down, after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -2787,11 +2669,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Add default Multi-Tailed Arrow by button, verify that top tail moved down up to 0.15 from head arrow and bottom
      * tail moved up to 0.5 from top tail, after that changed Multi-Tailed Arrow can be saved to KET with the correct coordinates of spine, tails and head.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2816,11 +2694,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Description: Using "Multi-Tailed Arrow Tool" button, add default Multi-Tailed Arrow, verify that size of two tails reduced to
      * right (minimal size is 0.4) and increased to left after that changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await clickInTheMiddleOfTheScreen(page);
@@ -2883,11 +2757,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Using "Multi-Tailed Arrow Tool" button, add 3 default Multi-Tailed Arrows, verify that that top and bottom tails moved 
     and its size changed for each of them, after that changed Multi-Tailed Arrows saved to KET with the correct coordinates of spines, tails and heads.
     */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 500, 300);
     await clickOnCanvas(page, 600, 450);
@@ -3105,11 +2975,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Test case: https://github.com/epam/ketcher/issues/5107
     Description: Undo/Redo actions performed for added by Tool default Multi-Tailed Arrow with two tails after moving/changing size of top and bottom tails.
     */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -3143,11 +3009,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Description: Undo/Redo actions performed for added by Tool 3 default Multi-Tailed Arrows after moving/changing size of top and bottom tails.
     */
     test.slow();
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 500, 300);
     await clickOnCanvas(page, 600, 450);
@@ -3192,11 +3054,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Test case: https://github.com/epam/ketcher/issues/5107
     Description: Copy-Paste (Ctrl+C, Ctrl+V) actions performed for added by Tool 3 different Multi-Tailed Arrow after moving/changing size of top and bottom tails.
     */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 500, 300);
     await clickOnCanvas(page, 600, 450);
@@ -3236,11 +3094,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Test case: https://github.com/epam/ketcher/issues/5107
     Description: Cut-Paste (Ctrl+X, Ctrl+V) actions performed for added by Tool 3 different Multi-Tailed Arrow after moving/changing size of top and bottom tails.
     */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await clickOnCanvas(page, 500, 300);
     await clickOnCanvas(page, 600, 450);
@@ -3280,11 +3134,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     Test case: https://github.com/epam/ketcher/issues/5107
     Description: Added by Tool Multi-Tailed Arrow after moving/changing size of top and bottom tails selected and moved with correct size and position of spine, tails and head.
     */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
@@ -3395,18 +3245,18 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     tails increased to left, reduced to right (minimal size is 0.4) by middle tail, after that changed Multi-Tailed Arrow saved to KET 
     with the correct coordinates of spine, tails and head.
     */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
-    await clickInTheMiddleOfTheScreen(page);
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await clickInTheMiddleOfTheScreen(page, 'left', {
+      waitForMergeInitialization: true,
+    });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTails(page, 3);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'left', {
+      waitForMergeInitialization: true,
+    });
     await page.getByTestId('tails-0-resize').hover({ force: true });
     await dragMouseTo(400, 500, page);
     await takeEditorScreenshot(page);
@@ -3430,18 +3280,18 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     medium tail to the second/fourth, it's automatically returned to the nearest available place, after that 
     changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
     */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
-    await clickInTheMiddleOfTheScreen(page);
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await clickInTheMiddleOfTheScreen(page, 'left', {
+      waitForMergeInitialization: true,
+    });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTails(page, 3);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'left', {
+      waitForMergeInitialization: true,
+    });
     await page.getByTestId('tails-2-move').hover({ force: true });
     await dragMouseTo(400, 300, page);
     await takeEditorScreenshot(page);
@@ -3467,18 +3317,18 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     more tail and move it down up to 0.35 from the fourth, add one more tail, verify that can't add more tails, after that changed Multi-Tailed Arrow 
     saved to KET with the correct coordinates of spine, tails and head.
     */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
-    await clickInTheMiddleOfTheScreen(page);
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
+    await clickInTheMiddleOfTheScreen(page, 'left', {
+      waitForMergeInitialization: true,
+    });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTails(page, 3);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'left', {
+      waitForMergeInitialization: true,
+    });
     await page.getByTestId('tails-2-move').hover({ force: true });
     await dragMouseTo(400, 300, page);
     await takeEditorScreenshot(page);
@@ -3494,7 +3344,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(400, 500, page);
     await takeEditorScreenshot(page);
     await addTails(page, 1);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -3535,11 +3387,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
      * Test case: https://github.com/epam/Indigo/issues/2129
      * Description: Added by Tool default Multi-Tailed Arrows is displayed on preview and can be saved separately to PNG/SVG files with correct positions and layers.
      */
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await TopLeftToolbar(page).saveFile();
@@ -3636,9 +3484,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectAromatizeTool(page);
+    await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
-    await selectDearomatizeTool(page);
+    await IndigoFunctionsToolbar(page).dearomatize();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -3727,7 +3575,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
        */
       await openFileAndAddToCanvasAsNewProject(file, page);
       await takeEditorScreenshot(page);
-      await selectLayoutTool(page);
+      await IndigoFunctionsToolbar(page).layout();
       await takeEditorScreenshot(page);
       await verifyFileExport(page, expectedFile, FileType.KET);
       await openFileAndAddToCanvasAsNewProject(expectedFile, page);
@@ -3762,7 +3610,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(700, 340, page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -3802,7 +3650,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(700, 340, page);
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
-    await selectCleanTool(page);
+    await IndigoFunctionsToolbar(page).cleanUp();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -3836,7 +3684,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Calculate, page);
+    await IndigoFunctionsToolbar(page).calculateCIP();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,
@@ -3869,7 +3717,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Check, page);
+    await IndigoFunctionsToolbar(page).checkStructure();
     await takeEditorScreenshot(page, {
       mask: [page.locator('[class*="Check-module_checkInfo"] > span')],
     });
@@ -3906,7 +3754,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectTopPanelButton(TopPanelButton.Calculated, page);
+    await IndigoFunctionsToolbar(page).calculatedValues();
     await takeEditorScreenshot(page);
     await pressButton(page, 'Close');
     await takeEditorScreenshot(page);
@@ -3941,9 +3789,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await selectAddRemoveExplicitHydrogens(page);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
-    await selectAddRemoveExplicitHydrogens(page);
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

@@ -55,46 +55,55 @@ export const ExternalFuncControls = ({
       name: 'arom',
       title: 'Aromatize',
       handler: onAromatize,
+      testId: 'Aromatize button',
     },
     {
       name: 'dearom',
       title: 'Dearomatize',
       handler: onDearomatize,
+      testId: 'Dearomatize button',
     },
     {
       name: 'layout',
       title: 'Layout',
       handler: onLayout,
+      testId: 'Layout button',
     },
     {
       name: 'clean',
       title: 'Clean Up',
       handler: onClean,
+      testId: 'Clean Up button',
     },
     {
       name: 'cip',
       title: 'Calculate CIP',
       handler: onCalculate,
+      testId: 'Calculate CIP button',
     },
     {
       name: 'check',
       title: 'Check Structure',
       handler: onCheck,
+      testId: 'Check Structure button',
     },
     {
       name: 'analyse',
       title: 'Calculated Values',
       handler: onAnalyse,
+      testId: 'Calculated Values button',
     },
     {
       name: 'explicit-hydrogens',
       title: 'Add/Remove explicit hydrogens',
       handler: onToggleExplicitHydrogens,
+      testId: 'Add/Remove explicit hydrogens button',
     },
     {
       name: 'miew',
       title: '3D Viewer',
       handler: onMiew,
+      testId: '3D Viewer button',
     },
   ];
 
@@ -107,6 +116,7 @@ export const ExternalFuncControls = ({
       disabled={indigoVerification || disabledButtons.includes(button.name)}
       isHidden={hiddenButtons.includes(button.name)}
       key={button.name}
+      testId={button.testId}
     />
   );
 

@@ -6,7 +6,6 @@ import {
   RingButton,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
-  selectTopPanelButton,
   BondType,
   dragMouseTo,
   screenshotBetweenUndoRedo,
@@ -27,7 +26,7 @@ import {
   waitForSpinnerFinishedWork,
 } from '@utils';
 import { TopPanelButton } from '@utils/selectors';
-import { resetCurrentTool } from '@utils/canvas/tools';
+import { resetCurrentTool, selectTopPanelButton } from '@utils/canvas/tools';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';

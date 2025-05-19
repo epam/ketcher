@@ -1532,7 +1532,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       await page.getByText('Add new tail').click();
     }
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right', {
+    await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
     await removeTail(page, 'tails-0-move');

@@ -132,7 +132,9 @@ async function hoverOverArrowSpine(
 
 async function addTails(page: Page, count: number) {
   for (let i = 0; i < count; i++) {
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByText('Add new tail').click();
   }
 }
@@ -1487,14 +1489,14 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right', {
+    await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
     for (let i = 0; i < 3; i++) {
-      await clickInTheMiddleOfTheScreen(page, 'right', {
+      await clickInTheMiddleOfTheScreen(page, 'left', {
         waitForMergeInitialization: true,
       });
       await hoverOverArrowSpine(page, 0, 'right');
@@ -1523,7 +1525,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
     for (let i = 0; i < 3; i++) {
-      await clickInTheMiddleOfTheScreen(page, 'right', {
+      await clickInTheMiddleOfTheScreen(page, 'left', {
         waitForMergeInitialization: true,
       });
       await hoverOverArrowSpine(page, 0, 'right');
@@ -3244,7 +3246,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     with the correct coordinates of spine, tails and head.
     */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page, 'right', {
+    await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -3252,7 +3254,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await addTails(page, 3);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right', {
+    await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
     await page.getByTestId('tails-0-resize').hover({ force: true });
@@ -3279,7 +3281,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
     */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page, 'right', {
+    await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -3287,7 +3289,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await addTails(page, 3);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right', {
+    await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
     await page.getByTestId('tails-2-move').hover({ force: true });
@@ -3316,7 +3318,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     saved to KET with the correct coordinates of spine, tails and head.
     */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page, 'right', {
+    await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -3324,7 +3326,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await addTails(page, 3);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right', {
+    await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
     await page.getByTestId('tails-2-move').hover({ force: true });

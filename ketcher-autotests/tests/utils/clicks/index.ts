@@ -114,11 +114,7 @@ export async function clickOnCanvas(
 }
 
 export async function getCoordinatesOfTheMiddleOfTheScreen(page: Page) {
-  const body = (await page.locator('body').boundingBox()) as BoundingBox;
-  return {
-    x: body.x + body.width / HALF_DIVIDER,
-    y: body.y + body.height / HALF_DIVIDER,
-  };
+  return await getCachedBodyCenter(page);
 }
 
 export async function getCoordinatesOfTheMiddleOfTheCanvas(page: Page) {

@@ -1260,11 +1260,15 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     for (let i = 0; i < 3; i++) {
-      await clickInTheMiddleOfTheScreen(page, 'right');
+      await clickInTheMiddleOfTheScreen(page, 'right', {
+        waitForMergeInitialization: true,
+      });
       await page.getByText('Add new tail').click();
     }
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await expect(page.getByText('Add new tail')).toBeDisabled();
     await takeEditorScreenshot(page);
     await verifyFileExport(
@@ -1289,7 +1293,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await addTails(page, 6);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await expect(page.getByText('Add new tail')).toBeDisabled();
     await takeEditorScreenshot(page);
     await addTailToArrow(page, 0);
@@ -1320,7 +1326,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await addTails(page, 6);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await expect(page.getByText('Add new tail')).toBeDisabled();
     await takeEditorScreenshot(page);
     await addTailToArrow(page, 0);
@@ -1479,12 +1487,16 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
     for (let i = 0; i < 3; i++) {
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheScreen(page, 'right', {
+        waitForMergeInitialization: true,
+      });
       await hoverOverArrowSpine(page, 0, 'right');
       await page.getByText('Add new tail').click();
     }
@@ -1511,12 +1523,16 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     );
     await takeEditorScreenshot(page);
     for (let i = 0; i < 3; i++) {
-      await clickInTheMiddleOfTheScreen(page);
+      await clickInTheMiddleOfTheScreen(page, 'right', {
+        waitForMergeInitialization: true,
+      });
       await hoverOverArrowSpine(page, 0, 'right');
       await page.getByText('Add new tail').click();
     }
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await removeTail(page, 'tails-0-move');
     await removeTail(page, 'tails-1-move');
     await takeEditorScreenshot(page);
@@ -1859,13 +1875,19 @@ test.describe('Multi-Tailed Arrow Tool', () => {
       'KET/multi-tailed-arrow-2-tails-1.ket',
       page,
     );
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByText('Add new tail').click();
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByText('Add new tail').click();
     await takeEditorScreenshot(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByText('Remove tail').click();
     await takeEditorScreenshot(page);
 
@@ -1885,9 +1907,13 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
 
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByText('Add new tail').click();
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByText('Add new tail').click();
     await takeEditorScreenshot(page);
 
@@ -3218,13 +3244,17 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     with the correct coordinates of spine, tails and head.
     */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTails(page, 3);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByTestId('tails-0-resize').hover({ force: true });
     await dragMouseTo(400, 500, page);
     await takeEditorScreenshot(page);
@@ -3249,13 +3279,17 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     changed Multi-Tailed Arrow saved to KET with the correct coordinates of spine, tails and head.
     */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTails(page, 3);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByTestId('tails-2-move').hover({ force: true });
     await dragMouseTo(400, 300, page);
     await takeEditorScreenshot(page);
@@ -3282,13 +3316,17 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     saved to KET with the correct coordinates of spine, tails and head.
     */
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
     await addTails(page, 3);
     await takeEditorScreenshot(page);
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await page.getByTestId('tails-2-move').hover({ force: true });
     await dragMouseTo(400, 300, page);
     await takeEditorScreenshot(page);
@@ -3304,7 +3342,9 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await dragMouseTo(400, 500, page);
     await takeEditorScreenshot(page);
     await addTails(page, 1);
-    await clickInTheMiddleOfTheScreen(page, 'right');
+    await clickInTheMiddleOfTheScreen(page, 'right', {
+      waitForMergeInitialization: true,
+    });
     await takeEditorScreenshot(page);
     await verifyFileExport(
       page,

@@ -31,6 +31,7 @@ import {
 import {
   FileType,
   verifyFileExport,
+  verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
 import {
   createDNAAntisenseChain,
@@ -380,7 +381,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from KET
      * 3. Select all nucleotides and call context menu
      * 4. Click Create DNA antisense stand option
-     * 5. Take a screenshot.
+     * 5. Validate HELM export.
      */
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
@@ -390,18 +391,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await selectAllStructuresOnCanvas(page);
     const anySymbolR = getSymbolLocator(page, { symbolAlias: 'R' }).first();
     await createDNAAntisenseChain(page, anySymbolR);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await TopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.HELM,
+    await verifyHELMExport(
+      page,
+      'RNA1{R(A,C,G,T)P.R(A,G,T)P.R(A,C,T)P.R(A,T)}|RNA2{R(A,C,G,U)P.R(A,G,U)P.R(A,C,U)P.R(A,U)}|RNA3{R(A,C)P.R(A,G)P.R(A,C,G)}|RNA4{[dR](A,T)P.[dR](A,G,T)P.[dR](A,C,T)P.[dR](A,C,G,T)}|RNA5{[dR](A,T)P.[dR](A,G,T)P.[dR](A,C,T)P.[dR](A,C,G,T)}|RNA6{[dR](C,G,T)P.[dR](C,T)P.[dR](G,T)}$RNA1,RNA4,11:pair-2:pair|RNA1,RNA4,8:pair-5:pair|RNA1,RNA4,5:pair-8:pair|RNA1,RNA4,2:pair-11:pair|RNA2,RNA5,11:pair-2:pair|RNA2,RNA5,8:pair-5:pair|RNA2,RNA5,5:pair-8:pair|RNA2,RNA5,2:pair-11:pair|RNA3,RNA6,8:pair-2:pair|RNA3,RNA6,5:pair-5:pair|RNA3,RNA6,2:pair-8:pair$$$V2.0',
     );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
   });
 
   test('Case 11: Warning message when deleting all hydrogen bonds between two chains', async () => {

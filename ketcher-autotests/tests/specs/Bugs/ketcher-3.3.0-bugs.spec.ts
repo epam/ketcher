@@ -45,10 +45,9 @@ import {
   selectSugarSlot,
   toggleRnaBuilder,
 } from '@utils/macromolecules/rnaBuilder';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
 
 let page: Page;
 
@@ -806,26 +805,17 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await getSymbolLocator(page, {
-      symbolAlias: 'A',
-      nodeIndexOverall: 1,
-    }).click();
     const symbolLocator = getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 1,
     });
+    await symbolLocator.click();
+
     await modifyInRnaBuilder(page, symbolLocator);
     await selectBaseSlot(page);
     await selectMonomer(page, Bases.DNA_N);
     await pressSaveButton(page);
-    await TopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.HELM,
-    );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await verifyHELMExport(page, 'RNA1{R(A)P.R(A,C,G,T)P.R(A)}$$$$V2.0');
   });
 
   test('Case 25: Correct bond length and angle for non-natural monomers in the library', async () => {

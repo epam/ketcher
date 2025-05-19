@@ -49,7 +49,6 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';

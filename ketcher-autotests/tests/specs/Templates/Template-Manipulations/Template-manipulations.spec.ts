@@ -226,7 +226,9 @@ test.describe('Template Manupulations', () => {
       page,
       'CCCCC/CC/C:CC.C(C)CCCCCCCCCC',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'left', {
+      waitForMergeInitialization: true,
+    });
     await selectRing(RingButton.Benzene, page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);

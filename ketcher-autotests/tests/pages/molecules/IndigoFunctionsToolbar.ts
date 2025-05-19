@@ -11,7 +11,7 @@ type IndigoFunctionsToolbarLocators = {
   checkStructureButton: Locator;
   calculatedValuesButton: Locator;
   addRemoveExplicitHydrogensButton: Locator;
-  TreeDViewerButton: Locator;
+  ThreeDViewerButton: Locator;
 };
 
 export const IndigoFunctionsToolbar = (page: Page) => {
@@ -26,7 +26,7 @@ export const IndigoFunctionsToolbar = (page: Page) => {
     addRemoveExplicitHydrogensButton: page.getByTestId(
       'Add/Remove explicit hydrogens button',
     ),
-    TreeDViewerButton: page.getByTestId('3D Viewer button'),
+    ThreeDViewerButton: page.getByTestId('3D Viewer button'),
   };
 
   return {
@@ -88,10 +88,10 @@ export const IndigoFunctionsToolbar = (page: Page) => {
       );
     },
 
-    async TreeDViewer() {
+    async ThreeDViewer() {
       await waitForSpinnerFinishedWork(
         page,
-        async () => await locators.TreeDViewerButton.click(),
+        async () => await locators.ThreeDViewerButton.click(),
       );
     },
   };

@@ -1,10 +1,10 @@
 import { expect, test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  RingButton,
   selectRingButton,
   waitForPageInit,
 } from '@utils';
+import { RingButton } from '@utils/selectors';
 
 test.describe('Save dialog dropdown', () => {
   test.beforeEach(async ({ page }) => {

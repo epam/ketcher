@@ -1471,7 +1471,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await IndigoFunctionsToolbar(page).TreeDViewer();
+    await IndigoFunctionsToolbar(page).ThreeDViewer();
     await takeEditorScreenshot(page);
     await pressButton(page, 'Cancel');
     await verifyFileExport(

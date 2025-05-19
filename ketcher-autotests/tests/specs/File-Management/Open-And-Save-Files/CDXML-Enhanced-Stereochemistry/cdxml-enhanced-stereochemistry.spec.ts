@@ -18,7 +18,7 @@ async function selectRadioButtonForNewGroup(
   selectRadioButton: string,
   cancelChanges = false,
 ) {
-  await LeftToolbar(page).stereochemestry();
+  await LeftToolbar(page).stereochemistry();
   await page.getByLabel(selectRadioButton).check();
 
   await waitForRender(page, async () => {

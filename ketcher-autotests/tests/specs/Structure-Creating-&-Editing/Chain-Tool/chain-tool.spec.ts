@@ -16,7 +16,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
 } from '@utils/clicks';
 import { waitForPageInit } from '@utils/common';
-import { LeftPanelButton } from '@utils/selectors';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const DELTA = 100;

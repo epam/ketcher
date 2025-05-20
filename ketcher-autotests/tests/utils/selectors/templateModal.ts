@@ -15,7 +15,6 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
-  pressButton,
 } from '@utils';
 import {
   MonomerLocationTabs,

@@ -4,4 +4,4 @@ export enum TopPanelButton {
   Cut = 'Cut',
 }
 
-export type ToolbarButton = TopPanelButton | LeftPanelButton;
+export type ToolbarButton = TopPanelButton;

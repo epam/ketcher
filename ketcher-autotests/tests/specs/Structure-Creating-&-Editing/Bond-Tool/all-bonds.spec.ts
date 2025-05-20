@@ -6,7 +6,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
   moveMouseToTheMiddleOfTheScreen,
-  selectTool,
   takeEditorScreenshot,
   DELAY_IN_SECONDS,
   clickOnTheCanvas,

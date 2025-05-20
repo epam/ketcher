@@ -2,13 +2,14 @@
 import { Page } from '@playwright/test';
 import { clickOnCanvas, SequenceType, waitForRender } from '@utils';
 import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
-import { RingButton, TopPanelButton } from '@utils/selectors';
+import { TopPanelButton } from '@utils/selectors';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { RingButton } from '@tests/pages/molecules/BottomToolbar';
 
 /**
  * Select button from top panel

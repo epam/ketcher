@@ -213,7 +213,6 @@ test.describe('Macro-Micro-Switcher', () => {
       page,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    // await page.getByText('Edc').hover();
     await takeEditorScreenshot(page, {
       hideMacromoleculeEditorScrollBars: true,
     });

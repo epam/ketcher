@@ -1,9 +1,6 @@
 import { expect, test } from '@playwright/test';
-import {
-  clickInTheMiddleOfTheScreen,
-  selectRingButton,
-  waitForPageInit,
-} from '@utils';
+import { clickInTheMiddleOfTheScreen, waitForPageInit } from '@utils';
+import { selectRingButton } from '@utils/canvas/tools';
 import { RingButton } from '@utils/selectors';
 
 test.describe('Save dialog dropdown', () => {

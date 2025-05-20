@@ -771,6 +771,7 @@ export class KetSerializer implements Serializer<Struct> {
   serializeMacromolecules(
     struct: Struct,
     drawingEntitiesManager: DrawingEntitiesManager,
+    needSetSelection = false,
   ) {
     const fileContent: IKetMacromoleculesContentRootProperty = {
       root: {
@@ -780,6 +781,11 @@ export class KetSerializer implements Serializer<Struct> {
       },
     };
     const monomerToAtomIdMap = new Map<BaseMonomer, Map<number, number>>();
+    const monomerToBondIdMap = new Map<BaseMonomer, Map<number, number>>();
+    const moleculesSelection: { atoms: number[]; bonds: number[] } = {
+      atoms: [],
+      bonds: [],
+    };
     const monomerIdMap = new Map<number, number>();
     let nextMonomerId = 0;
 
@@ -791,6 +797,8 @@ export class KetSerializer implements Serializer<Struct> {
         monomerItem.props.isMicromoleculeFragment
       ) {
         const atomIdMap = new Map<number, number>();
+        const bondIdMap = new Map<number, number>();
+
         monomerItem.struct.mergeInto(
           struct,
           null,
@@ -798,8 +806,15 @@ export class KetSerializer implements Serializer<Struct> {
           false,
           false,
           atomIdMap,
+          null,
+          null,
+          null,
+          null,
+          null,
+          bondIdMap,
         );
         monomerToAtomIdMap.set(monomer, atomIdMap);
+        monomerToBondIdMap.set(monomer, bondIdMap);
       } else {
         let templateId;
         const monomerKey = setMonomerPrefix(nextMonomerId);
@@ -852,6 +867,7 @@ export class KetSerializer implements Serializer<Struct> {
           ...(isTransformationDefined && {
             transformation: modifyTransformation(transformation),
           }),
+          selected: (needSetSelection && monomer.selected) || undefined,
         };
         fileContent.root.nodes.push(getKetRef(monomerKey));
 
@@ -902,6 +918,7 @@ export class KetSerializer implements Serializer<Struct> {
               polymerBond,
               monomerIdMap,
             ) as IKetConnectionEndPoint),
+        selected: (needSetSelection && polymerBond.selected) || undefined,
       });
     });
 
@@ -930,14 +947,40 @@ export class KetSerializer implements Serializer<Struct> {
           moleculeId: `mol${struct.atoms.get(globalAtomId)?.fragment}`,
           atomId: String(monomerToAtomBond.atom.atomIdInMicroMode),
         } as IKetConnectionEndPoint,
+        selected: (needSetSelection && monomerToAtomBond.selected) || undefined,
       });
     });
+
+    if (needSetSelection) {
+      drawingEntitiesManager.atoms.forEach((atom) => {
+        if (atom.selected) {
+          const atomIdMap = monomerToAtomIdMap.get(atom.monomer);
+          const globalAtomId = atomIdMap?.get(atom.atomIdInMicroMode);
+
+          if (isNumber(globalAtomId)) {
+            moleculesSelection.atoms.push(globalAtomId);
+          }
+        }
+      });
+
+      drawingEntitiesManager.bonds.forEach((bond) => {
+        if (bond.selected) {
+          const bondIdMap = monomerToBondIdMap.get(bond.firstAtom.monomer);
+          const globalBondId = bondIdMap?.get(bond.bondIdInMicroMode);
+
+          if (isNumber(globalBondId)) {
+            moleculesSelection.bonds.push(globalBondId);
+          }
+        }
+      });
+    }
 
     drawingEntitiesManager.micromoleculesHiddenEntities.mergeInto(struct);
 
     return {
       serializedMacromolecules: fileContent,
       micromoleculesStruct: struct,
+      moleculesSelection,
     };
   }
 
@@ -996,6 +1039,7 @@ export class KetSerializer implements Serializer<Struct> {
     drawingEntitiesManager = new DrawingEntitiesManager(),
     selection?: EditorSelection,
     isBeautified = true, // TODO make false by default
+    needSetSelectionToMacromolecules = false,
   ) {
     const struct = KetSerializer.removeLeavingGroupsFromConnectedAtoms(_struct);
     struct.enableInitiallySelected();
@@ -1005,14 +1049,26 @@ export class KetSerializer implements Serializer<Struct> {
       drawingEntitiesManager,
     );
 
-    const { serializedMacromolecules, micromoleculesStruct } =
-      this.serializeMacromolecules(new Struct(), drawingEntitiesManager);
+    const {
+      serializedMacromolecules,
+      micromoleculesStruct,
+      moleculesSelection,
+    } = this.serializeMacromolecules(
+      new Struct(),
+      drawingEntitiesManager,
+      needSetSelectionToMacromolecules,
+    );
 
     if (selection === undefined) {
       // if selection is not provided, then reset all initially selected flags
       // before serialization of micromolecules.
       // It is case of saving molecules in macromolecules mode, so we don't send to indigo/save selection.
       micromoleculesStruct.enableInitiallySelected();
+    }
+
+    // need for selection population to atoms and bonds from macromolecules mode
+    if (moleculesSelection) {
+      populateStructWithSelection(micromoleculesStruct, moleculesSelection);
     }
 
     const serializedMicromoleculesStruct = JSON.parse(

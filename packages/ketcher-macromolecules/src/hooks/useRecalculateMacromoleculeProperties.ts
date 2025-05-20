@@ -62,9 +62,10 @@ export const useRecalculateMacromoleculeProperties = () => {
 
     const serializedKet = ketSerializer.serialize(
       new Struct(),
-      drawingEntitiesManagerToCalculateProperties,
+      editor.drawingEntitiesManager,
       undefined,
       false,
+      true,
     );
     const calculateMacromoleculePropertiesResponse =
       await indigo.calculateMacromoleculeProperties(

@@ -1,10 +1,10 @@
 import { Page, test } from '@playwright/test';
+import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
-  LeftPanelButton,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  selectLeftPanelButton,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -18,7 +18,7 @@ test.describe('Selection and hover for simple objects', () => {
   const ellipseHeight = 100;
 
   const setupEllipse = async (page: Page) => {
-    await selectLeftPanelButton(LeftPanelButton.ShapeEllipse, page);
+    await LeftToolbar(page).selectShapeTool(ShapeType.Ellipse);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const ellipseCoordinates = { x: x + ellipseWidth, y: y + ellipseHeight };
     await clickInTheMiddleOfTheScreen(page);

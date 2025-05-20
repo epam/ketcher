@@ -1,7 +1,7 @@
 /* eslint-disable no-magic-numbers */
 import { test } from '@playwright/test';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {

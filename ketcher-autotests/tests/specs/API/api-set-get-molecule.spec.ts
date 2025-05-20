@@ -2,6 +2,7 @@
 import { expect, Page, test } from '@playwright/test';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   takeEditorScreenshot,
   FILE_TEST_DATA,
@@ -10,7 +11,6 @@ import {
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
   clickOnCanvas,
-  openSettings,
   pressButton,
   readFileContent,
 } from '@utils';
@@ -28,7 +28,7 @@ import {
 import { scrollSettingBar } from '@utils/scrollSettingBar';
 
 async function applyIgnoreChiralFlag(page: Page) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByText('Stereochemistry', { exact: true }).click();
   await scrollSettingBar(page, 80);
   await page

@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
-  openSettings,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
   waitForPageInit,
@@ -16,7 +16,7 @@ test.describe('Toolbar palette and settings', () => {
       Test case: EPMLSOPKET-1329
       Description:  'Settings': UI verification
       */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await takeEditorScreenshot(page);
   });
 

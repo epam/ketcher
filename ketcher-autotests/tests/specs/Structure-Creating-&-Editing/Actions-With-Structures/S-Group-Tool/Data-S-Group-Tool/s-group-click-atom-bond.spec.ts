@@ -1,9 +1,9 @@
-import { test } from '@playwright/test';
+import { test, expect } from '@playwright/test';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   getCoordinatesTopAtomOfBenzeneRing,
-  LeftPanelButton,
-  selectLeftPanelButton,
+  selectRingButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   waitForPageInit,
@@ -24,11 +24,24 @@ test.describe('S-Group Properties', () => {
     await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
-    await page.getByTestId('s-group-type-input-span').click();
-    await takeEditorScreenshot(page);
+    await sGroupTypeInputSpan.click();
+
+    await expect(page.getByTestId('Data-option')).toContainText('Data');
+    await expect(page.getByTestId('Multiple group-option')).toContainText(
+      'Multiple group',
+    );
+    await expect(page.getByTestId('SRU polymer-option')).toContainText(
+      'SRU polymer',
+    );
+    await expect(page.getByTestId('Superatom-option')).toContainText(
+      'Superatom',
+    );
+    await expect(page.getByTestId('Query component-option')).toContainText(
+      'Query component',
+    );
   });
 
   test('A superatom named `Test` is created', async ({ page }) => {
@@ -39,7 +52,7 @@ test.describe('S-Group Properties', () => {
     await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
     await page.getByTestId('s-group-type-input-span').click();
@@ -64,7 +77,7 @@ test.describe('S-Group Properties', () => {
     await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
     await page.getByPlaceholder('Enter name').click();
@@ -81,7 +94,7 @@ test.describe('S-Group Properties', () => {
     await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
     await page.getByTestId('s-group-type-input-span').click();

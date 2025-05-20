@@ -5,8 +5,6 @@ import {
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   pressButton,
-  selectLeftPanelButton,
-  LeftPanelButton,
   doubleClickOnAtom,
   doubleClickOnBond,
   BondType,
@@ -14,17 +12,13 @@ import {
   dragMouseTo,
   screenshotBetweenUndoRedo,
   openFileAndAddToCanvas,
-  selectNestedTool,
-  ReactionMappingTool,
   fillFieldByPlaceholder,
   getCoordinatesTopAtomOfBenzeneRing,
-  RgroupTool,
   AttachmentPoint,
   copyAndPaste,
   cutAndPaste,
   waitForPageInit,
   waitForRender,
-  openSettings,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
@@ -33,6 +27,7 @@ import {
   selectRedoByKeyboard,
   ZoomInByKeyboard,
 } from '@utils';
+import { selectRingButton } from '@utils/canvas/tools';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
@@ -40,6 +35,10 @@ import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const CANVAS_CLICK_X = 300;
@@ -253,7 +252,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     await moveOnAtom(page, 'C', 0);
     await dragMouseTo(x, y, page);
 
@@ -432,7 +431,9 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Mapping tool is restored.
     */
     await openFileAndAddToCanvas('KET/reaction-chain.ket', page);
-    await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionAutoMapping,
+    );
     await waitForRender(page, async () => {
       await pressButton(page, 'Apply');
     });
@@ -449,7 +450,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
     await fillFieldByPlaceholder(page, 'Enter value', '33');
     await pressButton(page, 'Apply');
@@ -466,7 +467,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -481,7 +482,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectSruPolymer(page, 'Data', 'SRU Polymer', 'A', 'Head-to-tail');
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -496,7 +497,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -512,7 +513,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
@@ -532,7 +533,7 @@ test.describe('Undo/Redo Actions', () => {
     await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
@@ -550,7 +551,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Attachment Point tool is restored;
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
@@ -565,7 +566,7 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo action should work correctly
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 2);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await pressButton(page, 'Apply');
@@ -596,7 +597,7 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo action should work correctly
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
@@ -613,7 +614,7 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo action should work correctly
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
@@ -630,7 +631,7 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo hotkeys action should work correctly
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
@@ -651,7 +652,7 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo hotkeys action should work correctly
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
@@ -681,11 +682,11 @@ test.describe('Undo/Redo Actions', () => {
     const yDelta = 300;
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
     await fillFieldByPlaceholder(page, 'Enter value', '33');
     await pressButton(page, 'Apply');
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await clickOnCanvas(page, point.x, point.y);
     const coordinatesWithShift = point.y + yDelta;
@@ -751,7 +752,7 @@ test.describe('Undo/Redo Actions', () => {
     Use select tool to choose and CTRL+C placed ring.
     Press CTRL+V and place the ring. Press CTRL+Z.
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await page.getByTestId('reset-to-select-input-span').click();
     await page.getByRole('option', { name: 'off' }).click();
     await takeEditorScreenshot(page);

@@ -2,8 +2,6 @@ import { Page, test } from '@playwright/test';
 import {
   selectFunctionalGroups,
   FunctionalGroups,
-  selectLeftPanelButton,
-  LeftPanelButton,
   clickInTheMiddleOfTheScreen,
   resetCurrentTool,
   takeEditorScreenshot,
@@ -19,7 +17,6 @@ import {
   waitForRender,
   copyAndPaste,
   cutAndPaste,
-  selectDropdownTool,
   clickOnAtom,
   moveOnAtom,
   selectAllStructuresOnCanvas,
@@ -33,6 +30,8 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   BottomToolbar,
   selectRingButton,
@@ -313,7 +312,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -341,7 +340,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
+    await LeftToolbar(page).chargePlus();
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -355,7 +354,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
+    await LeftToolbar(page).chargeMinus();
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -384,7 +383,7 @@ test.describe('Functional Groups', () => {
       page,
     );
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
   });
 
@@ -400,7 +399,7 @@ test.describe('Functional Groups', () => {
       page,
     );
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
   });
 
@@ -415,7 +414,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -431,7 +430,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -447,7 +446,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -533,7 +532,12 @@ test.describe('Functional Groups', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('me').first().hover();
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('me')
+      .first()
+      .hover();
     await takeEditorScreenshot(page);
   });
 

@@ -1,11 +1,4 @@
 import { test, expect } from '@playwright/test';
-import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
-import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -13,13 +6,19 @@ import {
   FunctionalGroups,
   clickInTheMiddleOfTheScreen,
   selectFunctionalGroups,
-  resetCurrentTool,
   waitForPageInit,
   takeRightToolbarScreenshot,
   clickOnAtom,
   waitForRender,
   waitForIndigoToLoad,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {

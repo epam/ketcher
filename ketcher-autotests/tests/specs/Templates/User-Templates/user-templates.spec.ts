@@ -17,7 +17,7 @@ import {
 } from '@utils';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   BottomToolbar,
   drawBenzeneRing,

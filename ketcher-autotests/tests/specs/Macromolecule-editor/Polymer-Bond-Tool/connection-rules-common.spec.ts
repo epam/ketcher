@@ -15,6 +15,7 @@ import {
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
   Monomer,
+  takeElementScreenshot,
 } from '@utils';
 import {
   selectSnakeLayoutModeTool,
@@ -40,6 +41,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { pageReload } from '@utils/common/helpers';
 
 test.describe('Common connection rules: ', () => {
   let page: Page;
@@ -473,15 +475,21 @@ test.describe('Common connection rules: ', () => {
      *    Check that Leaving groups (connection/attchment points) are displayed correctly in preview when switching to Micro mode
      */
     test.setTimeout(20000);
+    await pageReload(page);
 
     await openFileAndAddToCanvasMacro(
       'Molfiles-V3000/Common-Bond-Tests/C___Cysteine on the canvas.mol',
       page,
     );
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await page.getByText('C', { exact: true }).first().hover();
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('C', { exact: true })
+      .first()
+      .hover();
     await waitForMonomerPreviewMicro(page);
-    await takeEditorScreenshot(page);
+    await takeElementScreenshot(page, 'monomer-preview-micro');
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 

@@ -13,7 +13,6 @@ import {
   takeMonomerLibraryScreenshot,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  selectDropdownTool,
   clickInTheMiddleOfTheScreen,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
@@ -33,6 +32,7 @@ import {
   takeTopToolbarScreenshot,
   selectSequenceTypeMode,
   hideLibrary,
+  showLibrary,
 } from '@utils';
 import { selectSnakeLayoutModeTool } from '@utils/canvas/tools';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
@@ -63,6 +63,8 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 async function addToFavoritesMonomers(page: Page) {
@@ -104,6 +106,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await hideLibrary(page);
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await showLibrary(page);
     await goToFavoritesTab(page);
     await takeMonomerLibraryScreenshot(page);
   });
@@ -297,11 +300,7 @@ test.describe('Macro-Micro-Switcher2', () => {
       'KET/three-different-multi-tail-arrows.ket',
       page,
     );
-    await selectDropdownTool(
-      page,
-      'reaction-arrow-open-angle',
-      'reaction-arrow-multitail',
-    );
+    await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -654,7 +653,7 @@ test.describe('Macro-Micro-Switcher2', () => {
     await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await clickOnCanvas(page, 800, 100);
+    await clickOnCanvas(page, 600, 100);
     await pasteFromClipboardByKeyboard(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);

@@ -28,7 +28,7 @@ import {
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
@@ -293,7 +293,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
       page,
     );
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await IndigoFunctionsToolbar(page).TreeDViewer();
+    await IndigoFunctionsToolbar(page).ThreeDViewer();
     await takeEditorScreenshot(page);
   });
 

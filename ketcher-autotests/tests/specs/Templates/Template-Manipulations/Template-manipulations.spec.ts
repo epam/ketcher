@@ -10,8 +10,8 @@ import {
   waitForPageInit,
   resetCurrentTool,
   openFileAndAddToCanvas,
-  selectLeftPanelButton,
-  LeftPanelButton,
+  drawCyclopentadieneRing,
+  drawCyclohexaneRing,
   addCyclopentadieneRingWithTwoAtoms,
   TemplateLibrary,
   openEditDialogForTemplate,
@@ -25,8 +25,6 @@ import {
   selectUserTemplate,
   FunctionalGroups,
   selectFunctionalGroups,
-  openDropdown,
-  selectDropdownTool,
   getCoordinatesOfTheMiddleOfTheScreen,
   cutToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
@@ -49,6 +47,8 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   BottomToolbar,
   drawBenzeneRing,
@@ -221,7 +221,7 @@ test.describe('Template Manupulations', () => {
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     await atomToolbar.clickAtom(Atom.Iodine);
     await clickOnAtom(page, 'C', anyAtom);
 
@@ -229,7 +229,9 @@ test.describe('Template Manupulations', () => {
       page,
       'CCCCC/CC/C:CC.C(C)CCCCCCCCCC',
     );
-    await clickInTheMiddleOfTheScreen(page);
+    await clickInTheMiddleOfTheScreen(page, 'left', {
+      waitForMergeInitialization: true,
+    });
     await selectRingButton(page, 'Benzene');
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
@@ -273,17 +275,28 @@ test.describe('Template Manupulations', () => {
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
-    await page.getByText('S').first().click();
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
+
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('S')
+      .first()
+      .click();
     await page.getByLabel('Primary attachment point').check();
     await takeEditorScreenshot(page);
     await page.getByTestId('OK').click();
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
     );
-    await page.getByText('S').first().click({
-      button: 'right',
-    });
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('S')
+      .first()
+      .click({
+        button: 'right',
+      });
     await takeEditorScreenshot(page);
     await page.getByText('Edit...').click();
     await page.getByLabel('Label').click();
@@ -362,7 +375,7 @@ test.describe('Template Manupulations', () => {
     // eslint-disable-next-line no-magic-numbers
     await clickOnTheCanvas(page, 1, -4);
     await takePageScreenshot(page);
-    await openDropdown(page, 'reaction-arrow-open-angle');
+    await LeftToolbar(page).selectArrowTool();
     await clickOnTheCanvas(page, 1, 0);
     await takePageScreenshot(page);
     await zoomSelector.click();

@@ -3,13 +3,14 @@ import { chooseTab, Tabs, waitForMonomerPreview } from '@utils/macromolecules';
 import { Page, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectFlexLayoutModeTool,
   selectSequenceLayoutModeTool,
   MonomerType,
   waitForPageInit,
   MacroFileType,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
+  waitForRender,
 } from '@utils';
+import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { pageReload } from '@utils/common/helpers';
 import {
   getMonomerLocator,
@@ -504,8 +505,9 @@ test.describe('Preview tooltips checks: ', () => {
         MacroFileType.HELM,
         ambiguousMonomer.HELMString,
       );
-      await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-
+      await waitForRender(page, async () => {
+        await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+      });
       await hoverMouseOverMicroMonomer(
         page,
         ambiguousMonomer.monomerLocatorIndexOnMicro,

@@ -10,6 +10,7 @@ import {
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
+import { selectRingButton } from '@utils/canvas/tools';
 import { getRightAtomByAttributes } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 

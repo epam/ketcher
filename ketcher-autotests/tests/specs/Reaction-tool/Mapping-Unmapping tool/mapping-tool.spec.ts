@@ -8,7 +8,6 @@ import {
   waitForPageInit,
   mapTwoAtoms,
   clickOnAtom,
-  selectDropdownTool,
   clickOnCanvas,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
@@ -18,6 +17,8 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Mapping Tools', () => {
@@ -30,7 +31,9 @@ test.describe('Mapping Tools', () => {
     Description:  Click atoms to map atoms in a reaction
     */
     await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
-    await selectDropdownTool(page, 'reaction-map', 'reaction-map');
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionMapping,
+    );
     await mapTwoAtoms(
       page,
       { label: 'C', number: 0 },
@@ -47,12 +50,16 @@ test.describe('Mapping Tools', () => {
     test('Click the single mapped atom to delete mapping', async ({ page }) => {
       // EPMLSOPKET-1827
       const anyAtom = 0;
-      await selectDropdownTool(page, 'reaction-map', 'reaction-unmap');
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionUnmapping,
+      );
       await clickOnAtom(page, 'Br', anyAtom);
     });
 
     test('Map ordering', async ({ page }) => {
-      await selectDropdownTool(page, 'reaction-map', 'reaction-map');
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionMapping,
+      );
       await page.getByText('ALK').click();
       await page.getByText('ABH').click();
       await page.getByText('CHC').click();
@@ -71,7 +78,9 @@ test.describe('Mapping Tools', () => {
     page,
   }) => {
     await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
-    await selectDropdownTool(page, 'reaction-map', 'reaction-map');
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionMapping,
+    );
     const point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
@@ -85,7 +94,9 @@ test.describe('Mapping Tools', () => {
     // Undo not working properly https://github.com/epam/ketcher/issues/2174
     await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
-    await selectDropdownTool(page, 'reaction-map', 'reaction-map');
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionMapping,
+    );
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
@@ -101,7 +112,9 @@ test.describe('Mapping Tools', () => {
 
     test('Remove the reaction components', async ({ page }) => {
       // EPMLSOPKET-1831
-      await selectDropdownTool(page, 'reaction-map', 'reaction-map');
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionMapping,
+      );
       await page.getByText('CEL').click();
       await page.keyboard.press('Delete');
       await takeEditorScreenshot(page);
@@ -111,7 +124,9 @@ test.describe('Mapping Tools', () => {
 
     test('Unmap the mapped reaction', async ({ page }) => {
       // EPMLSOPKET-1830
-      await selectDropdownTool(page, 'reaction-map', 'reaction-unmap');
+      await LeftToolbar(page).selectReactionMappingTool(
+        ReactionMappingType.ReactionUnmapping,
+      );
       await page.getByText('CEL').click();
     });
   });

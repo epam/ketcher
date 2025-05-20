@@ -5,8 +5,6 @@ import {
   clickInTheMiddleOfTheScreen,
   pressButton,
   resetCurrentTool,
-  selectLeftPanelButton,
-  LeftPanelButton,
   copyAndPaste,
   doubleClickOnAtom,
   moveOnAtom,
@@ -53,6 +51,8 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import {
   drawBenzeneRing,
   selectRingButton,
@@ -1336,8 +1336,10 @@ test.describe('Atom Properties', () => {
       'Rxn-V2000/reaction-with-three-colored-atoms.rxn',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.ReactionMappingTool, page);
 
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionMapping,
+    );
     await clickOnAtom(page, 'N', 0);
 
     await clickOnAtom(page, 'F', 0);

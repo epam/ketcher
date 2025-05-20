@@ -17,7 +17,6 @@ import { ELEMENT_TITLE } from './types';
 import { getControlModifier } from '@utils/keyboard';
 import { TemplateLibrary, selectMonomer } from '@utils/selectors';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
-import { openSettings } from './tools';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
 import { hideMonomerPreview } from '@utils/macromolecules';
@@ -29,6 +28,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 export async function openEditDialogForTemplate(
@@ -82,7 +82,10 @@ export async function drawElementByTitle(
 }
 
 export async function getLeftToolBarWidth(page: Page): Promise<number> {
-  const leftBarSize = await page.getByTestId('left-toolbar').boundingBox();
+  const leftBarSize = await page
+    .getByTestId('left-toolbar')
+    .filter({ has: page.locator(':visible') })
+    .boundingBox();
 
   // we can get padding / margin values of left toolbar through x property
   if (leftBarSize?.width) {
@@ -93,7 +96,10 @@ export async function getLeftToolBarWidth(page: Page): Promise<number> {
 }
 
 export async function getTopToolBarHeight(page: Page): Promise<number> {
-  const topBarSize = await page.getByTestId('top-toolbar').boundingBox();
+  const topBarSize = await page
+    .getByTestId('top-toolbar')
+    .filter({ has: page.locator(':visible') })
+    .boundingBox();
 
   // we can get padding / margin values of top toolbar through y property
   if (topBarSize?.height) {
@@ -151,7 +157,13 @@ export async function takeElementScreenshot(
     await page.getByTestId('polymer-library-preview').isHidden();
   }
 
-  const element = page.getByTestId(elementId).first();
+  let element = page.getByTestId(elementId);
+
+  if ((await element.count()) > 1) {
+    element = element.filter({ has: page.locator(':visible') });
+    element = element.first();
+  }
+
   await expect(element).toHaveScreenshot(options);
 }
 
@@ -316,7 +328,7 @@ export async function screenshotBetweenUndoRedoInMacro(page: Page) {
 }
 
 export async function resetAllSettingsToDefault(page: Page) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await pressButton(page, 'Reset');
   await pressButton(page, 'Apply');
 }

@@ -5,9 +5,10 @@ import {
   clickOnCanvas,
   dragMouseTo,
 } from '@utils';
-import { ArrowTool, selectNestedTool } from './tools/selectNestedTool';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import {
   BottomToolbar,
   drawBenzeneRing,
@@ -20,7 +21,7 @@ export async function drawReactionWithTwoBenzeneRings(
   arrowLenght: number,
 ) {
   await drawBenzeneRing(page);
-  await selectNestedTool(page, ArrowTool.ARROW_OPEN_ANGLE);
+  await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
   const firstBenzineTopAtom = await getCoordinatesTopAtomOfBenzeneRing(page);
   await page.mouse.move(
     firstBenzineTopAtom.x,

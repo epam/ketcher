@@ -17,7 +17,6 @@ import {
   openBondsSettingsSection,
   openFileAndAddToCanvas,
   openFileAndAddToCanvasAsNewProject,
-  openSettings,
   openStereochemistrySettingsSection,
   pasteFromClipboardAndAddToCanvas,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
@@ -58,6 +57,7 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 declare global {
@@ -342,14 +342,14 @@ test(`Case 10: System reset micromolecule canvas settings to default if switched
    * 7. Check if Bond length remains the same (80)
    */
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   await setBondLengthValue(page, '80');
   await pressButton(page, 'Apply');
 
   await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   const bondLengthValue = await getBondLengthValue(page);
   expect(bondLengthValue).toBe('80');
@@ -868,7 +868,7 @@ test(`Case 33: Stereo flags are displayed despite enabling 'Ignore chiral flag' 
     hideMacromoleculeEditorScrollBars: true,
   });
 
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await openBondsSettingsSection(page);
   await openStereochemistrySettingsSection(page);
   await switchIgnoreTheChiralFlag(page);

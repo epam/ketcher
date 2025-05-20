@@ -219,7 +219,10 @@ test.describe('Text tools test cases', () => {
     await openFileAndAddToCanvas('KET/two-different-text-objects.ket', page);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('erase').click();
+    await page
+      .getByTestId('erase')
+      .filter({ has: page.locator(':visible') })
+      .click();
     await performUndoRedo(page);
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(

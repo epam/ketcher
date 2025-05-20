@@ -8,7 +8,6 @@ import {
   copyAndPaste,
   cutAndPaste,
   dragMouseTo,
-  LeftPanelButton,
   moveOnAtom,
   openFile,
   openFileAndAddToCanvas,
@@ -21,7 +20,7 @@ import {
   saveToTemplates,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
-  selectLeftPanelButton,
+  selectRing,
   selectWithLasso,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,
@@ -47,7 +46,8 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   openStructureLibrary,
   selectRingButton,
@@ -451,9 +451,9 @@ test.describe('Image files', () => {
      * Description: "Add Image" button is on left panel, icon can be selected and it displays with filling, after
      * clicking on another tool or Esc, the icon selection with filling is removed
      */
-    await selectLeftPanelButton(LeftPanelButton.AddImage, page);
+    await LeftToolbar(page).image();
     await takeLeftToolbarScreenshot(page);
-    await selectLeftPanelButton(LeftPanelButton.AddText, page);
+    await LeftToolbar(page).text();
     await takeLeftToolbarScreenshot(page);
   });
 
@@ -1473,7 +1473,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await IndigoFunctionsToolbar(page).TreeDViewer();
+    await IndigoFunctionsToolbar(page).ThreeDViewer();
     await takeEditorScreenshot(page);
     await pressButton(page, 'Cancel');
     await verifyFileExport(

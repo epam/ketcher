@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, expect, test } from '@playwright/test';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   pressButton,
@@ -18,7 +18,7 @@ import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApply
 import { getKet } from '@utils/formats';
 
 async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
-  await IndigoFunctionsToolbar(page).TreeDViewer();
+  await IndigoFunctionsToolbar(page).ThreeDViewer();
   if (waitForButtonIsEnabled) {
     await miewApplyButtonIsEnabled(page);
   }

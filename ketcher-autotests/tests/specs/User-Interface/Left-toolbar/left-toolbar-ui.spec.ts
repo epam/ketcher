@@ -1,11 +1,12 @@
 import { test, expect, Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
   BondType,
   clickOnBond,
-  openDropdown,
+  drawBenzeneRing,
   takeLeftToolbarScreenshot,
   waitForPageInit,
 } from '@utils';
@@ -51,21 +52,21 @@ test.describe('Left toolbar UI tests', () => {
 
   test('left toolbar r-group tool verification', async ({ page }) => {
     // Test case: EPMLSOPKET-4268
-    await openDropdown(page, 'rgroup-label');
+    await LeftToolbar(page).expandRGroupToolsDropdown();
     const selectionToolDropdownWidth = 200;
     await takeDropdownScreenshot(page, selectionToolDropdownWidth);
   });
 
   test('left toolbar reaction arrows verification', async ({ page }) => {
     // Test case: EPMLSOPKET-4268
-    await openDropdown(page, 'reaction-arrow-open-angle');
+    await LeftToolbar(page).expandArrowToolsDropdown();
     const selectionToolDropdownWidth = 700;
     await takeDropdownScreenshot(page, selectionToolDropdownWidth);
   });
 
   test('left toolbar shapes verification', async ({ page }) => {
     // Test case: EPMLSOPKET-4268
-    await openDropdown(page, 'shape-ellipse');
+    await LeftToolbar(page).expandShapeToolsDropdown();
     const selectionToolDropdownWidth = 200;
     await takeDropdownScreenshot(page, selectionToolDropdownWidth);
   });

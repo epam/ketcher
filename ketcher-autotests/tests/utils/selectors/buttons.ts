@@ -2,39 +2,6 @@ export enum TopPanelButton {
   Copy = 'Copy',
   Paste = 'Paste',
   Cut = 'Cut',
-  Aromatize = 'Aromatize',
-  Dearomatize = 'Dearomatize',
-  Layout = 'Layout',
-  Clean = 'Clean',
-  Calculate = 'Calculate CIP',
-  Check = 'Check',
-  Calculated = 'Calculated',
-  ThreeD = '3D',
-  Settings = 'Settings',
-  Help = 'Help',
-  About = 'About',
-  Fullscreen = 'Fullscreen',
-  toggleExplicitHydrogens = 'Add/Remove explicit hydrogens',
-}
-
-export enum LeftPanelButton {
-  SingleBond = 'Single Bond',
-  Chain = 'Chain',
-  Stereochemistry = 'Stereochemistry',
-  ChargePlus = 'Charge Plus',
-  ChargeMinus = 'Charge Minus',
-  RotateTool = 'Rotate Tool',
-  S_Group = 'S-Group',
-  ReactionPlusTool = 'Reaction Plus Tool',
-  ArrowOpenAngleTool = 'Arrow Open Angle Tool',
-  ReactionMappingTool = 'Reaction Mapping Tool',
-  R_GroupLabelTool = 'R-Group Label Tool',
-  ShapeEllipse = 'Shape Ellipse',
-  AddText = 'Add text',
-  AddImage = 'Add Image',
-  ZoomIn = 'Zoom In',
-  ZoomOut = 'Zoom Out',
-  ZoomReset = 'Reset Zoom',
 }
 
 export enum RingButton {
@@ -52,11 +19,5 @@ export const STRUCTURE_LIBRARY_BUTTON_NAME = 'Structure Library';
 
 export type ToolbarButton =
   | TopPanelButton
-  | LeftPanelButton
   | RingButton
   | typeof STRUCTURE_LIBRARY_BUTTON_NAME;
-
-export enum MacromoleculesLeftPanelButton {
-  Erase = 'Erase',
-  SingleBond = 'Single Bond',
-}

@@ -26,7 +26,9 @@ test.describe('Hand tool', () => {
       testId: 'hand',
       title: 'Hand tool (Ctrl+Alt+H)',
     };
-    const iconButton = page.getByTestId(icon.testId);
+    const iconButton = page
+      .getByTestId(icon.testId)
+      .filter({ has: page.locator(':visible') });
     await expect(iconButton).toHaveAttribute('title', icon.title);
     await iconButton.hover();
     expect(icon.title).toBeTruthy();

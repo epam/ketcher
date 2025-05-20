@@ -1,9 +1,9 @@
 import { test } from '@playwright/test';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   waitForPageInit,
-  selectLayoutTool,
 } from '@utils';
 
 test.describe('Layout', () => {
@@ -19,7 +19,7 @@ test.describe('Layout', () => {
     Description: The structures are displayed orderly in the middle of the screen
     */
     await openFileAndAddToCanvas('KET/calculated-values-chain.ket', page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -31,7 +31,7 @@ test.describe('Layout', () => {
     Description: The structures are displayed orderly in the middle of the screen
     */
     await openFileAndAddToCanvas('KET/two-atoms-and-bond.ket', page);
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
   });
 
@@ -46,7 +46,7 @@ test.describe('Layout', () => {
         'KET/two-templates-rings-and-functional-groups.ket',
         page,
       );
-      await selectLayoutTool(page);
+      await IndigoFunctionsToolbar(page).layout();
       await takeEditorScreenshot(page);
     },
   );

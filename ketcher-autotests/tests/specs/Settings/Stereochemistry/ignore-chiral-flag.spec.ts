@@ -1,13 +1,13 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
   openFileAndAddToCanvasAsNewProject,
-  openSettings,
   pressButton,
   takeEditorScreenshot,
   waitForPageInit,
@@ -27,9 +27,14 @@ async function templateFromLAminoAcidsCategory(page: Page) {
 }
 
 async function applyIgnoreChiralFlag(page: Page) {
-  await openSettings(page);
-  if (await page.getByTitle('Reset').isEnabled()) {
-    await page.getByTitle('Reset').click();
+  await TopRightToolbar(page).Settings();
+
+  const resetSettingsButton = page
+    .getByTitle('Reset')
+    .filter({ has: page.locator(':visible') });
+
+  if (await resetSettingsButton.isEnabled()) {
+    await resetSettingsButton.click();
   }
   await page.getByText('Stereochemistry', { exact: true }).click();
   await scrollSettingBar(page, 80);

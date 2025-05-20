@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 import { Page, Locator } from '@playwright/test';
 import { waitForRender } from '@utils/common/loaders/waitForRender';
 import { SelectionToolType } from '../constants/areaSelectionTool/Constants';
@@ -5,6 +6,7 @@ import {
   MacroBondType,
   MicroBondType,
 } from '../constants/bondSelectionTool/Constants';
+import { delay } from '@utils/index';
 
 type LeftToolbarLocators = {
   handToolButton: Locator;
@@ -18,15 +20,25 @@ type LeftToolbarLocators = {
 
 export const CommonLeftToolbar = (page: Page) => {
   const locators: LeftToolbarLocators = {
-    handToolButton: page.getByTestId('hand'),
-    areaSelectionDropdownButton: page.getByTestId('select-rectangle'),
+    handToolButton: page
+      .getByTestId('hand')
+      .filter({ has: page.locator(':visible') }),
+    areaSelectionDropdownButton: page
+      .getByTestId('select-rectangle')
+      .filter({ has: page.locator(':visible') }),
     areaSelectionDropdownExpandButton: page
       .getByTestId('select-drop-down-button')
+      .filter({ has: page.locator(':visible') })
       .getByTestId('dropdown-expand'),
-    eraseButton: page.getByTestId('erase'),
-    bondSelectionDropdownButton: page.getByTestId('bonds-drop-down-button'),
+    eraseButton: page
+      .getByTestId('erase')
+      .filter({ has: page.locator(':visible') }),
+    bondSelectionDropdownButton: page
+      .getByTestId('bonds-drop-down-button')
+      .filter({ has: page.locator(':visible') }),
     bondSelectionDropdownExpandButton: page
       .getByTestId('bonds-drop-down-button')
+      .filter({ has: page.locator(':visible') })
       .getByTestId('dropdown-expand'),
     bondMultiToolSection: page.getByTestId('multi-tool-dropdown').first(),
   };
@@ -38,10 +50,16 @@ export const CommonLeftToolbar = (page: Page) => {
       await locators.handToolButton.click();
     },
 
-    async selectAreaSelectionTool(toolType: SelectionToolType) {
+    async selectAreaSelectionTool(
+      toolType: SelectionToolType = SelectionToolType.Rectangle,
+    ) {
       if (await locators.areaSelectionDropdownExpandButton.isVisible()) {
         await locators.areaSelectionDropdownExpandButton.click();
-        await page.getByTestId(toolType).first().click();
+        await page
+          .getByTestId(toolType)
+          .filter({ has: page.locator(':visible') })
+          .first()
+          .click();
       } else {
         await locators.areaSelectionDropdownButton.click();
       }
@@ -55,6 +73,7 @@ export const CommonLeftToolbar = (page: Page) => {
 
     async expandBondSelectionDropdown() {
       try {
+        await delay(0.2);
         await locators.bondSelectionDropdownExpandButton.click({ force: true });
         await locators.bondMultiToolSection.waitFor({
           state: 'visible',
@@ -74,7 +93,10 @@ export const CommonLeftToolbar = (page: Page) => {
     async selectBondTool(bondType: MacroBondType | MicroBondType) {
       let attempts = 0;
       const maxAttempts = 5;
-      const bondTypeButton = page.getByTestId(bondType).first();
+      const bondTypeButton = page
+        .getByTestId(bondType)
+        .filter({ has: page.locator(':visible') })
+        .first();
       while (attempts < maxAttempts) {
         try {
           await this.expandBondSelectionDropdown();

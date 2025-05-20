@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -8,8 +9,6 @@ import {
   moveOnAtom,
   clickInTheMiddleOfTheScreen,
   resetCurrentTool,
-  selectLeftPanelButton,
-  LeftPanelButton,
   clickOnAtom,
   waitForPageInit,
 } from '@utils';
@@ -55,10 +54,10 @@ test.describe('Charge tool', () => {
     const anyAtom = 0;
     const anotherAnyAtom = 2;
     await openFileAndAddToCanvas('Molfiles-V2000/heteroatoms.mol', page);
-    await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
+    await LeftToolbar(page).chargePlus();
     await clickOnAtom(page, 'N', anyAtom);
     await clickOnAtom(page, 'O', anyAtom);
-    await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
+    await LeftToolbar(page).chargeMinus();
     await clickOnAtom(page, 'S', anyAtom);
     await clickOnAtom(page, 'O', anotherAnyAtom);
     await takeEditorScreenshot(page);

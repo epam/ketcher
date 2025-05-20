@@ -11,6 +11,7 @@ import {
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
   selectFlexLayoutModeTool,
+  selectPartOfMolecules,
   takePageScreenshot,
   takeTopToolbarScreenshot,
 } from '@utils';
@@ -603,14 +604,6 @@ test.describe('Calculate Properties tests', () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/7042
      * Description: Calculation Properties for standard R3-R1 connected monomers with microstructure displayed.
-     * We have a bugs on Ketcher and Indigo side:
-     * https://github.com/epam/ketcher/issues/7085
-     * https://github.com/epam/Indigo/issues/2902
-     * https://github.com/epam/Indigo/issues/2903
-     * https://github.com/epam/Indigo/issues/2904
-     * https://github.com/epam/Indigo/issues/2905
-     * After fixing this bug, we need to check that the calculation properties for non-standard R3-R1 connected monomers with microstructure displayed.
-     * And update screenshot.
      * Scenario:
      * 1. Go to Macro
      * 2. Load from file
@@ -622,6 +615,42 @@ test.describe('Calculate Properties tests', () => {
       'KET/peptide-connected-to-microstructure-r3-r1.ket',
       page,
     );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 25: Verify correct molecular formula and molecular mass calculation for whole benzene ring (C6H6,  78.11 Da)', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Correct molecular formula and molecular mass calculation for whole benzene ring (C6H6,  78.11 Da).
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from file
+     * 3. Open the "Calculate Properties" window
+     */
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/single-benzene-ring.ket',
+      page,
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 26: Verify correct molecular formula and molecular mass calculation for selection of part benzene ring', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Correct molecular formula and molecular mass calculation for selection of part benzene ring.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from file
+     * 3. Select part of benzene ring
+     * 4. Open the "Calculate Properties" window
+     */
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/single-benzene-ring.ket',
+      page,
+    );
+    await selectPartOfMolecules(page, 10);
     await TopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });

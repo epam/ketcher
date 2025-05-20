@@ -25,15 +25,17 @@ interface MenuItem {
           selectedMonomers?: BaseMonomer[];
         };
       }) => boolean);
-  hidden?: ({
-    props,
-  }: {
-    props?: {
-      polymerBondRenderer?: DeprecatedFlexModeOrSnakeModePolymerBondRenderer;
-      sequenceItemRenderer?: BaseSequenceItemRenderer;
-      selectedMonomers?: BaseMonomer[];
-    };
-  }) => boolean;
+  hidden?:
+    | boolean
+    | (({
+        props,
+      }: {
+        props?: {
+          polymerBondRenderer?: DeprecatedFlexModeOrSnakeModePolymerBondRenderer;
+          sequenceItemRenderer?: BaseSequenceItemRenderer;
+          selectedMonomers?: BaseMonomer[];
+        };
+      }) => boolean);
   isMenuTitle?: boolean;
   subMenuItems?: MenuItem[];
 }
@@ -55,23 +57,24 @@ const assembleMenuItems = (
       { name, title, hidden, disabled, isMenuTitle, separator, subMenuItems },
       index,
     ) => {
-      const item = subMenuItems ? (
-        <Submenu label={title}>
-          {assembleMenuItems(subMenuItems, handleMenuChange)}
-        </Submenu>
-      ) : (
-        <Item
-          id={name}
-          onClick={handleMenuChange}
-          key={name}
-          data-testid={name}
-          hidden={hidden}
-          disabled={disabled}
-          className={isMenuTitle ? 'contexify_item-title' : ''}
-        >
-          <span>{title}</span>
-        </Item>
-      );
+      const item =
+        subMenuItems && subMenuItems.length ? (
+          <Submenu label={title}>
+            {assembleMenuItems(subMenuItems, handleMenuChange)}
+          </Submenu>
+        ) : (
+          <Item
+            id={name}
+            onClick={handleMenuChange}
+            key={name}
+            data-testid={name}
+            hidden={hidden}
+            disabled={disabled}
+            className={isMenuTitle ? 'contexify_item-title' : ''}
+          >
+            <span>{title}</span>
+          </Item>
+        );
       items.push(item);
       if (separator) {
         items.push(<Separator key={index} />);

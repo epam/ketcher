@@ -17,12 +17,7 @@ import {
   EmptySequenceNode,
   BackBoneSequenceNode,
   Chain,
-  MonomerItemType,
   ITwoStrandedChainItem,
-  replaceMonomer,
-  EditorHistory,
-  ReinitializeModeOperation,
-  Command,
 } from 'ketcher-core';
 import { setSelectedTabIndex } from 'state/library';
 import {
@@ -42,13 +37,16 @@ import { ContextMenu } from 'components/contextMenu/ContextMenu';
 import {
   AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX,
   getModifyAminoAcidsMenuItems,
+  getMonomersForAminoAcidModification,
   isAntisenseCreationDisabled,
   isAntisenseOptionVisible,
 } from 'components/contextMenu/SelectedMonomersContextMenu/helpers';
 import { LIBRARY_TAB_INDEX } from 'src/constants';
+import { PointerEvent } from 'react';
 
 type SequenceItemContextMenuType = {
   selections?: NodesSelection;
+  contextMenuEvent?: PointerEvent;
 };
 
 export enum SequenceItemContextMenuNames {
@@ -68,6 +66,7 @@ export enum SequenceItemContextMenuNames {
 
 export const SequenceItemContextMenu = ({
   selections,
+  contextMenuEvent,
 }: SequenceItemContextMenuType) => {
   const editor = useAppSelector(selectEditor);
   const dispatch = useAppDispatch();
@@ -76,10 +75,17 @@ export const SequenceItemContextMenu = ({
     selections?.flat()?.flatMap((nodeSelection) => {
       return nodeSelection.node.monomers;
     }) || [];
+  const monomersForAminoAcidModification = getMonomersForAminoAcidModification(
+    selectedMonomers,
+    contextMenuEvent,
+  );
   const isSequenceEditInRNABuilderMode = useAppSelector(
     selectIsSequenceEditInRNABuilderMode,
   );
   const isSequenceMode = useLayoutMode() === ModeTypes.sequence;
+  const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(
+    monomersForAminoAcidModification,
+  );
   const menuItems = [
     {
       name: SequenceItemContextMenuNames.title,
@@ -142,7 +148,8 @@ export const SequenceItemContextMenu = ({
       name: SequenceItemContextMenuNames.modifyAminoAcids,
       title: 'Modify amino acids',
       disabled: false,
-      subMenuItems: getModifyAminoAcidsMenuItems(selectedMonomers),
+      hidden: !modifyAminoAcidsMenuItems.length,
+      subMenuItems: modifyAminoAcidsMenuItems,
     },
     {
       name: SequenceItemContextMenuNames.editSequence,
@@ -362,54 +369,15 @@ export const SequenceItemContextMenu = ({
         break;
       }
       case menuItemId?.startsWith(AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX): {
-        const modelChanges = new Command();
-        const editorHistory = new EditorHistory(editor);
         const modificationType = menuItemId?.replace(
           AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX,
           '',
         );
-        const naturalAnalogueToModifiedMonomerItem = new Map<
-          string,
-          MonomerItemType
-        >();
 
-        editor.monomersLibrary.forEach((libraryItem) => {
-          if (libraryItem.props?.modificationType !== modificationType) {
-            return;
-          }
-          const monomerNaturalAnalogCode =
-            libraryItem.props.MonomerNaturalAnalogCode;
-
-          if (monomerNaturalAnalogCode) {
-            naturalAnalogueToModifiedMonomerItem.set(
-              monomerNaturalAnalogCode,
-              libraryItem,
-            );
-          }
+        editor.events.modifyAminoAcids.dispatch({
+          monomers: monomersForAminoAcidModification,
+          modificationType,
         });
-
-        selectedMonomers.forEach((monomer) => {
-          const monomerNaturalAnalogCode =
-            monomer.monomerItem.props.MonomerNaturalAnalogCode;
-          const modifiedMonomerItem = naturalAnalogueToModifiedMonomerItem.get(
-            monomerNaturalAnalogCode,
-          );
-
-          if (modifiedMonomerItem) {
-            modelChanges.merge(
-              replaceMonomer(
-                editor.drawingEntitiesManager,
-                monomer,
-                modifiedMonomerItem,
-              ),
-            );
-          }
-        });
-
-        modelChanges.addOperation(new ReinitializeModeOperation());
-        editor.renderersContainer.update(modelChanges);
-        editorHistory.update(modelChanges);
-
         break;
       }
       case menuItemId === 'copy':

@@ -7,23 +7,38 @@ import { selectEditor } from 'state/common';
 import { BaseMonomer } from 'ketcher-core';
 import { ContextMenu } from 'components/contextMenu/ContextMenu';
 import {
+  AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX,
+  getModifyAminoAcidsMenuItems,
+  getMonomersForAminoAcidModification,
   isAntisenseCreationDisabled,
   isAntisenseOptionVisible,
 } from './helpers';
+import { SequenceItemContextMenuNames } from 'components/contextMenu/SequenceItemContextMenu/SequenceItemContextMenu';
+import { PointerEvent } from 'react';
 
 type SelectedMonomersContextMenuType = {
-  selectedMonomers: BaseMonomer[];
+  selectedMonomers?: BaseMonomer[];
+  contextMenuEvent?: PointerEvent;
 };
 
 export const SelectedMonomersContextMenu = ({
-  selectedMonomers,
+  selectedMonomers: _selectedMonomers,
+  contextMenuEvent,
 }: SelectedMonomersContextMenuType) => {
+  const selectedMonomers = _selectedMonomers || [];
   const editor = useAppSelector(selectEditor);
-
+  const monomersForAminoAcidModification = getMonomersForAminoAcidModification(
+    selectedMonomers,
+    contextMenuEvent,
+  );
+  const modifyAminoAcidsMenuItems = getModifyAminoAcidsMenuItems(
+    monomersForAminoAcidModification,
+  );
   const menuItems = [
     {
       name: 'copy',
       title: 'Copy',
+      disabled: selectedMonomers?.length === 0,
     },
     {
       name: 'create_antisense_rna_chain',
@@ -50,25 +65,44 @@ export const SelectedMonomersContextMenu = ({
       },
     },
     {
+      name: SequenceItemContextMenuNames.modifyAminoAcids,
+      title: 'Modify amino acids',
+      disabled: false,
+      hidden: !modifyAminoAcidsMenuItems.length,
+      subMenuItems: modifyAminoAcidsMenuItems,
+    },
+    {
       name: 'delete',
       title: 'Delete',
+      disabled: selectedMonomers?.length === 0,
     },
   ];
 
-  const handleMenuChange = ({ id }: ItemParams) => {
-    switch (id) {
-      case 'copy':
+  const handleMenuChange = ({ id: menuItemId }: ItemParams) => {
+    switch (true) {
+      case menuItemId === 'copy':
         editor.events.copySelectedStructure.dispatch();
         break;
-      case 'create_antisense_rna_chain':
+      case menuItemId === 'create_antisense_rna_chain':
         editor.events.createAntisenseChain.dispatch(false);
         break;
-      case 'create_antisense_dna_chain':
+      case menuItemId === 'create_antisense_dna_chain':
         editor.events.createAntisenseChain.dispatch(true);
         break;
-      case 'delete':
+      case menuItemId === 'delete':
         editor.events.deleteSelectedStructure.dispatch();
         break;
+      case menuItemId?.startsWith(AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX): {
+        const modificationType = menuItemId?.replace(
+          AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX,
+          '',
+        );
+        editor.events.modifyAminoAcids.dispatch({
+          monomers: monomersForAminoAcidModification,
+          modificationType,
+        });
+        break;
+      }
       default:
         break;
     }

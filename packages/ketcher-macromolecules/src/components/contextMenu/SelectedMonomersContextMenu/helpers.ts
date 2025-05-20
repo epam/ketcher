@@ -1,11 +1,13 @@
 import {
   AmbiguousMonomer,
   BaseMonomer,
+  BaseSequenceItemRenderer,
   CoreEditor,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
   isRnaBaseOrAmbiguousRnaBase,
   KetAmbiguousMonomerTemplateSubType,
+  Peptide,
   RNA_DNA_NON_MODIFIED_PART,
   RNABase,
   Sugar,
@@ -142,7 +144,7 @@ export const getModifyAminoAcidsMenuItems = (
   selectedMonomers.forEach((selectedMonomer) => {
     const monomerNaturalAnalogCode =
       selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode;
-    if (monomerNaturalAnalogCode) {
+    if (selectedMonomer instanceof Peptide && monomerNaturalAnalogCode) {
       selectedMonomersNaturalAnalogues.add(monomerNaturalAnalogCode);
     }
   });
@@ -171,4 +173,22 @@ export const getModifyAminoAcidsMenuItems = (
       title: modificationType,
     };
   });
+};
+
+export const getMonomersForAminoAcidModification = (
+  selectedMonomers: BaseMonomer[],
+  contextMenuEvent?,
+) => {
+  const clickedSequenceItemRenderer: BaseSequenceItemRenderer | undefined =
+    contextMenuEvent?.target?.__data__;
+  const clickedMonomer = clickedSequenceItemRenderer?.node?.monomer;
+  const monomersForAminoAcidModification = (
+    selectedMonomers.length
+      ? selectedMonomers
+      : clickedMonomer
+      ? [clickedMonomer]
+      : []
+  ).filter((monomer) => monomer instanceof Peptide);
+
+  return monomersForAminoAcidModification;
 };

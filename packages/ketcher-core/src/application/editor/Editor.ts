@@ -68,12 +68,18 @@ import { initializeMode, parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
+import { ReinitializeModeOperation } from 'application/editor/operations';
 
 interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
   mode?: BaseMode;
   monomersLibraryUpdate?: string | JSON;
+}
+
+interface ModifyAminoAcidsHandlerParams {
+  monomers: BaseMonomer[];
+  modificationType: string;
 }
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
@@ -456,6 +462,11 @@ export class CoreEditor {
       history.update(command);
       this.renderersContainer.update(command);
     });
+    this.events.modifyAminoAcids.add(
+      ({ monomers, modificationType }: ModifyAminoAcidsHandlerParams) => {
+        this.onModifyAminoAcids(monomers, modificationType);
+      },
+    );
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
@@ -672,6 +683,54 @@ export class CoreEditor {
 
   public setMode(mode: BaseMode) {
     this.mode = mode;
+  }
+
+  private onModifyAminoAcids(
+    monomers: BaseMonomer[],
+    modificationType: string,
+  ) {
+    const modelChanges = new Command();
+    const editorHistory = new EditorHistory(editor);
+    const naturalAnalogueToModifiedMonomerItem = new Map<
+      string,
+      MonomerItemType
+    >();
+
+    editor.monomersLibrary.forEach((libraryItem) => {
+      if (libraryItem.props?.modificationType !== modificationType) {
+        return;
+      }
+      const monomerNaturalAnalogCode =
+        libraryItem.props.MonomerNaturalAnalogCode;
+
+      if (monomerNaturalAnalogCode) {
+        naturalAnalogueToModifiedMonomerItem.set(
+          monomerNaturalAnalogCode,
+          libraryItem,
+        );
+      }
+    });
+
+    monomers.forEach((monomer) => {
+      const monomerNaturalAnalogCode =
+        monomer.monomerItem.props.MonomerNaturalAnalogCode;
+      const modifiedMonomerItem = naturalAnalogueToModifiedMonomerItem.get(
+        monomerNaturalAnalogCode,
+      );
+
+      if (modifiedMonomerItem) {
+        modelChanges.merge(
+          this.drawingEntitiesManager.modifyMonomerItem(
+            monomer,
+            modifiedMonomerItem,
+          ),
+        );
+      }
+    });
+
+    modelChanges.addOperation(new ReinitializeModeOperation());
+    editor.renderersContainer.update(modelChanges);
+    editorHistory.update(modelChanges);
   }
 
   public get isSequenceMode() {

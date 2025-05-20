@@ -30,6 +30,12 @@ export const TopLeftToolbar = (page: Page) => {
     redoButton: page
       .getByTestId('redo')
       .filter({ has: page.locator(':visible') }),
+    createAntisenseStrandButton: page
+      .getByTestId('Create Antisense Strand')
+      .filter({ has: page.locator(':visible') }),
+    calculateMacromoleculePropertiesButton: page
+      .getByTestId('calculate-macromolecule-properties-button')
+      .filter({ has: page.locator(':visible') }),
   };
 
   const closeWindowXButton = page.getByTestId('close-window-button');

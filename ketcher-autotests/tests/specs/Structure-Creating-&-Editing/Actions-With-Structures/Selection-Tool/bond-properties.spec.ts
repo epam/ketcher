@@ -9,7 +9,6 @@ import {
   openFileAndAddToCanvas,
   pressButton,
   selectAllStructuresOnCanvas,
-  selectRingButton,
   takeEditorScreenshot,
 } from '@utils';
 import {

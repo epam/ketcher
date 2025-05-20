@@ -13,7 +13,6 @@ import {
   resetCurrentTool,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
-  selectRingButton,
   selectUndoByKeyboard,
   takeEditorScreenshot,
   waitForPageInit,

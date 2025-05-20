@@ -6,7 +6,6 @@ import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
   BondType,
   clickOnBond,
-  drawBenzeneRing,
   takeLeftToolbarScreenshot,
   waitForPageInit,
 } from '@utils';

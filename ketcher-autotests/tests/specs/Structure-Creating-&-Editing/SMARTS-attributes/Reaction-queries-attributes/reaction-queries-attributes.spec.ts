@@ -1,6 +1,5 @@
 import { Page, test } from '@playwright/test';
 import {
-  RingButton,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   dragMouseTo,

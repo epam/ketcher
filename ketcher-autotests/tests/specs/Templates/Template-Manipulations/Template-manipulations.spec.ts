@@ -10,8 +10,6 @@ import {
   waitForPageInit,
   resetCurrentTool,
   openFileAndAddToCanvas,
-  drawCyclopentadieneRing,
-  drawCyclohexaneRing,
   addCyclopentadieneRingWithTwoAtoms,
   TemplateLibrary,
   openEditDialogForTemplate,

@@ -3,7 +3,6 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   getCoordinatesTopAtomOfBenzeneRing,
-  selectRingButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   waitForPageInit,
@@ -21,6 +20,7 @@ test.describe('S-Group Properties', () => {
       Description: Checking S-Group drop-down types 'Type' drop-down list with Data,
       Multiple group, SRU polymer, Superatom and Query Component items. Data item is selected by default;
     */
+    const sGroupTypeInputSpan = page.getByTestId('s-group-type-input-span');
     await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 

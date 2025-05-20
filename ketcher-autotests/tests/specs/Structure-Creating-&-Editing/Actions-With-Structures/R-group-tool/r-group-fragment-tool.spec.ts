@@ -3,8 +3,6 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
-  selectRingButton,
-  RingButton,
   AttachmentPoint,
   openFileAndAddToCanvas,
   pressButton,

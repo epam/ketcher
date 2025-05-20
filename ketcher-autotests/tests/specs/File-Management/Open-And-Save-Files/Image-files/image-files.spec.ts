@@ -20,7 +20,6 @@ import {
   saveToTemplates,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
-  selectRing,
   selectWithLasso,
   takeEditorScreenshot,
   takeLeftToolbarScreenshot,

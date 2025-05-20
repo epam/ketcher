@@ -10,7 +10,6 @@ import { Page, expect, test } from '@playwright/test';
 import {
   FILE_TEST_DATA,
   FunctionalGroups,
-  RingButton,
   SaltsAndSolvents,
   addMonomersToFavorites,
   clickInTheMiddleOfTheScreen,

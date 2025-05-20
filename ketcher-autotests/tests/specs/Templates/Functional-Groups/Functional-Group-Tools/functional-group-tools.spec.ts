@@ -8,8 +8,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
   takeEditorScreenshot,
-  selectRingButton,
-  RingButton,
   resetCurrentTool,
   attachOnTopOfBenzeneBonds,
   clickOnAtom,

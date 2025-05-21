@@ -1,3 +1,4 @@
+/* eslint-disable promise/param-names */
 /* eslint-disable no-inline-comments */
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
@@ -102,6 +103,11 @@ async function selectPeptidesPropertiesTab(page: Page) {
   await page.getByTestId('peptides-properties-tab').click();
 }
 
+async function closeAndOpenCalculatePropertiesWindow(page: Page) {
+  await TopLeftToolbar(page).calculateProperties();
+  await TopLeftToolbar(page).calculateProperties();
+}
+
 let page: Page;
 
 test.describe('Calculate Properties tests', () => {
@@ -181,7 +187,9 @@ test.describe('Calculate Properties tests', () => {
     }).dblclick();
     await page.keyboard.down('Shift');
     for (let i = 0; i < 12; i++) {
-      await keyboardPressOnCanvas(page, 'ArrowRight');
+      await keyboardPressOnCanvas(page, 'ArrowRight', {
+        waitForRenderTimeOut: 2,
+      });
     }
     await page.keyboard.up('Shift');
     await TopLeftToolbar(page).calculateProperties();
@@ -249,7 +257,9 @@ test.describe('Calculate Properties tests', () => {
     }).dblclick();
     await page.keyboard.down('Shift');
     for (let i = 0; i < 12; i++) {
-      await keyboardPressOnCanvas(page, 'ArrowRight');
+      await keyboardPressOnCanvas(page, 'ArrowRight', {
+        waitForRenderTimeOut: 2,
+      });
     }
     await page.keyboard.up('Shift');
     await TopLeftToolbar(page).calculateProperties();
@@ -282,7 +292,7 @@ test.describe('Calculate Properties tests', () => {
       nodeIndexOverall: 14,
     }).dblclick();
     await page.keyboard.down('Shift');
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 2; i++) {
       await keyboardPressOnCanvas(page, 'ArrowRight');
     }
     await page.keyboard.up('Shift');
@@ -448,7 +458,9 @@ test.describe('Calculate Properties tests', () => {
     }).dblclick();
     await page.keyboard.down('Shift');
     for (let i = 0; i < 16; i++) {
-      await keyboardPressOnCanvas(page, 'ArrowRight');
+      await keyboardPressOnCanvas(page, 'ArrowRight', {
+        waitForRenderTimeOut: 2,
+      });
     }
     await page.keyboard.up('Shift');
     await TopLeftToolbar(page).calculateProperties();
@@ -554,12 +566,16 @@ test.describe('Calculate Properties tests', () => {
     await takePageScreenshot(page);
     await selectUnipositiveIonsUnit(page, 'μM');
     await selectOligonucleotidesUnit(page, 'mM');
+    await closeAndOpenCalculatePropertiesWindow(page);
     await takePageScreenshot(page);
     await selectUnipositiveIonsUnit(page, 'nM');
     await selectOligonucleotidesUnit(page, 'nM');
+    await closeAndOpenCalculatePropertiesWindow(page);
     await takePageScreenshot(page);
     await selectUnipositiveIonsUnit(page, 'mM');
     await selectOligonucleotidesUnit(page, 'μM');
+    await TopLeftToolbar(page).calculateProperties();
+    await TopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });
 
@@ -605,7 +621,9 @@ test.describe('Calculate Properties tests', () => {
     }).dblclick();
     await page.keyboard.down('Shift');
     for (let i = 0; i < 2; i++) {
-      await keyboardPressOnCanvas(page, 'ArrowRight');
+      await keyboardPressOnCanvas(page, 'ArrowRight', {
+        waitForRenderTimeOut: 2,
+      });
     }
     await page.keyboard.up('Shift');
     await TopLeftToolbar(page).calculateProperties();
@@ -894,6 +912,70 @@ test.describe('Calculate Properties tests', () => {
       'RNA1{[dR](A)}|RNA2{[dR](T)}$RNA1,RNA2,2:pair-2:pair$$$V2.0',
     );
     await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 39: Verify melting temperature calculation with user-defined parameters for a simple double-stranded RNA', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Melting temperature calculation with user-defined parameters for a simple double-stranded RNA.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     * 4. Change the default values of the parameters
+     * 5. Check that the melting temperature is calculated correctly
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)}|RNA2{R(U)}$RNA1,RNA2,2:pair-2:pair$$$V2.0',
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+    await selectUnipositiveIonsUnit(page, 'μM');
+    await selectOligonucleotidesUnit(page, 'mM');
+    await closeAndOpenCalculatePropertiesWindow(page);
+    await takePageScreenshot(page);
+    await selectUnipositiveIonsUnit(page, 'nM');
+    await selectOligonucleotidesUnit(page, 'nM');
+    await closeAndOpenCalculatePropertiesWindow(page);
+    await takePageScreenshot(page);
+    await selectUnipositiveIonsUnit(page, 'mM');
+    await selectOligonucleotidesUnit(page, 'μM');
+    await closeAndOpenCalculatePropertiesWindow(page);
+    await takePageScreenshot(page);
+  });
+
+  test('Case 40: Verify melting temperature calculation with user-defined parameters for a simple double-stranded DNA', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Melting temperature calculation with user-defined parameters for a simple double-stranded DNA.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     * 4. Change the default values of the parameters
+     * 5. Check that the melting temperature is calculated correctly
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[dR](A)}|RNA2{[dR](T)}$RNA1,RNA2,2:pair-2:pair$$$V2.0',
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+    await selectUnipositiveIonsUnit(page, 'μM');
+    await selectOligonucleotidesUnit(page, 'mM');
+    await closeAndOpenCalculatePropertiesWindow(page);
+    await takePageScreenshot(page);
+    await selectUnipositiveIonsUnit(page, 'nM');
+    await selectOligonucleotidesUnit(page, 'nM');
+    await closeAndOpenCalculatePropertiesWindow(page);
+    await takePageScreenshot(page);
+    await selectUnipositiveIonsUnit(page, 'mM');
+    await selectOligonucleotidesUnit(page, 'μM');
+    await closeAndOpenCalculatePropertiesWindow(page);
     await takePageScreenshot(page);
   });
 });

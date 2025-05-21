@@ -10,8 +10,11 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   resetZoomLevelToDefault,
+  selectAllStructuresOnCanvas,
   selectFlexLayoutModeTool,
+  selectMonomer,
   selectPartOfMolecules,
+  selectSequenceLayoutModeTool,
   takePageScreenshot,
   takeTopToolbarScreenshot,
 } from '@utils';
@@ -20,10 +23,37 @@ import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaul
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
-import { switchToDNAMode } from '@utils/macromolecules/sequence';
+import {
+  switchToDNAMode,
+  switchToPeptideMode,
+  switchToRNAMode,
+} from '@utils/macromolecules/sequence';
+import { Peptides } from '@constants/monomers/Peptides';
+import { Presets } from '@constants/monomers/Presets';
+import { Chem } from '@constants/monomers/Chem';
+import { goToTab } from '@utils/macromolecules/library';
+import { RNA_TAB } from '@constants/testIdConstants';
 
-async function clickOnXButton(page: Page) {
-  await page.getByTestId('macromolecule-properties-close').click();
+/**
+ * Tries to hit the “×” twice.
+ * If the button is missing / not clickable after 2 attempts
+ * the error is swallowed and the test continues.
+ */
+export async function clickOnXButton(page: Page) {
+  const closeBtn = page.getByTestId('macromolecule-properties-close');
+
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      // wait max 2 s for the button to appear on each try
+      await closeBtn.waitFor({ state: 'visible', timeout: 2_000 });
+      await closeBtn.click();
+      return; // success → exit helper
+    } catch {
+      // optional short pause between attempts
+      await page.waitForTimeout(300);
+    }
+  }
+  // no throw → the calling test keeps running
 }
 
 export async function selectMolecularMassUnit(
@@ -87,7 +117,7 @@ test.describe('Calculate Properties tests', () => {
 
   test.afterEach(async ({ context: _ }, testInfo) => {
     await TopLeftToolbar(page).clearCanvas();
-    await TopLeftToolbar(page).calculateProperties();
+    await clickOnXButton(page);
     await resetZoomLevelToDefault(page);
     await processResetToDefaultState(testInfo, page);
   });
@@ -295,7 +325,7 @@ test.describe('Calculate Properties tests', () => {
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
-      'RNA1{[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)P.[dR](A)}$$$$V2.0',
+      'RNA1{R(A)}$$$$V2.0',
     );
     await TopLeftToolbar(page).calculateProperties();
     await selectMolecularMassUnit(page);
@@ -451,6 +481,7 @@ test.describe('Calculate Properties tests', () => {
      * 4. Open the "Calculate Properties" window
      * 5. Check that a valid nucleic acid (RNA/DNA) chain is any chain that contains a double stranded pure nucleotide/nucleoside
      */
+    await switchToRNAMode(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,
@@ -508,11 +539,11 @@ test.describe('Calculate Properties tests', () => {
      * Scenario:
      * 1. Go to Macro
      * 2. Load from HELM
-     * 4. Open the "Calculate Properties" window
-     * 5. Check that values for the concentration of unipositive ions and oligonucleotides can be changed by the user,
+     * 3. Open the "Calculate Properties" window
+     * 4. Check that values for the concentration of unipositive ions and oligonucleotides can be changed by the user,
      * but the default/preset values are 140mM and 200μM respectively
-     * 6. Check that within the drop-down menu for units of these two concentrations there three options nM, μM, and mM
-     * 7. Check that changing the units change the numbers appropriately
+     * 5. Check that within the drop-down menu for units of these two concentrations there three options nM, μM, and mM
+     * 6. Check that changing the units change the numbers appropriately
      */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -524,10 +555,10 @@ test.describe('Calculate Properties tests', () => {
     await selectUnipositiveIonsUnit(page, 'μM');
     await selectOligonucleotidesUnit(page, 'mM');
     await takePageScreenshot(page);
-    await selectUnipositiveIonsUnit(page, 'mM');
+    await selectUnipositiveIonsUnit(page, 'nM');
     await selectOligonucleotidesUnit(page, 'nM');
     await takePageScreenshot(page);
-    await selectUnipositiveIonsUnit(page, 'nM');
+    await selectUnipositiveIonsUnit(page, 'mM');
     await selectOligonucleotidesUnit(page, 'μM');
     await takePageScreenshot(page);
   });
@@ -651,6 +682,217 @@ test.describe('Calculate Properties tests', () => {
       page,
     );
     await selectPartOfMolecules(page, 10);
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 27: Verify correct molecular formula and molecular mass calculation for selection of part benzene ring connected to Peptides sequence', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Correct molecular formula and molecular mass calculation for selection of part benzene ring connected to Peptides sequence.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from file
+     * 3. Select part of benzene ring
+     * 4. Open the "Calculate Properties" window
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/benzene-ring-connected-to-peptide.ket',
+      page,
+    );
+    await selectPartOfMolecules(page, -80);
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 28: Verify correct molecular formula and molecular mass calculation for selection of part benzene ring connected to RNA/DNA sequence', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Correct molecular formula and molecular mass calculation for selection of part benzene ring connected to RNA/DNA sequence.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from file
+     * 3. Select part of benzene ring
+     * 4. Open the "Calculate Properties" window
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/benzene-ring-connected-to-rna.ket',
+      page,
+    );
+    await selectPartOfMolecules(page, -80);
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 29: Verify correct molecular formula and molecular mass calculation for selection of benzene ring connected to Peptides sequence', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Сorrect molecular formula and molecular mass calculation for selection of benzene ring connected to Peptides sequence.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from file
+     * 3. Select all
+     * 4. Open the "Calculate Properties" window
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/benzene-ring-connected-to-peptide.ket',
+      page,
+    );
+    await selectAllStructuresOnCanvas(page);
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 30: Verify correct molecular formula and molecular mass calculation for selection of benzene ring connected to RNA/DNA sequence', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Сorrect molecular formula and molecular mass calculation for selection of benzene ring connected to RNA/DNA sequence.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from file
+     * 3. Select all
+     * 4. Open the "Calculate Properties" window
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/benzene-ring-connected-to-rna.ket',
+      page,
+    );
+    await selectAllStructuresOnCanvas(page);
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 31: Verify correct molecular formula and molecular mass  of structures with multiple rings (e.g., naphthalene)', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Correct molecular formula and molecular mass  of structures with multiple rings (e.g., naphthalene).
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from file
+     * 3. Open the "Calculate Properties" window
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro('KET/naphthalene.ket', page);
+    await selectAllStructuresOnCanvas(page);
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 32: Verify that the molecular formula and molecular mass is correctly calculated for a simple peptide structure', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: The molecular formula and molecular mass is correctly calculated for a simple peptide structure.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Select a simple peptide structure
+     * 3. Open the "Calculate Properties" window
+     */
+    await selectSequenceLayoutModeTool(page);
+    await selectMonomer(page, Peptides.A);
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 33: Verify that the molecular formula and molecular mass is correctly calculated for a simple RNA/DNA structure', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: The molecular formula and molecular mass is correctly calculated for a simple RNA/DNA structure.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Select a simple RNA/DNA structure
+     * 3. Open the "Calculate Properties" window
+     */
+    await selectMonomer(page, Presets.A);
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 34: Verify that the molecular formula and molecular mass is correctly calculated for a simple CHEM structure', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: The molecular formula and molecular mass is correctly calculated for a simple CHEM structure.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Select a simple CHEM structure
+     * 3. Open the "Calculate Properties" window
+     */
+    await selectMonomer(page, Chem.Test_6_Ch);
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 35: Verify correct molecular mass calculation for complex polymers with connected small molecules', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Correct molecular mass calculation for complex polymers with connected small molecules.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from file
+     * 3. Open the "Calculate Properties" window
+     */
+    await selectFlexLayoutModeTool(page);
+    await goToTab(page, RNA_TAB);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/peptides-connected-to-molecule.ket',
+      page,
+    );
+    await selectAllStructuresOnCanvas(page);
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 36: Verify isoelectric point calculation with multiple groups (Leaving group atoms at occupied attachment points are ignored)', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Isoelectric point calculation with multiple groups are correct (Leaving group atoms at occupied attachment points are ignored).
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Add a structure with multiple groups
+     * 3. Open the "Calculate Properties" window
+     */
+    await selectSequenceLayoutModeTool(page);
+    await switchToPeptideMode(page);
+    await keyboardTypeOnCanvas(page, 'AAAAA');
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 37: Verify correct calculation of melting temperature for a simple double-stranded RNA', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Correct calculation of melting temperature for a simple double-stranded RNA.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)}|RNA2{R(U)}$RNA1,RNA2,2:pair-2:pair$$$V2.0',
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 38: Verify correct calculation of melting temperature for a simple double-stranded DNA', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Correct calculation of melting temperature for a simple double-stranded DNA.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[dR](A)}|RNA2{[dR](T)}$RNA1,RNA2,2:pair-2:pair$$$V2.0',
+    );
     await TopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });

@@ -3,7 +3,6 @@ import { expect, test, Page } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
   clickOnAtom,
   clickOnTheCanvas,
@@ -36,6 +35,7 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
   await TopLeftToolbar(page).saveFile();

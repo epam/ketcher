@@ -18,8 +18,6 @@ import {
   moveOnAtom,
   dragMouseTo,
   clickOnCanvas,
-  selectRing,
-  RingButton,
   waitForRender,
 } from '@utils';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
@@ -35,6 +33,7 @@ import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/micr
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 async function addTail(page: Page, x: number, y: number) {
   await page.mouse.click(x, y, { button: 'right' });
@@ -1752,7 +1751,7 @@ test.describe('Cascade Reactions', () => {
 
           await openFileAndAddToCanvas(rdfFile, page);
           await clickOnCanvas(page, 500, 600);
-          await selectRing(RingButton.Benzene, page);
+          await selectRingButton(page, 'Benzene');
           await clickOnCanvas(page, 200, 600);
           await CommonLeftToolbar(page).selectAreaSelectionTool(
             SelectionToolType.Rectangle,

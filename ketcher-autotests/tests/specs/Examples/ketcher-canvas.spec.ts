@@ -3,7 +3,6 @@ import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
-  drawBenzeneRing,
   getCoordinatesOfTheMiddleOfTheScreen,
   moveMouseToTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -15,6 +14,7 @@ import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Drawing atom, Benzene ring, Single and Double Bond', () => {
   test.beforeEach(async ({ page }) => {

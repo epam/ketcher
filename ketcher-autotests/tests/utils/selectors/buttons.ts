@@ -4,20 +4,4 @@ export enum TopPanelButton {
   Cut = 'Cut',
 }
 
-export enum RingButton {
-  Benzene = 'Benzene',
-  Cyclopentadiene = 'Cyclopentadiene',
-  Cyclohexane = 'Cyclohexane',
-  Cyclopentane = 'Cyclopentane',
-  Cyclopropane = 'Cyclopropane',
-  Cyclobutane = 'Cyclobutane',
-  Cycloheptane = 'Cycloheptane',
-  Cyclooctane = 'Cyclooctane',
-}
-
-export const STRUCTURE_LIBRARY_BUTTON_NAME = 'Structure Library';
-
-export type ToolbarButton =
-  | TopPanelButton
-  | RingButton
-  | typeof STRUCTURE_LIBRARY_BUTTON_NAME;
+export type ToolbarButton = TopPanelButton;

@@ -3,8 +3,6 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
-  selectRingButton,
-  RingButton,
   AttachmentPoint,
   openFileAndAddToCanvas,
   pressButton,
@@ -26,9 +24,10 @@ import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 async function openRGroupModalForTopAtom(page: Page) {
-  await selectRingButton(RingButton.Benzene, page);
+  await selectRingButton(page, 'Benzene');
   await clickInTheMiddleOfTheScreen(page);
 
   await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
@@ -203,7 +202,7 @@ test.describe('Open Ketcher', () => {
     /* Test case: EPMLSOPKET-1599
       Description: Define a structure with attachment points as R-Group member
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);

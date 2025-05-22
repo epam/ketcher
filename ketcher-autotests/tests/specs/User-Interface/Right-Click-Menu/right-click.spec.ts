@@ -11,7 +11,6 @@ import {
   clickOnBond,
   clickOnAtom,
   clickOnCanvas,
-  drawBenzeneRing,
   selectAllStructuresOnCanvas,
   screenshotBetweenUndoRedo,
   moveMouseAway,
@@ -24,6 +23,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Right-click menu', () => {
   test.beforeEach(async ({ page }) => {

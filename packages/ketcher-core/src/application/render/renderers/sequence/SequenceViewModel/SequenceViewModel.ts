@@ -21,6 +21,7 @@ import {
 } from 'domain/helpers/chains';
 import { isRnaBaseApplicableForAntisense } from 'domain/helpers/monomers';
 import { CoreEditor } from 'application/editor';
+import { SettingsManager } from 'utilities';
 
 interface IForEachNodeParams {
   twoStrandedNode: ITwoStrandedChainItem;
@@ -412,7 +413,7 @@ export class SequenceViewModel {
   }
 
   private fillChains() {
-    const NUMBER_OF_SYMBOLS_IN_ROW = 30;
+    const lineLength = SettingsManager.editorLineLength['sequence-layout-mode'];
     let currentIndexInSequenceModelChain = 0;
     let currentSequenceModelChain = new SequenceViewModelChain();
     let currentSequenceModelRow: ISequenceViewModelRow = {
@@ -429,7 +430,7 @@ export class SequenceViewModel {
         currentIndexInSequenceModelChain = 0;
       }
 
-      if (currentIndexInSequenceModelChain % NUMBER_OF_SYMBOLS_IN_ROW === 0) {
+      if (currentIndexInSequenceModelChain % lineLength === 0) {
         currentSequenceModelRow = {
           sequenceViewModelItems: [],
         };
@@ -457,7 +458,8 @@ export class SequenceViewModel {
       let rowToAddEmptyNode: ISequenceViewModelRow =
         sequenceViewModelChain.lastRow;
 
-      if (rowToAddEmptyNode.sequenceViewModelItems.length === 30) {
+      // TODO: Check if lineLength is needed here, it was just 30 before
+      if (rowToAddEmptyNode.sequenceViewModelItems.length === lineLength) {
         rowToAddEmptyNode = {
           sequenceViewModelItems: [],
         };

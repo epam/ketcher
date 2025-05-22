@@ -100,6 +100,9 @@ import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMono
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
 import { RootSizeProvider } from './contexts';
 import { MacromoleculePropertiesWindow } from 'components/macromoleculeProperties';
+import { RulerArea } from 'components/Ruler/RulerArea';
+
+import './theme.less';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -292,6 +295,7 @@ function Editor({
 
         <Layout.Main>
           <EditorEvents />
+          <RulerArea />
           <CanvasWrapper
             id="polymer-editor-canvas"
             data-testid="ketcher-canvas"

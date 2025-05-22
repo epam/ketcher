@@ -14,7 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import { Entities, ModeTypes } from 'ketcher-core';
+import { Entities } from 'ketcher-core';
 import { MonomerGroups } from 'src/constants';
 import { GroupBlock } from './GroupBlock';
 import {
@@ -126,7 +126,7 @@ export const RnaEditorExpanded = ({
       generateSequenceSelectionGroupNames(sequenceSelection),
     );
 
-  const isSequenceMode = useLayoutMode() === ModeTypes.sequence;
+  const isSequenceMode = useLayoutMode() === 'sequence-layout-mode';
 
   const updatePresetMonomerGroup = () => {
     if (activePresetMonomerGroup) {

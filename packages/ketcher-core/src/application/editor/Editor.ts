@@ -468,6 +468,23 @@ export class CoreEditor {
       history.update(command);
       this.renderersContainer.update(command);
     });
+
+    this.events.setEditorLineLength.add(() => {
+      this.mode.initialize();
+    });
+
+    this.events.toggleLineLengthHighlighting.add(
+      (value: boolean, currentPosition = 0) => {
+        if (value) {
+          this.transientDrawingView.showLineLengthHighlight({
+            currentPosition,
+          });
+        } else {
+          this.transientDrawingView.hideLineLengthHighlight();
+        }
+        this.transientDrawingView.update();
+      },
+    );
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
@@ -941,12 +958,7 @@ export class CoreEditor {
 
     if (this.mode instanceof SnakeMode) {
       modelChanges.merge(
-        this.drawingEntitiesManager.applySnakeLayout(
-          this.canvas.width.baseVal.value,
-          true,
-          true,
-          false,
-        ),
+        this.drawingEntitiesManager.applySnakeLayout(true, true, false),
       );
     }
 

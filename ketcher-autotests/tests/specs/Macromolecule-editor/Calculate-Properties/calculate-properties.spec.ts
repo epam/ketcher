@@ -103,6 +103,12 @@ async function selectPeptidesPropertiesTab(page: Page) {
   await page.getByTestId('peptides-properties-tab').click();
 }
 
+/**
+ * Refreshes the **Calculate Properties** panel.
+ * In our e2e tests the panel doesn’t fully re-render after switching
+ * measurement units, so we simply close and reopen it to ensure
+ * the content is up-to-date.
+ */
 async function closeAndOpenCalculatePropertiesWindow(page: Page) {
   await TopLeftToolbar(page).calculateProperties();
   await TopLeftToolbar(page).calculateProperties();
@@ -976,6 +982,193 @@ test.describe('Calculate Properties tests', () => {
     await selectUnipositiveIonsUnit(page, 'mM');
     await selectOligonucleotidesUnit(page, 'μM');
     await closeAndOpenCalculatePropertiesWindow(page);
+    await takePageScreenshot(page);
+  });
+
+  test('Case 41: Verify correct calculation of extinction coefficient and correct hydrophobicity calculation  for a simple peptide', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Сorrect calculation of extinction coefficient and correct hydrophobicity calculation  for a simple peptide.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Select a simple peptide structure
+     * 3. Open the "Calculate Properties" window
+     */
+    await selectMonomer(page, Peptides.A);
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 42: Verify correct calculation of extinction coefficient and correct hydrophobicity calculation  for a peptides sequence', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Сorrect calculation of extinction coefficient and correct hydrophobicity calculation  for a peptides sequence.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     */
+    await goToTab(page, RNA_TAB);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'PEPTIDE1{K.E.T.C.H.E.R}$$$$V2.0',
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 43: Verify correct property calculations for RNA containing modified bases', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Correct property calculations for RNA containing modified bases.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R([baA])P.R([5meC])P.R([4imen2])P.R([cneT])P.R([5eU])}$$$$V2.0',
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 44: Verify correct property calculations for DNA containing modified bases', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Correct property calculations for DNA containing modified bases.
+     * Scenario:
+     * 1. Go to Macro
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     */
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{[dR]([4ime6A])P.[dR]([ac4C])P.[dR]([allyl9])P.[dR]([mo4bn3])P.[dR]([5fU])}$$$$V2.0',
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 45: Verify property calculations for structures containing both peptide and RNA along with additional microstructures', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Calculations for structures containing both peptide and RNA along with additional microstructures.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Load from file
+     * 3. Open the "Calculate Properties" window
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/peptide-rna-microstructure-connected.ket',
+      page,
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 46: Verify property calculations for structures containing both peptide and DNA along with additional microstructures', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Calculations for structures containing both peptide and DNA along with additional microstructures.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Load from file
+     * 3. Open the "Calculate Properties" window
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/peptide-dna-microstructure-connected.ket',
+      page,
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 47: Verify calculate properties for Peptides if Phosphate is missing in mixed chain', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Calculate properties for Peptides if Phosphate is missing in mixed chain.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Load from HELM
+     * 3. Open the "Calculate Properties" window
+     * For now it is not possible to calculate properties for Peptides if Phosphate is missing in mixed chain
+     * We have a bug for this issue: https://github.com/epam/Indigo/issues/2902
+     * After fix we need to update screenshot
+     */
+    await selectFlexLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)}|PEPTIDE1{A}$RNA1,PEPTIDE1,1:R2-1:R1$$$V2.0',
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 48: Verify calculate properties when two chains are connected via a CHEM', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Calculate properties when two chains are connected via a CHEM.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Load from file
+     * 3. Open the "Calculate Properties" window
+     * We have a bug for this issue: https://github.com/epam/Indigo/issues/2904
+     * After fix we need to update screenshot
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/sequenses-connected-through-chem.ket',
+      page,
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 49: Verify calculate properties when two chains are connected via a microstructure with attachment points', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Calculate properties when two chains are connected via a microstructure with attachment points.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Load from file
+     * 3. Open the "Calculate Properties" window
+     * We have a bug for this issue: https://github.com/epam/Indigo/issues/2903
+     * After fix we need to update screenshot
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/microstructure-with-attachment-points.ket',
+      page,
+    );
+    await TopLeftToolbar(page).calculateProperties();
+    await takePageScreenshot(page);
+  });
+
+  test('Case 50: Verify calculate properties when two chains are connected via a microstructure without attachment points', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/7042
+     * Description: Calculate properties when two chains are connected via a microstructure without attachment points.
+     * Scenario:
+     * 1. Go to Macro - Flex
+     * 2. Load from file
+     * 3. Open the "Calculate Properties" window
+     * We have a bug for this issue: https://github.com/epam/Indigo/issues/2903
+     * After fix we need to update screenshot
+     */
+    await selectFlexLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/microstructure-without-attachment-points.ket',
+      page,
+    );
+    await TopLeftToolbar(page).calculateProperties();
     await takePageScreenshot(page);
   });
 });

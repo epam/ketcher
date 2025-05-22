@@ -33,7 +33,7 @@ import { Peptides } from '@constants/monomers/Peptides';
 import { Presets } from '@constants/monomers/Presets';
 import { Chem } from '@constants/monomers/Chem';
 import { goToTab } from '@utils/macromolecules/library';
-import { RNA_TAB } from '@constants/testIdConstants';
+import { PEPTIDES_TAB, RNA_TAB } from '@constants/testIdConstants';
 
 /**
  * Tries to hit the “×” twice.
@@ -859,7 +859,7 @@ test.describe('Calculate Properties tests', () => {
      * 3. Open the "Calculate Properties" window
      */
     await selectFlexLayoutModeTool(page);
-    await goToTab(page, RNA_TAB);
+    await goToTab(page, PEPTIDES_TAB);
     await openFileAndAddToCanvasAsNewProjectMacro(
       'KET/peptides-connected-to-molecule.ket',
       page,

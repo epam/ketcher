@@ -3,14 +3,11 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
   waitForRender,
-  drawBenzeneRing,
   resetCurrentTool,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  pressButton,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   cutAndPaste,
   clickOnCanvas,
   ZoomInByKeyboard,
@@ -27,6 +24,10 @@ import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
+import {
+  BottomToolbar,
+  drawBenzeneRing,
+} from '@tests/pages/molecules/BottomToolbar';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
@@ -201,7 +202,7 @@ test.describe('Action on simples objects', () => {
     await drawBenzeneRing(page);
     await saveToTemplates(page);
     await TopLeftToolbar(page).clearCanvas();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await takeEditorScreenshot(page);
   });

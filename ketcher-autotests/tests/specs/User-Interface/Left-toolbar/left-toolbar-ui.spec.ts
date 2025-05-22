@@ -2,10 +2,10 @@ import { test, expect, Page } from '@playwright/test';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
   BondType,
   clickOnBond,
-  drawBenzeneRing,
   takeLeftToolbarScreenshot,
   waitForPageInit,
 } from '@utils';

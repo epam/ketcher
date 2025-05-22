@@ -2,6 +2,7 @@
 import { Page, test } from '@playwright/test';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { openStructureLibrary } from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -13,10 +14,6 @@ import {
   waitForPageInit,
 } from '@utils';
 import { scrollSettingBar } from '@utils/scrollSettingBar';
-
-async function openStructureLibrary(page: Page) {
-  await page.getByTestId('template-lib').click();
-}
 
 async function templateFromLAminoAcidsCategory(page: Page) {
   await openStructureLibrary(page);

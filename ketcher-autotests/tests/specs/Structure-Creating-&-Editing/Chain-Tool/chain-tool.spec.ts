@@ -16,7 +16,7 @@ import {
   moveMouseToTheMiddleOfTheScreen,
 } from '@utils/clicks';
 import { waitForPageInit } from '@utils/common';
-import { RingButton, selectRing } from '@utils/selectors';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const DELTA = 100;
 const DELTA_Y = 110;
@@ -50,7 +50,7 @@ test.describe('Chain Tool drawing', () => {
     await page.mouse.move(point.x, point.y);
     await dragMouseTo(point.x, point.y + DELTA, page);
 
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickOnCanvas(page, point.x - DELTA, point.y + DELTA_Y);
 
     await LeftToolbar(page).chain();

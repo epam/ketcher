@@ -4,7 +4,6 @@ import {
   openFileAndAddToCanvas,
   clickOnAtom,
   dragMouseTo,
-  drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
   BondType,
   getCoordinatesOfTheMiddleOfTheScreen,
@@ -19,6 +18,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Lasso Selection tool', () => {
   test.beforeEach(async ({ page }) => {

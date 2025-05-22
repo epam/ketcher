@@ -1,16 +1,17 @@
 import { Page, test } from '@playwright/test';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   takeEditorScreenshot,
   waitForPageInit,
   pressButton,
-  drawBenzeneRing,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   resetCurrentTool,
-  selectRing,
-  RingButton,
   getAtomByIndex,
   clickOnCanvas,
 } from '@utils';
@@ -120,7 +121,7 @@ test.describe('Atom Settings', () => {
     const pointX = 200;
     const pointY = 200;
 
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 

@@ -580,8 +580,7 @@ test.describe('Calculate Properties tests', () => {
     await takePageScreenshot(page);
     await selectUnipositiveIonsUnit(page, 'mM');
     await selectOligonucleotidesUnit(page, 'μM');
-    await TopLeftToolbar(page).calculateProperties();
-    await TopLeftToolbar(page).calculateProperties();
+    await closeAndOpenCalculatePropertiesWindow(page);
     await takePageScreenshot(page);
   });
 

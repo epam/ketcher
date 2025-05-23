@@ -222,23 +222,12 @@ function initSGroup(sGroups, propData) {
   }
 }
 
-function applySGroupProp(
-  sGroups,
-  propName,
-  propData,
-  numeric,
-  core,
-  lowercase,
-) {
+function applySGroupProp(sGroups, propName, propData, numeric, core) {
   // eslint-disable-line max-params
   const kv = readKeyValuePairs(propData, !numeric);
   // "core" properties are stored directly in an sgroup, not in sgroup.data
   for (const key of kv.keys()) {
-    let v = kv.get(key);
-    if (lowercase) {
-      v = String(v).toLowerCase();
-    }
-    (core ? sGroups[key] : sGroups[key].data)[propName] = v;
+    (core ? sGroups[key] : sGroups[key].data)[propName] = kv.get(key);
   }
 }
 

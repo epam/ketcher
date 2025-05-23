@@ -192,6 +192,19 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       );
       break;
     }
+    case 'COP': {
+      ifDef(
+        result,
+        'subtype',
+        source.data.subtype != '' ? source.data.subtype : null,
+      );
+      ifDef(
+        result,
+        'connectivity',
+        source.data.connectivity.toUpperCase() || 'ht',
+      );
+      break;
+    }
     case 'SUP': {
       ifDef(result, 'name', source.data.name || '');
       ifDef(result, 'expanded', source.data.expanded);

@@ -42,19 +42,14 @@ import { PEPTIDES_TAB, RNA_TAB } from '@constants/testIdConstants';
  */
 export async function clickOnXButton(page: Page) {
   const closeBtn = page.getByTestId('macromolecule-properties-close');
-
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
-      // wait max 2 s for the button to appear on each try
       await closeBtn.waitFor({ state: 'visible', timeout: 2_000 });
       await closeBtn.click();
-      return; // success → exit helper
     } catch {
-      // optional short pause between attempts
       await page.waitForTimeout(300);
     }
   }
-  // no throw → the calling test keeps running
 }
 
 export async function selectMolecularMassUnit(
@@ -110,7 +105,7 @@ async function selectPeptidesPropertiesTab(page: Page) {
  * the content is up-to-date.
  */
 async function closeAndOpenCalculatePropertiesWindow(page: Page) {
-  await TopLeftToolbar(page).calculateProperties();
+  await clickOnXButton(page);
   await TopLeftToolbar(page).calculateProperties();
 }
 

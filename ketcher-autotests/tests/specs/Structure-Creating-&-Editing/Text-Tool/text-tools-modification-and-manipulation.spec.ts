@@ -6,8 +6,6 @@ import {
   openFileAndAddToCanvas,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
-  selectRing,
-  RingButton,
   waitForRender,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
@@ -17,6 +15,7 @@ import { addTextBoxToCanvas } from '@utils/selectors/addTextBoxToCanvas';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 async function selectStructureWithSelectionTool(page: Page) {
   const point = { x: 97, y: 79 };
@@ -289,7 +288,7 @@ test.describe('Text tools test cases', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('OneTwoThree');
     await pressButton(page, 'Apply');
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await waitForRender(page, async () => {
       await page.getByTestId('canvas').click({ position: { x, y } });
     });

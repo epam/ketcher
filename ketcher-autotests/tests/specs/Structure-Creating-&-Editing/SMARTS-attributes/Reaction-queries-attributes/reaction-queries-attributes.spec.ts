@@ -1,6 +1,5 @@
 import { Page, test } from '@playwright/test';
 import {
-  RingButton,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   dragMouseTo,
@@ -16,7 +15,6 @@ import {
   clickOnCanvas,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import { selectRingButton } from '@utils/canvas/tools';
 import { checkSmartsValue } from '../utils';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -25,6 +23,7 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 async function drawStructureWithArrowOpenAngle(page: Page) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -92,7 +91,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
      * Description: pasting SMARTS with query groups should not trigger any error
      */
 
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
@@ -114,7 +113,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     const shiftValue = 50;
     const atomToolbar = RightToolbar(page);
 
-    await selectRingButton(RingButton.Cyclopropane, page);
+    await selectRingButton(page, 'Cyclopropane');
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await atomToolbar.clickAtom(Atom.Carbon);

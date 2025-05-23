@@ -8,12 +8,9 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
   takeEditorScreenshot,
-  selectRingButton,
-  RingButton,
   resetCurrentTool,
   attachOnTopOfBenzeneBonds,
   clickOnAtom,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
   selectFunctionalGroups,
   moveOnAtom,
@@ -38,6 +35,10 @@ import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
+import {
+  BottomToolbar,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 const X_DELTA = 300;
 
@@ -424,7 +425,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
     );
 
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await waitForRender(page, async () => {
@@ -433,7 +434,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await takeEditorScreenshot(page);
 
-    await selectRingButton(RingButton.Cyclopentadiene, page);
+    await selectRingButton(page, 'Cyclopentadiene');
     point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await resetCurrentTool(page);
@@ -647,7 +648,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     Description: All FG's which contain symbols 'C2' are displayed on FG's window.
     All FG's which contain symbols 'Y' are displayed on FG's window.
    */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await page.getByPlaceholder('Search by elements...').click();
     await page.keyboard.press('C');
@@ -656,7 +657,7 @@ test.describe('Templates - Functional Group Tools3', () => {
 
     await page.getByRole('banner').getByRole('button').click();
 
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByPlaceholder('Search by elements...').click();
     await page.keyboard.press('Y');
     await takeEditorScreenshot(page);
@@ -730,7 +731,7 @@ test.describe('Templates - Functional Group Tools3', () => {
 
     await leftToolbar.text();
 
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 
@@ -779,7 +780,7 @@ test.describe('Templates - Functional Group Tools3', () => {
     Test case: EPMLSOPKET-2931
     Description: FG is downloaded ('ketcher-fg-tmpls.sdf' file). File contains all FG's from library
    */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await pressButton(page, 'Save to SDF');
   });

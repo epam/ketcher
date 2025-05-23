@@ -10,14 +10,12 @@ import { Page, expect, test } from '@playwright/test';
 import {
   FILE_TEST_DATA,
   FunctionalGroups,
-  RingButton,
   SaltsAndSolvents,
   addMonomersToFavorites,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   clickOnCanvas,
   dragMouseTo,
-  drawBenzeneRing,
   getControlModifier,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
@@ -32,7 +30,6 @@ import {
   readFileContent,
   selectFunctionalGroups,
   selectMonomer,
-  selectRing,
   selectSaltsAndSolvents,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
@@ -91,6 +88,10 @@ import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 const topLeftCorner = {
   x: -325,
@@ -533,7 +534,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await clickInTheMiddleOfTheScreen(page);
       await moveMouseAway(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await selectRing(RingButton.Benzene, page);
+      await selectRingButton(page, 'Benzene');
       await clickInTheMiddleOfTheScreen(page);
       await IndigoFunctionsToolbar(page).ThreeDViewer();
       await moveMouseAway(page);
@@ -1044,7 +1045,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const y = 200;
       const x1 = 600;
       const y1 = 600;
-      await selectRing(RingButton.Benzene, page);
+      await selectRingButton(page, 'Benzene');
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

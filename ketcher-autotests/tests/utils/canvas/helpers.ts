@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import {
   LocatorScreenshotOptions,
   Page,
@@ -14,13 +15,7 @@ import {
 } from '@utils/clicks';
 import { ELEMENT_TITLE } from './types';
 import { getControlModifier } from '@utils/keyboard';
-import {
-  RingButton,
-  TemplateLibrary,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
-  selectMonomer,
-  selectRing,
-} from '@utils/selectors';
+import { TemplateLibrary, selectMonomer } from '@utils/selectors';
 import { waitForRender, waitForSpinnerFinishedWork } from '@utils/common';
 import { getLeftTopBarSize } from './common/getLeftTopBarSize';
 import { emptyFunction } from '@utils/common/helpers';
@@ -34,28 +29,14 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
-
-export async function drawBenzeneRing(page: Page) {
-  await selectRing(RingButton.Benzene, page);
-  await clickInTheMiddleOfTheScreen(page);
-}
-
-export async function drawCyclohexaneRing(page: Page) {
-  await selectRing(RingButton.Cyclohexane, page);
-  await clickInTheMiddleOfTheScreen(page);
-}
-
-export async function drawCyclopentadieneRing(page: Page) {
-  await selectRing(RingButton.Cyclopentadiene, page);
-  await clickInTheMiddleOfTheScreen(page);
-}
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 export async function openEditDialogForTemplate(
   page: Page,
   itemToChoose: TemplateLibrary,
   _newName?: string,
 ) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   await page.getByRole('tab', { name: 'Template Library' }).click();
   await page.getByRole('button', { name: 'Aromatics (18)' }).click();
   await page.getByTitle(itemToChoose).getByRole('button').click();

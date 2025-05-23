@@ -3,12 +3,9 @@ import { expect, test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
-  selectRing,
-  RingButton,
   moveOnAtom,
   waitForRender,
   takeEditorScreenshot,
-  drawBenzeneRing,
   clickOnAtom,
   clickOnBond,
   BondType,
@@ -30,6 +27,10 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -535,7 +536,7 @@ test.describe('Hot key Del', () => {
     });
     const x = 100;
     const y = 100;
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
       await moveOnAtom(page, 'C', 0);

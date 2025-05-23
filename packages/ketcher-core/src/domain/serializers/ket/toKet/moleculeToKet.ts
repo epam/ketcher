@@ -201,7 +201,7 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       ifDef(
         result,
         'connectivity',
-        source.data.connectivity.toUpperCase() || 'ht',
+        source.data.connectivity.toUpperCase() || 'HT',
       );
       break;
     }

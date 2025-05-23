@@ -15,15 +15,18 @@ type BottomToolbarLocators = {
 };
 
 export const BottomToolbar = (page: Page) => {
+  const getButton = (dataTestId: string): Locator =>
+    page.getByTestId(dataTestId);
+
   const locators: BottomToolbarLocators = {
-    benzeneButton: page.getByTestId('template-0'),
-    cyclopentadieneButton: page.getByTestId('template-1'),
-    cyclohexaneButton: page.getByTestId('template-2'),
-    cyclopentaneButton: page.getByTestId('template-3'),
-    cyclopropaneButton: page.getByTestId('template-4'),
-    cyclobutaneButton: page.getByTestId('template-5'),
-    cycloheptaneButton: page.getByTestId('template-6'),
-    cyclooctaneButton: page.getByTestId('template-7'),
+    benzeneButton: page.getByTestId(RingButton.Benzene),
+    cyclopentadieneButton: page.getByTestId(RingButton.Cyclopentadiene),
+    cyclohexaneButton: page.getByTestId(RingButton.Cyclohexane),
+    cyclopentaneButton: page.getByTestId(RingButton.Cyclopentane),
+    cyclopropaneButton: page.getByTestId(RingButton.Cyclopropane),
+    cyclobutaneButton: page.getByTestId(RingButton.Cyclobutane),
+    cycloheptaneButton: page.getByTestId(RingButton.Cycloheptane),
+    cyclooctaneButton: page.getByTestId(RingButton.Cyclooctane),
     structureLibraryButton: page.getByTestId('template-lib'),
   };
 
@@ -65,18 +68,15 @@ export const BottomToolbar = (page: Page) => {
     async StructureLibrary() {
       await locators.structureLibraryButton.click();
     },
-  };
-};
 
-export const ringToLocator: Record<RingButton, keyof BottomToolbarLocators> = {
-  Benzene: 'benzeneButton',
-  Cyclopentadiene: 'cyclopentadieneButton',
-  Cyclohexane: 'cyclohexaneButton',
-  Cyclopentane: 'cyclopentaneButton',
-  Cyclopropane: 'cyclopropaneButton',
-  Cyclobutane: 'cyclobutaneButton',
-  Cycloheptane: 'cycloheptaneButton',
-  Cyclooctane: 'cyclooctaneButton',
+    async clickRing(RingButton: RingButton) {
+      await getButton(RingButton).click();
+    },
+
+    getButtonLocator(RingButton: RingButton): Locator {
+      return getButton(RingButton);
+    },
+  };
 };
 
 export async function openStructureLibrary(page: Page) {
@@ -84,24 +84,22 @@ export async function openStructureLibrary(page: Page) {
 }
 
 export async function selectRingButton(page: Page, name: RingButton) {
-  const toolbar = BottomToolbar(page);
-  await toolbar[ringToLocator[name]].click();
+  await BottomToolbar(page).clickRing(name);
 }
 
 export async function drawBenzeneRing(page: Page) {
-  await selectRingButton(page, 'Benzene');
+  await BottomToolbar(page).clickRing(RingButton.Benzene);
   await clickInTheMiddleOfTheScreen(page);
 }
 
 export async function drawCyclohexaneRing(page: Page) {
-  await selectRingButton(page, 'Cyclohexane');
+  await BottomToolbar(page).clickRing(RingButton.Cyclohexane);
   await clickInTheMiddleOfTheScreen(page);
 }
 
 export async function drawCyclopentadieneRing(page: Page) {
-  await selectRingButton(page, 'Cyclopentadiene');
+  await BottomToolbar(page).clickRing(RingButton.Cyclopentadiene);
   await clickInTheMiddleOfTheScreen(page);
 }
 
 export type BottomToolbarType = ReturnType<typeof BottomToolbar>;
-export { RingButton };

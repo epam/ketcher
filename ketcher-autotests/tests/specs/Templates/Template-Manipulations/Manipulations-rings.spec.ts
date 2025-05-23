@@ -1,13 +1,5 @@
 /* eslint-disable no-magic-numbers */
 import { test, Page, expect } from '@playwright/test';
-import { BondType } from '@utils/canvas/types';
-import { getAtomByIndex } from '@utils/canvas/atoms';
-import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
-import {
-  getBondByIndex,
-  getLeftBondByAttributes,
-  getRightBondByAttributes,
-} from '@utils/canvas/bonds';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
@@ -16,39 +8,51 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
+import { BondType } from '@utils/canvas/types';
+import { getAtomByIndex } from '@utils/canvas/atoms';
+import {
+  getBondByIndex,
+  getLeftBondByAttributes,
+  getRightBondByAttributes,
+} from '@utils/canvas/bonds';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import {
-  RingButton,
-  ringToLocator,
+  BottomToolbar,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+
+function getRingButtonName(value: RingButton): string | undefined {
+  return Object.entries(RingButton).find(([, val]) => val === value)?.[0];
+}
 
 async function checkTooltip(type: RingButton, page: Page) {
-  const templateButton = page.getByRole('button', { name: type });
-  await expect(templateButton).toHaveAttribute('title', `${type} (T)`);
+  const templateButton = BottomToolbar(page).getButtonLocator(type);
+  const buttonName = getRingButtonName(type);
+  await expect(templateButton).toHaveAttribute('title', `${buttonName} (T)`);
 }
 
 async function placeTwoRingsMergedByAtom(type: RingButton, page: Page) {
-  await selectButtonByTitle(type, page);
+  await BottomToolbar(page).clickRing(type);
   await clickInTheMiddleOfTheScreen(page);
   await moveMouseAway(page);
 
   // Attaching Second Ring By Atom
-  await selectButtonByTitle(type, page);
+  await BottomToolbar(page).clickRing(type);
   const point = await getAtomByIndex(page, { label: 'C' }, 2);
   await clickOnCanvas(page, point.x, point.y);
 }
 
 async function mergeRingByBond(type: RingButton, page: Page) {
-  await selectButtonByTitle(type, page);
+  await BottomToolbar(page).clickRing(type);
   const point = await getBondByIndex(page, { type: BondType.SINGLE }, 5);
   await clickOnCanvas(page, point.x, point.y);
 }
 
 async function mergeDistantRingByABond(type: RingButton, page: Page) {
-  await selectButtonByTitle(type, page);
+  await BottomToolbar(page).clickRing(type);
   let point = await getAtomByIndex(page, { label: 'C' }, 2);
   const selectionRange = point.x / 4;
   await clickOnCanvas(
@@ -102,7 +106,7 @@ async function manipulateRingsByName(type: RingButton, page: Page) {
   await takeEditorScreenshot(page);
   await TopLeftToolbar(page).clearCanvas();
 
-  await selectButtonByTitle(type, page);
+  await selectRingButton(page, type);
   await clickInTheMiddleOfTheScreen(page);
   await deleteRightBondInRing(page);
   await moveMouseAway(page);
@@ -111,7 +115,7 @@ async function manipulateRingsByName(type: RingButton, page: Page) {
   await checkHistoryForBondDeletion(page);
 }
 
-const templates = Object.keys(ringToLocator) as RingButton[];
+const templates = Object.keys(RingButton) as RingButton[];
 
 test.describe('Templates – Rings manipulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -120,7 +124,7 @@ test.describe('Templates – Rings manipulations', () => {
 
   for (const template of templates) {
     test(`Ring: ${template}`, async ({ page }) => {
-      await selectRingButton(page, template);
+      await BottomToolbar(page).clickRing(template);
       await manipulateRingsByName(template, page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);

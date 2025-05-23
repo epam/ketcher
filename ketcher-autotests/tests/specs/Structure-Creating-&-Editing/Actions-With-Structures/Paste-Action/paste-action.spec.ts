@@ -16,6 +16,7 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Paste Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -44,10 +45,10 @@ test.describe('Paste Tool', () => {
     */
     await drawBenzeneRing(page);
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, 200, 200);
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, 400, 400);
 
     await selectAllStructuresOnCanvas(page);

@@ -16,6 +16,7 @@ import {
 } from '@utils';
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import { getKet } from '@utils/formats';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
   await IndigoFunctionsToolbar(page).ThreeDViewer();
@@ -38,7 +39,7 @@ test.describe('3D Viewer', () => {
     The structure is spinned.
     Position of structure on the canvas is not changed. 
     */
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -142,7 +143,7 @@ test.describe('3D Viewer', () => {
     3D window is opened. Benzene is drawn in it. 
     */
     // we need remove or block the variable number of frames per second in the lower right corner
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await open3DViewer(page);
     await expect(page).toHaveScreenshot({
@@ -160,7 +161,7 @@ test.describe('3D Viewer', () => {
     Benzene is drawn in it. The structure is spinned.
     Position of the structure on the canvas is changed. 
     */
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     const initialStructureData = await getKet(page);
     await open3DViewer(page);

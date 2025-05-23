@@ -30,6 +30,7 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;
@@ -1122,7 +1123,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await waitForIndigoToLoad(page);
     await TopToolbar(page).expandCopyDropdown();
     await expect(page).toHaveScreenshot();
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await TopToolbar(page).expandCopyDropdown();
@@ -1137,7 +1138,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await waitForIndigoToLoad(page);
     await expect(page).toHaveScreenshot();
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await expect(page).toHaveScreenshot();
@@ -1156,7 +1157,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await waitForIndigoToLoad(page);
     await expect(page).toHaveScreenshot();
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await TopToolbar(page).cut();

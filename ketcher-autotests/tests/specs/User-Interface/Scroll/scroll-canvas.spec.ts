@@ -1,5 +1,6 @@
 import test from '@playwright/test';
-import { drawBenzeneRing, takeEditorScreenshot, waitForPageInit } from '@utils';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { takeEditorScreenshot, waitForPageInit } from '@utils';
 
 test.describe('Scroll canvas', () => {
   test.beforeEach(async ({ page }) => {

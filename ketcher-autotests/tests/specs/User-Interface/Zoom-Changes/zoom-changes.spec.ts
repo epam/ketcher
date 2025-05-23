@@ -1,6 +1,5 @@
 import { test, expect, Page } from '@playwright/test';
 import {
-  resetCurrentTool,
   takeTopToolbarScreenshot,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
@@ -10,14 +9,15 @@ import {
   TemplateLibrary,
   openFileAndAddToCanvas,
   waitForPageInit,
-  drawBenzeneRing,
   ZoomOutByKeyboard,
   ZoomInByKeyboard,
   readFileContent,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 async function checkZoomLevel(page: Page, zoomLevel: string) {
   const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
@@ -163,6 +163,7 @@ test.describe('Zoom changes', () => {
       */
     const zoomSelector = CommonTopRightToolbar(page).zoomSelector;
     const zoomOutButton = CommonTopRightToolbar(page).zoomOutButton;
+
     await drawBenzeneRing(page);
     await resetCurrentTool(page);
 

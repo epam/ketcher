@@ -19,7 +19,6 @@ import {
   selectPartOfMolecules,
   copyAndPaste,
   cutAndPaste,
-  drawBenzeneRing,
   getCoordinatesTopAtomOfBenzeneRing,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
@@ -34,6 +33,7 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 const X_DELTA_ONE = 100;
 

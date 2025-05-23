@@ -18,9 +18,15 @@ type ZoomDropdownLocators = {
 
 export const CommonTopRightToolbar = (page: Page) => {
   const locators: CommonTopRightToolbarLocators = {
-    ketcherModeSwitcherCombobox: page.getByTestId('polymer-toggler'),
-    fullScreenButton: page.getByTestId('fullscreen-mode-button'),
-    zoomSelector: page.getByTestId('zoom-selector'),
+    ketcherModeSwitcherCombobox: page
+      .getByTestId('polymer-toggler')
+      .filter({ has: page.locator(':visible') }),
+    fullScreenButton: page
+      .getByTestId('fullscreen-mode-button')
+      .filter({ has: page.locator(':visible') }),
+    zoomSelector: page
+      .getByTestId('zoom-selector')
+      .filter({ has: page.locator(':visible') }),
   };
 
   const zoomLocators: ZoomDropdownLocators = {
@@ -107,10 +113,11 @@ export const CommonTopRightToolbar = (page: Page) => {
 
     async turnOnMicromoleculesEditor() {
       const switcher = locators.ketcherModeSwitcherCombobox;
-      expect(switcher).toBeVisible();
+      await switcher.waitFor({ state: 'visible' });
       await switcher.click();
+
       const microOption = page.getByTestId('molecules_mode');
-      expect(microOption).toBeVisible();
+      await microOption.waitFor({ state: 'visible' });
       await microOption.click();
     },
   };

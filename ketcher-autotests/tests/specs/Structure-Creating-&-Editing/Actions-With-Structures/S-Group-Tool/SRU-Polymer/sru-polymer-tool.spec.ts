@@ -8,15 +8,11 @@ import {
   clickOnCanvas,
   copyAndPaste,
   cutAndPaste,
-  LeftPanelButton,
   openFileAndAddToCanvas,
   pressButton,
   resetCurrentTool,
-  RingButton,
   screenshotBetweenUndoRedo,
   selectAllStructuresOnCanvas,
-  selectLeftPanelButton,
-  selectRingButton,
   selectUndoByKeyboard,
   takeEditorScreenshot,
   waitForPageInit,
@@ -30,6 +26,9 @@ import {
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -74,7 +73,7 @@ test.describe('SRU Polymer tool', () => {
       Description: The brackets are rendered correctly around Atom
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 3);
     await selectSruPolymer(
       page,
@@ -92,7 +91,7 @@ test.describe('SRU Polymer tool', () => {
       Description: The brackets are rendered correctly around Bond
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 3);
     await selectSruPolymer(
       page,
@@ -111,7 +110,7 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectSruPolymer(
       page,
       'Data',
@@ -139,7 +138,7 @@ test.describe('SRU Polymer tool', () => {
       'Head-to-head' connection type is selected.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Edit S-Group...').click();
@@ -154,7 +153,7 @@ test.describe('SRU Polymer tool', () => {
       'Either unknown' connection type is selected.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Edit S-Group...').click();
@@ -170,7 +169,7 @@ test.describe('SRU Polymer tool', () => {
     */
     const polymerLabel = 'A';
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 3);
     await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await page.getByText('Edit S-Group...').click();
@@ -233,7 +232,7 @@ test.describe('SRU Polymer tool', () => {
       Description: User is able to add Template on structure with SRU polymer S-group.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -251,7 +250,7 @@ test.describe('SRU Polymer tool', () => {
     */
     const rGroupName = 'R12';
     await openFileAndAddToCanvas('Molfiles-V2000/sru-polymer.mol', page);
-    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 3);
     await page.getByRole('button', { name: rGroupName }).click();
     await pressButton(page, 'Apply');
@@ -308,7 +307,7 @@ test.describe('SRU Polymer tool', () => {
     */
     await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectSruPolymer(
       page,
       'Data',

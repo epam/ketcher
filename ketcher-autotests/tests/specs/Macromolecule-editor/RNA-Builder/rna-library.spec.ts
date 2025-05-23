@@ -1098,7 +1098,10 @@ test.describe('RNA Library', () => {
       'KET/chain-with-unsplit-nucleotides.ket',
       page,
     );
-    await takeEditorScreenshot(page);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
   });
 
   test('Validate that unsplit nucleotides could be deleted from sequence', async () => {
@@ -1143,6 +1146,8 @@ test.describe('RNA Library', () => {
       await clickOnCanvas(page, x, y);
       await page.keyboard.press('Escape');
       await clickOnCanvas(page, x, y);
+      await moveMouseAway(page);
+      await getMonomerLocator(page, monomer).hover();
       await waitForMonomerPreview(page);
       await takeEditorScreenshot(page);
 

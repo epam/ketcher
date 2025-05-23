@@ -1,15 +1,11 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
-  LeftPanelButton,
-  selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
   BondType,
-  selectRingButton,
-  RingButton,
   copyAndPaste,
   cutAndPaste,
   clickOnAtom,
@@ -27,6 +23,9 @@ import {
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 let point: { x: number; y: number };
 
 async function addNameToSuperatom(
@@ -81,7 +80,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: The brackets are rendered correctly around Atom
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 3);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     await takeEditorScreenshot(page);
@@ -93,7 +92,7 @@ test.describe('Superatom S-Group tool', () => {
       Description: The brackets are rendered correctly around Bond
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 3);
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     await takeEditorScreenshot(page);
@@ -106,7 +105,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     await takeEditorScreenshot(page);
   });
@@ -119,7 +118,7 @@ test.describe('Superatom S-Group tool', () => {
     const CANVAS_CLICK_X = 570;
     const CANVAS_CLICK_Y = 380;
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnCanvas(page, CANVAS_CLICK_X, CANVAS_CLICK_Y);
     await fillFieldByLabel(page, 'Name', 'Test@!#$%12345');
     await pressButton(page, 'Apply');
@@ -175,7 +174,7 @@ test.describe('Superatom S-Group tool', () => {
       EDIT ABBREVIATION modal appears.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });
@@ -189,7 +188,7 @@ test.describe('Superatom S-Group tool', () => {
       EDIT ABBREVIATION modal appears.
     */
     await openFileAndAddToCanvas('Molfiles-V2000/superatom.mol', page);
-    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });
@@ -284,7 +283,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     await verifyFileExport(
       page,
@@ -304,7 +303,7 @@ test.describe('Superatom S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await addQueryComponent(page);
 
     await verifyFileExport(

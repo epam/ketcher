@@ -1,22 +1,17 @@
 import { Page, test } from '@playwright/test';
 import {
-  LeftPanelButton,
   openFileAndAddToCanvas,
   waitForPageInit,
   waitForRender,
-  drawBenzeneRing,
   resetCurrentTool,
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  pressButton,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   cutAndPaste,
   clickOnCanvas,
   ZoomInByKeyboard,
 } from '@utils';
-import { selectLeftPanelButton } from '@utils/canvas/tools';
 import { selectAllStructuresOnCanvas, copyAndPaste } from '@utils/canvas';
 import {
   FileType,
@@ -27,12 +22,18 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
+import {
+  BottomToolbar,
+  drawBenzeneRing,
+} from '@tests/pages/molecules/BottomToolbar';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
 
 const setupEllipse = async (page: Page) => {
-  await selectLeftPanelButton(LeftPanelButton.ShapeEllipse, page);
+  await LeftToolbar(page).selectShapeTool(ShapeType.Ellipse);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const ellipseCoordinates = { x: x + ellipseWidth, y: y + ellipseHeight };
   await clickInTheMiddleOfTheScreen(page);
@@ -201,7 +202,7 @@ test.describe('Action on simples objects', () => {
     await drawBenzeneRing(page);
     await saveToTemplates(page);
     await TopLeftToolbar(page).clearCanvas();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await takeEditorScreenshot(page);
   });

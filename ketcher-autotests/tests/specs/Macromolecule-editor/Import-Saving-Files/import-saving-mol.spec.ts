@@ -15,6 +15,7 @@ import {
   MacroFileType,
   readFileContent,
   MonomerType,
+  selectSequenceLayoutModeTool,
 } from '@utils';
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
@@ -262,7 +263,7 @@ test.describe('Import-Saving .mol Files', () => {
     Description: System does not let uploading corrupted .mol file
     */
     const filename = 'Molfiles-V3000/corrupted-file.mol';
-
+    await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasMacro(filename, page, undefined, true);
     await takeEditorScreenshot(page);
   });

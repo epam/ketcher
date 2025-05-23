@@ -1,12 +1,9 @@
 import { expect, test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
-  RingButton,
-  selectRingButton,
   BondType,
   waitForPageInit,
   takeEditorScreenshot,
-  drawBenzeneRing,
   clickOnAtom,
   openFileAndAddToCanvas,
   selectAllStructuresOnCanvas,
@@ -14,6 +11,10 @@ import {
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Select tools tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,7 +24,7 @@ test.describe('Select tools tests', () => {
   test('when add molecula and choose select tools and move cursor to edge it should show specific pointer', async ({
     page,
   }) => {
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
     await CommonLeftToolbar(page).selectAreaSelectionTool(

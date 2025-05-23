@@ -5,24 +5,17 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
   getCoordinatesTopAtomOfBenzeneRing,
-  LeftPanelButton,
   moveMouseToTheMiddleOfTheScreen,
-  RingButton,
-  selectRing,
-  selectTool,
   takeEditorScreenshot,
   DELAY_IN_SECONDS,
   clickOnTheCanvas,
   openFileAndAddToCanvas,
-  selectLeftPanelButton,
   pressButton,
   selectFunctionalGroups,
   FunctionalGroups,
-  selectRingButton,
   clickOnBond,
   takeLeftToolbarScreenshot,
   moveOnAtom,
-  drawBenzeneRing,
   rightClickOnBond,
   selectOption,
   waitForPageInit,
@@ -47,7 +40,12 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -119,7 +117,7 @@ test.describe(`Bond tool:`, () => {
 
       await TopLeftToolbar(page).clearCanvas();
 
-      await selectRing(RingButton.Benzene, page);
+      await selectRingButton(page, 'Benzene');
       await clickInTheMiddleOfTheScreen(page);
 
       await CommonLeftToolbar(page).selectBondTool(bondType);
@@ -160,7 +158,7 @@ test.describe(`Bond tool:`, () => {
       /**
        * Test case: EPMLSOPKET-1375, 1383, 1392, 1398, 1406, 1412, 1418, 1424, 1430, 1439, 1446, 1453, 2240, 2246
        */
-      await selectTool(LeftPanelButton.Chain, page);
+      await LeftToolbar(page).chain();
       await moveMouseToTheMiddleOfTheScreen(page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
       await dragMouseTo(point.x + DELTA, point.y, page);
@@ -172,7 +170,7 @@ test.describe(`Bond tool:`, () => {
 
       await TopLeftToolbar(page).clearCanvas();
 
-      await selectRing(RingButton.Benzene, page);
+      await selectRingButton(page, 'Benzene');
       await clickInTheMiddleOfTheScreen(page);
 
       await CommonLeftToolbar(page).selectBondTool(bondType);
@@ -196,7 +194,7 @@ test.describe(`Bond tool:`, () => {
       const chainSizeWithBond = 5;
       const chainSizeWithoutBondAfterUndo = 4;
       const chainSizeAfterMultipleEditing = 6;
-      await selectTool(LeftPanelButton.Chain, page);
+      await LeftToolbar(page).chain();
       await moveMouseToTheMiddleOfTheScreen(page);
       point = await getCoordinatesOfTheMiddleOfTheScreen(page);
       await dragMouseTo(point.x + DELTA, point.y, page);
@@ -289,7 +287,7 @@ test.describe(`Bond tool:`, () => {
 
       test(`${bondTypeName}: Open and edit`, async () => {
         await openFileAndAddToCanvas(fileName, page);
-        await selectLeftPanelButton(LeftPanelButton.ReactionPlusTool, page);
+        await LeftToolbar(page).reactionPlusTool();
         await clickOnTheCanvas(page, 200, 0);
       });
     });
@@ -380,7 +378,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         });
         await TopLeftToolbar(page).undo();
 
-        await selectRing(RingButton.Cyclohexane, page);
+        await selectRingButton(page, 'Cyclohexane');
         await clickOnCanvas(page, point.x, point.y, {
           waitForRenderTimeOut: 100,
         });
@@ -459,7 +457,7 @@ test.describe('Bond Tool', () => {
      *Description: Bond Tool - Adding custom s-groups to bonds correctly selects bonds
      */
     await drawBenzeneRing(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 0);
     await takeEditorScreenshot(page);
   });
@@ -600,7 +598,7 @@ test.describe('Bond Tool', () => {
      *Test case: EPMLSOPKET-1436
      *Description: Aromatic Bond tool - Ring inside the cycle structure
      */
-    await selectRingButton(RingButton.Cyclohexane, page);
+    await selectRingButton(page, 'Cyclohexane');
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Aromatic);
     let i = 0;

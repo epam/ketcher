@@ -8,25 +8,24 @@ import {
   pasteFromClipboardAndAddToCanvas,
   TemplateLibrary,
   selectUserTemplatesAndPlaceInTheMiddle,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
   copyAndPaste,
   cutAndPaste,
-  drawBenzeneRing,
   clickOnAtom,
   getEditorScreenshot,
   clickOnCanvas,
 } from '@utils';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import {
+  BottomToolbar,
+  drawBenzeneRing,
+  openStructureLibrary,
+} from '@tests/pages/molecules/BottomToolbar';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
-
-async function openStructureLibrary(page: Page) {
-  await page.getByTestId('template-lib').click();
-}
 
 async function saveToTemplates(page: Page, shouldSave = true) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -212,7 +211,7 @@ test.describe('Create and Save Templates', () => {
     await saveToTemplates(page);
 
     await TopLeftToolbar(page).clearCanvas();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('0NNNNHNHNNHNNHNH').click();
     await clickInTheMiddleOfTheScreen(page);

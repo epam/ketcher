@@ -6,24 +6,24 @@ import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   BondType,
-  resetCurrentTool,
-  selectLeftPanelButton,
-  LeftPanelButton,
   waitForPageInit,
   waitForRender,
   clickOnBond,
   clickOnAtom,
   clickOnCanvas,
-  drawBenzeneRing,
   selectAllStructuresOnCanvas,
   screenshotBetweenUndoRedo,
+  moveMouseAway,
 } from '@utils';
+import { resetCurrentTool } from '@utils/canvas/tools';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Right-click menu', () => {
   test.beforeEach(async ({ page }) => {
@@ -215,6 +215,7 @@ test.describe('Right-click menu', () => {
       .locator('label')
       .filter({ hasText: 'Ignore the chiral flag' })
       .click();
+    await moveMouseAway(page);
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
   });
@@ -306,7 +307,7 @@ test.describe('Right-click menu', () => {
     Description: Opens right-click menu for atom
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await takeEditorScreenshot(page);
@@ -320,7 +321,7 @@ test.describe('Right-click menu', () => {
     Description: Opens right-click menu for bond
     */
     await openFileAndAddToCanvas('KET/chain.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     const point = await getBondByIndex(page, { type: BondType.SINGLE }, 0);
     await clickOnCanvas(page, point.x, point.y, { button: 'right' });
     await takeEditorScreenshot(page);

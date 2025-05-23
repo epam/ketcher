@@ -1,16 +1,11 @@
 /* eslint-disable no-magic-numbers */
 import { expect, test } from '@playwright/test';
 import {
-  selectTool,
-  LeftPanelButton,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
-  selectRing,
-  RingButton,
   moveOnAtom,
   waitForRender,
   takeEditorScreenshot,
-  drawBenzeneRing,
   clickOnAtom,
   clickOnBond,
   BondType,
@@ -30,7 +25,12 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { IndigoFunctionsToolbar } from '@tests/pages/molecules/indigo2';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -43,9 +43,9 @@ test.describe('Hot keys', () => {
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Fragment,
     );
-    await selectTool(LeftPanelButton.AddText, page);
+    await LeftToolbar(page).text();
     await page.keyboard.press('Escape');
-    await expect(page.getByTestId('select-fragment')).toBeVisible();
+    await expect(page.getByTestId(SelectionToolType.Fragment)).toBeVisible();
     await expect(page).toHaveScreenshot();
   });
 
@@ -53,7 +53,7 @@ test.describe('Hot keys', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.keyboard.press('Shift+Tab');
     await page.keyboard.press('Shift+Tab');
-    await expect(page.getByTestId('select-fragment')).toBeVisible();
+    await expect(page.getByTestId(SelectionToolType.Fragment)).toBeVisible();
     await expect(page).toHaveScreenshot();
   });
 
@@ -536,7 +536,7 @@ test.describe('Hot key Del', () => {
     });
     const x = 100;
     const y = 100;
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
       await moveOnAtom(page, 'C', 0);

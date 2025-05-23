@@ -1,17 +1,14 @@
-import { CoreEditor, EditorHistory, FlexMode } from 'application/editor';
+import { CoreEditor, EditorHistory } from 'application/editor';
 import { createPolymerEditorCanvas } from '../../helpers/dom';
 import { Command } from 'domain/entities/Command';
-import { BaseMode } from 'application/editor/modes/BaseMode';
 
 describe('EditorHistory', () => {
   let canvas;
   let editor: CoreEditor;
   let history: EditorHistory;
-  let mode: BaseMode;
   beforeEach(() => {
-    mode = new FlexMode();
     canvas = createPolymerEditorCanvas();
-    editor = new CoreEditor({ theme: {}, canvas, mode });
+    editor = new CoreEditor({ theme: {}, canvas });
     history = new EditorHistory(editor);
   });
 

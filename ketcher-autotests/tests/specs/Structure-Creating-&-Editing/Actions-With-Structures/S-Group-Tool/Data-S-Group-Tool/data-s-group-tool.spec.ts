@@ -2,8 +2,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
-  LeftPanelButton,
-  selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -11,8 +9,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   resetCurrentTool,
   BondType,
-  selectRingButton,
-  RingButton,
   copyAndPaste,
   cutAndPaste,
   clickOnBond,
@@ -31,6 +27,9 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const CANVAS_CLICK_X = 600;
 const CANVAS_CLICK_Y = 600;
@@ -57,7 +56,7 @@ async function selectSGroupProperties(
   radioButton: string,
 ) {
   await selectAllStructuresOnCanvas(page);
-  await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+  await LeftToolbar(page).sGroup();
   await page.getByTestId('context-input-span').click();
   // await pressButton(page, contextName);
   await page.getByRole('option', { name: optionName }).click();
@@ -79,7 +78,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
     await fillFieldByPlaceholder(page, 'Enter value', '33');
     await pressButton(page, 'Apply');
@@ -93,9 +92,9 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1499
       Description: The 'S-Group Properties' dialog appears when user selects atom.
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });
@@ -107,9 +106,9 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1499
       Description: The 'S-Group Properties' dialog appears when user selects bond.
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 2);
     await takeEditorScreenshot(page);
   });
@@ -121,10 +120,10 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1499
       Description: The 'S-Group Properties' dialog appears when user selects whole structure.
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
   });
 
@@ -321,7 +320,7 @@ test.describe('Data S-Group tool', () => {
       Description: User is able to add R-Group Label and Undo/Redo on structure with Data S-group.
     */
     await openFileAndAddToCanvas('KET/chain-with-name-and-value.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 3);
     await pressButton(page, 'R8');
     await pressButton(page, 'Apply');
@@ -391,7 +390,7 @@ test.describe('Data S-Group tool', () => {
       Description: Openns S-Group menu with filled context field Atom
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
   });
@@ -402,7 +401,7 @@ test.describe('Data S-Group tool', () => {
       Description: Openns S-Group menu with filled context field Bond
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 3);
     await takeEditorScreenshot(page);
   });
@@ -416,7 +415,7 @@ test.describe('Data S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
   });
 

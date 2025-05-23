@@ -112,7 +112,9 @@ test.describe('Erase Tool', () => {
       testId: 'erase',
       title: 'Erase (Del)',
     };
-    const iconButton = page.getByTestId(icon.testId);
+    const iconButton = page
+      .getByTestId(icon.testId)
+      .filter({ has: page.locator(':visible') });
     await expect(iconButton).toHaveAttribute('title', icon.title);
     await iconButton.hover();
     expect(icon.title).toBeTruthy();

@@ -19,8 +19,6 @@ import {
   takePageScreenshot,
   selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
-  selectRingButton,
-  RingButton,
   clickOnCanvas,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
@@ -45,10 +43,10 @@ import {
   selectSugarSlot,
   toggleRnaBuilder,
 } from '@utils/macromolecules/rnaBuilder';
-import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
-import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 let page: Page;
 
@@ -806,26 +804,17 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await getSymbolLocator(page, {
-      symbolAlias: 'A',
-      nodeIndexOverall: 1,
-    }).click();
     const symbolLocator = getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 1,
     });
+    await symbolLocator.click();
+
     await modifyInRnaBuilder(page, symbolLocator);
     await selectBaseSlot(page);
     await selectMonomer(page, Bases.DNA_N);
     await pressSaveButton(page);
-    await TopLeftToolbar(page).saveFile();
-    await SaveStructureDialog(page).chooseFileFormat(
-      MacromoleculesFileFormatType.HELM,
-    );
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await verifyHELMExport(page, 'RNA1{R(A)P.R(A,C,G,T)P.R(A)}$$$$V2.0');
   });
 
   test('Case 25: Correct bond length and angle for non-natural monomers in the library', async () => {
@@ -850,9 +839,13 @@ test.describe('Ketcher bugs in 3.3.0', () => {
     });
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await page.getByText('1Nal').click({ button: 'right' });
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('1Nal')
+      .click({ button: 'right' });
     await page.getByText('Expand monomer').click();
-    await selectRingButton(RingButton.Cyclohexane, page);
+    await selectRingButton(page, 'Cyclohexane');
     await clickOnCanvas(page, 505, 400);
     await takeEditorScreenshot(page);
   });

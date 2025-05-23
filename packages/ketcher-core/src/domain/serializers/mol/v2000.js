@@ -292,7 +292,14 @@ function processMPropertyLine(type, propertyData, props, sGroups, rLogic) {
   } else if (type === 'SPL') {
     sGroup.applySGroupProp(sGroups, 'parent', propertyData, true, true);
   } else if (type === 'SCN') {
-    sGroup.applySGroupProp(sGroups, 'connectivity', propertyData);
+    sGroup.applySGroupProp(
+      sGroups,
+      'connectivity',
+      propertyData,
+      false,
+      false,
+      true,
+    );
   } else if (type === 'SAL') {
     sGroup.applySGroupArrayProp(sGroups, 'atoms', propertyData, -1);
   } else if (type === 'SBL') {

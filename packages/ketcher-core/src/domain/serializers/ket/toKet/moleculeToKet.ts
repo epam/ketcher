@@ -201,7 +201,7 @@ function sgroupToKet(struct: Struct, source: SGroup) {
       ifDef(
         result,
         'subtype',
-        source.data.subtype != '' ? source.data.subtype : null,
+        source.data.subtype !== '' ? source.data.subtype : null,
       );
       ifDef(
         result,

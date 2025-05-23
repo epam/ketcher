@@ -1,4 +1,4 @@
-import { Atom, fromOneAtomDeletion } from 'ketcher-core';
+import { Atom, fromOneAtomDeletion, ketcherProvider } from 'ketcher-core';
 import { useCallback } from 'react';
 import { useAppContext } from 'src/hooks';
 import Editor from 'src/script/editor';
@@ -8,11 +8,11 @@ import { isNumber } from 'lodash';
 type Params = ItemEventParams<AtomContextMenuProps>;
 
 const useRemoveAttachmentPoint = () => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
 
   const handler = useCallback(
     async ({ props }: Params) => {
-      const editor = getKetcherInstance().editor as Editor;
+      const editor = ketcherProvider.getKetcher(ketcherId).editor as Editor;
       const restruct = editor.render.ctab;
       const struct = editor.struct();
       const atomId = props?.atomIds?.[0];
@@ -49,7 +49,7 @@ const useRemoveAttachmentPoint = () => {
       editor.selection(null);
       editor.focusCliparea();
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   return [handler];

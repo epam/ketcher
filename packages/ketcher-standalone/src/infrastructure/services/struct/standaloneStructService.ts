@@ -224,6 +224,7 @@ class IndigoService implements StructService {
   private readonly defaultOptions: StructServiceOptions;
   private worker: Worker;
   private readonly EE: EventEmitter = new EventEmitter();
+  private ketcherId: string | null = null;
 
   constructor(defaultOptions: StructServiceOptions) {
     this.defaultOptions = defaultOptions;
@@ -245,12 +246,19 @@ class IndigoService implements StructService {
     };
   }
 
+  public addKetcherId(ketcherId: string) {
+    this.ketcherId = ketcherId;
+  }
+
   private getStandardServerOptions(options?: StructServiceOptions) {
     if (!options) {
       return this.defaultOptions;
     }
+    if (!this.ketcherId) {
+      throw new Error('Cannot getting options because there are no ketcherId');
+    }
 
-    return pickStandardServerOptions(options);
+    return pickStandardServerOptions(this.ketcherId, options);
   }
 
   private callIndigoNoRenderLoadedCallback() {
@@ -408,7 +416,9 @@ class IndigoService implements StructService {
         ...this.getStandardServerOptions(options),
         'output-content-type': 'application/json',
 
-        'render-label-mode': getLabelRenderModeForIndigo(),
+        'render-label-mode': this.ketcherId
+          ? getLabelRenderModeForIndigo(this.ketcherId)
+          : undefined,
         'render-font-size': options?.['render-font-size'],
         'render-font-size-unit': options?.['render-font-size-unit'],
         'render-font-size-sub': options?.['render-font-size-sub'],
@@ -647,11 +657,11 @@ class IndigoService implements StructService {
             (acc, curr) => {
               const [key, value] = curr;
               const mappedPropertyName = mapWarningGroup(key);
-              acc[mappedPropertyName] = value;
+              acc[mappedPropertyName] = value as string;
 
               return acc;
             },
-            {},
+            {} as CheckResult,
           );
           resolve(result);
         } else {
@@ -752,7 +762,9 @@ class IndigoService implements StructService {
 
       const commandOptions: CommandOptions = {
         ...this.getStandardServerOptions(restOptions),
-        'render-label-mode': getLabelRenderModeForIndigo(),
+        'render-label-mode': this.ketcherId
+          ? getLabelRenderModeForIndigo(this.ketcherId)
+          : undefined,
         'render-coloring': restOptions['render-coloring'],
         'render-font-size': restOptions['render-font-size'],
         'render-font-size-unit': restOptions['render-font-size-unit'],

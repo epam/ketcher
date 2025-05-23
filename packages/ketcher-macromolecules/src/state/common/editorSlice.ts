@@ -40,6 +40,7 @@ export const molarMeasurementUnitToNumber = {
 
 // TODO: Looks like we do not use `isReady`. Delete?
 interface EditorState {
+  ketcherId: string;
   isReady: boolean | null;
   activeTool: string;
   editor: CoreEditor | undefined;
@@ -54,6 +55,7 @@ interface EditorState {
 }
 
 const initialState: EditorState = {
+  ketcherId: '',
   isReady: null,
   activeTool: 'select',
   editor: undefined,
@@ -78,6 +80,9 @@ export const editorSlice: Slice = createSlice({
     init: (state) => {
       state.isReady = false;
     },
+    initKetcherId: (state, action: PayloadAction<string>) => {
+      state.ketcherId = action.payload;
+    },
     initSuccess: (state) => {
       state.isReady = true;
     },
@@ -94,6 +99,7 @@ export const editorSlice: Slice = createSlice({
     createEditor: (
       state,
       action: PayloadAction<{
+        ketcherId: string;
         theme: DeepPartial<ThemeType>;
         canvas: SVGSVGElement;
         monomersLibraryUpdate?: string | JSON;
@@ -158,6 +164,7 @@ export const {
   init,
   initSuccess,
   initFailure,
+  initKetcherId,
   selectTool,
   setPosition,
   createEditor,
@@ -185,6 +192,10 @@ export const selectEditorPosition = (
 // export const selectEditorActiveTool = (
 //   state: RootState,
 // ): EditorState['activeTool'] => state.editor.activeTool;
+
+export const selectKetcherId = (state: RootState): string => {
+  return state.editor.ketcherId;
+};
 
 export const selectEditor = (state: RootState): CoreEditor =>
   state.editor.editor;

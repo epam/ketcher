@@ -7,7 +7,7 @@ import {
   RGroupAttachmentPointContextMenuProps,
 } from '../contextMenu.types';
 import { editRGroupAttachmentPoint } from 'src/script/editor/tool/apoint.utils';
-import { Ketcher } from 'ketcher-core';
+import { Ketcher, ketcherProvider } from 'ketcher-core';
 
 type Params = ItemEventParams<RGroupAttachmentPointContextMenuProps>;
 
@@ -31,11 +31,11 @@ const getAtomIdByProps = (
 };
 
 const useRGroupAttachmentPointEdit = () => {
-  const { getKetcherInstance } = useAppContext();
+  const { ketcherId } = useAppContext();
 
   const handler = useCallback(
     ({ props }: Params) => {
-      const ketcher = getKetcherInstance();
+      const ketcher = ketcherProvider.getKetcher(ketcherId);
       const restruct = ketcher.editor.render.ctab;
       const atomId = getAtomIdByProps(props, ketcher);
       const atom = restruct.molecule.atoms.get(atomId);
@@ -43,12 +43,12 @@ const useRGroupAttachmentPointEdit = () => {
 
       editRGroupAttachmentPoint(ketcher.editor, atom, atomId);
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   const disabled = useCallback(
     ({ props }: Params) => {
-      const ketcher = getKetcherInstance();
+      const ketcher = ketcherProvider.getKetcher(ketcherId);
       const restruct = ketcher.editor.render.ctab;
       const atomId = getAtomIdByProps(props, ketcher);
       const atom = restruct.molecule.atoms.get(atomId);
@@ -56,7 +56,7 @@ const useRGroupAttachmentPointEdit = () => {
 
       return atom.isRGroupAttachmentPointEditDisabled;
     },
-    [getKetcherInstance],
+    [ketcherId],
   );
 
   const hidden = useCallback(({ props }: Params) => {

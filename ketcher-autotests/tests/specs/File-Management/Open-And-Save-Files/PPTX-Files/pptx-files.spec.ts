@@ -298,7 +298,7 @@ test.describe('PPTX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Text messages @IncorrectResultBecauseOfBug', async ({
+  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Text messages', async ({
     page,
   }) => {
     /*
@@ -310,9 +310,7 @@ test.describe('PPTX files', () => {
     3. In appeared dialog - Validate Preview area
     4. Press Open as New Project button
     5. Validate canvas
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1679 issue.
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1683 issue.
-    Update screenshots after fix.
+
     */
     await TopLeftToolbar(page).openFile();
     await waitForSpinnerFinishedWork(page, async () => {

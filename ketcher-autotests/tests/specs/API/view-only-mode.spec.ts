@@ -40,6 +40,7 @@ import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
 
 test.describe('Tests for API setMolecule/getMolecule', () => {
   test.beforeEach(async ({ page }) => {
@@ -165,7 +166,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await selectAllStructuresOnCanvas(page);
     await expect(TopLeftToolbar(page).openButton).toBeEnabled();
     await expect(TopLeftToolbar(page).saveButton).toBeEnabled();
-    await expect(page.getByTitle('Copy (Ctrl+C)')).toBeEnabled();
+    await expect(TopToolbar(page).copyButton).toBeEnabled();
     await takeTopToolbarScreenshot(page);
   });
 

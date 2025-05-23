@@ -1,5 +1,6 @@
 import { Page, Locator } from '@playwright/test';
 import { clickInTheMiddleOfTheScreen } from '@utils/clicks';
+import { RingButton } from '../constants/ringButton/Constants';
 
 type BottomToolbarLocators = {
   benzeneButton: Locator;
@@ -67,20 +68,6 @@ export const BottomToolbar = (page: Page) => {
   };
 };
 
-export async function openStructureLibrary(page: Page) {
-  await BottomToolbar(page).StructureLibrary();
-}
-
-export type RingButton =
-  | 'Benzene'
-  | 'Cyclopentadiene'
-  | 'Cyclohexane'
-  | 'Cyclopentane'
-  | 'Cyclopropane'
-  | 'Cyclobutane'
-  | 'Cycloheptane'
-  | 'Cyclooctane';
-
 export const ringToLocator: Record<RingButton, keyof BottomToolbarLocators> = {
   Benzene: 'benzeneButton',
   Cyclopentadiene: 'cyclopentadieneButton',
@@ -91,6 +78,10 @@ export const ringToLocator: Record<RingButton, keyof BottomToolbarLocators> = {
   Cycloheptane: 'cycloheptaneButton',
   Cyclooctane: 'cyclooctaneButton',
 };
+
+export async function openStructureLibrary(page: Page) {
+  await BottomToolbar(page).StructureLibrary();
+}
 
 export async function selectRingButton(page: Page, name: RingButton) {
   const toolbar = BottomToolbar(page);

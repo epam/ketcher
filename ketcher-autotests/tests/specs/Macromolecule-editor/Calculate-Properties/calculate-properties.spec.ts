@@ -278,8 +278,8 @@ test.describe('Calculate Properties tests', () => {
      * 1. Go to Macro
      * 2. Load from HELM
      * 3. Open the "Calculate Properties" window (default tab is "Peptides")
-     * 5. Add the selection to RNA/DNA chain
-     * 6. Check "Calculate Properties" window (default tab is "RNA/DNA")
+     * 4. Add the selection to RNA/DNA chain
+     * 5. Check "Calculate Properties" window (default tab is "RNA/DNA")
      */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -491,8 +491,8 @@ test.describe('Calculate Properties tests', () => {
      * Scenario:
      * 1. Go to Macro
      * 2. Load from HELM double stranded nucleotide/nucleoside
-     * 4. Open the "Calculate Properties" window
-     * 5. Check that a valid nucleic acid (RNA/DNA) chain is any chain that contains a double stranded pure nucleotide/nucleoside
+     * 3. Open the "Calculate Properties" window
+     * 4. Check that a valid nucleic acid (RNA/DNA) chain is any chain that contains a double stranded pure nucleotide/nucleoside
      */
     await switchToRNAMode(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
@@ -511,8 +511,8 @@ test.describe('Calculate Properties tests', () => {
      * Scenario:
      * 1. Go to Macro
      * 2. Load from HELM
-     * 4. Open the "Calculate Properties" window
-     * 5. Check that if the chain is not valid the Melting temperature area of the RNA/DNA tab set to blank and grayed out
+     * 3. Open the "Calculate Properties" window
+     * 4. Check that if the chain is not valid the Melting temperature area of the RNA/DNA tab set to blank and grayed out
      */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -530,8 +530,8 @@ test.describe('Calculate Properties tests', () => {
      * Scenario:
      * 1. Go to Macro
      * 2. Load from HELM
-     * 4. Open the "Calculate Properties" window
-     * 5. Check that Melting temperature displayed as a number with one decimal point
+     * 3. Open the "Calculate Properties" window
+     * 4. Check that Melting temperature displayed as a number with one decimal point
      */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -587,8 +587,8 @@ test.describe('Calculate Properties tests', () => {
      * Scenario:
      * 1. Go to Macro
      * 2. Load from HELM
-     * 4. Open the "Calculate Properties" window
-     * 5. Check that Base count displayed as a grid with the appropriate number next to the natural analogue
+     * 3. Open the "Calculate Properties" window
+     * 4. Check that Base count displayed as a grid with the appropriate number next to the natural analogue
      */
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,

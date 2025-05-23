@@ -1,6 +1,7 @@
 import {
   AmbiguousMonomer,
   BaseMonomer,
+  CoreEditor,
   getRnaBaseFromSugar,
   getSugarFromRnaBase,
   isRnaBaseOrAmbiguousRnaBase,
@@ -122,5 +123,52 @@ export const isAntisenseOptionVisible = (selectedMonomers: BaseMonomer[]) => {
         getSugarFromRnaBase(selectedMonomer)) ||
       (selectedMonomer instanceof Sugar && getRnaBaseFromSugar(selectedMonomer))
     );
+  });
+};
+
+export const AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX =
+  'aminoAcidModification-';
+
+export const getModifyAminoAcidsMenuItems = (
+  selectedMonomers: BaseMonomer[],
+) => {
+  const modificationsForSelection = new Set<string>();
+  const selectedMonomersLabelsSet = new Set(
+    selectedMonomers.map((monomer) => monomer.label),
+  );
+  const selectedMonomersNaturalAnalogues = new Set<string>();
+  const editor = CoreEditor.provideEditorInstance();
+
+  selectedMonomers.forEach((selectedMonomer) => {
+    const monomerNaturalAnalogCode =
+      selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode;
+    if (monomerNaturalAnalogCode) {
+      selectedMonomersNaturalAnalogues.add(monomerNaturalAnalogCode);
+    }
+  });
+
+  editor?.monomersLibrary.forEach((monomer) => {
+    if (
+      selectedMonomersLabelsSet.has(monomer.label) ||
+      !monomer.props ||
+      !selectedMonomersNaturalAnalogues.has(
+        monomer.props?.MonomerNaturalAnalogCode,
+      )
+    ) {
+      return;
+    }
+
+    const modificationType = monomer.props.modificationType;
+
+    if (modificationType) {
+      modificationsForSelection.add(modificationType);
+    }
+  });
+
+  return [...modificationsForSelection.values()].map((modificationType) => {
+    return {
+      name: `${AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX}${modificationType}`,
+      title: modificationType,
+    };
   });
 };

@@ -615,7 +615,7 @@ describe('parseCTabV2000', () => {
       expect(firstSGroup.data.label).toBe(1);
       expect(secondSGroup.data.label).toBe(2);
       expect((firstSGroup as any).parent).toBe(2);
-      expect(firstSGroup.data.connectivity).toBe('EU');
+      expect(firstSGroup.data.connectivity).toBe('eu');
       expect(secondSGroup.data.connectivity).toBe('ht');
       expect(firstSGroup.data.subscript).toBe('3');
       expect(firstSGroup.atoms).toEqual([0, 1]);

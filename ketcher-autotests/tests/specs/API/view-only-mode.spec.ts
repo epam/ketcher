@@ -196,9 +196,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
-    // await copyToClipboardByKeyboard(page);
-    await page.getByTestId('copy-button-dropdown-triangle').click();
-    await page.getByTitle('Copy as MOL (Ctrl+M)').click();
+
+    await TopToolbar(page).copyAsMOL();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 200, 200);
@@ -216,8 +215,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('copy-button-dropdown-triangle').click();
-    await page.getByTitle('Copy as KET (Ctrl+Shift+K)').click();
+    await TopToolbar(page).copyAsKET();
     await disableViewOnlyModeBySetOptions(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, 200, 200);

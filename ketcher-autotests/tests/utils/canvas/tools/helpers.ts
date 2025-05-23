@@ -1,8 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page } from '@playwright/test';
 import { clickOnCanvas, SequenceType, waitForRender } from '@utils';
-import { selectButtonByTitle } from '@utils/clicks/selectButtonByTitle';
-import { TopPanelButton } from '@utils/selectors';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardTypeOnCanvas } from '@utils/keyboard/index';
@@ -10,14 +8,6 @@ import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { RingButton } from '@tests/pages/molecules/BottomToolbar';
-
-/**
- * Select button from top panel
- * Usage: await selectAction(TopPanelButton.Open, page)
- */
-export async function selectAction(type: TopPanelButton, page: Page) {
-  await selectButtonByTitle(type, page);
-}
 
 export async function openLayoutModeMenu(page: Page) {
   const modeSelectorButton = page.getByTestId('layout-mode');

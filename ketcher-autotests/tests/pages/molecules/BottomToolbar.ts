@@ -104,3 +104,4 @@ export async function drawCyclopentadieneRing(page: Page) {
 }
 
 export type BottomToolbarType = ReturnType<typeof BottomToolbar>;
+export { RingButton };

@@ -3,20 +3,19 @@ import { test } from '@playwright/test';
 import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
-  selectAction,
   waitForPageInit,
   selectAllStructuresOnCanvas,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
 } from '@utils';
-import { TopPanelButton } from '@utils/selectors';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import {
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
 
 test.describe('Paste Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -27,8 +26,8 @@ test.describe('Paste Tool', () => {
     const anyStructure = 'Molfiles-V2000/mol-1855-to-open.mol';
     await openFileAndAddToCanvas(anyStructure, page);
     await selectAllStructuresOnCanvas(page);
-    await selectAction(TopPanelButton.Copy, page);
-    await selectAction(TopPanelButton.Paste, page);
+    await TopToolbar(page).copy();
+    await TopToolbar(page).paste();
     await page.getByTestId('infoModal-shortcut-for-paste').first().isVisible();
     await takeEditorScreenshot(page);
   });

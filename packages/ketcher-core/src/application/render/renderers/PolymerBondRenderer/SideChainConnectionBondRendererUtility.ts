@@ -17,6 +17,7 @@ interface CalculatePathPartAndTurnPointParameter {
   readonly direction: ConnectionDirectionInDegrees;
   readonly horizontal: boolean;
   readonly turnPoint: number;
+  readonly turnPointIsUsed: boolean;
 }
 
 interface CalculatePathPartAndTurnPointResult {
@@ -35,6 +36,7 @@ export class SideChainConnectionBondRendererUtility {
     direction,
     horizontal,
     turnPoint,
+    turnPointIsUsed,
   }: CalculatePathPartAndTurnPointParameter): CalculatePathPartAndTurnPointResult {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
@@ -55,7 +57,7 @@ export class SideChainConnectionBondRendererUtility {
     );
 
     let endOfPathPart: number;
-    if (horizontal && turnPoint) {
+    if (horizontal && turnPointIsUsed) {
       endOfPathPart = turnPoint;
     } else {
       const { monomerSize, scaledMonomerPosition } = (

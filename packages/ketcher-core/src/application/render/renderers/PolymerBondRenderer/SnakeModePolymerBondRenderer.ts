@@ -324,6 +324,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           direction,
           horizontal: true,
           turnPoint: this.sideConnectionBondTurnPoint ?? 0,
+          turnPointIsUsed: this.sideConnectionBondTurnPoint !== undefined,
         });
       pathDAttributeValue += result.pathPart;
       this.sideConnectionBondTurnPoint = result.turnPoint;
@@ -426,6 +427,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
             direction,
             horizontal,
             turnPoint: this.sideConnectionBondTurnPoint ?? 0,
+            turnPointIsUsed: this.sideConnectionBondTurnPoint !== undefined,
           });
         pathDAttributeValue += result.pathPart;
         this.sideConnectionBondTurnPoint = result.turnPoint;

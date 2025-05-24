@@ -115,19 +115,17 @@ async function manipulateRingsByName(type: RingButton, page: Page) {
   await checkHistoryForBondDeletion(page);
 }
 
-const templates = Object.keys(RingButton) as RingButton[];
-
 test.describe('Templates – Rings manipulations', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
   });
 
-  for (const template of templates) {
-    test(`Ring: ${template}`, async ({ page }) => {
-      await BottomToolbar(page).clickRing(template);
-      await manipulateRingsByName(template, page);
+  Object.entries(RingButton).forEach(([key, value]) => {
+    test(`Ring: ${key}`, async ({ page }) => {
+      await BottomToolbar(page).clickRing(value);
+      await manipulateRingsByName(value, page);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
     });
-  }
+  });
 });

@@ -1,12 +1,11 @@
-import { CoreEditor, FlexMode, ToolName } from 'application/editor';
+import { CoreEditor, ToolName } from 'application/editor';
 import { MonomerTool } from 'application/editor/tools/Monomer';
 import { createPolymerEditorCanvas } from '../../helpers/dom';
 
 describe('CoreEditor', () => {
   it('should track dom events and trigger handlers', () => {
     const canvas = createPolymerEditorCanvas();
-    const mode = new FlexMode();
-    const editor: CoreEditor = new CoreEditor({ canvas, theme: {}, mode });
+    const editor: CoreEditor = new CoreEditor({ canvas, theme: {} });
     const onMousemove = jest.fn();
     jest
       .spyOn(MonomerTool.prototype, 'mousemove')

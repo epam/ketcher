@@ -28,6 +28,9 @@ import {
   getItemsToFuse,
   isAttachmentBond,
   vectorUtils,
+  getRelSGroupsBySelection,
+  MonomerMicromolecule,
+  RotateMonomerOperation,
 } from 'ketcher-core';
 import assert from 'assert';
 import { intersection, throttle } from 'lodash';
@@ -273,6 +276,27 @@ class RotateTool implements Tool {
       action = action
         ? fromItemsFuse(this.reStruct, dragCtx.mergeItems).mergeWith(action)
         : fromItemsFuse(this.reStruct, dragCtx.mergeItems);
+    }
+
+    if (this.selection?.atoms) {
+      const sGroups = getRelSGroupsBySelection(
+        this.struct,
+        this.selection?.atoms,
+      );
+      const monomerRotateAction = new Action();
+      sGroups.forEach((sGroup) => {
+        if (sGroup instanceof MonomerMicromolecule) {
+          const angleInRadians = (dragCtx.angle * Math.PI) / 180;
+          monomerRotateAction.addOp(
+            new RotateMonomerOperation({
+              id: sGroup.id,
+              value: angleInRadians,
+            }),
+          );
+        }
+      });
+      monomerRotateAction.perform(this.reStruct);
+      action = action.mergeWith(monomerRotateAction);
     }
 
     delete this.dragCtx;

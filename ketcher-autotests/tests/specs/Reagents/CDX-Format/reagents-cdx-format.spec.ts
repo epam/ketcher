@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvas,
@@ -7,18 +7,13 @@ import {
   FILE_TEST_DATA,
   clickInTheMiddleOfTheScreen,
 } from '@utils';
-import { clickOnFileFormatDropdown } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
-
-async function saveFileAsCdxFormat(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'CDX', exact: true }).click();
-}
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Reagents CDX format', () => {
   test.beforeEach(async ({ page }) => {
@@ -72,7 +67,10 @@ test.describe('Reagents CDX format', () => {
     Description: 'Can not display binary content' in Preview window.
     */
     await openFileAndAddToCanvas('CDX/two-reagents.cdx', page);
-    await saveFileAsCdxFormat(page);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.CDX,
+    );
     await takeEditorScreenshot(page);
   });
 });

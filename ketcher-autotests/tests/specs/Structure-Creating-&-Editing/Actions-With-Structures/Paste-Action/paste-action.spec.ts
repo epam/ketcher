@@ -6,16 +6,17 @@ import {
   selectAction,
   waitForPageInit,
   selectAllStructuresOnCanvas,
-  drawBenzeneRing,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
-  selectRing,
-  RingButton,
   clickOnCanvas,
 } from '@utils';
-import { selectOpenFileTool } from '@tests/pages/common/TopLeftToolbar';
 import { TopPanelButton } from '@utils/selectors';
-import { openStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Paste Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -42,20 +43,18 @@ test.describe('Paste Tool', () => {
     3. Open Paste from Canvas tool and paste by CTRL+V
     4. Check that the structure of file is MOL
     */
-    const pasteFromClipboardButton =
-      openStructureDialog(page).pasteFromClipboardButton;
     await drawBenzeneRing(page);
 
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickOnCanvas(page, 200, 200);
 
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickOnCanvas(page, 400, 400);
 
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await selectOpenFileTool(page);
-    await pasteFromClipboardButton.click();
+    await TopLeftToolbar(page).openFile();
+    await OpenStructureDialog(page).pasteFromClipboard();
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);
   });

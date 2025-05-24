@@ -89,6 +89,8 @@ class ReAtom extends ReObject {
     rectangle: any;
   };
 
+  private expandedMonomerAttachmentPoints?: any; // Raphael paths
+
   constructor(atom: Atom) {
     super('atom');
     this.a = atom; // TODO rename a to item
@@ -114,14 +116,69 @@ class ReAtom extends ReObject {
 
   drawHover(render: Render) {
     const ret = this.makeHoverPlate(render);
+
     render.ctab.addReObjectPath(LayerMap.atom, this.visel, ret);
+
     return ret;
   }
 
-  getLabeledSelectionContour(render: Render, isHighlight: boolean) {
+  setHover(hover: boolean, render: Render) {
+    super.setHover(hover, render);
+
+    if (!hover || this.selected) {
+      this.expandedMonomerAttachmentPoints?.hide();
+
+      return;
+    }
+
+    if (this.expandedMonomerAttachmentPoints?.removed) {
+      this.expandedMonomerAttachmentPoints = undefined;
+    }
+
+    if (this.expandedMonomerAttachmentPoints) {
+      this.expandedMonomerAttachmentPoints.show();
+    } else {
+      this.expandedMonomerAttachmentPoints =
+        this.makeMonomerAttachmentPointHighlightPlate(render);
+    }
+  }
+
+  public makeMonomerAttachmentPointHighlightPlate(render: Render) {
+    const restruct = render.ctab;
+    const struct = restruct.molecule;
+    const aid = struct.atoms.keyOf(this.a) || undefined;
+    const sgroup = struct.getGroupFromAtomId(aid);
+
+    if (!(sgroup instanceof MonomerMicromolecule)) {
+      return;
+    }
+
+    let style: RenderOptionStyles | undefined;
+
+    if (Atom.isSuperatomAttachmentAtom(struct, aid)) {
+      style = { fill: 'none', stroke: '#4da3f8', 'stroke-width': '2px' };
+    }
+
+    if (Atom.isSuperatomLeavingGroupAtom(struct, aid)) {
+      style = {
+        fill: '#fff8c5',
+        stroke: '#f8dc8f',
+        'stroke-width': '2px',
+      };
+    }
+
+    if (style) {
+      const path = this.makeHighlightePlate(restruct, style, -4);
+
+      restruct.addReObjectPath(LayerMap.atom, this.visel, path);
+
+      return path;
+    }
+  }
+
+  getLabeledSelectionContour(render: Render, highlightPadding = 0) {
     const { paper, ctab: restruct, options } = render;
     const { fontszInPx, radiusScaleFactor } = options;
-    const highlightPadding = isHighlight ? -2 : 0;
     const padding = fontszInPx * radiusScaleFactor + highlightPadding;
     const radius = fontszInPx * radiusScaleFactor * 2 + highlightPadding;
     const box = this.getVBoxObj(restruct.render)!;
@@ -138,10 +195,9 @@ class ReAtom extends ReObject {
     );
   }
 
-  getUnlabeledSelectionContour(render: Render, isHighlight: boolean) {
+  getUnlabeledSelectionContour(render: Render, highlightPadding = 0) {
     const { paper, options } = render;
     const { atomSelectionPlateRadius } = options;
-    const highlightPadding = isHighlight ? -2 : 0;
     const ps = Scale.modelToCanvas(this.a.pp, options);
     return paper.circle(
       ps.x,
@@ -150,13 +206,14 @@ class ReAtom extends ReObject {
     );
   }
 
-  getSelectionContour(render: Render, isHighlight: boolean) {
+  getSelectionContour(render: Render, highlightPadding = 0) {
     const hasLabel =
       (this.a.pseudo && this.a.pseudo.length > 1 && !getQueryAttrsText(this)) ||
       (this.showLabel && this.a.implicitH !== 0);
+
     return hasLabel
-      ? this.getLabeledSelectionContour(render, isHighlight)
-      : this.getUnlabeledSelectionContour(render, isHighlight);
+      ? this.getLabeledSelectionContour(render, highlightPadding)
+      : this.getUnlabeledSelectionContour(render, highlightPadding);
   }
 
   private isPlateShouldBeHidden = (atom: Atom, render: Render) => {
@@ -178,6 +235,7 @@ class ReAtom extends ReObject {
   private makeHighlightePlate = (
     restruct: ReStruct,
     style: RenderOptionStyles,
+    highlightPadding = -2,
   ) => {
     const atom = this.a;
     const { render } = restruct;
@@ -185,7 +243,7 @@ class ReAtom extends ReObject {
       return null;
     }
 
-    return this.getSelectionContour(render, true).attr(style);
+    return this.getSelectionContour(render, highlightPadding).attr(style);
   };
 
   makeHoverPlate(render: Render) {
@@ -195,7 +253,7 @@ class ReAtom extends ReObject {
       return null;
     }
 
-    return this.getSelectionContour(render, false).attr(options.hoverStyle);
+    return this.getSelectionContour(render).attr(options.hoverStyle);
   }
 
   makeSelectionPlate(restruct: ReStruct) {
@@ -206,7 +264,7 @@ class ReAtom extends ReObject {
     if (this.isPlateShouldBeHidden(atom, render)) {
       return null;
     }
-    return this.getSelectionContour(render, false).attr(options.selectionStyle);
+    return this.getSelectionContour(render).attr(options.selectionStyle);
   }
 
   private isNeedShiftForCharge(showCharge: boolean, bondLength: number) {
@@ -1005,6 +1063,13 @@ function getLabelText(atom, atomId: number, sgroup?: SGroup) {
         // eslint-disable-line max-depth
         text += 'R' + (rgi + 1).toString();
       }
+    }
+
+    if (
+      sgroup instanceof MonomerMicromolecule &&
+      Atom.isSuperatomLeavingGroupAtom(sgroup, atomId)
+    ) {
+      text = sgroup?.monomer?.monomerItem?.props?.MonomerCaps?.[text] || text;
     }
 
     return text;

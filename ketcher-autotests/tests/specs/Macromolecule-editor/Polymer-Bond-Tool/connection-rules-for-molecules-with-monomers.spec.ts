@@ -2,20 +2,17 @@
 import { Chem } from '@constants/monomers/Chem';
 import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import {
   addSingleMonomerToCanvas,
   BondType,
   clickOnAtom,
   clickOnBond,
-  drawBenzeneRing,
   openFileAndAddToCanvasAsNewProject,
   takeEditorScreenshot,
   waitForPageInit,
 } from '@utils';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 import { addSuperatomAttachmentPoint } from '@utils/canvas/atoms/superatomAttachmentPoints';
 import { goToPeptidesTab } from '@utils/macromolecules/library';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
@@ -41,7 +38,7 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await addSuperatomAttachmentPoint(page, 'C', 3);
     await takeEditorScreenshot(page);
 
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await goToPeptidesTab(page);
     const firstAlanine = await addSingleMonomerToCanvas(
       page,
@@ -78,7 +75,7 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await bondTwoMonomersPointToPoint(page, molecule, thirdAlanine, 'R4', 'R2');
 
     await takeEditorScreenshot(page);
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 
@@ -96,9 +93,9 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await clickOnAtom(page, 'C', 10, 'right');
     await page.getByText('Delete').click();
     await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 
@@ -114,9 +111,9 @@ test.describe('Connection rules for molecules with monomers: ', () => {
     await clickOnBond(page, BondType.SINGLE, 18, 'right');
     await page.getByText('Delete').click();
     await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await takeEditorScreenshot(page);
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
   });
 });

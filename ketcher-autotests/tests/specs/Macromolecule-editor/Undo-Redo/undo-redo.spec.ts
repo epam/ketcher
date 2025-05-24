@@ -34,19 +34,12 @@ import {
   moveMonomer,
 } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
-import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 /* eslint-disable no-magic-numbers */
 
 test.describe('Undo Redo', () => {
@@ -54,7 +47,7 @@ test.describe('Undo Redo', () => {
   let peptide2: Locator;
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
 
     await goToPeptidesTab(page);
     peptide1 = await addSingleMonomerToCanvas(page, Peptides.Tza, 300, 300, 0);
@@ -68,7 +61,7 @@ test.describe('Undo Redo', () => {
     );
 
     // Select bond tool
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
 
     // Create bonds between peptides
     await bondTwoMonomers(page, peptide1, peptide2);
@@ -83,23 +76,23 @@ test.describe('Undo Redo', () => {
     */
 
     // check that history pointer stops on last operation
-    await pressRedoButton(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
+    await TopLeftToolbar(page).redo();
 
     // check undo
-    await pressUndoButton(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
 
     // check that history pointer stops on first operation
-    await pressUndoButton(page);
-    await pressUndoButton(page);
-    await pressUndoButton(page);
-    await pressUndoButton(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
+    await TopLeftToolbar(page).undo();
+    await TopLeftToolbar(page).undo();
+    await TopLeftToolbar(page).undo();
+    await TopLeftToolbar(page).undo();
 
     // check redo
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -109,7 +102,7 @@ test.describe('Undo Redo', () => {
     */
 
     await selectSnakeLayoutModeTool(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -121,10 +114,10 @@ test.describe('Undo Redo', () => {
     await moveMonomer(page, peptide1, 500, 500);
     await moveMonomer(page, peptide2, 600, 600);
     await moveMonomer(page, peptide2, 400, 400);
-    await pressUndoButton(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -137,7 +130,7 @@ test.describe('Undo Redo', () => {
       'KET/peptide-enumeration-one-two-three.ket',
       page,
     );
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
 
     const startX = 10;
@@ -157,7 +150,7 @@ test.describe('Undo Redo', () => {
 test.describe('Undo-Redo tests', () => {
   test.beforeEach(async ({ page }) => {
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   });
 
   test('Deleting entities(Peptides, RNA, CHEM, Bonds) and then checking Undo and Redo actions', async ({
@@ -168,7 +161,7 @@ test.describe('Undo-Redo tests', () => {
     Description: Entities(Peptides, RNA, CHEM, Bonds) are deleted and then Undo and Redo actions.
     */
     await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
-    await await selectEraseTool(page);
+    await await CommonLeftToolbar(page).selectEraseTool();
     const entitiesToDelete = [
       Peptides.D_aIle,
       Peptides.SertBu,
@@ -188,12 +181,12 @@ test.describe('Undo-Redo tests', () => {
     const numberOfPress = 9;
 
     for (let i = 0; i < numberOfPress; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < numberOfPress; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -228,13 +221,13 @@ test.describe('Undo-Redo tests', () => {
 
     const maxUndoHistorySize = 32;
     for (let i = 0; i < maxUndoHistorySize; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     const maxRedoHistorySize = 32;
     for (let i = 0; i < maxRedoHistorySize; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -269,13 +262,13 @@ test.describe('Undo-Redo tests', () => {
 
     const maxUndoHistorySize = 32;
     for (let i = 0; i < maxUndoHistorySize; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     const maxRedoHistorySize = 32;
     for (let i = 0; i < maxRedoHistorySize; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -288,7 +281,7 @@ test.describe('Undo-Redo tests', () => {
     Description: Short key "Control + Z" and "Control+Y" are working.
     */
     await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
-    await await selectEraseTool(page);
+    await await CommonLeftToolbar(page).selectEraseTool();
     const entitiesToDelete = [
       Peptides.SertBu,
       Peptides.TyrabD,
@@ -324,9 +317,9 @@ test.describe('Undo-Redo tests', () => {
     Description: Undo/Redo after opening  a .ket file is working.
     */
     await openFileAndAddToCanvasMacro('KET/all-entities.ket', page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -341,9 +334,9 @@ test.describe('Undo-Redo tests', () => {
       'Molfiles-V3000/monomers-connected-with-bonds.mol',
       page,
     );
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -358,9 +351,9 @@ test.describe('Undo-Redo tests', () => {
       page,
     );
     await selectSnakeLayoutModeTool(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takePageScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
     await takePageScreenshot(page);
   });
@@ -393,13 +386,13 @@ test.describe('Undo-Redo tests', () => {
     await connectMonomersWithBonds(page, monomerNames);
     const maxUndoHistorySize = 5;
     for (let i = 0; i < maxUndoHistorySize; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     const maxRedoHistorySize = 5;
     for (let i = 0; i < maxRedoHistorySize; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -416,9 +409,9 @@ test.describe('Undo-Redo tests', () => {
     await takePageScreenshot(page);
     await selectMonomer(page, Peptides.Edc);
     await clickInTheMiddleOfTheScreen(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takePageScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takePageScreenshot(page);
   });
 
@@ -439,9 +432,9 @@ test.describe('Undo-Redo tests', () => {
     await pasteFromClipboardByKeyboard(page);
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -465,20 +458,22 @@ test.describe('Undo-Redo tests', () => {
     await selectMonomer(page, Peptides.X);
     await clickOnTheCanvas(page, 0, 0);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 
     await clickOnTheCanvas(page, 0, 0);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
 
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await takeEditorScreenshot(page);
 
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
 
     await takeEditorScreenshot(page);
     await zoomWithMouseWheel(page, 600);
@@ -504,20 +499,22 @@ test.describe('Undo-Redo tests', () => {
     await selectMonomer(page, Bases.DNA_N);
     await clickOnTheCanvas(page, 0, 0);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await zoomWithMouseWheel(page, -600);
     await takeEditorScreenshot(page);
 
     await clickOnTheCanvas(page, 0, 0);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
 
     await takeEditorScreenshot(page);
 
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
 
     await takeEditorScreenshot(page);
 
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
 
     await takeEditorScreenshot(page);
     await zoomWithMouseWheel(page, 600);

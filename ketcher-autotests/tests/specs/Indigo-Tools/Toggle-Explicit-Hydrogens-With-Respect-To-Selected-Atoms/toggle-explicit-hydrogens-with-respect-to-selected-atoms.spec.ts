@@ -1,13 +1,13 @@
 /* eslint-disable no-magic-numbers */
 import { Page, chromium, test } from '@playwright/test';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   takeEditorScreenshot,
   openFileAndAddToCanvasAsNewProject,
   waitForPageInit,
   resetZoomLevelToDefault,
-  selectAddRemoveExplicitHydrogens,
 } from '@utils';
-import { selectClearCanvasTool } from '@tests/pages/common/TopLeftToolbar';
 
 let page: Page;
 
@@ -30,7 +30,7 @@ test.beforeAll(async ({ browser }) => {
 
 test.afterEach(async () => {
   await resetZoomLevelToDefault(page);
-  await selectClearCanvasTool(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -349,10 +349,10 @@ test.describe('1. User can expand hydrogens for ', () => {
         `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/All types of bond/${fileName}`,
         page,
       );
-      await selectAddRemoveExplicitHydrogens(page);
+      await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
 
-      await selectAddRemoveExplicitHydrogens(page);
+      await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
     });
   }
@@ -654,10 +654,10 @@ test.describe('2. User can expand hydrogens for ', () => {
         `KET/Toggle-Explicit-Hydrogens-With-Respect-To-Selected-Atoms/A on the canvas/${fileName}`,
         page,
       );
-      await selectAddRemoveExplicitHydrogens(page);
+      await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
 
-      await selectAddRemoveExplicitHydrogens(page);
+      await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
       await takeEditorScreenshot(page);
     });
   }

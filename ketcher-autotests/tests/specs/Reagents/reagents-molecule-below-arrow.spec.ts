@@ -4,8 +4,9 @@ import {
   openFileAndAddToCanvas,
   waitForPageInit,
 } from '@utils';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
-import { clickOnFileFormatDropdown } from '@utils/formats';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Reagents molecule below arrow', () => {
   test.beforeEach(async ({ page }) => {
@@ -49,9 +50,10 @@ test.describe('Reagents molecule below arrow', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'SVG Document' }).click();
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -65,9 +67,10 @@ test.describe('Reagents molecule below arrow', () => {
       page,
     );
 
-    await selectSaveTool(page);
-    await clickOnFileFormatDropdown(page);
-    await page.getByRole('option', { name: 'PNG Image' }).click();
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 });

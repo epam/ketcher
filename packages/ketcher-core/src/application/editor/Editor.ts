@@ -9,7 +9,9 @@ import {
 } from 'application/editor/editorEvents';
 import { MacromoleculesConverter } from 'application/editor/MacromoleculesConverter';
 import {
+  DEFAULT_LAYOUT_MODE,
   FlexMode,
+  HAS_CONTENT_LAYOUT_MODE,
   LayoutMode,
   modesMap,
   SequenceMode,
@@ -64,9 +66,10 @@ import { HandTool } from 'application/editor/tools/Hand';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import { ToolName } from 'application/editor/tools/types';
 import { BaseMonomerRenderer } from 'application/render';
-import { initializeMode, parseMonomersLibrary } from './helpers';
+import { parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
+import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -95,7 +98,13 @@ export class CoreEditor {
   private _monomersLibrary: MonomerItemType[] = [];
   public canvas: SVGSVGElement;
   public drawnStructuresWrapperElement: SVGGElement;
-  public canvasOffset: DOMRect;
+  public canvasOffset: DOMRect = {
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
+  } as DOMRect;
+
   public theme;
   public zoomTool: ZoomTool;
   // private lastEvent: Event | undefined;
@@ -106,6 +115,7 @@ export class CoreEditor {
   }
 
   public mode: BaseMode;
+  private previousModes: BaseMode[] = [];
   public sequenceTypeEnterMode = SequenceType.RNA;
   private micromoleculesEditor: Editor;
   private hotKeyEventHandler: (event: KeyboardEvent) => void = () => {};
@@ -116,16 +126,16 @@ export class CoreEditor {
   constructor({
     theme,
     canvas,
-    mode,
     monomersLibraryUpdate,
+    mode,
   }: ICoreEditorConstructorParams) {
-    this._type = EditorType.Macromolecules;
+    this._type = EditorType.Micromolecules;
     this.theme = theme;
     this.canvas = canvas;
     this.drawnStructuresWrapperElement = canvas.querySelector(
       drawnStructuresSelector,
     ) as SVGGElement;
-    this.mode = initializeMode(mode);
+    this.mode = mode || new SequenceMode();
     resetEditorEvents();
     this.events = editorEvents;
     this.setMonomersLibrary(monomersDataRaw);
@@ -142,15 +152,39 @@ export class CoreEditor {
     this.setupKeyboardEvents();
     this.setupHotKeysEvents();
     this.setupCopyPasteEvent();
-    this.canvasOffset = this.canvas.getBoundingClientRect();
+    this.resetCanvasOffset();
     this.zoomTool = ZoomTool.initInstance(this.drawingEntitiesManager);
     this.transientDrawingView = new TransientDrawingView();
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     editor = this;
     const ketcher = ketcherProvider.getKetcher();
     this.micromoleculesEditor = ketcher?.editor;
-    this.switchToMacromolecules();
-    this.rerenderSequenceMode();
+    this.initializeEventListeners();
+  }
+
+  private resetCanvasOffset() {
+    this.canvasOffset = this.canvas.getBoundingClientRect();
+  }
+
+  private initializeEventListeners(): void {
+    document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    window.addEventListener('blur', this.handleWindowBlur);
+  }
+
+  private handleVisibilityChange = (): void => {
+    if (document.hidden) {
+      this.cancelActiveDrag();
+    }
+  };
+
+  private handleWindowBlur = (): void => {
+    this.cancelActiveDrag();
+  };
+
+  private cancelActiveDrag(): void {
+    if (this.tool instanceof SelectRectangle) {
+      this.tool.stopMovement();
+    }
   }
 
   static provideEditorInstance(): CoreEditor {
@@ -275,6 +309,7 @@ export class CoreEditor {
   }
 
   private handleHotKeyEvents(event: KeyboardEvent) {
+    if (this._type === EditorType.Micromolecules) return;
     if (!(event.target instanceof HTMLElement)) return;
     const keySettings = hotkeysConfiguration;
     const hotKeys = initHotKeys(keySettings);
@@ -639,6 +674,7 @@ export class CoreEditor {
     }
 
     this.mode.destroy();
+    this.previousModes.push(this.mode);
     this.mode = new ModeConstructor(this.mode.modeName);
     command.merge(this.mode.initialize(true, false, !hasModeChanged));
     history.update(
@@ -845,29 +881,56 @@ export class CoreEditor {
   }
 
   public switchToMicromolecules() {
-    this.unsubscribeEvents();
     const history = new EditorHistory(this);
-    history.destroy();
     const struct = this.micromoleculesEditor.struct();
     const reStruct = this.micromoleculesEditor.render.ctab;
+    const zoomTool = ZoomTool.instance;
+
     const { conversionErrorMessage } =
       MacromoleculesConverter.convertDrawingEntitiesToStruct(
         this.drawingEntitiesManager,
         struct,
         reStruct,
       );
-    reStruct.render.setMolecule(struct);
+
     if (conversionErrorMessage) {
       const ketcher = ketcherProvider.getKetcher();
 
       ketcher.editor.setMacromoleculeConvertionError(conversionErrorMessage);
     }
-    this._monomersLibraryParsedJson = null;
+
+    history.destroy();
+    this.drawingEntitiesManager.clearCanvas();
+    zoomTool.resetZoom();
+    struct.applyMonomersTransformations();
+    reStruct.render.setMolecule(struct);
+
     this._type = EditorType.Micromolecules;
     this.drawingEntitiesManager = new DrawingEntitiesManager();
   }
 
-  private switchToMacromolecules() {
+  private resetModeIfNeeded() {
+    if (this.previousModes.length === 0) {
+      const ketcher = ketcherProvider.getKetcher();
+      const isBlank = ketcher?.editor?.struct().isBlank();
+      const oldModeName = this.mode?.modeName;
+      const newModeName = isBlank
+        ? DEFAULT_LAYOUT_MODE
+        : HAS_CONTENT_LAYOUT_MODE;
+
+      if (oldModeName === newModeName) {
+        return;
+      }
+
+      this.onSelectMode(newModeName);
+      this.events.layoutModeChange.dispatch(newModeName);
+    }
+  }
+
+  public switchToMacromolecules() {
+    this.resetCanvasOffset();
+    this.resetModeIfNeeded();
+
     const struct = this.micromoleculesEditor?.struct() || new Struct();
     const ketcher = ketcherProvider.getKetcher();
     const { modelChanges } =
@@ -887,16 +950,16 @@ export class CoreEditor {
       );
     }
 
-    this.renderersContainer.update(modelChanges);
-    ketcher?.editor.clear();
-    this._type = EditorType.Macromolecules;
-  }
-
-  private rerenderSequenceMode() {
     if (this.mode instanceof SequenceMode) {
-      this.drawingEntitiesManager.clearCanvas();
-      this.drawingEntitiesManager.applyMonomersSequenceLayout();
+      this.mode.initialize(false, false, false);
+    } else {
+      this.renderersContainer.update(modelChanges);
     }
+
+    ketcher?.editor.clear();
+    ketcher?.editor.clearHistory();
+    ketcher?.editor.zoom(1);
+    this._type = EditorType.Macromolecules;
   }
 
   public isCurrentModeWithAutozoom(): boolean {

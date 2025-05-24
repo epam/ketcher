@@ -1,8 +1,6 @@
 import { test, expect } from '@playwright/test';
 import {
-  pressButton,
   takeEditorScreenshot,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
   selectUserTemplatesAndPlaceInTheMiddle,
   TemplateLibrary,
@@ -12,13 +10,14 @@ import {
   openEditDialogForTemplate,
   selectAzuleneOnTemplateLibrary,
   clickOnTheCanvas,
-  AtomButton,
-  selectAtomInToolbar,
   clickOnAtom,
 } from '@utils';
-import { bondSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { pasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
 test.describe('Open Ketcher', () => {
   test.beforeEach(async ({ page }) => {
@@ -31,7 +30,7 @@ test.describe('Open Ketcher', () => {
     Description:
     The 'Template Library' tab is opened by default.
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await takeEditorScreenshot(page);
   });
 
@@ -56,12 +55,11 @@ test.describe('Open Ketcher', () => {
     Click the 'X' button.
     Click on the 'Custom Templates' button.
     */
-    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
-    await closeWindowButton.click();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await PasteFromClipboardDialog(page).closeWindowButton.click();
+    await BottomToolbar(page).StructureLibrary();
     await takeEditorScreenshot(page);
   });
 
@@ -72,7 +70,7 @@ test.describe('Open Ketcher', () => {
     Open 'Custom Templates'
     Switch between tabs
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
     await page.getByRole('tab', { name: 'Functional Groups' }).click();
     await page.getByRole('tab', { name: 'Salts and Solvents' }).click();
@@ -98,13 +96,12 @@ test.describe('Open Ketcher', () => {
     Close 'Custom Templates' window
     Open 'Custom Templates' window
     */
-    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByPlaceholder('Search by elements...').fill('DMF');
     await page.getByPlaceholder('Search by elements...').press('Enter');
     await takeEditorScreenshot(page);
-    await closeWindowButton.click();
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await PasteFromClipboardDialog(page).closeWindowButton.click();
+    await BottomToolbar(page).StructureLibrary();
     await takeEditorScreenshot(page);
   });
 
@@ -129,7 +126,7 @@ test.describe('Open Ketcher', () => {
     Description:
     Click on Edit button in right down corner of template (e.g. alpha-D-Arabinofuranose)
     */
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('tab', { name: 'Template Library' }).click();
     await page.getByRole('button', { name: 'Aromatics (18)' }).click();
     await page.getByTitle('Azulene').getByRole('button').click();
@@ -144,10 +141,9 @@ test.describe('Open Ketcher', () => {
     Description:
     Make any change(s) in the window. Click the 'Apply' button.
     */
-    const closeWindowButton = pasteFromClipboardDialog(page).closeWindowButton;
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await BottomToolbar(page).StructureLibrary();
     await selectAzuleneOnTemplateLibrary(page);
-    await closeWindowButton.click();
+    await PasteFromClipboardDialog(page).closeWindowButton.click();
     await selectAzuleneOnTemplateLibrary(page);
     await page.getByRole('button', { name: 'Cancel' }).click();
     await selectAzuleneOnTemplateLibrary(page);
@@ -199,6 +195,8 @@ test.describe('Open Ketcher', () => {
     Test case: EPMLSOPKET-1720
     Description: The template is attached to the structure by the defined attachment bond.
     */
+    const atomToolbar = RightToolbar(page);
+
     await openEditDialogForTemplate(page, TemplateLibrary.Azulene);
     await page.getByPlaceholder('template').click();
     await page.getByRole('dialog').getByTestId('canvas').click();
@@ -209,9 +207,9 @@ test.describe('Open Ketcher', () => {
     await page.getByTitle('Azulene').click();
     await clickOnTheCanvas(page, 0, 1);
     const point = { x: -50, y: 0 };
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnTheCanvas(page, point.x, point.y);
-    await bondSelectionTool(page, MicroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', 0);
     await takeEditorScreenshot(page);
   });
@@ -227,8 +225,8 @@ test.describe('Open Ketcher', () => {
     Description:
     'Structure Library (Shift + T)' tooltip appears when Hover over the 'SL'.
     */
-    const button = page.getByTestId('template-lib');
-    await expect(button).toHaveAttribute(
+    const structureLibraryButton = BottomToolbar(page).structureLibraryButton;
+    await expect(structureLibraryButton).toHaveAttribute(
       'title',
       'Structure Library (Shift+T)',
     );

@@ -1,15 +1,7 @@
 import { Page, test } from '@playwright/test';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
-import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import {
-  clickOnCanvas,
-  LeftPanelButton,
-  openFileAndAddToCanvas,
-  waitForPageInit,
-} from '@utils';
+import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
 import {
   selectAllStructuresOnCanvas,
-  selectLeftPanelButton,
   takeEditorScreenshot,
 } from '@utils/canvas';
 import {
@@ -17,12 +9,16 @@ import {
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
 } from '@utils/clicks';
+import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
 
 const ellipseWidth = 120;
 const ellipseHeight = 100;
 
 const setupEllipse = async (page: Page) => {
-  await selectLeftPanelButton(LeftPanelButton.ShapeEllipse, page);
+  await LeftToolbar(page).selectShapeTool(ShapeType.Ellipse);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const ellipseCoordinates = { x: x + ellipseWidth, y: y + ellipseHeight };
   await clickInTheMiddleOfTheScreen(page);
@@ -56,7 +52,9 @@ async function separetingAndMovingEllipse(page: Page) {
   await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
-  await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Lasso,
+  );
   await createSomeStructure(page);
   await clickOnCanvas(page, point4.x, point4.y);
   await page.mouse.down();
@@ -103,7 +101,9 @@ test.describe('Draw Ellipse', () => {
     await takeEditorScreenshot(page);
     await dragMouseTo(point1.x, point1.y, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Lasso,
+    );
     await createSomeStructure(page);
     await page.mouse.move(point2.x, point2.y);
     await page.mouse.down();

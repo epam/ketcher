@@ -1,6 +1,8 @@
 import { Page, test } from '@playwright/test';
-import { selectAreaSelectionTool } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { clickOnCanvas, openFileAndAddToCanvas, waitForPageInit } from '@utils';
 import {
   selectAllStructuresOnCanvas,
@@ -10,15 +12,13 @@ import {
   clickInTheMiddleOfTheScreen,
   dragMouseTo,
   getCoordinatesOfTheMiddleOfTheScreen,
-  openDropdown,
 } from '@utils/clicks';
 
 const rectangleWidth = 150;
 const rectangleHeight = 100;
 
 const setupRectangle = async (page: Page) => {
-  await openDropdown(page, 'shape-ellipse');
-  await page.getByTestId('shape-rectangle').click();
+  await LeftToolbar(page).selectShapeTool(ShapeType.Rectangle);
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
   const rectangleCoordinates = {
     x: x + rectangleWidth,
@@ -71,7 +71,9 @@ async function separetingAndMovingRecatngles(page: Page) {
   await dragMouseTo(point3.x, point3.y, page);
   await takeEditorScreenshot(page);
   await clickInTheMiddleOfTheScreen(page);
-  await selectAreaSelectionTool(page, SelectionToolType.Lasso);
+  await CommonLeftToolbar(page).selectAreaSelectionTool(
+    SelectionToolType.Lasso,
+  );
   await createSomeStructure(page);
   await clickOnCanvas(page, point4.x, point4.y);
   await page.mouse.down();

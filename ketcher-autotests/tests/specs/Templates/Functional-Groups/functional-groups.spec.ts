@@ -2,45 +2,40 @@ import { Page, test } from '@playwright/test';
 import {
   selectFunctionalGroups,
   FunctionalGroups,
-  selectLeftPanelButton,
-  LeftPanelButton,
   clickInTheMiddleOfTheScreen,
-  pressButton,
   resetCurrentTool,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pasteFromClipboardAndAddToCanvas,
-  selectAtomInToolbar,
-  AtomButton,
-  selectRing,
-  RingButton,
   moveMouseToTheMiddleOfTheScreen,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
   drawFGAndDrag,
   pressTab,
   FILE_TEST_DATA,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   waitForPageInit,
   waitForRender,
   copyAndPaste,
   cutAndPaste,
-  selectDropdownTool,
   clickOnAtom,
   moveOnAtom,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
-import {
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import {
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import {
+  BottomToolbar,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
@@ -51,8 +46,10 @@ const MAX_BOND_LENGTH = 50;
 const anyAtom = 3;
 
 async function saveToTemplates(page: Page) {
-  await selectSaveTool(page);
-  await page.getByRole('button', { name: 'Save to Templates' }).click();
+  const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
+
+  await TopLeftToolbar(page).saveFile();
+  await saveToTemplatesButton.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My Template');
   await page.getByRole('button', { name: 'Save', exact: true }).click();
@@ -204,8 +201,8 @@ test.describe('Functional Groups', () => {
 
     await saveToTemplates(page);
 
-    await selectClearCanvasTool(page);
-    await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+    await TopLeftToolbar(page).clearCanvas();
+    await BottomToolbar(page).StructureLibrary();
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page.getByText('0OOCH3CCl3OO').click();
     await clickInTheMiddleOfTheScreen(page);
@@ -285,7 +282,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.SingleBond, page);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -295,11 +292,13 @@ test.describe('Functional Groups', () => {
     Test case: EPMLSOPKET-5238
     Description: When Adding 'Atom' to expanded Functional Group system display 'Edit Abbreviation' pop-up window.
     */
+    const atomToolbar = RightToolbar(page);
     await openFileAndAddToCanvas(
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectAtomInToolbar(AtomButton.Nitrogen, page);
+
+    await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -313,7 +312,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -327,7 +326,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -341,7 +340,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.ChargePlus, page);
+    await LeftToolbar(page).chargePlus();
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -355,7 +354,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.ChargeMinus, page);
+    await LeftToolbar(page).chargeMinus();
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -369,7 +368,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -384,7 +383,7 @@ test.describe('Functional Groups', () => {
       page,
     );
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
   });
 
@@ -400,7 +399,7 @@ test.describe('Functional Groups', () => {
       page,
     );
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await takeEditorScreenshot(page);
   });
 
@@ -415,7 +414,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -431,7 +430,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-fragment');
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -447,7 +446,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectDropdownTool(page, 'rgroup-label', 'rgroup-attpoints');
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -496,7 +495,9 @@ test.describe('Functional Groups', () => {
     await selectFunctionalGroups(FunctionalGroups.PhCOOH, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -511,7 +512,9 @@ test.describe('Functional Groups', () => {
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -526,8 +529,15 @@ test.describe('Functional Groups', () => {
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
-    await page.getByText('me').first().hover();
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('me')
+      .first()
+      .hover();
     await takeEditorScreenshot(page);
   });
 
@@ -560,7 +570,9 @@ test.describe('Functional Groups', () => {
       await page.getByText('Expand Abbreviation').click();
     });
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     point = await getAtomByIndex(page, { label: 'S' }, 0);
     await page.mouse.move(point.x, point.y);
     await page.keyboard.press('n');
@@ -598,7 +610,9 @@ test.describe('Functional Groups', () => {
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.keyboard.press('Delete');
     await resetCurrentTool(page);
@@ -615,7 +629,9 @@ test.describe('Functional Groups', () => {
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.keyboard.press('Delete');
     await resetCurrentTool(page);
@@ -632,7 +648,9 @@ test.describe('Functional Groups', () => {
     await selectFunctionalGroups(FunctionalGroups.Boc, page);
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await moveMouseToTheMiddleOfTheScreen(page);
     await page.keyboard.press('n');
     await resetCurrentTool(page);
@@ -648,7 +666,9 @@ test.describe('Functional Groups', () => {
     */
     await selectSaltsAndSolvents(SaltsAndSolvents.MethaneSulphonicAcid, page);
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await moveMouseToTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
       await page.keyboard.press('o');

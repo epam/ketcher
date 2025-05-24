@@ -203,7 +203,7 @@ export const RnaEditorExpanded = ({
     }
   }, [activePresetMonomerGroup?.groupItem, isSequenceEditInRNABuilderMode]);
 
-  const scrollToActiveItemInLibrary = (selectedGroup) => {
+  const scrollToActiveItemInLibrary = (selectedGroup, selectedMonomer) => {
     if (selectedGroup === RnaBuilderPresetsItem.Presets) {
       scrollToSelectedPreset(newPreset?.name);
       if (newPreset) {
@@ -215,8 +215,13 @@ export const RnaEditorExpanded = ({
     const activeMonomerInSelectedGroup =
       newPreset[monomerGroupToPresetGroup[selectedGroup]];
 
-    if (!activeMonomerInSelectedGroup) return;
-    scrollToSelectedMonomer(getMonomerUniqueKey(activeMonomerInSelectedGroup));
+    if (activeMonomerInSelectedGroup) {
+      scrollToSelectedMonomer(
+        getMonomerUniqueKey(activeMonomerInSelectedGroup),
+      );
+    } else if (selectedMonomer) {
+      scrollToSelectedMonomer(selectedMonomer);
+    }
   };
 
   const selectGroup = (selectedGroup) => () => {
@@ -244,12 +249,32 @@ export const RnaEditorExpanded = ({
       recalculateRnaBuilderValidations({ rnaPreset: newPreset, isEditMode }),
     );
 
+    // If all the selected nodes in sequence have the same base, set the monomer as active in the library
+    let selectedMonomer = '';
+    if (isSequenceEditInRNABuilderMode && sequenceSelection.length > 0) {
+      const firstBaseLabel = sequenceSelection[0].baseLabel;
+      const allBasesSame =
+        firstBaseLabel &&
+        sequenceSelection.every((node) => node.baseLabel === firstBaseLabel);
+
+      if (allBasesSame) {
+        const baseMonomerItem = sequenceSelection[0].rnaBaseMonomerItem;
+        if (baseMonomerItem) {
+          selectedMonomer = getMonomerUniqueKey(baseMonomerItem);
+          dispatch(setActiveMonomerKey(selectedMonomer));
+        }
+      }
+    }
+
     /*
      * setTimeout is needed here to wait for the selected group to be switched first (in tab or accordion view)
      * Then scroll to the selected item in the library will be possible, otherwise it won't be present in the DOM
      * Perhaps not the best approach, consider refactoring
      */
-    setTimeout(() => scrollToActiveItemInLibrary(selectedGroup), 100);
+    setTimeout(
+      () => scrollToActiveItemInLibrary(selectedGroup, selectedMonomer),
+      100,
+    );
   };
 
   const onChangeName = (event: ChangeEvent<HTMLInputElement>) => {
@@ -336,7 +361,9 @@ export const RnaEditorExpanded = ({
         event.preventDefault();
         event.stopPropagation();
       } else if (event.key === 'Enter') {
-        isSequenceEditInRNABuilderMode ? onUpdateSequence() : onSave();
+        isSequenceEditInRNABuilderMode
+          ? onUpdateSequence()
+          : editor.events.startNewSequence.dispatch({});
         event.preventDefault();
         event.stopPropagation();
       }

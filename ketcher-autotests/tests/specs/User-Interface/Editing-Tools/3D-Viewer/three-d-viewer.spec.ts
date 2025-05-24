@@ -1,16 +1,14 @@
 /* eslint-disable no-magic-numbers */
 import { Page, expect, test } from '@playwright/test';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
-  selectTopPanelButton,
-  TopPanelButton,
   moveMouseToTheMiddleOfTheScreen,
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
-  selectRing,
-  RingButton,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   takeTopToolbarScreenshot,
@@ -20,9 +18,7 @@ import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApply
 import { getKet } from '@utils/formats';
 
 async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
-  await waitForRender(page, async () => {
-    await selectTopPanelButton(TopPanelButton.ThreeD, page);
-  });
+  await IndigoFunctionsToolbar(page).ThreeDViewer();
   if (waitForButtonIsEnabled) {
     await miewApplyButtonIsEnabled(page);
   }
@@ -42,7 +38,7 @@ test.describe('3D Viewer', () => {
     The structure is spinned.
     Position of structure on the canvas is not changed. 
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await open3DViewer(page);
     await moveMouseToTheMiddleOfTheScreen(page);
@@ -146,7 +142,7 @@ test.describe('3D Viewer', () => {
     3D window is opened. Benzene is drawn in it. 
     */
     // we need remove or block the variable number of frames per second in the lower right corner
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await open3DViewer(page);
     await expect(page).toHaveScreenshot({
@@ -164,7 +160,7 @@ test.describe('3D Viewer', () => {
     Benzene is drawn in it. The structure is spinned.
     Position of the structure on the canvas is changed. 
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     const initialStructureData = await getKet(page);
     await open3DViewer(page);

@@ -28,7 +28,12 @@ function AboutDialog(props) {
       className={`${classes.about} ${classes.dialog_body}`}
       params={props}
       buttons={[
-        <button onClick={props.onOk} className={classes.okButton} key="ok">
+        <button
+          onClick={props.onOk}
+          className={classes.okButton}
+          key="ok"
+          data-testid="ok-button"
+        >
           Ok
         </button>,
       ]}

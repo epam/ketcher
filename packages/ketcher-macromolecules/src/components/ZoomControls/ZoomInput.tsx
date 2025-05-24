@@ -22,7 +22,10 @@ import {
   RefObject,
 } from 'react';
 import { StyledInput } from 'components/ZoomControls/styles';
-import { shortcuts, updateInputString } from 'components/ZoomControls/helpers';
+import {
+  hotkeysShortcuts,
+  updateInputString,
+} from 'components/ZoomControls/helpers';
 
 interface ZoomInputProps {
   onZoomSubmit: () => void;
@@ -41,7 +44,10 @@ export const ZoomInput = ({
       if (!inputEl) return;
 
       // Prevent bubbling of keyDown events to capture input and Enter, allow bubbling of shortcuts
-      const zoomShortcuts = [shortcuts['zoom-out'], shortcuts['zoom-in']];
+      const zoomShortcuts = [
+        hotkeysShortcuts['zoom-out'],
+        hotkeysShortcuts['zoom-in'],
+      ];
       if (!zoomShortcuts.includes(event.key))
         event.nativeEvent.stopImmediatePropagation();
 
@@ -50,7 +56,7 @@ export const ZoomInput = ({
         inputEl.select();
       }
     },
-    [onZoomSubmit, inputRef, shortcuts],
+    [onZoomSubmit, inputRef, hotkeysShortcuts],
   );
 
   const onFocusHandler = (event: FocusEvent<HTMLInputElement>) => {

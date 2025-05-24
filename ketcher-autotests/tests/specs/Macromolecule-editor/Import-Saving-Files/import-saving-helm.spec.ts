@@ -1,9 +1,8 @@
 /* eslint-disable no-magic-numbers */
-import { chooseFileFormat, chooseTab, Tabs } from '@utils/macromolecules';
+import { chooseTab, Tabs } from '@utils/macromolecules';
 import { Page, test, expect } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  pressButton,
   waitForPageInit,
   pasteFromClipboardAndAddToMacromoleculesCanvas,
   MacroFileType,
@@ -13,11 +12,10 @@ import {
   closeOpenStructure,
   pageReload,
 } from '@utils/common/helpers';
-import {
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import { turnOnMacromoleculesEditor } from '@tests/pages/common/TopRightToolbar';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
 
@@ -30,26 +28,19 @@ test.beforeAll(async ({ browser }) => {
   page = await context.newPage();
 
   await waitForPageInit(page);
-  await turnOnMacromoleculesEditor(page);
+  await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
   await configureInitialState(page);
 });
 
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await page.keyboard.press('Escape');
-  // await resetZoomLevelToDefault(page);
-  await selectClearCanvasTool(page);
-  // await resetZoomLevelToDefault(page);
+  await TopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
   await Promise.all(browser.contexts().map((context) => context.close()));
 });
-
-async function openSaveToHELMDialog(page: Page) {
-  await selectSaveTool(page);
-  await chooseFileFormat(page, 'HELM');
-}
 
 interface IHELMString {
   helmDescription: string;
@@ -481,10 +472,14 @@ test.describe('Export to HELM: ', () => {
         MacroFileType.HELM,
         correctHELMString.HELMString,
       );
-      await openSaveToHELMDialog(page);
-      const HELMExportResult = await page
-        .getByTestId('preview-area-text')
-        .textContent();
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MacromoleculesFileFormatType.HELM,
+      );
+
+      const HELMExportResult = await SaveStructureDialog(
+        page,
+      ).getTextAreaValue();
 
       if (correctHELMString.differentHELMExport) {
         expect(HELMExportResult).toEqual(correctHELMString.differentHELMExport);
@@ -492,7 +487,7 @@ test.describe('Export to HELM: ', () => {
         expect(HELMExportResult).toEqual(correctHELMString.HELMString);
       }
 
-      await pressButton(page, 'Cancel');
+      await SaveStructureDialog(page).cancel();
     });
   }
 });

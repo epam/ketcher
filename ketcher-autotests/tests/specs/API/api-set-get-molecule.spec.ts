@@ -1,18 +1,16 @@
 /* eslint-disable no-magic-numbers */
 import { expect, Page, test } from '@playwright/test';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
-  AtomButton,
-  selectAtomInToolbar,
   takeEditorScreenshot,
   FILE_TEST_DATA,
   waitForSpinnerFinishedWork,
   clickInTheMiddleOfTheScreen,
   waitForPageInit,
   openFileAndAddToCanvasAsNewProject,
-  drawBenzeneRing,
-  waitForLoad,
   clickOnCanvas,
-  openSettings,
   pressButton,
   readFileContent,
 } from '@utils';
@@ -30,7 +28,7 @@ import {
 import { scrollSettingBar } from '@utils/scrollSettingBar';
 
 async function applyIgnoreChiralFlag(page: Page) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByText('Stereochemistry', { exact: true }).click();
   await scrollSettingBar(page, 80);
   await page
@@ -262,9 +260,11 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     Description:  Elements ["Pol", "CYH", "CXH"] disabled and show tooltip: '{elementName}'
     */
     // Called to make sure the page has been fully loaded
+    const extendedTableButton = RightToolbar(page).extendedTableButton;
+
     await clickInTheMiddleOfTheScreen(page);
     await disableQueryElements(page);
-    await selectAtomInToolbar(AtomButton.Extended, page);
+    await extendedTableButton.click();
     await takeEditorScreenshot(page);
   });
 
@@ -767,9 +767,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
      * Test case: #3531
      * Description: "containsReaction" method returns "false" if structure has not a reaction in micro mode
      */
-    await waitForLoad(page, async () => {
-      await drawBenzeneRing(page);
-    });
+    await drawBenzeneRing(page);
     const containsReaction = await page.evaluate(() => {
       return window.ketcher.containsReaction();
     });

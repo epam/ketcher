@@ -2,15 +2,9 @@
 import { Page, expect, test } from '@playwright/test';
 import {
   takeEditorScreenshot,
-  selectRing,
-  RingButton,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   pressButton,
-  selectLeftPanelButton,
-  LeftPanelButton,
-  selectAtomInToolbar,
-  AtomButton,
   doubleClickOnAtom,
   doubleClickOnBond,
   BondType,
@@ -18,18 +12,13 @@ import {
   dragMouseTo,
   screenshotBetweenUndoRedo,
   openFileAndAddToCanvas,
-  selectNestedTool,
-  ReactionMappingTool,
   fillFieldByPlaceholder,
   getCoordinatesTopAtomOfBenzeneRing,
-  selectRingButton,
-  RgroupTool,
   AttachmentPoint,
   copyAndPaste,
   cutAndPaste,
   waitForPageInit,
   waitForRender,
-  openSettings,
   copyToClipboardByKeyboard,
   pasteFromClipboardByKeyboard,
   selectAllStructuresOnCanvas,
@@ -39,17 +28,17 @@ import {
   ZoomInByKeyboard,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import {
-  pressRedoButton,
-  pressUndoButton,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
@@ -132,9 +121,9 @@ test.describe('Undo/Redo Actions', () => {
     for the Undo action the deleted object is restored.
     after Redo it is deleted again.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
 
     await clickOnAtom(page, 'C', 0);
 
@@ -149,9 +138,11 @@ test.describe('Undo/Redo Actions', () => {
     Undo: heteroatom is removed;
     Redo: heteroatom is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    const atomToolbar = RightToolbar(page);
+
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
-    await selectAtomInToolbar(AtomButton.Chlorine, page);
+    await atomToolbar.clickAtom(Atom.Chlorine);
 
     await clickOnAtom(page, 'C', 0);
 
@@ -166,9 +157,11 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the property mark is removed.
     Redo: the property mark is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
 
     await doubleClickOnAtom(page, 'C', 0);
     await fillAliasForAtom(page, '!@#$%123AbCd', 'Apply');
@@ -184,9 +177,11 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the property mark is removed.
     Redo: the property mark is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
 
     await doubleClickOnBond(page, BondType.SINGLE, 0);
     await selectBondProperties(page, 'Double', 'Ring', 'Center', 'Apply');
@@ -202,10 +197,10 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Single bond is removed;
     Redo: the Single bond is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await bondSelectionTool(page, MicroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -219,9 +214,9 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Double bond is removed;
     Redo: the Double bond is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
-    await bondSelectionTool(page, MicroBondType.Double);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Double);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -235,9 +230,9 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Triple bond is removed;
     Redo: the Triple bond is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
-    await bondSelectionTool(page, MicroBondType.Triple);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Triple);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -253,10 +248,10 @@ test.describe('Undo/Redo Actions', () => {
     */
     const x = 300;
     const y = 300;
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     await moveOnAtom(page, 'C', 0);
     await dragMouseTo(x, y, page);
 
@@ -271,10 +266,10 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Single Up stereobond is removed;
     Redo: the Single Up stereobond is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await bondSelectionTool(page, MicroBondType.SingleUp);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUp);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -288,10 +283,10 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Single Down stereobond is removed;
     Redo: the Single Down stereobond is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await bondSelectionTool(page, MicroBondType.SingleDown);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleDown);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -307,10 +302,10 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Single Up/Down stereobond is removed;
     Redo: the Single Up/Down stereobond is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await bondSelectionTool(page, MicroBondType.SingleUpDown);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleUpDown);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -326,10 +321,10 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Double Cis/Trans stereobond is removed;
     Redo: the Double Cis/Trans stereobond is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await bondSelectionTool(page, MicroBondType.DoubleCisTrans);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.DoubleCisTrans);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -343,10 +338,10 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Any Query Bond is removed;
     Redo: the Any Query Bond is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await bondSelectionTool(page, MicroBondType.Any);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Any);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -360,10 +355,10 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Aromatic Query Bond is removed;
     Redo: the Aromatic Query Bond is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await bondSelectionTool(page, MicroBondType.Aromatic);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Aromatic);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -379,10 +374,10 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Single/Double Query Bond is removed;
     Redo: the Single/Double Query Bond is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await bondSelectionTool(page, MicroBondType.SingleDouble);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleDouble);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -398,10 +393,10 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Single/Aromatic Query Bond is removed;
     Redo: the Single/Aromatic Query Bond is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await bondSelectionTool(page, MicroBondType.SingleAromatic);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.SingleAromatic);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -417,10 +412,10 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the Double/Aromatic Query Bond is removed;
     Redo: the Double/Aromatic Query Bond is restored.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await bondSelectionTool(page, MicroBondType.DoubleAromatic);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.DoubleAromatic);
     await clickOnAtom(page, 'C', 0);
 
     await screenshotBetweenUndoRedo(page);
@@ -435,7 +430,9 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Mapping tool is restored.
     */
     await openFileAndAddToCanvas('KET/reaction-chain.ket', page);
-    await selectNestedTool(page, ReactionMappingTool.AUTOMAP);
+    await LeftToolbar(page).selectReactionMappingTool(
+      ReactionMappingType.ReactionAutoMapping,
+    );
     await waitForRender(page, async () => {
       await pressButton(page, 'Apply');
     });
@@ -452,7 +449,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
     await fillFieldByPlaceholder(page, 'Enter value', '33');
     await pressButton(page, 'Apply');
@@ -469,7 +466,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88');
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -484,7 +481,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectSruPolymer(page, 'Data', 'SRU Polymer', 'A', 'Head-to-tail');
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -499,7 +496,7 @@ test.describe('Undo/Redo Actions', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await addNameToSuperatom(page, 'Name', 'Test@!#$%12345');
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
@@ -512,10 +509,10 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the R-Group Label tool is removed;
     Redo: the R-Group Label tool is restored;
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
@@ -532,10 +529,10 @@ test.describe('Undo/Redo Actions', () => {
     Undo: the R-Group Fragment tool is removed;
     Redo: the R-Group Fragment tool is restored;
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
 
-    await selectNestedTool(page, RgroupTool.R_GROUP_FRAGMENT);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupFragment);
     // need fix getCoordinatesTopAtomOfBenzeneRing after change canvas design
     const { x, y } = await getCoordinatesTopAtomOfBenzeneRing(page);
     await clickOnCanvas(page, x, y);
@@ -553,7 +550,7 @@ test.describe('Undo/Redo Actions', () => {
     Redo: the Attachment Point tool is restored;
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
@@ -568,7 +565,7 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo action should work correctly
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 2);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await pressButton(page, 'Apply');
@@ -583,12 +580,12 @@ test.describe('Undo/Redo Actions', () => {
     await pressButton(page, 'Apply');
 
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -599,7 +596,7 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo action should work correctly
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
@@ -616,7 +613,7 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo action should work correctly
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
@@ -633,7 +630,7 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo hotkeys action should work correctly
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
@@ -654,7 +651,7 @@ test.describe('Undo/Redo Actions', () => {
     Description: Undo/Redo hotkeys action should work correctly
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await page.getByLabel(AttachmentPoint.SECONDARY).check();
@@ -684,22 +681,22 @@ test.describe('Undo/Redo Actions', () => {
     const yDelta = 300;
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await fillFieldByPlaceholder(page, 'Enter name', 'Test');
     await fillFieldByPlaceholder(page, 'Enter value', '33');
     await pressButton(page, 'Apply');
-    await selectLeftPanelButton(LeftPanelButton.Chain, page);
+    await LeftToolbar(page).chain();
     const point = await getAtomByIndex(page, { label: 'C' }, 2);
     await clickOnCanvas(page, point.x, point.y);
     const coordinatesWithShift = point.y + yDelta;
     await dragMouseTo(point.x, coordinatesWithShift, page);
     for (let i = 0; i < 2; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < 2; i++) {
-      await pressRedoButton(page);
+      await TopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -719,11 +716,11 @@ test.describe('Undo/Redo Actions', () => {
     After one action is performed on the canvas and then the Undo button is pressed, the Redo button 
     becomes enabled and the Undo button becomes disabled.
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await expect(page).toHaveScreenshot();
-    await pressRedoButton(page);
+    await TopLeftToolbar(page).redo();
     await expect(page).toHaveScreenshot();
   });
 
@@ -735,9 +732,9 @@ test.describe('Undo/Redo Actions', () => {
     Draw any bonds on Benzene atoms
     Hover mouse cursor over of 'Benzene' and press CTRL+Z (Undo)
     */
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
-    await bondSelectionTool(page, MicroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MicroBondType.Single);
     await clickOnAtom(page, 'C', 2);
     await page.getByTestId('canvas').hover();
     await takeEditorScreenshot(page);
@@ -754,12 +751,12 @@ test.describe('Undo/Redo Actions', () => {
     Use select tool to choose and CTRL+C placed ring.
     Press CTRL+V and place the ring. Press CTRL+Z.
     */
-    await openSettings(page);
+    await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await page.getByTestId('reset-to-select-input-span').click();
     await page.getByRole('option', { name: 'off' }).click();
     await takeEditorScreenshot(page);
     await page.getByTestId('OK').click();
-    await selectRing(RingButton.Benzene, page);
+    await selectRingButton(page, 'Benzene');
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);

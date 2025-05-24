@@ -3,12 +3,13 @@ import {
   takeEditorScreenshot,
   waitForPageInit,
   openFileAndAddToCanvas,
-  selectFormatForSaving,
-  clickOnSaveFileAndOpenDropdown,
-  openSettings,
   pressButton,
-  selectLayoutTool,
 } from '@utils';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 
 test.describe('Saving in .png files', () => {
   test.beforeEach(async ({ page }) => {
@@ -47,8 +48,10 @@ test.describe('Saving in .png files', () => {
     }) => {
       await openFileAndAddToCanvas(filename, page);
       await takeEditorScreenshot(page);
-      await clickOnSaveFileAndOpenDropdown(page);
-      await selectFormatForSaving(page, 'PNG Image');
+      await TopLeftToolbar(page).saveFile();
+      await SaveStructureDialog(page).chooseFileFormat(
+        MoleculesFileFormatType.PNGImage,
+      );
       await takeEditorScreenshot(page);
     });
   }
@@ -65,8 +68,10 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'PNG Image');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -82,8 +87,10 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'PNG Image');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -98,8 +105,10 @@ test.describe('Saving in .png files', () => {
       'KET/schema-with-vertical-retrosynthetic-arrow.ket',
       page,
     );
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'PNG Image');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -115,8 +124,10 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'PNG Image');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -132,8 +143,10 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'PNG Image');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -149,8 +162,10 @@ test.describe('Saving in .png files', () => {
       page,
     );
 
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'PNG Image');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -165,14 +180,16 @@ test.describe('Saving in .png files', () => {
   https://github.com/epam/Indigo/issues/2457
   */
     await openFileAndAddToCanvas('KET/layout-with-catalyst.ket', page);
-    await openSettings(page);
+    await TopRightToolbar(page).Settings();
     await pressButton(page, 'Set ACS Settings');
     await pressButton(page, 'Apply');
     await pressButton(page, 'OK');
-    await selectLayoutTool(page);
+    await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
-    await clickOnSaveFileAndOpenDropdown(page);
-    await selectFormatForSaving(page, 'PNG Image');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 });

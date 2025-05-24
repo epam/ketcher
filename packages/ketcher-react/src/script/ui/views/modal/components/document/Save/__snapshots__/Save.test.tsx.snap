@@ -13,6 +13,7 @@ Object {
         class="dialog dialog"
         role="dialog"
         tabindex="-1"
+        testid="save-structure-dialog"
       >
         <header
           class="header withDivider"
@@ -134,7 +135,7 @@ Object {
                 >
                   <textarea
                     class="previewArea"
-                    data-testid="mol-preview-area-text"
+                    data-testid="preview-area"
                     readonly=""
                   />
                   <button
@@ -419,6 +420,7 @@ Object {
       class="dialog dialog"
       role="dialog"
       tabindex="-1"
+      testid="save-structure-dialog"
     >
       <header
         class="header withDivider"
@@ -540,7 +542,7 @@ Object {
               >
                 <textarea
                   class="previewArea"
-                  data-testid="mol-preview-area-text"
+                  data-testid="preview-area"
                   readonly=""
                 />
                 <button

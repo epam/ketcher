@@ -1,15 +1,15 @@
 import { Page, expect, test } from '@playwright/test';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   BondType,
   BondTypeName,
-  LeftPanelButton,
   clickOnAtom,
   doubleClickOnAtom,
   doubleClickOnBond,
-  drawBenzeneRing,
   pressButton,
   selectAllStructuresOnCanvas,
-  selectTool,
   setAromaticity,
   setBondType,
   setCustomQuery,
@@ -68,8 +68,10 @@ test.describe('API isQueryStructureSelected for atoms', () => {
   });
 
   test('returns true, when structure has "Any" atom', async ({ page }) => {
+    const anyAtomButton = RightToolbar(page).anyAtomButton;
+
     await pressButton(page, 'Cancel');
-    await page.getByTestId('any-atom').click();
+    await anyAtomButton.click();
     await clickOnAtom(page, 'C', 0);
     await selectAllStructuresOnCanvas(page);
     expect(await isQueryStructureSelected(page)).toBe(true);
@@ -114,7 +116,7 @@ test.describe('Tests for API isQueryStructureSelected for Custom Component', () 
     await waitForPageInit(page);
     await drawBenzeneRing(page);
     await selectAllStructuresOnCanvas(page);
-    await selectTool(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await page.getByTestId('s-group-type-input-span').click();
     await page.getByRole('option', { name: 'Query component' }).click();
     await checkIsQueryStructureSelected(page, true);

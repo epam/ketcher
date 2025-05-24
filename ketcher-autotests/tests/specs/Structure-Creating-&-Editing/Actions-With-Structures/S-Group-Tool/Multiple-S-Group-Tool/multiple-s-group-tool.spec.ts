@@ -1,15 +1,10 @@
 /* eslint-disable no-magic-numbers */
-import { Page, expect, test } from '@playwright/test';
+import { Page, test } from '@playwright/test';
 import {
-  LeftPanelButton,
-  selectLeftPanelButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   pressButton,
-  receiveFileComparisonData,
-  selectAtomInToolbar,
-  AtomButton,
   resetCurrentTool,
   BondType,
   copyAndPaste,
@@ -18,21 +13,21 @@ import {
   clickOnBond,
   fillFieldByLabel,
   screenshotBetweenUndoRedo,
-  saveToFile,
-  RgroupTool,
-  selectNestedTool,
   AttachmentPoint,
   setAttachmentPoints,
   waitForPageInit,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
 } from '@utils';
-import { getMolfile } from '@utils/formats';
 import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { selectEraseTool } from '@tests/pages/common/CommonLeftToolbar';
+import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
+import { Atom } from '@tests/pages/constants/atoms/atoms';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 500;
@@ -56,7 +51,7 @@ async function selectMultipleGroup(
 
 async function changeRepeatCountValue(page: Page, value: string) {
   await selectAllStructuresOnCanvas(page);
-  await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+  await LeftToolbar(page).sGroup();
   await page.getByTestId('s-group-type-input-span').click();
   await page.getByTestId('Multiple group-option').click();
   await page.getByTestId('mul-input').fill(value);
@@ -73,7 +68,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: The brackets are rendered correctly around Atom
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 3);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
     await takeEditorScreenshot(page);
@@ -85,7 +80,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: The brackets are rendered correctly around Bond
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 3);
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
     await takeEditorScreenshot(page);
@@ -98,7 +93,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
     await takeEditorScreenshot(page);
   });
@@ -107,12 +102,12 @@ test.describe('Multiple S-Group tool', () => {
     page,
   }) => {
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await clickOnAtom(page, 'C', 3);
     await page.getByLabel(AttachmentPoint.PRIMARY).check();
     await pressButton(page, 'Apply');
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '88', 'Apply');
     await takeEditorScreenshot(page);
   });
@@ -123,7 +118,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: User is able to edit the Multiple S-group.
     */
     await openFileAndAddToCanvas('KET/multiple-group.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 3, 'right');
     await page.getByText('Edit S-Group...').click();
     await fillFieldByLabel(page, 'Repeat count', '99');
@@ -137,8 +132,10 @@ test.describe('Multiple S-Group tool', () => {
       Test case: EPMLSOPKET-1521
       Description: User is able to add atom on structure with Multiple S-group.
     */
+    const atomToolbar = RightToolbar(page);
+
     await openFileAndAddToCanvas('KET/multiple-group.ket', page);
-    await selectAtomInToolbar(AtomButton.Oxygen, page);
+    await atomToolbar.clickAtom(Atom.Oxygen);
     await clickOnAtom(page, 'C', 3);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -152,7 +149,7 @@ test.describe('Multiple S-Group tool', () => {
       Description: User is able to delete and undo/redo atom on structure with Multiple S-group.
     */
     await openFileAndAddToCanvas('KET/multiple-group.ket', page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'C', 3);
     await takeEditorScreenshot(page);
 
@@ -185,7 +182,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     const rGroupName = 'R8';
     await openFileAndAddToCanvas('KET/multiple-group.ket', page);
-    await selectLeftPanelButton(LeftPanelButton.R_GroupLabelTool, page);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
     await clickOnAtom(page, 'C', 3);
     await page.getByRole('button', { name: rGroupName }).click();
     await pressButton(page, 'Apply');
@@ -224,20 +221,14 @@ test.describe('Multiple S-Group tool', () => {
       Description: User is able to save and open structure with Multiple S-group.
     */
     await openFileAndAddToCanvas('KET/multiple-group-data.ket', page);
-    const expectedFile = await getMolfile(page);
-    await saveToFile(
+
+    await verifyFileExport(
+      page,
       'Molfiles-V2000/multiple-group-data-expected.mol',
-      expectedFile,
+      FileType.MOL,
+      'v2000',
+      [1],
     );
-    const METADATA_STRING_INDEX = [1];
-    const { fileExpected: molFileExpected, file: molFile } =
-      await receiveFileComparisonData({
-        page,
-        expectedFileName: 'Molfiles-V2000/multiple-group-data-expected.mol',
-        metaDataIndexes: METADATA_STRING_INDEX,
-      });
-    expect(molFile).toEqual(molFileExpected);
-    await takeEditorScreenshot(page);
   });
 
   test('Limit on minimum count', async ({ page }) => {
@@ -248,7 +239,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '1', 'Apply');
     await takeEditorScreenshot(page);
   });
@@ -261,7 +252,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '200', 'Apply');
     await takeEditorScreenshot(page);
   });
@@ -276,7 +267,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '0');
     await takeEditorScreenshot(page);
   });
@@ -291,7 +282,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '201');
     await takeEditorScreenshot(page);
   });
@@ -305,7 +296,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '-1');
     await takeEditorScreenshot(page);
   });
@@ -317,9 +308,9 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '200', 'Apply');
-    await selectNestedTool(page, RgroupTool.ATTACHMENT_POINTS);
+    await LeftToolbar(page).selectRGroupTool(RGroupType.AttachmentPoint);
     await setAttachmentPoints(
       page,
       { label: 'C', index: 3 },
@@ -372,7 +363,7 @@ test.describe('Multiple S-Group tool', () => {
     */
     await openFileAndAddToCanvas('KET/cyclopropane-and-h2o.ket', page);
     await selectAllStructuresOnCanvas(page);
-    await selectLeftPanelButton(LeftPanelButton.S_Group, page);
+    await LeftToolbar(page).sGroup();
     await selectMultipleGroup(page, 'Data', 'Multiple group', '8', 'Apply');
     await verifyFileExport(
       page,

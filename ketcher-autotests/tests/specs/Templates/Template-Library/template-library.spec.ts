@@ -1,22 +1,26 @@
 import { Page, test, expect } from '@playwright/test';
+import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
+import {
+  BottomToolbar,
+  openStructureLibrary,
+} from '@tests/pages/molecules/BottomToolbar';
 import {
   clickInTheMiddleOfTheScreen,
   clickOnCanvas,
   FunctionalGroups,
   getCoordinatesOfTheMiddleOfTheScreen,
   getEditorScreenshot,
-  openSettings,
   pressButton,
   selectAllStructuresOnCanvas,
   selectFunctionalGroups,
-  STRUCTURE_LIBRARY_BUTTON_NAME,
   takeEditorScreenshot,
   waitForPageInit,
   waitForRender,
 } from '@utils';
+import { editStructureTemplate, openFunctionalGroup } from '@utils/templates';
 
 async function setDisplayStereoFlagsSettingToOn(page: Page) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByText('Stereochemistry', { exact: true }).click();
   await page.getByTestId('stereo-label-style-input-span').click();
   // Using "On" label style, to always show the stereo labels, so we can see the difference
@@ -25,7 +29,7 @@ async function setDisplayStereoFlagsSettingToOn(page: Page) {
 }
 
 async function setIgnoreChiralFlagSetting(page: Page, newSetting: boolean) {
-  await openSettings(page);
+  await TopRightToolbar(page).Settings();
   await page.getByText('Stereochemistry', { exact: true }).click();
 
   const checkLocator = page.getByText('Ignore the chiral flag');
@@ -37,7 +41,7 @@ async function setIgnoreChiralFlagSetting(page: Page, newSetting: boolean) {
 }
 
 async function placePhenylalanineMustard(page: Page, x: number, y: number) {
-  await pressButton(page, STRUCTURE_LIBRARY_BUTTON_NAME);
+  await BottomToolbar(page).StructureLibrary();
   const phenylalanineLocator = page.locator(
     `div[title*="Phenylalanine mustard"] > div`,
   );
@@ -48,26 +52,6 @@ async function placePhenylalanineMustard(page: Page, x: number, y: number) {
     await phenylalanineLocator.first().click();
     await clickOnCanvas(page, x, y);
   });
-}
-
-async function openStructureLibrary(page: Page) {
-  await page.getByTestId('template-lib').click();
-}
-
-async function openFunctionalGroup(page: Page) {
-  await openStructureLibrary(page);
-  await page.getByText('Functional Group').click();
-}
-
-async function editStructureTemplate(
-  page: Page,
-  templateCategory: string,
-  templateName: string,
-) {
-  const editStructureButton = page.getByTitle(templateName).getByRole('button');
-  await openStructureLibrary(page);
-  await page.getByText(templateCategory).click();
-  await editStructureButton.click();
 }
 
 async function editAndClearTemplateName(
@@ -114,8 +98,8 @@ test.describe('Templates - Template Library', () => {
   test('Open Structure Library tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-4265
     // Verify Structure LIbrary tooltip
-    const button = page.getByTestId('template-lib');
-    await expect(button).toHaveAttribute(
+    const { structureLibraryButton } = BottomToolbar(page);
+    await expect(structureLibraryButton).toHaveAttribute(
       'title',
       'Structure Library (Shift+T)',
     );

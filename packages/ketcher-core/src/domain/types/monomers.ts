@@ -9,11 +9,13 @@ import {
   PolymerBond,
 } from 'domain/entities';
 import {
+  AmbiguousMonomerTransformation,
   IKetAttachmentPoint,
   IKetIdtAliases,
   KetAmbiguousMonomerTemplateOption,
   KetAmbiguousMonomerTemplateSubType,
   KetMonomerClass,
+  MonomerTransformation,
 } from 'application/formatters/types/ket';
 import { D3SvgElementSelection } from 'application/render/types';
 import { UsageInMacromolecule } from 'application/render';
@@ -47,6 +49,7 @@ export type MonomerItemType = MonomerItemBase & {
   struct: Struct;
   props: {
     id?: string;
+    MonomerNaturalAnalogThreeLettersCode?: string;
     MonomerNaturalAnalogCode: string;
     MonomerName: string;
     MonomerFullName?: string;
@@ -65,6 +68,8 @@ export type MonomerItemType = MonomerItemBase & {
   seqId?: number;
   isAntisense?: boolean;
   isSense?: boolean;
+  expanded?: boolean;
+  transformation?: MonomerTransformation;
 };
 
 export type AmbiguousMonomerType = MonomerItemBase & {
@@ -74,6 +79,7 @@ export type AmbiguousMonomerType = MonomerItemBase & {
   options: KetAmbiguousMonomerTemplateOption[];
   idtAliases?: IKetIdtAliases;
   isAmbiguous: true;
+  transformation?: AmbiguousMonomerTransformation;
 };
 
 export type MonomerOrAmbiguousType = MonomerItemType | AmbiguousMonomerType;

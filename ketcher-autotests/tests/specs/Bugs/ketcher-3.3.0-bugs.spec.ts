@@ -19,20 +19,13 @@ import {
   takePageScreenshot,
   selectSequenceLayoutModeTool,
   openFileAndAddToCanvasAsNewProjectMacro,
-  selectRingButton,
-  RingButton,
   clickOnCanvas,
   selectSaltsAndSolvents,
   SaltsAndSolvents,
   openFileAndAddToCanvasAsNewProject,
 } from '@utils';
-import { chooseFileFormat, waitForMonomerPreview } from '@utils/macromolecules';
+import { waitForMonomerPreview } from '@utils/macromolecules';
 import { waitForPageInit } from '@utils/common';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
 import {
   createRNAAntisenseChain,
   getMonomerLocator,
@@ -50,10 +43,10 @@ import {
   selectSugarSlot,
   toggleRnaBuilder,
 } from '@utils/macromolecules/rnaBuilder';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 
 let page: Page;
 
@@ -62,24 +55,19 @@ async function callContextMenuForAnySymbol(page: Page) {
   await anySymbol.click({ button: 'right', force: true });
 }
 
-async function openSaveToHELMDialog(page: Page) {
-  await selectSaveTool(page);
-  await chooseFileFormat(page, 'HELM');
-}
-
 test.describe('Ketcher bugs in 3.3.0', () => {
   test.beforeAll(async ({ browser }) => {
     const context = await browser.newContext();
     page = await context.newPage();
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
     await processResetToDefaultState(testInfo, page);
   });
@@ -289,12 +277,16 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       await selectMonomer(page, Sugars._25d3r);
       await waitForMonomerPreview(page);
       // Screenshot suppression is not used on purpose, as it’s required for the test
-      await takePageScreenshot(page);
+      await takePageScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
       await keyboardPressOnCanvas(page, 'Escape');
       await selectMonomer(page, Bases._5meC);
       await waitForMonomerPreview(page);
       // Screenshot suppression is not used on purpose, as it’s required for the test
-      await takePageScreenshot(page);
+      await takePageScreenshot(page, {
+        hideMacromoleculeEditorScrollBars: true,
+      });
     },
   );
 
@@ -492,7 +484,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     for (let i = 0; i < 3; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -782,8 +774,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectClearCanvasTool(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).clearCanvas();
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -812,23 +804,17 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await getSymbolLocator(page, {
-      symbolAlias: 'A',
-      nodeIndexOverall: 1,
-    }).click();
     const symbolLocator = getSymbolLocator(page, {
       symbolAlias: 'A',
       nodeIndexOverall: 1,
     });
+    await symbolLocator.click();
+
     await modifyInRnaBuilder(page, symbolLocator);
     await selectBaseSlot(page);
     await selectMonomer(page, Bases.DNA_N);
     await pressSaveButton(page);
-    await openSaveToHELMDialog(page);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await verifyHELMExport(page, 'RNA1{R(A)P.R(A,C,G,T)P.R(A)}$$$$V2.0');
   });
 
   test('Case 25: Correct bond length and angle for non-natural monomers in the library', async () => {
@@ -851,11 +837,15 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await page.getByText('1Nal').click({ button: 'right' });
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('1Nal')
+      .click({ button: 'right' });
     await page.getByText('Expand monomer').click();
-    await selectRingButton(RingButton.Cyclohexane, page);
+    await selectRingButton(page, 'Cyclohexane');
     await clickOnCanvas(page, 505, 400);
     await takeEditorScreenshot(page);
   });
@@ -870,7 +860,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Go to the Structure library, Salts and Solvents tab
      * 3. Select DBU
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectSaltsAndSolvents(SaltsAndSolvents.DBU, page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
@@ -886,7 +876,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Load from MOL
      * 3. Take a screenshot
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Bugs/structure-with-stereo-bonds-4.mol',
       page,
@@ -904,7 +894,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
      * 2. Load from MOL
      * 3. Take a screenshot
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Bugs/R-fragment-structure.mol',
       page,

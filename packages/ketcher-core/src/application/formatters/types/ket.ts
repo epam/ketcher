@@ -1,9 +1,24 @@
 import { AttachmentPointName } from 'domain/types';
+import type { FlipDirection } from 'application/editor/shared/utils.types';
 
 export enum KetNodeType {
   MONOMER = 'monomer',
   AMBIGUOUS_MONOMER = 'ambiguousMonomer',
 }
+
+export type MonomerTransformation = Partial<{
+  rotate: number;
+  shift: Partial<{
+    x: number;
+    y: number;
+  }>;
+  flip: FlipDirection;
+}>;
+
+export type AmbiguousMonomerTransformation = Pick<
+  MonomerTransformation,
+  'flip'
+>;
 
 export interface IKetMonomerNode {
   type: KetNodeType.MONOMER;
@@ -15,6 +30,8 @@ export interface IKetMonomerNode {
   };
   alias: string;
   templateId: string;
+  expanded?: boolean;
+  transformation?: MonomerTransformation;
 }
 
 export interface IKetAmbiguousMonomerNode {
@@ -26,6 +43,7 @@ export interface IKetAmbiguousMonomerNode {
   };
   alias: string;
   templateId: string;
+  transformation?: AmbiguousMonomerTransformation;
 }
 
 export type KetNode = IKetMonomerNode | IKetAmbiguousMonomerNode;

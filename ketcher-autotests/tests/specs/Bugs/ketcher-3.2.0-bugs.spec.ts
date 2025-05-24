@@ -19,13 +19,10 @@ import {
   openFileAndAddToCanvasAsNewProjectMacro,
   FILE_TEST_DATA,
   resetZoomLevelToDefault,
-  selectSaveFileFormat,
-  FileFormatOption,
   resetCurrentTool,
   clickOnCanvas,
   setMolecule,
 } from '@utils';
-import { chooseFileFormat } from '@utils/macromolecules';
 import {
   waitForPageInit,
   waitForRender,
@@ -34,17 +31,8 @@ import {
 import {
   FileType,
   verifyFileExport,
+  verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  setZoomInputValue,
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
 import {
   createDNAAntisenseChain,
   createRNAAntisenseChain,
@@ -61,13 +49,12 @@ import {
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
 import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 
 let page: Page;
-
-async function openSaveToHELMDialog(page: Page) {
-  await selectSaveTool(page);
-  await chooseFileFormat(page, 'HELM');
-}
 
 async function callContexMenu(page: Page, locatorText: string) {
   const canvasLocator = page.getByTestId('ketcher-canvas');
@@ -88,14 +75,14 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     const context = await browser.newContext();
     page = await context.newPage();
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
     await processResetToDefaultState(testInfo, page);
   });
@@ -121,8 +108,8 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       MacroFileType.HELM,
       'PEPTIDE1{C}|PEPTIDE2{A}$PEPTIDE1,PEPTIDE2,1:pair-1:pair$$$V2.0',
     );
-    await turnOnMicromoleculesEditor(page);
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await getMonomerLocator(page, Peptides.A).click();
     await page.mouse.down();
     await page.mouse.move(600, 400);
@@ -296,7 +283,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await getSymbolLocator(page, { symbolAlias: 'U' }).nth(2).dblclick();
     await keyboardPressOnCanvas(page, 'ArrowDown');
     await keyboardPressOnCanvas(page, 'Delete');
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await selectFlexLayoutModeTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -393,7 +380,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from KET
      * 3. Select all nucleotides and call context menu
      * 4. Click Create DNA antisense stand option
-     * 5. Take a screenshot.
+     * 5. Validate HELM export.
      */
     await selectSequenceLayoutModeTool(page);
     await openFileAndAddToCanvasAsNewProject(
@@ -403,15 +390,10 @@ test.describe('Ketcher bugs in 3.2.0', () => {
     await selectAllStructuresOnCanvas(page);
     const anySymbolR = getSymbolLocator(page, { symbolAlias: 'R' }).first();
     await createDNAAntisenseChain(page, anySymbolR);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
-    await openSaveToHELMDialog(page);
-    await takeEditorScreenshot(page, {
-      hideMonomerPreview: true,
-      hideMacromoleculeEditorScrollBars: true,
-    });
+    await verifyHELMExport(
+      page,
+      'RNA1{R(A,C,G,T)P.R(A,G,T)P.R(A,C,T)P.R(A,T)}|RNA2{R(A,C,G,U)P.R(A,G,U)P.R(A,C,U)P.R(A,U)}|RNA3{R(A,C)P.R(A,G)P.R(A,C,G)}|RNA4{[dR](A,T)P.[dR](A,G,T)P.[dR](A,C,T)P.[dR](A,C,G,T)}|RNA5{[dR](A,T)P.[dR](A,G,T)P.[dR](A,C,T)P.[dR](A,C,G,T)}|RNA6{[dR](C,G,T)P.[dR](C,T)P.[dR](G,T)}$RNA1,RNA4,11:pair-2:pair|RNA1,RNA4,8:pair-5:pair|RNA1,RNA4,5:pair-8:pair|RNA1,RNA4,2:pair-11:pair|RNA2,RNA5,11:pair-2:pair|RNA2,RNA5,8:pair-5:pair|RNA2,RNA5,5:pair-8:pair|RNA2,RNA5,2:pair-11:pair|RNA3,RNA6,8:pair-2:pair|RNA3,RNA6,5:pair-5:pair|RNA3,RNA6,2:pair-8:pair$$$V2.0',
+    );
   });
 
   test('Case 11: Warning message when deleting all hydrogen bonds between two chains', async () => {
@@ -597,7 +579,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -642,7 +624,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await keyboardTypeOnCanvas(page, 'AAAAA');
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -720,7 +702,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Make setMolecule call with coordinates (10, 10) twice
      * 3. Take a screenshot.
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await waitForSpinnerFinishedWork(
       page,
       async () =>
@@ -753,7 +735,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from MOL
      * 3. Take a screenshot.
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Bugs/markush.mol',
       page,
@@ -771,7 +753,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from MOL
      * 3. Take a screenshot.
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Bugs/complex-r-group-structure.mol',
       page,
@@ -789,7 +771,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from MOL
      * 3. Take a screenshot.
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Bugs/two-stereostructures.mol',
       page,
@@ -808,7 +790,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 3. Save to MOL V2000
      * 4. Take a screenshot.
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/Unable to save canvas to MOL - system throws an error.ket',
       page,
@@ -837,7 +819,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from KET
      * 3. Take a screenshot.
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/Substitution count.ket',
       page,
@@ -855,7 +837,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from MOL
      * 3. Save to SMILES
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'Molfiles-V2000/Bugs/different-features.mol',
       page,
@@ -878,12 +860,15 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from KET
      * 3. Save to PNG
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/Elliptical arrows can be saved to the png.ket',
       page,
     );
-    await selectSaveFileFormat(page, FileFormatOption.PNG);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.PNGImage,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -897,12 +882,15 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from CDXML
      * 3. Save to SVG
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'CDXML/Bugs/stereochemistry.cdxml',
       page,
     );
-    await selectSaveFileFormat(page, FileFormatOption.SVG);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
     await takeEditorScreenshot(page);
   });
 
@@ -919,11 +907,11 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      */
     await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'AA');
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     await expandMonomer(page, 'P');
     await clickOnCanvas(page, 500, 500);
-    await setZoomInputValue(page, '60');
+    await CommonTopRightToolbar(page).setZoomInputValue('60');
     await resetCurrentTool(page);
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -941,7 +929,7 @@ test.describe('Ketcher bugs in 3.2.0', () => {
      * 2. Load from HELM
      * 3. Take a screenshot.
      */
-    await turnOnMacromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
       MacroFileType.HELM,

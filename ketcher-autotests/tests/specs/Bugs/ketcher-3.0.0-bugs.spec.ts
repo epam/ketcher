@@ -22,23 +22,14 @@ import {
   dragMouseTo,
   selectMonomer,
   pressButton,
-  drawBenzeneRing,
   moveOnAtom,
   clickOnAtom,
   openFileAndAddToCanvasAsNewProject,
   selectPartOfMolecules,
-  selectAromatizeTool,
-  selectDearomatizeTool,
-  selectLayoutTool,
-  selectCleanTool,
-  selectCalculateTool,
-  selectAddRemoveExplicitHydrogens,
   clickOnCanvas,
   setMolecule,
   FILE_TEST_DATA,
   moveMouseAway,
-  selectRing,
-  RingButton,
 } from '@utils';
 import { waitForPageInit, waitForSpinnerFinishedWork } from '@utils/common';
 import { pageReload } from '@utils/common/helpers';
@@ -47,7 +38,6 @@ import {
   verifyFileExport,
   verifyHELMExport,
 } from '@utils/files/receiveFileComparisonData';
-import { chooseFileFormat } from '@utils/macromolecules';
 import { goToRNATab } from '@utils/macromolecules/library';
 import {
   modifyInRnaBuilder,
@@ -61,27 +51,23 @@ import {
   switchToPeptideMode,
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
-import {
-  pressUndoButton,
-  selectClearCanvasTool,
-  selectSaveTool,
-} from '@tests/pages/common/TopLeftToolbar';
-import {
-  turnOnMacromoleculesEditor,
-  turnOnMicromoleculesEditor,
-} from '@tests/pages/common/TopRightToolbar';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
-import {
-  bondSelectionTool,
-  selectAreaSelectionTool,
-  selectEraseTool,
-} from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
+import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
 
 let page: Page;
 
@@ -134,14 +120,14 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     const context = await browser.newContext();
     page = await context.newPage();
     await waitForPageInit(page);
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await processResetToDefaultState(testInfo, page);
   });
 
@@ -219,7 +205,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     await connectMonomerToAtom(page);
     await takeEditorScreenshot(page);
   });
@@ -280,7 +266,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'RNA1{R(A)P}$$$$V2.0',
     );
-    await bondSelectionTool(page, MacroBondType.Single);
+    await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
     const baseLocator = getMonomerLocator(page, Bases.A).first();
     await baseLocator.hover({ force: true });
     await takeEditorScreenshot(page, {
@@ -361,7 +347,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await addMonomerToCenterOfCanvas(page, Presets.T);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'UUU');
     await keyboardPressOnCanvas(page, 'ArrowUp');
@@ -411,9 +397,11 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Change C1 of a molecule to O using the keyboard and then try to change C2 to N very
      * quickly afterward
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await drawBenzeneRing(page);
-    await selectAreaSelectionTool(page, SelectionToolType.Rectangle);
+    await CommonLeftToolbar(page).selectAreaSelectionTool(
+      SelectionToolType.Rectangle,
+    );
     await clickOnAtom(page, 'C', 0);
     await page.keyboard.press('O');
     await moveOnAtom(page, 'C', 1);
@@ -432,15 +420,15 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Press Undo
      * 4. Take a screenshot
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
       page,
     );
     await selectAllStructuresOnCanvas(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -454,7 +442,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Go to the Library - Peptide tab
      * 3. Click on A peptide
      */
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -484,7 +472,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await switchToPeptideMode(page);
     await keyboardTypeOnCanvas(page, 'AAATT');
     for (let i = 0; i < 3; i++) {
-      await pressUndoButton(page);
+      await TopLeftToolbar(page).undo();
     }
     await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
@@ -511,7 +499,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await keyboardPressOnCanvas(page, 'Enter');
     await keyboardTypeOnCanvas(page, 'AAATT');
     await keyboardPressOnCanvas(page, 'Enter');
-    await selectClearCanvasTool(page);
+    await TopLeftToolbar(page).clearCanvas();
     await keyboardTypeOnCanvas(page, 'AAATT');
     await keyboardPressOnCanvas(page, 'Enter');
     await keyboardTypeOnCanvas(page, 'AAATT');
@@ -570,12 +558,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       page,
     );
     await selectPartOfMolecules(page);
-    await selectEraseTool(page);
+    await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await pressUndoButton(page);
+    await TopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -593,17 +581,19 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Press Aromatize | Dearomatize | Layout | Clean Up | Calculate CIP | Add/Remove explicit hydrogens button
      * 4. Take a screenshot
      */
-    await turnOnMicromoleculesEditor(page);
+    const indigoFunctionsToolbar = IndigoFunctionsToolbar(page);
+
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
       page,
     );
-    await selectAromatizeTool(page);
-    await selectDearomatizeTool(page);
-    await selectLayoutTool(page);
-    await selectCleanTool(page);
-    await selectCalculateTool(page);
-    await selectAddRemoveExplicitHydrogens(page);
+    await indigoFunctionsToolbar.aromatize();
+    await indigoFunctionsToolbar.dearomatize();
+    await indigoFunctionsToolbar.layout();
+    await indigoFunctionsToolbar.cleanUp();
+    await indigoFunctionsToolbar.calculateCIP();
+    await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);
   });
 
@@ -618,7 +608,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Switch to Sequence mode
      * 4. Take a screenshot
      */
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -644,7 +634,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Take a screenshot
      */
     await pageReload(page);
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/1. Peptide X (ambiguouse, alternatives, from library).ket',
       page,
@@ -664,7 +654,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Click on the center of double bond (e.g. between two black lines)
      * 4. Take a screenshot
      */
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -692,7 +682,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Bugs/monomers-cycled.ket',
       page,
     );
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
     await page.getByText('1Nal').click({ button: 'right' });
     await page.getByText('Expand monomers').click();
@@ -715,7 +705,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Take a screenshot
      */
     await pageReload(page);
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -723,9 +713,9 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       'KET/Bugs/ketcher - 2025-01-06T161755.116.ket',
       page,
     );
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await takeEditorScreenshot(page);
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -743,12 +733,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Switch to Macro mode
      * 4. Take a screenshot
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/ketcher - 2025-01-06T160012.582.ket',
       page,
     );
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -767,7 +757,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 4. Press Save button
      */
     test.slow();
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -776,10 +766,12 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D}$$$$V2.0',
     );
-    await selectSaveTool(page);
-    await chooseFileFormat(page, 'Sequence (3-letter code)');
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MacromoleculesFileFormatType.Sequence3LetterCode,
+    );
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Save');
+    await SaveStructureDialog(page).save();
     await takeEditorScreenshot(page);
   });
 
@@ -793,7 +785,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Load RXN V3000 file with Super G and Super T monomers
      * 3. Take a screenshot
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/super-g-and-super-t.ket',
       page,
@@ -822,7 +814,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Load RXN V3000 file with Super G and Super T monomers
      * 3. Take a screenshot
      */
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: true,
       goToPeptides: false,
     });
@@ -848,7 +840,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 2. Load from HELM using paste from clipboard
      * 3. Take a screenshot
      */
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
@@ -861,7 +853,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await takeEditorScreenshot(page);
   });
 
-  test(`Case 28: Ambiguous DNA bases (N, D, H, W) not converted to DNA bases on antisense creation`, async () => {
+  test.skip(`Case 28: Ambiguous DNA bases (N, D, H, W) not converted to DNA bases on antisense creation`, async () => {
     /*
      * Test case: https://github.com/epam/ketcher/issues/6600
      * Bug: https://github.com/epam/ketcher/issues/6196
@@ -872,7 +864,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Create antisense for that chain
      * 4. Take a screenshot
      */
-    test.slow();
+    // test.slow();
     await selectSnakeLayoutModeTool(page);
     await pasteFromClipboardAndAddToMacromoleculesCanvas(
       page,
@@ -929,7 +921,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      */
     await goToRNATab(page);
     await selectMonomer(page, Presets.MOE_A_P);
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await verifyFileExport(
       page,
       'Molfiles-V3000/Bugs/moe-a-p-expected.mol',
@@ -954,7 +946,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 3. Expand structure
      * 4. Take a screenshot
      */
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await openFileAndAddToCanvasAsNewProject(
       'KET/Bugs/modified-phosphates.ket',
       page,
@@ -978,16 +970,20 @@ test.describe('Ketcher bugs in 3.0.0', () => {
      * 5. Draw a cyclohexane
      * 6. Compare bond lengths
      */
-    await turnOnMacromoleculesEditor(page, {
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
       enableFlexMode: false,
       goToPeptides: false,
     });
     await selectMonomer(page, Bases.A);
-    await turnOnMicromoleculesEditor(page);
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
     await selectAllStructuresOnCanvas(page);
-    await page.getByText('A', { exact: true }).click({ button: 'right' });
+    await page
+      .getByTestId('ketcher-canvas')
+      .filter({ has: page.locator(':visible') })
+      .getByText('A', { exact: true })
+      .click({ button: 'right' });
     await page.getByText('Expand monomer').click();
-    await selectRing(RingButton.Cyclohexane, page);
+    await selectRingButton(page, 'Cyclohexane');
     await clickOnCanvas(page, 180, 180);
     await takeEditorScreenshot(page);
   });

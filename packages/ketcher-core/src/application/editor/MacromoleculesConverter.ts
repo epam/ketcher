@@ -44,7 +44,7 @@ export class MacromoleculesConverter {
     const sgroupId = struct.sgroups.add(monomerMicromolecule);
 
     monomerMicromolecule.data.name = monomer.monomerItem.label;
-    monomerMicromolecule.data.expanded = false;
+    monomerMicromolecule.data.expanded = monomer.monomerItem.expanded;
     monomerMicromolecule.id = sgroupId;
     monomerMicromolecule.pp = monomer.position;
 
@@ -483,6 +483,7 @@ export class MacromoleculesConverter {
               isotope: atom.isotope,
               radical: atom.radical,
               alias: atom.alias,
+              cip: atom.cip,
             },
           );
 
@@ -509,6 +510,7 @@ export class MacromoleculesConverter {
               bond.type,
               bond.stereo,
               bondId,
+              bond.cip,
             ),
           );
         });

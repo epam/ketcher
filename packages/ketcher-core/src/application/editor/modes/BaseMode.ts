@@ -15,17 +15,12 @@ import {
   legacyCopy,
   legacyPaste,
 } from 'utilities';
-import { BaseMonomer, SequenceType, Struct, Vec2 } from 'domain/entities';
+import { SequenceType, Struct, Vec2 } from 'domain/entities';
 import { identifyStructFormat, SupportedFormat } from 'application/formatters';
 import { KetSerializer } from 'domain/serializers';
 import { ChemicalMimeType } from 'domain/services';
-import { PolymerBond } from 'domain/entities/PolymerBond';
 import { ketcherProvider } from 'application/utils';
 import { DrawingEntitiesManager } from 'domain/entities/DrawingEntitiesManager';
-import { HydrogenBond } from 'domain/entities/HydrogenBond';
-import { AttachmentPointName } from 'domain/types';
-import { Atom } from 'domain/entities/CoreAtom';
-import { MACROMOLECULES_BOND_TYPES } from 'application/editor';
 
 export abstract class BaseMode {
   private _pasteIsInProgress = false;
@@ -107,51 +102,8 @@ export abstract class BaseMode {
       return;
     }
     const editor = CoreEditor.provideEditorInstance();
-    const drawingEntitiesManager = new DrawingEntitiesManager();
-    editor.drawingEntitiesManager.selectedEntities.forEach(([, entity]) => {
-      if (entity instanceof BaseMonomer) {
-        drawingEntitiesManager.addMonomerChangeModel(
-          entity.monomerItem,
-          entity.position,
-          entity,
-        );
-      } else if (entity instanceof Atom) {
-        drawingEntitiesManager.addMonomerChangeModel(
-          entity.monomer.monomerItem,
-          entity.monomer.position,
-          entity.monomer,
-        );
-      } else if (entity instanceof PolymerBond && entity.secondMonomer) {
-        const firstAttachmentPoint =
-          entity.firstMonomer.getAttachmentPointByBond(entity);
-        const secondAttachmentPoint =
-          entity.secondMonomer?.getAttachmentPointByBond(entity);
-        if (
-          firstAttachmentPoint &&
-          secondAttachmentPoint &&
-          entity.firstMonomer.selected &&
-          entity.secondMonomer?.selected
-        ) {
-          drawingEntitiesManager.finishPolymerBondCreationModelChange(
-            entity.firstMonomer,
-            entity.secondMonomer,
-            firstAttachmentPoint,
-            secondAttachmentPoint,
-            undefined,
-            entity,
-          );
-        }
-      } else if (entity instanceof HydrogenBond && entity.secondMonomer) {
-        drawingEntitiesManager.finishPolymerBondCreationModelChange(
-          entity.firstMonomer,
-          entity.secondMonomer,
-          AttachmentPointName.HYDROGEN,
-          AttachmentPointName.HYDROGEN,
-          MACROMOLECULES_BOND_TYPES.HYDROGEN,
-          entity,
-        );
-      }
-    });
+    const drawingEntitiesManager =
+      editor.drawingEntitiesManager.filterSelection();
     const ketSerializer = new KetSerializer();
     const serializedKet = ketSerializer.serialize(
       new Struct(),

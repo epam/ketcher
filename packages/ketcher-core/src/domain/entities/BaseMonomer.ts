@@ -51,6 +51,7 @@ export abstract class BaseMonomer extends DrawingEntity {
     super(_position, config);
 
     this.monomerItem = { ...monomerItem };
+    this.monomerItem.expanded = monomerItem.expanded;
     this.attachmentPointsToBonds = this.getAttachmentPointDict();
     this.potentialAttachmentPointsToBonds = this.getAttachmentPointDict();
     this.monomerItem.attachmentPoints =
@@ -592,7 +593,21 @@ export abstract class BaseMonomer extends DrawingEntity {
   }
 
   public get isModification() {
-    return this.monomerItem.props.MonomerNaturalAnalogCode !== this.label;
+    const naturalAnalogThreeLettersCode =
+      this.monomerItem.props.MonomerNaturalAnalogThreeLettersCode;
+    const naturalAnalogCode = this.monomerItem.props.MonomerNaturalAnalogCode;
+    const namesToCompareNaturalAnalog = [
+      ...([this.label] || []),
+      ...([this.monomerItem.props.MonomerName] || []),
+    ];
+    const naturalAnaloguesToCompare = [
+      ...([naturalAnalogThreeLettersCode] || []),
+      ...([naturalAnalogCode] || []),
+    ];
+
+    return namesToCompareNaturalAnalog.every(
+      (nameToCompare) => !naturalAnaloguesToCompare.includes(nameToCompare),
+    );
   }
 
   public get sideConnections() {

@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import {
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
@@ -7,25 +7,13 @@ import {
   moveMouseAway,
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
-import { selectSaveTool } from '@tests/pages/common/TopLeftToolbar';
 import {
   verifyFileExport,
   FileType,
 } from '@utils/files/receiveFileComparisonData';
-import { clickOnFileFormatDropdown } from '@utils/formats';
-
-async function saveSmarts(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
-  await page.getByRole('button', { name: 'Save', exact: true }).click();
-}
-
-async function previewSmarts(page: Page) {
-  await selectSaveTool(page);
-  await clickOnFileFormatDropdown(page);
-  await page.getByRole('option', { name: 'Daylight SMARTS' }).click();
-}
+import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
+import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
+import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 
 test.describe('Reagents SMARTS format', () => {
   test.beforeEach(async ({ page }) => {
@@ -52,7 +40,10 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await previewSmarts(page);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMARTS,
+    );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -79,7 +70,10 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await previewSmarts(page);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMARTS,
+    );
     await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
@@ -139,6 +133,10 @@ test.describe('Reagents SMARTS format', () => {
       FileType.SMARTS,
     );
 
-    await saveSmarts(page);
+    await TopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.DaylightSMARTS,
+    );
+    await SaveStructureDialog(page).save();
   });
 });

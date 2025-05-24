@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  ***************************************************************************/
+
 import { Provider } from 'react-redux';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Global, ThemeProvider } from '@emotion/react';
@@ -20,6 +21,7 @@ import { createTheme } from '@mui/material/styles';
 import { merge } from 'lodash';
 import {
   BaseMonomer,
+  CoreEditor,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
   NodeSelection,
   NodesSelection,
@@ -42,6 +44,8 @@ import {
   destroyEditor,
   selectEditor,
   selectIsHandToolSelected,
+  setContextMenuActive,
+  toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
 import {
   useAppDispatch,
@@ -95,6 +99,7 @@ import { EditorEvents } from './EditorEvents';
 import { SelectedMonomersContextMenu } from 'components/contextMenu/SelectedMonomersContextMenu/SelectedMonomersContextMenu';
 import { SequenceSyncEditModeButton } from 'components/SequenceSyncEditModeButton';
 import { RootSizeProvider } from './contexts';
+import { MacromoleculePropertiesWindow } from 'components/macromoleculeProperties';
 
 const muiTheme = createTheme(muiOverrides);
 
@@ -102,10 +107,12 @@ interface EditorProps {
   theme?: DeepPartial<EditorTheme>;
   togglerComponent?: JSX.Element;
   monomersLibraryUpdate?: string | JSON;
+  onInit?: (editor: CoreEditor) => void;
 }
 
 interface EditorContainerProps extends EditorProps {
-  onInit?: () => void;
+  onInit?: (editor: CoreEditor) => void;
+  isMacromoleculesEditorTurnedOn?: boolean;
 }
 
 function EditorContainer({
@@ -113,6 +120,7 @@ function EditorContainer({
   theme,
   togglerComponent,
   monomersLibraryUpdate,
+  isMacromoleculesEditorTurnedOn,
 }: EditorContainerProps) {
   const rootElRef = useRef<HTMLDivElement>(null);
   const editorTheme: EditorTheme = theme
@@ -123,20 +131,20 @@ function EditorContainer({
     ketcher: editorTheme,
   });
 
-  useEffect(() => {
-    onInit?.();
-  }, [onInit]);
-
   return (
     <Provider store={store}>
       <ThemeProvider theme={mergedTheme}>
         <Global styles={getGlobalStyles} />
-        <RootSizeProvider rootRef={rootElRef}>
+        <RootSizeProvider
+          rootRef={rootElRef}
+          isMacromoleculesEditorTurnedOn={isMacromoleculesEditorTurnedOn}
+        >
           <EditorWrapper ref={rootElRef} className={EditorClassName}>
             <Editor
               theme={editorTheme}
               togglerComponent={togglerComponent}
               monomersLibraryUpdate={monomersLibraryUpdate}
+              onInit={onInit}
             />
           </EditorWrapper>
         </RootSizeProvider>
@@ -149,6 +157,7 @@ function Editor({
   theme,
   togglerComponent,
   monomersLibraryUpdate,
+  onInit,
 }: EditorProps) {
   const dispatch = useAppDispatch();
   const canvasRef = useRef<SVGSVGElement>(null);
@@ -172,7 +181,12 @@ function Editor({
 
   useEffect(() => {
     dispatch(
-      createEditor({ theme, canvas: canvasRef.current, monomersLibraryUpdate }),
+      createEditor({
+        theme,
+        canvas: canvasRef.current,
+        monomersLibraryUpdate,
+        onInit,
+      }),
     );
 
     return () => {
@@ -185,6 +199,8 @@ function Editor({
   useEffect(() => {
     editor?.events.rightClickSequence.add(([event, selections]) => {
       setSelections(selections);
+      window.dispatchEvent(new Event('hidePreview'));
+      dispatch(setContextMenuActive(true));
       showSequenceContextMenu({
         event,
         props: {
@@ -223,6 +239,9 @@ function Editor({
         });
       },
     );
+    editor?.events.toggleMacromoleculesPropertiesVisibility.add(() => {
+      dispatch(toggleMacromoleculesPropertiesWindowVisibility({}));
+    });
   }, [editor]);
 
   useEffect(() => {
@@ -314,6 +333,10 @@ function Editor({
         <Layout.Right hide={isMonomerLibraryHidden}>
           <MonomerLibrary toggleLibraryVisibility={toggleLibraryVisibility} />
         </Layout.Right>
+
+        <Layout.Bottom>
+          <MacromoleculePropertiesWindow />
+        </Layout.Bottom>
         <Layout.InsideRoot>
           {isMonomerLibraryHidden && (
             <MonomerLibraryToggle onClick={toggleLibraryVisibility} />

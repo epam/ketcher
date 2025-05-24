@@ -16,12 +16,12 @@ interface CalculatePartOfBondSettingsParameter {
   readonly connection: Connection;
   readonly direction: ConnectionDirectionInDegrees;
   readonly horizontal: boolean;
-  readonly sideConnectionBondTurnPoint: number;
+  readonly turnPoint: number;
 }
 
 interface CalculatePartOfBondSettingsResult {
   readonly pathPart: string;
-  readonly sideConnectionBondTurnPoint: number;
+  readonly turnPoint: number;
 }
 
 export class SideChainConnectionBondRendererUtility {
@@ -34,7 +34,7 @@ export class SideChainConnectionBondRendererUtility {
     connection,
     direction,
     horizontal,
-    sideConnectionBondTurnPoint,
+    turnPoint,
   }: CalculatePartOfBondSettingsParameter): CalculatePartOfBondSettingsResult {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
@@ -55,8 +55,8 @@ export class SideChainConnectionBondRendererUtility {
     );
 
     let endOfPathPart: number;
-    if (horizontal && sideConnectionBondTurnPoint) {
-      endOfPathPart = sideConnectionBondTurnPoint;
+    if (horizontal && turnPoint) {
+      endOfPathPart = turnPoint;
     } else {
       const { monomerSize, scaledMonomerPosition } = (
         cell.monomer as BaseMonomer
@@ -66,7 +66,7 @@ export class SideChainConnectionBondRendererUtility {
         : scaledMonomerPosition.y + monomerSize.height / 2 + yOffset;
     }
 
-    const sideConnectionBondTurnPointInternal = endOfPathPart;
+    const turnPointInternal = endOfPathPart;
 
     if (horizontal) {
       endOfPathPart +=
@@ -91,7 +91,7 @@ export class SideChainConnectionBondRendererUtility {
 
     return {
       pathPart,
-      sideConnectionBondTurnPoint: sideConnectionBondTurnPointInternal,
+      turnPoint: turnPointInternal,
     };
   }
 

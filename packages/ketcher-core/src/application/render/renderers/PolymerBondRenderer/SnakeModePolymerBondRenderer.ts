@@ -323,10 +323,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           connection: firstCellConnection,
           direction,
           horizontal: true,
-          sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
+          turnPoint: this.sideConnectionBondTurnPoint ?? 0,
         });
       pathDAttributeValue += result.pathPart;
-      this.sideConnectionBondTurnPoint = result.sideConnectionBondTurnPoint;
+      this.sideConnectionBondTurnPoint = result.turnPoint;
     }
 
     let maxHorizontalOffset = 0;
@@ -425,10 +425,10 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
             connection: previousConnection,
             direction,
             horizontal,
-            sideConnectionBondTurnPoint: this.sideConnectionBondTurnPoint ?? 0,
+            turnPoint: this.sideConnectionBondTurnPoint ?? 0,
           });
         pathDAttributeValue += result.pathPart;
-        this.sideConnectionBondTurnPoint = result.sideConnectionBondTurnPoint;
+        this.sideConnectionBondTurnPoint = result.turnPoint;
       }
       previousCell = cell;
       previousConnection = cellConnection;

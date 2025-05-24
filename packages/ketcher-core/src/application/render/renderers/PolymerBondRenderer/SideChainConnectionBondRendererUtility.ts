@@ -11,7 +11,7 @@ import type {
 } from 'domain/entities/canvas-matrix/Connection';
 import { CELL_WIDTH } from 'domain/entities/DrawingEntitiesManager';
 
-interface CalculatePartOfBondSettingsParameter {
+interface CalculatePathPartAndTurnPointParameter {
   readonly cell: Cell;
   readonly connection: Connection;
   readonly direction: ConnectionDirectionInDegrees;
@@ -19,7 +19,7 @@ interface CalculatePartOfBondSettingsParameter {
   readonly turnPoint: number;
 }
 
-interface CalculatePartOfBondSettingsResult {
+interface CalculatePathPartAndTurnPointResult {
   readonly pathPart: string;
   readonly turnPoint: number;
 }
@@ -29,13 +29,13 @@ export class SideChainConnectionBondRendererUtility {
   public static readonly cellHeight = 40;
   public static readonly smoothCornerSize = 5;
 
-  public static calculatePartOfBondSettings({
+  public static calculatePathPartAndTurnPoint({
     cell,
     connection,
     direction,
     horizontal,
     turnPoint,
-  }: CalculatePartOfBondSettingsParameter): CalculatePartOfBondSettingsResult {
+  }: CalculatePathPartAndTurnPointParameter): CalculatePathPartAndTurnPointResult {
     const sin = Math.sin((direction * Math.PI) / 180);
     const cos = Math.cos((direction * Math.PI) / 180);
     const xOffset = (CELL_WIDTH / 2) * cos;

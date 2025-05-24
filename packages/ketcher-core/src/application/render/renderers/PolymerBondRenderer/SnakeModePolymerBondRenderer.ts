@@ -318,7 +318,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           ? 0
           : 180;
       const result =
-        SideChainConnectionBondRendererUtility.calculatePartOfBondSettings({
+        SideChainConnectionBondRendererUtility.calculatePathPartAndTurnPoint({
           cell: firstCell,
           connection: firstCellConnection,
           direction,
@@ -420,7 +420,7 @@ export class SnakeModePolymerBondRenderer extends BaseRenderer {
           : // TODO?: Check. I am not sure about `as ConnectionDirectionInDegrees`.
             (previousConnection.direction as ConnectionDirectionInDegrees);
         const result =
-          SideChainConnectionBondRendererUtility.calculatePartOfBondSettings({
+          SideChainConnectionBondRendererUtility.calculatePathPartAndTurnPoint({
             cell: previousCell,
             connection: previousConnection,
             direction,

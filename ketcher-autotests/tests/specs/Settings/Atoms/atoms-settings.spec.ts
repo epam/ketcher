@@ -1,4 +1,5 @@
 import { Page, test } from '@playwright/test';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import {
   drawBenzeneRing,
   selectRingButton,
@@ -121,7 +122,7 @@ test.describe('Atom Settings', () => {
     const pointX = 200;
     const pointY = 200;
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 

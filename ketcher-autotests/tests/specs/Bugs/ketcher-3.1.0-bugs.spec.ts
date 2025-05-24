@@ -58,6 +58,7 @@ import { Bases } from '@constants/monomers/Bases';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 let page: Page;
 
@@ -266,7 +267,7 @@ test.describe('Ketcher bugs in 3.1.0', () => {
      * 6. Take a screenshot
      */
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, 200, 200);
     await clickOnCanvas(page, 400, 400);
     await clickOnCanvas(page, 600, 600);

@@ -39,6 +39,7 @@ import {
   BottomToolbar,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 const X_DELTA = 300;
 
@@ -425,7 +426,7 @@ test.describe('Templates - Functional Group Tools2', () => {
       page,
     );
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await waitForRender(page, async () => {
@@ -434,7 +435,7 @@ test.describe('Templates - Functional Group Tools2', () => {
 
     await takeEditorScreenshot(page);
 
-    await selectRingButton(page, 'Cyclopentadiene');
+    await selectRingButton(page, RingButton.Cyclopentadiene);
     point = await getAtomByIndex(page, { label: 'C' }, 0);
     await clickOnCanvas(page, point.x, point.y);
     await resetCurrentTool(page);
@@ -731,7 +732,7 @@ test.describe('Templates - Functional Group Tools3', () => {
 
     await leftToolbar.text();
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page, 'right');
     await takeEditorScreenshot(page);
 

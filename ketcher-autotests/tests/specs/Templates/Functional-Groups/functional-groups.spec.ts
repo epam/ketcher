@@ -36,6 +36,7 @@ import {
   BottomToolbar,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 let point: { x: number; y: number };
 
 const CANVAS_CLICK_X = 300;
@@ -326,7 +327,7 @@ test.describe('Functional Groups', () => {
       'Molfiles-V2000/functional-group-expanded.mol',
       page,
     );
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });

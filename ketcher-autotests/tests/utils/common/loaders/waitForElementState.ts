@@ -1,4 +1,5 @@
 import { Locator, Page } from '@playwright/test';
+import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
 
 export async function waitForElementEnabled(
   locator: Locator,
@@ -27,6 +28,6 @@ export async function waitForElementDisabled(
 }
 
 export async function waitForOpenButtonEnabled(page: Page) {
-  const copyButton = page.getByTitle('Copy (Ctrl+C)');
+  const copyButton = await TopToolbar(page).copyButton;
   await waitForElementEnabled(copyButton);
 }

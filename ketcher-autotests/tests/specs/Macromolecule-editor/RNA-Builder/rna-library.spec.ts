@@ -1537,10 +1537,16 @@ test.describe('RNA Library', () => {
          * Test task: https://github.com/epam/ketcher/issues/5539
          * Verify search by full IDT alias
          * Case:
+         * 0. Close RNA builder if it is opened
          * 1. Fill Search field with value
          * 2. Switch to monomer's tab to see it
          * 3. Take screenshot of the library to make sure search works
          */
+        const rnaEditor = page.getByTestId('rna-editor-expanded');
+        if (await rnaEditor.isVisible()) {
+          await toggleRnaBuilderAccordion(page);
+        }
+
         await searchMonomerByName(page, IDTSearchString.SearchString);
         await goToMonomerLocationTab(
           page,

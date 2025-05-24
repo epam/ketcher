@@ -24,6 +24,7 @@ import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 async function drawStructureWithArrowOpenAngle(page: Page) {
   const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
@@ -91,7 +92,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
      * Description: pasting SMARTS with query groups should not trigger any error
      */
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
@@ -113,7 +114,7 @@ test.describe('Checking reaction queries attributes in SMARTS format', () => {
     const shiftValue = 50;
     const atomToolbar = RightToolbar(page);
 
-    await selectRingButton(page, 'Cyclopropane');
+    await selectRingButton(page, RingButton.Cyclopropane);
     await clickInTheMiddleOfTheScreen(page);
     await moveMouseAway(page);
     await atomToolbar.clickAtom(Atom.Carbon);

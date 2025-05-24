@@ -92,6 +92,7 @@ import {
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 const topLeftCorner = {
   x: -325,
@@ -534,7 +535,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await clickInTheMiddleOfTheScreen(page);
       await moveMouseAway(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await selectRingButton(page, 'Benzene');
+      await selectRingButton(page, RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
       await IndigoFunctionsToolbar(page).ThreeDViewer();
       await moveMouseAway(page);
@@ -1045,7 +1046,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const y = 200;
       const x1 = 600;
       const y1 = 600;
-      await selectRingButton(page, 'Benzene');
+      await selectRingButton(page, RingButton.Benzene);
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();

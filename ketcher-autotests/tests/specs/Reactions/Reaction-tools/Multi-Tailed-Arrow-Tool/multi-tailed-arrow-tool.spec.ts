@@ -49,6 +49,7 @@ import {
   openStructureLibrary,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 async function saveToTemplates(page: Page) {
   const saveToTemplatesButton = SaveStructureDialog(page).saveToTemplatesButton;
@@ -72,7 +73,7 @@ async function selectFromSaveToTemplates(page: Page) {
 async function setupElementsAndModifyMultiTailArrow(page: Page) {
   await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
   await clickOnCanvas(page, 600, 400);
-  await selectRingButton(page, 'Benzene');
+  await selectRingButton(page, RingButton.Benzene);
   await clickOnCanvas(page, 200, 400);
   await CommonLeftToolbar(page).selectAreaSelectionTool(
     SelectionToolType.Rectangle,
@@ -989,7 +990,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     test.slow();
     await LeftToolbar(page).selectArrowTool(ArrowType.MultiTailedArrow);
     await clickOnCanvas(page, 500, 600);
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, 200, 400);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
       SelectionToolType.Rectangle,
@@ -1092,7 +1093,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 200, 200);
     await clickOnCanvas(page, 800, 200);
     await clickOnCanvas(page, 800, 300);
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(
@@ -1160,7 +1161,7 @@ test.describe('Multi-Tailed Arrow Tool', () => {
     await clickOnCanvas(page, 200, 200);
     await clickOnCanvas(page, 800, 200);
     await clickOnCanvas(page, 800, 300);
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, 300, 300);
     await takeEditorScreenshot(page);
     await CommonLeftToolbar(page).selectAreaSelectionTool(

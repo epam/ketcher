@@ -248,10 +248,10 @@ test.describe('Plus and Arrows tools ', () => {
         );
         await cutToClipboardByKeyboard(page);
         await pasteFromClipboardByKeyboard(page);
-        // await selectTopPanelButton(TopPanelButton.Cut, page);
+        // await TopToolbar(page).cut();
         // await waitForSpinnerFinishedWork(
         //   page,
-        //   async () => await selectTopPanelButton(TopPanelButton.Cut, page),
+        //   async () => await TopToolbar(page).cut(),
         // );
 
         // await pasteFromClipboardByKeyboard(page);

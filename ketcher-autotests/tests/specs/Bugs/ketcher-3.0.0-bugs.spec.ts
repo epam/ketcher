@@ -68,6 +68,7 @@ import {
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 let page: Page;
 
@@ -983,7 +984,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       .getByText('A', { exact: true })
       .click({ button: 'right' });
     await page.getByText('Expand monomer').click();
-    await selectRingButton(page, 'Cyclohexane');
+    await selectRingButton(page, RingButton.Cyclohexane);
     await clickOnCanvas(page, 180, 180);
     await takeEditorScreenshot(page);
   });

@@ -12,6 +12,7 @@ import {
   screenshotBetweenUndoRedo,
   clickOnCanvas,
 } from '@utils';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Toggle-Explicit-Hydrogens Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -48,7 +49,7 @@ test.describe('Toggle-Explicit-Hydrogens Tool', () => {
     */
     const x = 200;
     const y = 200;
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, x, y);
     await IndigoFunctionsToolbar(page).addRemoveExplicitHydrogens();
     await takeEditorScreenshot(page);

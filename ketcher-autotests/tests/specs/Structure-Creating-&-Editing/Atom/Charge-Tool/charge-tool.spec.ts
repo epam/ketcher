@@ -11,6 +11,7 @@ import {
   clickOnAtom,
   waitForPageInit,
 } from '@utils';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Charge tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -23,7 +24,7 @@ test.describe('Charge tool', () => {
     Description: Charge Plus is applied to the structure atom.
     */
     const anyAtom = 0;
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('Shift++');
@@ -37,7 +38,7 @@ test.describe('Charge tool', () => {
     Description: Charge Minus is applied to the structure atom.
     */
     const anyAtom = 0;
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await moveOnAtom(page, 'C', anyAtom);
     await page.keyboard.press('-');

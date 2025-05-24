@@ -31,6 +31,7 @@ import {
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Hot keys', () => {
   test.beforeEach(async ({ page }) => {
@@ -536,7 +537,7 @@ test.describe('Hot key Del', () => {
     });
     const x = 100;
     const y = 100;
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await waitForRender(page, async () => {
       await moveOnAtom(page, 'C', 0);

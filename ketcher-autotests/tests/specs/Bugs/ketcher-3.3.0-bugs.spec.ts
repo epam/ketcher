@@ -47,6 +47,7 @@ import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 let page: Page;
 
@@ -845,7 +846,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       .getByText('1Nal')
       .click({ button: 'right' });
     await page.getByText('Expand monomer').click();
-    await selectRingButton(page, 'Cyclohexane');
+    await selectRingButton(page, RingButton.Cyclohexane);
     await clickOnCanvas(page, 505, 400);
     await takeEditorScreenshot(page);
   });

@@ -27,6 +27,7 @@ import {
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 const RING_OFFSET = 150;
 const ARROW_OFFSET = 20;
@@ -159,7 +160,7 @@ test.describe('Save files', () => {
     const fileFormatDropdonwList =
       SaveStructureDialog(page).fileFormatDropdownList;
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
@@ -209,7 +210,7 @@ test.describe('Save files', () => {
      */
     // Can't select TestId because after press drop-down menu there is no InchIKey.
     await waitForIndigoToLoad(page);
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await TopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(

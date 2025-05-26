@@ -45,7 +45,7 @@ export default function initEditor(dispatch, getState) {
 
   const resetToSelect =
     (force = false) =>
-    (dispatch) => {
+    async (dispatch) => {
       const state = getState();
       const activeTool = state.actionState?.activeTool.tool;
       if (!activeTool || (activeTool === 'select' && !force)) return;

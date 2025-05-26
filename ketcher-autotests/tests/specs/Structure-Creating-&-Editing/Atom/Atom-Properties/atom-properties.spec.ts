@@ -29,7 +29,6 @@ import {
   selectUnsaturated,
   selectReactionFlagsInversion,
   selectExactChange,
-  selectThreeAtomsFromPeriodicTable,
   selectElementFromExtendedTable,
   selectRingBondCountOption,
   selectHCountOption,
@@ -58,6 +57,11 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { selectElementsFromPeriodicTable } from '@tests/pages/molecules/canvas/PeriodicTableDialog';
+import {
+  PeriodicTableElement,
+  TypeChoice,
+} from '@tests/pages/constants/periodicTableDialog/Constants';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -1479,14 +1483,11 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1658
       Description: The different List symbols are present on the canvas.
     */
-    await selectThreeAtomsFromPeriodicTable(
-      page,
-      'List',
-      'Ru 44',
-      'Mo 42',
-      'W 74',
-      'Add',
-    );
+    await selectElementsFromPeriodicTable(page, TypeChoice.List, [
+      PeriodicTableElement.Ru,
+      PeriodicTableElement.Mo,
+      PeriodicTableElement.W,
+    ]);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -1497,14 +1498,11 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1658
       Description: The different Not List symbols are present on the canvas.
     */
-    await selectThreeAtomsFromPeriodicTable(
-      page,
-      'Not List',
-      'Ru 44',
-      'Mo 42',
-      'W 74',
-      'Add',
-    );
+    await selectElementsFromPeriodicTable(page, TypeChoice.NotList, [
+      PeriodicTableElement.Ru,
+      PeriodicTableElement.Mo,
+      PeriodicTableElement.W,
+    ]);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);

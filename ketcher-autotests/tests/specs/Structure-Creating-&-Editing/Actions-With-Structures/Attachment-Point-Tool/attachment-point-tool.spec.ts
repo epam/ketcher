@@ -1,7 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
 import {
-  pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   dragMouseTo,
@@ -34,20 +33,14 @@ import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import {
+  PeriodicTableElement,
+  TypeChoice,
+} from '@tests/pages/constants/periodicTableDialog/Constants';
+import { selectElementsFromPeriodicTable } from '@tests/pages/molecules/canvas/PeriodicTableDialog';
 
 const CANVAS_CLICK_X = 300;
 const CANVAS_CLICK_Y = 300;
-
-async function selectNotListAtoms(page: Page) {
-  const periodicTableButton = RightToolbar(page).periodicTableButton;
-
-  await periodicTableButton.click();
-  await page.getByText('Not List').click();
-  await pressButton(page, 'U 92');
-  await pressButton(page, 'Np 93');
-  await pressButton(page, 'Pu 94');
-  await page.getByRole('button', { name: 'Add', exact: true }).click();
-}
 
 async function selectExtendedTableElements(page: Page, element: string) {
   const extendedTableButton = RightToolbar(page).extendedTableButton;
@@ -291,7 +284,12 @@ test.describe('Attachment Point Tool', () => {
     const anyAtomButton = RightToolbar(page).anyAtomButton;
 
     await openFileAndAddToCanvas('KET/chain-with-attachment-points.ket', page);
-    await selectNotListAtoms(page);
+    await selectElementsFromPeriodicTable(page, TypeChoice.NotList, [
+      PeriodicTableElement.U,
+      PeriodicTableElement.Np,
+      PeriodicTableElement.Pu,
+    ]);
+
     await clickOnAtom(page, 'C', 2);
 
     await anyAtomButton.click();

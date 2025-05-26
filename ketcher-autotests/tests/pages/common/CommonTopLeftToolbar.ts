@@ -101,4 +101,4 @@ export const CommonTopLeftToolbar = (page: Page) => {
   };
 };
 
-export type TopLeftToolbarType = ReturnType<typeof CommonTopLeftToolbar>;
+export type CommonTopLeftToolbarType = ReturnType<typeof CommonTopLeftToolbar>;

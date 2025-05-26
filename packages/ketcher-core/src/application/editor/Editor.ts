@@ -42,7 +42,7 @@ import {
 } from 'application/render/renderers/sequence/SequenceRenderer';
 import { ketcherProvider } from 'application/utils';
 import assert from 'assert';
-import { SequenceType, Struct, Vec2 } from 'domain/entities';
+import { MonomerToAtomBond, SequenceType, Struct, Vec2 } from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import {
@@ -685,6 +685,19 @@ export class CoreEditor {
     this.mode = mode;
   }
 
+  public canModifyAminoAcid(
+    monomer: BaseMonomer,
+    modificationMonomerLibraryItem: MonomerItemType,
+  ) {
+    return (
+      monomer.label !== modificationMonomerLibraryItem.label &&
+      (monomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) ||
+        modificationMonomerLibraryItem.props.MonomerCaps?.R1) &&
+      (monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2) ||
+        modificationMonomerLibraryItem.props.MonomerCaps?.R2)
+    );
+  }
+
   public getAminoAcidsToModify(
     monomers: BaseMonomer[],
     modificationType: string,
@@ -717,7 +730,10 @@ export class CoreEditor {
         monomerNaturalAnalogCode,
       );
 
-      if (modifiedMonomerItem) {
+      if (
+        modifiedMonomerItem &&
+        this.canModifyAminoAcid(monomer, modifiedMonomerItem)
+      ) {
         aminoAcidsToModify.set(monomer, modifiedMonomerItem);
       }
     });
@@ -735,21 +751,64 @@ export class CoreEditor {
       monomers,
       modificationType,
     );
+    const bondsToDelete = new Set<PolymerBond | MonomerToAtomBond>();
 
-    aminoAcidsToModify.forEach((modifiedMonomerItem, aminoAcidToModify) => {
-      modelChanges.merge(
-        this.drawingEntitiesManager.modifyMonomerItem(
-          aminoAcidToModify,
-          modifiedMonomerItem,
-        ),
-      );
-    });
+    [...aminoAcidsToModify.entries()].forEach(
+      ([aminoAcidToModify, modifiedMonomerItem]) => {
+        aminoAcidToModify.covalentBonds.forEach((polymerBond) => {
+          const attachmentPoint =
+            aminoAcidToModify.getAttachmentPointByBond(polymerBond);
 
-    modelChanges.addOperation(new ReinitializeModeOperation());
-    editor.renderersContainer.update(modelChanges);
-    editorHistory.update(modelChanges);
-    editor.transientDrawingView.hideModifyAminoAcidsView();
-    editor.transientDrawingView.update();
+          if (!attachmentPoint) {
+            KetcherLogger.error('Attachment point not found for the bond');
+
+            return;
+          }
+
+          const modificationHasAttachmentPointForBond =
+            modifiedMonomerItem.props.MonomerCaps?.[attachmentPoint];
+
+          if (!modificationHasAttachmentPointForBond) {
+            bondsToDelete.add(polymerBond);
+          }
+        });
+      },
+    );
+
+    const modificationFunction = () => {
+      aminoAcidsToModify.forEach((modifiedMonomerItem, aminoAcidToModify) => {
+        modelChanges.merge(
+          this.drawingEntitiesManager.modifyMonomerItem(
+            aminoAcidToModify,
+            modifiedMonomerItem,
+          ),
+        );
+      });
+
+      modelChanges.addOperation(new ReinitializeModeOperation());
+      editor.renderersContainer.update(modelChanges);
+      editorHistory.update(modelChanges);
+      editor.transientDrawingView.hideModifyAminoAcidsView();
+      editor.transientDrawingView.update();
+    };
+
+    if (bondsToDelete.size > 0) {
+      this.events.openConfirmationDialog.dispatch({
+        // title: 'Delete bonds',
+        confirmationText:
+          'Some side chain connections will be deleted during replacement. Do you want to proceed?',
+        onConfirm: () => {
+          bondsToDelete.forEach((bond) => {
+            modelChanges.merge(
+              this.drawingEntitiesManager.deleteDrawingEntity(bond),
+            );
+          });
+          modificationFunction();
+        },
+      });
+    } else {
+      modificationFunction();
+    }
   }
 
   public get isSequenceMode() {

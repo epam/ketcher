@@ -138,33 +138,57 @@ export const getModifyAminoAcidsMenuItems = (
   const selectedMonomersLabelsSet = new Set(
     selectedMonomers.map((monomer) => monomer.label),
   );
-  const selectedMonomersNaturalAnalogues = new Set<string>();
+  const naturalAnalogueToSelectedMonomers = new Map<string, BaseMonomer[]>();
   const editor = CoreEditor.provideEditorInstance();
 
   selectedMonomers.forEach((selectedMonomer) => {
     const monomerNaturalAnalogCode =
       selectedMonomer.monomerItem.props.MonomerNaturalAnalogCode;
-    if (selectedMonomer instanceof Peptide && monomerNaturalAnalogCode) {
-      selectedMonomersNaturalAnalogues.add(monomerNaturalAnalogCode);
+
+    if (!(selectedMonomer instanceof Peptide) || !monomerNaturalAnalogCode) {
+      return;
     }
+
+    if (!naturalAnalogueToSelectedMonomers.has(monomerNaturalAnalogCode)) {
+      naturalAnalogueToSelectedMonomers.set(monomerNaturalAnalogCode, []);
+    }
+
+    naturalAnalogueToSelectedMonomers
+      .get(monomerNaturalAnalogCode)
+      ?.push(selectedMonomer);
   });
 
-  editor?.monomersLibrary.forEach((monomer) => {
+  editor?.monomersLibrary.forEach((monomerLibraryItem) => {
+    const monomersWithSameNaturalAnalogCode =
+      naturalAnalogueToSelectedMonomers.get(
+        monomerLibraryItem.props?.MonomerNaturalAnalogCode,
+      );
+
     if (
-      selectedMonomersLabelsSet.has(monomer.label) ||
-      !monomer.props ||
-      !selectedMonomersNaturalAnalogues.has(
-        monomer.props?.MonomerNaturalAnalogCode,
+      selectedMonomersLabelsSet.has(monomerLibraryItem.label) ||
+      !monomerLibraryItem.props ||
+      !monomersWithSameNaturalAnalogCode
+    ) {
+      return;
+    }
+
+    const modificationType = monomerLibraryItem.props.modificationType;
+
+    if (!modificationType) {
+      return;
+    }
+
+    // If modification does not have R1 or R2 attachment points to persist connection
+    if (
+      monomersWithSameNaturalAnalogCode.every(
+        (monomer: BaseMonomer) =>
+          !editor.canModifyAminoAcid(monomer, monomerLibraryItem),
       )
     ) {
       return;
     }
 
-    const modificationType = monomer.props.modificationType;
-
-    if (modificationType) {
-      modificationsForSelection.add(modificationType);
-    }
+    modificationsForSelection.add(modificationType);
   });
 
   return [...modificationsForSelection.values()].map((modificationType) => {

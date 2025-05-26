@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   pressButton,
@@ -72,7 +73,7 @@ test.describe('Clear canvas', () => {
     await clickInTheMiddleOfTheScreen(page);
     await page.getByRole('dialog').getByRole('textbox').fill('one two three');
     await pressButton(page, 'Apply');
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await page.getByTestId('canvas').click({ position: { x, y } });
     await takeEditorScreenshot(page);
     await page.keyboard.press('Control+Delete');

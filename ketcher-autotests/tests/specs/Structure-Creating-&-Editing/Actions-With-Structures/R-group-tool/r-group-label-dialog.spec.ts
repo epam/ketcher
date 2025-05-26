@@ -29,6 +29,7 @@ import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsTo
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('R-Group Label Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -39,7 +40,7 @@ test.describe('R-Group Label Tool', () => {
     /* Test case: EPMLSOPKET-1556
       Description: R-group label dialog appears
     */
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -63,7 +64,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Single R-Group label
     */
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -81,7 +82,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Multiple R-Group label
     */
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -101,7 +102,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Delete R-Group label using Erase tool
     */
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -122,7 +123,7 @@ test.describe('R-Group Label Tool', () => {
       Description: R-group atom label is changed accordingly on the canvas. The R-group label buttons in the "R-Group" dialog are highlighted properly.
     */
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -145,7 +146,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Create S-Group with R-Group
     */
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
@@ -175,7 +176,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Structure with R-Group label is rotated correctly
     */
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -196,7 +197,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Single R-Group label
     */
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -221,7 +222,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Create the same R-Group label as existing. The same R-group atom label is created correctly.
     */
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -249,7 +250,7 @@ test.describe('R-Group Label Tool', () => {
       Description: The structures are zoomed correctly without R-group labels loss
     */
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -278,7 +279,7 @@ test.describe('R-Group Label Tool', () => {
       Description: Delete R-Group label using hotkey
     */
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).selectRGroupTool(RGroupType.RGroupLabel);
@@ -462,7 +463,7 @@ test.describe('R-Group Label Tool', () => {
       'Rxn-V2000/chain-with-three-r-groups.rxn',
       page,
     );
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await page.getByText('R10').hover();
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);

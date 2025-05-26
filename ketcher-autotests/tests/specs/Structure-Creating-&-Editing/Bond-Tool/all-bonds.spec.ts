@@ -46,6 +46,7 @@ import {
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 const buttonIdToTitle: Record<MicroBondType, string> = {
   [MicroBondType.Single]: 'Single Bond (1)',
@@ -117,7 +118,7 @@ test.describe(`Bond tool:`, () => {
 
       await TopLeftToolbar(page).clearCanvas();
 
-      await selectRingButton(page, 'Benzene');
+      await selectRingButton(page, RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
 
       await CommonLeftToolbar(page).selectBondTool(bondType);
@@ -170,7 +171,7 @@ test.describe(`Bond tool:`, () => {
 
       await TopLeftToolbar(page).clearCanvas();
 
-      await selectRingButton(page, 'Benzene');
+      await selectRingButton(page, RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
 
       await CommonLeftToolbar(page).selectBondTool(bondType);
@@ -378,7 +379,7 @@ test.describe(`Bond tool (copy-paste):`, () => {
         });
         await TopLeftToolbar(page).undo();
 
-        await selectRingButton(page, 'Cyclohexane');
+        await selectRingButton(page, RingButton.Cyclohexane);
         await clickOnCanvas(page, point.x, point.y, {
           waitForRenderTimeOut: 100,
         });
@@ -598,7 +599,7 @@ test.describe('Bond Tool', () => {
      *Test case: EPMLSOPKET-1436
      *Description: Aromatic Bond tool - Ring inside the cycle structure
      */
-    await selectRingButton(page, 'Cyclohexane');
+    await selectRingButton(page, RingButton.Cyclohexane);
     await clickInTheMiddleOfTheScreen(page);
     await CommonLeftToolbar(page).selectBondTool(MicroBondType.Aromatic);
     let i = 0;

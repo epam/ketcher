@@ -34,6 +34,7 @@ import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
 import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 async function addTail(page: Page, x: number, y: number) {
   await page.mouse.click(x, y, { button: 'right' });
@@ -1751,7 +1752,7 @@ test.describe('Cascade Reactions', () => {
 
           await openFileAndAddToCanvas(rdfFile, page);
           await clickOnCanvas(page, 500, 600);
-          await selectRingButton(page, 'Benzene');
+          await selectRingButton(page, RingButton.Benzene);
           await clickOnCanvas(page, 200, 600);
           await CommonLeftToolbar(page).selectAreaSelectionTool(
             SelectionToolType.Rectangle,

@@ -38,6 +38,8 @@ interface MenuItem {
       }) => boolean);
   isMenuTitle?: boolean;
   subMenuItems?: MenuItem[];
+  onMouseOver?: (itemId: string) => void;
+  onMouseOut?: (itemId: string) => void;
 }
 
 interface MenuProps {
@@ -54,7 +56,17 @@ const assembleMenuItems = (
 
   menuItems.forEach(
     (
-      { name, title, hidden, disabled, isMenuTitle, separator, subMenuItems },
+      {
+        name,
+        title,
+        hidden,
+        disabled,
+        isMenuTitle,
+        separator,
+        subMenuItems,
+        onMouseOver,
+        onMouseOut,
+      },
       index,
     ) => {
       const item =
@@ -71,6 +83,8 @@ const assembleMenuItems = (
             hidden={hidden}
             disabled={disabled}
             className={isMenuTitle ? 'contexify_item-title' : ''}
+            onMouseOver={() => onMouseOver?.(name)}
+            onMouseOut={() => onMouseOut?.(name)}
           >
             <span>{title}</span>
           </Item>

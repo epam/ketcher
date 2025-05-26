@@ -168,9 +168,24 @@ export const getModifyAminoAcidsMenuItems = (
   });
 
   return [...modificationsForSelection.values()].map((modificationType) => {
+    const aminoAcidsToModify = editor.getAminoAcidsToModify(
+      selectedMonomers,
+      modificationType,
+    );
+
     return {
       name: `${AMINO_ACID_MODIFICATION_MENU_ITEM_PREFIX}${modificationType}`,
       title: modificationType,
+      onMouseOver: () => {
+        editor.transientDrawingView.showModifyAminoAcidsView({
+          monomersToModify: [...aminoAcidsToModify.keys()],
+        });
+        editor.transientDrawingView.update();
+      },
+      onMouseOut: () => {
+        editor.transientDrawingView.hideModifyAminoAcidsView();
+        editor.transientDrawingView.update();
+      },
     };
   });
 };

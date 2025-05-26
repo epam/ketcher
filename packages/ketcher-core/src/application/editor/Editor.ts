@@ -685,16 +685,15 @@ export class CoreEditor {
     this.mode = mode;
   }
 
-  private onModifyAminoAcids(
+  public getAminoAcidsToModify(
     monomers: BaseMonomer[],
     modificationType: string,
   ) {
-    const modelChanges = new Command();
-    const editorHistory = new EditorHistory(editor);
     const naturalAnalogueToModifiedMonomerItem = new Map<
       string,
       MonomerItemType
     >();
+    const aminoAcidsToModify = new Map<BaseMonomer, MonomerItemType>();
 
     editor.monomersLibrary.forEach((libraryItem) => {
       if (libraryItem.props?.modificationType !== modificationType) {
@@ -719,18 +718,38 @@ export class CoreEditor {
       );
 
       if (modifiedMonomerItem) {
-        modelChanges.merge(
-          this.drawingEntitiesManager.modifyMonomerItem(
-            monomer,
-            modifiedMonomerItem,
-          ),
-        );
+        aminoAcidsToModify.set(monomer, modifiedMonomerItem);
       }
+    });
+
+    return aminoAcidsToModify;
+  }
+
+  private onModifyAminoAcids(
+    monomers: BaseMonomer[],
+    modificationType: string,
+  ) {
+    const modelChanges = new Command();
+    const editorHistory = new EditorHistory(editor);
+    const aminoAcidsToModify = this.getAminoAcidsToModify(
+      monomers,
+      modificationType,
+    );
+
+    aminoAcidsToModify.forEach((modifiedMonomerItem, aminoAcidToModify) => {
+      modelChanges.merge(
+        this.drawingEntitiesManager.modifyMonomerItem(
+          aminoAcidToModify,
+          modifiedMonomerItem,
+        ),
+      );
     });
 
     modelChanges.addOperation(new ReinitializeModeOperation());
     editor.renderersContainer.update(modelChanges);
     editorHistory.update(modelChanges);
+    editor.transientDrawingView.hideModifyAminoAcidsView();
+    editor.transientDrawingView.update();
   }
 
   public get isSequenceMode() {

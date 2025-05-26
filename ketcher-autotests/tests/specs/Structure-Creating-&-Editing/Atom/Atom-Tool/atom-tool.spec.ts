@@ -511,7 +511,7 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1435
     Description: The additional button with the selected atom symbol appears on the Atom Palette
     */
-    await selectElementsFromPeriodicTable(page, TypeChoice.List, [
+    const elementNames = [
       PeriodicTableElement.Si,
       PeriodicTableElement.Au,
       PeriodicTableElement.In,
@@ -519,8 +519,11 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Se,
       PeriodicTableElement.Pu,
       PeriodicTableElement.Rn,
-    ]);
+    ];
 
+    for (const elementName of elementNames) {
+      await selectElementFromPeriodicTable(page, elementName);
+    }
     await takeRightToolbarScreenshot(page);
   });
 
@@ -530,7 +533,7 @@ test.describe('Atom Tool', () => {
     Description: The first additional atom symbol is replaced with the new one.
     The 8th button isn't added. In our test 'Si' replaces by 'Db'.
     */
-    await selectElementsFromPeriodicTable(page, TypeChoice.List, [
+    const elementNames = [
       PeriodicTableElement.Si,
       PeriodicTableElement.Au,
       PeriodicTableElement.In,
@@ -539,7 +542,11 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Pu,
       PeriodicTableElement.Rn,
       PeriodicTableElement.Db,
-    ]);
+    ];
+
+    for (const elementName of elementNames) {
+      await selectElementFromPeriodicTable(page, elementName);
+    }
 
     await takeRightToolbarScreenshot(page);
   });
@@ -552,7 +559,7 @@ test.describe('Atom Tool', () => {
     Description: The additional button with the selected atom symbol appears on the Atom Palette.
     Additional atom can be added to structure.
     */
-    await selectElementsFromPeriodicTable(page, TypeChoice.List, [
+    const elementNames = [
       PeriodicTableElement.Si,
       PeriodicTableElement.Au,
       PeriodicTableElement.In,
@@ -560,7 +567,11 @@ test.describe('Atom Tool', () => {
       PeriodicTableElement.Se,
       PeriodicTableElement.Pu,
       PeriodicTableElement.Rn,
-    ]);
+    ];
+
+    for (const elementName of elementNames) {
+      await selectElementFromPeriodicTable(page, elementName);
+    }
 
     const anyAtom = 0;
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);

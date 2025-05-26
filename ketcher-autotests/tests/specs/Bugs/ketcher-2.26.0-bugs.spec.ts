@@ -36,6 +36,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 async function setHighResolution(page: Page) {
   await page.getByText('low').click();
@@ -120,7 +121,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
      * 4. Attempt to manipulate the structure using the 3D Viewer and press Apply button.
      */
     const applyButton = page.getByTestId('miew-modal-button');
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await IndigoFunctionsToolbar(page).ThreeDViewer();

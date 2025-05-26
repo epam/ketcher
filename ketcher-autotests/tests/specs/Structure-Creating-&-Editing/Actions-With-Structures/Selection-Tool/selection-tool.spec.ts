@@ -23,6 +23,7 @@ import {
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Selection tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -34,7 +35,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-8925
     Description: Selection is not reset. User can use right-click menu in order to perform actions.
     */
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await clickOnAtom(page, 'C', 0, 'right');
@@ -71,7 +72,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-13008
     Description: When hovered selected Atom becomes lighter than the rest of the structure.
     */
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await moveOnAtom(page, 'C', 0);
@@ -83,7 +84,7 @@ test.describe('Selection tools', () => {
     Test case: EPMLSOPKET-13008
     Description: When hovered selected Bond becomes lighter than the rest of the structure.
     */
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await moveOnBond(page, BondType.SINGLE, 0);
@@ -348,7 +349,7 @@ test.describe('Selection tools', () => {
     Description: If user presses esc, then last chosen selected tool must be
     selected and pressing esc doesn't choose another mode of selection tool
     */
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     for (let i = 0; i < 2; i++) {

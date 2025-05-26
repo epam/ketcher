@@ -16,6 +16,7 @@ import {
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
 import { getBondByIndex } from '@utils/canvas/bonds';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Calculated Values Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -152,7 +153,7 @@ test.describe('Calculated Values Tools', () => {
     The number of decimal places in the 'Molecular Weight' and 'Exact Mass'
     changes according to the selected values in the fields for the decimal places count.
     */
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await IndigoFunctionsToolbar(page).calculatedValues();
 

@@ -57,6 +57,7 @@ import {
   drawBenzeneRing,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -190,7 +191,7 @@ test.describe('Atom Properties', () => {
     */
     const anyAtom = 2;
     const secondAnyAtom = 3;
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 
@@ -257,7 +258,7 @@ test.describe('Atom Properties', () => {
     */
     const atomToolbar = RightToolbar(page);
 
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
 

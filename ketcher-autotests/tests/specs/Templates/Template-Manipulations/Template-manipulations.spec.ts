@@ -55,6 +55,7 @@ import {
   openStructureLibrary,
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Template Manupulations', () => {
   test.beforeEach(async ({ page }) => {
@@ -164,7 +165,7 @@ test.describe('Template Manupulations', () => {
     Test case: 1678
     Description: Choose any template and click on the canvas.
     */
-    await selectRingButton(page, 'Cyclopentadiene');
+    await selectRingButton(page, RingButton.Cyclopentadiene);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -230,7 +231,7 @@ test.describe('Template Manupulations', () => {
     await clickInTheMiddleOfTheScreen(page, 'left', {
       waitForMergeInitialization: true,
     });
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await moveOnAtom(page, 'C', anyAtom);
     await dragMouseTo(x, y, page);
     await takeEditorScreenshot(page);
@@ -369,7 +370,7 @@ test.describe('Template Manupulations', () => {
     await drawBenzeneRing(page);
     await page.getByTestId('reaction-plus').click();
     await clickOnTheCanvas(page, 1, 1);
-    await selectRingButton(page, 'Cyclooctane');
+    await selectRingButton(page, RingButton.Cyclooctane);
     // eslint-disable-next-line no-magic-numbers
     await clickOnTheCanvas(page, 1, -4);
     await takePageScreenshot(page);
@@ -422,7 +423,7 @@ test.describe('Template Manupulations', () => {
     */
     await drawCyclopentadieneRing(page);
     await addCyclopentadieneRingWithTwoAtoms(page);
-    await selectRingButton(page, 'Cyclopentadiene');
+    await selectRingButton(page, RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -436,7 +437,7 @@ test.describe('Template Manupulations', () => {
     */
     await drawBenzeneRing(page);
     await addCyclopentadieneRingWithTwoAtoms(page);
-    await selectRingButton(page, 'Cyclopentadiene');
+    await selectRingButton(page, RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -455,7 +456,7 @@ test.describe('Template Manupulations', () => {
     await clickOnAtom(page, 'C', 0);
     const anyAtom = 4;
     await clickOnAtom(page, 'C', anyAtom);
-    await selectRingButton(page, 'Cyclopentadiene');
+    await selectRingButton(page, RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -472,7 +473,7 @@ test.describe('Template Manupulations', () => {
     await drawCyclohexaneRing(page);
     await atomToolbar.clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', 0);
-    await selectRingButton(page, 'Cyclopentadiene');
+    await selectRingButton(page, RingButton.Cyclopentadiene);
     await takeEditorScreenshot(page);
   });
 
@@ -527,7 +528,7 @@ test.describe('Template Manupulations', () => {
     await page.getByText('Expand Abbreviation').click();
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const nitrogenCoordinates = { x: x + X_DELTA_ONE, y };
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, nitrogenCoordinates.x, nitrogenCoordinates.y);
     await takeEditorScreenshot(page);
   });
@@ -653,7 +654,7 @@ test.describe('Open Ketcher', () => {
     Verify if merging these Templates after clicking matches the full preview of merging these Templates"
     */
       const xOffsetFromCenter = 40;
-      await selectRingButton(page, 'Benzene');
+      await selectRingButton(page, RingButton.Benzene);
       await clickOnTheCanvas(page, xOffsetFromCenter, 0);
       await CommonLeftToolbar(page).selectAreaSelectionTool(
         SelectionToolType.Rectangle,
@@ -664,9 +665,9 @@ test.describe('Open Ketcher', () => {
       await cutToClipboardByKeyboard(page);
       await pasteFromClipboardByKeyboard(page);
       await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-      await selectRingButton(page, 'Benzene');
+      await selectRingButton(page, RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
-      await selectRingButton(page, 'Benzene');
+      await selectRingButton(page, RingButton.Benzene);
       await takePageScreenshot(page);
     },
   );

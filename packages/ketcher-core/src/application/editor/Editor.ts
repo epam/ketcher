@@ -363,6 +363,9 @@ export class CoreEditor {
             };
           }),
       ) as NodesSelection;
+      const selectedMonomers = this.drawingEntitiesManager.selectedEntities
+        .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
+        .map(([, drawingEntity]) => drawingEntity as BaseMonomer);
 
       if (eventData instanceof BaseSequenceItemRenderer) {
         this.events.rightClickSequence.dispatch([event, sequenceSelections]);
@@ -379,12 +382,16 @@ export class CoreEditor {
         this.events.rightClickSelectedMonomers.dispatch([event]);
         this.events.rightClickSelectedMonomers.dispatch([
           event,
-          this.drawingEntitiesManager.selectedEntities
-            .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
-            .map(([, drawingEntity]) => drawingEntity as BaseMonomer),
+          selectedMonomers,
         ]);
       } else if (isClickOnCanvas) {
-        this.events.rightClickCanvas.dispatch([event, sequenceSelections]);
+        // TODO separate by two events for modes
+        this.events.rightClickCanvas.dispatch([
+          event,
+          this.mode instanceof SequenceMode
+            ? sequenceSelections
+            : selectedMonomers,
+        ]);
       }
 
       return false;
@@ -794,7 +801,6 @@ export class CoreEditor {
 
     if (bondsToDelete.size > 0) {
       this.events.openConfirmationDialog.dispatch({
-        // title: 'Delete bonds',
         confirmationText:
           'Some side chain connections will be deleted during replacement. Do you want to proceed?',
         onConfirm: () => {

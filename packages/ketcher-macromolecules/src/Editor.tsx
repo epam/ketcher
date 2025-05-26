@@ -226,18 +226,23 @@ function Editor({
       },
     );
     editor?.events.rightClickCanvas.add(
-      ([event, selections]: [PointerEvent, NodesSelection]) => {
-        setSelections(selections);
+      ([event, selections]: [PointerEvent, NodesSelection | BaseMonomer[]]) => {
         setContextMenuEvent(event);
-        editor.mode instanceof SequenceMode
-          ? showSequenceContextMenu({
-              event,
-              props: {},
-            })
-          : showSelectedMonomersContextMenu({
-              event,
-              props: { selectedMonomers: selections },
-            });
+
+        // TODO separate by two events
+        if (editor.mode instanceof SequenceMode) {
+          setSelections(selections as NodesSelection);
+          showSequenceContextMenu({
+            event,
+            props: {},
+          });
+        } else {
+          setSelectedMonomers(selections as BaseMonomer[]);
+          showSelectedMonomersContextMenu({
+            event,
+            props: { selectedMonomers: selections },
+          });
+        }
       },
     );
     editor?.events.toggleMacromoleculesPropertiesVisibility.add(() => {

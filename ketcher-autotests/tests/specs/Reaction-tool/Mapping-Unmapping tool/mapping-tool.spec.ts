@@ -16,7 +16,7 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
@@ -102,7 +102,7 @@ test.describe('Mapping Tools', () => {
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
   });
 
   test.describe('Mapping reactions', () => {
@@ -120,7 +120,7 @@ test.describe('Mapping Tools', () => {
       await page.keyboard.press('Delete');
       await takeEditorScreenshot(page);
 
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     });
 
     test('Unmap the mapped reaction', async ({ page }) => {

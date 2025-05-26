@@ -32,7 +32,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 const X_DELTA_ONE = 100;
@@ -468,7 +468,7 @@ test.describe('Atom Tool', () => {
     await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'Br', numberOfAtom);
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await clickOnAtom(page, 'N', numberOfAtom);
     await takeEditorScreenshot(page);
   });
@@ -657,7 +657,7 @@ test.describe('Atom Tool', () => {
       const coordinatesWithShift = y - MAX_BOND_LENGTH;
       await dragMouseTo(x, coordinatesWithShift, page);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     });
   }
 });

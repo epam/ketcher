@@ -26,8 +26,8 @@ import {
 } from '@utils/keyboard/index';
 import { createAntisenseStrandByButton } from '@utils/macromolecules/monomer';
 import { switchToDNAMode } from '@utils/macromolecules/sequence';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 export async function clickOnTriangle(page: Page) {
   const expandButton = page
@@ -193,7 +193,7 @@ test.describe('Sequence Mode', () => {
     */
     await openFileAndAddToCanvasMacro('Molfiles-V3000/rna.mol', page);
     await selectSequenceLayoutModeTool(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -1128,7 +1128,7 @@ test.describe('Sequence Mode', () => {
         modifiedAminoAcid,
       );
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
 
@@ -1165,6 +1165,6 @@ test.describe('Sequence Mode', () => {
     await newSequenceButton.nth(3).hover({ force: true });
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
   });
 });

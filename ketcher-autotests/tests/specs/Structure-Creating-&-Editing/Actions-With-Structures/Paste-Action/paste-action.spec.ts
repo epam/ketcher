@@ -10,7 +10,7 @@ import {
   clickOnCanvas,
 } from '@utils';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   drawBenzeneRing,
   selectRingButton,
@@ -53,7 +53,7 @@ test.describe('Paste Tool', () => {
 
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
     await pasteFromClipboardByKeyboard(page);
     await takeEditorScreenshot(page);

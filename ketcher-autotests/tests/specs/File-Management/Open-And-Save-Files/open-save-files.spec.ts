@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { takeEditorScreenshot, waitForPageInit } from '@utils';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import {
   MoleculesFileFormatName,
@@ -14,19 +14,19 @@ test.describe('Open Ketcher', () => {
 
   test('Open button tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-1833
-    const button = TopLeftToolbar(page).openButton;
+    const button = CommonTopLeftToolbar(page).openButton;
     await expect(button).toHaveAttribute('title', 'Open... (Ctrl+O)');
   });
 
   test('Open button UI', async ({ page }) => {
     // Test case: EPMLSOPKET-1834
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await takeEditorScreenshot(page);
   });
 
   test('Save button tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-1842
-    const button = TopLeftToolbar(page).saveButton;
+    const button = CommonTopLeftToolbar(page).saveButton;
     await expect(button).toHaveAttribute('title', 'Save as... (Ctrl+S)');
   });
 
@@ -35,7 +35,7 @@ test.describe('Open Ketcher', () => {
     const saveStructureTextarea =
       SaveStructureDialog(page).saveStructureTextarea;
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await takeEditorScreenshot(page, {
       mask: [saveStructureTextarea],
     });
@@ -85,7 +85,7 @@ test.describe('Open Ketcher', () => {
     test(`dropdown options check_${fileFormat[1]}`, async ({ page }) => {
       const fileFormatDropdonwList =
         SaveStructureDialog(page).fileFormatDropdownList;
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await fileFormatDropdonwList.click();
 
       const option = page.getByTestId(fileFormat[0]);

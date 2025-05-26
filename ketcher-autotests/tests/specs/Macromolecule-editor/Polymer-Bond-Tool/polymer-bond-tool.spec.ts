@@ -633,7 +633,7 @@ test('Verify correct display and changing of connection points in the dialog for
 test('Verify behaviour when a non-bond is right-clicked', async () => {
   /* 
     Test case: #4905
-    Description: Nothing happen.
+    Description: Call context menu for empty selection.
     */
   await openFileAndAddToCanvasMacro('KET/two-peptides-connected.ket', page);
   await clickOnCanvas(page, 200, 200, { button: 'right' });

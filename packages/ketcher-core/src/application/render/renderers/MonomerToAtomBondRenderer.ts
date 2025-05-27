@@ -8,9 +8,6 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
     | D3SvgElementSelection<SVGLineElement, void>
     | undefined;
 
-  private endX = 0;
-  private endY = 0;
-
   constructor(public monomerToAtomBond: MonomerToAtomBond) {
     super(monomerToAtomBond);
     this.monomerToAtomBond.setRenderer(this);

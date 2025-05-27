@@ -48,7 +48,7 @@ if (process.env.MODE === 'standalone') {
   }
 }
 
-const EXTERNAL_ZOOM_SCALE = 0.5;
+const EXTERNAL_ZOOM_SCALE = 1.0;
 
 const App = () => {
   const hiddenButtonsConfig = getHiddenButtonsConfig();

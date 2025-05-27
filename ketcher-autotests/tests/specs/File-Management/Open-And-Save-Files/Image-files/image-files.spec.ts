@@ -29,7 +29,7 @@ import {
   readFileContent,
   copyContentToClipboard,
 } from '@utils';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   clearLocalStorage,
   closeErrorAndInfoModals,
@@ -44,7 +44,7 @@ import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboard
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import {
@@ -65,7 +65,7 @@ test.describe('Image files', () => {
 
   test.afterEach(async ({ context: _ }) => {
     await closeErrorAndInfoModals(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
   });
 
@@ -322,7 +322,7 @@ test.describe('Image files', () => {
      * Test case: #4911
      * Description: Images together (PNG, SVG) are correctly displayed in .ket format in Open Structure Preview
      */
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await openFile('KET/images-png-svg.ket', page);
     await takeEditorScreenshot(page);
   });
@@ -333,7 +333,7 @@ test.describe('Image files', () => {
      * Description: Images together (PNG, SVG) are correctly displayed in .ket format in Save Structure Preview
      */
     await openFileAndAddToCanvas('KET/images-png-svg.ket', page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.KetFormat,
     );
@@ -356,7 +356,7 @@ test.describe('Image files', () => {
        * Test case: #4911
        * Description: Error message is displayed - "Cannot deserialize input JSON."
        */
-      await TopLeftToolbar(page).openFile();
+      await CommonTopLeftToolbar(page).openFile();
       await openFile(`KET/${fileName}.ket`, page);
       await PasteFromClipboardDialog(page).addToCanvasButton.click();
       await takeEditorScreenshot(page);
@@ -386,7 +386,7 @@ test.describe('Image files', () => {
        */
       const addToCanvasButton =
         PasteFromClipboardDialog(page).addToCanvasButton;
-      await TopLeftToolbar(page).openFile();
+      await CommonTopLeftToolbar(page).openFile();
       await openFile(`KET/${file}`, page);
       await addToCanvasButton.click();
       await takeEditorScreenshot(page);
@@ -399,7 +399,7 @@ test.describe('Image files', () => {
      * Description: Error message is displayed - "Cannot deserialize input JSON."
      */
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await openFile(`KET/image-png-159-symbols.ket`, page);
     await addToCanvasButton.click();
     await takeEditorScreenshot(page);
@@ -614,11 +614,11 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await TopLeftToolbar(page).redo();
+      await CommonTopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -635,11 +635,11 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await TopLeftToolbar(page).redo();
+      await CommonTopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -666,11 +666,11 @@ test.describe('Image files', () => {
      */
     await openFileAndAddToCanvasAsNewProject('KET/images-png-svg.ket', page);
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -684,11 +684,11 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -702,11 +702,11 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -718,11 +718,11 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -923,7 +923,7 @@ test.describe('Image files', () => {
 
     await openImageAndAddToCanvas('Images/image-svg.svg', page);
     await openImageAndAddToCanvas('Images/image-png.png', page, 200, 200);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await expect(saveToTemplatesButton).toBeDisabled();
     await takeEditorScreenshot(page, {
       mask: [saveStructureTextarea],
@@ -940,7 +940,7 @@ test.describe('Image files', () => {
     await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, 200, 400);
     await saveToTemplates(page, 'My Custom Template');
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await openStructureLibrary(page);
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await page
@@ -2031,11 +2031,11 @@ test.describe('Image files', () => {
   for (const testCase of testCases) {
     test(testCase.description, async () => {
       if (testCase.action === 'open') {
-        await TopLeftToolbar(page).openFile();
+        await CommonTopLeftToolbar(page).openFile();
         await openFile(testCase.file, page);
       } else if (testCase.action === 'save') {
         await openFileAndAddToCanvas(testCase.file, page);
-        await TopLeftToolbar(page).saveFile();
+        await CommonTopLeftToolbar(page).saveFile();
         await SaveStructureDialog(page).chooseFileFormat(
           testCase.dropdownOption || MoleculesFileFormatType.MDLMolfileV2000,
         );
@@ -2142,7 +2142,7 @@ test.describe('Image files', () => {
      * Description: Image can't be loaded from CDX/CDXML/Base 64 CDX file if the length of bitmap is less than 160 symbols and error message
      *  is displayed - "Cannot deserialize input JSON.".
      */
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await openFile(`CDXML/image-png-169-symbols.cdxml`, page);
     await PasteFromClipboardDialog(page).addToCanvasButton.click();
     await takeEditorScreenshot(page);
@@ -2511,7 +2511,7 @@ test.describe('Image files', () => {
     );
     await pasteFromClipboardAndOpenAsNewProject(page, fileContent);
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -2525,7 +2525,7 @@ test.describe('Image files', () => {
       page,
     );
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -2567,7 +2567,7 @@ test.describe('Image files', () => {
     const saveButton = SaveStructureDialog(page).saveButton;
 
     await openFileAndAddToCanvas('KET/svg-images-black-and-colored.ket', page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -2598,7 +2598,7 @@ test.describe('Image files', () => {
       'KET/svg-colored-images-with-elements.ket',
       page,
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -2621,7 +2621,7 @@ test.describe('Image files', () => {
       200,
     );
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -2637,7 +2637,7 @@ test.describe('Image files', () => {
     const saveButton = SaveStructureDialog(page).saveButton;
 
     await openFileAndAddToCanvas('KET/images-svg-with-elements.ket', page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -2671,7 +2671,7 @@ test.describe('Image files', () => {
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -2711,7 +2711,7 @@ test.describe('Image files', () => {
     await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -2746,7 +2746,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -2776,7 +2776,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 500, 500);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -2807,7 +2807,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -2827,7 +2827,7 @@ test.describe('Image files', () => {
       page,
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -2861,7 +2861,7 @@ test.describe('Image files', () => {
     await dragMouseTo(200, 500, page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -2901,7 +2901,7 @@ test.describe('Image files', () => {
     await dragMouseTo(300, 300, page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -2936,7 +2936,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 200, 200);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -2966,7 +2966,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 500, 500);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -2997,7 +2997,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -3040,7 +3040,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png-demo.png', page, 400, 400);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -3059,7 +3059,7 @@ test.describe('Image files', () => {
     await openImageAndAddToCanvas('Images/image-png-demo.png', page, 400, 400);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -3075,7 +3075,7 @@ test.describe('Image files', () => {
     const saveButton = SaveStructureDialog(page).saveButton;
 
     await openFileAndAddToCanvas('KET/images-png-with-elements.ket', page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -3091,7 +3091,7 @@ test.describe('Image files', () => {
     const saveButton = SaveStructureDialog(page).saveButton;
 
     await openFileAndAddToCanvas('KET/images-png-with-elements.ket', page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -3120,7 +3120,7 @@ test.describe('Image files', () => {
     await dragMouseTo(600, 500, page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -3149,7 +3149,7 @@ test.describe('Image files', () => {
     await dragMouseTo(600, 500, page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -3184,7 +3184,7 @@ test.describe('Image files', () => {
     await dragMouseTo(600, 500, page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -3219,7 +3219,7 @@ test.describe('Image files', () => {
     await dragMouseTo(600, 500, page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -3248,7 +3248,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -3277,7 +3277,7 @@ test.describe('Image files', () => {
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -3302,7 +3302,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 500, 400);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -3327,7 +3327,7 @@ test.describe('Image files', () => {
     await clickOnCanvas(page, 500, 400);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
@@ -3353,7 +3353,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.PNGImage,
     );
@@ -3379,7 +3379,7 @@ test.describe('Image files', () => {
     await takeEditorScreenshot(page);
     await screenshotBetweenUndoRedo(page);
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );

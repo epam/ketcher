@@ -24,7 +24,7 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
@@ -211,9 +211,9 @@ test.describe('R-Group Label Tool', () => {
     await pressButton(page, 'R7');
     await pressButton(page, 'R8');
     await pressButton(page, 'Apply');
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

@@ -43,8 +43,8 @@ import {
   selectSugarSlot,
   toggleRnaBuilder,
 } from '@utils/macromolecules/rnaBuilder';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { verifyHELMExport } from '@utils/files/receiveFileComparisonData';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
@@ -68,7 +68,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await resetZoomLevelToDefault(page);
     await processResetToDefaultState(testInfo, page);
   });
@@ -485,7 +485,7 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMacromoleculeEditorScrollBars: true,
     });
     for (let i = 0; i < 3; i++) {
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
@@ -775,8 +775,8 @@ test.describe('Ketcher bugs in 3.3.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).clearCanvas();
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

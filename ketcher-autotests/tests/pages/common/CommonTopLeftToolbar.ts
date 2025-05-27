@@ -13,7 +13,7 @@ type TopLeftToolbarLocators = {
   calculateMacromoleculePropertiesButton: Locator;
 };
 
-export const TopLeftToolbar = (page: Page) => {
+export const CommonTopLeftToolbar = (page: Page) => {
   const locators: TopLeftToolbarLocators = {
     clearCanvasButton: page
       .getByTestId('clear-canvas')
@@ -101,4 +101,4 @@ export const TopLeftToolbar = (page: Page) => {
   };
 };
 
-export type TopLeftToolbarType = ReturnType<typeof TopLeftToolbar>;
+export type CommonTopLeftToolbarType = ReturnType<typeof CommonTopLeftToolbar>;

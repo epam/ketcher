@@ -14,7 +14,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 test.describe('Reagents RXN format', () => {
   test.beforeEach(async ({ page }) => {
@@ -75,7 +75,7 @@ test.describe('Reagents RXN format', () => {
       'v2000',
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).save();
   });
 
@@ -95,7 +95,7 @@ test.describe('Reagents RXN format', () => {
       'v3000',
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.MDLRxnfileV3000,
     );

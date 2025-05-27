@@ -29,7 +29,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
@@ -109,7 +109,7 @@ test.describe('Plus and Arrows tools ', () => {
         await LeftToolbar(page).selectArrowTool(tool);
         await clickOnTheCanvas(page, xOffsetFromCenter, 0);
         await takeEditorScreenshot(page);
-        await TopLeftToolbar(page).undo();
+        await CommonTopLeftToolbar(page).undo();
         await takeEditorScreenshot(page);
       });
       counter++;
@@ -179,11 +179,11 @@ test.describe('Plus and Arrows tools ', () => {
     await clickOnTheCanvas(page, xOffsetFromCenter2, -100);
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
     for (let i = 0; i < 2; i++) {
-      await TopLeftToolbar(page).redo();
+      await CommonTopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -282,7 +282,7 @@ test.describe('Plus and Arrows tools ', () => {
       await copyAndPaste(page);
       await clickOnCanvas(page, point.x - 100, point.y - 100);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
       await CommonLeftToolbar(page).selectEraseTool();
       await page.mouse.move(point.x - 300, point.y - 100);
@@ -353,7 +353,7 @@ test.describe('Plus and Arrows tools ', () => {
       await copyAndPaste(page);
       await clickOnCanvas(page, point.x - 100, point.y - 100);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
       await CommonLeftToolbar(page).selectEraseTool();
       await page.mouse.move(point.x - 300, point.y - 100);
@@ -447,7 +447,7 @@ test.describe('Plus and Arrows tools ', () => {
       await CommonLeftToolbar(page).selectEraseTool();
       await clickOnTheCanvas(page, -OFFSET_FROM_ARROW, 0);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
       await CommonLeftToolbar(page).selectEraseTool();
       await page.mouse.move(point.x - 40, point.y - 300);
@@ -476,7 +476,7 @@ test.describe('Plus and Arrows tools ', () => {
     await takeEditorScreenshot(page);
     await IndigoFunctionsToolbar(page).layout();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await IndigoFunctionsToolbar(page).cleanUp();
   });
 
@@ -487,13 +487,13 @@ test.describe('Plus and Arrows tools ', () => {
      */
     await LeftToolbar(page).reactionPlusTool();
     await clickInTheMiddleOfTheScreen(page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).cancel();
     await takeEditorScreenshot(page);
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowOpenAngle);
     const offsetFromCenter = -35;
     await clickOnTheCanvas(page, offsetFromCenter, 0);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).cancel();
   });
 
@@ -654,7 +654,7 @@ test.describe('Plus and Arrows tools ', () => {
         page,
       );
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
       await openFileAndAddToCanvas(
         `KET/resizing-reaction-arrow-saving.ket`,
         page,
@@ -689,7 +689,7 @@ test.describe('Plus and Arrows tools ', () => {
     await copyToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page, { delay: INPUT_DELAY });
 
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
   });
 
   test.describe('Arrow snapping', () => {

@@ -15,8 +15,8 @@ import {
   pasteFromClipboardAndAddToCanvas,
 } from '@utils';
 import { resetCurrentTool } from '@utils/canvas/tools';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 async function checkZoomLevel(page: Page, zoomLevel: string) {
@@ -130,12 +130,12 @@ test.describe('Zoom changes', () => {
     await checkZoomLevel(page, '110%');
 
     await resetCurrentTool(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
 
     await resetCurrentTool(page);
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeTopToolbarScreenshot(page);
     await takeEditorScreenshot(page);
   });

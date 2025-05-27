@@ -11,7 +11,7 @@ import {
 } from '@utils';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
@@ -92,7 +92,7 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
         const atomNumber2 = 2;
         await openFileAndAddToCanvas('Rxn-V2000/reaction-3.rxn', page);
         await applyAutoMapMode(page, mode);
-        await TopLeftToolbar(page).undo();
+        await CommonTopLeftToolbar(page).undo();
         await takeEditorScreenshot(page);
         await LeftToolbar(page).selectReactionMappingTool(
           ReactionMappingType.ReactionMapping,
@@ -115,9 +115,9 @@ test.describe('Verifying buttons on reaction am tool dropdown', () => {
       );
       await takeEditorScreenshot(page);
       await applyAutoMapMode(page, 'Discard');
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
       await applyAutoMapMode(page, 'Keep');
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
       await applyAutoMapMode(page, 'Alter', false);
     });
     test('After the manual mapping with incorrect ordering', async ({

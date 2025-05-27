@@ -10,7 +10,7 @@ import {
   waitForPageInit,
 } from '@utils';
 import { Monomer } from '@utils/types';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 
 interface IAmbiguousMonomerName {

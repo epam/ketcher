@@ -23,8 +23,8 @@ import {
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 test.describe('Sequence mode selection for view mode', () => {
   test.beforeEach(async ({ page }) => {
@@ -126,7 +126,7 @@ test.describe('Sequence mode selection for edit mode', () => {
     await keyboardPressOnCanvas(page, 'Backspace');
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
 
     await keyboardPressOnCanvas(page, 'Escape');

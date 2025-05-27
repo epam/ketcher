@@ -17,8 +17,7 @@ test.describe('Open Ketcher', () => {
       Test case: EPMLSOPKET-4234
       Description: Open periodic table
       */
-    const periodicTableButton = RightToolbar(page).periodicTableButton;
-    await periodicTableButton.click();
+    await RightToolbar(page).periodicTable();
     await takeEditorScreenshot(page);
   });
 

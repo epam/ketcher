@@ -20,8 +20,8 @@ import {
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ShapeType } from '@tests/pages/constants/shapeSelectionTool/Constants';
 import {
@@ -54,7 +54,7 @@ async function selectAndMoveSimpleObjects(page: Page) {
 async function saveToTemplates(page: Page) {
   const saveToTemplates = SaveStructureDialog(page).saveToTemplatesButton;
 
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
   await saveToTemplates.click();
   await page.getByPlaceholder('template').click();
   await page.getByPlaceholder('template').fill('My New Template');
@@ -160,13 +160,13 @@ test.describe('Action on simples objects', () => {
     await clickOnCanvas(page, anyPointX, anyPointY);
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     }
     await cutAndPaste(page);
     await clickOnCanvas(page, anyPointX, anyPointY);
     await takeEditorScreenshot(page);
     for (let i = 0; i < numberOfPress; i++) {
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -201,7 +201,7 @@ test.describe('Action on simples objects', () => {
     await clickInTheMiddleOfTheScreen(page);
     await drawBenzeneRing(page);
     await saveToTemplates(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await BottomToolbar(page).StructureLibrary();
     await page.getByRole('button', { name: 'User Templates (1)' }).click();
     await takeEditorScreenshot(page);

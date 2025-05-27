@@ -78,8 +78,8 @@ export const RulerArea = () => {
     const handlePosition = translateValueWithZoomAndDrag - 8;
     let inputPosition = translateValueWithZoomAndDrag + 10;
 
-    const canvasWidth = editor.canvas.width.baseVal.value;
-    const canvasContainer = editor.canvas.parentElement;
+    const canvasWidth = editor?.canvas.width.baseVal.value;
+    const canvasContainer = editor?.canvas.parentElement;
     const scrollLeft = canvasContainer?.scrollLeft || 0;
     const visibleLeftEdge = scrollLeft;
     const visibleRightEdge =
@@ -97,8 +97,8 @@ export const RulerArea = () => {
 
     return [inputPosition, handlePosition];
   }, [
-    editor.canvas.width.baseVal.value,
-    editor.canvas.parentElement,
+    editor?.canvas.width.baseVal.value,
+    editor?.canvas.parentElement,
     transform,
     translateValue,
     dragDelta,
@@ -185,6 +185,7 @@ export const RulerArea = () => {
   return (
     <div
       className={clsx(styles.rulerArea, isDragging && styles.rulerAreaDragging)}
+      data-testid="ruler-area"
     >
       <RulerInput
         lineLengthValue={lineLengthValue}

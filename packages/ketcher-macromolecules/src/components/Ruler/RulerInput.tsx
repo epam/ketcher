@@ -76,6 +76,7 @@ const RulerInput = ({
       onChange={handleChange}
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
+      data-testid="ruler-input"
       ref={ref}
     />
   );

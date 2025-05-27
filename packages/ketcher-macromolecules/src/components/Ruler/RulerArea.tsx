@@ -111,6 +111,25 @@ export const RulerArea = () => {
     [editor?.events?.setEditorLineLength, layoutMode],
   );
 
+  const calculateLineLength = useCallback(
+    (position: number) => {
+      if (layoutMode === 'sequence-layout-mode') {
+        const rawCount =
+          (position -
+            indentsInSequenceMode * SequenceModeIndentWidth -
+            SequenceModeStartOffset) /
+          SequenceModeItemWidth;
+        return Math.max(10, Math.round(rawCount / 10) * 10);
+      } else if (layoutMode === 'snake-layout-mode') {
+        const rawCount = (position - SnakeModeStartOffset) / SnakeModeItemWidth;
+        return Math.max(1, Math.round(rawCount));
+      }
+
+      return lineLengthValue;
+    },
+    [layoutMode, indentsInSequenceMode, lineLengthValue],
+  );
+
   const calculateDragPosition = useCallback(
     (initialScreenX: number) => {
       const dragDelta = initialScreenX - dragStartX.current;
@@ -119,6 +138,24 @@ export const RulerArea = () => {
     },
     [transform, translateValue],
   );
+
+  const previewValue = useMemo(() => {
+    if (!isDragging) {
+      return lineLengthValue;
+    }
+
+    const [, dragPosition] = calculateDragPosition(
+      dragStartX.current + dragDelta,
+    );
+    return calculateLineLength(dragPosition);
+  }, [
+    isDragging,
+    lineLengthValue,
+    calculateDragPosition,
+    dragStartX,
+    dragDelta,
+    calculateLineLength,
+  ]);
 
   const handleDragStart = useCallback(
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
@@ -145,20 +182,7 @@ export const RulerArea = () => {
       setIsDragging(false);
 
       const [, dragPosition] = calculateDragPosition(event.sourceEvent.clientX);
-
-      let newValue = 0;
-      if (layoutMode === 'sequence-layout-mode') {
-        const rawCount =
-          (dragPosition -
-            indentsInSequenceMode * SequenceModeIndentWidth -
-            SequenceModeStartOffset) /
-          SequenceModeItemWidth;
-        newValue = Math.max(10, Math.round(rawCount / 10) * 10);
-      } else if (layoutMode === 'snake-layout-mode') {
-        const rawCount =
-          (dragPosition - SnakeModeStartOffset) / SnakeModeItemWidth;
-        newValue = Math.max(1, Math.round(rawCount));
-      }
+      const newValue = calculateLineLength(dragPosition);
 
       if (newValue !== lineLengthValue) {
         updateSettings(newValue);
@@ -170,11 +194,10 @@ export const RulerArea = () => {
     },
     [
       calculateDragPosition,
-      layoutMode,
-      indentsInSequenceMode,
+      calculateLineLength,
       lineLengthValue,
+      editor?.events.toggleLineLengthHighlighting,
       updateSettings,
-      editor?.events?.toggleLineLengthHighlighting,
     ],
   );
 
@@ -188,7 +211,7 @@ export const RulerArea = () => {
       data-testid="ruler-area"
     >
       <RulerInput
-        lineLengthValue={lineLengthValue}
+        lineLengthValue={isDragging ? previewValue : lineLengthValue}
         offsetX={inputOffsetX}
         isDragging={isDragging}
         layoutMode={layoutMode}

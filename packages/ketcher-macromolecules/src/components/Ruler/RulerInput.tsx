@@ -1,10 +1,10 @@
 import { ChangeEvent, KeyboardEvent, memo, useRef, useState } from 'react';
+import clsx from 'clsx';
 import { LayoutMode } from 'ketcher-core';
 
 import useTranslateAlongXAxis from './useTranslateAlongXAxis';
 
 import styles from './RulerArea.module.less';
-import clsx from 'clsx';
 
 type Props = {
   lineLengthValue: number;
@@ -77,6 +77,7 @@ const RulerInput = ({
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
       data-testid="ruler-input"
+      disabled={isDragging}
       ref={ref}
     />
   );

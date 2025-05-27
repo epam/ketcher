@@ -274,10 +274,8 @@ function Editor({
   }, [editor]);
 
   useEffect(() => {
-    const setEditorLineLengthListener = (
-      event: CustomEvent<EditorLineLength>,
-    ) => {
-      const lineLengthUpdate = event.detail;
+    const setEditorLineLengthListener = (event: Event) => {
+      const lineLengthUpdate = (event as CustomEvent<EditorLineLength>).detail;
       if (lineLengthUpdate) {
         dispatch(setEditorLineLength(lineLengthUpdate));
       }

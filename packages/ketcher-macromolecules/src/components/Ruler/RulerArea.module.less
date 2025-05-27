@@ -3,7 +3,7 @@
   height: 36px;
   background-color: var(--color-background-canvas);
 
-  &:hover, &.rulerAreaDragging {
+  &:hover, &.rulerAreaDragging, &:focus-within {
     > .rulerInput {
       opacity: 100%;
       box-shadow: var(--shadow-regular);
@@ -39,6 +39,7 @@
 
   &.rulerInputDragging {
     user-select: none;
+    user-focus: none;
   }
 }
 
@@ -47,6 +48,7 @@
   width: 100%;
   visibility: hidden;
   pointer-events: none;
+  user-select: none;
 }
 
 .rulerHandle {

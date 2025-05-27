@@ -19,15 +19,10 @@ import {
   StructFormatter,
   SupportedFormat,
 } from './structFormatter.types';
-import {
-  KetSerializer,
-  MolSerializer,
-  MolSerializerOptions,
-} from 'domain/serializers';
+import { KetSerializer, MolSerializerOptions } from 'domain/serializers';
 import { StructService, StructServiceOptions } from 'domain/services';
 import { KetFormatter } from './ketFormatter';
 import { ServerFormatter } from './serverFormatter';
-import { MolfileV2000Formatter } from './molfileV2000Formatter';
 
 export class FormatterFactory {
   #structService: StructService;
@@ -70,10 +65,8 @@ export class FormatterFactory {
   create(
     format: SupportedFormat,
     options?: FormatterFactoryOptions,
-    queryPropertiesAreUsed?: boolean,
   ): StructFormatter {
-    const [molSerializerOptions, structServiceOptions] =
-      this.separateOptions(options);
+    const [, structServiceOptions] = this.separateOptions(options);
 
     let formatter: StructFormatter;
     switch (format) {

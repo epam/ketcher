@@ -29,7 +29,6 @@ import {
   selectUnsaturated,
   selectReactionFlagsInversion,
   selectExactChange,
-  selectThreeAtomsFromPeriodicTable,
   selectElementFromExtendedTable,
   selectRingBondCountOption,
   selectHCountOption,
@@ -50,7 +49,7 @@ import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constant
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
 import {
@@ -58,6 +57,11 @@ import {
   selectRingButton,
 } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { selectElementsFromPeriodicTable } from '@tests/pages/molecules/canvas/PeriodicTableDialog';
+import {
+  PeriodicTableElement,
+  TypeChoice,
+} from '@tests/pages/constants/periodicTableDialog/Constants';
 
 const CANVAS_CLICK_X = 200;
 const CANVAS_CLICK_Y = 200;
@@ -1031,12 +1035,12 @@ test.describe('Atom Properties', () => {
     await selectRingBondCount(page, '3', 'Apply');
 
     for (let i = 0; i < numberOfPress; i++) {
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
 
     for (let i = 0; i < numberOfPress; i++) {
-      await TopLeftToolbar(page).redo();
+      await CommonTopLeftToolbar(page).redo();
     }
     await takeEditorScreenshot(page);
   });
@@ -1479,14 +1483,11 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1658
       Description: The different List symbols are present on the canvas.
     */
-    await selectThreeAtomsFromPeriodicTable(
-      page,
-      'List',
-      'Ru 44',
-      'Mo 42',
-      'W 74',
-      'Add',
-    );
+    await selectElementsFromPeriodicTable(page, TypeChoice.List, [
+      PeriodicTableElement.Ru,
+      PeriodicTableElement.Mo,
+      PeriodicTableElement.W,
+    ]);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -1497,14 +1498,11 @@ test.describe('Atom Properties', () => {
       Test case: EPMLSOPKET-1658
       Description: The different Not List symbols are present on the canvas.
     */
-    await selectThreeAtomsFromPeriodicTable(
-      page,
-      'Not List',
-      'Ru 44',
-      'Mo 42',
-      'W 74',
-      'Add',
-    );
+    await selectElementsFromPeriodicTable(page, TypeChoice.NotList, [
+      PeriodicTableElement.Ru,
+      PeriodicTableElement.Mo,
+      PeriodicTableElement.W,
+    ]);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);

@@ -1,6 +1,6 @@
 import { Peptides } from '@constants/monomers/Peptides';
 import { test } from '@playwright/test';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import {
   addMonomerToFavorites,
   clickInTheMiddleOfTheScreen,

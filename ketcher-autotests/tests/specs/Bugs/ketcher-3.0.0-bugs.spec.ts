@@ -51,7 +51,7 @@ import {
   switchToPeptideMode,
   switchToRNAMode,
 } from '@utils/macromolecules/sequence';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
@@ -62,7 +62,7 @@ import {
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import {
   drawBenzeneRing,
@@ -128,7 +128,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
   });
 
   test.afterEach(async ({ context: _ }, testInfo) => {
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await processResetToDefaultState(testInfo, page);
   });
 
@@ -348,7 +348,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await addMonomerToCenterOfCanvas(page, Presets.T);
     await selectAllStructuresOnCanvas(page);
     await copyToClipboardByKeyboard(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await selectSequenceLayoutModeTool(page);
     await keyboardTypeOnCanvas(page, 'UUU');
     await keyboardPressOnCanvas(page, 'ArrowUp');
@@ -429,7 +429,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await selectAllStructuresOnCanvas(page);
     await CommonLeftToolbar(page).selectEraseTool();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -473,7 +473,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await switchToPeptideMode(page);
     await keyboardTypeOnCanvas(page, 'AAATT');
     for (let i = 0; i < 3; i++) {
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     }
     await keyboardPressOnCanvas(page, 'Enter');
     await takeEditorScreenshot(page, {
@@ -500,7 +500,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
     await keyboardPressOnCanvas(page, 'Enter');
     await keyboardTypeOnCanvas(page, 'AAATT');
     await keyboardPressOnCanvas(page, 'Enter');
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await keyboardTypeOnCanvas(page, 'AAATT');
     await keyboardPressOnCanvas(page, 'Enter');
     await keyboardTypeOnCanvas(page, 'AAATT');
@@ -564,7 +564,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -767,7 +767,7 @@ test.describe('Ketcher bugs in 3.0.0', () => {
       MacroFileType.HELM,
       'PEPTIDE1{A.C.D}$$$$V2.0',
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.Sequence3LetterCode,
     );

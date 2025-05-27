@@ -8,7 +8,7 @@ import {
   takeEditorScreenshot,
 } from '@utils';
 import { getAtomByIndex } from '@utils/canvas/atoms';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 export const COORDINATES_TO_PERFORM_ROTATION = {
   x: 20,
@@ -90,8 +90,8 @@ export async function addStructureAndSelect(
 }
 
 export async function checkUndoRedo(page: Page) {
-  await TopLeftToolbar(page).undo();
-  await TopLeftToolbar(page).redo();
+  await CommonTopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).redo();
   await takeEditorScreenshot(page);
 }
 

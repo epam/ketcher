@@ -39,8 +39,8 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { pageReload } from '@utils/common/helpers';
 
 test.describe('Common connection rules: ', () => {
@@ -72,7 +72,7 @@ test.describe('Common connection rules: ', () => {
   test.afterEach(async () => {
     await page.keyboard.press('Escape');
     await resetZoomLevelToDefault(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
   });
 
   test.afterAll(async ({ browser }) => {

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
@@ -18,8 +18,8 @@ test.describe('Clear canvas', () => {
 
   test('Clear Canvas - checking button tooltip', async ({ page }) => {
     // Test case: EPMLSOPKET-1702
-    await TopLeftToolbar(page).clearCanvas();
-    const button = TopLeftToolbar(page).clearCanvasButton;
+    await CommonTopLeftToolbar(page).clearCanvas();
+    const button = CommonTopLeftToolbar(page).clearCanvasButton;
     await expect(button).toHaveAttribute('title', 'Clear Canvas (Ctrl+Del)');
     await takeEditorScreenshot(page);
   });
@@ -29,7 +29,7 @@ test.describe('Clear canvas', () => {
     await addTextBoxToCanvas(page);
     await page.getByRole('dialog').getByRole('textbox').fill('one two three');
     await pressButton(page, 'Apply');
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -38,11 +38,11 @@ test.describe('Clear canvas', () => {
     await openFileAndAddToCanvas('Rxn-V2000/reaction-dif-prop.rxn', page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await clickInTheMiddleOfTheScreen(page);
-    await TopLeftToolbar(page).undo();
-    await TopLeftToolbar(page).redo();
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -89,13 +89,13 @@ test.describe('Clear canvas', () => {
     // Test case: EPMLSOPKET-1706
     await openFileAndAddToCanvas('SMILES/chain-with-r-group.smi', page);
     await clickInTheMiddleOfTheScreen(page);
-    await TopLeftToolbar(page).clearCanvas();
-    await TopLeftToolbar(page).undo();
-    await TopLeftToolbar(page).clearCanvas();
-    await TopLeftToolbar(page).undo();
-    await TopLeftToolbar(page).undo();
-    await TopLeftToolbar(page).redo();
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 });

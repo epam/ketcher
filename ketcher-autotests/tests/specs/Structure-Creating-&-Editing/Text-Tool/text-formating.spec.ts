@@ -19,7 +19,7 @@ import {
   FileType,
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 async function openFromFileViaTextBox(filename: string, page: Page) {
   const fileText = await readFileContent(filename);
@@ -180,13 +180,13 @@ test.describe('Text tools test cases', () => {
   }) => {
     // Opening a file with created ealier text (task EPMLSOPKET-2272 ) and doing copy/paste action on it
     await openFileAndAddToCanvas('KET/two-text-objects.ket', page);
-    await TopLeftToolbar(page).undo();
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
     await cutAndPaste(page);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

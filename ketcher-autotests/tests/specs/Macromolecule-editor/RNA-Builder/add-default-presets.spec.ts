@@ -9,7 +9,7 @@ import {
 import { toggleRnaBuilderAccordion } from '@utils/macromolecules/rnaBuilder';
 import { Presets } from '@constants/monomers/Presets';
 import { goToRNATab } from '@utils/macromolecules/library';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 test.describe('Macromolecules default presets', () => {
   test.beforeEach(async ({ page }) => {

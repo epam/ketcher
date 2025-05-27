@@ -86,7 +86,7 @@ export async function setChirality(page: Page, chirality: chirality) {
 
 export async function setCustomQueryForAtom(page: Page, customQuery: string) {
   await page.getByTestId('custom-query-checkbox').check();
-  await page.getByTestId('bond-custom-query').fill(customQuery);
+  await page.getByTestId('atom-custom-query').fill(customQuery);
 }
 
 // Custom query - bond properties:

@@ -86,7 +86,7 @@ export class ModifyAminoAcidsView extends TransientView {
           .attr('cy', monomerCenterInPixels.y)
           .attr('r', BaseMonomerRenderer.selectionCircleRadius)
           .attr('fill', 'none')
-          .attr('stroke', 'blue')
+          .attr('stroke', '#0097A8')
           .attr('stroke-width', 1);
       });
     }

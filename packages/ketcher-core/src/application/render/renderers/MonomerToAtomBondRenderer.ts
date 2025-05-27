@@ -27,6 +27,36 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       this.editorSettings,
     );
 
+    const atomRect =
+      this.monomerToAtomBond.atom.baseRenderer?.rootBoundingClientRect;
+    if (atomRect) {
+      // Get the atom rectangle dimensions
+      const atomWidth = atomRect.width;
+      const atomHeight = atomRect.height;
+
+      // Estimate the atom radius (approximating the atom as a circle)
+      const atomRadius = Math.min(atomWidth, atomHeight) / 2;
+
+      // Calculate direction vector from start to end
+      const directionX = endPositionInPixels.x - startPositionInPixels.x;
+      const directionY = endPositionInPixels.y - startPositionInPixels.y;
+      const distance = Math.sqrt(
+        directionX * directionX + directionY * directionY,
+      );
+
+      // Normalize the direction vector
+      const normalizedDirectionX = directionX / distance;
+      const normalizedDirectionY = directionY / distance;
+
+      // Adjust end position to stop at the atom edge
+      endPositionInPixels.x =
+        endPositionInPixels.x - normalizedDirectionX * atomRadius;
+      endPositionInPixels.y =
+        endPositionInPixels.y - normalizedDirectionY * atomRadius;
+    } else {
+      // need to align start end position to give proper position on canvas reload
+    }
+
     return {
       startPosition: startPositionInPixels,
       endPosition: endPositionInPixels,
@@ -34,34 +64,6 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
   }
 
   show() {
-    const atomRenderer = this.monomerToAtomBond.atom.renderer;
-    const labelBBox = atomRenderer?.getLabelBBoxInCanvas?.();
-
-    if (labelBBox) {
-      const startX = this.scaledPosition.startPosition.x;
-      const startY = this.scaledPosition.startPosition.y;
-      const centerX = labelBBox.x + labelBBox.width / 2;
-      const centerY = labelBBox.y + labelBBox.height / 2;
-      const radius = Math.min(labelBBox.width, labelBBox.height) / 2 + 3;
-      const dx = centerX - startX;
-      const dy = centerY - startY;
-      const len = Math.sqrt(dx * dx + dy * dy);
-
-      if (len === 0) {
-        this.endX = dx;
-        this.endY = dy;
-      } else {
-        this.endX = dx - (dx / len) * radius;
-        this.endY = dy - (dy / len) * radius;
-      }
-    } else {
-      // fallback to atom center
-      this.endX =
-        this.scaledPosition.endPosition.x - this.scaledPosition.startPosition.x;
-      this.endY =
-        this.scaledPosition.endPosition.y - this.scaledPosition.startPosition.y;
-    }
-
     this.rootElement = this.canvas
       .insert('g', `.monomer`)
       .data([this])
@@ -85,11 +87,16 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       ?.append('line')
       .attr('x1', 0)
       .attr('y1', 0)
-      .attr('x2', this.endX)
-      .attr('y2', this.endY)
+      .attr(
+        'x2',
+        this.scaledPosition.endPosition.x - this.scaledPosition.startPosition.x,
+      )
+      .attr(
+        'y2',
+        this.scaledPosition.endPosition.y - this.scaledPosition.startPosition.y,
+      )
       .attr('stroke', '#333333')
       .attr('stroke-width', 1);
-
     this.appendHover();
   }
 
@@ -98,8 +105,14 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       ?.append('line')
       .attr('x1', 0)
       .attr('y1', 0)
-      .attr('x2', this.endX)
-      .attr('y2', this.endY)
+      .attr(
+        'x2',
+        this.scaledPosition.endPosition.x - this.scaledPosition.startPosition.x,
+      )
+      .attr(
+        'y2',
+        this.scaledPosition.endPosition.y - this.scaledPosition.startPosition.y,
+      )
       .attr('stroke', 'transparent')
       .attr('stroke-width', 10);
   }
@@ -122,8 +135,14 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       ?.insert('line', ':first-child')
       .attr('x1', 0)
       .attr('y1', 0)
-      .attr('x2', this.endX)
-      .attr('y2', this.endY)
+      .attr(
+        'x2',
+        this.scaledPosition.endPosition.x - this.scaledPosition.startPosition.x,
+      )
+      .attr(
+        'y2',
+        this.scaledPosition.endPosition.y - this.scaledPosition.startPosition.y,
+      )
       .attr('stroke', '#57ff8f')
       .attr('stroke-width', 10);
   }

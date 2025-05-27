@@ -524,16 +524,4 @@ export class AtomRenderer extends BaseRenderer {
   protected appendHoverAreaElement(): void {}
 
   protected removeHover(): void {}
-
-  public getLabelBBoxInCanvas() {
-    if (!this.textElement) return null;
-    const bbox = this.textElement.node()?.getBBox();
-    if (!bbox) return null;
-    return {
-      x: this.scaledPosition.x + bbox.x,
-      y: this.scaledPosition.y + bbox.y,
-      width: bbox.width,
-      height: bbox.height,
-    };
-  }
 }

@@ -23,6 +23,8 @@ import {
   BaseMonomer,
   CoreEditor,
   DeprecatedFlexModeOrSnakeModePolymerBondRenderer,
+  EditorLineLength,
+  SetEditorLineLengthAction,
   NodeSelection,
   NodesSelection,
   SequenceMode,
@@ -46,6 +48,7 @@ import {
   selectEditor,
   selectIsHandToolSelected,
   setContextMenuActive,
+  setEditorLineLength,
   toggleMacromoleculesPropertiesWindowVisibility,
 } from 'state/common';
 import {
@@ -269,6 +272,29 @@ function Editor({
       editor?.zoomTool.destroy();
     };
   }, [editor]);
+
+  useEffect(() => {
+    const setEditorLineLengthListener = (
+      event: CustomEvent<EditorLineLength>,
+    ) => {
+      const lineLengthUpdate = event.detail;
+      if (lineLengthUpdate) {
+        dispatch(setEditorLineLength(lineLengthUpdate));
+      }
+    };
+
+    window.addEventListener(
+      SetEditorLineLengthAction,
+      setEditorLineLengthListener,
+    );
+
+    return () => {
+      window.removeEventListener(
+        SetEditorLineLengthAction,
+        setEditorLineLengthListener,
+      );
+    };
+  }, [dispatch]);
 
   const handleCloseErrorTooltip = () => {
     dispatch(closeErrorTooltip());

@@ -1494,8 +1494,23 @@ export class DrawingEntitiesManager {
 
     // not only snake mode???
     if (isSnakeMode) {
-      const numberOfCellsInRow =
+      const editor = CoreEditor.provideEditorInstance();
+      const canvasWidth = editor.canvas.width.baseVal.value;
+
+      const lineLengthFromSettings =
         SettingsManager.editorLineLength['snake-layout-mode'];
+      const lineLengthFromCanvasWidth = Math.floor(
+        (canvasWidth - CELL_WIDTH) / CELL_WIDTH,
+      );
+      const numberOfCellsInRow =
+        lineLengthFromSettings || lineLengthFromCanvasWidth;
+
+      if (lineLengthFromSettings === 0) {
+        SettingsManager.editorLineLength = {
+          'snake-layout-mode': lineLengthFromCanvasWidth,
+        };
+      }
+
       const rearrangedMonomersSet: Set<number> = new Set();
       let lastPosition = new Vec2({
         x: MONOMER_START_X_POSITION,

@@ -1,12 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ZoomTool } from 'ketcher-core';
 import { D3DragEvent, ZoomTransform } from 'd3';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  selectEditor,
-  selectEditorLineLength,
-  updateEditorLineLength,
-} from 'state/common';
+import { useSelector } from 'react-redux';
+import { selectEditor, selectEditorLineLength } from 'state/common';
 import { useLayoutMode } from 'hooks';
 
 import RulerInput from './RulerInput';
@@ -23,8 +19,6 @@ import {
 } from 'components/Ruler/RulerArea.constants';
 
 export const RulerArea = () => {
-  const dispatch = useDispatch();
-
   const layoutMode = useLayoutMode();
   const editorLineLength = useSelector(selectEditorLineLength);
   const lineLengthValue = editorLineLength[layoutMode];
@@ -85,17 +79,9 @@ export const RulerArea = () => {
 
   const updateSettings = useCallback(
     (value: number) => {
-      dispatch(
-        updateEditorLineLength({ ...editorLineLength, [layoutMode]: value }),
-      );
-      editor.events.setEditorLineLength.dispatch();
+      editor.events.setEditorLineLength.dispatch({ [layoutMode]: value });
     },
-    [
-      dispatch,
-      editor?.events?.setEditorLineLength,
-      editorLineLength,
-      layoutMode,
-    ],
+    [editor?.events?.setEditorLineLength, layoutMode],
   );
 
   const calculateDragPosition = useCallback(

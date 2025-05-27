@@ -1,12 +1,7 @@
-import {
-  ChangeEvent,
-  KeyboardEvent,
-  memo,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ChangeEvent, KeyboardEvent, memo, useRef, useState } from 'react';
 import { LayoutMode } from 'ketcher-core';
+
+import useTranslateAlongXAxis from './useTranslateAlongXAxis';
 
 import styles from './RulerArea.module.less';
 
@@ -25,13 +20,7 @@ const RulerInput = ({
 }: Props) => {
   const ref = useRef<HTMLInputElement>(null);
 
-  useLayoutEffect(() => {
-    const inputElement = ref.current;
-    if (!inputElement) {
-      return;
-    }
-    inputElement.style.transform = `translateX(${offsetX}px)`;
-  }, [offsetX]);
+  useTranslateAlongXAxis(ref, offsetX);
 
   const stringifiedLineLengthValue = lineLengthValue.toString();
 

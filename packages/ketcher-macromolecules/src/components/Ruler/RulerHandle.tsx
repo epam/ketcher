@@ -1,6 +1,9 @@
-import { memo, useEffect, useLayoutEffect, useRef } from 'react';
-import styles from './RulerArea.module.less';
+import { memo, useEffect, useRef } from 'react';
 import { D3DragEvent, drag, select } from 'd3';
+
+import useTranslateAlongXAxis from './useTranslateAlongXAxis';
+
+import styles from './RulerArea.module.less';
 
 type Props = {
   offsetX: number;
@@ -13,13 +16,7 @@ const RulerHandle = ({ offsetX, onDragStart, onDrag, onDragEnd }: Props) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const handleRef = useRef<SVGGElement>(null);
 
-  useLayoutEffect(() => {
-    const inputElement = svgRef.current;
-    if (!inputElement) {
-      return;
-    }
-    inputElement.style.transform = `translateX(${offsetX}px)`;
-  }, [offsetX]);
+  useTranslateAlongXAxis(svgRef, offsetX);
 
   useEffect(() => {
     if (!handleRef.current) {
@@ -51,7 +48,7 @@ const RulerHandle = ({ offsetX, onDragStart, onDrag, onDragEnd }: Props) => {
       data-testid="ruler-handle"
     >
       <g cursor="pointer" pointerEvents="all" ref={handleRef}>
-        <mask id="a" fill="#fff">
+        <mask id="ruler-handle-mask" fill="#fff">
           <path
             fillRule="evenodd"
             d="M16 1.625a1 1 0 0 0-1-1H1a1 1 0 0 0-1 1v4.5a1 1 0 0 0 .4.8l7 5.25a1 1 0 0 0 1.2 0l7-5.25a1 1 0 0 0 .4-.8v-4.5Z"
@@ -67,7 +64,7 @@ const RulerHandle = ({ offsetX, onDragStart, onDrag, onDragEnd }: Props) => {
         <path
           fill="#B4B9D6"
           d="m15.6 6.925-.6-.8.6.8Zm-8.2 5.25.6-.8-.6.8Zm-7-5.25.6-.8-.6.8Zm.6-5.3h14v-2H1v2Zm0 4.5v-4.5h-2v4.5h2Zm7 5.25-7-5.25-1.2 1.6 7 5.25 1.2-1.6Zm7-5.25-7 5.25 1.2 1.6 7-5.25-1.2-1.6Zm0-4.5v4.5h2v-4.5h-2Zm1.2 6.1a2 2 0 0 0 .8-1.6h-2l1.2 1.6Zm-9.4 5.25a2 2 0 0 0 2.4 0l-1.2-1.6-1.2 1.6ZM-1 6.125a2 2 0 0 0 .8 1.6l1.2-1.6h-2Zm16-4.5h2a2 2 0 0 0-2-2v2Zm-14-2a2 2 0 0 0-2 2h2v-2Z"
-          mask="url(#a)"
+          mask="url(#ruler-handle-mask)"
         />
       </g>
     </svg>

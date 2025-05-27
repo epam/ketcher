@@ -27,8 +27,10 @@ export type EditorLineLength = Record<
 
 const DefaultEditorLineLength: EditorLineLength = {
   'sequence-layout-mode': 30,
-  'snake-layout-mode': 10,
+  'snake-layout-mode': 0,
 };
+
+export const SetEditorLineLengthAction = 'SetEditorLineLength';
 
 interface SavedSettings {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,6 +65,7 @@ export class SettingsManager {
     if (!settings) {
       return;
     }
+
     localStorage.setItem(KETCHER_SAVED_SETTINGS_KEY, JSON.stringify(settings));
   }
 
@@ -115,13 +118,20 @@ export class SettingsManager {
     return { ...DefaultEditorLineLength, ...editorLineLength };
   }
 
-  static set editorLineLength(newEditorLineLength) {
+  static set editorLineLength(newEditorLineLength: Partial<EditorLineLength>) {
     const settings = this.getSettings();
-    const previousEditorLineLength = settings.editorLineLength || {};
+    const previousEditorLineLength =
+      settings.editorLineLength || DefaultEditorLineLength;
     const editorLineLength = {
       ...previousEditorLineLength,
       ...newEditorLineLength,
     };
+
+    window.dispatchEvent(
+      new CustomEvent<EditorLineLength>(SetEditorLineLengthAction, {
+        detail: editorLineLength,
+      }),
+    );
 
     this.saveSettings({
       ...settings,

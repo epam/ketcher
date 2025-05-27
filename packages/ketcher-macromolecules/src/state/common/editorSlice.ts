@@ -14,12 +14,7 @@
  * limitations under the License.
  ***************************************************************************/
 
-import {
-  createAsyncThunk,
-  createSlice,
-  PayloadAction,
-  Slice,
-} from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Slice } from '@reduxjs/toolkit';
 import {
   CoreEditor,
   type LayoutMode,
@@ -76,14 +71,6 @@ const initialState: EditorState = {
   unipositiveIonsMeasurementUnit: MolarMeasurementUnit.milliMol,
   oligonucleotidesMeasurementUnit: MolarMeasurementUnit.microMol,
 };
-
-export const updateEditorLineLength = createAsyncThunk(
-  'editor/updateEditorLineLength',
-  (editorLineLength: EditorLineLength) => {
-    SettingsManager.editorLineLength = editorLineLength;
-    return editorLineLength;
-  },
-);
 
 export const editorSlice: Slice<EditorState> = createSlice({
   name: 'editor',
@@ -160,13 +147,14 @@ export const editorSlice: Slice<EditorState> = createSlice({
     ) => {
       state.oligonucleotidesMeasurementUnit = action.payload;
     },
-  },
-  extraReducers: {
-    [updateEditorLineLength.fulfilled.type]: (
+    setEditorLineLength: (
       state,
-      action: PayloadAction<Record<LayoutMode, number>>,
+      action: PayloadAction<Partial<EditorLineLength>>,
     ) => {
-      state.editorLineLength = { ...state.editorLineLength, ...action.payload };
+      state.editorLineLength = {
+        ...state.editorLineLength,
+        ...action.payload,
+      };
     },
   },
 });
@@ -183,6 +171,7 @@ export const {
   setMacromoleculesProperties,
   setUnipositiveIonsMeasurementUnit,
   setOligonucleotidesMeasurementUnit,
+  setEditorLineLength,
 } = editorSlice.actions;
 
 export const selectShowPreview = (state: RootState): EditorStatePreview =>

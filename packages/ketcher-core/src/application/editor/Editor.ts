@@ -56,7 +56,12 @@ import {
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
 import { DOMSubscription } from 'subscription';
-import { initHotKeys, KetcherLogger, keyNorm } from 'utilities';
+import {
+  EditorLineLength,
+  initHotKeys,
+  KetcherLogger,
+  keyNorm,
+} from 'utilities';
 import monomersDataRaw from './data/monomers.ket';
 import { EditorHistory, HistoryOperationType } from './EditorHistory';
 import { Coordinates } from './shared/coordinates';
@@ -72,6 +77,7 @@ import { SelectLayoutModeOperation } from 'application/editor/operations/polymer
 import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 import { ReinitializeModeOperation } from 'application/editor/operations';
 import { getAminoAcidsToModify } from 'domain/helpers/monomers';
+import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -488,9 +494,15 @@ export class CoreEditor {
       },
     );
 
-    this.events.setEditorLineLength.add(() => {
-      this.mode.initialize();
-    });
+    this.events.setEditorLineLength.add(
+      (lineLengthUpdate: Partial<EditorLineLength>) => {
+        const command = new Command();
+        const history = new EditorHistory(this);
+
+        command.addOperation(new LineLengthChangeOperation(lineLengthUpdate));
+        history.update(command);
+      },
+    );
 
     this.events.toggleLineLengthHighlighting.add(
       (value: boolean, currentPosition = 0) => {

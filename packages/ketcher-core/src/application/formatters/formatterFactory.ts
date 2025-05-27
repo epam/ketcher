@@ -81,21 +81,6 @@ export class FormatterFactory {
         formatter = new KetFormatter(new KetSerializer());
         break;
 
-      case SupportedFormat.mol:
-        if (queryPropertiesAreUsed) {
-          formatter = new ServerFormatter(
-            this.#structService,
-            new KetSerializer(),
-            format,
-            structServiceOptions,
-          );
-        } else {
-          formatter = new MolfileV2000Formatter(
-            new MolSerializer(molSerializerOptions),
-          );
-        }
-        break;
-
       case SupportedFormat.cml:
       case SupportedFormat.inChIAuxInfo:
       case SupportedFormat.inChI:
@@ -110,6 +95,9 @@ export class FormatterFactory {
       case SupportedFormat.binaryCdx:
       case SupportedFormat.unknown:
       case SupportedFormat.rxn:
+      // The frontend based for formatter depends on window.ketcher instance, this fails if multiple ketchers are on the same page.
+      //   We can use the backend formatter until that is fixed.
+      case SupportedFormat.mol:
       default:
         formatter = new ServerFormatter(
           this.#structService,

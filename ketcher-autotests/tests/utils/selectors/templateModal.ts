@@ -7,7 +7,6 @@ import { Presets } from '@constants/monomers/Presets';
 import { Sugars } from '@constants/monomers/Sugars';
 import { Page, expect } from '@playwright/test';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
-import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
   Monomer,
   clickInTheMiddleOfTheScreen,
@@ -20,7 +19,6 @@ import {
   MonomerLocationTabs,
   goToMonomerLocationTab,
 } from '@utils/macromolecules/library';
-import { ElementLabel } from 'ketcher-core';
 
 export enum SaltsAndSolvents {
   AceticAcid = 'acetic acid',
@@ -391,21 +389,4 @@ export async function fillFieldByPlaceholder(
 ) {
   await page.getByPlaceholder(fieldLabel).click();
   await page.getByPlaceholder(fieldLabel).fill(testValue);
-}
-
-export async function selectAtomsFromPeriodicTable(
-  page: Page,
-  selectlisting: 'List' | 'Not List',
-  elements: ElementLabel[],
-) {
-  const periodicTableButton = RightToolbar(page).periodicTableButton;
-
-  await periodicTableButton.click();
-  await page.getByText(selectlisting, { exact: true }).click();
-
-  for (const element of elements) {
-    await page.getByTestId(`${element}-button`).click();
-  }
-
-  await page.getByTestId('OK').click();
 }

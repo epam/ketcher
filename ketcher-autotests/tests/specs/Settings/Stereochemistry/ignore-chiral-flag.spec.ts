@@ -1,6 +1,6 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test } from '@playwright/test';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { openStructureLibrary } from '@tests/pages/molecules/BottomToolbar';
 import {
@@ -82,7 +82,7 @@ test.describe('Ignore Chiral Flag', () => {
     await applyIgnoreChiralFlag(page);
     await templateFromLAminoAcidsCategory(page);
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 

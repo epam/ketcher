@@ -11,8 +11,8 @@ import {
 import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 test.describe('Enumerations', () => {
   test.beforeEach(async ({ page }) => {
@@ -110,7 +110,7 @@ test.describe('Enumerations', () => {
     );
     await CommonLeftToolbar(page).selectEraseTool();
     await getMonomerLocator(page, Bases.baA).click();
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -216,7 +216,7 @@ test.describe('Enumerations', () => {
 
     const pressCount = 3;
     for (let i = 0; i < pressCount; i++) {
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });
@@ -239,7 +239,7 @@ test.describe('Enumerations', () => {
     await takeEditorScreenshot(page);
     const pressCount = 2;
     for (let i = 0; i < pressCount; i++) {
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     }
     await takeEditorScreenshot(page);
   });

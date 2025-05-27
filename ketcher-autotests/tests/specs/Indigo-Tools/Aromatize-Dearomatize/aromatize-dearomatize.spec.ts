@@ -17,7 +17,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
@@ -121,9 +121,9 @@ test.describe('Aromatize/Dearomatize Tool', () => {
     );
     await IndigoFunctionsToolbar(page).aromatize();
     await IndigoFunctionsToolbar(page).dearomatize();
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 

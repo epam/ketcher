@@ -22,7 +22,7 @@ import {
   setHashSpacingOptionUnit,
   openBondsSettingsSection,
 } from '@utils';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { drawReactionWithTwoBenzeneRings } from '@utils/canvas/drawStructures';
 import {
   FileType,
@@ -38,7 +38,7 @@ import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 
 async function savedFileInfoStartsWithRxn(page: Page, wantedResult = false) {
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
   const textareaText = await SaveStructureDialog(page).getTextAreaValue();
   const expectedSentence = '$RXN';
   wantedResult
@@ -85,7 +85,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       .waitFor({ state: 'detached' });
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     await clickOnTheCanvas(page, xOffsetFromCenter, 0);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
 
     await SaveStructureDialog(page).cancel();
@@ -96,7 +96,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
       { primary: true },
       'Apply',
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
 
     await SaveStructureDialog(page).cancel();
@@ -105,7 +105,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await clickOnCanvas(page, x, y);
     await page.getByRole('button', { name: 'R22' }).click();
     await page.getByRole('button', { name: 'Apply' }).click();
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await expect(saveButton).not.toHaveAttribute('disabled', 'disabled');
   });
 
@@ -175,7 +175,7 @@ test.describe('Tests for Open and Save RXN file operations', () => {
     await savedFileInfoStartsWithRxn(page, true);
 
     await pressButton(page, 'Cancel');
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await LeftToolbar(page).selectArrowTool(ArrowType.ArrowFilledBow);
     await page.mouse.move(xCoordinatesWithShiftHalf, yArrowStart);
     await dragMouseTo(xCoordinatesWithShiftHalf, yArrowEnd, page);

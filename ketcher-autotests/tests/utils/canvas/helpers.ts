@@ -27,7 +27,7 @@ import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { BottomToolbar } from '@tests/pages/molecules/BottomToolbar';
 
@@ -314,17 +314,17 @@ export async function delay(seconds = 1) {
 }
 
 export async function screenshotBetweenUndoRedo(page: Page) {
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, {
     maxDiffPixels: 1,
   });
-  await TopLeftToolbar(page).redo();
+  await CommonTopLeftToolbar(page).redo();
 }
 
 export async function screenshotBetweenUndoRedoInMacro(page: Page) {
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page);
-  await TopLeftToolbar(page).redo();
+  await CommonTopLeftToolbar(page).redo();
 }
 
 export async function resetAllSettingsToDefault(page: Page) {

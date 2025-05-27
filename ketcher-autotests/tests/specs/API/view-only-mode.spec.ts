@@ -19,7 +19,7 @@ import {
   pasteFromClipboardByKeyboard,
   clickOnCanvas,
 } from '@utils';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { closeErrorAndInfoModals } from '@utils/common/helpers';
 import { waitForOpenButtonEnabled } from '@utils/common/loaders/waitForElementState';
 import {
@@ -37,7 +37,7 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
@@ -165,8 +165,8 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     await clickInTheMiddleOfTheScreen(page);
     await enableViewOnlyModeBySetOptions(page);
     await selectAllStructuresOnCanvas(page);
-    await expect(TopLeftToolbar(page).openButton).toBeEnabled();
-    await expect(TopLeftToolbar(page).saveButton).toBeEnabled();
+    await expect(CommonTopLeftToolbar(page).openButton).toBeEnabled();
+    await expect(CommonTopLeftToolbar(page).saveButton).toBeEnabled();
     await expect(TopToolbar(page).copyButton).toBeEnabled();
     await takeTopToolbarScreenshot(page);
   });
@@ -287,7 +287,7 @@ test.describe('Tests for API setMolecule/getMolecule', () => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
     const openAsNewButton = PasteFromClipboardDialog(page).openAsNewButton;
     await enableViewOnlyModeBySetOptions(page);
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await openFile(`KET/images-png-50-with-50-structures.ket`, page);
     await expect(addToCanvasButton).toBeDisabled();
     await expect(openAsNewButton).toBeEnabled();

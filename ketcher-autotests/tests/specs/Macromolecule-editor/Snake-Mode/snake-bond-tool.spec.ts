@@ -29,8 +29,8 @@ import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { bondTwoMonomers } from '@utils/macromolecules/polymerBond';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 /* eslint-disable no-magic-numbers */
 
 async function createBondedMonomers(page: Page) {
@@ -84,7 +84,7 @@ test.beforeAll(async ({ browser }) => {
 test.afterEach(async () => {
   await page.keyboard.press('Escape');
   await resetZoomLevelToDefault(page);
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -169,12 +169,12 @@ test.describe('Snake Bond Tool', () => {
     await selectSnakeLayoutModeTool(page);
     await expect(snakeModeButton).toHaveClass(/active/);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await waitForRender(page);
     await expect(snakeModeButton).not.toBeVisible();
     await expect(flexModeButton).toHaveClass(/active/);
 
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await waitForRender(page);
     await expect(flexModeButton).not.toBeVisible();
     await expect(snakeModeButton).toHaveClass(/active/);

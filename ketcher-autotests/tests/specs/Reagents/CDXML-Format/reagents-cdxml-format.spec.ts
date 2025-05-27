@@ -9,7 +9,7 @@ import {
 } from '@utils';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 test.describe('Reagents CDXML format', () => {
   test.beforeEach(async ({ page }) => {
@@ -27,7 +27,7 @@ test.describe('Reagents CDXML format', () => {
       'KET/benzene-arrow-benzene-reagent-nh3.ket',
       page,
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.CDXML,
     );
@@ -46,7 +46,7 @@ test.describe('Reagents CDXML format', () => {
       'KET/benzene-arrow-benzene-reagent-hcl.ket',
       page,
     );
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.CDXML,
     );
@@ -62,7 +62,7 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect text NH3 as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
     await openFileAndAddToCanvas('KET/reagent-nh3-text-above-arrow.ket', page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.CDXML,
     );
@@ -78,7 +78,7 @@ test.describe('Reagents CDXML format', () => {
     Description: System detect text HCl below arrow as reagent and write reagent in 'CDXML' format in "Preview" tab
     */
     await openFileAndAddToCanvas('KET/reagent-hcl-text-below-arrow.ket', page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.CDXML,
     );
@@ -95,7 +95,7 @@ test.describe('Reagents CDXML format', () => {
       page,
     );
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.CDXML,
     );

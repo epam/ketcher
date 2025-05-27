@@ -18,11 +18,17 @@ import {
   openFileAndAddToCanvasAsNewProject,
   clickOnBond,
   BondType,
+  selectSnakeLayoutModeTool,
+  selectFlexLayoutModeTool,
+  pasteFromClipboardAndAddToMacromoleculesCanvas,
+  MacroFileType,
+  clickOnAtom,
+  setBondLengthValue,
+  setBondSpacingValue,
+  resetAllSettingsToDefault,
 } from '@utils';
 import { waitForPageInit } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
@@ -37,6 +43,8 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 async function setHighResolution(page: Page) {
   await page.getByText('low').click();
@@ -56,8 +64,8 @@ test.describe('Ketcher bugs in 2.26.0', () => {
   test.afterEach(async ({ context: _ }, testInfo) => {
     await closeErrorAndInfoModals(page);
     await resetZoomLevelToDefault(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
     await processResetToDefaultState(testInfo, page);
-    await TopLeftToolbar(page).clearCanvas();
   });
 
   test.afterAll(async ({ browser }) => {
@@ -102,11 +110,13 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await setBondThicknessValue(page, '2.6');
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MoleculesFileFormatType.SVGDocument,
     );
     await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).cancel();
+    await resetAllSettingsToDefault(page);
   });
 
   test('Case 3: The 3D View allow manipulation of the structure in "View Only" mode but button Apply disabled', async () => {
@@ -195,6 +205,7 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await setBondThicknessValue(page, '6');
     await pressButton(page, 'Apply');
     await takeEditorScreenshot(page);
+    await resetAllSettingsToDefault(page);
   });
 
   test('Case 7: Correct stereo-label placement for (E) and (Z)', async () => {
@@ -256,6 +267,276 @@ test.describe('Ketcher bugs in 2.26.0', () => {
       'Molfiles-V3000/reaction-saved-to-MOL-V3000-expected.mol',
       page,
     );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 10: ketcher.getMolfile() not stopped working for macro canvas with peptides', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5634
+     * Description: ketcher.getMolfile() not stopped working for macro canvas with peptides.
+     * Scenario:
+     * 1. Go to Macro - Snake mode
+     * 2. Load from file
+     * 3. Save to MOL V3000
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectSnakeLayoutModeTool(page);
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/snake-mode-peptides-on-canvas.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
+      FileType.MOL,
+      'v3000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Molfiles-V3000/snake-mode-peptides-on-canvas-expected.mol',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 11: Export to SDF V3000 not returns SDF V2000', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5652
+     * Description: Export to SDF V3000 not returns SDF V2000, it should be SDF V3000.
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Save to SDF V3000
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/one-attachment-point-added-in-micro-mode.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'SDF/one-attachment-point-added-in-micro-mode-expected.sdf',
+      FileType.SDF,
+      'v3000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'SDF/one-attachment-point-added-in-micro-mode-expected.sdf',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 12: The reaction can be saved to MDL RXN V3000 (not returns RXN V2000 instead)', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5651
+     * Description: The reaction can be saved to MDL RXN V3000 (not returns RXN V2000 instead).
+     * Scenario:
+     * 1. Go to Micro
+     * 2. Load from file
+     * 3. Save to MDL RXN V3000
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/reaction-cant-save-to-MDL-RXN-V3000.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await verifyFileExport(
+      page,
+      'Rxn-V3000/reaction-cant-save-to-MDL-RXN-V3000-expected.rxn',
+      FileType.RXN,
+      'v3000',
+    );
+    await openFileAndAddToCanvasAsNewProject(
+      'Rxn-V3000/reaction-cant-save-to-MDL-RXN-V3000-expected.rxn',
+      page,
+    );
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 13: Able to load variant CHEM from HELM - system not throws an error: Convert error! {}', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5711
+     * Description: Able to load variant CHEM from HELM - system not throws an error: Convert error! {}.
+     * Scenario:
+     * 1. Toggle to Macro - Flex
+     * 2. Load from HELM
+     * 3. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectFlexLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'CHEM1{([4aPEGMal],[4FB])}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 14: Able to load variant phosphate from HELM - system not throws an error: Convert error! {}', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5710
+     * Description: Able to load variant phosphate from HELM - system not throws an error: Convert error! {}.
+     * Scenario:
+     * 1. Toggle to Macro - Flex
+     * 2. Load from HELM
+     * 3. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectFlexLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{R(A)([bnn],[bP])}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 15: Able to load variant sugar from HELM - system not throws an error: Convert error! {}', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5709
+     * Description: Able to load variant sugar from HELM - system not throws an error: Convert error! {}.
+     * Scenario:
+     * 1. Toggle to Macro - Flex
+     * 2. Load from HELM
+     * 3. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
+    await selectFlexLayoutModeTool(page);
+    await pasteFromClipboardAndAddToMacromoleculesCanvas(
+      page,
+      MacroFileType.HELM,
+      'RNA1{([25d3r],[25mo3r])(A)P}$$$$V2.0',
+    );
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+      hideMacromoleculeEditorScrollBars: true,
+    });
+  });
+
+  test('Case 16: No overlapping UI elements in Query Properties right-click menu', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5615
+     * Description: No overlapping UI elements in Query Properties right-click menu.
+     * Scenario:
+     * 1. Open Micro
+     * 2. Right-click and select Query Properties -> H count or Substitution count (in my case)
+     * 3. Take screenshot
+     */
+    await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
+    await drawBenzeneRing(page);
+    await clickOnAtom(page, 'C', 0, 'right');
+    await page.getByText('Query properties').click();
+    await page.getByText('H count', { exact: true }).hover();
+    await takeEditorScreenshot(page);
+    await page.getByText('Substitution count').hover();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 17: Bond spacing is correct after saving in PNG (svg)', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5628
+     * Description: Bond spacing is correct after saving in PNG (svg).
+     * Scenario:
+     * 1. Open Micro
+     * 2. Add benzene ring
+     * 3. Set bond length 50 px in the Settings on the Bond section
+     * 4. Set bond spacing 50%
+     * 5. Save to PNG (or SVG)
+     */
+    await drawBenzeneRing(page);
+    await TopRightToolbar(page).Settings();
+    await openBondsSettingsSection(page);
+    await setBondLengthValue(page, '50');
+    await scrollToDownInSetting(page);
+    await setBondSpacingValue(page, '50');
+    await pressButton(page, 'Apply');
+    await CommonTopLeftToolbar(page).saveFile();
+    await SaveStructureDialog(page).chooseFileFormat(
+      MoleculesFileFormatType.SVGDocument,
+    );
+    await takeEditorScreenshot(page);
+    await SaveStructureDialog(page).cancel();
+    await resetAllSettingsToDefault(page);
+  });
+
+  test('Case 18: Single up bond is being painted over correctly', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5606
+     * Description: Single up bond is being painted over correctly.
+     * Scenario:
+     * 1. Open Micro
+     * 2. Add file with single up bond
+     * 3. Highlight the bond
+     * 4. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/chain-with-singleup-bond.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickOnBond(page, BondType.SINGLE, 2, 'right');
+    await page.getByText('Highlight', { exact: true }).click();
+    await page.locator('.css-1pz88a0').click(); // Green color
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 19: The double bond is colored properly', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5598
+     * Description: The double bond is colored properly.
+     * Scenario:
+     * 1. Open Micro
+     * 2. Add file with double bond
+     * 3. Highlight the bond
+     * 4. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/chain-with-double-bond.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickOnBond(page, BondType.DOUBLE, 0, 'right');
+    await page.getByText('Highlight', { exact: true }).click();
+    await page.locator('.css-cyxjjb').click(); // Red color
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 20: The atom is completely colored', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5597
+     * Description: The atom is completely colored.
+     * Scenario:
+     * 1. Open Micro
+     * 2. Add file
+     * 3. Highlight the atom
+     * 4. Take screenshot
+     */
+    await openFileAndAddToCanvasAsNewProject(
+      'KET/chain-with-double-bond.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await clickOnAtom(page, 'C', 0, 'right');
+    await page.getByText('Highlight', { exact: true }).click();
+    await page.locator('.css-cyxjjb').click(); // Red color
     await takeEditorScreenshot(page);
   });
 });

@@ -4,19 +4,20 @@ import { D3DragEvent, ZoomTransform } from 'd3';
 import { useSelector } from 'react-redux';
 import { selectEditor, selectEditorLineLength } from 'state/common';
 import { useLayoutMode } from 'hooks';
+import clsx from 'clsx';
 
 import RulerInput from './RulerInput';
 import RulerScale from './RulerScale';
 import RulerHandle from './RulerHandle';
-
-import styles from './RulerArea.module.less';
 import {
   SequenceModeIndentWidth,
   SequenceModeItemWidth,
   SequenceModeStartOffset,
   SnakeModeItemWidth,
   SnakeModeStartOffset,
-} from 'components/Ruler/RulerArea.constants';
+} from './RulerArea.constants';
+
+import styles from './RulerArea.module.less';
 
 export const RulerArea = () => {
   const layoutMode = useLayoutMode();
@@ -31,6 +32,7 @@ export const RulerArea = () => {
 
   const dragStartX = useRef(0);
   const [dragDelta, setDragDelta] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     const zoom = ZoomTool.instance;
@@ -71,11 +73,36 @@ export const RulerArea = () => {
   }, [layoutMode, indentsInSequenceMode, lineLengthValue]);
 
   const [inputOffsetX, handleOffsetX] = useMemo(() => {
-    return [
-      transform.applyX(translateValue) + dragDelta + 10,
-      transform.applyX(translateValue) + dragDelta - 8,
-    ];
-  }, [transform, translateValue, dragDelta]);
+    const translateValueWithZoomAndDrag =
+      transform.applyX(translateValue) + dragDelta;
+    const handlePosition = translateValueWithZoomAndDrag - 8;
+    let inputPosition = translateValueWithZoomAndDrag + 10;
+
+    const canvasWidth = editor.canvas.width.baseVal.value;
+    const canvasContainer = editor.canvas.parentElement;
+    const scrollLeft = canvasContainer?.scrollLeft || 0;
+    const visibleLeftEdge = scrollLeft;
+    const visibleRightEdge =
+      scrollLeft + (canvasContainer?.clientWidth || canvasWidth);
+
+    // If input would go beyond right visible edge, cap it, take into account input width (26px)
+    if (inputPosition + 26 > visibleRightEdge) {
+      inputPosition = visibleRightEdge - 26;
+    }
+
+    // If input would go beyond left visible edge, cap it
+    if (inputPosition < visibleLeftEdge) {
+      inputPosition = visibleLeftEdge;
+    }
+
+    return [inputPosition, handlePosition];
+  }, [
+    editor.canvas.width.baseVal.value,
+    editor.canvas.parentElement,
+    transform,
+    translateValue,
+    dragDelta,
+  ]);
 
   const updateSettings = useCallback(
     (value: number) => {
@@ -95,6 +122,7 @@ export const RulerArea = () => {
 
   const handleDragStart = useCallback(
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
+      setIsDragging(true);
       dragStartX.current = event.sourceEvent.clientX;
       editor.events.toggleLineLengthHighlighting.dispatch(true, translateValue);
     },
@@ -114,6 +142,8 @@ export const RulerArea = () => {
 
   const handleDragEnd = useCallback(
     (event: D3DragEvent<SVGGElement, unknown, unknown>) => {
+      setIsDragging(false);
+
       const [, dragPosition] = calculateDragPosition(event.sourceEvent.clientX);
 
       let newValue = 0;
@@ -153,10 +183,13 @@ export const RulerArea = () => {
   }
 
   return (
-    <div className={styles.rulerArea}>
+    <div
+      className={clsx(styles.rulerArea, isDragging && styles.rulerAreaDragging)}
+    >
       <RulerInput
         lineLengthValue={lineLengthValue}
         offsetX={inputOffsetX}
+        isDragging={isDragging}
         layoutMode={layoutMode}
         onCommitValue={updateSettings}
       />

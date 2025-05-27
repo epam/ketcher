@@ -3,7 +3,7 @@
   height: 36px;
   background-color: var(--color-background-canvas);
 
-  &:hover {
+  &:hover, &.rulerAreaDragging {
     > .rulerInput {
       opacity: 100%;
       box-shadow: var(--shadow-regular);
@@ -26,13 +26,6 @@
   text-align: center;
   z-index: 10;
 
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  -moz-appearance: textfield;
-
   &:hover {
     cursor: pointer;
     border: 1px solid var(--color-input-border-hover);
@@ -42,6 +35,10 @@
     height: 18px;
     outline: none;
     border: 1px solid var(--color-input-border-hover);
+  }
+
+  &.rulerInputDragging {
+    user-select: none;
   }
 }
 

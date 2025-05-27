@@ -4,10 +4,12 @@ import { LayoutMode } from 'ketcher-core';
 import useTranslateAlongXAxis from './useTranslateAlongXAxis';
 
 import styles from './RulerArea.module.less';
+import clsx from 'clsx';
 
 type Props = {
   lineLengthValue: number;
   offsetX: number;
+  isDragging: boolean;
   layoutMode: LayoutMode;
   onCommitValue: (value: number) => void;
 };
@@ -15,6 +17,7 @@ type Props = {
 const RulerInput = ({
   lineLengthValue,
   offsetX,
+  isDragging,
   layoutMode,
   onCommitValue,
 }: Props) => {
@@ -62,7 +65,10 @@ const RulerInput = ({
 
   return (
     <input
-      className={styles.rulerInput}
+      className={clsx(
+        styles.rulerInput,
+        isDragging && styles.rulerInputDragging,
+      )}
       type="text"
       inputMode="numeric"
       pattern="[0-9]*"

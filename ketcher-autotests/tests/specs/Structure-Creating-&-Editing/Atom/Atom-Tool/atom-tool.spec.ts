@@ -1,7 +1,6 @@
 import { MAX_BOND_LENGTH } from '@constants/index';
 import { test, Page } from '@playwright/test';
 import {
-  pressButton,
   takeEditorScreenshot,
   waitForPageInit,
   clickInTheMiddleOfTheScreen,
@@ -12,7 +11,6 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   dragMouseTo,
   waitForRender,
-  selectAtomsFromPeriodicTable,
   resetCurrentTool,
   moveOnAtom,
   screenshotBetweenUndoRedo,
@@ -32,8 +30,17 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
+import {
+  PeriodicTableDialog,
+  selectElementFromPeriodicTable,
+  selectElementsFromPeriodicTable,
+} from '@tests/pages/molecules/canvas/PeriodicTableDialog';
+import {
+  PeriodicTableElement,
+  TypeChoice,
+} from '@tests/pages/constants/periodicTableDialog/Constants';
 
 const X_DELTA_ONE = 100;
 
@@ -53,11 +60,9 @@ test.describe('Atom Tool', () => {
     Description: The "Periodic table" modal dialog is opened.
     Periodic table' window is closed. No symbols appear on the canvas.
     */
-    const periodicTableButton = RightToolbar(page).periodicTableButton;
-
-    await periodicTableButton.click();
+    await RightToolbar(page).periodicTable();
     await takeEditorScreenshot(page);
-    await pressButton(page, 'Cancel');
+    await PeriodicTableDialog(page).cancel();
     await takeEditorScreenshot(page);
   });
 
@@ -84,12 +89,7 @@ test.describe('Atom Tool', () => {
     Description: Pop-up windows appear with Si element.
     After pressing 'Add' button Si element added to canvas.
     */
-    const periodicTableButton = RightToolbar(page).periodicTableButton;
-
-    await periodicTableButton.click();
-    await page.getByRole('button', { name: 'Si 14' }).click();
-    await takeEditorScreenshot(page);
-    await page.getByTestId('OK').click();
+    await selectElementFromPeriodicTable(page, PeriodicTableElement.Si);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -102,7 +102,6 @@ test.describe('Atom Tool', () => {
     Description: The structure is illustrated as H3Si-SH.
     */
     const atomToolbar = RightToolbar(page);
-    const periodicTableButton = RightToolbar(page).periodicTableButton;
 
     await atomToolbar.clickAtom(Atom.Sulfur);
     await clickInTheMiddleOfTheScreen(page);
@@ -111,9 +110,7 @@ test.describe('Atom Tool', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     const coordinatesWithShift = x + MAX_BOND_LENGTH;
     await dragMouseTo(coordinatesWithShift, y, page);
-    await periodicTableButton.click();
-    await page.getByRole('button', { name: 'Si 14' }).click();
-    await page.getByTestId('OK').click();
+    await selectElementFromPeriodicTable(page, PeriodicTableElement.Si);
     await clickInTheMiddleOfTheScreen(page);
     await takeEditorScreenshot(page);
   });
@@ -124,7 +121,11 @@ test.describe('Atom Tool', () => {
     Description: The selected atom symbols appear on the canvas with square brackets, for example [C, N, O].
     All listed atom symbols should be colored with black.
     */
-    await selectAtomsFromPeriodicTable(page, 'List', ['Au', 'In', 'Am']);
+    await selectElementsFromPeriodicTable(page, TypeChoice.List, [
+      PeriodicTableElement.Au,
+      PeriodicTableElement.In,
+      PeriodicTableElement.Am,
+    ]);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -138,7 +139,11 @@ test.describe('Atom Tool', () => {
     */
     const anyAtom = 2;
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectAtomsFromPeriodicTable(page, 'List', ['Au', 'In', 'Am']);
+    await selectElementsFromPeriodicTable(page, TypeChoice.List, [
+      PeriodicTableElement.Au,
+      PeriodicTableElement.In,
+      PeriodicTableElement.Am,
+    ]);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -150,7 +155,11 @@ test.describe('Atom Tool', () => {
     Description: The selected atom symbols appear on the canvas with square brackets, for example ![C, N, O].
     All listed atom symbols should be colored with black.
     */
-    await selectAtomsFromPeriodicTable(page, 'Not List', ['Ti', 'V', 'Cs']);
+    await selectElementsFromPeriodicTable(page, TypeChoice.NotList, [
+      PeriodicTableElement.Ti,
+      PeriodicTableElement.V,
+      PeriodicTableElement.Cs,
+    ]);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -166,7 +175,11 @@ test.describe('Atom Tool', () => {
     */
     const anyAtom = 2;
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await selectAtomsFromPeriodicTable(page, 'Not List', ['V', 'Ti', 'Cs']);
+    await selectElementsFromPeriodicTable(page, TypeChoice.NotList, [
+      PeriodicTableElement.V,
+      PeriodicTableElement.Ti,
+      PeriodicTableElement.Cs,
+    ]);
     await clickOnAtom(page, 'C', anyAtom);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -468,7 +481,7 @@ test.describe('Atom Tool', () => {
     await CommonLeftToolbar(page).selectEraseTool();
     await clickOnAtom(page, 'Br', numberOfAtom);
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await clickOnAtom(page, 'N', numberOfAtom);
     await takeEditorScreenshot(page);
   });
@@ -498,15 +511,19 @@ test.describe('Atom Tool', () => {
     Test case: EPMLSOPKET-1435
     Description: The additional button with the selected atom symbol appears on the Atom Palette
     */
-    const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn'];
-    const periodicTableButton = RightToolbar(page).periodicTableButton;
+    const elementNames = [
+      PeriodicTableElement.Si,
+      PeriodicTableElement.Au,
+      PeriodicTableElement.In,
+      PeriodicTableElement.Am,
+      PeriodicTableElement.Se,
+      PeriodicTableElement.Pu,
+      PeriodicTableElement.Rn,
+    ];
 
     for (const elementName of elementNames) {
-      await periodicTableButton.click();
-      await page.click(`button[data-testid="${elementName}-button"]`);
-      await page.getByTestId('OK').click();
+      await selectElementFromPeriodicTable(page, elementName);
     }
-
     await takeRightToolbarScreenshot(page);
   });
 
@@ -516,13 +533,19 @@ test.describe('Atom Tool', () => {
     Description: The first additional atom symbol is replaced with the new one.
     The 8th button isn't added. In our test 'Si' replaces by 'Db'.
     */
-    const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn', 'Db'];
-    const periodicTableButton = RightToolbar(page).periodicTableButton;
+    const elementNames = [
+      PeriodicTableElement.Si,
+      PeriodicTableElement.Au,
+      PeriodicTableElement.In,
+      PeriodicTableElement.Am,
+      PeriodicTableElement.Se,
+      PeriodicTableElement.Pu,
+      PeriodicTableElement.Rn,
+      PeriodicTableElement.Db,
+    ];
 
     for (const elementName of elementNames) {
-      await periodicTableButton.click();
-      await page.click(`button[data-testid="${elementName}-button"]`);
-      await page.getByTestId('OK').click();
+      await selectElementFromPeriodicTable(page, elementName);
     }
 
     await takeRightToolbarScreenshot(page);
@@ -536,20 +559,23 @@ test.describe('Atom Tool', () => {
     Description: The additional button with the selected atom symbol appears on the Atom Palette.
     Additional atom can be added to structure.
     */
-    const atomToolbar = RightToolbar(page);
-    const periodicTableButton = RightToolbar(page).periodicTableButton;
-
-    const elementNames = ['Si', 'Au', 'In', 'Am', 'Se', 'Pu', 'Rn'];
+    const elementNames = [
+      PeriodicTableElement.Si,
+      PeriodicTableElement.Au,
+      PeriodicTableElement.In,
+      PeriodicTableElement.Am,
+      PeriodicTableElement.Se,
+      PeriodicTableElement.Pu,
+      PeriodicTableElement.Rn,
+    ];
 
     for (const elementName of elementNames) {
-      await periodicTableButton.click();
-      await page.click(`button[data-testid="${elementName}-button"]`);
-      await page.getByTestId('OK').click();
+      await selectElementFromPeriodicTable(page, elementName);
     }
 
     const anyAtom = 0;
     await openFileAndAddToCanvas('KET/simple-chain.ket', page);
-    await atomToolbar.clickAtom(Atom.Aurum);
+    await RightToolbar(page).clickAtom(Atom.Aurum);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -657,7 +683,7 @@ test.describe('Atom Tool', () => {
       const coordinatesWithShift = y - MAX_BOND_LENGTH;
       await dragMouseTo(x, coordinatesWithShift, page);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     });
   }
 });

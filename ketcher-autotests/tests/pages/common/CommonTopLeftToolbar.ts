@@ -9,9 +9,11 @@ type TopLeftToolbarLocators = {
   saveButton: Locator;
   undoButton: Locator;
   redoButton: Locator;
+  createAntisenseStrandButton: Locator;
+  calculateMacromoleculePropertiesButton: Locator;
 };
 
-export const TopLeftToolbar = (page: Page) => {
+export const CommonTopLeftToolbar = (page: Page) => {
   const locators: TopLeftToolbarLocators = {
     clearCanvasButton: page
       .getByTestId('clear-canvas')
@@ -27,6 +29,12 @@ export const TopLeftToolbar = (page: Page) => {
       .filter({ has: page.locator(':visible') }),
     redoButton: page
       .getByTestId('redo')
+      .filter({ has: page.locator(':visible') }),
+    createAntisenseStrandButton: page
+      .getByTestId('Create Antisense Strand')
+      .filter({ has: page.locator(':visible') }),
+    calculateMacromoleculePropertiesButton: page
+      .getByTestId('calculate-macromolecule-properties-button')
       .filter({ has: page.locator(':visible') }),
   };
 
@@ -81,7 +89,16 @@ export const TopLeftToolbar = (page: Page) => {
         await locators.redoButton.click();
       });
     },
+
+    async calculateProperties() {
+      await waitForRender(page, async () => {
+        await locators.calculateMacromoleculePropertiesButton.click({
+          timeout: 1000,
+        });
+        await page.waitForTimeout(1000);
+      });
+    },
   };
 };
 
-export type TopLeftToolbarType = ReturnType<typeof TopLeftToolbar>;
+export type CommonTopLeftToolbarType = ReturnType<typeof CommonTopLeftToolbar>;

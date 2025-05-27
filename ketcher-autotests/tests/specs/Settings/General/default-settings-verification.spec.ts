@@ -257,9 +257,10 @@ test.describe('General Settings', () => {
     await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'cm-option');
     await setFontSizeValue(page, '0.83');
-    await page.waitForTimeout(1000);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

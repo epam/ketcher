@@ -18,9 +18,9 @@ import classes from './TypeChoice.module.less';
 import { GenericInput } from 'src/script/ui/component/form/Input/Input';
 
 const typeSchema = [
-  { title: 'Single', value: 'atom' },
-  { title: 'List', value: 'list' },
-  { title: 'Not List', value: 'not-list' },
+  { title: 'Single', value: 'atom', testId: 'single-radio-button' },
+  { title: 'List', value: 'list', testId: 'list-radio-button' },
+  { title: 'Not List', value: 'not-list', testId: 'not-list-radio-button' },
 ];
 
 function TypeChoice({ value, onChange, ...props }) {
@@ -32,6 +32,7 @@ function TypeChoice({ value, onChange, ...props }) {
           <GenericInput
             type="radio"
             value={type.value}
+            data-testid={type.testId}
             checked={type.value === value}
             onChange={() => onChange(type.value)}
             {...props}

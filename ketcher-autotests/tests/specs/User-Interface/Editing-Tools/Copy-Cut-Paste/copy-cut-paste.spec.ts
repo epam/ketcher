@@ -21,16 +21,16 @@ import {
   moveMouseAway,
   selectAllStructuresOnCanvas,
   clickOnCanvas,
-  waitForSpinnerFinishedWork,
 } from '@utils';
-import { TopPanelButton } from '@utils/selectors';
-import { resetCurrentTool, selectTopPanelButton } from '@utils/canvas/tools';
+import { resetCurrentTool } from '@utils/canvas/tools';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { TopToolbar } from '@tests/pages/molecules/TopToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 const CANVAS_CLICK_X = 500;
 const CANVAS_CLICK_Y = 300;
@@ -50,9 +50,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + xDelta, y + yDelta, page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Cut, page);
-    });
+    await TopToolbar(page).cut();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -64,9 +62,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await selectAllStructuresOnCanvas(page);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Cut, page);
-    });
+    await TopToolbar(page).cut();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -79,9 +75,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 3;
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnAtom(page, 'C', anyAtom);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Cut, page);
-    });
+    await TopToolbar(page).cut();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -94,9 +88,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyBond = 0;
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnBond(page, BondType.TRIPLE, anyBond);
-    await waitForSpinnerFinishedWork(page, async () => {
-      await selectTopPanelButton(TopPanelButton.Cut, page);
-    });
+    await TopToolbar(page).cut();
     await screenshotBetweenUndoRedo(page);
     await takeEditorScreenshot(page);
   });
@@ -110,9 +102,9 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page);
   });
 
@@ -204,10 +196,10 @@ test.describe('Copy/Cut/Paste Actions', () => {
     await cutToClipboardByKeyboard(page);
     // 2. Empty canvas - We removed all from canvas by Cut to clipboard
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     // 3. Reaction on the canvas - We returned all back to canvas
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     // 4. Emty canvas - We Undo previus Redo
     await takeEditorScreenshot(page);
   });
@@ -219,7 +211,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await selectAllStructuresOnCanvas(page);
-    await selectTopPanelButton(TopPanelButton.Copy, page);
+    await TopToolbar(page).copy();
     await takeEditorScreenshot(page);
   });
 
@@ -231,7 +223,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const anyAtom = 0;
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnAtom(page, 'C', anyAtom);
-    await selectTopPanelButton(TopPanelButton.Copy, page);
+    await TopToolbar(page).copy();
     await takeEditorScreenshot(page);
   });
 
@@ -242,7 +234,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await openFileAndAddToCanvas('Molfiles-V2000/query-features.mol', page);
     await clickOnBond(page, BondType.SINGLE, 0);
-    await selectTopPanelButton(TopPanelButton.Copy, page);
+    await TopToolbar(page).copy();
     await takeEditorScreenshot(page);
   });
 
@@ -825,14 +817,13 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const x = 300;
     const y = 200;
     const anyAtom = 5;
-    const atomToolbar = RightToolbar(page);
 
     await openFileAndAddToCanvas('Rxn-V2000/mapped-structure.rxn', page);
     await selectAllStructuresOnCanvas(page);
     await cutToClipboardByKeyboard(page);
     await pasteFromClipboardByKeyboard(page);
     await clickOnCanvas(page, x, y);
-    await atomToolbar.clickAtom(Atom.Nitrogen);
+    await RightToolbar(page).clickAtom(Atom.Nitrogen);
     await clickOnAtom(page, 'C', anyAtom);
     await takeEditorScreenshot(page);
   });
@@ -1130,12 +1121,12 @@ test.describe('Copy/Cut/Paste Actions', () => {
     Object is selected. Buttons are enabled.
     */
     await waitForIndigoToLoad(page);
-    await page.getByTestId('copy-button-dropdown-triangle').click();
+    await TopToolbar(page).expandCopyDropdown();
     await expect(page).toHaveScreenshot();
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await page.getByTestId('copy-button-dropdown-triangle').click();
+    await TopToolbar(page).expandCopyDropdown();
     await expect(page).toHaveScreenshot();
   });
 
@@ -1147,11 +1138,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await waitForIndigoToLoad(page);
     await expect(page).toHaveScreenshot();
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await expect(page).toHaveScreenshot();
-    await selectTopPanelButton(TopPanelButton.Cut, page);
+    await TopToolbar(page).cut();
     await expect(page).toHaveScreenshot();
   });
 
@@ -1166,11 +1157,11 @@ test.describe('Copy/Cut/Paste Actions', () => {
     */
     await waitForIndigoToLoad(page);
     await expect(page).toHaveScreenshot();
-    await selectRingButton(page, 'Benzene');
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
-    await selectTopPanelButton(TopPanelButton.Cut, page);
-    await selectTopPanelButton(TopPanelButton.Paste, page);
+    await TopToolbar(page).cut();
+    await TopToolbar(page).paste();
     await expect(page).toHaveScreenshot();
   });
 
@@ -1185,7 +1176,7 @@ test.describe('Copy/Cut/Paste Actions', () => {
     const smartsString =
       '[#6]-[#6]-[#6]-[#6]-[!#40!#79!#30]-[#6]-[#6]-[#6]-[#6]';
 
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await OpenStructureDialog(page).pasteFromClipboard();
     await PasteFromClipboardDialog(page).openStructureTextarea.fill(
       smartsString,

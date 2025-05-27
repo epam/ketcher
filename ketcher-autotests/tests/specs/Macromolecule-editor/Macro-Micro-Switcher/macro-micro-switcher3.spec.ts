@@ -28,8 +28,8 @@ import {
 } from '@utils';
 import { pressCancelAtEditAbbreviationDialog } from '@utils/canvas/EditAbbreviation';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import {
@@ -86,7 +86,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
 });
 
@@ -300,7 +300,7 @@ interface IMonomer {
 //       await moveMouseToTheMiddleOfTheScreen(page);
 //       await takeEditorScreenshot(page);
 
-//       await TopLeftToolbar(page).undo();
+//       await CommonTopLeftToolbar(page).undo();
 //       await takeEditorScreenshot(page);
 
 //       // Test should be skipped if related bug exists
@@ -427,7 +427,7 @@ test.describe('Move expanded monomer on Micro and Undo: ', () => {
       await moveMouseToTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
 
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
@@ -464,9 +464,9 @@ test(`Verify that the system supports undo/redo functionality for expanding and 
   await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
   await expandMonomer(page, expandableMonomer.monomerLocatorText);
   await takeEditorScreenshot(page);
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page);
-  await TopLeftToolbar(page).redo();
+  await CommonTopLeftToolbar(page).redo();
   await takeEditorScreenshot(page);
 });
 
@@ -797,7 +797,7 @@ test(`Verify that deleting an expanded monomer in a chain structure using the Er
       hideMacromoleculeEditorScrollBars: true,
     });
     await pressCancelAtEditAbbreviationDialog(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
   }
 });
 
@@ -935,12 +935,12 @@ test(
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
       // Pic 3, 6, 9, 12, 15, 18
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
       });
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
       // Pic 4, 6, 10, 13, 16, 19
       await takeEditorScreenshot(page, {
         hideMacromoleculeEditorScrollBars: true,
@@ -1013,7 +1013,7 @@ test.describe('Check that in preview expanded monomers exported both to PNG in t
       await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
 
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );
@@ -1055,7 +1055,7 @@ test.describe('Check that in preview expanded monomers exported both to SVG in t
       await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
 
       await expandMonomer(page, expandableMonomer.monomerLocatorText);
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
@@ -1103,7 +1103,7 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
       await selectAllStructuresOnCanvas(page);
       await page.keyboard.press('Alt+V');
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );
@@ -1151,7 +1151,7 @@ test.describe('Check that any flipping of the expanded monomers reflected in the
       await selectAllStructuresOnCanvas(page);
       await page.keyboard.press('Alt+V');
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
@@ -1201,7 +1201,7 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
       await rotationHandle.hover();
       await dragMouseTo(750, 150, page);
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );
@@ -1251,7 +1251,7 @@ test.describe('Check that any rotating of the expanded monomers reflected in the
       await rotationHandle.hover();
       await dragMouseTo(750, 150, page);
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
@@ -1287,7 +1287,7 @@ test.describe('Check that non-expanded monomers exported as their symbols in PNG
 
       await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );
@@ -1326,7 +1326,7 @@ test.describe('Check that non-expanded monomers exported as their symbols in SVG
 
       await openFileAndAddToCanvasAsNewProject(expandableMonomer.KETFile, page);
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
@@ -1409,7 +1409,7 @@ test.describe('Check that part expanded and part non-expanded monomers on same s
 
       await expandMonomer(page, monomerComposition.monomerLocatorText);
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );
@@ -1454,7 +1454,7 @@ test.describe('Check that part expanded and part non-expanded monomers on same s
 
       await expandMonomer(page, monomerComposition.monomerLocatorText);
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );

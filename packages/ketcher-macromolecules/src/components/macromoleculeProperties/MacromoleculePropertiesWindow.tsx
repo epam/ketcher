@@ -835,7 +835,11 @@ export const MacromoleculePropertiesWindow = () => {
             <path d="M2 10H14" stroke="#333333" />
           </svg>
         </WindowDragControl>
-        <StyledCloseIcon name="close" onClick={closeWindow} />
+        <StyledCloseIcon
+          name="close"
+          onClick={closeWindow}
+          dataTestId="macromolecule-properties-close"
+        />
       </WindowControlsArea>
       <Header>
         {grossFormula}

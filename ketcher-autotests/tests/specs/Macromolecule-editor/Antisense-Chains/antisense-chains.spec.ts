@@ -45,8 +45,8 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Chem } from '@constants/monomers/Chem';
 import { Nucleotides } from '@constants/monomers/Nucleotides';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 let page: Page;
 
@@ -60,7 +60,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -3255,7 +3255,7 @@ test(`11. Check that option "Delete" deletes the selected monomers and all the b
   await deleteOption.click();
   await takeEditorScreenshot(page);
 
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page);
 });
 
@@ -3346,22 +3346,22 @@ test(`13. Validate that creating, deleting, and modifying the antisense chain su
   await dragMouseTo(200, 200, page);
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await TopLeftToolbar(page).redo();
+  await CommonTopLeftToolbar(page).redo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await TopLeftToolbar(page).redo();
+  await CommonTopLeftToolbar(page).redo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-  await TopLeftToolbar(page).redo();
+  await CommonTopLeftToolbar(page).redo();
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 });
 
@@ -3709,7 +3709,7 @@ test(`22. Verify dot positioning after copy and paste structures`, async () => {
 
   await selectAllStructuresOnCanvas(page);
   await copyToClipboardByKeyboard(page);
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
   await pasteFromClipboardByKeyboard(page);
 
   await takeEditorScreenshot(page, {
@@ -3742,7 +3742,7 @@ test(`23. Verify dot positioning after deleting and Undo/Redo actions`, async ()
 
   await selectAllStructuresOnCanvas(page);
   await page.keyboard.press('Delete');
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
 
   await takeEditorScreenshot(page, {
     hideMonomerPreview: true,

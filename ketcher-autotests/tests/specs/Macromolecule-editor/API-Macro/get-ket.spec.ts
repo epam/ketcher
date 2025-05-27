@@ -14,7 +14,7 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 test.describe('getKet', () => {
   test.beforeEach(async ({ page }) => {

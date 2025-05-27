@@ -9,8 +9,8 @@ import {
 import { waitForMonomerPreview } from '@utils/macromolecules';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 test.beforeEach(async ({ page }) => {
   await waitForPageInit(page);
@@ -61,7 +61,7 @@ const fileNames: string[] = [
 //         hideMonomerPreview: true,
 //       });
 //     }
-//     await TopLeftToolbar(page).clearCanvas();
+//     await CommonTopLeftToolbar(page).clearCanvas();
 //   }
 // });
 
@@ -101,7 +101,7 @@ test(
         await waitForMonomerPreview(page);
         await takeEditorScreenshot(page);
       }
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   },
 );

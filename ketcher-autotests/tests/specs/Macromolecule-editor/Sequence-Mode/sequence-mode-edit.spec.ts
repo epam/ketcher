@@ -58,8 +58,8 @@ import {
   keyboardPressOnCanvas,
   keyboardTypeOnCanvas,
 } from '@utils/keyboard/index';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 async function hoverMouseOverMonomer(page: Page, monomer: Monomer, nth = 0) {
   await CommonLeftToolbar(page).selectBondTool(MacroBondType.Single);
@@ -614,7 +614,7 @@ test.describe('Sequence edit mode', () => {
     for (const symbol of sequenceSymbols) {
       await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
 
@@ -629,7 +629,7 @@ test.describe('Sequence edit mode', () => {
     for (const symbol of sequenceSymbols) {
       await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
 
@@ -646,7 +646,7 @@ test.describe('Sequence edit mode', () => {
     for (const symbol of sequenceSymbols) {
       await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
 
@@ -662,7 +662,7 @@ test.describe('Sequence edit mode', () => {
     for (const symbol of sequenceSymbols) {
       await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
 
@@ -701,7 +701,7 @@ test.describe('Sequence edit mode', () => {
       await keyboardPressOnCanvas(page, symbol);
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
 
@@ -717,7 +717,7 @@ test.describe('Sequence edit mode', () => {
     for (const symbol of sequenceSymbols) {
       await keyboardPressOnCanvas(page, symbol);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).clearCanvas();
+      await CommonTopLeftToolbar(page).clearCanvas();
     }
   });
 
@@ -871,17 +871,17 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1000,7 +1000,7 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1185,12 +1185,12 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1223,12 +1223,12 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
@@ -1700,7 +1700,7 @@ test.describe('Sequence edit mode', () => {
     await callContextMenuForAnySymbol(page);
     await page.getByTestId('copy').click();
     await keyboardPressOnCanvas(page, 'Escape');
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await clickOnCanvas(page, 400, 400, { button: 'right' });
     await page.getByTestId('paste').click();
     await takeEditorScreenshot(page, {
@@ -1714,12 +1714,12 @@ test.describe('Sequence edit mode', () => {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,
     });
-    await TopLeftToolbar(page).redo();
+    await CommonTopLeftToolbar(page).redo();
     await takeEditorScreenshot(page, {
       hideMonomerPreview: true,
       hideMacromoleculeEditorScrollBars: true,

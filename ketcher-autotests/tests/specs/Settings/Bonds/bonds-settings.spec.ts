@@ -2157,6 +2157,7 @@ test.describe('Negative cases for Bonds Settings', () => {
         1000.1 should not be allowed to be entered
         */
     await TopRightToolbar(page).Settings();
+    await page.getByText('General', { exact: true }).click();
     await openBondsSettingsSection(page);
     await scrollToDownInSetting(page);
     await setHashSpacingOptionUnit(page, 'px-option');

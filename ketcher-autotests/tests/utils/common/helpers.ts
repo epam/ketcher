@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import { waitForKetcherInit, waitForIndigoToLoad } from './loaders';
 import { OpenStructureDialog } from '@tests/pages/common/OpenStructureDialog';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export async function emptyFunction() {}

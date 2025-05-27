@@ -70,27 +70,10 @@ export class FormatterFactory {
 
     let formatter: StructFormatter;
     switch (format) {
-      case SupportedFormat.ket:
+      case SupportedFormat.ket: {
         formatter = new KetFormatter(new KetSerializer());
         break;
-
-      case SupportedFormat.cml:
-      case SupportedFormat.inChIAuxInfo:
-      case SupportedFormat.inChI:
-      case SupportedFormat.inChIKey:
-      case SupportedFormat.molV3000:
-      case SupportedFormat.smiles:
-      case SupportedFormat.rxnV3000:
-      case SupportedFormat.smilesExt:
-      case SupportedFormat.smarts:
-      case SupportedFormat.cdxml:
-      case SupportedFormat.cdx:
-      case SupportedFormat.binaryCdx:
-      case SupportedFormat.unknown:
-      case SupportedFormat.rxn:
-      // The frontend based for formatter depends on window.ketcher instance, this fails if multiple ketchers are on the same page.
-      //   We can use the backend formatter until that is fixed.
-      case SupportedFormat.mol:
+      }
       default:
         formatter = new ServerFormatter(
           this.#structService,

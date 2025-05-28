@@ -1,16 +1,18 @@
-import styled from '@emotion/styled'
-import { ThemeProvider, createTheme } from '@mui/material'
-import { useCallback, useState } from 'react'
-import { ButtonsConfig, Editor } from 'ketcher-react'
-import { Ketcher } from 'ketcher-core'
-import { StandaloneStructServiceProvider } from 'ketcher-standalone'
-import 'ketcher-react/dist/index.css'
+import styled from '@emotion/styled';
+import { ThemeProvider, createTheme } from '@mui/material';
+import { useCallback, useState } from 'react';
+import { ButtonsConfig, Editor } from 'ketcher-react';
+import { Ketcher } from 'ketcher-core';
+import { StandaloneStructServiceProvider } from 'ketcher-standalone';
 
-import './App.css'
-import { Panel } from './components/Panel'
-import { OutputArea } from './components/OutputArea'
-import { initiallyHidden } from './constants/buttons'
-import { defaultTheme } from './constants/defaultTheme'
+import 'ketcher-react/dist/index.css';
+import 'ketcher-macromolecules/dist/index.css';
+
+import './App.css';
+import { Panel } from './components/Panel';
+import { OutputArea } from './components/OutputArea';
+import { initiallyHidden } from './constants/buttons';
+import { defaultTheme } from './constants/defaultTheme';
 
 const GridWrapper = styled('div')`
   height: 100vh;
@@ -26,56 +28,56 @@ const GridWrapper = styled('div')`
   & > div {
     border: 1px solid grey;
   }
-`
+`;
 
 const KetcherBox = styled('div')`
   grid-area: Ketcher;
   height: 100vh;
-`
+`;
 
 const OutputBox = styled('div')`
   grid-area: Output;
-`
+`;
 
 const PanelBox = styled('div')`
   grid-area: Panel;
   overflow: auto;
   padding-right: 8px;
   padding-left: 8px;
-`
+`;
 
-const theme = createTheme(defaultTheme)
+const theme = createTheme(defaultTheme);
 
 const getHiddenButtonsConfig = (btnArr: string[]): ButtonsConfig => {
   return btnArr.reduce((acc, button) => {
-    if (button) acc[button] = { hidden: true }
+    if (button) acc[button] = { hidden: true };
 
-    return acc
-  }, {})
-}
+    return acc;
+  }, {});
+};
 
-const structServiceProvider = new StandaloneStructServiceProvider()
+const structServiceProvider = new StandaloneStructServiceProvider();
 
 const getUniqueKey = (() => {
-  let count = 0
+  let count = 0;
   return () => {
-    count += 1
-    return `editor-key-${count}`
-  }
-})()
+    count += 1;
+    return `editor-key-${count}`;
+  };
+})();
 
 const App = () => {
-  const [outputValue, setOutputValue] = useState('')
-  const [hiddenButtons, setHiddenButtons] = useState(initiallyHidden)
-  const [editorKey, setEditorKey] = useState('first-editor-key')
+  const [outputValue, setOutputValue] = useState('');
+  const [hiddenButtons, setHiddenButtons] = useState(initiallyHidden);
+  const [editorKey, setEditorKey] = useState('first-editor-key');
 
   const updateHiddenButtons = useCallback(
     (buttonsToHide: string[]) => {
-      setHiddenButtons(buttonsToHide)
-      setEditorKey(getUniqueKey())
+      setHiddenButtons(buttonsToHide);
+      setEditorKey(getUniqueKey());
     },
-    [setHiddenButtons, setEditorKey]
-  )
+    [setHiddenButtons, setEditorKey],
+  );
 
   return (
     <ThemeProvider theme={theme}>
@@ -88,8 +90,8 @@ const App = () => {
             structServiceProvider={structServiceProvider}
             errorHandler={(err) => console.log(err)}
             onInit={(ketcher: Ketcher) => {
-              ;(global as any).ketcher = ketcher
-              ;(global as any).KetcherFunctions = KetcherAPI(global.ketcher)
+              (global as any).ketcher = ketcher;
+              (global as any).KetcherFunctions = KetcherAPI(global.ketcher);
             }}
           />
         </KetcherBox>
@@ -108,7 +110,7 @@ const App = () => {
         </OutputBox>
       </GridWrapper>
     </ThemeProvider>
-  )
-}
+  );
+};
 
-export default App
+export default App;

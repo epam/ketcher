@@ -116,5 +116,11 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "exports": {
+    "./dist/index.css": {
+      "import": "./dist/index.css",
+      "require": "./dist/index.css"
+    }
+  }
 }

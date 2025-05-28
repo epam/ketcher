@@ -57,10 +57,11 @@ const config = {
     }),
     postcss({
       plugins: [autoprefixer({ grid: 'autoplace' })],
-      extract: path.resolve('dist/index.css'),
+      extract: 'index.css',
       minimize: isProduction,
       sourceMap: true,
       include: includePattern,
+      modules: true,
     }),
     svgr({ include: includePattern }),
     peerDepsExternal({ includeDependencies: true }),

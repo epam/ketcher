@@ -75,6 +75,7 @@ const config = {
       minimize: isProduction,
       sourceMap: true,
       include: includePattern,
+      modules: true,
     }),
     svgr({ include: includePattern }),
     peerDepsExternal({ includeDependencies: true }),

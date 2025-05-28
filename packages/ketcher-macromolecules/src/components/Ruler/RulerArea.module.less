@@ -1,9 +1,12 @@
 .rulerArea {
+  position: absolute;
   width: 100%;
   height: 36px;
-  background-color: var(--color-background-canvas);
+  background-color: transparent;
 
   &:hover, &.rulerAreaDragging, &:focus-within {
+    background-color: var(--color-background-canvas);
+
     > .rulerInput {
       opacity: 100%;
       box-shadow: var(--shadow-regular);

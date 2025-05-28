@@ -4,7 +4,6 @@ import { Dialog } from '@mui/material';
 import { Ketcher, StructServiceProvider } from 'ketcher-core';
 
 import 'ketcher-react/dist/index.css';
-import 'ketcher-macromolecules/dist/index.css';
 
 import { getStructServiceProvider } from './utils';
 

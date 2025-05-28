@@ -1,5 +1,4 @@
 import 'ketcher-react/dist/index.css';
-import 'ketcher-macromolecules/dist/index.css';
 
 import { EditorComponent } from './editor';
 

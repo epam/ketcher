@@ -43,11 +43,13 @@ const config = {
       file: pkg.main,
       exports: 'named',
       format: 'cjs',
+      banner: `require('./index.css');`,
     },
     {
       file: pkg.module,
       exports: 'named',
       format: 'es',
+      banner: `import './index.css';`,
     },
   ],
   plugins: [
@@ -57,11 +59,10 @@ const config = {
     }),
     postcss({
       plugins: [autoprefixer({ grid: 'autoplace' })],
-      extract: 'index.css',
+      extract: path.resolve('dist/index.css'),
       minimize: isProduction,
       sourceMap: true,
       include: includePattern,
-      modules: true,
     }),
     svgr({ include: includePattern }),
     peerDepsExternal({ includeDependencies: true }),

@@ -3,7 +3,6 @@ import { ButtonsConfig, Editor, InfoModal } from 'ketcher-react';
 import { Ketcher, StructServiceProvider } from 'ketcher-core';
 
 import 'ketcher-react/dist/index.css';
-import 'ketcher-macromolecules/dist/index.css';
 
 import { getStructServiceProvider } from './utils';
 

@@ -6,7 +6,6 @@ import { Ketcher } from 'ketcher-core';
 import { StandaloneStructServiceProvider } from 'ketcher-standalone';
 
 import 'ketcher-react/dist/index.css';
-import 'ketcher-macromolecules/dist/index.css';
 
 import './App.css';
 import { Panel } from './components/Panel';

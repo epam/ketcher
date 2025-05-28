@@ -50,8 +50,6 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
         endPositionInPixels.x - normalizedDirectionX * atomRadius;
       endPositionInPixels.y =
         endPositionInPixels.y - normalizedDirectionY * atomRadius;
-    } else {
-      // need to align start end position to give proper position on canvas reload
     }
 
     return {
@@ -61,6 +59,13 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
   }
 
   show() {
+    // If atom's baseRenderer or its bounding rect is not ready, retry after 10ms
+    const atomRenderer = this.monomerToAtomBond.atom.baseRenderer;
+    if (!atomRenderer || !atomRenderer.rootBoundingClientRect) {
+      setTimeout(() => this.show(), 10);
+      return;
+    }
+
     this.rootElement = this.canvas
       .insert('g', `.monomer`)
       .data([this])

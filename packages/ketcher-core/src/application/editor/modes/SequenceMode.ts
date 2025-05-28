@@ -878,48 +878,34 @@ export class SequenceMode extends BaseMode {
         SequenceRenderer.getNextNodeInSameChain(selectionEndTwoStrandedNode);
 
       const nodeBeforeSelection =
-        (twoStrandedNodeBeforeSelection &&
-          getNodeFromTwoStrandedNode(
-            twoStrandedNodeBeforeSelection,
-            strandType,
-          )) ||
-        undefined;
+        twoStrandedNodeBeforeSelection &&
+        getNodeFromTwoStrandedNode(twoStrandedNodeBeforeSelection, strandType);
       const potentialNodeAfterSelection =
-        (twoStrandedNodeAfterSelection &&
-          getNodeFromTwoStrandedNode(
-            twoStrandedNodeAfterSelection,
-            strandType,
-          )) ||
-        undefined;
+        twoStrandedNodeAfterSelection &&
+        getNodeFromTwoStrandedNode(twoStrandedNodeAfterSelection, strandType);
       const nodeAfterSelection =
         potentialNodeAfterSelection instanceof BackBoneSequenceNode
           ? strandType === STRAND_TYPE.SENSE
             ? potentialNodeAfterSelection.secondConnectedNode
             : potentialNodeAfterSelection.firstConnectedNode
           : potentialNodeAfterSelection;
+
       const nodeInSameChainBeforeSelection =
-        (twoStrandedNodeInSameChainBeforeSelection &&
-          getNodeFromTwoStrandedNode(
-            twoStrandedNodeInSameChainBeforeSelection,
-            strandType,
-          )) ||
-        undefined;
+        twoStrandedNodeInSameChainBeforeSelection &&
+        getNodeFromTwoStrandedNode(
+          twoStrandedNodeInSameChainBeforeSelection,
+          strandType,
+        );
       const potentialNodeInSameChainAfterSelection =
-        (twoStrandedNodeInSameChainAfterSelection &&
-          getNodeFromTwoStrandedNode(
-            twoStrandedNodeInSameChainAfterSelection,
-            strandType,
-          )) ||
-        twoStrandedNodeInSameChainAfterSelection;
+        twoStrandedNodeInSameChainAfterSelection &&
+        getNodeFromTwoStrandedNode(
+          twoStrandedNodeInSameChainAfterSelection,
+          strandType,
+        );
       const nodeInSameChainAfterSelection =
         potentialNodeInSameChainAfterSelection instanceof BackBoneSequenceNode
           ? potentialNodeInSameChainAfterSelection.secondConnectedNode
           : potentialNodeInSameChainAfterSelection;
-      const previouseNodeInBackbone =
-        strandType === STRAND_TYPE.SENSE
-          ? nodeBeforeSelection
-          : nodeAfterSelection;
-
       // Сase delete A (for sense) and empty node (for antisense) in sync mode:
       // G | A | G
       // C |   | C
@@ -941,7 +927,6 @@ export class SequenceMode extends BaseMode {
       ) {
         return;
       }
-
       // Сase delete "-":
       // G | - | G
       // C |   | C
@@ -954,24 +939,59 @@ export class SequenceMode extends BaseMode {
           selectionStartNode instanceof BackBoneSequenceNode
             ? selectionStartNode
             : (selectionEndNode as BackBoneSequenceNode);
-        const polymerBondToDelete =
-          backBoneSequenceNode.firstConnectedNode.lastMonomerInNode
-            .attachmentPointsToBonds.R2;
 
-        if (!(polymerBondToDelete instanceof PolymerBond)) {
-          return;
+        const firstConnected = backBoneSequenceNode.firstConnectedNode;
+        const secondConnected = backBoneSequenceNode.secondConnectedNode;
+
+        let polymerBondToDelete: PolymerBond | undefined;
+
+        if (
+          firstConnected instanceof Nucleotide &&
+          firstConnected.lastMonomerInNode?.attachmentPointsToBonds
+            ?.R2 instanceof PolymerBond
+        ) {
+          polymerBondToDelete =
+            firstConnected.lastMonomerInNode.attachmentPointsToBonds.R2;
+        } else if (
+          secondConnected instanceof Nucleotide &&
+          secondConnected.firstMonomerInNode?.attachmentPointsToBonds
+            ?.R1 instanceof PolymerBond
+        ) {
+          polymerBondToDelete =
+            secondConnected.firstMonomerInNode.attachmentPointsToBonds.R1;
         }
 
-        modelChanges.merge(
-          editor.drawingEntitiesManager.deletePolymerBond(polymerBondToDelete),
-        );
-
-        if (previouseNodeInBackbone instanceof Nucleotide) {
+        if (polymerBondToDelete) {
           modelChanges.merge(
-            editor.drawingEntitiesManager.deleteMonomer(
-              previouseNodeInBackbone.lastMonomerInNode,
+            editor.drawingEntitiesManager.deletePolymerBond(
+              polymerBondToDelete,
             ),
           );
+
+          if (
+            firstConnected instanceof Nucleotide &&
+            firstConnected.lastMonomerInNode instanceof Phosphate
+          ) {
+            modelChanges.merge(
+              editor.drawingEntitiesManager.deleteMonomer(
+                firstConnected.lastMonomerInNode,
+              ),
+            );
+          }
+
+          if (
+            secondConnected instanceof Nucleotide &&
+            secondConnected.firstMonomerInNode instanceof Phosphate
+          ) {
+            modelChanges.merge(
+              editor.drawingEntitiesManager.deleteMonomer(
+                secondConnected.firstMonomerInNode,
+              ),
+            );
+          }
+        } else {
+          console.warn('Could not find a valid polymer bond to delete');
+          return;
         }
 
         return;
@@ -1038,7 +1058,7 @@ export class SequenceMode extends BaseMode {
               nodeAfterSelection.firstMonomerInNode,
             ),
           );
-        } else if (nodeBeforeSelection && nodeAfterSelection) {
+        } else {
           modelChanges.merge(
             this.tryToCreatePolymerBond(
               isPhosphateAdditionalyDeleted
@@ -1095,7 +1115,7 @@ export class SequenceMode extends BaseMode {
               nodeBeforeSelection.firstMonomerInNode,
             ),
           );
-        } else if (nodeBeforeSelection && nodeAfterSelection) {
+        } else {
           modelChanges.merge(
             this.tryToCreatePolymerBond(
               isPhosphateAdditionalyDeleted

@@ -87,6 +87,7 @@ const HeaderContent = ({
         server={server}
         onLoad={onOpenFile}
         className={classes.button}
+        data-testid="open-settings-from-file-button"
       >
         <Icon name="open-1" />
       </OpenButton>
@@ -96,6 +97,7 @@ const HeaderContent = ({
         data={JSON.stringify(formState.result)}
         filename="ketcher-settings"
         className={classes.button}
+        data-testid="save-settings-to-file-button"
       >
         <Icon name="save-1" />
       </SaveButton>
@@ -104,6 +106,7 @@ const HeaderContent = ({
         key="settings-button"
         onClick={onReset}
         className={classes.button}
+        data-testid="reset-settings-button"
         disabled={getIsResetDisabled()}
       >
         <Icon name="reset" />
@@ -153,9 +156,13 @@ const SettingsDialog = (props: Props) => {
           data-testid="reset-to-select"
         />
         <Field name="rotationStep" data-testid="rotation-step" />
-        <Field name="showValenceWarnings" />
-        <Field name="atomColoring" />
-        <Field name="font" component={SystemFonts} />
+        <Field name="showValenceWarnings" data-testid="show-valence-warnings" />
+        <Field name="atomColoring" data-testid="atom-coloring" />
+        <Field
+          name="font"
+          component={SystemFonts}
+          data-testid="font-selection"
+        />
         <Field
           name="fontsz"
           component={MeasureInput}
@@ -179,6 +186,7 @@ const SettingsDialog = (props: Props) => {
           tooltip="option applicable to PNG/SVG pictures renderer"
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.imageResolution)}
+          data-testid="image-resolution"
         />
       </fieldset>
     ),
@@ -188,16 +196,28 @@ const SettingsDialog = (props: Props) => {
     label: 'Stereochemistry',
     content: (
       <fieldset>
-        <Field name="showStereoFlags" />
+        <Field name="showStereoFlags" data-testid="show-stereo-flags" />
         <Field
           name="stereoLabelStyle"
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.stereoLabelStyle)}
           data-testid="stereo-label-style"
         />
-        <Field name="colorOfAbsoluteCenters" component={ColorPicker} />
-        <Field name="colorOfAndCenters" component={ColorPicker} />
-        <Field name="colorOfOrCenters" component={ColorPicker} />
+        <Field
+          name="colorOfAbsoluteCenters"
+          component={ColorPicker}
+          data-testid="color-of-absolute-centers"
+        />
+        <Field
+          name="colorOfAndCenters"
+          component={ColorPicker}
+          data-testid="color-of-and-centers"
+        />
+        <Field
+          name="colorOfOrCenters"
+          component={ColorPicker}
+          data-testid="color-of-or-centers"
+        />
         <Field
           name="colorStereogenicCenters"
           component={Select}
@@ -206,14 +226,18 @@ const SettingsDialog = (props: Props) => {
           )}
           data-testid="color-stereogenic-centers"
         />
-        <Field name="autoFadeOfStereoLabels" />
-        <Field name="absFlagLabel" />
-        <Field name="andFlagLabel" />
-        <Field name="orFlagLabel" />
-        <Field name="mixedFlagLabel" />
+        <Field
+          name="autoFadeOfStereoLabels"
+          data-testid="auto-fade-of-stereo-labels"
+        />
+        <Field name="absFlagLabel" data-testid="abs-flag-label" />
+        <Field name="andFlagLabel" data-testid="and-flag-label" />
+        <Field name="orFlagLabel" data-testid="or-flag-label" />
+        <Field name="mixedFlagLabel" data-testid="mixed-flag-label" />
         <Field
           name="ignoreChiralFlag"
           tooltip="Ignore chiral flag while loading from molfiles. By default all the stereo will be ABS"
+          data-testid="ignore-chiral-flag"
         />
       </fieldset>
     ),
@@ -223,9 +247,9 @@ const SettingsDialog = (props: Props) => {
     label: 'Atoms',
     content: (
       <fieldset>
-        <Field name="carbonExplicitly" />
-        <Field name="showCharge" />
-        <Field name="showValence" />
+        <Field name="carbonExplicitly" data-testid="carbon-explicitly" />
+        <Field name="showCharge" data-testid="show-charge" />
+        <Field name="showValence" data-testid="show-valence" />
         <Field
           name="showHydrogenLabels"
           component={Select}
@@ -242,7 +266,7 @@ const SettingsDialog = (props: Props) => {
     label: 'Bonds',
     content: (
       <fieldset>
-        <Field name="aromaticCircle" />
+        <Field name="aromaticCircle" data-testid="aromatic-circle" />
         <Field
           name="bondLength"
           component={MeasureInput}
@@ -276,11 +300,23 @@ const SettingsDialog = (props: Props) => {
     label: 'Server',
     content: (
       <fieldset disabled={!appOpts.server}>
-        <Field name="smart-layout" />
-        <Field name="ignore-stereochemistry-errors" />
-        <Field name="mass-skip-error-on-pseudoatoms" />
-        <Field name="gross-formula-add-rsites" />
-        <Field name="gross-formula-add-isotopes" />
+        <Field name="smart-layout" data-testid="smart-layout" />
+        <Field
+          name="ignore-stereochemistry-errors"
+          data-testid="ignore-stereochemistry-errors"
+        />
+        <Field
+          name="mass-skip-error-on-pseudoatoms"
+          data-testid="mass-skip-error-on-pseudoatoms"
+        />
+        <Field
+          name="gross-formula-add-rsites"
+          data-testid="gross-formula-add-rsites"
+        />
+        <Field
+          name="gross-formula-add-isotopes"
+          data-testid="gross-formula-add-isotopes"
+        />
       </fieldset>
     ),
   };
@@ -294,16 +330,19 @@ const SettingsDialog = (props: Props) => {
           name="miewMode"
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.miewMode)}
+          data-testid="display-mode"
         />
         <Field
           name="miewTheme"
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.miewTheme)}
+          data-testid="background-color"
         />
         <Field
           name="miewAtomLabel"
           component={Select}
           options={getSelectOptionsFromSchema(settingsProps?.miewAtomLabel)}
+          data-testid="label-coloring"
         />
       </fieldset>
     ),
@@ -313,10 +352,10 @@ const SettingsDialog = (props: Props) => {
     label: 'Options for Debugging',
     content: (
       <fieldset>
-        <Field name="showAtomIds" />
-        <Field name="showBondIds" />
-        <Field name="showHalfBondIds" />
-        <Field name="showLoopIds" />
+        <Field name="showAtomIds" data-testid="show-atom-ids" />
+        <Field name="showBondIds" data-testid="show-bond-ids" />
+        <Field name="showHalfBondIds" data-testid="show-half-bond-ids" />
+        <Field name="showLoopIds" data-testid="show-loop-ids" />
       </fieldset>
     ),
   };

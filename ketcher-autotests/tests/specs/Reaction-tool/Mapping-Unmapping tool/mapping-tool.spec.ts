@@ -3,8 +3,6 @@ import {
   takeEditorScreenshot,
   clickInTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
-  selectRingButton,
-  RingButton,
   getCoordinatesTopAtomOfBenzeneRing,
   dragMouseTo,
   waitForPageInit,
@@ -18,9 +16,11 @@ import {
   verifyFileExport,
 } from '@utils/files/receiveFileComparisonData';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ReactionMappingType } from '@tests/pages/constants/reactionMappingTool/Constants';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Mapping Tools', () => {
   test.beforeEach(async ({ page }) => {
@@ -93,7 +93,7 @@ test.describe('Mapping Tools', () => {
   }) => {
     // EPMLSOPKET-12961
     // Undo not working properly https://github.com/epam/ketcher/issues/2174
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await LeftToolbar(page).selectReactionMappingTool(
       ReactionMappingType.ReactionMapping,
@@ -102,7 +102,7 @@ test.describe('Mapping Tools', () => {
     await clickOnCanvas(page, x, y);
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
   });
 
   test.describe('Mapping reactions', () => {
@@ -120,7 +120,7 @@ test.describe('Mapping Tools', () => {
       await page.keyboard.press('Delete');
       await takeEditorScreenshot(page);
 
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
     });
 
     test('Unmap the mapped reaction', async ({ page }) => {

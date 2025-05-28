@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
   waitForPageInit,
   openFile,
@@ -14,7 +14,7 @@ test.describe('PPTX files', () => {
   });
 
   test('open pptx file', async ({ page }) => {
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await openFile('PPTX/pptx-with-chem-draw.pptx', page);
     await takeEditorScreenshot(page);
     await page.getByText('Structure 2').click();
@@ -22,7 +22,7 @@ test.describe('PPTX files', () => {
   });
 
   test('open empty pptx file', async ({ page }) => {
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await openFile('PPTX/pptx-empty.pptx', page);
     await takeEditorScreenshot(page);
   });
@@ -50,7 +50,7 @@ test.describe('PPTX files', () => {
       const longerTimeout = 30000;
       page.setDefaultTimeout(longerTimeout);
 
-      await TopLeftToolbar(page).openFile();
+      await CommonTopLeftToolbar(page).openFile();
       await waitForSpinnerFinishedWork(page, async () => {
         await openFile('PPTX/50 mols on 1 canvas.pptx', page);
       });
@@ -88,7 +88,7 @@ test.describe('PPTX files', () => {
       const maxTimeout = 150000;
       test.setTimeout(maxTimeout);
 
-      await TopLeftToolbar(page).openFile();
+      await CommonTopLeftToolbar(page).openFile();
       await waitForSpinnerFinishedWork(page, async () => {
         await openFile('PPTX/1000 moleculs.pptx', page);
       });
@@ -122,7 +122,7 @@ test.describe('PPTX files', () => {
       const maxTimeout = 150000;
       test.setTimeout(maxTimeout);
 
-      await TopLeftToolbar(page).openFile();
+      await CommonTopLeftToolbar(page).openFile();
       await waitForSpinnerFinishedWork(page, async () => {
         await openFile(
           'PPTX/BigPPT (79 molecules and many objects).pptx',
@@ -168,7 +168,7 @@ test.describe('PPTX files', () => {
 
       const structures = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
       for await (const count of structures) {
-        await TopLeftToolbar(page).openFile();
+        await CommonTopLeftToolbar(page).openFile();
         await waitForSpinnerFinishedWork(page, async () => {
           await openFile('PPTX/ARROWS.pptx', page);
         });
@@ -199,7 +199,7 @@ test.describe('PPTX files', () => {
     IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1680 issue.
     Uncomment code after fix and update screenshots!
     */
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await waitForSpinnerFinishedWork(page, async () => {
       await openFile('PPTX/Brackets.pptx', page);
     });
@@ -226,7 +226,7 @@ test.describe('PPTX files', () => {
     4. Press Open as New Project button
     5. Validate canvas
     */
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await waitForSpinnerFinishedWork(page, async () => {
       await openFile('PPTX/Chromotography tools.pptx', page);
     });
@@ -255,7 +255,7 @@ test.describe('PPTX files', () => {
     Expected result: Most of figures we don't suppot and ignores
     */
     for (let count = 1; count <= 2; count++) {
-      await TopLeftToolbar(page).openFile();
+      await CommonTopLeftToolbar(page).openFile();
       await waitForSpinnerFinishedWork(page, async () => {
         await openFile('PPTX/Geometry figures.pptx', page);
       });
@@ -284,7 +284,7 @@ test.describe('PPTX files', () => {
     5. Validate canvas
     Expected result: No orbitals since are not support them - we simply ignore them
     */
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await waitForSpinnerFinishedWork(page, async () => {
       await openFile('PPTX/Orbitals.pptx', page);
     });
@@ -298,7 +298,7 @@ test.describe('PPTX files', () => {
     await takeEditorScreenshot(page);
   });
 
-  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Text messages @IncorrectResultBecauseOfBug', async ({
+  test('User can import from .pptx file with CDX content containing basic ChemDraw 15.0 object: Text messages', async ({
     page,
   }) => {
     /*
@@ -310,11 +310,9 @@ test.describe('PPTX files', () => {
     3. In appeared dialog - Validate Preview area
     4. Press Open as New Project button
     5. Validate canvas
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1679 issue.
-    IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1683 issue.
-    Update screenshots after fix.
+
     */
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await waitForSpinnerFinishedWork(page, async () => {
       await openFile('PPTX/Text messages.pptx', page);
     });
@@ -342,7 +340,7 @@ test.describe('PPTX files', () => {
     5. Validate canvas
     Expected result: Seems that ChemDraw's pluses and minises are simply atom modifiers - we don' support them in such way
     */
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await waitForSpinnerFinishedWork(page, async () => {
       await openFile('PPTX/Pluses and minuses.pptx', page);
     });
@@ -370,7 +368,7 @@ test.describe('PPTX files', () => {
     5. Validate canvas
     Expected result: We don't support tables so they are ignored
     */
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await waitForSpinnerFinishedWork(page, async () => {
       await openFile('PPTX/Tables.pptx', page);
     });
@@ -399,7 +397,7 @@ test.describe('PPTX files', () => {
     IMPORTANT: Result of execution is incorrect because of https://github.com/epam/Indigo/issues/1725 issue.
     Update screenshots after fix.
     */
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await waitForSpinnerFinishedWork(page, async () => {
       await openFile('PPTX/Attachment points.pptx', page);
     });

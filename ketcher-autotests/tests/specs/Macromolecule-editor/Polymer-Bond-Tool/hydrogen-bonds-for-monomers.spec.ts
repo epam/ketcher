@@ -27,8 +27,8 @@ import {
   MacroBondType,
 } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 let page: Page;
 test.setTimeout(40000);
@@ -42,7 +42,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
 });
 
@@ -710,12 +710,12 @@ Object.values(monomers).forEach((leftMonomer) => {
         hideMonomerPreview: true,
       });
 
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
       });
 
-      await TopLeftToolbar(page).redo();
+      await CommonTopLeftToolbar(page).redo();
       await takeEditorScreenshot(page, {
         hideMonomerPreview: true,
       });

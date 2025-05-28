@@ -62,8 +62,8 @@ import { getMonomerLocator } from '@utils/macromolecules/monomer';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Constants';
 import { MacroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 async function drawThreeMonomers(page: Page) {
   const x1 = 301;
@@ -182,7 +182,7 @@ test.describe('RNA Library', () => {
   });
 
   test.afterEach(async ({ context: _ }) => {
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
   });
 
   test.afterAll(async ({ browser }) => {
@@ -954,7 +954,7 @@ test.describe('RNA Library', () => {
     Description: Canvas is cleared
     */
     await drawThreeMonomersConnectedWithBonds(page);
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -967,7 +967,7 @@ test.describe('RNA Library', () => {
       'KET/monomers-connected-with-bonds.ket',
       page,
     );
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 
@@ -1181,13 +1181,13 @@ test.describe('RNA Library', () => {
       await clickInTheMiddleOfTheScreen(page);
       await dragMouseTo(x, y, page);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).redo();
+      await CommonTopLeftToolbar(page).redo();
       await CommonLeftToolbar(page).selectEraseTool();
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
 
       // Reset to default state
@@ -1537,10 +1537,16 @@ test.describe('RNA Library', () => {
          * Test task: https://github.com/epam/ketcher/issues/5539
          * Verify search by full IDT alias
          * Case:
+         * 0. Close RNA builder if it is opened
          * 1. Fill Search field with value
          * 2. Switch to monomer's tab to see it
          * 3. Take screenshot of the library to make sure search works
          */
+        const rnaEditor = page.getByTestId('rna-editor-expanded');
+        if (await rnaEditor.isVisible()) {
+          await toggleRnaBuilderAccordion(page);
+        }
+
         await searchMonomerByName(page, IDTSearchString.SearchString);
         await goToMonomerLocationTab(
           page,

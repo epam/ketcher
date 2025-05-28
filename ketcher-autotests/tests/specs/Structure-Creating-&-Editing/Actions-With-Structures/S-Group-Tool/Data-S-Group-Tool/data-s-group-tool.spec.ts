@@ -9,8 +9,6 @@ import {
   moveMouseToTheMiddleOfTheScreen,
   resetCurrentTool,
   BondType,
-  selectRingButton,
-  RingButton,
   copyAndPaste,
   cutAndPaste,
   clickOnBond,
@@ -31,6 +29,8 @@ import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 const CANVAS_CLICK_X = 600;
 const CANVAS_CLICK_Y = 600;
@@ -93,7 +93,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1499
       Description: The 'S-Group Properties' dialog appears when user selects atom.
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await LeftToolbar(page).sGroup();
     await clickOnAtom(page, 'C', 3);
@@ -107,7 +107,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1499
       Description: The 'S-Group Properties' dialog appears when user selects bond.
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await LeftToolbar(page).sGroup();
     await clickOnBond(page, BondType.SINGLE, 2);
@@ -121,7 +121,7 @@ test.describe('Data S-Group tool', () => {
       Test case: EPMLSOPKET-1499
       Description: The 'S-Group Properties' dialog appears when user selects whole structure.
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await selectAllStructuresOnCanvas(page);
     await LeftToolbar(page).sGroup();

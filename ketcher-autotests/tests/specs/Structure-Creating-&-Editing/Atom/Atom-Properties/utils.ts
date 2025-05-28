@@ -133,24 +133,6 @@ export async function selectExactChange(
   }
 }
 
-export async function selectThreeAtomsFromPeriodicTable(
-  page: Page,
-  selectlisting: 'List' | 'Not List',
-  atom1: string,
-  atom2: string,
-  atom3: string,
-  button: string,
-) {
-  const periodicTableButton = RightToolbar(page).periodicTableButton;
-
-  await periodicTableButton.click();
-  await page.getByText(selectlisting, { exact: true }).click();
-  await pressButton(page, atom1);
-  await pressButton(page, atom2);
-  await pressButton(page, atom3);
-  await page.getByRole('button', { name: button, exact: true }).click();
-}
-
 export async function selectElementFromExtendedTable(
   page: Page,
   element: string,

@@ -46,8 +46,8 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { keyboardPressOnCanvas } from '@utils/keyboard/index';
 import { getSymbolLocator } from '@utils/macromolecules/monomer';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 let page: Page;
 
@@ -70,7 +70,7 @@ test.afterEach(async () => {
   await keyboardPressOnCanvas(page, 'Escape');
   await keyboardPressOnCanvas(page, 'Escape');
   await resetZoomLevelToDefault(page);
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
   await resetZoomLevelToDefault(page);
 });
 
@@ -2054,7 +2054,7 @@ test(`25. Verify undo/redo functionality after replacing monomers`, async () => 
   await selectAndReplaceAllSymbols(page, replaceMonomer, sequence);
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
-  await TopLeftToolbar(page).undo();
+  await CommonTopLeftToolbar(page).undo();
 
   await takeEditorScreenshot(page, { hideMonomerPreview: true });
 

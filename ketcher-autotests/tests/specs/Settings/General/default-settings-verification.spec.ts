@@ -1,10 +1,10 @@
 /* eslint-disable no-magic-numbers */
 import { Page, test, expect } from '@playwright/test';
+import { drawBenzeneRing } from '@tests/pages/molecules/BottomToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import {
   waitForPageInit,
-  drawBenzeneRing,
   pressButton,
   copyAndPaste,
   takeEditorScreenshot,
@@ -257,9 +257,10 @@ test.describe('General Settings', () => {
     await TopRightToolbar(page).Settings({ waitForFontListLoad: true });
     await setFontSizeOptionUnit(page, 'cm-option');
     await setFontSizeValue(page, '0.83');
-    await page.waitForTimeout(1000);
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
     await pressButton(page, 'Apply');
+    await moveMouseAway(page);
     await takeEditorScreenshot(page);
   });
 

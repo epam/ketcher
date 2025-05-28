@@ -10,14 +10,12 @@ import { Page, expect, test } from '@playwright/test';
 import {
   FILE_TEST_DATA,
   FunctionalGroups,
-  RingButton,
   SaltsAndSolvents,
   addMonomersToFavorites,
   clickInTheMiddleOfTheScreen,
   clickOnAtom,
   clickOnCanvas,
   dragMouseTo,
-  drawBenzeneRing,
   getControlModifier,
   moveMouseAway,
   moveMouseToTheMiddleOfTheScreen,
@@ -32,7 +30,6 @@ import {
   readFileContent,
   selectFunctionalGroups,
   selectMonomer,
-  selectRing,
   selectSaltsAndSolvents,
   selectSequenceLayoutModeTool,
   selectSnakeLayoutModeTool,
@@ -86,11 +83,16 @@ import { Atom } from '@tests/pages/constants/atoms/atoms';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import { TopRightToolbar } from '@tests/pages/molecules/TopRightToolbar';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { RGroupType } from '@tests/pages/constants/rGroupSelectionTool/Constants';
+import {
+  drawBenzeneRing,
+  selectRingButton,
+} from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 const topLeftCorner = {
   x: -325,
@@ -167,7 +169,7 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterEach(async () => {
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
 });
 
 test.afterAll(async ({ browser }) => {
@@ -533,7 +535,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await clickInTheMiddleOfTheScreen(page);
       await moveMouseAway(page);
       await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-      await selectRing(RingButton.Benzene, page);
+      await selectRingButton(page, RingButton.Benzene);
       await clickInTheMiddleOfTheScreen(page);
       await IndigoFunctionsToolbar(page).ThreeDViewer();
       await moveMouseAway(page);
@@ -582,10 +584,10 @@ test.describe('Macro-Micro-Switcher', () => {
       }
     });
     await fullScreenButton.click();
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await takeEditorScreenshot(page);
     await PasteFromClipboardDialog(page).closeWindowButton.click();
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await takeEditorScreenshot(page);
   });
 });
@@ -593,7 +595,7 @@ test.describe('Macro-Micro-Switcher', () => {
 test.describe('Macro-Micro-Switcher', () => {
   test.beforeEach(async () => {
     await CommonTopRightToolbar(page).turnOnMicromoleculesEditor();
-    await TopLeftToolbar(page).clearCanvas();
+    await CommonTopLeftToolbar(page).clearCanvas();
   });
 
   test.skip(
@@ -1044,7 +1046,7 @@ test.describe('Macro-Micro-Switcher', () => {
       const y = 200;
       const x1 = 600;
       const y1 = 600;
-      await selectRing(RingButton.Benzene, page);
+      await selectRingButton(page, RingButton.Benzene);
       await clickOnCanvas(page, x, y);
       await takeEditorScreenshot(page);
       await CommonTopRightToolbar(page).turnOnMacromoleculesEditor();
@@ -1355,7 +1357,7 @@ test.describe('Macro-Micro-Switcher', () => {
       }).first();
       await bondLine.click({ force: true });
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
     });
   }
@@ -1389,7 +1391,7 @@ test.describe('Macro-Micro-Switcher', () => {
     }).first();
     await bondLine.click({ force: true });
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -1439,7 +1441,7 @@ test.describe('Macro-Micro-Switcher', () => {
       await CommonLeftToolbar(page).selectEraseTool();
       await page.getByText(data.monomer.alias).click();
       await takeEditorScreenshot(page);
-      await TopLeftToolbar(page).undo();
+      await CommonTopLeftToolbar(page).undo();
       await takeEditorScreenshot(page);
     });
   }
@@ -1475,7 +1477,7 @@ test.describe('Macro-Micro-Switcher', () => {
       .filter({ has: page.locator(':visible') });
     await canvasLocator.locator('path').nth(5).click();
     await takeEditorScreenshot(page);
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -1748,7 +1750,7 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.SVGDocument,
       );
@@ -1770,7 +1772,7 @@ test.describe('Macro-Micro-Switcher', () => {
         'KET/one-attachment-point-added-in-micro-mode.ket',
         page,
       );
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MoleculesFileFormatType.PNGImage,
       );

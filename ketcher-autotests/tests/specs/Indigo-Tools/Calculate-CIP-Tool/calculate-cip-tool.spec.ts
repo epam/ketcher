@@ -4,8 +4,6 @@ import {
   openFileAndAddToCanvas,
   takeEditorScreenshot,
   BondType,
-  selectRingButton,
-  RingButton,
   clickInTheMiddleOfTheScreen,
   resetCurrentTool,
   copyAndPaste,
@@ -29,8 +27,10 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { MicroBondType } from '@tests/pages/constants/bondSelectionTool/Constants';
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('Indigo Tools - Calculate CIP Tool', () => {
   test.beforeEach(async ({ page }) => {
@@ -71,7 +71,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     Ketcher functions work correctly after clicking the 'Calculate CIP' button on the empty canvas.
     */
     await IndigoFunctionsToolbar(page).calculateCIP();
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
     await resetCurrentTool(page);
     await takeEditorScreenshot(page);
@@ -96,7 +96,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -279,7 +279,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
     await IndigoFunctionsToolbar(page).aromatize();
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -319,7 +319,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 
@@ -342,7 +342,7 @@ test.describe('Indigo Tools - Calculate CIP Tool', () => {
 
     await takeEditorScreenshot(page);
 
-    await TopLeftToolbar(page).undo();
+    await CommonTopLeftToolbar(page).undo();
     await takeEditorScreenshot(page);
   });
 

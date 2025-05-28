@@ -8,9 +8,7 @@ import {
   getCoordinatesOfTheMiddleOfTheScreen,
   openFileAndAddToCanvas,
   pressButton,
-  RingButton,
   selectAllStructuresOnCanvas,
-  selectRingButton,
   takeEditorScreenshot,
 } from '@utils';
 import {
@@ -21,6 +19,8 @@ import { SelectionToolType } from '@tests/pages/constants/areaSelectionTool/Cons
 import { CommonLeftToolbar } from '@tests/pages/common/CommonLeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 async function selectOption(
   page: Page,
@@ -527,7 +527,7 @@ test.describe('Bond Properties', () => {
       SelectionToolType.Rectangle,
     );
 
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickOnCanvas(page, x + 150, y + 150);
 
     await verifyFileExport(

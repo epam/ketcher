@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 import { RNA_TAB } from '@constants/testIdConstants';
 import { moveMouseAway } from '@utils/moveMouseAway';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 export const RnaAccordionTypes = {
   Presets: {

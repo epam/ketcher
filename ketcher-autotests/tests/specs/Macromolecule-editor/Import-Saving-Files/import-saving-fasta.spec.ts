@@ -25,8 +25,8 @@ import { SequenceMonomerType } from '@tests/pages/constants/monomers/Constants';
 import { PasteFromClipboardDialog } from '@tests/pages/common/PasteFromClipboardDialog';
 import { MacromoleculesFileFormatType } from '@tests/pages/constants/fileFormats/macroFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 
 // function removeNotComparableData(file: string) {
 //   return file.replaceAll('\r', '');
@@ -78,7 +78,7 @@ test.describe('Import-Saving .fasta Files', () => {
     page,
   }) => {
     const addToCanvasButton = PasteFromClipboardDialog(page).addToCanvasButton;
-    await TopLeftToolbar(page).openFile();
+    await CommonTopLeftToolbar(page).openFile();
     await openFile('FASTA/fasta-empty.fasta', page);
     await expect(addToCanvasButton).toBeDisabled();
   });
@@ -87,7 +87,7 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Check that system does not let uploading corrupted .fasta file', async ({
   //   page,
   // }) => {
-  //   await TopLeftToolbar(page).openFile();
+  //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-corrupted.fasta';
   //   await openFile(filename, page);
@@ -133,7 +133,7 @@ test.describe('Import-Saving .fasta Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro('KET/rna-and-peptide.ket', page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.FASTA,
     );
@@ -146,7 +146,7 @@ test.describe('Import-Saving .fasta Files', () => {
     page,
   }) => {
     await openFileAndAddToCanvasMacro('KET/chems-not-connected.ket', page);
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.FASTA,
     );
@@ -174,7 +174,7 @@ test.describe('Import-Saving .fasta Files', () => {
   //   test(`Import FASTA: Verify correct import of sequences with valid header and ${data.monomers} monomers`, async ({
   //     page,
   //   }) => {
-  //     await TopLeftToolbar(page).openFile();
+  //     await CommonTopLeftToolbar(page).openFile();
   //     await openFile(data.filename, page);
   //     await selectOptionInDropdown(data.filename, page);
   //
@@ -192,7 +192,7 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Import FASTA: Verify correct import of sequences with multi-line representation', async ({
   //   page,
   // }) => {
-  //   await TopLeftToolbar(page).openFile();
+  //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-multiline-sequence.fasta';
   //   await openFile(filename, page);
@@ -206,7 +206,7 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Import FASTA: Verify error message if the first symbol is not ">"', async ({
   //   page,
   // }) => {
-  //   await TopLeftToolbar(page).openFile();
+  //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-without-greater-than-symbol.fasta';
   //   await openFile(filename, page);
@@ -218,7 +218,7 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Import FASTA: Verify correct handling of "*" symbol for peptide sequences', async ({
   //   page,
   // }) => {
-  //   await TopLeftToolbar(page).openFile();
+  //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-with-asterisk-separator.fasta';
   //   await openFile(filename, page);
@@ -249,7 +249,7 @@ test.describe('Import-Saving .fasta Files', () => {
   // test('Import FASTA: Verify ignoring "-" symbol during import', async ({
   //   page,
   // }) => {
-  //   await TopLeftToolbar(page).openFile();
+  //   await CommonTopLeftToolbar(page).openFile();
   //
   //   const filename = 'FASTA/fasta-with-dash-symbol.fasta';
   //   await openFile(filename, page);
@@ -318,7 +318,7 @@ test.describe('Import-Saving .fasta Files', () => {
     After fix screenshot should be updated.
     */
       await openFileAndAddToCanvasMacro('KET/rna-sequence-and-chems.ket', page);
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.FASTA,
       );
@@ -336,7 +336,7 @@ test.describe('Import-Saving .fasta Files', () => {
     */
       await openFileAndAddToCanvasMacro('KET/peptides-chain-cycled.ket', page);
       await selectSequenceLayoutModeTool(page);
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.FASTA,
       );
@@ -407,7 +407,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.FASTA,
       );
@@ -446,7 +446,7 @@ test.describe('Import-Saving .fasta Files', () => {
     await moveMouseAway(page);
     await takeEditorScreenshot(page, { hideMonomerPreview: true });
 
-    await TopLeftToolbar(page).saveFile();
+    await CommonTopLeftToolbar(page).saveFile();
     await SaveStructureDialog(page).chooseFileFormat(
       MacromoleculesFileFormatType.FASTA,
     );
@@ -485,7 +485,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.FASTA,
       );
@@ -543,7 +543,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.FASTA,
       );
@@ -601,7 +601,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.FASTA,
       );
@@ -659,7 +659,7 @@ test.describe('Import-Saving .fasta Files', () => {
       await moveMouseAway(page);
       await takeEditorScreenshot(page);
 
-      await TopLeftToolbar(page).saveFile();
+      await CommonTopLeftToolbar(page).saveFile();
       await SaveStructureDialog(page).chooseFileFormat(
         MacromoleculesFileFormatType.FASTA,
       );

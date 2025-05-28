@@ -15,13 +15,13 @@ import {
 } from '@utils/files/receiveFileComparisonData';
 import { MoleculesFileFormatType } from '@tests/pages/constants/fileFormats/microFileFormats';
 import { SaveStructureDialog } from '@tests/pages/common/SaveStructureDialog';
-import { TopLeftToolbar } from '@tests/pages/common/TopLeftToolbar';
+import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 
 async function getPreviewForSmiles(
   page: Page,
   smileType: MoleculesFileFormatType,
 ) {
-  await TopLeftToolbar(page).saveFile();
+  await CommonTopLeftToolbar(page).saveFile();
   await SaveStructureDialog(page).chooseFileFormat(smileType);
   const previewInput = await SaveStructureDialog(page).getTextAreaValue();
   expect(previewInput).not.toBe('');
@@ -29,7 +29,7 @@ async function getPreviewForSmiles(
 
 async function clearCanvasAndPasteSmiles(page: Page, smiles: string) {
   await pressButton(page, 'Cancel');
-  await TopLeftToolbar(page).clearCanvas();
+  await CommonTopLeftToolbar(page).clearCanvas();
 
   await pasteFromClipboardAndAddToCanvas(page, smiles);
   await clickInTheMiddleOfTheScreen(page);

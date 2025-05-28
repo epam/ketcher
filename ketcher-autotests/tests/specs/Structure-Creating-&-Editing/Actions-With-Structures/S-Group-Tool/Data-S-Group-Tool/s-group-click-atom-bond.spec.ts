@@ -1,14 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
+import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
   getCoordinatesTopAtomOfBenzeneRing,
-  selectRingButton,
   clickInTheMiddleOfTheScreen,
   takeEditorScreenshot,
-  RingButton,
   waitForPageInit,
   clickOnCanvas,
 } from '@utils';
+import { RingButton } from '@tests/pages/constants/ringButton/Constants';
 
 test.describe('S-Group Properties', () => {
   test.beforeEach(async ({ page }) => {
@@ -22,8 +22,7 @@ test.describe('S-Group Properties', () => {
       Multiple group, SRU polymer, Superatom and Query Component items. Data item is selected by default;
     */
     const sGroupTypeInputSpan = page.getByTestId('s-group-type-input-span');
-
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
@@ -51,7 +50,7 @@ test.describe('S-Group Properties', () => {
       Test case: EPMLSOPKET-1537
       Description: A superatom named `Test` is created. Atom enclosed in brackets.
     */
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
@@ -76,7 +75,7 @@ test.describe('S-Group Properties', () => {
     */
     const testName = 'Test';
     const testValue = '8';
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();
@@ -93,7 +92,7 @@ test.describe('S-Group Properties', () => {
   });
 
   test('A query component  is created', async ({ page }) => {
-    await selectRingButton(RingButton.Benzene, page);
+    await selectRingButton(page, RingButton.Benzene);
     await clickInTheMiddleOfTheScreen(page);
 
     await LeftToolbar(page).sGroup();

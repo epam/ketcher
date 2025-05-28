@@ -1,5 +1,5 @@
 import { Page, test, TestInfo } from '@playwright/test';
-import { CommonTopRightToolbar } from '@tests/pages/common/TopRightToolbar';
+import { CommonTopRightToolbar } from '@tests/pages/common/CommonTopRightToolbar';
 import { selectFlexLayoutModeTool } from '@utils/canvas/tools';
 import { chooseTab, Tabs } from '@utils/macromolecules';
 

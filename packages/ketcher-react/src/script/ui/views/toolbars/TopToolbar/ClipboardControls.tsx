@@ -45,21 +45,25 @@ export const ClipboardControls = ({
       name: 'copy',
       title: 'Copy',
       handler: onCopy,
+      testId: 'copy-button',
     },
     {
       name: 'copy-mol',
       title: 'Copy as MOL',
       handler: onCopyMol,
+      testId: 'copy-mol-button',
     },
     {
       name: 'copy-ket',
       title: 'Copy as KET',
       handler: onCopyKet,
+      testId: 'copy-ket-button',
     },
     {
       name: 'copy-image',
       title: 'Copy Image',
       handler: onCopyImage,
+      testId: 'copy-image-button',
     },
   ];
 
@@ -72,6 +76,7 @@ export const ClipboardControls = ({
       disabled={disabledButtons.includes(button.name)}
       isHidden={hiddenButtons.includes(button.name)}
       key={button.name}
+      testId={button.testId}
     />
   );
 
@@ -92,6 +97,7 @@ export const ClipboardControls = ({
       )}
       <TopToolbarIconButton
         title="Paste"
+        testId="paste-button"
         onClick={onPaste}
         iconName="paste"
         shortcut={shortcuts.paste}
@@ -100,6 +106,7 @@ export const ClipboardControls = ({
       />
       <TopToolbarIconButton
         title="Cut"
+        testId="cut-button"
         onClick={onCut}
         iconName="cut"
         shortcut={shortcuts.cut}

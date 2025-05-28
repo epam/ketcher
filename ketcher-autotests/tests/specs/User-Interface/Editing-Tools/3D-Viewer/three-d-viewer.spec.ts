@@ -3,7 +3,6 @@ import { Page, expect, test } from '@playwright/test';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { selectRingButton } from '@tests/pages/molecules/BottomToolbar';
 import {
-  pressButton,
   takeEditorScreenshot,
   openFileAndAddToCanvas,
   moveMouseToTheMiddleOfTheScreen,
@@ -17,6 +16,7 @@ import {
 import { miewApplyButtonIsEnabled } from '@utils/common/loaders/waitForMiewApplyButtonIsEnabled';
 import { getKet } from '@utils/formats';
 import { RingButton } from '@tests/pages/constants/ringButton/Constants';
+import { MiewDialog } from '@tests/pages/molecules/canvas/MiewDialog';
 
 async function open3DViewer(page: Page, waitForButtonIsEnabled = true) {
   await IndigoFunctionsToolbar(page).ThreeDViewer();
@@ -46,7 +46,7 @@ test.describe('3D Viewer', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 20, y, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Cancel');
+      await MiewDialog(page).pressCancelButton();
     });
     await takeEditorScreenshot(page);
   });
@@ -64,7 +64,7 @@ test.describe('3D Viewer', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 20, y, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Cancel');
+      await MiewDialog(page).pressCancelButton();
     });
     await takeEditorScreenshot(page);
   });
@@ -83,7 +83,7 @@ test.describe('3D Viewer', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 20, y, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Cancel');
+      await MiewDialog(page).pressCancelButton();
     });
     await takeEditorScreenshot(page);
   });
@@ -105,7 +105,7 @@ test.describe('3D Viewer', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 20, y, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Cancel');
+      await MiewDialog(page).pressCancelButton();
     });
     await takeEditorScreenshot(page);
   });
@@ -169,7 +169,7 @@ test.describe('3D Viewer', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x, y + 75, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Apply');
+      await MiewDialog(page).pressApplyButton();
     });
 
     // Get the structure data after making changes
@@ -193,7 +193,7 @@ test.describe('3D Viewer', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 80, y, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Apply');
+      await MiewDialog(page).pressApplyButton();
     });
 
     // Get the structure data after making changes
@@ -216,7 +216,7 @@ test.describe('3D Viewer', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x + 75, y, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Apply');
+      await MiewDialog(page).pressApplyButton();
     });
 
     // Get the structure data after making changes
@@ -242,7 +242,7 @@ test.describe('3D Viewer', () => {
     const { x, y } = await getCoordinatesOfTheMiddleOfTheScreen(page);
     await dragMouseTo(x - 90, y, page);
     await waitForRender(page, async () => {
-      await pressButton(page, 'Apply');
+      await MiewDialog(page).pressApplyButton();
     });
 
     // Get the structure data after making changes

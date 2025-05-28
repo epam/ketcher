@@ -11,6 +11,8 @@ import {
   RNA_DNA_NON_MODIFIED_PART,
   RNABase,
   Sugar,
+  getAminoAcidsToModify,
+  canModifyAminoAcid,
 } from 'ketcher-core';
 
 const getMonomersCode = (monomers: BaseMonomer[]) => {
@@ -182,7 +184,7 @@ export const getModifyAminoAcidsMenuItems = (
     if (
       monomersWithSameNaturalAnalogCode.every(
         (monomer: BaseMonomer) =>
-          !editor.canModifyAminoAcid(monomer, monomerLibraryItem),
+          !canModifyAminoAcid(monomer, monomerLibraryItem),
       )
     ) {
       return;
@@ -192,9 +194,10 @@ export const getModifyAminoAcidsMenuItems = (
   });
 
   return [...modificationsForSelection.values()].map((modificationType) => {
-    const aminoAcidsToModify = editor.getAminoAcidsToModify(
+    const aminoAcidsToModify = getAminoAcidsToModify(
       selectedMonomers,
       modificationType,
+      editor.monomersLibrary,
     );
 
     return {

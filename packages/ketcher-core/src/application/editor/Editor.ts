@@ -69,6 +69,7 @@ import { TransientDrawingView } from 'application/render/renderers/TransientView
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 import { ReinitializeModeOperation } from 'application/editor/operations';
+import { getAminoAcidsToModify } from 'domain/helpers/monomers';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -692,71 +693,16 @@ export class CoreEditor {
     this.mode = mode;
   }
 
-  public canModifyAminoAcid(
-    monomer: BaseMonomer,
-    modificationMonomerLibraryItem: MonomerItemType,
-  ) {
-    return (
-      monomer.label !== modificationMonomerLibraryItem.label &&
-      (monomer.isAttachmentPointExistAndFree(AttachmentPointName.R1) ||
-        modificationMonomerLibraryItem.props.MonomerCaps?.R1) &&
-      (monomer.isAttachmentPointExistAndFree(AttachmentPointName.R2) ||
-        modificationMonomerLibraryItem.props.MonomerCaps?.R2)
-    );
-  }
-
-  public getAminoAcidsToModify(
-    monomers: BaseMonomer[],
-    modificationType: string,
-  ) {
-    const naturalAnalogueToModifiedMonomerItem = new Map<
-      string,
-      MonomerItemType
-    >();
-    const aminoAcidsToModify = new Map<BaseMonomer, MonomerItemType>();
-
-    editor.monomersLibrary.forEach((libraryItem) => {
-      if (libraryItem.props?.modificationType !== modificationType) {
-        return;
-      }
-      const monomerNaturalAnalogCode =
-        libraryItem.props.MonomerNaturalAnalogCode;
-
-      if (monomerNaturalAnalogCode) {
-        naturalAnalogueToModifiedMonomerItem.set(
-          monomerNaturalAnalogCode,
-          libraryItem,
-        );
-      }
-    });
-
-    monomers.forEach((monomer) => {
-      const monomerNaturalAnalogCode =
-        monomer.monomerItem.props.MonomerNaturalAnalogCode;
-      const modifiedMonomerItem = naturalAnalogueToModifiedMonomerItem.get(
-        monomerNaturalAnalogCode,
-      );
-
-      if (
-        modifiedMonomerItem &&
-        this.canModifyAminoAcid(monomer, modifiedMonomerItem)
-      ) {
-        aminoAcidsToModify.set(monomer, modifiedMonomerItem);
-      }
-    });
-
-    return aminoAcidsToModify;
-  }
-
   private onModifyAminoAcids(
     monomers: BaseMonomer[],
     modificationType: string,
   ) {
     const modelChanges = new Command();
     const editorHistory = new EditorHistory(editor);
-    const aminoAcidsToModify = this.getAminoAcidsToModify(
+    const aminoAcidsToModify = getAminoAcidsToModify(
       monomers,
       modificationType,
+      this.monomersLibrary,
     );
     const bondsToDelete = new Set<PolymerBond | MonomerToAtomBond>();
 

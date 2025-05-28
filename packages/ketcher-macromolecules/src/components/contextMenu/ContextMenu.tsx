@@ -52,6 +52,8 @@ const assembleMenuItems = (
   menuItems: MenuItem[],
   handleMenuChange: (params: ItemParams) => void,
 ) => {
+  const MENU_CLOSING_TIME = 500;
+  let isMouseOverThrottling = false;
   const items: ReactElement[] = [];
 
   menuItems.forEach(
@@ -77,13 +79,24 @@ const assembleMenuItems = (
         ) : (
           <Item
             id={name}
-            onClick={handleMenuChange}
+            onClick={(params) => {
+              isMouseOverThrottling = true;
+              setTimeout(() => {
+                isMouseOverThrottling = false;
+              }, MENU_CLOSING_TIME);
+              handleMenuChange(params);
+            }}
             key={name}
             data-testid={name}
             hidden={hidden}
             disabled={disabled}
             className={isMenuTitle ? 'contexify_item-title' : ''}
-            onMouseOver={() => onMouseOver?.(name)}
+            onMouseOver={() => {
+              if (isMouseOverThrottling) {
+                return;
+              }
+              onMouseOver?.(name);
+            }}
             onMouseOut={() => onMouseOut?.(name)}
           >
             <span>{title}</span>

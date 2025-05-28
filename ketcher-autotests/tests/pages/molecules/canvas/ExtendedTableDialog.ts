@@ -41,8 +41,15 @@ export const ExtendedTableDialog = (page: Page) => {
 export async function selectExtendedTableElement(
   page: Page,
   name: ExtendedTableButton,
+  action?: 'Add' | 'Cancel',
 ) {
   await ExtendedTableDialog(page).clickExtendedTableElement(name);
+
+  if (action === 'Add') {
+    await ExtendedTableDialog(page).pressAddButton();
+  } else if (action === 'Cancel') {
+    await ExtendedTableDialog(page).pressCancelButton();
+  }
 }
 
 export type ExtendedTableDialogType = ReturnType<typeof ExtendedTableDialog>;

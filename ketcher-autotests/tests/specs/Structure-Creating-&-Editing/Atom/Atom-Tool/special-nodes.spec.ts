@@ -1,9 +1,6 @@
 import { test } from '@playwright/test';
 import { ExtendedTableButton } from '@tests/pages/constants/extendedTableWindow/Constants';
-import {
-  ExtendedTableDialog,
-  selectExtendedTableElement,
-} from '@tests/pages/molecules/canvas/ExtendedTableDialog';
+import { selectExtendedTableElement } from '@tests/pages/molecules/canvas/ExtendedTableDialog';
 import { IndigoFunctionsToolbar } from '@tests/pages/molecules/IndigoFunctionsToolbar';
 import { RightToolbar } from '@tests/pages/molecules/RightToolbar';
 import {
@@ -34,8 +31,7 @@ test.describe('Special nodes', () => {
       const extendedTableButton = RightToolbar(page).extendedTableButton;
 
       await extendedTableButton.click();
-      await selectExtendedTableElement(page, atom);
-      await ExtendedTableDialog(page).pressAddButton();
+      await selectExtendedTableElement(page, atom, 'Add');
       await clickInTheMiddleOfTheScreen(page);
       await IndigoFunctionsToolbar(page).calculatedValues();
       await takeEditorScreenshot(page);
@@ -61,8 +57,7 @@ test.describe('Special nodes', () => {
       const extendedTableButton = RightToolbar(page).extendedTableButton;
 
       await extendedTableButton.click();
-      await selectExtendedTableElement(page, atom);
-      await ExtendedTableDialog(page).pressAddButton();
+      await selectExtendedTableElement(page, atom, 'Add');
       await clickInTheMiddleOfTheScreen(page);
       await takeEditorScreenshot(page);
     });
@@ -78,8 +73,7 @@ test.describe('Special nodes', () => {
         page,
       );
       await extendedTableButton.click();
-      await selectExtendedTableElement(page, atom);
-      await ExtendedTableDialog(page).pressAddButton();
+      await selectExtendedTableElement(page, atom, 'Add');
       await page.keyboard.down('Shift');
       await clickOnAtom(page, 'S', 0);
       await clickOnAtom(page, 'F', 0);
@@ -107,8 +101,7 @@ test.describe('Special node', () => {
       const extendedTableButton = RightToolbar(page).extendedTableButton;
 
       await extendedTableButton.click();
-      await selectExtendedTableElement(page, atom);
-      await ExtendedTableDialog(page).pressAddButton();
+      await selectExtendedTableElement(page, atom, 'Add');
       await clickInTheMiddleOfTheScreen(page);
       await IndigoFunctionsToolbar(page).checkStructure();
       await takeEditorScreenshot(page, {

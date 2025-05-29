@@ -7,6 +7,10 @@ import { BondSnapView } from './BondSnapView';
 import { AngleSnapView, AngleSnapViewParams } from './AngleSnapView';
 import { BaseMonomerRenderer } from 'application/render';
 import { DistanceSnapView, DistanceSnapViewParams } from './DistanceSnapView';
+import {
+  ModifyAminoAcidsView,
+  ModifyAminoAcidsViewParams,
+} from 'application/render/renderers/TransientView/ModifyAminoAcidsView';
 
 type ViewData<P> = {
   show: (layer: D3SvgElementSelection<SVGGElement, void>, params: P) => void;
@@ -117,6 +121,18 @@ export class TransientDrawingView {
 
   public hideDistanceSnap() {
     this.removeView(DistanceSnapView.viewName);
+  }
+
+  public showModifyAminoAcidsView(params: ModifyAminoAcidsViewParams) {
+    this.addView(ModifyAminoAcidsView.viewName, {
+      show: ModifyAminoAcidsView.show,
+      topLayer: true,
+      params,
+    });
+  }
+
+  public hideModifyAminoAcidsView() {
+    this.removeView(ModifyAminoAcidsView.viewName);
   }
 
   public clear() {

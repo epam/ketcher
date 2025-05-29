@@ -44,7 +44,7 @@ import {
 } from 'application/render/renderers/sequence/SequenceRenderer';
 import { ketcherProvider } from 'application/utils';
 import assert from 'assert';
-import { SequenceType, Struct, Vec2 } from 'domain/entities';
+import { MonomerToAtomBond, SequenceType, Struct, Vec2 } from 'domain/entities';
 import { BaseMonomer } from 'domain/entities/BaseMonomer';
 import { Command } from 'domain/entities/Command';
 import {
@@ -70,12 +70,19 @@ import { parseMonomersLibrary } from './helpers';
 import { TransientDrawingView } from 'application/render/renderers/TransientView/TransientDrawingView';
 import { SelectLayoutModeOperation } from 'application/editor/operations/polymerBond';
 import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
+import { ReinitializeModeOperation } from 'application/editor/operations';
+import { getAminoAcidsToModify } from 'domain/helpers/monomers';
 
 interface ICoreEditorConstructorParams {
   theme;
   canvas: SVGSVGElement;
   mode?: BaseMode;
   monomersLibraryUpdate?: string | JSON;
+}
+
+interface ModifyAminoAcidsHandlerParams {
+  monomers: BaseMonomer[];
+  modificationType: string;
 }
 
 let persistentMonomersLibrary: MonomerItemType[] = [];
@@ -369,6 +376,9 @@ export class CoreEditor {
             };
           }),
       ) as NodesSelection;
+      const selectedMonomers = this.drawingEntitiesManager.selectedEntities
+        .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
+        .map(([, drawingEntity]) => drawingEntity as BaseMonomer);
 
       if (eventData instanceof BaseSequenceItemRenderer) {
         this.events.rightClickSequence.dispatch([event, sequenceSelections]);
@@ -385,12 +395,16 @@ export class CoreEditor {
         this.events.rightClickSelectedMonomers.dispatch([event]);
         this.events.rightClickSelectedMonomers.dispatch([
           event,
-          this.drawingEntitiesManager.selectedEntities
-            .filter(([, drawingEntity]) => drawingEntity instanceof BaseMonomer)
-            .map(([, drawingEntity]) => drawingEntity as BaseMonomer),
+          selectedMonomers,
         ]);
       } else if (isClickOnCanvas) {
-        this.events.rightClickCanvas.dispatch([event, sequenceSelections]);
+        // TODO separate by two events for modes
+        this.events.rightClickCanvas.dispatch([
+          event,
+          this.mode instanceof SequenceMode
+            ? sequenceSelections
+            : selectedMonomers,
+        ]);
       }
 
       return false;
@@ -468,6 +482,11 @@ export class CoreEditor {
       history.update(command);
       this.renderersContainer.update(command);
     });
+    this.events.modifyAminoAcids.add(
+      ({ monomers, modificationType }: ModifyAminoAcidsHandlerParams) => {
+        this.onModifyAminoAcids(monomers, modificationType);
+      },
+    );
   }
 
   private onEditSequence(sequenceItemRenderer: BaseSequenceItemRenderer) {
@@ -685,6 +704,76 @@ export class CoreEditor {
 
   public setMode(mode: BaseMode) {
     this.mode = mode;
+  }
+
+  private onModifyAminoAcids(
+    monomers: BaseMonomer[],
+    modificationType: string,
+  ) {
+    const modelChanges = new Command();
+    const editorHistory = new EditorHistory(editor);
+    const aminoAcidsToModify = getAminoAcidsToModify(
+      monomers,
+      modificationType,
+      this.monomersLibrary,
+    );
+    const bondsToDelete = new Set<PolymerBond | MonomerToAtomBond>();
+
+    [...aminoAcidsToModify.entries()].forEach(
+      ([aminoAcidToModify, modifiedMonomerItem]) => {
+        aminoAcidToModify.covalentBonds.forEach((polymerBond) => {
+          const attachmentPoint =
+            aminoAcidToModify.getAttachmentPointByBond(polymerBond);
+
+          if (!attachmentPoint) {
+            KetcherLogger.error('Attachment point not found for the bond');
+
+            return;
+          }
+
+          const modificationHasAttachmentPointForBond =
+            modifiedMonomerItem.props.MonomerCaps?.[attachmentPoint];
+
+          if (!modificationHasAttachmentPointForBond) {
+            bondsToDelete.add(polymerBond);
+          }
+        });
+      },
+    );
+
+    const modificationFunction = () => {
+      aminoAcidsToModify.forEach((modifiedMonomerItem, aminoAcidToModify) => {
+        modelChanges.merge(
+          this.drawingEntitiesManager.modifyMonomerItem(
+            aminoAcidToModify,
+            modifiedMonomerItem,
+          ),
+        );
+      });
+
+      modelChanges.addOperation(new ReinitializeModeOperation());
+      editor.renderersContainer.update(modelChanges);
+      editorHistory.update(modelChanges);
+      editor.transientDrawingView.hideModifyAminoAcidsView();
+      editor.transientDrawingView.update();
+    };
+
+    if (bondsToDelete.size > 0) {
+      this.events.openConfirmationDialog.dispatch({
+        confirmationText:
+          'Some side chain connections will be deleted during replacement. Do you want to proceed?',
+        onConfirm: () => {
+          bondsToDelete.forEach((bond) => {
+            modelChanges.merge(
+              this.drawingEntitiesManager.deleteDrawingEntity(bond),
+            );
+          });
+          modificationFunction();
+        },
+      });
+    } else {
+      modificationFunction();
+    }
   }
 
   public get isSequenceMode() {

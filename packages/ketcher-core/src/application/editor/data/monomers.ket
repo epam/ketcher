@@ -17418,7 +17418,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "A"
+    "naturalAnalogShort": "A",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-Test-6-P___Test-6-AP-Peptide": {
     "type": "monomerTemplate",
@@ -20058,7 +20059,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "C"
+    "naturalAnalogShort": "C",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-Cap___(2R,3S)-3-amino-2-hydroxy-5-cyclohexylpentanoic acid": {
     "type": "monomerTemplate",
@@ -20788,7 +20790,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "R"
+    "naturalAnalogShort": "R",
+    "modificationType": "Citrullination"
   },
   "monomerTemplate-Cya___Cysteic acid": {
     "type": "monomerTemplate",
@@ -21183,7 +21186,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "D"
+    "naturalAnalogShort": "D",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-D*___Aspartic acid*": {
     "type": "monomerTemplate",
@@ -22553,7 +22557,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "E"
+    "naturalAnalogShort": "E",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-Edc___S-ethylthiocysteine": {
     "type": "monomerTemplate",
@@ -22976,7 +22981,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "F"
+    "naturalAnalogShort": "F",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-G___Glycine": {
     "type": "monomerTemplate",
@@ -23092,7 +23098,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "G"
+    "naturalAnalogShort": "G",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-gGlu___gamma-glutamic acid": {
     "type": "monomerTemplate",
@@ -23872,7 +23879,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "H"
+    "naturalAnalogShort": "H",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-Har___homoarginine": {
     "type": "monomerTemplate",
@@ -25085,7 +25093,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "K"
+    "naturalAnalogShort": "K",
+    "modificationType": "Hydroxylation"
   },
   "monomerTemplate-Hyp___trans-4-hydroxy-L-proline": {
     "type": "monomerTemplate",
@@ -25272,7 +25281,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "P"
+    "naturalAnalogShort": "P",
+    "modificationType": "Hydroxylation"
   },
   "monomerTemplate-I___Isoleucine": {
     "type": "monomerTemplate",
@@ -25452,7 +25462,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "I"
+    "naturalAnalogShort": "I",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-Iva___isovaline": {
     "type": "monomerTemplate",
@@ -25833,7 +25844,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "K"
+    "naturalAnalogShort": "K",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-L___Leucine": {
     "type": "monomerTemplate",
@@ -26011,7 +26023,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "L"
+    "naturalAnalogShort": "L",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-L-OAla___lactic acid": {
     "type": "monomerTemplate",
@@ -26298,7 +26311,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "M"
+    "naturalAnalogShort": "M",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-Mba___(2S)-2-mercaptobutyric acid": {
     "type": "monomerTemplate",
@@ -26981,7 +26995,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "N"
+    "naturalAnalogShort": "N",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-2Nal___3-(2-naphthyl)-alanine": {
     "type": "monomerTemplate",
@@ -28228,7 +28243,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "P"
+    "naturalAnalogShort": "P",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-Pen___Penicillamine": {
     "type": "monomerTemplate",
@@ -29239,7 +29255,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "Q"
+    "naturalAnalogShort": "Q",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-R___Arginine": {
     "type": "monomerTemplate",
@@ -29486,7 +29503,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "R"
+    "naturalAnalogShort": "R",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-S___Serine": {
     "type": "monomerTemplate",
@@ -29658,7 +29676,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "S"
+    "naturalAnalogShort": "S",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-meG___Sarcosine": {
     "type": "monomerTemplate",
@@ -29789,7 +29808,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "G"
+    "naturalAnalogShort": "G",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-Ar5c___Cycloleucine": {
     "type": "monomerTemplate",
@@ -30386,7 +30406,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "T"
+    "naturalAnalogShort": "T",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-Thi___3-(2-thienyl)-alanine": {
     "type": "monomerTemplate",
@@ -31648,7 +31669,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "V"
+    "naturalAnalogShort": "V",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-W___Tryptophan": {
     "type": "monomerTemplate",
@@ -31954,7 +31976,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "W"
+    "naturalAnalogShort": "W",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-Wil___Willardiine": {
     "type": "monomerTemplate",
@@ -32483,7 +32506,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "Y"
+    "naturalAnalogShort": "Y",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-Ac-___N-Terminal acetyl": {
     "type": "monomerTemplate",
@@ -32740,7 +32764,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "A"
+    "naturalAnalogShort": "A",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dC___D-Cysteine": {
     "type": "monomerTemplate",
@@ -32912,7 +32937,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "C"
+    "naturalAnalogShort": "C",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dD___D-Aspartic acid": {
     "type": "monomerTemplate",
@@ -33114,7 +33140,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "D"
+    "naturalAnalogShort": "D",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dE___D-Glutamic acid": {
     "type": "monomerTemplate",
@@ -33331,7 +33358,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "E"
+    "naturalAnalogShort": "E",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dF___D-Phenylalanine": {
     "type": "monomerTemplate",
@@ -33561,7 +33589,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "F"
+    "naturalAnalogShort": "F",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dH___D-Histidine": {
     "type": "monomerTemplate",
@@ -33800,7 +33829,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "H"
+    "naturalAnalogShort": "H",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dK___D-Lysine": {
     "type": "monomerTemplate",
@@ -34017,7 +34047,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "K"
+    "naturalAnalogShort": "K",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dL___D-Leucine": {
     "type": "monomerTemplate",
@@ -34195,7 +34226,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "L"
+    "naturalAnalogShort": "L",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dM___D-Methionine": {
     "type": "monomerTemplate",
@@ -34373,7 +34405,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "M"
+    "naturalAnalogShort": "M",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dN___D-Asparagine": {
     "type": "monomerTemplate",
@@ -34575,7 +34608,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "N"
+    "naturalAnalogShort": "N",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dP___D-Proline": {
     "type": "monomerTemplate",
@@ -34745,7 +34779,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "P"
+    "naturalAnalogShort": "P",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dQ___D-Glutamine": {
     "type": "monomerTemplate",
@@ -34962,7 +34997,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "Q"
+    "naturalAnalogShort": "Q",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dR___D-Arginine": {
     "type": "monomerTemplate",
@@ -35209,7 +35245,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "R"
+    "naturalAnalogShort": "R",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dS___D-Serine": {
     "type": "monomerTemplate",
@@ -35381,7 +35418,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "S"
+    "naturalAnalogShort": "S",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dV___D-Valine": {
     "type": "monomerTemplate",
@@ -35544,7 +35582,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "V"
+    "naturalAnalogShort": "V",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dI___D-Isoleucine": {
     "type": "monomerTemplate",
@@ -35724,7 +35763,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "I"
+    "naturalAnalogShort": "I",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dT___D-Threonine": {
     "type": "monomerTemplate",
@@ -35913,7 +35953,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "T"
+    "naturalAnalogShort": "T",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dW___D-Tryptophan": {
     "type": "monomerTemplate",
@@ -36219,7 +36260,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "W"
+    "naturalAnalogShort": "W",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dY___D-Tyrosine": {
     "type": "monomerTemplate",
@@ -36488,7 +36530,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "Y"
+    "naturalAnalogShort": "Y",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-fmoc-___N-Terminal fluorenylmethoxycarbonyl": {
     "type": "monomerTemplate",
@@ -36944,7 +36987,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "A"
+    "naturalAnalogShort": "A",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meC___N-Methyl-Cysteine": {
     "type": "monomerTemplate",
@@ -37131,7 +37175,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "C"
+    "naturalAnalogShort": "C",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meD___N-Methyl-Aspartic acid": {
     "type": "monomerTemplate",
@@ -37333,7 +37378,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "D"
+    "naturalAnalogShort": "D",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meE___N-Methyl-Glutamic acid": {
     "type": "monomerTemplate",
@@ -37550,7 +37596,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "E"
+    "naturalAnalogShort": "E",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meF___N-Methyl-Phenylalanine": {
     "type": "monomerTemplate",
@@ -37795,7 +37842,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "F"
+    "naturalAnalogShort": "F",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meH___N-Methyl-Histidine": {
     "type": "monomerTemplate",
@@ -38025,7 +38073,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "H"
+    "naturalAnalogShort": "H",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meI___N-Methyl-Isoleucine": {
     "type": "monomerTemplate",
@@ -38220,7 +38269,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "I"
+    "naturalAnalogShort": "I",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meK___N-Methyl-Lysine": {
     "type": "monomerTemplate",
@@ -38452,7 +38502,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "K"
+    "naturalAnalogShort": "K",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meL___N-Methyl-Leucine": {
     "type": "monomerTemplate",
@@ -38645,7 +38696,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "L"
+    "naturalAnalogShort": "L",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meM___N-Methyl-Methionine": {
     "type": "monomerTemplate",
@@ -38838,7 +38890,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "M"
+    "naturalAnalogShort": "M",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meN___N-Methyl-Asparagine": {
     "type": "monomerTemplate",
@@ -39031,7 +39084,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "N"
+    "naturalAnalogShort": "N",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meQ___N-Methyl-Glutamine": {
     "type": "monomerTemplate",
@@ -39239,7 +39293,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "Q"
+    "naturalAnalogShort": "Q",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meR___N-Methyl-Arginine": {
     "type": "monomerTemplate",
@@ -39477,7 +39532,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "R"
+    "naturalAnalogShort": "R",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meS___N-Methyl-Serine": {
     "type": "monomerTemplate",
@@ -39640,7 +39696,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "S"
+    "naturalAnalogShort": "S",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meT___N-Methyl-Threonine": {
     "type": "monomerTemplate",
@@ -39820,7 +39877,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "T"
+    "naturalAnalogShort": "T",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meV___N-Methyl-Valine": {
     "type": "monomerTemplate",
@@ -39998,7 +40056,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "V"
+    "naturalAnalogShort": "V",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meW___N-Methyl-Tryptophan": {
     "type": "monomerTemplate",
@@ -40295,7 +40354,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "W"
+    "naturalAnalogShort": "W",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meY___N-Methyl-Tyrosine": {
     "type": "monomerTemplate",
@@ -40555,7 +40615,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "Y"
+    "naturalAnalogShort": "Y",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-pnA___PNA Adenine": {
     "type": "monomerTemplate",
@@ -42163,7 +42224,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "U"
+    "naturalAnalogShort": "U",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate-Test-6-Ch___Test-6-AP-Chem": {
     "type": "monomerTemplate",
@@ -46603,7 +46665,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "O"
+    "naturalAnalogShort": "O",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-dU___D-selenocysteine": {
     "type": "monomerTemplate",
@@ -46775,7 +46838,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "U"
+    "naturalAnalogShort": "U",
+    "modificationType": "Inversion"
   },
   "monomerTemplate-O___Pyrrolysine": {
     "type": "monomerTemplate",
@@ -47097,7 +47161,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "O"
+    "naturalAnalogShort": "O",
+    "modificationType": "Natural amino acid"
   },
   "monomerTemplate--NMe___C-Terminal methylamino": {
     "type": "monomerTemplate",
@@ -62263,7 +62328,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "K"
+    "naturalAnalogShort": "K",
+    "modificationType": "Side chain acetylation"
   },
   "monomerTemplate-OMe-___N-Terminal methoxy": {
     "type": "monomerTemplate",
@@ -67439,7 +67505,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "S"
+    "naturalAnalogShort": "S",
+    "modificationType": "Phosphorylation"
   },
   "monomerTemplate-ThrPO3___O-phospho-L-threonine": {
     "type": "monomerTemplate",
@@ -67664,7 +67731,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "T"
+    "naturalAnalogShort": "T",
+    "modificationType": "Phosphorylation"
   },
   "monomerTemplate-Thz___L-thioproline": {
     "type": "monomerTemplate",
@@ -84085,7 +84153,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "Y"
+    "naturalAnalogShort": "Y",
+    "modificationType": "Phosphorylation"
   },
   "monomerTemplate-xiHyp___4-hydroxy-L-proline": {
     "type": "monomerTemplate",
@@ -89234,7 +89303,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "P"
+    "naturalAnalogShort": "P",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meU___N-Methyl-Selenocysteine": {
     "type": "monomerTemplate",
@@ -89421,7 +89491,8 @@
         "type": "side"
       }
     ],
-    "naturalAnalogShort": "U"
+    "naturalAnalogShort": "U",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-meO___N-Methyl-Pyrrolysine": {
     "type": "monomerTemplate",
@@ -89758,7 +89829,8 @@
         "type": "right"
       }
     ],
-    "naturalAnalogShort": "O"
+    "naturalAnalogShort": "O",
+    "modificationType": "N-methylation"
   },
   "monomerTemplate-oC3o___1,3 Propanediol": {
     "type": "monomerTemplate",

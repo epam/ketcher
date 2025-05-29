@@ -24,6 +24,16 @@ declare module '*.svg' {
   export default src;
 }
 
+declare global {
+  export interface Element {
+    __data__?: BaseRenderer;
+  }
+
+  export interface EventTarget {
+    __data__?: BaseRenderer;
+  }
+}
+
 interface Document {
   mozFullScreenElement?: Element;
   msFullscreenElement?: Element;

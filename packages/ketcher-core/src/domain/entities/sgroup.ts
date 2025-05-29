@@ -503,7 +503,9 @@ export class SGroup {
     render?,
   ): void {
     const BORDER_EXT = new Vec2(0.05 * 3, 0.05 * 3);
-    const PADDING_VECTOR = new Vec2(0.2, 0.4);
+    const PADDING_VECTOR = !SGroup.isCOPGroup(sGroup)
+      ? new Vec2(0.2, 0.4)
+      : new Vec2(1.2, 1.2);
     const atoms = sGroup.atoms;
     const crossBonds = crossBondsPerAtom
       ? Object.values(crossBondsPerAtom).flat()
@@ -809,6 +811,10 @@ export class SGroup {
 
   static isMulSGroup(sGroup: SGroup): boolean {
     return sGroup.type === SGroup.TYPES.MUL;
+  }
+
+  static isCOPGroup(sGroup: SGroup): boolean {
+    return sGroup.type === SGroup.TYPES.COP;
   }
 }
 

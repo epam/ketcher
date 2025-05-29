@@ -761,7 +761,7 @@ Clicking on the _Calculate Properties_ toogle on the main toolbar, or using the 
 - *Molecular formula* - This value can be calculated for any structure on canvas;
 - *Molecular mass* - The molecular mass is given in of of three units - Da, kDa, and MDa - and is calculates for any structure on canvas;
 - Peptide specific properties are:
-     - *Isoelectric point* - Calculated as the mean of all pKa values of a structure;
+     - *Isoelectric point* - Calculated as the median of all pKa values of a structure;
      - *Extinction Coefficient* - For λ=280nm; Calculated using the method from _Gill, S.C. and von Hippel, P.H. (1989)_ with only natural analogues taken into account (for example, a modified alanine is considered as a natural alanine);
      - *Hydrophobicity* - Represented as a graph with the x-axis signifying amino-acid count, and the y-axis the hydrophobicity score of the natural analogue; The method used is from _Black S.D. and Mould D.R. (1991)_;
      - *Amino Acid Count* - Represents the count of every amino acid with the same natural analogue.

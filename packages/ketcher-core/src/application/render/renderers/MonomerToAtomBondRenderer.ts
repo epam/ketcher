@@ -1,3 +1,4 @@
+import { AtomRenderer } from 'application/render/renderers/AtomRenderer';
 import { BaseRenderer } from 'application/render/renderers/BaseRenderer';
 import { D3SvgElementSelection } from 'application/render/types';
 import { Scale } from 'domain/helpers';
@@ -24,8 +25,21 @@ export class MonomerToAtomBondRenderer extends BaseRenderer {
       this.editorSettings,
     );
 
+    // If the atom's label is not visible,
+    // return the start and end positions without further adjustments.
+    if (
+      this.monomerToAtomBond.atom.baseRenderer instanceof AtomRenderer &&
+      !this.monomerToAtomBond.atom.baseRenderer.isLabelVisible
+    ) {
+      return {
+        startPosition: startPositionInPixels,
+        endPosition: endPositionInPixels,
+      };
+    }
+
     const atomRect =
       this.monomerToAtomBond.atom.baseRenderer?.rootBoundingClientRect;
+
     if (atomRect) {
       // Get the atom rectangle dimensions
       const atomWidth = atomRect.width;

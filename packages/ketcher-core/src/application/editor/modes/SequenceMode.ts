@@ -1100,7 +1100,7 @@ export class SequenceMode extends BaseMode {
               nodeBeforeSelection.firstMonomerInNode,
             ),
           );
-        } else {
+        } else if (nodeBeforeSelection && nodeAfterSelection) {
           modelChanges.merge(
             this.tryToCreatePolymerBond(
               isPhosphateAdditionalyDeleted

@@ -844,6 +844,31 @@ export class SequenceMode extends BaseMode {
     editorHistory.update(modelChanges);
   }
 
+  private getPolymerBondToDeleteFromBackboneNode(
+    node: BackBoneSequenceNode,
+  ): PolymerBond | undefined {
+    const firstConnected = node.firstConnectedNode;
+    const secondConnected = node.secondConnectedNode;
+
+    if (
+      firstConnected instanceof Nucleotide &&
+      firstConnected.lastMonomerInNode?.attachmentPointsToBonds?.R2 instanceof
+        PolymerBond
+    ) {
+      return firstConnected.lastMonomerInNode.attachmentPointsToBonds.R2;
+    }
+
+    if (
+      secondConnected instanceof Nucleotide &&
+      secondConnected.firstMonomerInNode?.attachmentPointsToBonds?.R1 instanceof
+        PolymerBond
+    ) {
+      return secondConnected.firstMonomerInNode.attachmentPointsToBonds.R1;
+    }
+
+    return undefined;
+  }
+
   private handleNodesDeletion(
     selections: TwoStrandedNodesSelection,
     strandType: STRAND_TYPE,
@@ -952,26 +977,8 @@ export class SequenceMode extends BaseMode {
             ? selectionStartNode
             : (selectionEndNode as BackBoneSequenceNode);
 
-        const firstConnected = backBoneSequenceNode.firstConnectedNode;
-        const secondConnected = backBoneSequenceNode.secondConnectedNode;
-
-        let polymerBondToDelete: PolymerBond | undefined;
-
-        if (
-          firstConnected instanceof Nucleotide &&
-          firstConnected.lastMonomerInNode?.attachmentPointsToBonds
-            ?.R2 instanceof PolymerBond
-        ) {
-          polymerBondToDelete =
-            firstConnected.lastMonomerInNode.attachmentPointsToBonds.R2;
-        } else if (
-          secondConnected instanceof Nucleotide &&
-          secondConnected.firstMonomerInNode?.attachmentPointsToBonds
-            ?.R1 instanceof PolymerBond
-        ) {
-          polymerBondToDelete =
-            secondConnected.firstMonomerInNode.attachmentPointsToBonds.R1;
-        }
+        const polymerBondToDelete =
+          this.getPolymerBondToDeleteFromBackboneNode(backBoneSequenceNode);
 
         if (polymerBondToDelete) {
           modelChanges.merge(

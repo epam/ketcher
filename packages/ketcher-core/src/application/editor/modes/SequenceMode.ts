@@ -898,7 +898,6 @@ export class SequenceMode extends BaseMode {
             ? potentialNodeAfterSelection.secondConnectedNode
             : potentialNodeAfterSelection.firstConnectedNode
           : potentialNodeAfterSelection;
-
       const nodeInSameChainBeforeSelection =
         (twoStrandedNodeInSameChainBeforeSelection &&
           getNodeFromTwoStrandedNode(
@@ -917,6 +916,7 @@ export class SequenceMode extends BaseMode {
         potentialNodeInSameChainAfterSelection instanceof BackBoneSequenceNode
           ? potentialNodeInSameChainAfterSelection.secondConnectedNode
           : potentialNodeInSameChainAfterSelection;
+
       // Сase delete A (for sense) and empty node (for antisense) in sync mode:
       // G | A | G
       // C |   | C
@@ -938,6 +938,7 @@ export class SequenceMode extends BaseMode {
       ) {
         return;
       }
+
       // Сase delete "-":
       // G | - | G
       // C |   | C
@@ -979,6 +980,7 @@ export class SequenceMode extends BaseMode {
             ),
           );
         }
+
         return;
       }
 
@@ -1053,7 +1055,7 @@ export class SequenceMode extends BaseMode {
             ),
           );
         }
-      } else if (nodeBeforeSelection && nodeAfterSelection) {
+      } else {
         if (
           !nodeAfterSelection ||
           nodeAfterSelection instanceof EmptySequenceNode

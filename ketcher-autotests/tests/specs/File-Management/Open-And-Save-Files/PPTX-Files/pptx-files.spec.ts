@@ -1,11 +1,14 @@
 import { test } from '@playwright/test';
 import { CommonTopLeftToolbar } from '@tests/pages/common/CommonTopLeftToolbar';
 import {
+  OpenPPTXFileDialog,
+  selectStructureInPPTXDialog,
+} from '@tests/pages/molecules/OpenPPTXFileDialog';
+import {
   waitForPageInit,
   openFile,
   takeEditorScreenshot,
   waitForSpinnerFinishedWork,
-  pressButton,
 } from '@utils';
 /* eslint-disable no-magic-numbers */
 test.describe('PPTX files', () => {
@@ -17,7 +20,7 @@ test.describe('PPTX files', () => {
     await CommonTopLeftToolbar(page).openFile();
     await openFile('PPTX/pptx-with-chem-draw.pptx', page);
     await takeEditorScreenshot(page);
-    await page.getByText('Structure 2').click();
+    await selectStructureInPPTXDialog(page, 1);
     await takeEditorScreenshot(page);
   });
 
@@ -55,11 +58,11 @@ test.describe('PPTX files', () => {
         await openFile('PPTX/50 mols on 1 canvas.pptx', page);
       });
       await waitForSpinnerFinishedWork(page, async () => {
-        await page.getByText('Structure 1', { exact: true }).click();
+        await selectStructureInPPTXDialog(page, 0);
       });
       await takeEditorScreenshot(page);
       await waitForSpinnerFinishedWork(page, async () => {
-        await pressButton(page, 'Open as New Project');
+        await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
       });
       await takeEditorScreenshot(page);
 
@@ -93,11 +96,11 @@ test.describe('PPTX files', () => {
         await openFile('PPTX/1000 moleculs.pptx', page);
       });
       await waitForSpinnerFinishedWork(page, async () => {
-        await page.getByText('Structure 1000', { exact: true }).click();
+        await selectStructureInPPTXDialog(page, 999);
       });
       await takeEditorScreenshot(page);
       await waitForSpinnerFinishedWork(page, async () => {
-        await pressButton(page, 'Open as New Project');
+        await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
       });
       await takeEditorScreenshot(page);
     },
@@ -129,14 +132,14 @@ test.describe('PPTX files', () => {
           page,
         );
       });
-      for (let count = 10; count <= 20; count++) {
+      for (let count = 9; count <= 19; count++) {
         await waitForSpinnerFinishedWork(page, async () => {
-          await page.getByText(`Structure ${count}`, { exact: true }).click();
+          await selectStructureInPPTXDialog(page, count);
         });
         await takeEditorScreenshot(page);
       }
       await waitForSpinnerFinishedWork(page, async () => {
-        await page.getByText('Structure 79').click();
+        await selectStructureInPPTXDialog(page, 78);
       });
       await takeEditorScreenshot(page);
     },
@@ -166,18 +169,18 @@ test.describe('PPTX files', () => {
       const maxTimeout = 210000;
       test.setTimeout(maxTimeout);
 
-      const structures = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14];
+      const structures = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
       for await (const count of structures) {
         await CommonTopLeftToolbar(page).openFile();
         await waitForSpinnerFinishedWork(page, async () => {
           await openFile('PPTX/ARROWS.pptx', page);
         });
         await waitForSpinnerFinishedWork(page, async () => {
-          await page.getByText(`Structure ${count}`, { exact: true }).click();
+          await selectStructureInPPTXDialog(page, count);
         });
         await takeEditorScreenshot(page);
         await waitForSpinnerFinishedWork(page, async () => {
-          await pressButton(page, 'Open as New Project');
+          await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
         });
         await takeEditorScreenshot(page);
       }
@@ -204,11 +207,11 @@ test.describe('PPTX files', () => {
       await openFile('PPTX/Brackets.pptx', page);
     });
     //    await waitForSpinnerFinishedWork(page, async () => {
-    //      await page.getByText('Structure 1', {exact: true}).click();
+    //      await selectStructureInPPTXDialog(page, 0);
     //    });
     await takeEditorScreenshot(page);
     //    await waitForSpinnerFinishedWork(page, async () => {
-    //      await pressButton(page, 'Open as New Project');
+    //      await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
     //    });
     //    await takeEditorScreenshot(page);
   });
@@ -231,11 +234,11 @@ test.describe('PPTX files', () => {
       await openFile('PPTX/Chromotography tools.pptx', page);
     });
     await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 1', { exact: true }).click();
+      await selectStructureInPPTXDialog(page, 0);
     });
     await takeEditorScreenshot(page);
     await waitForSpinnerFinishedWork(page, async () => {
-      await pressButton(page, 'Open as New Project');
+      await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
     });
     await takeEditorScreenshot(page);
   });
@@ -254,17 +257,17 @@ test.describe('PPTX files', () => {
     5. Validate canvas
     Expected result: Most of figures we don't suppot and ignores
     */
-    for (let count = 1; count <= 2; count++) {
+    for (let count = 0; count <= 1; count++) {
       await CommonTopLeftToolbar(page).openFile();
       await waitForSpinnerFinishedWork(page, async () => {
         await openFile('PPTX/Geometry figures.pptx', page);
       });
       await waitForSpinnerFinishedWork(page, async () => {
-        await page.getByText(`Structure ${count}`, { exact: true }).click();
+        await selectStructureInPPTXDialog(page, count);
       });
       await takeEditorScreenshot(page);
       await waitForSpinnerFinishedWork(page, async () => {
-        await pressButton(page, 'Open as New Project');
+        await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
       });
       await takeEditorScreenshot(page);
     }
@@ -289,11 +292,11 @@ test.describe('PPTX files', () => {
       await openFile('PPTX/Orbitals.pptx', page);
     });
     await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 1', { exact: true }).click();
+      await selectStructureInPPTXDialog(page, 0);
     });
     await takeEditorScreenshot(page);
     await waitForSpinnerFinishedWork(page, async () => {
-      await pressButton(page, 'Open as New Project');
+      await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
     });
     await takeEditorScreenshot(page);
   });
@@ -317,11 +320,11 @@ test.describe('PPTX files', () => {
       await openFile('PPTX/Text messages.pptx', page);
     });
     await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 1', { exact: true }).click();
+      await selectStructureInPPTXDialog(page, 0);
     });
     await takeEditorScreenshot(page);
     await waitForSpinnerFinishedWork(page, async () => {
-      await pressButton(page, 'Open as New Project');
+      await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
     });
     await takeEditorScreenshot(page);
   });
@@ -345,11 +348,11 @@ test.describe('PPTX files', () => {
       await openFile('PPTX/Pluses and minuses.pptx', page);
     });
     await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 1', { exact: true }).click();
+      await selectStructureInPPTXDialog(page, 0);
     });
     await takeEditorScreenshot(page);
     await waitForSpinnerFinishedWork(page, async () => {
-      await pressButton(page, 'Open as New Project');
+      await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
     });
     await takeEditorScreenshot(page);
   });
@@ -373,11 +376,11 @@ test.describe('PPTX files', () => {
       await openFile('PPTX/Tables.pptx', page);
     });
     await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 1', { exact: true }).click();
+      await selectStructureInPPTXDialog(page, 0);
     });
     await takeEditorScreenshot(page);
     await waitForSpinnerFinishedWork(page, async () => {
-      await pressButton(page, 'Open as New Project');
+      await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
     });
     await takeEditorScreenshot(page);
   });
@@ -402,11 +405,11 @@ test.describe('PPTX files', () => {
       await openFile('PPTX/Attachment points.pptx', page);
     });
     await waitForSpinnerFinishedWork(page, async () => {
-      await page.getByText('Structure 1', { exact: true }).click();
+      await selectStructureInPPTXDialog(page, 0);
     });
     await takeEditorScreenshot(page);
     await waitForSpinnerFinishedWork(page, async () => {
-      await pressButton(page, 'Open as New Project');
+      await OpenPPTXFileDialog(page).pressOpenAsNewProjectButton();
     });
     await takeEditorScreenshot(page);
   });

@@ -36,4 +36,20 @@ export const OpenPPTXFileDialog = (page: Page) => {
   };
 };
 
+export async function selectStructureInPPTXDialog(
+  page: Page,
+  id: number,
+  action?: 'AddToCanvas' | 'OpenAsNewProject' | 'Cancel',
+) {
+  await page.getByTestId(`cdx-structure-${id}`).click();
+  const dialog = OpenPPTXFileDialog(page);
+  if (action === 'AddToCanvas') {
+    await dialog.pressAddToCanvasButton();
+  } else if (action === 'OpenAsNewProject') {
+    await dialog.pressOpenAsNewProjectButton();
+  } else if (action === 'Cancel') {
+    await dialog.pressCancelButton();
+  }
+}
+
 export type OpenPPTXFileDialogType = ReturnType<typeof OpenPPTXFileDialog>;

@@ -179,7 +179,7 @@ const addToCanvas = ({
   const isFlexMode = editor.mode instanceof FlexMode;
 
   if (isFlexMode) {
-    editor.drawingEntitiesManager.recalculateAntisenseChains(); // test
+    //  editor.drawingEntitiesManager.recalculateAntisenseChains();
 
     if (editor.drawingEntitiesManager.hasAntisenseChains) {
       modelChanges.merge(

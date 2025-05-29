@@ -179,6 +179,8 @@ const addToCanvas = ({
   const isFlexMode = editor.mode instanceof FlexMode;
 
   if (isFlexMode) {
+    editor.drawingEntitiesManager.recalculateAntisenseChains(); // test
+
     if (editor.drawingEntitiesManager.hasAntisenseChains) {
       modelChanges.merge(
         editor.drawingEntitiesManager.applySnakeLayout(

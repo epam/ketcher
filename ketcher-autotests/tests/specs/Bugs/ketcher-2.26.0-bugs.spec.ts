@@ -2,7 +2,7 @@
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/no-inferrable-types */
 /* eslint-disable no-magic-numbers */
-import { Page, test, expect } from '@playwright/test';
+import { Page, test, expect, Locator } from '@playwright/test';
 import {
   takeEditorScreenshot,
   resetZoomLevelToDefault,
@@ -34,6 +34,7 @@ import {
   waitForMonomerPreview,
   dragMouseTo,
   selectAllStructuresOnCanvas,
+  openFileAndAddToCanvasMacro,
 } from '@utils';
 import { waitForPageInit, waitForRender } from '@utils/common';
 import { processResetToDefaultState } from '@utils/testAnnotations/resetToDefaultState';
@@ -62,6 +63,7 @@ import { Phosphates } from '@constants/monomers/Phosphates';
 import { Sugars } from '@constants/monomers/Sugars';
 import { LeftToolbar } from '@tests/pages/molecules/LeftToolbar';
 import { ArrowType } from '@tests/pages/constants/arrowSelectionTool/Constants';
+import { getBondLocator } from '@utils/macromolecules/polymerBond';
 
 async function setHighResolution(page: Page) {
   await page.getByText('low').click();
@@ -78,6 +80,11 @@ async function removeTail(page: Page, tailName: string, index?: number) {
   await waitForRender(page, async () => {
     await page.getByText('Remove tail').click();
   });
+}
+
+async function openEditConnectionPointsMenu(page: Page, bondLine: Locator) {
+  await bondLine.click({ button: 'right', force: true });
+  await page.getByText('Edit Connection Points...').click();
 }
 
 let page: Page;
@@ -688,6 +695,62 @@ test.describe('Ketcher bugs in 2.26.0', () => {
     await removeTail(page, 'tails-0-move');
     await takeEditorScreenshot(page);
     await CommonTopLeftToolbar(page).undo();
+    await takeEditorScreenshot(page);
+  });
+
+  test('Case 26: Edit Connection points dialog cant cause invalid connection between monomers', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5205
+     * Description: Edit Connection points dialog cant cause invalid connection between monomers
+     * Scenario:
+     * 1. Go to Macro mode
+     * 2. Load from file
+     * 3. Open Edit Connection points dialog
+     * 4. Click on ALREADY selected connection points
+     * 5. Press Reconnect button
+     * 6. Open Edit Connection points dialog again
+     * 7. Take screenshot
+     */
+    const bondLine = getBondLocator(page, {});
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvasMacro('KET/two-nucleotides.ket', page);
+    await openEditConnectionPointsMenu(page, bondLine);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+    });
+    await page.getByRole('button', { name: 'R2' }).first().click();
+    await page.getByRole('button', { name: 'R1' }).nth(1).click();
+    await pressButton(page, 'Reconnect');
+    await openEditConnectionPointsMenu(page, bondLine);
+    await takeEditorScreenshot(page, {
+      hideMonomerPreview: true,
+    });
+  });
+
+  test('Case 27: Atom/Bond selection not remains on the canvas after clear canvas', async () => {
+    /*
+     * Test case: https://github.com/epam/ketcher/issues/6947
+     * Bug: https://github.com/epam/ketcher/issues/5788
+     * Description: Atom/Bond selection not remains on the canvas after clear canvas
+     * Scenario:
+     * 1. Toggle to Macro - Flex mode
+     * 2. Load from file
+     * 3. Select all
+     * 4. Press Clear canvas button
+     */
+    await CommonTopRightToolbar(page).turnOnMacromoleculesEditor({
+      enableFlexMode: true,
+    });
+    await openFileAndAddToCanvasAsNewProjectMacro(
+      'KET/Bond properties are not implemented.ket',
+      page,
+    );
+    await takeEditorScreenshot(page);
+    await selectAllStructuresOnCanvas(page);
+    await CommonTopLeftToolbar(page).clearCanvas();
     await takeEditorScreenshot(page);
   });
 });

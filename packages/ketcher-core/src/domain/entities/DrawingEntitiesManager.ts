@@ -88,7 +88,11 @@ import {
   MonomerToAtomBondAddOperation,
   MonomerToAtomBondDeleteOperation,
 } from 'application/editor/operations/monomerToAtomBond/monomerToAtomBond';
-import { AtomLabel, HalfMonomerSize } from 'domain/constants';
+import {
+  AtomLabel,
+  SnakeLayoutCellWidth,
+  HalfMonomerSize,
+} from 'domain/constants';
 import { isMonomerSgroupWithAttachmentPoints } from '../../utilities/monomers';
 import { HydrogenBond } from 'domain/entities/HydrogenBond';
 import {
@@ -110,13 +114,13 @@ import { getRnaPartLibraryItem } from 'domain/helpers/rna';
 import { KetcherLogger, SettingsManager } from 'utilities';
 import { EmptyMonomer } from 'domain/entities/EmptyMonomer';
 
-export const CELL_WIDTH = 60;
-const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = CELL_WIDTH;
+const VERTICAL_DISTANCE_FROM_ROW_WITHOUT_RNA = SnakeLayoutCellWidth;
 const VERTICAL_OFFSET_FROM_ROW_WITH_RNA = 142;
 const DISTANCE_FROM_RIGHT = 55;
-export const SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS = CELL_WIDTH * 2 + 30;
-export const MONOMER_START_X_POSITION = 20 + CELL_WIDTH / 2;
-export const MONOMER_START_Y_POSITION = 20 + CELL_WIDTH / 2;
+export const SNAKE_LAYOUT_Y_OFFSET_BETWEEN_CHAINS =
+  SnakeLayoutCellWidth * 2 + 30;
+export const MONOMER_START_X_POSITION = 20 + SnakeLayoutCellWidth / 2;
+export const MONOMER_START_Y_POSITION = 20 + SnakeLayoutCellWidth / 2;
 
 type RnaPresetAdditionParams = {
   sugar: MonomerItemType;
@@ -1464,7 +1468,7 @@ export class DrawingEntitiesManager {
         snakeLayoutNode.base?.position,
         new Vec2(
           newSugarPosition.x,
-          newSugarPosition.y + (isAntisense ? -1 : 1) * CELL_WIDTH,
+          newSugarPosition.y + (isAntisense ? -1 : 1) * SnakeLayoutCellWidth,
         ),
         snakeLayoutNode.base,
       );
@@ -1500,7 +1504,7 @@ export class DrawingEntitiesManager {
       const lineLengthFromSettings =
         SettingsManager.editorLineLength['snake-layout-mode'];
       const lineLengthFromCanvasWidth = Math.floor(
-        (canvasWidth - CELL_WIDTH) / CELL_WIDTH,
+        (canvasWidth - SnakeLayoutCellWidth) / SnakeLayoutCellWidth,
       );
       const numberOfCellsInRow =
         lineLengthFromSettings || lineLengthFromCanvasWidth;
@@ -1561,7 +1565,8 @@ export class DrawingEntitiesManager {
                     : 0),
               )
             : new Vec2(
-                lastPosition.x + (isFirstNodeOverall ? 0 : CELL_WIDTH),
+                lastPosition.x +
+                  (isFirstNodeOverall ? 0 : SnakeLayoutCellWidth),
                 lastPosition.y,
               );
 
@@ -1633,7 +1638,7 @@ export class DrawingEntitiesManager {
                   antisenseNode,
                   new Vec2(
                     newSenseNodePosition.x,
-                    newSenseNodePosition.y + CELL_WIDTH * 3,
+                    newSenseNodePosition.y + SnakeLayoutCellWidth * 3,
                   ),
                   rearrangedMonomersSet,
                   needRepositionMonomers,
@@ -1647,7 +1652,7 @@ export class DrawingEntitiesManager {
                   antisenseNode,
                   new Vec2(
                     newSenseNodePosition.x,
-                    newSenseNodePosition.y + CELL_WIDTH * 3,
+                    newSenseNodePosition.y + SnakeLayoutCellWidth * 3,
                   ),
                   rearrangedMonomersSet,
                   needRepositionMonomers,
@@ -1733,11 +1738,11 @@ export class DrawingEntitiesManager {
     lastPosition: Vec2,
     height: number,
     canvasWidth: number,
-    width = CELL_WIDTH,
+    width = SnakeLayoutCellWidth,
     restOfRowsWithAntisense: number,
   ) {
     const monomerOccupiedWidth =
-      lastPosition.x + width + DISTANCE_FROM_RIGHT + CELL_WIDTH / 2;
+      lastPosition.x + width + DISTANCE_FROM_RIGHT + SnakeLayoutCellWidth / 2;
     const isMonomerFitCanvas = monomerOccupiedWidth < canvasWidth;
 
     if (!isMonomerFitCanvas) {

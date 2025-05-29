@@ -51,7 +51,6 @@ import {
   DrawingEntitiesManager,
   MONOMER_START_X_POSITION,
   MONOMER_START_Y_POSITION,
-  CELL_WIDTH,
 } from 'domain/entities/DrawingEntitiesManager';
 import { PolymerBond } from 'domain/entities/PolymerBond';
 import { AttachmentPointName, MonomerItemType } from 'domain/types';
@@ -78,6 +77,7 @@ import { SelectRectangle } from 'application/editor/tools/SelectRectangle';
 import { ReinitializeModeOperation } from 'application/editor/operations';
 import { getAminoAcidsToModify } from 'domain/helpers/monomers';
 import { LineLengthChangeOperation } from 'application/editor/operations/editor/LineLengthChangeOperation';
+import { SnakeLayoutCellWidth } from 'domain/constants';
 
 interface ICoreEditorConstructorParams {
   theme;
@@ -1102,8 +1102,8 @@ export class CoreEditor {
     ZoomTool.instance.scrollTo(
       new Vec2(drawnEntitiesBoundingBox.left, drawnEntitiesBoundingBox.top),
       false,
-      MONOMER_START_X_POSITION - CELL_WIDTH / 4,
-      MONOMER_START_Y_POSITION - CELL_WIDTH / 4,
+      MONOMER_START_X_POSITION - SnakeLayoutCellWidth / 4,
+      MONOMER_START_Y_POSITION - SnakeLayoutCellWidth / 4,
       false,
     );
   }

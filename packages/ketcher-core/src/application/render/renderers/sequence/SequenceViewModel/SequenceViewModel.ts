@@ -458,7 +458,6 @@ export class SequenceViewModel {
       let rowToAddEmptyNode: ISequenceViewModelRow =
         sequenceViewModelChain.lastRow;
 
-      // TODO: Check if lineLength is needed here, it was just 30 before
       if (rowToAddEmptyNode.sequenceViewModelItems.length === lineLength) {
         rowToAddEmptyNode = {
           sequenceViewModelItems: [],
